@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "reviewKind": "owner-blind-model-preference",
+  "evaluationId": "sky-placement-judge-targeted-provenance-v3",
+  "runId": "sky-placement-blind-2026-08-02T23-29-54-128Z",
+  "recordedAt": "2026-08-02",
+  "blindReviewCompletedBeforeKeyReveal": true,
+  "modelKeyStatus": "revealed_after_blind_review",
+  "modelMapping": {
+    "A": {
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh"
+    },
+    "B": {
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "low"
+    }
+  },
+  "blindPreferences": [
+    { "caseId": "target-001", "preference": "A", "preferredModel": "gpt-5.6-sol" },
+    { "caseId": "target-002", "preference": "tie", "preferredModel": null },
+    { "caseId": "target-003", "preference": "B", "preferredModel": "gpt-5.6-terra" },
+    { "caseId": "target-004", "preference": "A", "preferredModel": "gpt-5.6-sol" },
+    { "caseId": "target-005", "preference": "B", "preferredModel": "gpt-5.6-terra" },
+    { "caseId": "target-006", "preference": "B", "preferredModel": "gpt-5.6-terra" },
+    { "caseId": "target-007", "preference": "A", "preferredModel": "gpt-5.6-sol" },
+    { "caseId": "target-008", "preference": "A", "preferredModel": "gpt-5.6-sol" },
+    { "caseId": "target-009", "preference": "B", "preferredModel": "gpt-5.6-terra" }
+  ],
+  "preferenceTotals": {
+    "gpt-5.6-sol": 4,
+    "gpt-5.6-terra": 4,
+    "ties": 1
+  },
+  "operationalMetrics": {
+    "gpt-5.6-terra": {
+      "calls": 9,
+      "averageLatencyMs": 3467.222222222222,
+      "totalLatencyMs": 31205,
+      "totalEstimatedCostUsd": 0.06847900000000001,
+      "averageEstimatedCostUsd": 0.007608777777777779,
+      "inputTokens": 17629,
+      "outputTokens": 2035,
+      "reasoningTokens": 1449,
+      "schemaFailures": 0,
+      "retries": 0
+    },
+    "gpt-5.6-sol": {
+      "calls": 9,
+      "averageLatencyMs": 8599.777777777777,
+      "totalLatencyMs": 77398,
+      "totalEstimatedCostUsd": 0.2309875,
+      "averageEstimatedCostUsd": 0.02566527777777778,
+      "inputTokens": 17629,
+      "outputTokens": 4028,
+      "reasoningTokens": 3533,
+      "schemaFailures": 0,
+      "retries": 0
+    }
+  },
+  "comparison": {
+    "solLatencyMultipleVsTerra": 2.4803093991347547,
+    "solCostMultipleVsTerra": 3.3726125118642215,
+    "qualitativeWinner": "tie",
+    "differenceLargeEnoughToJustifyPromotion": false
+  },
+  "decision": {
+    "promotionRecommended": false,
+    "promotionAuthorized": false,
+    "activeRuntimeChanged": false,
+    "reason": "Owner preference is tied 4-4 with one tie. Sol-xhigh has no demonstrated qualitative advantage large enough to justify roughly 2.5x latency and 3.4x cost."
+  },
+  "calibrationFollowUps": [
+    {
+      "caseId": "target-006",
+      "status": "needs_severity_review",
+      "issue": "Both judges detected the unnatural personification but rated the full article borderline.",
+      "question": "Should unnatural English that fails on first read force an off-voice score when the remaining passage is also generalized?",
+      "automaticRubricChangeAuthorized": false
+    }
+  ],
+  "adaptationProvenance": {
+    "editorialStatus": "collective_adaptation_candidate",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "unchangedByReview": true
+  }
+}

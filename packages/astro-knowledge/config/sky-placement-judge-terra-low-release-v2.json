@@ -1,0 +1,11 @@
+{
+  "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-placement-voice-v5:first-read-severity+collective-protection+stacked-ending+owner-gold-v3",
+  "rubricVersion": "sky-placement-voice-v5",
+  "evaluationSetVersion": "sky-placement-owner-approved-v3+weak-v5",
+  "policyVersion": "editorial-judge-policy-v1",
+  "notes": "Terra-low Sky Placement release evaluated only against explicitly approved v3 judge-calibration evidence. No governed content or generation-evidence promotion is implied."
+}

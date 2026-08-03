@@ -1,6 +1,9 @@
 import { Check, ChevronDown, MoreVertical } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
+import "../../styles/friends-detail.css";
+
+export { FriendProfileChartRail } from "./FriendProfileChartRail";
 
 export type FriendDetailTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
 export type FriendDetailTabOption = {

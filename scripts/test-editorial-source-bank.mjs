@@ -12,12 +12,17 @@ const require = createRequire(import.meta.url);
 const judge = require("../packages/astro-knowledge/scripts/judge-editorial-source-bank.js");
 const bank = JSON.parse(fs.readFileSync(judge.bankPath, "utf8"));
 const entries = judge.flattenBank(bank);
+const referenceFacts = judge.flattenReferenceFacts(bank);
 
 assert.equal(bank.authoring.origin, "owner-authored");
 assert.equal(bank.authoring.review_status, "approved");
 assert.equal(bank.authoring.approved_via, "owner-authored");
 assert.equal(bank.authoring.preserve_exact_wording, true);
 assert.equal(bank.authoring.reader_serving, false);
+assert.equal(bank.facts.lane, "reference");
+assert.equal(bank.facts.reader_serving, false);
+assert.equal(referenceFacts.length, 13);
+assert.ok(referenceFacts.every((fact) => fact.reader_serving === false));
 
 assert.equal(bank.collections.length, 7);
 assert.equal(entries.length, 102);
@@ -53,7 +58,35 @@ assert.ok(exactBodies.has("Where structure will set you free."));
 
 const lint = judge.lintBank(bank);
 assert.equal(lint.entryCount, 102);
+assert.equal(lint.referenceFactCount, 13);
 assert.deepEqual(lint.errors, []);
+
+const cazimiFacts = judge.queryReferenceFacts("cazimi within one degree");
+assert.equal(cazimiFacts[0].id, "solar-proximity-ladder");
+assert.equal(cazimiFacts[0].values.cazimi_primary_arcminutes, 17);
+assert.equal(cazimiFacts[0].status, "quarantined-source-claim");
+const cazimiConflict = judge.checkReferenceClaim("Cazimi is within 1 degree of the Sun.");
+assert.deepEqual(cazimiConflict, []);
+const traditionalCazimiConflict = judge.checkReferenceClaim("The traditional cazimi orb is 1 degree.");
+assert.deepEqual(traditionalCazimiConflict, []);
+assert.ok(referenceFacts
+  .filter((fact) => fact.source_tags.some((tag) => tag === "CC" || tag === "SD"))
+  .filter((fact) => !fact.source_tags.includes("independently-verified"))
+  .every((fact) => fact.status !== "verified-reference"));
+const barbaultFacts = judge.queryReferenceFacts("Barbault Saturn Neptune configuration");
+assert.equal(barbaultFacts[0].id, "barbault-cyclic-index");
+assert.equal(barbaultFacts[0].status, "verified-reference");
+assert.equal(
+  barbaultFacts[0].values.verified_scope,
+  "The 2026 Saturn-Neptune conjunction is part of the configuration, not the whole configuration."
+);
+const barbaultConflict = judge.checkReferenceClaim("Barbault called it the most benefic configuration of the century.");
+assert.equal(barbaultConflict[0].severity, "fail");
+assert.equal(barbaultConflict[0].status, "verified-reference");
+const scopedBarbaultClaim = judge.checkReferenceClaim(
+  "Barbault described the 2026 Saturn-Neptune conjunction as part of the most benefic configuration of the century."
+);
+assert.deepEqual(scopedBarbaultClaim, []);
 
 const sample = entries.find((entry) => entry.id === "boundaries-energy-protection-01");
 const prompt = judge.buildJudgePrompt(sample);

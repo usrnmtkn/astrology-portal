@@ -14,6 +14,10 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
+const friendTransitsTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendTransitsTab.tsx"),
+  "utf8"
+);
 
 function readPackageJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(packageDir, relativePath), "utf8"));
@@ -42,7 +46,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-01a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-01b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -500,9 +504,14 @@ assert.match(
   "Friend house-transit cards must remove a repeated visible window before truncating the preview."
 );
 assert.match(
-  appSource,
-  /onClick=\{\(\) => openBondTransitDetail\(card\)\}[\s\S]*?\{card\.effectBody\}[\s\S]*?card\.activationBody/u,
+  friendTransitsTabSource,
+  /onClick=\{\(\) => onOpenBondTransit\(card\.id\)\}[\s\S]*?\{card\.effectBody\}[\s\S]*?card\.activationBody/u,
   "Connection-transit cards must be clickable and show the complete effect plus activation context."
+);
+assert.match(
+  appSource,
+  /onOpenBondTransit=\{openBondTransitById\}/u,
+  "The deferred connection-transit list must remain wired to the detail handler."
 );
 assert.match(
   appSource,
@@ -510,9 +519,14 @@ assert.match(
   "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
 assert.match(
-  appSource,
-  /onClick=\{\(\) => openFriendTransitDetail\(transit\)\}/u,
+  friendTransitsTabSource,
+  /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u,
   "Friend personal-transit cards must open a detail view."
+);
+assert.match(
+  appSource,
+  /onOpenPersonalTransit=\{openFriendTransitById\}/u,
+  "The deferred friend personal-transit list must remain wired to the detail handler."
 );
 assert.match(
   appSource,
@@ -586,8 +600,8 @@ assert.match(
 );
 assert.match(
   runtimeSource,
-  /export const fallbackArchitectureV3BundledManifest = fallbackArchitectureV3ManifestForBundle\(snapshotBundle\)/u,
-  "Runtime must expose the bundled key manifest and content hash."
+  /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
+  "Runtime must expose the bundled manifest summary without eagerly importing its key list."
 );
 assert.match(
   generatedContentSource,
@@ -596,7 +610,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifest\.contentHash/u,
+  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
   "Dashboard cache payloads must be rejected when the bundled content hash changes."
 );
 assert.match(

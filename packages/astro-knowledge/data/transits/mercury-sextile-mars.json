@@ -25,6 +25,11 @@
     "cyclic": "humanistic / process-oriented source (cyclic model)"
   },
   "voiceNeutral": true,
-  "status": "DRAFT",
-  "base": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate. The sextile makes this a natural strength: Quick, incisive thinking and confident argument. The growth edge is not to coast on the ease."
+  "status": "LIVE",
+  "base": "Mind meets drive. A sharp, restless intellect that attacks problems rather than mulling them, and doesn't shy from debate. The sextile makes this a natural strength: Quick, incisive thinking and confident argument. The growth edge is not to coast on the ease.",
+  "readerCopy": {
+    "summary": "A direct conversation clears a logistical bottleneck that has held up the work.",
+    "body": "A direct conversation clears a logistical bottleneck that has held up the work. A straightforward question about money, scheduling, or household responsibility brings the answer needed to buy supplies, make the payment, or begin. Mercury names the practical question, while Mars turns the answer into action. The sextile opens a clear next step, but someone still has to make the call and move on what they learn. Relief arrives quickly once the immediate need is handled and the work can proceed.",
+    "approvedVia": "owner-refined Sky aspect v10.1 corpus; owner direction, chat 2026-08-01"
+  }
 }

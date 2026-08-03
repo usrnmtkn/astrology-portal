@@ -15,14 +15,14 @@
 // Exit 1 lists the offending draft files; delete them and re-run --batch
 // (resumable) so only the flagged cells regenerate under the current prompt.
 //
-//   node scripts/audit-placement-batch.js [dir]
+//   node scripts/audit-placement-batch.js [directory-or-review-bundle.json]
 
 const fs = require("fs");
 const path = require("path");
 const { lintArticle } = require("./lint-placement-voice.js");
 
 const root = path.join(__dirname, "..");
-const dir = process.argv[2] || path.join(root, "out", "sky-placement-drafts");
+const target = process.argv[2] || path.join(root, "out", "sky-placement-drafts");
 
 // A phrase is "shared" if it appears in more than this fraction of drafts
 // (minimum absolute floor keeps tiny batches from tripping on coincidence).
@@ -30,11 +30,15 @@ const SHARE_LIMIT = 0.15;
 const MIN_HITS = 3;
 
 function articleText(a) {
-  return [a.tagline, a.hook, a.lived, a.turn, ...(a.moves || [])]
+  return articleSegments(a)
     .filter(Boolean)
     .join(" ")
     .toLowerCase()
     .replace(/[‘’]/g, "'"); // keep contractions as one token
+}
+
+function articleSegments(a) {
+  return [a.tagline, a.hook, a.lived, a.turn, ...(a.moves || [])].filter(Boolean);
 }
 
 // Phrases that are legitimately shared across cards and never sameness:
@@ -45,31 +49,46 @@ const spec = JSON.parse(fs.readFileSync(path.join(root, "voice", "tldr-astro", "
 const ALLOWED_SHARED_EXACT = new Set();
 const paceSources = [
   ...Object.values(spec.pace.labels),
+  ...Object.entries(spec.pace.labels).map(([planet, label]) => `${planet} spends ${label} in a sign`),
   "two and a half days", "for about a month", "for about four weeks",
-  "six or seven weeks", "about eighteen months", "about twenty years"
+  "six or seven weeks", "about eighteen months", "about twenty years",
+  "roughly seven years", "uranus spends roughly seven years in a sign"
 ];
 for (const label of paceSources) {
-  const w = label.toLowerCase().split(/\s+/);
-  for (let i = 0; i + 2 < w.length + 1 && w.length >= 3; i++) {
-    if (i + 3 <= w.length) ALLOWED_SHARED_EXACT.add(w.slice(i, i + 3).join(" "));
+  const w = label.toLowerCase().replace(/[^a-z' -]/g, " ").split(/\s+/).filter(Boolean);
+  for (const size of [3, 4]) {
+    for (let i = 0; i + size <= w.length; i++) {
+      ALLOWED_SHARED_EXACT.add(w.slice(i, i + size).join(" "));
+    }
   }
 }
 const ALLOWED_SHARED = [
   /^for about( \S+)?$/, /^over the next$/, /^the next few$/, /^next few weeks$/,
-  /^in a sign$/, /^a sign for$/, /^(a|and a) half (days?|weeks?)$/, /half days? here$/
+  /^in a sign$/, /^a sign for$/, /^(a|and a) half (days?|weeks?)$/, /half days? here$/,
+  /^long enough to$/
 ];
 const isAllowedShared = (key) => ALLOWED_SHARED_EXACT.has(key) || ALLOWED_SHARED.some((re) => re.test(key));
 
 function main() {
-  if (!fs.existsSync(dir)) {
-    console.error(`No batch directory at ${dir}`);
+  if (!fs.existsSync(target)) {
+    console.error(`No batch input at ${target}`);
     process.exit(2);
   }
   const drafts = [];
-  for (const f of fs.readdirSync(dir)) {
-    if (!f.endsWith(".json") || f === "_summary.json") continue;
-    const d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
-    if (d.article) drafts.push({ file: f, cell: f.replace(".json", ""), article: d.article });
+  const inputIsFile = fs.statSync(target).isFile();
+  if (inputIsFile) {
+    const bundle = JSON.parse(fs.readFileSync(target, "utf8"));
+    for (const candidate of bundle.candidates || []) {
+      if (!candidate.article) continue;
+      const cell = `${candidate.planet}-${candidate.sign}`;
+      drafts.push({ file: `${cell}.json`, cell, article: candidate.article });
+    }
+  } else {
+    for (const f of fs.readdirSync(target)) {
+      if (!f.endsWith(".json") || f === "_summary.json") continue;
+      const d = JSON.parse(fs.readFileSync(path.join(target, f), "utf8"));
+      if (d.article) drafts.push({ file: f, cell: f.replace(".json", ""), article: d.article });
+    }
   }
   if (drafts.length < 2) {
     console.log(`Only ${drafts.length} draft(s); nothing to cross-compare.`);
@@ -88,8 +107,10 @@ function main() {
   //    now-banned copy while the cross-draft checks stay quiet (mercury-aries
   //    survived three delete rounds this way with "unsent" in its lived beat).
   for (const d of drafts) {
-    const planet = d.cell.split("-").slice(0, -1).join("-") || d.cell.split("-")[0];
-    const r = lintArticle({ ...d.article, planet });
+    const parts = d.cell.split("-");
+    const sign = parts.at(-1);
+    const planet = parts.slice(0, -1).join("-") || parts[0];
+    const r = lintArticle({ ...d.article, planet, sign });
     if (r.fails > 0) {
       const what = r.findings.filter((x) => x.severity === "fail").map((x) => `${x.term}${x.match ? ` "${x.match}"` : ""}`).slice(0, 3).join("; ");
       console.log(`STALE VS CURRENT RULES ${d.cell}: ${what}`);
@@ -124,6 +145,35 @@ function main() {
     if (files.length >= limit) {
       console.log(`SHARED PHRASE "${gram}" in ${files.length}/${drafts.length}: ${files.map((f) => f.replace(".json", "")).join(", ")}`);
       for (const f of files) flag(f, `phrase "${gram}"`);
+    }
+  }
+
+  // Small pilots need a stricter pairwise check. With six or twelve cards, a
+  // phrase copied into two drafts is already visible; the 15% production-batch
+  // threshold and three-hit floor would miss it. Four-word runs reduce noise
+  // while still catching prompt leakage and same-planet boilerplate.
+  if (drafts.length <= 12) {
+    const fourGramWhere = new Map();
+    for (const d of drafts) {
+      const seen = new Set();
+      for (const segment of articleSegments(d.article)) {
+        const words = String(segment).toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z' -]/g, " ").split(/\s+/).filter(Boolean);
+        for (let i = 0; i + 3 < words.length; i++) {
+          const g = words.slice(i, i + 4);
+          if (g.filter((w) => !STOP.has(w)).length < 2) continue;
+          const key = g.join(" ");
+          if (isAllowedShared(key)) continue;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          if (!fourGramWhere.has(key)) fourGramWhere.set(key, []);
+          fourGramWhere.get(key).push(d.file);
+        }
+      }
+    }
+    for (const [gram, files] of fourGramWhere) {
+      if (files.length < 2) continue;
+      console.log(`SHARED PILOT PHRASE "${gram}" in ${files.length}/${drafts.length}: ${files.map((f) => f.replace(".json", "")).join(", ")}`);
+      for (const f of files) flag(f, `pilot phrase "${gram}"`);
     }
   }
 
@@ -177,10 +227,12 @@ function main() {
     console.log(`\nSameness audit clean across ${drafts.length} drafts.`);
     return;
   }
-  console.log(`\n${flagged.size}/${drafts.length} drafts flagged for regeneration. Delete and re-run --batch:`);
+  console.log(`\n${flagged.size}/${drafts.length} drafts flagged for revision:`);
   const files = [...flagged.keys()].sort();
   for (const f of files) console.log(`  ${f}  (${[...new Set(flagged.get(f))].slice(0, 3).join("; ")})`);
-  console.log(`\n  cd ${path.relative(process.cwd(), dir) || "."} && rm ${files.join(" ")}`);
+  if (!inputIsFile) {
+    console.log(`\n  Delete the flagged generated drafts from ${path.relative(process.cwd(), target) || "."} and rerun --batch.`);
+  }
   process.exit(1);
 }
 

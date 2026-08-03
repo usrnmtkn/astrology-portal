@@ -1641,6 +1641,21 @@ test.describe("client-facing user flow case studies", () => {
     await expect(skyControls.getByRole("button", { name: "Date" })).toBeVisible();
     await expect(skyControls.getByRole("button", { name: /Portsmouth/ })).toBeVisible();
 
+    await skyControls.getByRole("button", { name: /Portsmouth/ }).click();
+    await expect(skyControls).toBeVisible();
+    await expect(skyControls.getByRole("form", { name: "Change location" })).toBeVisible();
+    await expect(skyControls.getByLabel("City")).toBeVisible();
+    await expect(page.locator(".hero-city-picker--mobile")).toHaveCount(0);
+
+    await skyControls.getByRole("button", { name: "Back to Sky controls" }).click();
+    await expect(skyControls.getByRole("button", { name: "Today", exact: true })).toBeVisible();
+    await expect(skyControls.getByRole("button", { name: /Portsmouth/ })).toBeFocused();
+
+    await skyControls.getByRole("button", { name: /Portsmouth/ }).click();
+    await skyControls.getByLabel("City").fill("Boston, MA");
+    await skyControls.getByRole("button", { name: "Update" }).click();
+    await expect(skyControls.getByRole("button", { name: /Boston/ })).toBeVisible();
+
     await skyControls.getByRole("button", { name: "Tomorrow" }).click();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
 
@@ -1650,11 +1665,29 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("constrained Sky header shows one brand mark", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 1000, height: 844 });
+    await seedClientState(page);
+    await expectClientRouteLoads(page, "/#sky");
+
+    const header = page.locator(".topbar");
+    const primaryNavigation = page.getByRole("navigation", { name: "Primary navigation" });
+
+    await expect(header.getByRole("button", { name: "Home", exact: true })).toBeVisible();
+    await expect(header.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
+    await expect(primaryNavigation, "Constrained header moves primary navigation into the menu").toBeHidden();
+    await expect(primaryNavigation.getByRole("button", { name: "Sky", exact: true })).toBeHidden();
+    await expect(header.getByRole("button", { name: "Open menu" })).toBeVisible();
+    await assertNoClientErrors();
+  });
+
   test("narrow mobile sky cards and header stay inside their rails", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await page.setViewportSize({ width: 320, height: 568 });
-    await seedClientState(page);
+    await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#sky");
 
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
@@ -1697,6 +1730,20 @@ test.describe("client-facing user flow case studies", () => {
     expect(layout.headerControlsOverlap, "Narrow Sky header controls do not overlap").toBe(false);
     expect(layout.overflowingCardChildren, "Narrow Sky card contents stay inside their cards").toEqual([]);
     expect(layout.locationWraps, "Narrow Sky location stays on one line").toBe(false);
+
+    for (const width of [320, 390, 430]) {
+      await page.setViewportSize({ width, height: 844 });
+      const mobileRail = await page.locator(".detail-panel").boundingBox();
+      expect(mobileRail, `Sky content rail is rendered at ${width}px`).not.toBeNull();
+
+      if (mobileRail) {
+        const expectedRailLeft = (width - mobileRail.width) / 2;
+        expect(Math.abs(mobileRail.x - expectedRailLeft), `Sky content rail is centered at ${width}px`).toBeLessThanOrEqual(1);
+        expect(mobileRail.x, `Sky content rail starts inside ${width}px viewport`).toBeGreaterThanOrEqual(-1);
+        expect(mobileRail.x + mobileRail.width, `Sky content rail ends inside ${width}px viewport`).toBeLessThanOrEqual(width + 1);
+      }
+    }
+
     await expectNoHorizontalOverflow(page, "Narrow mobile Sky");
     await assertNoClientErrors();
   });

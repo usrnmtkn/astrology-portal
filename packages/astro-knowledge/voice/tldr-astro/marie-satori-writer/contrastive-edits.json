@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "marie-satori-contrastive-edits-v1",
+  "records": [
+    {
+      "id": "sky-placement-saturn-capricorn-name-lost-time",
+      "surface": "sky-placement",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "articleBeat": "hook",
+      "before": "Work that holds its value over time needs a structure that does not depend on disappearance.",
+      "after": "Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off.",
+      "whatChanged": "Replaced polished shorthand with the exact time and rest being lost.",
+      "ownerReason": "Name the visible cost instead of asking the reader to interpret disappearance.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": ["abstract_consequence", "requires_interpretation", "polished_but_flat"],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Owner called the replacement great; the complete article remains unapproved."
+    },
+    {
+      "id": "sky-placement-neptune-libra-show-agreement-before-cancellation",
+      "surface": "sky-placement",
+      "planet": "neptune",
+      "sign": "libra",
+      "articleBeat": "hook",
+      "before": "Nobody raises their voice, but one person keeps cancelling plans they never wanted.",
+      "after": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable.",
+      "whatChanged": "Restored the missing behavior that causes the later cancellation.",
+      "ownerReason": "The real pattern begins when someone agrees to avoid disturbing the mood and cancels later.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": ["behavior_missing", "explanatory_before_observable", "polished_but_flat"],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Preferred hook from owner-provided review; not exact full-article approval."
+    },
+    {
+      "id": "sky-placement-uranus-pisces-private-denial-to-public-evidence",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "lived",
+      "before": "Care becomes visible in what changes: money is moved, access is widened, and a rule that protected the institution is challenged.",
+      "after": "Someone spends months appealing the same denial, finds three other families caught behind the same rule, and turns a folder of unanswered emails into a public complaint.",
+      "whatChanged": "Replaced a civic category inventory with one observable escalation sequence.",
+      "ownerReason": "Show private denial, repeated pattern, compared evidence, public complaint, and a challenge to the rule.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": ["category_inventory", "generic_coverage_sentence", "behavior_missing", "overbalanced_structure"],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Owner-provided replacement candidate; complete article remains needs_review."
+    },
+    {
+      "id": "sky-placement-uranus-cancer-show-role-before-astrology",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "hook",
+      "before": "The person everyone calls may stop answering every call. Uranus in Cancer changes the private rules around home and family, especially the rules that made one person responsible for remembering, helping, hosting, and handling every emergency.",
+      "after": "The person who remembers every birthday, keeps the spare key, and gets called when someone needs help may stop doing all of it. Uranus in Cancer changes the private rules around home and family, especially the ones that only worked because one person was always available.",
+      "whatChanged": "Showed the family role through ordinary evidence before explaining the astrology.",
+      "ownerReason": "Name what the person actually does instead of turning them into a role or listing labor categories.",
+      "reasonSource": "explicit_owner_review",
+      "failureTags": ["abstract_hook", "behavior_missing", "category_inventory", "explanatory_before_observable"],
+      "approvalLevel": "exact_owner_approved_calibration_only",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json",
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v3.json"
+      ],
+      "provenance": "The after wording belongs to exact v3, approved for judge calibration only and forbidden as generation evidence."
+    },
+    {
+      "id": "sky-placement-uranus-cancer-specific-room-change",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "lived",
+      "before": "A spare room changes purpose.",
+      "after": "A guest room turns into an office.",
+      "whatChanged": "Replaced a generic change with an immediately visible use of space.",
+      "ownerReason": "Specificity beats a broad description of change.",
+      "reasonSource": "explicit_owner_edit_analysis",
+      "failureTags": ["generic_coverage_sentence", "behavior_missing"],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": ["packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"],
+      "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval."
+    },
+    {
+      "id": "sky-placement-uranus-cancer-name-relational-cost",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "lived",
+      "before": "What looked like stability turns out to be obligation.",
+      "after": "What looked like connection turns out to be heavy obligation.",
+      "whatChanged": "Moved from a system label to the relational bond being reinterpreted.",
+      "ownerReason": "Connection makes the realization more emotionally precise than stability.",
+      "reasonSource": "explicit_owner_edit_analysis",
+      "failureTags": ["abstract_consequence", "polished_but_flat"],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": ["packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"],
+      "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval."
+    },
+    {
+      "id": "sky-placement-uranus-cancer-demand-not-carry",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "lived",
+      "before": "The old version asked one person to carry too much.",
+      "after": "The old structure demands more than anyone should give.",
+      "whatChanged": "Changed a familiar carrying metaphor into direct pressure and a limit.",
+      "ownerReason": "Demands names the pressure; anyone keeps the cost collective without second person.",
+      "reasonSource": "explicit_owner_edit_analysis",
+      "failureTags": ["polished_but_flat", "requires_interpretation"],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": ["packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"],
+      "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval."
+    }
+  ]
+}

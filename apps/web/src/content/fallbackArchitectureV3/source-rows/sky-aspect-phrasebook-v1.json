@@ -5,9 +5,9 @@
     "voice": "collective (single subject); body_you==body_they",
     "levels": {
       "sky-aspect-pair/{a}/{b}/{group}": 30,
-      "sky-aspect-exact/{a}/{aspect}/{b}": 3,
+      "sky-aspect-exact/{a}/{aspect}/{b}": 4,
       "sky-placement-sign/{planet}/{sign}": 36,
-      "sky-aspect-sign/{a}/{signA}/{aspect}/{b}/{signB}": 72
+      "sky-aspect-sign/{a}/{signA}/{aspect}/{b}/{signB}": 78
     },
     "review": "reviewed by owner on 2026-08-01"
   },
@@ -1691,6 +1691,97 @@
         "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
       ],
       "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-exact/jupiter/trine/neptune",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Hope and imagination reinforce each other for a few days. Jupiter trine Neptune makes it easier to trust a creative idea, take a meaningful risk, or rest without treating the pause as wasted time. Inspiration helps. It is not the same thing as a finished plan.",
+      "body_they": "Hope and imagination reinforce each other for a few days. Jupiter trine Neptune makes it easier to trust a creative idea, take a meaningful risk, or rest without treating the pause as wasted time. Inspiration helps. It is not the same thing as a finished plan.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "packages/astro-knowledge/data/transits/jupiter-trine-neptune.json"
+      ],
+      "note": "Owner-approved exact-aspect emergency fallback. The approved exact corpus write-up remains the primary reader unit.",
+      "approved_via": "owner direction, chat 2026-08-01"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/square/mars/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Desire wants an actual target, not an abstract ideal, and drive keeps shifting the coordinates. With Venus in Virgo square Mars in Gemini, we get the push to connect and the pull to move on at the same time. A message left on read, a plan changed mid-sentence, the extra shift agreed to before anyone knows why - the timing is just a little off, and the mood never quite syncs up. Venus in Virgo weighs every signal for real value; Mars in Gemini keeps the options circling, ready to pivot or bail.\n\nWe try to turn desire into action and end up tangled in missed cues and double takes. The same charge that makes us magnetic also burns up patience, and what could be easy chemistry becomes a string of second guesses. Wanting and doing are not synonyms, and the lag between them gets loud. The urge is real. The timing is not.",
+      "body_they": "Desire wants an actual target, not an abstract ideal, and drive keeps shifting the coordinates. With Venus in Virgo square Mars in Gemini, we get the push to connect and the pull to move on at the same time. A message left on read, a plan changed mid-sentence, the extra shift agreed to before anyone knows why - the timing is just a little off, and the mood never quite syncs up. Venus in Virgo weighs every signal for real value; Mars in Gemini keeps the options circling, ready to pivot or bail.\n\nWe try to turn desire into action and end up tangled in missed cues and double takes. The same charge that makes us magnetic also burns up patience, and what could be easy chemistry becomes a string of second guesses. Wanting and doing are not synonyms, and the lag between them gets loud. The urge is real. The timing is not.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "owner-authored Sky aspect write-up, chat 2026-08-01"
+      ],
+      "note": "Owner-authored sign-specific Sky aspect write-up; serves ahead of generated prose.",
+      "approved_via": "owner direction, chat 2026-08-01"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/chiron/taurus/sextile/north-node/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Experience learned the hard way becomes useful to other people.\n\nSomeone who learned how to stretch a tight budget, rebuild after losing ground, or quiet the panic of having less gets asked what they know. With Chiron in Taurus sextile the North Node in Aquarius, practical knowledge about money, food, shelter, and basic material survival gives a group the framework it needs for a better plan.\n\nIt starts small: a question after a meeting, an introduction, a seat at the planning table. Older doubts may still linger, but the room sees concrete value in what was learned the hard way.",
+      "body_they": "Experience learned the hard way becomes useful to other people.\n\nSomeone who learned how to stretch a tight budget, rebuild after losing ground, or quiet the panic of having less gets asked what they know. With Chiron in Taurus sextile the North Node in Aquarius, practical knowledge about money, food, shelter, and basic material survival gives a group the framework it needs for a better plan.\n\nIt starts small: a question after a meeting, an introduction, a seat at the planning table. Older doubts may still linger, but the room sees concrete value in what was learned the hard way.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "owner-authored Sky aspect write-up, chat 2026-08-01"
+      ],
+      "note": "Owner-authored sign-specific Sky aspect write-up; serves ahead of generic fallback.",
+      "approved_via": "owner direction, chat 2026-08-01"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/lilith/sagittarius/sextile/north-node/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Desires expected to trigger a fight suddenly find an open door instead.\n\nA total career pivot gets mentioned in passing and instantly lands a useful contact. An opinion held back for years gets spoken aloud, only for half the room to start nodding along. A choice that once seemed completely unacceptable meets a practical, unbothered response. With Lilith in Sagittarius sextile the North Node in Aquarius, unconventional decisions, especially the ones that break familiar rules, are finding unexpected, solid support.\n\nDesire often stays hidden because backlash is expected: an argument, judgment, or the cold shoulder. Once spoken plainly, the response changes. The right people finally know what is wanted, and other people can respond to it.",
+      "body_they": "Desires expected to trigger a fight suddenly find an open door instead.\n\nA total career pivot gets mentioned in passing and instantly lands a useful contact. An opinion held back for years gets spoken aloud, only for half the room to start nodding along. A choice that once seemed completely unacceptable meets a practical, unbothered response. With Lilith in Sagittarius sextile the North Node in Aquarius, unconventional decisions, especially the ones that break familiar rules, are finding unexpected, solid support.\n\nDesire often stays hidden because backlash is expected: an argument, judgment, or the cold shoulder. Once spoken plainly, the response changes. The right people finally know what is wanted, and other people can respond to it.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "owner-authored Sky aspect write-up, chat 2026-08-01"
+      ],
+      "note": "Owner-authored sign-specific Sky aspect write-up; serves ahead of generic fallback.",
+      "approved_via": "owner direction, chat 2026-08-01"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/square/lilith/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "An evening that goes fine on paper still leaves something important unsatisfied.\n\nWe keep the conversation pleasant and leave wishing we had said what we wanted; attraction lands outside the life that looks sensible on paper, or a small request receives a sharper no than anyone expected. With Venus in Virgo square Lilith in Sagittarius, desire is being edited for usefulness and good judgment while the banished want refuses to stay reasonable.\n\nThe pressure to keep everything appropriate is working against the appetite that will not ask permission. What looks sensible on paper may not match what the body actually wants.",
+      "body_they": "An evening that goes fine on paper still leaves something important unsatisfied.\n\nWe keep the conversation pleasant and leave wishing we had said what we wanted; attraction lands outside the life that looks sensible on paper, or a small request receives a sharper no than anyone expected. With Venus in Virgo square Lilith in Sagittarius, desire is being edited for usefulness and good judgment while the banished want refuses to stay reasonable.\n\nThe pressure to keep everything appropriate is working against the appetite that will not ask permission. What looks sensible on paper may not match what the body actually wants.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "owner-authored Sky aspect write-up, chat 2026-08-01"
+      ],
+      "note": "Owner-authored sign-specific Sky aspect write-up; serves ahead of generic fallback.",
+      "approved_via": "owner direction, chat 2026-08-01"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/mars/gemini/opposition/lilith/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "A petty argument carries the weight of months of unspoken words.\n\nA debate over wording suddenly turns into a fight about respect. A quick reply in the group chat lands harder than intended. Someone who stayed quiet for far too long finally drops the polite filter and says what was being held back. With Mars in Gemini opposite Lilith in Sagittarius, fast replies collide with opinions and convictions held back too long.\n\nThe latest comment is not the real issue, only the spark. The reaction carries the full weight of how long people have been holding their breath.",
+      "body_they": "A petty argument carries the weight of months of unspoken words.\n\nA debate over wording suddenly turns into a fight about respect. A quick reply in the group chat lands harder than intended. Someone who stayed quiet for far too long finally drops the polite filter and says what was being held back. With Mars in Gemini opposite Lilith in Sagittarius, fast replies collide with opinions and convictions held back too long.\n\nThe latest comment is not the real issue, only the spark. The reaction carries the full weight of how long people have been holding their breath.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "owner-authored Sky aspect write-up, chat 2026-08-01"
+      ],
+      "note": "Owner-authored sign-specific Sky aspect write-up; serves ahead of generic fallback.",
+      "approved_via": "owner direction, chat 2026-08-01"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/pluto/aquarius/square/chiron/taurus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Changes involving rent, benefits, ownership, or access to basic resources feel much larger than the announcement itself.\n\nA payment ticks up, a service gets quietly cut, or a decision gets handed down by people with institutional power. With Pluto in Aquarius square Chiron in Taurus, shifts in who controls money and material support press directly on older fears about not having enough to survive.\n\nIf the reaction feels extreme, it is because it carries the panic of an earlier crisis. This pressure is showing which risks are current and which precautions were built for an emergency people have already survived.",
+      "body_they": "Changes involving rent, benefits, ownership, or access to basic resources feel much larger than the announcement itself.\n\nA payment ticks up, a service gets quietly cut, or a decision gets handed down by people with institutional power. With Pluto in Aquarius square Chiron in Taurus, shifts in who controls money and material support press directly on older fears about not having enough to survive.\n\nIf the reaction feels extreme, it is because it carries the panic of an earlier crisis. This pressure is showing which risks are current and which precautions were built for an emergency people have already survived.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "owner-authored Sky aspect write-up, chat 2026-08-01"
+      ],
+      "note": "Owner-authored sign-specific Sky aspect write-up; serves ahead of generic fallback.",
+      "approved_via": "owner direction, chat 2026-08-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/pisces/sextile/saturn/taurus",

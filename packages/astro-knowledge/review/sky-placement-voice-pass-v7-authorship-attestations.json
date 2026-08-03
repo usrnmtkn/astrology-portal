@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "created": "2026-08-02",
+  "reviewer": "Codex editorial writer",
+  "governance": {
+    "ownerApprovalEffect": false,
+    "promotionEffect": false,
+    "canonicalEffect": false,
+    "note": "These records attest that the local authorship rewrite was performed. They are not owner review or Terra judgment."
+  },
+  "attestations": {
+    "sky-placement-v7-saturn-capricorn": {
+      "sentences": [
+        {"slot":"tagline","index":0,"passed":true,"reason":"Short imperative names the article's standard without adding a second conclusion."},
+        {"slot":"hook","index":0,"passed":true,"reason":"Begins with the observable cost of being unable to take a day off."},
+        {"slot":"hook","index":1,"passed":true,"reason":"Names deadlines, mistakes, and late work before drawing the placement meaning."},
+        {"slot":"hook","index":2,"passed":true,"reason":"Names the exact lost evenings, weekends, and days off from the owner correction."},
+        {"slot":"lived","index":0,"passed":true,"reason":"Advances one project sequence with midnight work, a vacancy, and vacation labor."},
+        {"slot":"lived","index":1,"passed":true,"reason":"The missed deadline exposes concentrated knowledge and free overtime."},
+        {"slot":"lived","index":2,"passed":true,"reason":"Brief astrology sentence follows the evidence and remains placement-specific."},
+        {"slot":"lived","index":3,"passed":true,"reason":"Converts apparent strength into the concrete cost of one person's unpaid time."},
+        {"slot":"turn","index":0,"passed":true,"reason":"Names the contradiction between competence and accumulated responsibility."},
+        {"slot":"turn","index":1,"passed":true,"reason":"Uses dinner messages, rework, and postponed rest rather than abstraction."},
+        {"slot":"turn","index":2,"passed":true,"reason":"Shows how praise conceals undistributed work and knowledge."},
+        {"slot":"turn","index":3,"passed":true,"reason":"Closes the existing contradiction without adding a new metaphor."},
+        {"slot":"moves","index":0,"passed":true,"reason":"Pairs documentation with the consequence of a forced handoff."},
+        {"slot":"moves","index":1,"passed":true,"reason":"Names a real redistribution decision rather than a reflective instruction."},
+        {"slot":"moves","index":2,"passed":true,"reason":"Makes the stopping time observable and records the system failure it exposes."}
+      ],
+      "articleChecks": [
+        {"question":"The hook begins with recognizable pressure, behavior, a decision, or a contradiction.","passed":true},
+        {"question":"Astrology follows or accompanies the lived observation rather than replacing it.","passed":true},
+        {"question":"Every beat advances one sequence.","passed":true},
+        {"question":"The lived section is not an inventory.","passed":true},
+        {"question":"The turn names behavior and consequence.","passed":true},
+        {"question":"The ending does not stack another metaphor, slogan, or conclusion.","passed":true},
+        {"question":"Moves carry pressure, choice, or consequence instead of administration.","passed":true},
+        {"question":"Current Sky contains no second person.","passed":true},
+        {"question":"The article did not become more polished at the expense of natural English.","passed":true}
+      ]
+    },
+    "sky-placement-v7-neptune-libra": {
+      "sentences": [
+        {"slot":"tagline","index":0,"passed":true,"reason":"Names the central contradiction in ordinary language."},
+        {"slot":"hook","index":0,"passed":true,"reason":"Begins with a recognizable evening rather than a placement definition."},
+        {"slot":"hook","index":1,"passed":true,"reason":"Shows agreement, discomfort, and later cancellation as one behavior."},
+        {"slot":"hook","index":2,"passed":true,"reason":"Keeps astrology brief and attached to the observed disagreement pattern."},
+        {"slot":"lived","index":0,"passed":true,"reason":"Sets proportional timing and the collective habit without drifting domains."},
+        {"slot":"lived","index":1,"passed":true,"reason":"Advances the same evening through yes, changed plans, and cancellation."},
+        {"slot":"lived","index":2,"passed":true,"reason":"Names the false evidence used to call the evening peaceful."},
+        {"slot":"lived","index":3,"passed":true,"reason":"Shows how repeated avoidance changes later decisions."},
+        {"slot":"turn","index":0,"passed":true,"reason":"Focuses the turn on the established cancellation."},
+        {"slot":"turn","index":1,"passed":true,"reason":"Names the unreality of the original agreement without ornament."},
+        {"slot":"turn","index":2,"passed":true,"reason":"Names the cost to everyone who reorganizes and loses trust."},
+        {"slot":"turn","index":3,"passed":true,"reason":"Exposes the contradiction without a second metaphorical ending."},
+        {"slot":"moves","index":0,"passed":true,"reason":"Pairs an honest no with the time cost of a false yes."},
+        {"slot":"moves","index":1,"passed":true,"reason":"Creates a real choice before compromise rather than generic reflection."},
+        {"slot":"moves","index":2,"passed":true,"reason":"Returns to the article's cancellation sequence and names when to reopen it."}
+      ],
+      "articleChecks": [
+        {"question":"The hook begins with recognizable pressure, behavior, a decision, or a contradiction.","passed":true},
+        {"question":"Astrology follows or accompanies the lived observation rather than replacing it.","passed":true},
+        {"question":"Every beat advances one sequence.","passed":true},
+        {"question":"The lived section is not an inventory.","passed":true},
+        {"question":"The turn names behavior and consequence.","passed":true},
+        {"question":"The ending does not stack another metaphor, slogan, or conclusion.","passed":true},
+        {"question":"Moves carry pressure, choice, or consequence instead of administration.","passed":true},
+        {"question":"Current Sky contains no second person.","passed":true},
+        {"question":"The article did not become more polished at the expense of natural English.","passed":true}
+      ]
+    },
+    "sky-placement-v7-uranus-pisces": {
+      "sentences": [
+        {"slot":"tagline","index":0,"passed":true,"reason":"Keeps the practical-compassion standard concise."},
+        {"slot":"hook","index":0,"passed":true,"reason":"Begins with the contradiction between care and an unchanged rule."},
+        {"slot":"hook","index":1,"passed":true,"reason":"Connects Uranus and Pisces to the observed gap without house or natal drift."},
+        {"slot":"hook","index":2,"passed":true,"reason":"Introduces exact rejection letters and a repeated dead end."},
+        {"slot":"lived","index":0,"passed":true,"reason":"Sets proportional timing and advances separate complaints toward pattern evidence."},
+        {"slot":"lived","index":1,"passed":true,"reason":"Names the months spent appealing and the initial private assumption."},
+        {"slot":"lived","index":2,"passed":true,"reason":"Uses one comparison scene rather than an inventory of possible causes."},
+        {"slot":"lived","index":3,"passed":true,"reason":"Turns unanswered emails into evidence and a challengeable rule."},
+        {"slot":"turn","index":0,"passed":true,"reason":"Keeps the turn inside the newly visible institutional harm."},
+        {"slot":"turn","index":1,"passed":true,"reason":"Names messages, forms, and missed sleep as the organizer's cost."},
+        {"slot":"turn","index":2,"passed":true,"reason":"Exposes how a campaign can reproduce the burden it opposes."},
+        {"slot":"turn","index":3,"passed":true,"reason":"Concludes with the need for a structure that survives rest, not a slogan."},
+        {"slot":"moves","index":0,"passed":true,"reason":"Makes comparison the choice before accepting private-exception framing."},
+        {"slot":"moves","index":1,"passed":true,"reason":"Names the record fields and prevents evidence from living in one inbox."},
+        {"slot":"moves","index":2,"passed":true,"reason":"Distributes the exact work before the organizer becomes another unpaid system."}
+      ],
+      "articleChecks": [
+        {"question":"The hook begins with recognizable pressure, behavior, a decision, or a contradiction.","passed":true},
+        {"question":"Astrology follows or accompanies the lived observation rather than replacing it.","passed":true},
+        {"question":"Every beat advances one sequence.","passed":true},
+        {"question":"The lived section is not an inventory.","passed":true},
+        {"question":"The turn names behavior and consequence.","passed":true},
+        {"question":"The ending does not stack another metaphor, slogan, or conclusion.","passed":true},
+        {"question":"Moves carry pressure, choice, or consequence instead of administration.","passed":true},
+        {"question":"Current Sky contains no second person.","passed":true},
+        {"question":"The article did not become more polished at the expense of natural English.","passed":true}
+      ]
+    }
+  }
+}

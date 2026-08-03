@@ -1,0 +1,944 @@
+.friend-detail-page {
+  position: relative;
+  width: var(--page-content-width);
+  margin: 0 auto;
+  padding: var(--chart-page-top) 0 var(--page-bottom);
+  overflow-x: clip;
+}
+
+.friend-back-row {
+  width: auto;
+}
+
+.friend-detail-back-row {
+  display: contents;
+}
+
+.friends-back-button {
+  margin: 0;
+}
+
+.friend-detail-layout,
+.relationship-detail-layout {
+  --relationship-wheel-size: var(--shared-chart-size);
+  justify-content: initial;
+  max-width: none;
+  margin: 0 auto;
+  padding: 0;
+  overflow: visible;
+}
+
+.friend-chart-page {
+  --friend-detail-content-max: 720px;
+  --friend-detail-chart-max: var(--shared-chart-size);
+  --friend-wheel-stack-gap: 8px;
+  --friend-detail-no-chart-max: 760px;
+  --friend-section-label-margin: var(--sp-1) 0 calc(var(--sp-1) * -1);
+  --friend-composite-row-template: 56px minmax(0, 1fr) auto;
+  --friend-composite-row-gap: 20px;
+  --friend-composite-row-padding: var(--space-6) calc(var(--space-7) - var(--space-1) / 2);
+  --friend-placement-column-title-padding: 0 0 var(--space-3);
+  --friend-placement-symbol-size: var(--text-glyph);
+  --friend-placement-label-size: var(--friend-row-title-size);
+  --friend-placement-meta-size: var(--text-placement-meta);
+  --friend-placement-summary-size: var(--text-description);
+  --friend-placement-compact-padding: var(--space-6) var(--space-5);
+  --friend-placement-row-gap: 12px;
+  --friend-placement-row-bg: var(--card-bg);
+  --friend-placement-row-border: var(--card-border);
+  display: grid;
+  grid-template-columns: var(--chart-column-width) var(--content-column-width);
+  gap: var(--chart-layout-gap);
+  align-items: start;
+  width: var(--chart-content-width);
+  margin-inline: auto;
+}
+
+.friend-chart-page .chart-layout__content,
+.friend-chart-page .friend-detail-main {
+  gap: var(--stack-gap);
+}
+
+.friend-chart-page .section-block,
+.friend-chart-page .section-label,
+.friend-chart-page .friend-section-label {
+  scroll-margin-top: var(--chart-sticky-top);
+}
+
+.relationship-detail-left,
+.relationship-detail-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--stack-gap);
+}
+
+.relationship-detail-left {
+  align-items: center;
+}
+
+.relationship-detail-layout > .friend-detail-content-column,
+.friend-detail-main {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  max-width: var(--friend-detail-content-max);
+}
+
+.relationship-detail-layout > .friend-detail-chart-column,
+.friend-detail-chart-rail {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  max-width: var(--friend-detail-chart-max);
+  align-self: start;
+}
+
+.relationship-detail-no-chart {
+  grid-template-columns: minmax(0, var(--friend-detail-no-chart-max));
+  justify-content: center;
+  width: min(var(--friend-detail-no-chart-max), calc(100vw - clamp(32px, 8vw, 144px)));
+}
+
+.relationship-detail-no-chart > .friend-detail-content-column {
+  max-width: var(--friend-detail-no-chart-max);
+}
+
+.relationship-detail-no-chart > .friend-detail-chart-column {
+  display: none;
+}
+
+.friend-synastry-wheel-shell {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  gap: var(--friend-wheel-stack-gap);
+  overflow: visible;
+}
+
+.chart-shell--composite-inspector,
+.chart-shell--composite-inspector > .chart-frame {
+  height: auto;
+  aspect-ratio: auto;
+}
+
+.friend-chart-page--synastry,
+.friend-chart-page--composite {
+  --friend-wheel-stack-gap: 18px;
+}
+
+.friend-synastry-wheel-shell > .natal-chart-view-toggle {
+  margin-bottom: var(--space-1);
+}
+
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel),
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel-shell,
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) > .sky-wheel,
+.friend-synastry-wheel-shell > :where(.friend-wheel, .natal-wheel, .synastry-wheel, .composite-wheel, .wheel) svg {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.relationship-explainer-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-6) calc(var(--space-7) - var(--space-1));
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.relationship-explainer-card__glyph {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--card-glyph-color);
+  font-family: var(--font-glyph);
+  font-size: var(--text-glyph);
+  line-height: var(--leading-label);
+}
+
+.relationship-explainer-card__glyph img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  filter: var(--filter-relationship-tool-glyph);
+  opacity: 0.96;
+  object-fit: contain;
+}
+
+:is(.theme-dark, [data-theme="dark"]) .relationship-explainer-card__glyph {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--wheel-glyph) 8%, var(--surface-2));
+  color: var(--wheel-glyph);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .relationship-explainer-card__glyph img {
+  filter: var(--filter-relationship-tool-glyph);
+  opacity: 1;
+}
+
+.relationship-explainer-card__copy {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+
+.relationship-explainer-card__kicker {
+  color: var(--card-meta-color);
+  font-family: var(--font-body);
+  font-size: var(--text-section-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-meta);
+  text-transform: uppercase;
+}
+
+.relationship-explainer-card p {
+  margin: 0;
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  text-wrap: pretty;
+}
+
+.relationship-api-summary {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.relationship-api-summary h3 {
+  margin: 0;
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+}
+
+.relationship-api-summary p {
+  margin: 0;
+  color: var(--card-body-color);
+  font-size: var(--text-description);
+  line-height: var(--leading-body);
+}
+
+.relationship-api-summary ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: calc(var(--space-1) / 2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.relationship-api-summary li {
+  padding: calc(var(--space-1) + var(--space-1) / 4) var(--space-2);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  color: var(--card-meta-color);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-meta);
+}
+
+.composite-placements-section {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.composite-placements-section .friend-section-label {
+  margin: 0;
+}
+
+.friend-chart-page .composite-placements-section .placement-table-card {
+  width: 100%;
+}
+
+.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--friend-composite-row-gap);
+  padding: var(--friend-composite-row-padding);
+}
+
+.friend-chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 10px 24px;
+  flex-wrap: wrap;
+  width: min(100%, var(--relationship-wheel-size));
+  max-width: var(--shared-chart-size);
+  margin: 0 auto;
+  color: var(--ink);
+  font-size: var(--text-section-label-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-meta);
+  text-align: center;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.friend-chart-legend span,
+.friend-chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  gap: 0.58em;
+  white-space: normal;
+}
+
+.friend-chart-legend b {
+  flex: 0 0 auto;
+  margin-right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-circle);
+  border: 3px solid currentColor;
+  color: var(--ink);
+}
+
+.friend-chart-legend-item-inner b {
+  border-color: var(--synastry-accent);
+  background: color-mix(in srgb, var(--synastry-accent) 28%, transparent);
+}
+
+.friend-chart-legend-item > span {
+  display: block;
+  max-width: none;
+  overflow: visible;
+  color: var(--ink);
+  font-weight: var(--weight-regular);
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.friend-chart-legend em {
+  color: var(--muted);
+  font-style: normal;
+  letter-spacing: var(--tracking-pill);
+}
+
+.synastry-placements-comparison,
+.synastry-placement-rows {
+  display: grid;
+  gap: 14px;
+}
+
+.synastry-placement-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.synastry-placement-column,
+.synastry-placement-panel {
+  display: grid;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.synastry-placement-column {
+  align-self: start;
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+}
+
+.synastry-placement-column-inner {
+  border-color: transparent;
+}
+
+.synastry-placement-column-header,
+.synastry-placement-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 0 0 calc(var(--space-3) - var(--space-1) / 4);
+  border-bottom: 1px solid var(--line);
+}
+
+.synastry-placement-column-header h3 {
+  margin: 0;
+}
+
+.synastry-placement-column-header {
+  border-bottom: 0;
+}
+
+.synastry-placement-panel-title {
+  color: var(--muted);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-section-label-size);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.synastry-placement-table {
+  display: grid;
+  position: relative;
+  overflow: visible;
+  grid-template-columns: 1fr;
+  gap: var(--friend-placement-row-gap);
+  margin-top: 0;
+  border: 0;
+  border-radius: var(--card-radius);
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+}
+
+.synastry-placement-column-inner .synastry-placement-table {
+  background: transparent;
+}
+
+.synastry-placement-row {
+  --row-bg: var(--card-bg);
+  --synastry-placement-meta-width: 104px;
+
+  display: grid;
+  grid-template-columns: minmax(58px, max-content) 34px var(--synastry-placement-meta-width);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
+  border: 1px solid var(--card-border);
+  border-bottom: 0;
+  border-radius: 0;
+  box-shadow: var(--shadow-flat);
+  overflow: visible;
+}
+
+.synastry-placement-column-inner .synastry-placement-row {
+  border-color: var(--card-border);
+  background: var(--synastry-row-bg);
+}
+
+.synastry-placement-table > .synastry-placement-row {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.synastry-placement-table > .synastry-placement-row-inner {
+  background: var(--synastry-row-bg);
+}
+
+.synastry-placement-row-empty {
+  visibility: hidden;
+}
+
+.friend-chart-page .synastry-placement-degree,
+.friend-chart-page .synastry-placement-house,
+.friend-chart-page .synastry-placement-meta {
+  color: var(--card-meta-color);
+  font-size: var(--type-meta-size);
+}
+
+.synastry-placement-lead {
+  display: inline-grid;
+  grid-template-columns: 34px auto;
+  align-items: center;
+  justify-content: center;
+  justify-items: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.synastry-placement-glyph {
+  position: relative;
+  display: inline-flex;
+  place-items: center;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
+  transform: translateY(-1px);
+  color: var(--wheel-glyph);
+  font-family: var(--font-glyph);
+  font-size: var(--text-glyph);
+  line-height: var(--leading-label);
+}
+
+.synastry-rx-glyph-svg {
+  display: block;
+  width: 23px;
+  height: auto;
+  filter: var(--filter-synastry-outer-glyph);
+  overflow: visible;
+  object-fit: contain;
+}
+
+.synastry-placement-rx-mark {
+  color: var(--wheel-glyph);
+  font-family: var(--font-display);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.synastry-placement-column-inner .synastry-rx-glyph-svg,
+.synastry-placement-row-inner .synastry-rx-glyph-svg {
+  filter: var(--filter-synastry-inner-glyph);
+}
+
+.synastry-placement-column-inner .synastry-placement-rx-mark,
+.synastry-placement-row-inner .synastry-placement-rx-mark {
+  color: var(--synastry-accent);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .synastry-rx-glyph-svg,
+:is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-rx-glyph-svg {
+  opacity: 1;
+}
+
+.synastry-placement-sign {
+  min-width: 0;
+}
+
+.synastry-placement-sign {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  line-height: var(--leading-label);
+  max-width: 100%;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.synastry-placement-chip b {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-row-title-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+}
+
+.synastry-placement-sign-svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  filter: var(--filter-glyph-current);
+  object-fit: contain;
+}
+
+.synastry-placement-sign {
+  color: var(--ink);
+}
+
+.synastry-placement-column-inner .synastry-placement-glyph,
+.synastry-placement-column-inner .synastry-placement-sign,
+.synastry-placement-row-inner .synastry-placement-glyph,
+.synastry-placement-row-inner .synastry-placement-sign {
+  color: var(--synastry-accent);
+}
+
+.synastry-placement-column-inner .synastry-placement-sign-svg,
+.synastry-placement-row-inner .synastry-placement-sign-svg {
+  filter: var(--filter-synastry-inner-glyph);
+}
+
+.synastry-placement-degree,
+.synastry-placement-house {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1em;
+  color: var(--muted);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-label);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.synastry-placement-degree {
+  justify-content: flex-end;
+}
+
+.synastry-placement-house {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.synastry-placement-meta {
+  display: grid;
+  grid-template-columns: minmax(52px, 1fr) 4px 28px;
+  align-items: center;
+  justify-self: end;
+  justify-content: end;
+  column-gap: var(--space-2);
+  width: var(--synastry-placement-meta-width);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-label);
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.synastry-placement-meta-separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--card-meta-color);
+  line-height: var(--leading-label);
+}
+
+.synastry-placement-chip small,
+.synastry-placement-empty {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 8px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-meta);
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.synastry-placement-empty {
+  padding: 0 calc(var(--space-7) - var(--space-1)) var(--space-6);
+}
+
+.friend-placement-column {
+  position: relative;
+  overflow: visible;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+}
+
+.friend-placement-column-title {
+  margin: 0;
+  padding: var(--space-5) var(--space-6);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--type-xs);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-title);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.friend-placement-table {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--friend-placement-row-gap);
+  width: 100%;
+  max-width: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+  overflow: visible;
+}
+
+.friend-chart-page .friend-placement-column-title {
+  padding: var(--friend-placement-column-title-padding);
+  color: var(--card-meta-color);
+}
+
+.friend-placement-main {
+  display: contents;
+}
+
+.friend-placement-symbol {
+  grid-area: symbol;
+  width: 42px;
+  min-width: 42px;
+  font-size: var(--type-small-display-size);
+  text-align: center;
+}
+
+.friend-chart-page .friend-placement-symbol {
+  font-size: var(--friend-placement-symbol-size);
+}
+
+.friend-placement-label {
+  grid-area: label;
+  min-width: 0;
+  overflow: visible;
+  font-size: var(--type-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-title);
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.friend-chart-page .friend-placement-label {
+  font-size: var(--friend-placement-label-size);
+  line-height: var(--leading-h1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-placement-meta {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  grid-area: meta;
+  justify-self: end;
+  min-width: 0;
+  color: var(--card-meta-color);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-title);
+  white-space: nowrap;
+}
+
+.friend-chart-page .friend-placement-meta {
+  color: var(--card-meta-color);
+  font-size: var(--friend-placement-meta-size);
+  font-weight: var(--weight-semibold);
+}
+
+.friend-placement-summary {
+  grid-area: summary;
+  color: var(--card-body-color);
+  font-size: var(--type-sm);
+  line-height: var(--leading-description);
+  overflow-wrap: normal;
+}
+
+.friend-chart-page .friend-placement-summary {
+  margin-top: 0;
+  color: var(--card-body-color);
+  font-size: var(--friend-placement-summary-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-meta);
+}
+
+.friend-placement-row,
+.friend-chart-page .friend-placement-row,
+.friend-chart-page .friend-placement-row-compact,
+.friend-placement-column-compact .friend-placement-row {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  border-bottom: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.friend-placement-row .planet-placement-row {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.friend-placement-row .placement-table-row {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
+  border-radius: var(--card-radius);
+}
+
+.friend-placement-column-title + .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
+  border-radius: var(--card-radius);
+}
+
+.friend-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
+  border-radius: var(--card-radius);
+}
+
+.friend-chart-page .friend-placement-row-compact .planet-placement-row {
+  padding: var(--friend-placement-compact-padding);
+}
+
+.friend-chart-page .friend-placement-row-compact .placement-table-row {
+  padding: var(--friend-placement-compact-padding);
+}
+
+.synastry-placement-table {
+  display: grid;
+  gap: var(--friend-placement-row-gap);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+}
+
+.synastry-placement-table {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.synastry-placement-table .planet-placement-row {
+  border: 1px solid var(--friend-placement-row-border, var(--card-border));
+  border-radius: var(--card-radius);
+  background: var(--friend-placement-row-bg, var(--card-bg));
+  box-shadow: var(--card-shadow);
+}
+
+.synastry-placement-table > .synastry-placement-row:first-child,
+.synastry-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
+  border-radius: var(--card-radius);
+  background-clip: padding-box;
+}
+
+.synastry-placement-table > .synastry-placement-row:last-child,
+.synastry-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
+  border-radius: var(--card-radius);
+  background-clip: padding-box;
+}
+
+.friend-placement-row .planet-placement-row,
+.friend-placement-row .placement-table-row {
+  border-color: var(--friend-placement-row-border, var(--card-border));
+  border-radius: var(--card-radius);
+  background: var(--friend-placement-row-bg, var(--card-bg));
+  box-shadow: var(--card-shadow);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .friend-chart-page :where(
+  .synastry-placement-column,
+  .synastry-placement-panel,
+  .synastry-placement-column-inner,
+  .synastry-placement-column-header,
+  .synastry-placement-panel-header
+) {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .friend-chart-page :where(
+  .synastry-placement-column-header,
+  .synastry-placement-panel-header
+) {
+  padding-bottom: var(--space-2);
+}
+
+:is(.theme-dark, [data-theme="dark"]) :where(
+  .friend-chart-page .synastry-placement-table,
+  .friend-chart-page .friend-placement-column,
+  .friend-chart-page .friend-placement-table
+) {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row {
+  border-bottom-color: var(--card-border);
+  background: var(--card-bg);
+}
+
+:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-column-inner .synastry-placement-table,
+:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-column-inner .synastry-placement-row,
+:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row-inner {
+  background: var(--synastry-row-bg);
+}
+
+.friend-chart-page .aspect-row,
+.friend-chart-page .aspect-row-button,
+.friend-chart-page .aspect-row-static {
+  --aspect-row-template: 82px minmax(0, 1fr) 30px;
+  --aspect-row-gap: 14px;
+  --aspect-row-padding: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
+  --aspect-row-glyph-width: 82px;
+  --aspect-row-glyph-size: 22px;
+  --aspect-row-copy-margin: var(--space-1);
+  --aspect-row-copy-color: var(--card-body-color);
+  --aspect-row-copy-size: var(--friend-row-description-size);
+  --aspect-row-copy-line: 1.45;
+  --aspect-row-meta-width: 30px;
+  --aspect-row-meta-size: var(--aspect-card-meta-size);
+  --aspect-row-meta-weight: var(--aspect-card-meta-weight);
+  --aspect-row-action-margin: var(--space-2);
+  --aspect-row-action-color: var(--app-text);
+  border-color: var(--card-border);
+}
+
+.friend-chart-page .aspect-row-meta {
+  justify-self: end;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.friend-placement-column-compact .friend-placement-table {
+  grid-template-columns: 1fr;
+}
+
+.friend-placement-column-compact .friend-placement-row {
+  border-right: 0;
+}
+
+/* FriendDetail is lazy-loaded after the global responsive stylesheet. Keep
+   the mobile one-column contract in this boundary so its desktop grid cannot
+   win merely because this CSS chunk arrives later. */
+@media (max-width: 800px) {
+  .app-shell.mode-friends .friend-profile-panel.friend-chart-page {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-content-column,
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-chart-column {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-content-column {
+    order: 2;
+  }
+
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-chart-column {
+    position: relative;
+    top: auto;
+    order: 1;
+  }
+}

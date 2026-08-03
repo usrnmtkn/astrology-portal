@@ -1,6 +1,6 @@
 "use strict";
 
-function editorialGate({ score, disagreement = false, exactApprovedGold = false } = {}) {
+function editorialGate({ score, disagreement = false, contractViolation = false, exactApprovedGold = false } = {}) {
   if (exactApprovedGold) {
     return {
       gate: "auto-publish",
@@ -13,6 +13,14 @@ function editorialGate({ score, disagreement = false, exactApprovedGold = false 
     return {
       gate: "human-review",
       recommendation: "resolve-judge-disagreement",
+      approvalSource: "llm-advisory"
+    };
+  }
+
+  if (contractViolation) {
+    return {
+      gate: "human-review",
+      recommendation: "resolve-judge-contract-violation",
       approvalSource: "llm-advisory"
     };
   }

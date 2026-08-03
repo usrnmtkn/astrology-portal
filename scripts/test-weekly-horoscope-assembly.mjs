@@ -20,6 +20,8 @@ const vite = await createServer({
 });
 
 try {
+  const fallbackRuntime = await vite.ssrLoadModule("/src/content/fallbackArchitectureV3Runtime.ts");
+  await fallbackRuntime.loadDeferredFallbackArchitectureV3Bundle();
   const weekly = await vite.ssrLoadModule("/src/services/weeklyHoroscope.ts");
 
   assert.deepEqual(weekly.weeklyContentImportCounts, {

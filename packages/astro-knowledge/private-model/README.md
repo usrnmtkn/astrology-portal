@@ -67,6 +67,12 @@ The exporter writes:
 - `.local-data/sky-article-longform.eval.jsonl`
 - `.local-data/sky-article-longform.manifest.json`
 
+The manifest records exact train/evaluation counts, the 50-example hard floor,
+the 75-example recommended target, explicit readiness reasons, and coverage by
+planet, sign, and article variant. Coverage is advisory while the corpus is
+small, but it must match the exported examples and makes a narrow training set
+visible before a paid run.
+
 When the corpus reaches the readiness floor, run the validator without `--allow-insufficient`.
 
 ## Private GPU training

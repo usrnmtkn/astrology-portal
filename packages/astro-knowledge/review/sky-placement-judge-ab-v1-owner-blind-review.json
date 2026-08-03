@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewKind": "owner-blind-model-preference",
+  "runId": "sky-placement-blind-2026-08-02T22-48-33-462Z",
+  "recordedAt": "2026-08-02",
+  "modelKeyStatus": "sealed",
+  "modelIdentityRevealed": false,
+  "promotionRecommended": false,
+  "evaluationScope": "Evidence about natural-language, abstraction, and editorial diagnosis only; not sufficient evidence for Current Sky rule enforcement or promotion because the v1 approved set conflicted with the no-second-person rule.",
+  "summary": {
+    "reviewA": 0,
+    "reviewB": 5,
+    "ties": 9,
+    "overallPreference": "B"
+  },
+  "cases": [
+    { "caseId": "case-001", "preference": "tie" },
+    { "caseId": "case-002", "preference": "B" },
+    { "caseId": "case-003", "preference": "tie" },
+    { "caseId": "case-004", "preference": "B" },
+    { "caseId": "case-005", "preference": "B" },
+    { "caseId": "case-006", "preference": "tie" },
+    { "caseId": "case-007", "preference": "tie" },
+    { "caseId": "case-008", "preference": "B" },
+    { "caseId": "case-009", "preference": "tie" },
+    { "caseId": "case-010", "preference": "B" },
+    { "caseId": "case-011", "preference": "tie" },
+    { "caseId": "case-012", "preference": "tie" },
+    { "caseId": "case-013", "preference": "tie" },
+    { "caseId": "case-014", "preference": "tie" }
+  ],
+  "ownerFindings": [
+    "Review B caught the abstract opening and prohibited Current Sky pronouns in case 005.",
+    "Review B treated the unnatural personification in case 010 as off-voice rather than borderline.",
+    "Review B gave the fuller generic-language, sign-lore, second-person, and swappable-moves diagnosis in case 008.",
+    "Review B identified the genuinely weaker explanatory lines in cases 002 and 004.",
+    "No case clearly favored Review A."
+  ]
+}

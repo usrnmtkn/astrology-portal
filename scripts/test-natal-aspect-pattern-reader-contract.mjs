@@ -12,8 +12,10 @@ function read(relativePath) {
 const app = read("apps/web/src/App.tsx");
 const page = read("apps/web/src/features/you/YouPage.tsx");
 const component = read("apps/web/src/features/you/NatalAspectPatternsSection.tsx");
+const labels = read("apps/web/src/features/you/natalAspectPatternLabels.ts");
 const chartPatternPill = read("apps/web/src/features/friends/ChartPatternPill.tsx");
 const friendChartsList = read("apps/web/src/features/friends/FriendChartsList.tsx");
+const friendNatalTab = read("apps/web/src/features/friends/FriendNatalTab.tsx");
 const socialFriendsPanel = read("apps/web/src/features/friends/SocialFriendsPanel.tsx");
 const service = read("apps/web/src/services/natalAspectPatterns.ts");
 const serverPatternAdapter = read("api/_lib/aspect-patterns.ts");
@@ -42,9 +44,11 @@ assert.match(app, /copy:\s*natalAspectPatternCopyForOwner\(item\.copy,\s*ownerNa
 assert.match(app, /activationCopy:\s*item\.activationCopy\s*\?\s*natalAspectPatternActivationCopyForOwner\(item\.activationCopy,\s*ownerName,\s*ownerKind,\s*ownerPronouns\)/s, "Friend pattern activation copy must use the same owner-aware transformation.");
 assert.match(app, /createNatalGeneratedCopyForOwnerConverter\(ownerName,\s*ownerKind,\s*ownerPronouns,\s*false\)/, "Pattern copy must retain the first generated owner-name mention instead of collapsing it back to a pronoun.");
 assert.match(app, /\|leave\|leaves\|left\) you/, "Pattern object clauses such as “leave [name] out” must use object grammar.");
-assert.match(app, /title=\{`Patterns in \$\{possessiveLabel\(selectedChart\.displayName\)\} chart`\}/, "Friends natal patterns must label the section with the chart owner's name.");
+assert.match(app, /patternTitle=\{`Patterns in \$\{possessiveLabel\(selectedChart\.displayName\)\} chart`\}/, "Friends natal patterns must derive the section label from the chart owner's name.");
+assert.match(friendNatalTab, /<NatalAspectPatternsSection[\s\S]*title=\{patternTitle\}/, "The deferred Friends natal tab must forward its owner-aware section title.");
 assert.match(app, /selectedFriendNatalAspectPatternStatus/, "Friends natal charts must compute an explicit reader status.");
-assert.match(app, /<NatalAspectPatternsSection\s+items=\{selectedFriendNatalAspectPatternItems\}\s+onOpenDetail=\{openFriendNatalAspectPatternDetail\}\s+status=\{selectedFriendNatalAspectPatternStatus\}/s, "Friends natal charts must render the shared pattern preview with a detail action.");
+assert.match(app, /<FriendNatalTab[\s\S]*onOpenPattern=\{openFriendNatalAspectPatternDetail\}[\s\S]*patternItems=\{selectedFriendNatalAspectPatternItems\}[\s\S]*patternStatus=\{selectedFriendNatalAspectPatternStatus\}/, "App must pass owner-aware pattern data and actions into the deferred Friends natal tab.");
+assert.match(friendNatalTab, /<NatalAspectPatternsSection\s+items=\{patternItems\}\s+onOpenDetail=\{onOpenPattern\}\s+status=\{patternStatus\}\s+title=\{patternTitle\}/s, "The deferred Friends natal tab must render the shared pattern preview with a detail action.");
 assert.match(service, /natalAspectPatternPillSummary/, "Friends lists must derive compact pattern summaries from stored snapshots.");
 assert.match(service, /confidence === "exact" \|\| pattern\.geometry\.confidence === "strong"/, "Pattern pills must remain limited to exact and strong detections.");
 assert.match(chartPatternPill, /confirmed chart/, "Pattern pills must expose their complete contents to assistive technology.");
@@ -122,10 +126,10 @@ assert.match(page, /natalAspectPatternDetailArticle/, "Full pattern copy must re
 assert.match(page, /bodyBeforeSections:\s*true,[\s\S]*body:\s*\[copy\.overview\]/, "The pattern detail reader must begin with the main write-up before its titled sections.");
 assert.match(page, /copy\.sections/, "The detail reader must consume resolved pattern sections.");
 assert.match(page, /resolvedNatalAspectPatternSectionLabel\(section\)/, "Reader labels should map section IDs to human labels.");
-assert.doesNotMatch(component, /replace\(\/_\/g, " "\)/, "Reader must never render a raw section id as a heading.");
+assert.doesNotMatch(labels, /replace\(\/_\/g, " "\)/, "Reader must never render a raw section id as a heading.");
 assert.match(page, /Boolean\(section\.body && section\.heading\)/, "Sections without an approved reader label must not render in the detail reader.");
 assert.match(component, /section\.id !== "timing" && activationSectionLabel\(section\.id\)/, "Activation sections without an approved reader label must not render at all.");
-assert.match(component, /confidence_note: "Reading note"/, "Confidence qualifications must keep a reader-facing label.");
+assert.match(labels, /confidence_note: "Reading note"/, "Confidence qualifications must keep a reader-facing label.");
 assert.match(types, /aspectPatterns\?: import\("@tldr\/astro-knowledge\/aspect-pattern-engine"\)\.AspectPatternDetectionResult/, "SkySnapshot must carry canonical aspect pattern data.");
 assert.match(styles, /natal-patterns-section/);
 assert.match(styles, /natal-pattern-card__details-button/);

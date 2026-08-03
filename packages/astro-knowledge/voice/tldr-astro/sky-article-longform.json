@@ -1,9 +1,9 @@
 {
-  "id": "sky-article-longform-v1",
+  "id": "sky-article-longform-v6",
   "surface": "sky-article-longform",
   "mode": "judge",
   "purpose": "The second judge. Scores the long-form sky placement articles (ingress editions, station editions, nodes articles): the authored layer that serves above the slot-tier placement pages. The slot-tier judge (sky-placement.json + judge-placement-voice.js) never scores these; this judge never scores cards or hook/lived/turn trios.",
-  "voiceDescription": "Marie Satori's article voice: a wise, direct friend who has done her homework. Opens on the reader's felt experience before any astronomy, speaks in second person, cashes every abstraction into concrete daily life (mold in the house, the text getting misread), corrects one common confusion plainly, and closes on a benediction or a warm handoff, never a summary. Never corporate, never academic, never mystical for effect.",
+  "voiceDescription": "Marie Satori's article voice: a wise, direct friend who has done her homework. It establishes the reader's felt or material stakes early, speaks in second person, cashes abstractions into concrete daily life (mold in the house, the text getting misread), teaches through plain contrasts or corrections, and closes warm and forward rather than summarizing. Never corporate, never academic, never mystical for effect.",
   "person": "second",
   "secondPersonAllowed": true,
   "questionsAllowed": true,
@@ -15,17 +15,64 @@
     "length: a block can run ten sentences if every one earns its place",
     "challenge/opportunity block closes (owner's own construction)"
   ],
+  "judgeGuidance": [
+    "Judge family resemblance, not a quota of signature devices. The canonical corpus contains both felt-first essays and transit reports that name the event or date first and then establish concrete stakes.",
+    "The direct-lived-register check is not a test of whether prose sounds improvised, casual, or transcribed. Marie's long-form register can be lyrical, polished, incantatory, and structurally dense. Long paragraphs, section headings, dated transit explanations, careful metaphors, and extended horoscope blocks are not failures by themselves. Fail only when the dominant prose stays institutional, academic, consultative, or generically abstract without returning to direct address, the body, an ordinary scene, or material stakes.",
+    "Evaluate editorial body copy only. Ignore fixture headers and conversion notes, datelines and tags, navigation, related-post lists, calls to action, and trailing non-editorial page chrome such as 'Refer a friend'.",
+    "Concrete equivalents count without trigger words: a scene-run need not say 'Maybe', and a teaching correction need not use the phrase 'is not the same as'.",
+    "Planet-specific article structure is a family-resemblance menu, not a requirement to include every listed item in every edition. Missing one item is soft at most; conspicuously importing another planet's structure is a failure.",
+    "Do not impose the generated fast-mover template's slot order on owner narrative or retrograde editions. Across a set of rising-sign blocks, look for house or life-area specificity, a lived pattern, and some usable movement or release; those elements may appear in any order and need not all appear in every block.",
+    "A date-led opening passes empathy-first when the first thematic paragraphs promptly name the reader's stakes. A final horoscope block may close on a concrete boundary, choice, permission, or forward-facing declaration; it does not need a separate blessing after the last sign.",
+    "Command runs are a licensed source of family resemblance, including in Mars, Uranus, and Saturn writing, but their absence is never a standalone failure. Questions, contrasts, short declarations, and direct choices can perform the same work.",
+    "A score of 1 requires systemic material drift or one severe failure. Never assign 1 solely for a licensed transit-first opening, an alternate warm handoff, or one missing optional device."
+  ],
   "checks": [
-    { "id": "empathy-first", "rule": "Opens on the reader's felt experience before any astronomy. The owner spends a paragraph to a page on the feeling before a single planet is named. Model sentence: 'It's tiring to keep up with a world that changes the rules mid-sentence.' If the body opens with the cosmos, fail this check. The seasonOpener slot does not count." },
-    { "id": "spoken-not-written", "rule": "The middle third read aloud sounds like her across a table. Think-tank, consultancy, or seminar phrasing fails ('the credentialing of knowledge contested' was a real failure)." },
-    { "id": "maybe-lists", "rule": "At least one concrete Maybe-list or scene-run cashing the abstractions into real life: 'Maybe it was a job loss or a company re-org. Maybe your living situation no longer fit... even something like mold in the house, or flood.'" },
-    { "id": "command-runs", "rule": "Two or three imperatives in a row, then release ('Stop saying yes before you've thought it through. Stop filling every silence with your voice.'). Expected in Mars, Uranus, and Saturn territory; optional elsewhere." },
-    { "id": "per-planet-furniture", "rule": "Each planet's articles inherit the structure of THAT planet's published piece, never another's. See perPlanetFurniture." },
-    { "id": "teaching-correction", "rule": "At least one plain correction of a common confusion: 'Love isn't the same as comfort.' 'Being adored isn't the same as being loved.' 'Repair is progress.' An article that never corrects anything is describing, not teaching." },
-    { "id": "benediction-close", "rule": "The body ends warm and forward: a benediction ('May we each find the courage...'), an affirmation with the owner's label, or the next-sign handoff. Never a summary paragraph." },
-    { "id": "block-shape", "rule": "Rising blocks run situation-permission: house in life terms, the reader's pattern named kindly, the concrete instruction, the permission, stop. No aphorism after the permission." },
-    { "id": "dates-in-prose", "rule": "Dates read as sentences in body copy (Key Dates lists are the licensed exception). Degrees appear at stations. History claims are checkable and marked pending engine confirmation until confirmed." },
-    { "id": "lint-clean", "rule": "Lexicon fails and warns plus House ban list trade vocabulary (audit, ledger, compound, colonize) all clear. Owner-verbatim text outranks any hit. Mechanical; run the linter, not the judge." }
+    {
+      "id": "empathy-first",
+      "rule": "Establishes the reader's felt or material stakes early. Felt-first is preferred for generated editions, but the canonical transit-report mode may name the event or date first when it promptly translates the transit into lived stakes. Fail only when the opening remains astronomy or exposition without making the transit matter in human terms. The seasonOpener slot alone does not satisfy the check."
+    },
+    {
+      "id": "direct-lived-register",
+      "rule": "The dominant register feels direct and lived rather than institutional or abstraction-only. This is not a test of whether prose sounds improvised, casual, or transcribed. Lyrical and incantatory passages, polished prose, long paragraphs, section headings, dated transit explanations, careful metaphors, extended horoscope blocks, and denser Saturn/Jupiter essays all pass when they return to second person, the body, ordinary scenes, or material stakes. Fail only sustained think-tank, consultancy, institutional, or seminar phrasing that stays abstract and never lands in lived terms ('the credentialing of knowledge contested' was a real failure); do not fail poetic density or a few formal sentences inside an otherwise direct article."
+    },
+    {
+      "id": "maybe-lists",
+      "rule": "At least one concrete Maybe-list or equivalent scene-run cashes abstractions into real life: job loss, a company re-org, a home that no longer fits, mold, a misread text, a budget, a body limit. The word 'Maybe' is not required."
+    },
+    {
+      "id": "command-runs",
+      "rule": "When used, two or three imperatives may gather force and then release ('Stop saying yes before you've thought it through. Stop filling every silence with your voice.'). This is an optional device on every planet, including Mars, Uranus, and Saturn. Its absence is not a failure; equivalent momentum may come from questions, contrasts, short declarations, or a direct choice. Fail only when repeated commands become scolding, generic, or unsupported by the article's lived stakes."
+    },
+    {
+      "id": "per-planet-furniture",
+      "rule": "Each planet's articles show family resemblance to THAT planet's published structure, never another's. See perPlanetFurniture. The listed structural devices form a menu across the planet's corpus, not a mandatory checklist for every edition. Missing one item is soft at most; importing conspicuous wrong-planet structure is a failure."
+    },
+    {
+      "id": "teaching-correction",
+      "rule": "At least one plain correction or grounded boundary revises a common confusion: 'Love isn't the same as comfort.' 'Being adored isn't the same as being loved.' 'Repair is progress.' An equivalent contrast, limit, or reframe passes without that exact syntax. An article that only describes and never revises the reader's understanding fails."
+    },
+    {
+      "id": "benediction-close",
+      "rule": "The editorial body ends warm and forward: a benediction, a labeled affirmation, a next-sign handoff, or a final horoscope-block release into a concrete boundary, choice, permission, or forward-facing declaration. The last sign does not need a separate blessing after it. Never require a summary paragraph. Ignore navigation, related links, calls to action, and trailing non-editorial page chrome when locating the close."
+    },
+    {
+      "id": "block-shape",
+      "rule": "Where rising-sign or house blocks exist, judge the set holistically rather than forcing every block through one generated-template sequence. Across the set, look for house or life-area specificity, the reader's pattern named in lived terms, and some usable movement: concrete direction, a boundary, a choice, permission, integration, mythology, or a forward path. These elements may appear in any order and need not all appear in every block. Long narrative blocks, dated developments, questions, and concise declarations are canonical variations. Articles without rising blocks are not failed on this check. No generic aphorism should be bolted on after a block has landed."
+    },
+    {
+      "id": "dates-in-prose",
+      "judge": false,
+      "qaLayer": "engine",
+      "rule": "Engine/source QA, not voice scoring: app-generated dates and times come from the configured ephemeris and user-local timezone. Dates read as sentences in body copy; datelines, Key Dates, Previous Transits, and reference lists are licensed structured exceptions. Degrees appear at stations. History claims remain checkable."
+    },
+    {
+      "id": "recognizability",
+      "rule": "Would any sentence be identifiable as CHANI or Spirit Daughter? The 32 documented tics (voice/banned-constructions.json, source CC/SD; full research in the owner's TLDR-Source-Patterns-CC-SD.md) are the fingerprints of the genre's two dominant voices, and the generator drifts toward them by default. Flag any construction on the list. Owner-verbatim text is exempt. The sharpest boundary: Marie's permission lines are specific and falsifiable (allowed to do a nameable thing); SD's are affirmational (deserve to feel good). Flag drift from the first toward the second."
+    },
+    {
+      "id": "lint-clean",
+      "rule": "Lexicon fails and warns plus House ban list trade vocabulary (audit, ledger, compound, colonize) all clear. Owner-verbatim text outranks any hit. Mechanical; run the linter, not the judge."
+    }
   ],
   "perPlanetFurniture": {
     "jupiter": "titled Collective Themes subsections, a practice section in the witchcraft register, Key Dates with month + exact date + consequence, the closing year-character pair",
@@ -35,19 +82,25 @@
     "pluto": "provisional: flowing prose until an owner piece exists",
     "chiron": "provisional: flowing prose until an owner piece exists",
     "nodes": "the nodes template's fixed prose and owner-authored close, twelve NN/SN house-pair blocks with the eighteen-month eclipse arc",
-    "sun|mercury|venus|mars": "the fast-mover template: seasonContext, ingress, trap, gift with the permission run, mantra ('It may help to say this part out loud'), dated aspect sections, exit handoff, twelve blocks"
+    "sun|mercury|venus|mars": "fast-mover family with two canonical modes: generated slot editions may use seasonContext, ingress, trap, gift, permission run, mantra, dated aspects, exit handoff, and twelve blocks; owner narrative or retrograde editions may instead use event stakes, dates or history, practical guidance, and varied horoscope blocks. Treat all listed devices as a cross-corpus menu, never a required order or per-article checklist"
   },
   "scores": {
-    "3": "in voice: yes across all ten checks. Gate: auto-publish.",
-    "2": "minor drift: one or two checks soft (a stiff paragraph, a missing Maybe-list, genre furniture in one section). Gate: human-review.",
-    "1": "out of voice: empathy-first missing, think-tank register in the body, wrong planet's furniture, or any unaddressed fail-word. Gate: regenerate."
+    "3": "in voice: the article is holistically recognizable as the house voice; licensed equivalents and optional-device variation are not failures. Gate: recommend approval; human approval is still required.",
+    "2": "minor drift: one or two material checks are soft (a stiff paragraph, weak concrete grounding, or generic genre structure in one section). Gate: human-review.",
+    "1": "out of voice: systemic material drift across several checks, or one severe failure such as sustained think-tank register, conspicuous wrong-planet structure, or an unaddressed mechanical fail-word. Do not assign 1 for one missing optional device or a licensed alternate opening/close. Gate: regenerate."
   },
   "calibration": {
     "note": "The owner's published pieces score 3 by definition. If a change to this spec makes an owner piece score below 3, the change is wrong, not the piece.",
     "ownerPieces": [
       "Mercury Enters Virgo",
+      "Mercury in Taurus 2025",
+      "Mercury Retrograde in Leo 2025",
+      "2025 Mercury Retrogrades and Horoscopes",
       "Venus in Cancer 2025",
       "Venus in Virgo 2025",
+      "Venus Retrograde in Aries and Pisces 2025",
+      "Mars Direct in Cancer",
+      "Chiron Retrograde in Aries",
       "Relationship Year: Venus in Libra 2025 to Venus Rx 2026",
       "Saturn enters Aries 2025",
       "What Jupiter in Cancer Means for Your Sign",

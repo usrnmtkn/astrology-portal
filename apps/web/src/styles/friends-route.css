@@ -1,0 +1,1814 @@
+/* Friends production correction: keep the shipped Friends views aligned
+   to the desktop relationship layouts without touching chart geometry. */
+.app-shell.mode-friends {
+  --friends-page-rail: min(1640px, calc(100vw - 96px));
+  --friends-tab-content-width: var(--friends-page-rail);
+  --friend-detail-copy-width: minmax(480px, 532px);
+  --friend-detail-top-clearance: calc(var(--top-control-top) + var(--top-control-height) + clamp(58px, 5.5vw, 86px));
+}
+
+.app-shell.mode-friends .profile-layout > .detail-panel:has(.friends-page) {
+  align-items: stretch;
+  justify-items: center;
+  max-width: none;
+  width: 100%;
+}
+
+.app-shell.mode-friends .friends-page {
+  gap: 30px;
+  margin: clamp(46px, 5vw, 78px) auto 0;
+  max-width: var(--friends-page-rail);
+  padding-top: 0;
+  width: 100%;
+}
+
+.app-shell.mode-friends .friends-page:not(.friend-detail-page) .friends-page-heading,
+.app-shell.mode-friends .friends-page:not(.friend-detail-page) .manual-chart-workspace-list-only,
+.app-shell.mode-friends .friends-page:not(.friend-detail-page) .friends-feed-view {
+  justify-self: center;
+  width: var(--friends-tab-content-width);
+  max-width: 100%;
+}
+
+.app-shell.mode-friends .friends-page:has(.friend-profile-view) {
+  gap: 24px;
+  margin-top: var(--friend-detail-top-clearance);
+  max-width: var(--friends-page-rail);
+}
+
+.app-shell.mode-friends .friends-chart-toolbar {
+  margin: 0 0 var(--space-3);
+}
+
+.app-shell.mode-friends .manual-chart-workspace,
+.app-shell.mode-friends .manual-chart-workspace-list-only,
+.app-shell.mode-friends .friends-charts-view,
+.app-shell.mode-friends .manual-chart-list {
+  justify-self: stretch;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  width: 100%;
+}
+
+.app-shell.mode-friends .manual-chart-cards {
+  gap: var(--card-list-gap);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.app-shell.mode-friends .manual-chart-row {
+  grid-template-columns: minmax(0, 1fr) 64px;
+  grid-template-areas:
+    "select actions"
+    "cta actions";
+  min-height: 118px;
+  padding: 0;
+  border-radius: var(--card-radius);
+}
+
+.app-shell.mode-friends .manual-chart-select {
+  gap: 24px;
+  grid-template-columns: 82px minmax(0, 1fr);
+  padding: calc(var(--space-7) - var(--space-1)) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
+}
+
+.app-shell.mode-friends .friend-profile-panel {
+  gap: 26px;
+  max-width: var(--friends-page-rail);
+  width: 100%;
+}
+
+.app-shell.mode-friends .friend-profile-card,
+.app-shell.mode-friends .friend-view-tabs {
+  max-width: none;
+  width: 100%;
+}
+
+.app-shell.mode-friends .friend-view-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 0;
+  gap: var(--space-2);
+  padding: 0;
+  overflow: visible;
+}
+
+.app-shell.mode-friends .friend-view-tab {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: var(--button-height);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.app-shell.mode-friends .friend-view-tab:hover {
+  border-color: var(--ink);
+}
+
+.app-shell.mode-friends .friend-view-tab:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.app-shell.mode-friends .friend-view-tab.friend-view-tab--active {
+  border-color: var(--pill-bg);
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  font-weight: var(--weight-medium);
+}
+
+.app-shell.mode-friends .friend-view-more {
+  position: relative;
+}
+
+.app-shell.mode-friends .friend-view-more-trigger {
+  gap: var(--space-2);
+}
+
+.app-shell.mode-friends .friend-view-more-count {
+  color: var(--text-muted);
+  font-size: var(--text-compact-meta);
+}
+
+.app-shell.mode-friends .friend-view-tab--active .friend-view-more-count {
+  color: inherit;
+  opacity: 0.72;
+}
+
+.app-shell.mode-friends .friend-view-more-chevron {
+  transition: transform 160ms ease;
+}
+
+.app-shell.mode-friends .friend-view-more-chevron--open {
+  transform: rotate(180deg);
+}
+
+.app-shell.mode-friends .friend-view-more-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  display: grid;
+  width: min(360px, calc(100vw - var(--space-6)));
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--card-radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-overlay);
+}
+
+.app-shell.mode-friends .friend-view-more-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border: 0;
+  border-radius: calc(var(--card-radius) - var(--space-2));
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-shell.mode-friends .friend-view-more-option:hover,
+.app-shell.mode-friends .friend-view-more-option:focus-visible {
+  background: var(--surface-2);
+}
+
+.app-shell.mode-friends .friend-view-more-option:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+.app-shell.mode-friends .friend-view-more-option-copy {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.app-shell.mode-friends .friend-view-more-option-copy strong {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+.app-shell.mode-friends .friend-view-more-option-copy small {
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-description);
+}
+
+@media (max-width: 520px) {
+  .app-shell.mode-friends .friend-view-tabs {
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .app-shell.mode-friends .friend-view-tab {
+    min-height: var(--segmented-item-height);
+    padding-inline: var(--space-3);
+    font-size: var(--text-compact-meta);
+  }
+
+  .app-shell.mode-friends .friend-view-more-trigger {
+    gap: var(--space-1);
+  }
+
+  .app-shell.mode-friends .friend-view-more-menu {
+    right: auto;
+    left: 0;
+    width: min(360px, calc(100vw - var(--mobile-page-gutter) * 2));
+    max-width: calc(100vw - var(--mobile-page-gutter) * 2);
+  }
+}
+
+@media (min-width: 1040px) {
+  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout {
+    align-items: start;
+    column-gap: 55px;
+    grid-template-columns: minmax(min(var(--shared-chart-size), 48vw), 1fr) var(--friend-detail-copy-width);
+    justify-content: stretch;
+  }
+
+  .app-shell.mode-friends .relationship-detail-layout > .friend-detail-content-column,
+  .app-shell.mode-friends .friend-detail-main {
+    grid-column: 2;
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .app-shell.mode-friends .relationship-detail-layout > .friend-detail-chart-column,
+  .app-shell.mode-friends .friend-detail-chart-rail {
+    grid-column: 1;
+    justify-self: center;
+    max-width: var(--shared-chart-size);
+    position: sticky;
+    top: var(--friend-detail-top-clearance);
+  }
+
+  .app-shell.mode-friends .friend-detail-chart-rail .friend-synastry-wheel-shell,
+  .app-shell.mode-friends .friend-detail-chart-rail .friend-wheel,
+  .app-shell.mode-friends .friend-detail-chart-rail .sky-wheel-shell,
+  .app-shell.mode-friends .friend-detail-chart-rail .sky-wheel,
+  .app-shell.mode-friends .friend-detail-chart-rail svg {
+    max-width: var(--shared-chart-size);
+    width: 100%;
+  }
+
+  .app-shell.mode-friends .friend-profile-card {
+    min-height: 110px;
+    padding: calc(var(--space-5) + var(--space-1) / 2) var(--space-6);
+  }
+
+  .app-shell.mode-friends .friend-profile-card .friend-profile-avatar {
+    height: 60px;
+    width: 60px;
+  }
+}
+
+.compatibility-column {
+  gap: 18px;
+}
+
+.compatibility-summary,
+.compatibility-glance,
+.compatibility-card,
+.compatibility-dynamics__group {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  padding: clamp(16px, 2.5vw, 22px);
+}
+
+.compatibility-card {
+  padding-block: var(--space-6);
+}
+
+.compatibility-summary {
+  position: relative;
+  overflow: hidden;
+}
+
+.compatibility-summary__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-bg) 68%, transparent);
+}
+
+.compatibility-summary h3,
+.compatibility-card h3,
+.compatibility-dynamic-row h4 {
+  margin: 0;
+  color: var(--card-title-color);
+  line-height: var(--leading-h1);
+}
+
+.compatibility-summary h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+}
+
+.compatibility-summary__meta,
+.compatibility-card__signs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compatibility-summary__meta span,
+.compatibility-card__receipt {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  padding: calc(var(--space-1) + var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 2);
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-title);
+}
+
+.compatibility-card__signs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-items: start;
+  gap: 6px 10px;
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+  letter-spacing: 0;
+  line-height: var(--leading-title);
+  text-align: left;
+}
+
+.compatibility-card__signs > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.compatibility-card__signs strong {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-label);
+}
+
+.compatibility-sign-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: var(--leading-label);
+  vertical-align: middle;
+}
+
+.compatibility-sign-label img {
+  display: block;
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
+}
+
+.compatibility-glance__list,
+.compatibility-card-list,
+.compatibility-card__body,
+.compatibility-dynamics {
+  display: grid;
+  gap: 14px;
+}
+
+.compatibility-card-list__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  background: var(--control-bg);
+  padding: calc(var(--space-1) * 0.75);
+}
+
+.compatibility-card-list__toggle button {
+  min-height: 30px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted);
+  padding: calc(var(--space-1) + var(--space-1) / 4) calc(var(--space-2) + var(--space-1) / 2);
+  font: inherit;
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-h1);
+  cursor: pointer;
+}
+
+.compatibility-card-list__toggle button.is-active {
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  font-weight: var(--weight-semibold);
+}
+
+.compatibility-glance p,
+.compatibility-card p {
+  margin: 0;
+  color: var(--card-body-color);
+  line-height: var(--leading-description);
+}
+
+.compatibility-card__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  align-items: start;
+  gap: var(--space-3);
+  text-align: left;
+}
+
+.compatibility-card__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compatibility-card__source {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  padding: calc(var(--space-1) / 2) var(--space-2);
+  color: var(--muted);
+  background: var(--control-bg);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-label);
+}
+
+.compatibility-card__function,
+.compatibility-card__receipt {
+  color: var(--muted);
+}
+
+.compatibility-card__glyph {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  color: var(--ink);
+  font-size: var(--compatibility-card-glyph-size);
+  line-height: var(--leading-label);
+}
+
+.compatibility-card__body {
+  padding-top: 0;
+}
+
+.compatibility-card__reading {
+  display: grid;
+  gap: 14px;
+}
+
+.compatibility-card__reading p {
+  color: var(--card-body-color);
+  font-size: var(--text-body-size);
+  line-height: var(--leading-body);
+}
+
+.compatibility-card--clickable {
+  cursor: pointer;
+}
+
+.compatibility-card__summary {
+  gap: 16px;
+}
+
+.compatibility-summary-lanes {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.compatibility-summary-lanes div {
+  display: grid;
+  grid-template-columns: minmax(84px, max-content) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.compatibility-summary-lanes dt {
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
+  text-transform: uppercase;
+}
+
+.compatibility-summary-lanes dd {
+  margin: 0;
+  color: var(--card-body-color);
+  font-size: var(--text-body-size);
+  line-height: var(--leading-description);
+}
+
+.compatibility-card__receipt {
+  justify-self: start;
+  border-style: dashed;
+}
+
+.compatibility-dynamics__group {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.friend-compatibility-stage .compatibility-dynamic-row {
+  --aspect-row-glyph-gap: 4px;
+  --aspect-row-glyph-width: 68px;
+}
+
+.compatibility-dynamic-row__quality {
+  margin-top: 2px;
+}
+
+.compatibility-dynamic-row h4 {
+  font-size: var(--text-body-size);
+}
+
+.updates-aspect-row.friend-transit-row {
+  grid-template-columns: minmax(0, 1fr) var(--updates-aspect-meta-width);
+  grid-template-areas: "content meta";
+}
+
+.friend-transit-row .updates-aspect-row__content {
+  grid-area: content;
+}
+
+.friend-transit-row .updates-aspect-row__meta {
+  grid-area: meta;
+}
+
+.friend-bond-transit-activation {
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--card-border);
+  color: var(--card-meta-color);
+}
+
+@media (max-width: 560px) {
+  .compatibility-card__header {
+    gap: var(--space-3);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .compatibility-card__glyph {
+    width: 38px;
+    height: 38px;
+    font-size: var(--compatibility-card-glyph-size-compact);
+  }
+
+  .compatibility-card__reading {
+    gap: 15px;
+  }
+
+  .compatibility-card__signs {
+    display: grid;
+    gap: 4px;
+  }
+
+  .compatibility-summary-lanes div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+
+@media (max-width: 939px) {
+  .app-shell.mode-friends {
+    --friends-page-rail: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
+    --friends-tab-content-width: var(--friends-page-rail);
+  }
+
+  .app-shell.mode-friends .friends-page {
+    gap: var(--stack-gap);
+    margin-top: 0;
+    max-width: var(--friends-page-rail);
+    padding: var(--page-top) 0 var(--page-bottom);
+  }
+
+  .app-shell.mode-friends .friends-page:has(.friend-profile-view),
+  .app-shell.mode-friends .friend-profile-panel {
+    margin-top: calc(var(--space-4) + var(--space-1) / 2);
+    max-width: var(--friends-page-rail);
+  }
+
+  .app-shell.mode-friends .manual-chart-row {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .app-shell.mode-friends .manual-chart-select {
+    gap: 18px;
+    grid-template-columns: 56px minmax(0, 1fr);
+    padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-3) + var(--space-1) / 2) calc(var(--space-3) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
+  }
+}
+
+@media (max-width: 560px) {
+  .social-card-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .social-card-heading .social-secondary-button {
+    align-self: start;
+  }
+
+  .social-inline-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .social-invite-form {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .social-invite-kind,
+  .social-invite-form > input {
+    grid-column: 1 / -1;
+  }
+
+  .social-invite-kind {
+    justify-self: start;
+  }
+
+  .social-search-form > .social-primary-button {
+    width: 100%;
+  }
+
+  .social-person-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .social-person-row > :last-child {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .social-lookup-results .social-primary-button,
+  .social-lookup-results .social-secondary-button {
+    width: auto;
+  }
+
+  .social-person-row .social-person-action,
+  .social-person-row .social-state-pill,
+  .social-person-row .social-request-actions {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .social-friend-row {
+    padding-right: var(--space-4);
+  }
+
+  .social-friend-row-actions {
+    position: static;
+    grid-column: 2;
+    justify-self: start;
+    padding: 0 var(--space-4) var(--space-3);
+    transform: none;
+  }
+
+  .social-sharing-heading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .social-sharing-heading .profile-avatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .social-sharing-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .social-sharing-actions button {
+    width: 100%;
+  }
+
+  .social-friend-row .social-friend-chevron {
+    display: none;
+  }
+
+  .friends-feed-card {
+    grid-template-columns: minmax(0, 1fr) auto 20px;
+    gap: 14px;
+    min-height: 0;
+    padding: calc(var(--space-7) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
+  }
+
+  .friends-feed-card-static {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .friends-feed-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .friends-feed-avatar + .friends-feed-avatar {
+    --friends-feed-avatar-overlap: -18px;
+  }
+
+  .friends-feed-chevron {
+    width: 20px;
+    font-size: var(--friend-feed-chevron-size-compact);
+  }
+}
+
+/* Unified Friends directory */
+.friends-page:not(.friend-detail-page) .friends-unified-panel {
+  width: min(var(--friends-content-width), 100%);
+  max-width: var(--friends-content-width);
+  margin-inline: auto;
+}
+
+.friends-unified-panel {
+  position: relative;
+  order: 1;
+  overflow: visible;
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.friends-unified-search-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 62px;
+  padding: 0 clamp(18px, 2.6vw, 28px);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--friend-directory-subtle-text);
+}
+
+.friends-unified-panel > .friends-unified-search-row:first-child {
+  border-radius: 20px 20px 0 0;
+}
+
+.friends-unified-search-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 60px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-meta-size);
+}
+
+.friends-unified-search-row input::placeholder {
+  color: var(--friend-directory-subtle-text);
+  opacity: 1;
+}
+
+.friends-searching-label {
+  flex: 0 0 auto;
+  color: var(--friend-directory-subtle-text);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.friends-search-clear,
+.friends-row-menu-trigger {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--friend-directory-secondary-text);
+}
+
+.friends-search-clear:hover,
+.friends-search-clear:focus-visible,
+.friends-row-menu-trigger:hover,
+.friends-row-menu-trigger:focus-visible {
+  border-color: var(--control-border);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.friends-unified-tab-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 50px;
+  padding: 7px clamp(14px, 2.3vw, 24px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.friends-unified-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.friends-unified-tabs > button,
+.friends-add-chart-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--friend-directory-secondary-text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.friends-unified-tabs > button.active {
+  border-color: var(--card-border);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.friends-unified-tabs > button:hover,
+.friends-unified-tabs > button:focus-visible,
+.friends-add-chart-action:hover,
+.friends-add-chart-action:focus-visible {
+  border-color: var(--control-border);
+  color: var(--ink);
+}
+
+.friends-unified-tab-row.is-searching .friends-unified-tabs > button {
+  color: var(--friend-directory-subtle-text);
+}
+
+.friends-unified-tabs > button.friends-requests-tab {
+  border-color: color-mix(in srgb, #77a67f 34%, var(--card-border));
+  background: #edf7ee;
+  color: #264d31;
+}
+
+.friends-unified-tabs > button.friends-requests-tab.active {
+  border-color: #8ab793;
+  background: #dcefe0;
+  color: #173c22;
+}
+
+.theme-dark .friends-unified-tabs > button.friends-requests-tab {
+  border-color: #466b50;
+  background: #24392a;
+  color: #d8f0dc;
+}
+
+.friends-tab-count {
+  display: inline-grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.friends-requests-tab .friends-tab-count {
+  background: #285c38;
+  color: #fff;
+}
+
+.theme-dark .friends-requests-tab .friends-tab-count {
+  background: #7fb98b;
+  color: #102818;
+}
+
+.friends-add-chart-action {
+  border-color: var(--control-border);
+  color: var(--ink);
+}
+
+.friends-searching-label {
+  margin-left: auto;
+}
+
+.friends-unified-content {
+  min-height: 176px;
+}
+
+.friends-person-list {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  overflow: visible;
+}
+
+.friends-request-groups {
+  display: grid;
+  gap: 18px;
+  padding: 16px 0;
+}
+
+.friends-request-group {
+  display: grid;
+  gap: 4px;
+}
+
+.friends-request-group > h2 {
+  margin: 0;
+  padding: 0 20px;
+  color: var(--friend-directory-subtle-text);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.friends-request-error {
+  margin: 0 20px;
+  color: #a32727;
+  font-size: 0.85rem;
+}
+
+.friends-person-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  min-height: 68px;
+  padding: 9px 10px 9px 12px;
+  overflow: visible;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--card-bg);
+}
+
+.friends-person-row.is-keyboard-active {
+  border-color: color-mix(in srgb, var(--ink) 32%, var(--card-border));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 15%, transparent);
+}
+
+.friends-person-row.is-openable {
+  cursor: pointer;
+}
+
+.friends-person-row.is-openable:hover,
+.friends-person-row.is-openable:focus-visible {
+  border-color: color-mix(in srgb, var(--ink) 32%, var(--card-border));
+  background: color-mix(in srgb, var(--card-bg) 94%, var(--surface-2));
+}
+
+.friends-row-arrow {
+  display: inline-grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: var(--friend-directory-subtle-text);
+}
+
+.friends-person-row > .profile-avatar {
+  width: 44px;
+  height: 44px;
+  font-size: 0.74rem;
+}
+
+.friends-invite-contact-avatar {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--control-border);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: var(--weight-semibold);
+}
+
+.friends-person-copy,
+.friends-person-identity {
+  display: grid;
+  min-width: 0;
+}
+
+.friends-person-copy {
+  gap: 3px;
+}
+
+.friends-person-identity {
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: baseline;
+  gap: 9px;
+}
+
+.friends-person-identity strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friends-person-identity small,
+.friends-remove-identity small {
+  overflow: hidden;
+  color: var(--friend-directory-secondary-text);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friends-person-identity mark {
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--surface-2) 58%, #f1d58a 42%);
+  color: inherit;
+}
+
+.friends-person-third-line {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  overflow: hidden;
+  color: var(--friend-directory-secondary-text);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friends-person-signatures {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chart-pattern-pill {
+  align-items: center;
+  align-self: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 20px;
+  padding: 1px 7px;
+  border: 1px solid color-mix(in srgb, var(--card-border) 76%, var(--card-title-color) 24%);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface-2) 82%, var(--card-bg) 18%);
+  color: var(--card-title-color);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.friends-person-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.friends-unified-panel .social-primary-button,
+.friends-unified-panel .social-secondary-button,
+.friends-danger-button {
+  min-height: 34px;
+  padding: 0 14px;
+  font-size: 0.75rem;
+}
+
+.friends-unified-panel button:disabled {
+  opacity: 1;
+  cursor: wait;
+}
+
+.friends-unified-panel .social-primary-button:disabled {
+  background: #454b55;
+  color: #fff;
+}
+
+.friends-unified-panel .social-secondary-button:disabled {
+  border-color: #a8adb4;
+  color: var(--friend-directory-secondary-text);
+}
+
+.friends-row-text-action {
+  padding: 5px 3px;
+  border: 0;
+  background: transparent;
+  color: #5448be;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: var(--weight-semibold);
+}
+
+.friends-row-text-action:hover,
+.friends-row-text-action:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.friends-requested-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  color: var(--friend-directory-subtle-text);
+  font-size: 0.75rem;
+}
+
+.friends-row-menu-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.friends-person-menu {
+  position: absolute;
+  z-index: calc(var(--z-popover) + 1);
+  top: calc(100% + 6px);
+  right: 0;
+  display: grid;
+  width: 168px;
+  padding: 6px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-popover);
+}
+
+.friends-person-menu button {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.friends-person-menu button:hover,
+.friends-person-menu button:focus-visible {
+  background: var(--surface-2);
+}
+
+.friends-person-menu .friends-danger-action {
+  color: #a32727;
+}
+
+.friends-person-menu .friends-last-resort-action {
+  margin-top: 4px;
+  border-top: 1px solid var(--card-border);
+  border-radius: 0 0 8px 8px;
+}
+
+.friends-row-text-action.friends-danger-action {
+  color: #a32727;
+}
+
+.friends-unified-empty {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  min-height: 176px;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.friends-unified-empty h2,
+.friends-unified-empty h3,
+.friends-unified-empty p {
+  margin: 0;
+}
+
+.friends-unified-empty h2,
+.friends-unified-empty h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: var(--weight-medium);
+}
+
+.friends-unified-empty p {
+  max-width: 540px;
+  color: var(--friend-directory-subtle-text);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.friends-unified-empty .social-primary-button {
+  margin-top: 8px;
+}
+
+.friends-search-skeleton {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+}
+
+.friends-search-skeleton-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+  min-height: 68px;
+  padding: 9px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.friends-search-skeleton-row > i,
+.friends-search-skeleton-row > span i {
+  display: block;
+  border-radius: 999px;
+  background: var(--surface-2);
+  animation: social-search-pulse 1.25s ease-in-out infinite alternate;
+}
+
+.friends-search-skeleton-row > i {
+  width: 44px;
+  height: 44px;
+}
+
+.friends-search-skeleton-row > span {
+  display: grid;
+  gap: 8px;
+}
+
+.friends-search-skeleton-row > span i:first-child {
+  width: min(180px, 45%);
+  height: 12px;
+}
+
+.friends-search-skeleton-row > span i:last-child {
+  width: min(320px, 70%);
+  height: 9px;
+}
+
+.friends-unified-charts,
+.friends-unified-chart-list {
+  display: grid;
+  width: 100%;
+}
+
+.friends-unified-panel .friends-unified-chart-list > .manual-chart-message {
+  margin: 10px 16px 0;
+}
+
+.friends-unified-panel .manual-chart-cards {
+  gap: 6px;
+  padding: 10px;
+  box-shadow: none;
+}
+
+.app-shell.mode-friends .friends-unified-panel .manual-chart-row {
+  grid-template-columns: minmax(0, 1fr) 52px;
+  grid-template-areas:
+    "select actions"
+    "cta cta";
+  min-height: 68px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.app-shell.mode-friends .friends-unified-panel .manual-chart-select {
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+  min-height: 66px;
+  padding: 9px 12px;
+}
+
+.friends-unified-panel .manual-chart-avatar {
+  width: 44px;
+  height: 44px;
+  font-size: 0.72rem;
+}
+
+.friends-unified-panel .crb {
+  gap: 4px;
+}
+
+.friends-unified-panel .crt {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+
+.friends-unified-panel .manual-chart-signatures {
+  gap: 5px 10px;
+  color: var(--friend-directory-secondary-text);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.friends-unified-panel .manual-chart-row-cta {
+  padding: 0 12px 9px 69px;
+}
+
+.friends-unified-panel .manual-chart-birth-time-button {
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 0.72rem;
+}
+
+.friends-remove-dialog {
+  display: grid;
+  gap: 20px;
+  padding: 26px;
+  border-radius: 18px;
+}
+
+.friends-remove-identity {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+}
+
+.friends-remove-identity > .profile-avatar {
+  width: 44px;
+  height: 44px;
+}
+
+.friends-remove-identity h2 {
+  margin: 0 0 2px;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: var(--weight-medium);
+}
+
+.friends-remove-dialog > p {
+  margin: 0;
+  color: #5f6670;
+  line-height: 1.55;
+}
+
+.friends-remove-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.friends-danger-button {
+  border: 1px solid #a32727;
+  border-radius: 999px;
+  background: #a32727;
+  color: #fff;
+  font: inherit;
+  font-weight: var(--weight-semibold);
+}
+
+.friends-toast {
+  position: fixed;
+  z-index: calc(var(--z-popover) + 2);
+  left: max(18px, env(safe-area-inset-left));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  max-width: calc(100vw - 36px);
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: #151821;
+  box-shadow: var(--shadow-popover);
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.friends-toast button {
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-weight: var(--weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.friends-acceptance-toast > .profile-avatar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  font-size: 0.6rem;
+}
+
+.friends-acceptance-toast > span {
+  line-height: 1.35;
+}
+
+.friends-invite-dialog {
+  position: relative;
+  display: grid;
+  gap: 22px;
+  max-height: min(760px, calc(100vh - 32px));
+  padding: 28px;
+  overflow: auto;
+  border-radius: 18px;
+}
+
+.friends-invite-heading {
+  display: grid;
+  gap: 7px;
+  padding-right: 48px;
+}
+
+.friends-invite-heading h2,
+.friends-invite-heading p,
+.friends-invite-ready h2,
+.friends-invite-ready p,
+.friends-invite-history h3 {
+  margin: 0;
+}
+
+.friends-invite-heading h2,
+.friends-invite-ready > h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
+  font-weight: var(--weight-regular);
+  line-height: 1.1;
+}
+
+.friends-invite-heading p,
+.friends-invite-ready p {
+  color: #5f6670;
+  line-height: 1.5;
+}
+
+.friends-invite-form,
+.friends-invite-ready {
+  display: grid;
+  gap: 14px;
+}
+
+.friends-invite-form {
+  gap: 9px;
+}
+
+.friends-invite-wide-action {
+  width: 100%;
+  min-height: 52px;
+}
+
+.friends-invite-link-note {
+  max-width: 46ch;
+  margin: 0;
+  color: #5f6670;
+  line-height: 1.5;
+}
+
+.friends-invite-manage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+}
+
+.friends-invite-link-card {
+  display: grid;
+  gap: 7px;
+  padding: 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.friends-invite-link-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.friends-invite-visible-link {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1.45;
+  user-select: all;
+}
+
+.friends-invite-link-value {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.friends-invite-link-copy {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.friends-invite-link-copy:hover,
+.friends-invite-link-copy.is-copied {
+  background: var(--surface-3);
+}
+
+.friends-invite-link-copy:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.friends-invite-link-card small {
+  color: var(--muted);
+  font-size: var(--text-meta-size);
+}
+
+.friends-invite-send-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.friends-invite-send-actions > .social-primary-button,
+.friends-invite-send-actions > .social-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.friends-invite-error {
+  margin: 0;
+  color: #a32727;
+  font-size: 0.85rem;
+}
+
+.friends-invite-history {
+  display: grid;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--card-border);
+}
+
+.friends-invite-history h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+.friends-invite-history > div {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.friends-invite-history-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 74px;
+  padding: 12px 14px;
+}
+
+.friends-invite-history-row + .friends-invite-history-row {
+  border-top: 1px solid var(--card-border);
+}
+
+.friends-invite-history-copy,
+.friends-invite-history-actions {
+  display: grid;
+  gap: 3px;
+}
+
+.friends-invite-history-row strong {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
+
+.friends-invite-history-link {
+  overflow: hidden;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-overflow: ellipsis;
+  user-select: all;
+  white-space: nowrap;
+}
+
+.friends-invite-history-row small {
+  color: #656c76;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.friends-invite-history-actions {
+  justify-items: end;
+}
+
+.friends-invite-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: var(--weight-semibold);
+}
+
+.friends-invite-status.is-claimed {
+  background: color-mix(in srgb, #4f8b62 15%, var(--surface));
+  color: #3f7550;
+}
+
+.friends-invite-status.is-expired,
+.friends-invite-status.is-cancelled,
+.friends-invite-status.is-declined {
+  opacity: 0.72;
+}
+
+@media (max-width: 560px) {
+  .friends-invite-dialog {
+    gap: 18px;
+    padding: 24px 20px;
+  }
+
+  .friends-invite-send-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .friends-invite-history-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .friends-invite-history-actions {
+    grid-auto-flow: column;
+    justify-content: space-between;
+    justify-items: start;
+  }
+}
+
+.social-invitation-accept-modal {
+  display: grid;
+  gap: 20px;
+  padding: 28px;
+  border-radius: 18px;
+}
+
+.social-invitation-accept-identity {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.social-invitation-accept-identity > .profile-avatar {
+  width: 48px;
+  height: 48px;
+}
+
+.social-invitation-accept-identity > span {
+  display: grid;
+  gap: 3px;
+}
+
+.social-invitation-accept-identity h2,
+.social-invitation-accept-modal > p {
+  margin: 0;
+}
+
+.social-invitation-accept-identity h2 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1.15;
+}
+
+.social-invitation-accept-identity small {
+  color: #656c76;
+  font-family: var(--font-mono);
+}
+
+.social-invitation-accept-modal > p {
+  color: #5f6670;
+  line-height: 1.55;
+}
+
+@media (max-width: 700px) {
+  .friends-unified-tab-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .friends-unified-tabs {
+    flex: 1 1 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .friends-unified-tabs > button,
+  .friends-add-chart-action {
+    padding-inline: 10px;
+  }
+
+  .friends-add-chart-action {
+    margin-left: auto;
+  }
+
+  .friends-person-row {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .friends-person-actions {
+    grid-column: 2;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .friends-person-third-line {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .friends-person-menu {
+    right: auto;
+    left: 0;
+  }
+}

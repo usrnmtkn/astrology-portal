@@ -1,0 +1,11 @@
+{
+  "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v1",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-placement-voice-v5:first-read-severity+collective-protection+stacked-ending+owner-gold-v1",
+  "rubricVersion": "sky-placement-voice-v5",
+  "evaluationSetVersion": "sky-placement-owner-approved-v1+weak-v5",
+  "policyVersion": "editorial-judge-policy-v1",
+  "notes": "Owner-selected routine Sky Placement judge. Promotion requires the five-sample owner-approved-versus-weak calibration report; no governed content promotion is implied."
+}

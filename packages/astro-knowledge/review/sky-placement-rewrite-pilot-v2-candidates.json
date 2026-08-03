@@ -1,0 +1,195 @@
+{
+  "schema": "tldrastro-sky-placement-review-bundle-v1",
+  "version": "1.0.0",
+  "created": "2026-08-02",
+  "status": "needs_review",
+  "editorialStatus": "needs_voice_pass",
+  "promotionAuthorized": false,
+  "generation": {
+    "model": "gpt-5.6-terra",
+    "lane": "generation:default",
+    "reasoning": "none"
+  },
+  "judge": {
+    "model": "gpt-5.6-terra",
+    "lane": "judge:sky-placement",
+    "reasoning": "low"
+  },
+  "candidates": [
+    {
+      "candidateId": "sky-placement-v2-mars-capricorn",
+      "planet": "mars",
+      "sign": "capricorn",
+      "title": "Mars in Capricorn",
+      "status": "needs_review",
+      "promotionAuthorized": false,
+      "recommendedDecision": "revise",
+      "meaningSource": "data/placements/sign/mars-capricorn.json",
+      "ownerEdit": {
+        "date": "2026-08-02",
+        "source": "owner-directed-review",
+        "slots": [
+          "hook",
+          "lived",
+          "turn"
+        ],
+        "status": "pending_owner_approval"
+      },
+      "article": {
+        "tagline": "Finish what matters",
+        "hook": "Make the plan, then make it real. Mars governs the part of us that acts, pushes, and fights for what matters; in Capricorn, it stops wasting energy on distractions and puts that force into work we can measure. The work may be slow, but the aim gets sharper.",
+        "lived": "Over the next six or seven weeks, we may want proof that our time is going somewhere: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the daily work after the novelty has worn off. You may feel most alive when there is a clear finish line and a solid way to reach it.",
+        "turn": "Tunnel vision sets in when the mountain is all anyone can see. People push so hard that determination turns into sheer stubbornness, and ambition degrades into grinding for the sake of the grind. The effort stops leading anywhere and becomes a self-inflicted punishment. The smart move is to cut the climb when the summit turns out to be just another peak to scale.",
+        "moves": [
+          "Choose one long-delayed practical task and give it a two-hour block with a defined finish.",
+          "Write the next three steps for a goal that has been living only in your head.",
+          "Cancel one obligation that makes you look productive but does not move your real work forward."
+        ]
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0
+      },
+      "judgeResult": {
+        "status": "stale_after_owner_edit",
+        "priorScore": 3,
+        "priorVerdict": "in-voice",
+        "why": "It cleanly distinguishes Mars's drive from Capricorn's disciplined, outcome-focused pace, with concrete behavior and a sharp observable shadow.",
+        "weakest": "You may feel most alive when there is a clear finish line and a solid way to reach it.",
+        "note": "The prior judge evaluated the GPT-5.6 draft before the owner-directed hook, lived, and turn edits. The revision has not been rejudged."
+      }
+    },
+    {
+      "candidateId": "sky-placement-v2-saturn-capricorn",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "title": "Saturn in Capricorn",
+      "status": "needs_review",
+      "promotionAuthorized": false,
+      "recommendedDecision": "revise",
+      "meaningSource": "data/placements/sign/saturn-capricorn.json",
+      "ownerEdit": {
+        "date": "2026-08-02",
+        "source": "owner-directed-review",
+        "slots": [
+          "hook",
+          "lived",
+          "turn"
+        ],
+        "status": "pending_owner_approval"
+      },
+      "article": {
+        "tagline": "Build it without disappearing",
+        "hook": "Saturn in Capricorn proves that life is not a performance review. Saturn handles limits, standards, and the kind of work that holds its value over time; in Capricorn, it forces us to build from the ground up instead of chasing quick wins. This transit turns ambition into a structure we can actually stand inside.",
+        "lived": "Over roughly two and a half years, we may choose the training that takes longer, repair the budget instead of making excuses for overspending, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry a future version of your life.",
+        "turn": "But competence can become a hiding place. We finish one more chore instead of sitting down for the conversation, postpone rest until the next milestone, and keep raising the bar so no achievement has time to feel like enough. If nobody can reach you until the work is done, the work is running your life.",
+        "moves": [
+          "Choose one long-term goal and give it a weekly appointment with a defined stopping point.",
+          "Write down one responsibility you have been carrying alone, then ask a specific person to take a defined part of it.",
+          "Leave work at the time you said you would once this week, even if there is still more you could do."
+        ]
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0
+      },
+      "judgeResult": {
+        "status": "stale_after_owner_edit",
+        "priorScore": 3,
+        "priorVerdict": "in-voice",
+        "why": "Clear Saturn function and Capricorn expression, with lived behavior, an observable shadow, and a sharp closing line.",
+        "weakest": "Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment.",
+        "note": "The prior judge evaluated the GPT-5.6 draft before the owner-directed hook, lived, and turn edits. The revision has not been rejudged."
+      }
+    },
+    {
+      "candidateId": "sky-placement-v2-neptune-libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "title": "Neptune in Libra",
+      "status": "needs_review",
+      "promotionAuthorized": false,
+      "recommendedDecision": "revise",
+      "meaningSource": "data/placements/sign/neptune-libra.json",
+      "ownerEdit": {
+        "date": "2026-08-02",
+        "source": "owner-directed-review",
+        "slots": [
+          "lived",
+          "moves"
+        ],
+        "status": "pending_owner_approval"
+      },
+      "article": {
+        "tagline": "Stop calling silence peace",
+        "hook": "A relationship can look calm while one person disappears inside it. Neptune blurs edges between people, and in Libra it makes fairness, beauty, and mutual understanding feel like needs we cannot live without. This transit can make the ideal partnership, workplace, or public agreement feel close enough to reach for.",
+        "lived": "Neptune stays in one sign for about fourteen years, giving ideas about fairness and relationship time to shape a generation. That long shift shows up in ordinary rooms: the meeting that keeps circling until nobody remembers the decision, the shared project polished past usefulness, the couple making every plan together because separate wants feel rude. The gift is real: more imagination in how we work, love, negotiate, and make room for another person.",
+        "turn": "The blur arrives when keeping both sides comfortable becomes more important than telling the truth. We edit our needs into something harmless, agree to terms we do not understand, or call a beautiful compromise fair because nobody raised their voice. A relationship that needs your silence to stay peaceful is not peaceful.",
+        "moves": [
+          "Name one decision you have been softening, then state your actual preference in a single sentence.",
+          "Before agreeing to a compromise, write down what each person is giving up and what each person is getting.",
+          "Make one shared space more beautiful with a choice everyone involved explicitly agrees on."
+        ]
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0
+      },
+      "judgeResult": {
+        "status": "stale_after_owner_edit",
+        "priorScore": 3,
+        "priorVerdict": "in-voice",
+        "why": "It is sharply specific, behaviorally observable, and unmistakably Neptune in Libra.",
+        "weakest": "The gift is real: more imagination in how we work, love, negotiate, and make room for another person.",
+        "note": "The prior judge evaluated the GPT-5.6 draft before the owner-directed lived and moves edits. The revision has not been rejudged."
+      }
+    },
+    {
+      "candidateId": "sky-placement-v2-venus-aries",
+      "planet": "venus",
+      "sign": "aries",
+      "title": "Venus in Aries",
+      "status": "needs_review",
+      "promotionAuthorized": false,
+      "recommendedDecision": "revise",
+      "meaningSource": "data/placements/sign/venus-aries.json",
+      "ownerEdit": {
+        "date": "2026-08-02",
+        "source": "owner-directed-review",
+        "slots": [
+          "hook",
+          "lived",
+          "turn"
+        ],
+        "status": "pending_owner_approval"
+      },
+      "article": {
+        "tagline": "Want it out loud",
+        "hook": "Attraction should not require a translator. Venus handles love, pleasure, taste, and money; in Aries, it quits circling the subject and goes straight for the spark. This transit makes desire feel less like a private theory and more like a reason to act.",
+        "lived": "For about four weeks, we may wear the thing we usually save for a better invitation, buy the ticket before the doubt has finished talking, or be the one who names the flirtation in the room. Affection gets bolder and taste gets cleaner: less collecting, more choosing. A small risk can feel strangely life-giving when it lets us move toward what we actually like.",
+        "turn": "Chasing the thrill can make attraction feel like something to win. We may pursue the person who resists us, lose interest once they are available, or keep score over every difference in taste. Wanting the spark is real; confusing pursuit with love is how we burn through it.",
+        "moves": [
+          "Ask someone on a date with a real plan, not a vague invitation.",
+          "Wear or make one thing that feels too bold for your usual taste.",
+          "Before a quick purchase, name whether you want the object or the rush of choosing it."
+        ]
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0
+      },
+      "judgeResult": {
+        "status": "stale_after_owner_edit",
+        "priorScore": 3,
+        "priorVerdict": "in-voice",
+        "why": "The article is sharply Venus-in-Aries specific, clears the swap test, and closes with real bite.",
+        "weakest": "A small risk can feel strangely life-giving when it lets us move toward what we actually like.",
+        "note": "The prior judge evaluated the GPT-5.6 draft before the owner-directed hook, lived, and turn edits. The revision has not been rejudged."
+      }
+    }
+  ]
+}

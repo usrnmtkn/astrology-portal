@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
 const assert = require("assert");
+const fs = require("fs");
 const path = require("path");
 const bannedConfig = require(path.join("..", "voice", "banned-words.json"));
 const spec = require(path.join("..", "voice", "tldr-astro", "sky-article-longform.json"));
-const { buildJudgePrompt, furnitureFor } = require("./judge-article-voice.js");
+const rubricDocument = fs.readFileSync(path.join(__dirname, "..", "voice", "tldr-astro", "sky-article-longform-rubric.md"), "utf8");
+const { ARTICLE_PROMPT_VERSION, buildJudgePrompt, furnitureFor, parseVerdict } = require("./judge-article-voice.js");
 const { lintLongformArticle } = require("./lint-article-voice.js");
 const {
   LONGFORM_SURFACE,
@@ -22,6 +24,22 @@ const cleanArticle = [
   "Love is not the same as comfort. Choose the useful promise. Leave the decorative one behind.",
   "May the next honest choice make more room for your actual life."
 ].join("\n\n");
+
+function verdict(score, { checkId = "direct-lived-register", sentence = cleanArticle.split("\n")[0], why = "fixture-controlled response" } = {}) {
+  const passing = score === 3;
+  return {
+    score,
+    verdict: passing ? "in-voice" : score === 2 ? "borderline" : "off-voice",
+    why,
+    failedChecks: passing ? [] : [checkId],
+    evidence: passing ? [] : [{
+      checkId,
+      sentence,
+      reason: "This sentence demonstrates the named test failure in the fixture-controlled response.",
+      rewrite: "You can see the concrete situation and the available choice clearly."
+    }]
+  };
+}
 
 async function main() {
   assert.strictEqual(surfaceForContentKey("sky-article-template/jupiter/ingress"), LONGFORM_SURFACE);
@@ -55,8 +73,8 @@ async function main() {
       samples: 5,
       judgeFn: async (prompt) => {
         calls += 1;
-        assert.ok(prompt.includes(furnitureFor("jupiter")), "router must pass planet into the furniture-aware judge");
-        return JSON.stringify({ score: 3, verdict: "in-voice", failedChecks: [], weakest: [], rewrites: [], why: "calibration stub" });
+        assert.ok(prompt.includes(furnitureFor("jupiter")), "router must pass planet into the structure-aware judge");
+        return JSON.stringify(verdict(3, { why: "calibration stub" }));
       }
     }
   );
@@ -82,24 +100,57 @@ async function main() {
     () => runEditorialVoiceQa({ surface: PLACEMENT_SURFACE, articleText: cleanArticle }),
     /never accepts long-form text/
   );
-  console.log("OK  lint runs first, planet furniture is passed, and neither judge crosses surfaces");
+  console.log("OK  lint runs first, planet-specific structure is passed, and neither judge crosses surfaces");
 
-  assert.strictEqual(spec.checks.length, 10, "long-form contract must retain all ten checks");
+  assert.strictEqual(spec.checks.length, 11, "long-form contract must retain all eleven checks");
   const prompt = buildJudgePrompt(cleanArticle, { planet: "jupiter" });
-  for (const check of spec.checks.filter((entry) => entry.id !== "lint-clean")) {
+  const semanticChecks = spec.checks.filter((entry) => entry.id !== "lint-clean" && entry.judge !== false);
+  assert.strictEqual(semanticChecks.length, 9, "date mechanics belong to engine QA, leaving nine semantic voice checks");
+  for (const check of semanticChecks) {
     assert.ok(prompt.includes(`[${check.id}]`), `judge prompt must include ${check.id}`);
   }
-  assert.ok(!prompt.includes("[lint-clean]"), "the tenth check is mechanical and must stay in the pre-judge linter");
+  assert.ok(!prompt.includes("[lint-clean]"), "the eleventh check is mechanical and must stay in the pre-judge linter");
+  assert.ok(!prompt.includes("[dates-in-prose]"), "ephemeris and user-local date QA must stay out of voice scoring");
+  assert.strictEqual(spec.checks.find((entry) => entry.id === "dates-in-prose").qaLayer, "engine");
   assert.ok(prompt.includes(furnitureFor("jupiter")));
-  console.log("OK  ten-check contract = mechanical lint-clean + nine semantic prompt checks; Jupiter furniture present");
+  assert.ok(prompt.includes("Interpretation rules (mandatory)"));
+  assert.ok(prompt.includes("Judge family resemblance, not a quota"));
+  assert.ok(prompt.includes("Never assign 1 solely for a licensed transit-first opening"));
+  assert.ok(prompt.includes(spec.scores["1"]));
+  assert.ok(prompt.includes("OWNER-VERBATIM PROVENANCE: No exemption is asserted."));
+  const ownerPrompt = buildJudgePrompt(cleanArticle, { planet: "jupiter", ownerVerbatim: true });
+  assert.ok(ownerPrompt.includes("Apply the spec's exemption only to recognizability"));
+  assert.ok(ownerPrompt.includes("judge every other voice check normally"));
+  assert.ok(ownerPrompt.includes("Verdict consistency is mandatory"));
+  assert.strictEqual(ARTICLE_PROMPT_VERSION, "sky-article-longform-v6:prompt-v1");
+  assert.ok(ownerPrompt.includes("direct-lived-register check is not a test"));
+  assert.ok(ownerPrompt.includes("Do not impose the generated fast-mover template's slot order"));
+  assert.ok(ownerPrompt.includes("Command runs are a licensed source of family resemblance"));
+  assert.ok(ownerPrompt.includes("A date-led opening passes empathy-first"));
+  assert.ok(ownerPrompt.includes("The last sign does not need a separate blessing"));
+  assert.ok(ownerPrompt.includes("judge the set holistically rather than forcing every block"));
+  assert.ok(rubricDocument.includes("candidate `sky-article-longform-v6`"));
+  assert.ok(rubricDocument.includes("Their absence is never a failure"));
+  assert.ok(!rubricDocument.includes("**Spoken, not written.**"));
+  assert.ok(!rubricDocument.includes("Expected in Mars"));
+  assert.ok(ownerPrompt.includes("provide exactly one evidence object"));
+  assert.ok(ownerPrompt.includes("sentence must be copied verbatim from the article"));
+  assert.strictEqual(parseVerdict(JSON.stringify(verdict(2, { checkId: "block-shape" })), cleanArticle).contractViolation, false);
+  assert.strictEqual(parseVerdict(JSON.stringify(verdict(2, { checkId: "block-shape", sentence: "This sentence is absent." })), cleanArticle).contractViolation, true);
+  assert.strictEqual(parseVerdict(JSON.stringify({ ...verdict(2, { checkId: "block-shape" }), evidence: [] }), cleanArticle).contractViolation, true);
+  assert.strictEqual(parseVerdict(JSON.stringify(verdict(3)), cleanArticle).contractViolation, false);
+  assert.strictEqual(parseVerdict(JSON.stringify(verdict(1, { checkId: "not-a-check" })), cleanArticle).contractViolation, true);
+  console.log("OK  eleven-check contract = nine semantic checks + lint and engine-date QA; Jupiter structure present");
 
   let calibrationCalls = 0;
   const calibration = await runArticleJudgeCalibration({
-    judgeFn: async (_prompt, { cohort }) => {
+    judgeFn: async (_prompt, { cohort, fixture }) => {
       calibrationCalls += 1;
+      if (cohort === "approved") assert.ok(_prompt.includes("OWNER-VERBATIM PROVENANCE: This is owner-published text."));
+      else assert.ok(_prompt.includes("OWNER-VERBATIM PROVENANCE: No exemption is asserted."));
       return JSON.stringify(cohort === "approved"
-        ? { score: 3, verdict: "in-voice", failedChecks: [], weakest: [], rewrites: [], why: "owner calibration fixture" }
-        : { score: 1, verdict: "off-voice", failedChecks: ["spoken-register"], weakest: [], rewrites: [], why: "intentionally weak control" });
+        ? verdict(3, { why: "owner calibration fixture" })
+        : verdict(1, { sentence: fixture.text.split("\n").find(Boolean), why: "intentionally weak control" }));
     }
   });
   assert.strictEqual(calibration.approved.length, 4);
@@ -108,15 +159,31 @@ async function main() {
   assert.ok(calibration.approved.every(({ result }) => result.samples === 5 && result.score === 3));
   assert.ok(calibration.weak.every(({ result }) => result.samples === 5 && result.score === 1));
   assert.strictEqual(calibration.status, "passed");
+  assert.strictEqual(calibration.sampleCount, 5);
   assert.ok(calibration.separation >= 1);
   console.log("OK  approved examples separate from weak controls under median-of-5 calibration");
 
+  let smokeCalls = 0;
+  const smoke = await runArticleJudgeCalibration({
+    samples: 1,
+    judgeFn: async (_prompt, { cohort, fixture }) => {
+      smokeCalls += 1;
+      return JSON.stringify(cohort === "approved"
+        ? verdict(3, { why: "smoke owner" })
+        : verdict(1, { sentence: fixture.text.split("\n").find(Boolean), why: "smoke weak" }));
+    }
+  });
+  assert.strictEqual(smokeCalls, 6);
+  assert.strictEqual(smoke.sampleCount, 1);
+  assert.strictEqual(smoke.status, "passed");
+  console.log("OK  one-sample smoke uses exactly six verdicts and remains distinguishable from calibration");
+
   let splitCall = 0;
   const disagreement = await runArticleJudgeCalibration({
-    judgeFn: async (_prompt, { cohort }) => {
+    judgeFn: async (_prompt, { cohort, fixture }) => {
       splitCall += 1;
       const score = cohort === "weak" ? 1 : (splitCall % 5 === 0 ? 2 : 3);
-      return JSON.stringify({ score, verdict: score === 3 ? "in-voice" : score === 2 ? "borderline" : "off-voice", why: "disagreement control" });
+      return JSON.stringify(verdict(score, { sentence: fixture.text.split("\n").find(Boolean), why: "disagreement control" }));
     }
   });
   assert.strictEqual(disagreement.status, "needs-human-review");

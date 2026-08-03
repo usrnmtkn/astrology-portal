@@ -50,6 +50,7 @@ export type SkyAspectCardResult = {
   provider?: string;
   model?: string;
   temperature?: number | null;
+  reasoningEffort?: "none" | "low" | "medium" | "high" | "xhigh" | "max" | null;
   repair?: {
     fired: boolean;
     result: "not-needed" | "unchanged" | "2→3" | "2→2" | "2→1" | "lint-failed" | "error";
@@ -87,6 +88,7 @@ export type SkyAspectCardResult = {
       registryOverride: boolean;
       evaluationSetVersion: string | null;
       policyVersion: string | null;
+      reasoningEffort: "none" | "low" | "medium" | "high" | "xhigh" | "max" | null;
       temperature: number | null;
       samples: number;
       scores: number[];
@@ -105,6 +107,7 @@ export type SkyAspectCardResult = {
     signB?: string;
     pairKey?: string;
     pairSource?: string;
+    exactAspectSource?: string | null;
   };
 };
 
@@ -144,6 +147,7 @@ export function normalizeCardArgs(
   signB: string;
   pairKey: string;
   pairSource: string;
+  exactAspectSource: string | null;
   reversed: boolean;
 };
 

@@ -684,7 +684,8 @@ async function savePlacementCard(
           skyPlacementLintRetryAvoidTerms: result.lintRetryAvoidTerms ?? [],
           generationAttempts: routed.attempts,
           judgePasses: routed.judgePasses,
-          temperature: result.temperature ?? null
+          temperature: result.temperature ?? null,
+          reasoningEffort: result.reasoningEffort ?? null
         },
         judge_score: result.judge?.score ?? null,
         judge_verdict: clean ? result.judge?.verdict ?? "" : "lint-failed",
@@ -882,6 +883,7 @@ async function savePlacementTopper(
           generationAttempts: routed.attempts,
           judgePasses: routed.judgePasses,
           temperature: result.temperature ?? null,
+          reasoningEffort: result.reasoningEffort ?? null,
           judgedCombination: "topper-plus-unchanged-base"
         },
         judge_score: result.judge?.score ?? null,

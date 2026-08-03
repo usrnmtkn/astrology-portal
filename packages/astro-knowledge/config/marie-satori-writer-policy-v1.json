@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "policyId": "marie-satori-writer-policy-v1",
+  "lane": {
+    "laneId": "writer:sky-placement",
+    "role": "writer",
+    "surface": "sky-placement",
+    "runtimeRegistered": false,
+    "modelRegistryChanged": false,
+    "modelSelection": "Use the strongest editorial reasoning available in the current Codex session; model promotion requires a separate writer evaluation and explicit owner authorization."
+  },
+  "judge": {
+    "laneId": "judge:sky-placement",
+    "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+    "role": "final acceptability gate only",
+    "mayGenerateReplacementCopy": false
+  },
+  "order": [
+    "validate_facts_and_surface",
+    "compile_ranked_evidence_packet",
+    "identify_central_lived_pressure",
+    "build_one_observable_sequence",
+    "draft_privately",
+    "sentence_by_sentence_authorship_rewrite",
+    "deterministic_lint",
+    "authorship_audit",
+    "rewrite_failed_sentences",
+    "terra_acceptability_judge",
+    "return_candidate_evidence_and_change_log"
+  ],
+  "governance": {
+    "ownerApprovalMayBeInferred": false,
+    "writerMayPromoteContent": false,
+    "writerMayChangeModelRegistry": false,
+    "writerMayUseCalibrationOnlyEvidenceForGeneration": false,
+    "writerMayUseThirdPartyPhrasingAsVoiceEvidence": false,
+    "billedCallsRequireExplicitAuthorization": true
+  }
+}

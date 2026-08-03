@@ -6,9 +6,6 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Download,
-  Eye,
-  EyeOff,
   LogOut,
   MapPin,
   Moon,
@@ -18,37 +15,35 @@ import {
   Sparkles,
   Star,
   Sun,
-  Trash2,
   User,
   X,
 } from "lucide-react";
-import { Fragment, isValidElement, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode, Ref } from "react";
+import { flushSync } from "react-dom";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
-import { FriendsPageShell } from "./components/FriendsPageShell";
 import { ModalPortal } from "./components/ModalPortal";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
-import { SegmentedControl } from "./components/SegmentedControl";
-import { AppearanceToggle, HouseSignLabelToggle, SwitchControl } from "./components/SettingsControls";
-import { AspectGiftLessonGroup } from "./components/charts/AspectGiftLessonGroup";
-import { NatalChartDataTable, type NatalChartDataTableRow } from "./components/charts/NatalChartDataTable";
+import { CitySearchField, CitySuggestions } from "./components/CitySearchField";
 import {
   AspectGlyphs,
   DurationLabelText,
-  FriendPlacementTable,
   InlineGlyphIcon,
   PlanetPlacementRow,
   PlacementGlyphIcon,
   PlacementTableRow,
-  SynastryPlacementsComparison,
   dignitiesFor,
   friendPlacementDescription,
-  placementPlanetOrder,
   placementDignity,
   socialPlacementRows
 } from "./components/charts/PlacementRows";
 import type { PlacementHouseInsight, SocialPlacementRow } from "./components/charts/PlacementRows";
+import {
+  completeNatalChartTableRows,
+  natalChartTableRowFromPosition,
+  natalChartTableRowFromSocial
+} from "./components/charts/natalChartTableRows";
 import {
   aspectGlyph,
   aspectIconFiles,
@@ -60,13 +55,14 @@ import {
   zodiacAssetHref,
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
-import { SkyWheel, SynastryWheel, type InterChartAspectLine } from "./components/charts/Wheels";
+import { SkyWheel, type InterChartAspectLine } from "./components/charts/Wheels";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
 } from "./content/fallbackArchitectureV3Runtime";
 import {
   installFallbackArchitectureV3Bundle,
+  loadDeferredFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
@@ -87,16 +83,55 @@ import {
   isLunarNodePoint,
   lunarNodeTransitRangeLabel
 } from "./services/astrologyDisplay";
-import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
-import type { RelationshipComparisonOption } from "./features/friends/RelationshipComparePicker";
-import { CompatibilityTab, type CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
-import { BlockedAccountsSettings } from "./features/settings/BlockedAccountsSettings";
-import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
+import { twentyFourHourTimeToDisplay } from "./services/chartTime";
 import {
-  NatalAspectPatternActivationsSection,
-  NatalAspectPatternsSection,
-  resolvedNatalAspectPatternSectionLabel
-} from "./features/you/NatalAspectPatternsSection";
+  formatSignupBirthDate,
+  formatSignupBirthTime,
+  signupProviderLabel as providerLabel,
+  splitSignupBirthDate,
+  splitSignupBirthTime,
+  type AuthMode,
+  type SignupDateParts,
+  type SignupForm,
+  type SignupProvider,
+  type SignupTimeParts
+} from "./features/auth/signupModel";
+import type { RelationshipChartFullscreenMode } from "./features/friends/RelationshipChartFullscreen";
+import type { FriendNatalChartViewMode } from "./features/friends/FriendNatalViewControl";
+import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/friends/CompatibilityTab";
+import type { FriendCompositeAspectGroup } from "./features/friends/FriendCompositeTab";
+import type { FriendSynastryAspectGroup } from "./features/friends/FriendSynastryTab";
+import type { FriendNatalAspectGroup as FriendNatalViewAspectGroup, FriendNatalEmptyHouseRow } from "./features/friends/FriendNatalTab";
+import type { FriendBondTransitView, FriendHouseTransitView, FriendPersonalTransitGroup } from "./features/friends/FriendTransitsTab";
+import {
+  friendDetailRoutePath,
+  friendsHashParts,
+  friendsRouteStateFromUrl,
+  initialFriendsTab,
+  isFriendsUrl,
+  parseFriendProfileTab,
+  storeFriendsTab,
+  updateFriendProfileUrl,
+  updateFriendsTabUrl,
+  type FriendProfileTab,
+  type FriendsMainView,
+  type FriendsTab
+} from "./features/friends/friendsRouting";
+import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
+import {
+  apiSubjectFromManualChart,
+  buildFriendChartListItems,
+  buildRelationshipComparisonOptions,
+  groupFriendNatalAspects,
+  isSocialBigThreeRow,
+  manualChartBigThree,
+  planetPositionFromSocialRow
+} from "./features/friends/friendChartModel";
+import { useManualChartsController } from "./features/friends/useManualChartsController";
+import { useRelationshipCompare } from "./features/friends/useRelationshipCompare";
+import { resolvedNatalAspectPatternSectionLabel } from "./features/you/natalAspectPatternLabels";
+import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
+import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent } from "./services/ephemeris";
 import {
   calendarEventGeneratedContentKeys,
@@ -116,6 +151,7 @@ import {
   SkyPlacementListItem,
   SkyTodayView
 } from "./features/sky/SkyToday";
+import type { AspectToneBucket, SkyDetail, SkyDetailKeyDate, SkyDetailRelatedAspectRow, SkyDetailSection, SkyHistoricalLookback } from "./features/sky/SkyDetailArticle";
 import {
   aspectTone,
   detailGlyphForPlacement,
@@ -128,31 +164,14 @@ import {
   wholeDegreeOrb
 } from "./features/sky/skyHelpers";
 import {
-  deleteOwnAccount,
   getAuthAccount,
   isAuthConfigured,
-  isPhoneAuthEnabled,
   loadPersistedProfile,
   onAuthAccountChange,
-  resendPhoneNumberChangeCode,
-  signInWithEmail,
-  signInWithProvider,
-  sendPhoneSignInCode,
   signOutAuth,
-  signUpWithEmail,
-  startPhoneNumberChange,
-  upsertPersistedProfile,
-  verifyPhoneNumberChange,
-  verifyPhoneSignInCode
+  upsertPersistedProfile
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
-import {
-  formatUsPhoneInput,
-  isValidUsPhoneNumber,
-  maskPhoneNumber,
-  phoneNumberLastFour,
-  supportedPhoneCountry
-} from "./services/phoneAuth";
 import {
   generatedContentSections,
   generatedContentParagraphs,
@@ -169,6 +188,24 @@ import {
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
+  angularDistance,
+  calculatedSynastryContacts,
+  compatibilityHighlightContact,
+  comparisonPointRole,
+  natalElementBalance,
+  normalizedAngle,
+  relationshipCompositeSky,
+  samePlanetExactAspect,
+  synastryWheelAspectLines,
+  transitAspectDefinitions,
+  wholeSignHouseForSign,
+  zodiacLongitude,
+  zodiacSignForLongitude,
+  zodiacSignGlyphs,
+  zodiacSigns,
+  type CalculatedSynastryContact
+} from "./services/chartMath";
+import {
   readCachedSkySnapshot,
   skySnapshotCacheKey,
   writeCachedSkySnapshot
@@ -176,12 +213,13 @@ import {
 import {
   aspectGiftOrLesson,
   groupAspectsByGiftLesson,
+  type AspectGiftLessonKey,
   type AspectGiftLessonGroup as GiftLessonGroup
 } from "./services/aspectGiftLesson";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
-import { isDisplayableNatalAspect } from "./services/natalAspectDisplay";
+import { uniqueDisplayableNatalAspects as uniqueNatalAspectRows } from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
-import type { TemplateSlotValues } from "./services/templateInterpolation";
+import { interpolateTemplateString, type TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
   compositeHouseContentKey,
@@ -199,29 +237,19 @@ import {
   transitHouseContentKey
 } from "./services/generatedContentKeys";
 import {
-  createManualChart,
-  deleteManualChart,
-  listCachedManualCharts,
   listLocalManualChartUserIds,
-  listManualCharts,
-  migrateLocalManualChartsToRemote,
-  updateManualChart
+  migrateLocalManualChartsToRemote
 } from "./services/manualCharts";
-import type { ManualChart, ManualChartInput, ManualChartType } from "./services/manualCharts";
+import type { ManualChart } from "./services/manualCharts";
 import {
   captureSocialInvitationFromUrl,
   clearPendingSocialInvitation,
   claimPendingSocialInvitation,
   declinePendingSocialInvitation,
-  exportSocialAccountBundle,
   isSocialFriendChart,
   listSocialFriendRequests,
   loadOwnSocialProfile,
-  normalizeSocialHandle,
   previewPendingSocialInvitation,
-  saveSocialHandle,
-  saveSocialPrivacy,
-  socialHandleIsValid,
   socialFriendToChart,
   subscribeToSocialChanges,
   syncOwnSocialProfile
@@ -235,14 +263,13 @@ import "./hooks/useChartSyncFlush";
 import {
   fetchNatalAspectPatternsWithCopy,
   natalAspectPatternActivationEnabled,
-  natalAspectPatternPillSummary,
   natalAspectPatternReaderEnabled,
   natalAspectPatternReaderItems,
   natalAspectPatternReaderStatus,
   skyWithNatalAspectPatternCopy
 } from "./services/natalAspectPatterns";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "./services/natalAspectPatterns";
-import { relationshipContextFromRole, relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship, relationshipContextGroup } from "./services/relationshipContext";
+import { relationshipContextLabel, normalizeRelationshipContextKey, isExplicitRomanticRelationship, relationshipContextGroup } from "./services/relationshipContext";
 import {
   defaultPronounChoice,
   genericPersonReferenceSlots,
@@ -258,17 +285,18 @@ import {
   contactsForBondTransitGroup,
   groupBondTransitActivations
 } from "./services/bondTransitGrouping";
-import { hasMapboxToken, reverseGeocodeCity, searchCities } from "./services/mapbox";
+import { hasMapboxToken, reverseGeocodeCity, searchCities, type CitySuggestion } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
 import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
 import {
-  compareRelationship,
-  getPersonalTiming,
-  isTldrAstroApiConfigured,
-  resolveTimezone,
-  type RelationshipCompareResponse,
-  type TldrAstroChartSettings,
-  type TldrAstroSubject,
+  apiSettingsFromChartSettings,
+  apiSubjectFromUserChart,
+  natalBigThreeFromSky,
+  validChartBirthDate,
+  validChartBirthTime,
+  zodiacFromBirthDate
+} from "./services/chartProfile";
+import {
   type PersonalTimingResponse
 } from "./services/tldrastroApi";
 import {
@@ -278,12 +306,22 @@ import {
 } from "./services/userGeneratedContent";
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 import { dedupeArticleSectionHeadings } from "./utils/articleHeadings";
+import { normalizedArticleAspectToneBucket } from "./utils/articleAspects";
+import {
+  cleanGeneratedSectionBody,
+  cleanGeneratedSectionHeading,
+  comparableText,
+  escapeRegExpLiteral,
+  isLegacySkyArticleScaffoldHeading,
+  stripLegacySkyArticleScaffoldPrefix,
+  stripTldrPrefix
+} from "./utils/articleText";
+import { compactCityLabel } from "./utils/locationLabels";
 
 type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
-type SignupProvider = "email" | "google" | "phone";
 
 const defaultLocation: LocationInput = {
   label: "New York City, NY",
@@ -326,7 +364,7 @@ type LifeAreaFocus =
   | "growth"
   | "spirituality";
 
-type UserProfile = {
+export type UserProfile = {
   id: string;
   name: string;
   email: string;
@@ -342,16 +380,6 @@ type UserProfile = {
   charts: UserChart[];
 };
 
-type SignupForm = {
-  fullName: string;
-  email: string;
-  password: string;
-  birthDate: string;
-  birthTime: string;
-  unknownBirthTime: boolean;
-  birthCity: string;
-  birthLocation: LocationInput | null;
-};
 
 type TransitForm = {
   name: string;
@@ -367,18 +395,6 @@ type TransitForm = {
   currentLocation: string;
   currentLocationData: LocationInput | null;
   chartDate: string;
-};
-
-type ManualChartForm = {
-  chartType: ManualChartType;
-  displayName: string;
-  pronouns: PronounChoice;
-  relationshipType: string;
-  birthDate: string;
-  birthTime: string;
-  birthTimeUnknown: boolean;
-  birthPlace: string;
-  birthLocation: LocationInput | null;
 };
 
 type ChartOwnerContext = {
@@ -408,15 +424,6 @@ type TransitItem = {
   isSlowGeneralWeather?: boolean;
 };
 
-type PersonalTimingStatus = "idle" | "loading" | "ready" | "error";
-type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
-
-type FriendProfileTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
-type NatalChartViewMode = "circle" | "table";
-type FriendsMainView = "circle" | "charts" | "requests" | "profile";
-type FriendsTab = Exclude<FriendsMainView, "profile">;
-type SettingsSubpage = "root" | "blocked-accounts";
-
 type FriendTimingContext = {
   age: number | null;
   profectedHouse: number | null;
@@ -426,21 +433,7 @@ type FriendTimingContext = {
   activeNatalPlanetsInProfectedSign?: string[];
 };
 
-type ComparisonPoint = {
-  name: string;
-  glyph: string;
-  longitude: number;
-  role: string;
-};
-
-type SynastryContact = {
-  id: string;
-  friendPoint: ComparisonPoint;
-  yourPoint: ComparisonPoint;
-  aspect: string;
-  orb: number;
-  score: number;
-  tone: string;
+type SynastryContact = CalculatedSynastryContact & {
   summary: string;
   contentKeys: string[];
 };
@@ -452,9 +445,7 @@ type RenderedSynastryContact = {
   templateKey?: string;
 };
 
-type FriendNatalAspectGroup = GiftLessonGroup<SkySnapshot["aspects"][number]>;
-
-type SurfaceProseLayer = "authored" | "fallback";
+type SurfaceProseLayer = "authored" | "generated" | "fallback";
 type NormalizedSurfaceStatus = "servable" | "partial" | "not-servable";
 
 type NormalizedSurfaceSection<Slot extends string = string> = {
@@ -598,74 +589,6 @@ type HouseOverlay = {
   contentKeys: string[];
 };
 
-type CitySuggestion = Awaited<ReturnType<typeof searchCities>>[number];
-type SignupTimeParts = {
-  hour: string;
-  minute: string;
-  meridiem: "AM" | "PM";
-};
-
-type SignupDateParts = {
-  month: string;
-  day: string;
-  year: string;
-};
-
-type AuthMode = "create" | "login";
-type AspectToneBucket = "gifts" | "lessons";
-type SkyDetailRelatedAspectRow = {
-  key: string;
-  aspectType?: string;
-  group?: AspectToneBucket;
-  node: ReactNode;
-};
-type SkyDetailSection = {
-  heading: string;
-  body: ReactNode;
-  sourceTag?: string;
-  sourceKeys?: string[];
-  role?: "main" | "aspect";
-  aspectType?: string;
-  group?: AspectToneBucket;
-};
-type SkyDetailKeyDate = {
-  date: string;
-  label: string;
-};
-type SkyDetail = {
-  routePath?: string;
-  glyph: string;
-  kicker: string;
-  title: string;
-  meta: string;
-  duration?: string;
-  tagline?: string;
-  moves?: string[];
-  movesPresentation?: "list" | "plain";
-  keyDates?: SkyDetailKeyDate[];
-  closingCharge?: string | null;
-  risingHoroscopes?: { risingSign: string; body: string }[];
-  subtitle?: string;
-  tldr?: string;
-  suppressTldr?: boolean;
-  lensHint?: ReactNode;
-  compactHeader?: boolean;
-  plainBody?: boolean;
-  bodyBeforeSections?: boolean;
-  retrograde?: boolean;
-  body: ReactNode[];
-  sections?: SkyDetailSection[];
-  relatedAspects?: {
-    heading: string;
-    rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
-  };
-  historicalLookback?: SkyHistoricalLookback | null;
-  astrologyDrilldown?: GeneratedContentDrilldown | null;
-  seriesLine?: string | null;
-  mechanicsCaption?: string | null;
-  content?: ContentBundle;
-};
-
 function isSkyDetail(value: unknown): value is SkyDetail {
   return Boolean(value && typeof value === "object" && "title" in value && "body" in value);
 }
@@ -681,18 +604,11 @@ function skyDetailHasReaderFacingMainBody(detail: SkyDetail) {
 }
 
 type GeneratedContentMap = Map<string, LiveGeneratedContent>;
-type SkyAspectContentStatus = "idle" | "loading" | "ready";
 type CalendarContentStatus = "idle" | "loading" | "ready";
 type CalendarContentRequest = { cacheKey: string; contentKeys: string[] };
 type CalendarContentCacheEntry = {
   content: GeneratedContentMap;
   requestedKeys: Set<string>;
-};
-
-type SkyHistoricalLookback = {
-  heading: string;
-  dateLabel: string;
-  paragraphs: string[];
 };
 
 type YouTransitArticle = {
@@ -741,7 +657,7 @@ type LazyContentRegistry = Pick<
   | "placementContentId"
   | "skyPlacementContentId"
   | "natalPlacementContentId"
->;
+> & Partial<Pick<typeof import("./content/skyRegistry"), "approvedExactSkyAspectCopy">>;
 
 type ContentFallback = {
   bundle: ContentBundle;
@@ -817,31 +733,6 @@ function loadContentRegistry(domain: ContentDomain) {
 
 function baseAspectContentId(planetA: string, aspect: string, planetB: string) {
   return `${normalizeContentIdPart(planetA)}-${normalizeContentIdPart(aspect)}-${normalizeContentIdPart(planetB)}`;
-}
-
-function canonicalAspectDisplayKey(aspect: SkySnapshot["aspects"][number]) {
-  const points = [normalizeContentIdPart(aspect.from), normalizeContentIdPart(aspect.to)].sort();
-
-  return `${points[0]}-${normalizeContentIdPart(aspect.type)}-${points[1]}`;
-}
-
-function uniqueNatalAspectRows(aspects: SkySnapshot["aspects"]) {
-  const seen = new Set<string>();
-
-  return aspects.filter((aspect) => {
-    if (!isDisplayableNatalAspect(aspect)) {
-      return false;
-    }
-
-    const key = canonicalAspectDisplayKey(aspect);
-
-    if (seen.has(key)) {
-      return false;
-    }
-
-    seen.add(key);
-    return true;
-  });
 }
 
 function basePlacementContentId(planet: string, sign: string) {
@@ -1822,42 +1713,6 @@ function transitCardPreview(text: string) {
     : preview;
 }
 
-function stripTldrPrefix(value: string) {
-  return value
-    .replace(/^(?:\*\*)?(?:TLDR|TDLR)(?:\*\*)?\s*:\s*/i, "")
-    .trim();
-}
-
-function cleanGeneratedSectionHeading(heading: string) {
-  const cleaned = heading.replace(/^\d{1,2}\s*[.\-·:]\s*/u, "").trim();
-
-  return isLegacySkyArticleScaffoldHeading(cleaned) ? "" : cleaned;
-}
-
-function cleanGeneratedSectionBody(body: string) {
-  return stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(body));
-}
-
-function inferredSectionQaSourceTag(section: { body?: ReactNode; sourceTag?: string }) {
-  const sourceTag = typeof section.sourceTag === "string" ? section.sourceTag.trim() : "";
-
-  if (sourceTag) {
-    return sourceTag;
-  }
-
-  if (typeof section.body !== "string") {
-    return "";
-  }
-
-  const trimmedBody = section.body.trim();
-
-  if (/^\[(?:AUTHORED|FALLBACK)\s*·/u.test(trimmedBody)) {
-    return "";
-  }
-
-  return "";
-}
-
 function normalizedArticleCopy(value: ReactNode) {
   return typeof value === "string"
     ? stripTldrPrefix(value).replace(/\s+/g, " ").trim().toLowerCase()
@@ -2061,40 +1916,10 @@ const houseSignLabelStyleStorageKey = "tldrastro:houseSignLabelStyle";
 const journalPromptsStorageKey = "tldrastro:journalPrompts";
 const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
-const friendsTabStorageKey = "tldrastro:friendsTab";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const DEFAULT_SUNRISE_ORB_DEGREES = 0;
 const synodicMonthDays = 29.530588;
 const lunarMeanDailyMotion = 13.176358;
-const zodiacSigns = [
-  "Aries",
-  "Taurus",
-  "Gemini",
-  "Cancer",
-  "Leo",
-  "Virgo",
-  "Libra",
-  "Scorpio",
-  "Sagittarius",
-  "Capricorn",
-  "Aquarius",
-  "Pisces"
-];
-const zodiacSignGlyphs: Record<string, string> = {
-  Aries: "♈",
-  Taurus: "♉",
-  Gemini: "♊",
-  Cancer: "♋",
-  Leo: "♌",
-  Virgo: "♍",
-  Libra: "♎",
-  Scorpio: "♏",
-  Sagittarius: "♐",
-  Capricorn: "♑",
-  Aquarius: "♒",
-  Pisces: "♓"
-};
-
 const traditionalSignRulers: Record<string, string> = Object.fromEntries(
   zodiacSigns.map((sign) => [sign, fallbackV3SignRuler(sign)])
 );
@@ -2221,81 +2046,11 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
 };
 const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings"];
-const friendsTabs: FriendsTab[] = ["circle", "charts", "requests"];
-const settingsRouteChangeEvent = "tldr:settings-route-change";
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);
 }
 
-function parseFriendsTab(value: string | null): FriendsTab {
-  return value === "charts" || value === "requests" || value === "circle" ? value : "circle";
-}
-
-function parseFriendProfileTab(value: string | null): FriendProfileTab {
-  return value === "compatibility" || value === "transits" || value === "synastry" || value === "composite" || value === "natal" ? value : "compatibility";
-}
-
-function friendsHashParts(hash: string) {
-  const cleanHash = hash.replace(/^#\/?/, "");
-  const [path = "", query = ""] = cleanHash.split("?");
-
-  return { path, params: new URLSearchParams(query) };
-}
-
-function settingsSubpageFromUrl(): SettingsSubpage {
-  try {
-    const url = new URL(window.location.href);
-    const { path, params } = friendsHashParts(url.hash);
-
-    return path === "settings" && params.get("view") === "blocked-accounts"
-      ? "blocked-accounts"
-      : "root";
-  } catch {
-    return "root";
-  }
-}
-
-function updateSettingsSubpageUrl(
-  subpage: SettingsSubpage,
-  mode: "push" | "replace" = "push"
-) {
-  try {
-    const url = new URL(window.location.href);
-
-    url.hash = subpage === "blocked-accounts"
-      ? "settings?view=blocked-accounts"
-      : "settings";
-
-    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
-    window.dispatchEvent(new Event(settingsRouteChangeEvent));
-  } catch {
-    // Nested Settings routing is an enhancement; local navigation still works.
-  }
-}
-
-function friendsRouteStateFromUrl() {
-  try {
-    const url = new URL(window.location.href);
-    const { path, params } = friendsHashParts(url.hash);
-    const routeParams = url.pathname === "/friends" ? url.searchParams : path === "friends" ? params : null;
-
-    if (!routeParams) {
-      return null;
-    }
-
-    const chartId = routeParams.get("chart");
-
-    return {
-      tab: parseFriendsTab(routeParams.get("tab")),
-      chartId,
-      view: parseFriendProfileTab(routeParams.get("view")),
-      detail: routeParams.get("detail")
-    };
-  } catch {
-    return null;
-  }
-}
 
 function portalModeFromHashPath(path: string): PortalMode | null {
   switch (path) {
@@ -2322,34 +2077,6 @@ function portalModeFromHashPath(path: string): PortalMode | null {
       }
 
       return null;
-  }
-}
-
-function friendsTabFromUrl(): FriendsTab {
-  try {
-    const url = new URL(window.location.href);
-    const searchTab = url.searchParams.get("tab");
-
-    if (friendsTabs.includes(searchTab as FriendsTab)) {
-      return parseFriendsTab(searchTab);
-    }
-
-    const { path, params } = friendsHashParts(url.hash);
-
-    return path === "friends" ? parseFriendsTab(params.get("tab")) : "circle";
-  } catch {
-    return "circle";
-  }
-}
-
-function isFriendsUrl() {
-  try {
-    const url = new URL(window.location.href);
-    const { path } = friendsHashParts(url.hash);
-
-    return url.pathname === "/friends" || path === "friends";
-  } catch {
-    return false;
   }
 }
 
@@ -2515,94 +2242,9 @@ function updateSkyDetailRouteUrl(routePath: string, mode: "push" | "replace" = "
   }
 }
 
-function updateFriendsTabUrl(tab: FriendsTab, mode: "push" | "replace" = "push") {
-  try {
-    const url = new URL(window.location.href);
-
-    if (url.pathname === "/friends") {
-      url.searchParams.set("tab", tab);
-      url.searchParams.delete("chart");
-      url.searchParams.delete("view");
-      url.searchParams.delete("detail");
-    } else {
-      const { path, params } = friendsHashParts(url.hash);
-      const nextParams = path === "friends" ? params : new URLSearchParams();
-      nextParams.set("tab", tab);
-      nextParams.delete("chart");
-      nextParams.delete("view");
-      nextParams.delete("detail");
-      url.hash = `friends?${nextParams.toString()}`;
-    }
-
-    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
-  } catch {
-    // URL state is an enhancement; keep the tab usable if history is unavailable.
-  }
-}
-
-function updateFriendProfileUrl(chartId: string, view: FriendProfileTab = "natal", mode: "push" | "replace" = "push", detail?: string | null) {
-  try {
-    const url = new URL(window.location.href);
-
-    if (url.pathname === "/friends") {
-      url.searchParams.set("tab", "charts");
-      url.searchParams.set("chart", chartId);
-      url.searchParams.set("view", view);
-      if (detail) {
-        url.searchParams.set("detail", detail);
-      } else {
-        url.searchParams.delete("detail");
-      }
-    } else {
-      const nextParams = new URLSearchParams();
-      nextParams.set("tab", "charts");
-      nextParams.set("chart", chartId);
-      nextParams.set("view", view);
-      if (detail) {
-        nextParams.set("detail", detail);
-      }
-      url.hash = `friends?${nextParams.toString()}`;
-    }
-
-    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
-  } catch {
-    // URL state is an enhancement; keep the friend profile usable if history is unavailable.
-  }
-}
-
-function friendDetailRoutePath(chartId: string, view: FriendProfileTab, detail: string) {
-  const params = new URLSearchParams();
-  params.set("tab", "charts");
-  params.set("chart", chartId);
-  params.set("view", view);
-  params.set("detail", detail);
-
-  return `friends?${params.toString()}`;
-}
-
 function storePortalMode(mode: PortalMode) {
   try {
     window.localStorage.setItem(portalModeStorageKey, mode);
-  } catch {
-    return;
-  }
-}
-
-function getStoredFriendsTab() {
-  try {
-    return parseFriendsTab(window.localStorage.getItem(friendsTabStorageKey));
-  } catch {
-    return "circle";
-  }
-}
-
-function initialFriendsTab(): FriendsTab {
-  return isFriendsUrl() ? friendsTabFromUrl() : getStoredFriendsTab();
-}
-
-function storeFriendsTab(tab: FriendsTab) {
-  try {
-    window.localStorage.setItem(friendsTabStorageKey, tab);
   } catch {
     return;
   }
@@ -2723,74 +2365,6 @@ const defaultTransitForm: TransitForm = {
   chartDate: new Date().toISOString().slice(0, 10)
 };
 
-const defaultManualChartForm: ManualChartForm = {
-  chartType: "person",
-  displayName: "",
-  pronouns: defaultPronounChoice,
-  relationshipType: "friend",
-  birthDate: "",
-  birthTime: "12:00",
-  birthTimeUnknown: false,
-  birthPlace: "",
-  birthLocation: null
-};
-
-const chartFormCopy: Record<ManualChartType, {
-  title: string;
-  editTitle: string;
-  subtitle: string;
-  editSubtitle: string;
-  nameLabel: string;
-  namePlaceholder: string;
-  dateLabel: string;
-  timeLabel: string;
-  placeLabel: string;
-  placePlaceholder: string;
-  unknownTime: string;
-  submit: string;
-  savingSubmit: string;
-  saveSubmit: string;
-  requiredMessage: string;
-  timeMessage: string;
-}> = {
-  person: {
-    title: "Add chart",
-    editTitle: "Edit chart",
-    subtitle: "Enter birth details to save this chart.",
-    editSubtitle: "Update birth details for this saved chart.",
-    nameLabel: "Name",
-    namePlaceholder: "Their name",
-    dateLabel: "Birth date",
-    timeLabel: "Birth time",
-    placeLabel: "Birth place",
-    placePlaceholder: "City, Country",
-    unknownTime: "I don't know their birth time.",
-    submit: "Add chart",
-    savingSubmit: "Saving...",
-    saveSubmit: "Save chart",
-    requiredMessage: "Add a name, birth date, and birth place.",
-    timeMessage: "Add a birth time, or mark it unknown."
-  },
-  event: {
-    title: "Add event chart",
-    editTitle: "Edit event chart",
-    subtitle: "Enter the event details to save this chart.",
-    editSubtitle: "Update event details for this saved chart.",
-    nameLabel: "Event name",
-    namePlaceholder: "Event name",
-    dateLabel: "Event date",
-    timeLabel: "Event time",
-    placeLabel: "Event place",
-    placePlaceholder: "City, Country",
-    unknownTime: "I don't know the event time.",
-    submit: "Add event chart",
-    savingSubmit: "Saving...",
-    saveSubmit: "Save event chart",
-    requiredMessage: "Add an event name, event date, and event place.",
-    timeMessage: "Add an event time, or mark it unknown."
-  }
-};
-
 const defaultChartSettings: ChartSettings = {
   houseSystem: "Whole Sign",
   zodiac: "Tropical",
@@ -2814,74 +2388,6 @@ function normalizeChartSettings(settings?: Partial<ChartSettings> | null): Chart
     aspects: settings?.aspects === "Tight" ? "Tight" : "Standard",
     houseSignLabelStyle: normalizeHouseSignLabelStyle(settings?.houseSignLabelStyle),
     lifeAreaFocus: Array.from(new Set(lifeAreaFocus))
-  };
-}
-
-function apiSettingsFromChartSettings(settings?: Partial<ChartSettings> | null): TldrAstroChartSettings {
-  const normalized = normalizeChartSettings(settings);
-
-  return {
-    houseSystem: "whole_sign" as const,
-    zodiac: "tropical" as const,
-    aspectProfile: normalized.aspects === "Tight" ? "tight" as const : "standard" as const
-  };
-}
-
-function apiSubjectFromUserChart(
-  profile: UserProfile,
-  chart: UserChart | undefined,
-  settings?: Partial<ChartSettings> | null
-): TldrAstroSubject | null {
-  const birthDate = validChartBirthDate(chart);
-  const birthTime = validChartBirthTime(chart);
-  const birthLocation = chart?.birthLocation?.timeZone
-    ? chart.birthLocation
-    : null;
-
-  if (!birthDate || !birthTime || !birthLocation) {
-    return null;
-  }
-
-  const timeKnown = birthTime !== "Time unknown";
-
-  return {
-    name: profile.name,
-    datetime: {
-      date: birthDate,
-      time: timeKnown ? displayTimeToTwentyFourHour(birthTime) : "12:00",
-      timeKnown,
-      timeZone: birthLocation.timeZone
-    },
-    location: birthLocation,
-    settings: apiSettingsFromChartSettings(settings)
-  };
-}
-
-function apiSubjectFromManualChart(
-  chart: ManualChart | null | undefined,
-  settings?: Partial<ChartSettings> | null
-): TldrAstroSubject | null {
-  if (!chart || !chart.birthDate || !chart.birthLocation) {
-    return null;
-  }
-
-  const birthLocation = chart.birthLocation.timeZone ? chart.birthLocation : null;
-  const timeKnown = !chart.birthTimeUnknown && Boolean(chart.birthTime);
-
-  if (!birthLocation) {
-    return null;
-  }
-
-  return {
-    name: chart.displayName,
-    datetime: {
-      date: chart.birthDate,
-      time: timeKnown ? displayTimeToTwentyFourHour(chart.birthTime) : "12:00",
-      timeKnown,
-      timeZone: birthLocation.timeZone
-    },
-    location: birthLocation,
-    settings: apiSettingsFromChartSettings(settings)
   };
 }
 
@@ -3092,121 +2598,8 @@ function formatBriefPlacementDegree(position?: PlanetPosition) {
   return `${Math.round(position.degree)}°`;
 }
 
-function chartTableHouse(label: string, house?: number | null) {
-  if (label === "Ascendant") {
-    return 1;
-  }
-
-  return typeof house === "number" && house >= 1 && house <= 12 ? house : null;
-}
-
-function formatChartTableDegree(degree?: number | null) {
-  if (typeof degree !== "number" || !Number.isFinite(degree)) {
-    return "";
-  }
-
-  const normalized = ((degree % 30) + 30) % 30;
-  const wholeDegrees = Math.floor(normalized);
-  const minutes = Math.round((normalized - wholeDegrees) * 60);
-
-  if (minutes >= 60) {
-    return `${wholeDegrees + 1}°00'`;
-  }
-
-  return `${wholeDegrees}°${String(minutes).padStart(2, "0")}'`;
-}
-
-function natalChartTableSortValue(row: NatalChartDataTableRow) {
-  const house = row.house ?? 99;
-  const pointOrder: readonly string[] = placementPlanetOrder;
-  const pointIndex = pointOrder.indexOf(row.label);
-
-  return {
-    house,
-    pointIndex: pointIndex >= 0 ? pointIndex : 99,
-    label: row.label
-  };
-}
-
-function sortNatalChartTableRows(rows: NatalChartDataTableRow[]) {
-  return rows.slice().sort((first, second) => {
-    const firstSort = natalChartTableSortValue(first);
-    const secondSort = natalChartTableSortValue(second);
-
-    if (firstSort.house !== secondSort.house) {
-      return firstSort.house - secondSort.house;
-    }
-
-    if (firstSort.pointIndex !== secondSort.pointIndex) {
-      return firstSort.pointIndex - secondSort.pointIndex;
-    }
-
-    return firstSort.label.localeCompare(secondSort.label);
-  });
-}
-
-function natalChartTableRowFromPosition(position: PlanetPosition): NatalChartDataTableRow {
-  return {
-    id: `natal-table-${position.planet}`,
-    degree: formatPlanetDegree(position),
-    glyph: position.glyph,
-    house: chartTableHouse(position.planet, position.house),
-    label: position.planet,
-    retrograde: isDisplayRetrograde(position),
-    sign: position.sign
-  };
-}
-
-function natalChartTableRowFromSocial(row: SocialPlacementRow): NatalChartDataTableRow {
-  return {
-    id: `friend-natal-table-${row.id}`,
-    degree: formatChartTableDegree(row.degree),
-    glyph: row.glyph,
-    house: chartTableHouse(row.label, row.house),
-    label: row.label,
-    retrograde: row.retrograde,
-    sign: row.sign
-  };
-}
-
-function natalChartTableEmptyHouseRows(sky: SkySnapshot, rows: NatalChartDataTableRow[]): NatalChartDataTableRow[] {
-  const occupiedHouses = new Set(
-    rows
-      .map((row) => row.house)
-      .filter((house): house is number => typeof house === "number" && house >= 1 && house <= 12)
-  );
-
-  return Array.from({ length: 12 }, (_, index) => index + 1)
-    .filter((house) => !occupiedHouses.has(house))
-    .map((house) => ({
-      id: `natal-table-empty-house-${house}`,
-      degree: "",
-      glyph: "",
-      house,
-      label: "Empty house",
-      sign: signAtWholeSignHouse(sky.ascendant, house) || "—"
-    }));
-}
-
-function completeNatalChartTableRows(sky: SkySnapshot, rows: NatalChartDataTableRow[]) {
-  return sortNatalChartTableRows([
-    ...rows,
-    ...natalChartTableEmptyHouseRows(sky, rows)
-  ]);
-}
-
 function compactSkyChicletSign(label: string) {
   return label === "Sagittarius" ? "Sag." : label;
-}
-
-function zodiacLongitude(position?: PlanetPosition) {
-  if (!position) {
-    return 0;
-  }
-
-  const signIndex = zodiacSigns.indexOf(position.sign);
-
-  return (Math.max(signIndex, 0) * 30 + position.degree) % 360;
 }
 
 function positionFromLongitude({
@@ -3230,19 +2623,6 @@ function positionFromLongitude({
     house: 0,
     motion: "direct"
   };
-}
-
-function normalizedAngle(value: number) {
-  return ((value % 360) + 360) % 360;
-}
-
-function angularDistance(first: number, second: number) {
-  const difference = Math.abs(normalizedAngle(first - second));
-  return difference > 180 ? 360 - difference : difference;
-}
-
-function zodiacSignForLongitude(longitude: number) {
-  return zodiacSigns[Math.floor(normalizedAngle(longitude) / 30)] ?? "Aries";
 }
 
 function nextMoonEvent(sky: SkySnapshot) {
@@ -3472,73 +2852,8 @@ function profileForAuthAccount(profile: UserProfile, account: AuthAccount): User
   };
 }
 
-function zodiacFromBirthDate(value: string) {
-  const isoMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const slashMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  const monthValue = isoMatch?.[2] ?? slashMatch?.[1] ?? "";
-  const dayValue = isoMatch?.[3] ?? slashMatch?.[2] ?? "";
-  const month = Number(monthValue);
-  const day = Number(dayValue);
-
-  if (!month || !day) {
-    return "Gemini";
-  }
-
-  const signStarts = [
-    { sign: "Capricorn", month: 1, day: 1 },
-    { sign: "Aquarius", month: 1, day: 20 },
-    { sign: "Pisces", month: 2, day: 19 },
-    { sign: "Aries", month: 3, day: 21 },
-    { sign: "Taurus", month: 4, day: 20 },
-    { sign: "Gemini", month: 5, day: 21 },
-    { sign: "Cancer", month: 6, day: 21 },
-    { sign: "Leo", month: 7, day: 23 },
-    { sign: "Virgo", month: 8, day: 23 },
-    { sign: "Libra", month: 9, day: 23 },
-    { sign: "Scorpio", month: 10, day: 23 },
-    { sign: "Sagittarius", month: 11, day: 22 },
-    { sign: "Capricorn", month: 12, day: 22 }
-  ];
-
-  return signStarts.reduce((currentSign, item) => (
-    month > item.month || (month === item.month && day >= item.day) ? item.sign : currentSign
-  ), "Capricorn");
-}
-
-function planetSignFromSky(sky: SkySnapshot, planet: string) {
-  return sky.positions.find((position) => position.planet === planet)?.sign ?? "";
-}
-
-function natalBigThreeFromSky(sky: SkySnapshot, unknownBirthTime: boolean) {
-  return {
-    sun: planetSignFromSky(sky, "Sun") || sky.positions[0]?.sign || "Sun pending",
-    moon: planetSignFromSky(sky, "Moon") || "Moon pending",
-    rising: unknownBirthTime ? "Rising pending" : sky.ascendant
-  };
-}
-
-function validChartBirthDate(chart?: UserChart) {
-  const value = chart?.birthDate?.trim() ?? "";
-
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return value;
-  }
-
-  const [, month = "", day = "", year = ""] = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) ?? [];
-
-  if (!month || !day || !year) {
-    return "";
-  }
-
-  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-}
-
 function validChartBirthCity(chart?: UserChart) {
   return chart?.birthCity && chart.birthCity !== "Birth city needed" ? chart.birthCity : "";
-}
-
-function validChartBirthTime(chart?: UserChart) {
-  return chart?.birthTime && chart.birthTime !== "Birth time needed" ? chart.birthTime : "";
 }
 
 function chartNameFromProfile(name: string) {
@@ -3547,259 +2862,10 @@ function chartNameFromProfile(name: string) {
   return trimmedName ? `${trimmedName}'s birth chart` : "My birth chart";
 }
 
-function splitSignupBirthTime(value: string): SignupTimeParts {
-  const [, hour = "", minute = "", meridiem = "AM"] = value.match(/^(\d{1,2}):(\d{0,2})\s?(AM|PM)$/i) ?? [];
-
-  return {
-    hour,
-    minute,
-    meridiem: meridiem.toUpperCase() === "PM" ? "PM" : "AM"
-  };
-}
-
-function formatSignupBirthTime({ hour, minute, meridiem }: SignupTimeParts) {
-  const cleanHour = hour.replace(/\D/g, "").slice(0, 2);
-  const cleanMinute = minute.replace(/\D/g, "").slice(0, 2);
-
-  if (!cleanHour && !cleanMinute) {
-    return "";
-  }
-
-  return `${cleanHour}:${cleanMinute} ${meridiem}`;
-}
-
-function splitSignupBirthDate(value: string): SignupDateParts {
-  const [, year = "", month = "", day = ""] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
-
-  return { month, day, year };
-}
-
-function formatSignupBirthDate({ month, day, year }: SignupDateParts) {
-  const cleanMonth = month.replace(/\D/g, "").slice(0, 2);
-  const cleanDay = day.replace(/\D/g, "").slice(0, 2);
-  const cleanYear = year.replace(/\D/g, "").slice(0, 4);
-
-  if (cleanMonth.length !== 2 || cleanDay.length !== 2 || cleanYear.length !== 4) {
-    return "";
-  }
-
-  return `${cleanYear}-${cleanMonth}-${cleanDay}`;
-}
-
 function formatProfileBirthDate(value: string) {
   const { month, day, year } = splitSignupBirthDate(value);
 
   return month && day && year ? `${month}/${day}/${year}` : value;
-}
-
-function formatProfileBirthDateLong(value: string) {
-  const [, year = "", month = "", day = ""] = value.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
-  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
-
-  if (!year || Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC"
-  }).format(date);
-}
-
-function twentyFourHourTimeToDisplay(value: string) {
-  const [, rawHour = "", rawMinute = ""] = value.match(/^(\d{1,2}):(\d{2})/) ?? [];
-  const hour = Number(rawHour);
-
-  if (!rawHour || Number.isNaN(hour)) {
-    return "12:00 PM";
-  }
-
-  const meridiem = hour >= 12 ? "PM" : "AM";
-  const hour12 = hour % 12 || 12;
-
-  return `${hour12}:${rawMinute || "00"} ${meridiem}`;
-}
-
-function displayTimeToTwentyFourHour(value: string | null | undefined) {
-  if (!value) {
-    return "12:00";
-  }
-
-  const [, rawHour = "", rawMinute = "00", meridiem = "AM"] = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i) ?? [];
-  const hour = Number(rawHour);
-
-  if (!rawHour || Number.isNaN(hour)) {
-    return value.slice(0, 5);
-  }
-
-  const hour24 = meridiem.toUpperCase() === "PM"
-    ? (hour % 12) + 12
-    : hour % 12;
-
-  return `${String(hour24).padStart(2, "0")}:${rawMinute}`;
-}
-
-function manualChartFormFromChart(chart?: ManualChart | null): ManualChartForm {
-  if (!chart) {
-    return defaultManualChartForm;
-  }
-
-  return {
-    chartType: chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person"),
-    displayName: chart.displayName,
-    pronouns: normalizePronounChoice(chart.pronouns),
-    relationshipType: normalizeRelationshipContextKey(chart.relationshipType),
-    birthDate: chart.birthDate,
-    birthTime: displayTimeToTwentyFourHour(chart.birthTime),
-    birthTimeUnknown: chart.birthTimeUnknown,
-    birthPlace: chart.birthPlace,
-    birthLocation: chart.birthLocation
-  };
-}
-
-function manualChartBigThree(chart: ManualChart) {
-  if (!chart.natalChart) {
-    return {
-      sun: zodiacFromBirthDate(chart.birthDate),
-      moon: "Moon pending",
-      rising: chart.birthTimeUnknown ? "Rising pending" : "Rising pending"
-    };
-  }
-
-  return natalBigThreeFromSky(chart.natalChart, chart.birthTimeUnknown);
-}
-
-async function resolvedManualChartBirthLocationForRepair(chart: ManualChart) {
-  if (isTldrAstroApiConfigured) {
-    try {
-      const response = await resolveTimezone({
-        latitude: chart.birthLocation.latitude,
-        longitude: chart.birthLocation.longitude,
-        date: chart.birthDate,
-        time: chart.birthTime ?? "12:00"
-      });
-
-      if (response.source !== "fallback" && response.timeZone) {
-        return {
-          ...chart.birthLocation,
-          timeZone: response.timeZone
-        };
-      }
-    } catch {
-      // If the API cannot resolve coordinates, do not guess a birth-chart timezone locally.
-    }
-  }
-
-  return chart.birthLocation.timeZone ? chart.birthLocation : null;
-}
-
-function manualChartNeedsNatalRepair(chart: ManualChart) {
-  if (chart.birthTimeUnknown || !chart.birthTime || !chart.birthDate || !chart.birthLocation) {
-    return false;
-  }
-
-  // Complete charts should not trigger background timezone/natal API repair on page load.
-  return !chart.natalChart || !chart.birthLocation.timeZone;
-}
-
-const socialBigThreeLabels = new Set(["Sun", "Moon", "Ascendant"]);
-
-function isSocialBigThreeRow(row: SocialPlacementRow) {
-  return socialBigThreeLabels.has(row.label);
-}
-
-function planetPositionFromSocialRow(row: SocialPlacementRow, sky: SkySnapshot): PlanetPosition | null {
-  const existingPosition = sky.positions.find((position) => position.planet === row.label);
-
-  if (existingPosition) {
-    return existingPosition;
-  }
-
-  if (row.label !== "Ascendant") {
-    return null;
-  }
-
-  return {
-    planet: "Ascendant",
-    glyph: row.glyph || pointGlyph("Ascendant"),
-    sign: row.sign,
-    signGlyph: zodiacGlyphText(row.sign),
-    degree: row.degree,
-    house: row.house ?? 0,
-    motion: "direct"
-  };
-}
-
-function manualChartSubtitle(chart: ManualChart) {
-  if (isSocialFriendChart(chart)) {
-    return `${chart.notes ?? "Connected friend"} · Connected friend`;
-  }
-
-  const birthTime = chart.birthTimeUnknown ? "Time unknown" : twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-  const dateTimePlace = `${formatProfileBirthDateLong(chart.birthDate)} · ${birthTime} · ${compactCityLabel(chart.birthPlace)}`;
-
-  return chart.chartType === "event" ? `Event · ${dateTimePlace}` : dateTimePlace;
-}
-
-function manualChartNeedsBirthTime(chart: ManualChart) {
-  return chart.chartType !== "event" && (chart.birthTimeUnknown || !chart.birthTime);
-}
-
-function nextManualChartBirthday(chart: ManualChart, currentDateValue: string) {
-  const [, rawYear = "", rawMonth = "", rawDay = ""] = chart.birthDate.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? [];
-  const currentDate = new Date(currentDateValue);
-
-  if (chart.chartType === "event" || !rawYear || Number.isNaN(currentDate.getTime())) {
-    return null;
-  }
-
-  const month = Number(rawMonth);
-  const day = Number(rawDay);
-  const currentDay = localDayStart(currentDate);
-  let birthday = new Date(currentDay.getFullYear(), month - 1, day);
-
-  if (birthday.getTime() < currentDay.getTime()) {
-    birthday = new Date(currentDay.getFullYear() + 1, month - 1, day);
-  }
-
-  const daysUntil = Math.round((birthday.getTime() - currentDay.getTime()) / 86_400_000);
-
-  return {
-    chart,
-    date: birthday,
-    daysUntil
-  };
-}
-
-function upcomingBirthdayChiclet(charts: ManualChart[], currentDateValue: string) {
-  const birthdays = charts.flatMap((chart) => {
-    const birthday = nextManualChartBirthday(chart, currentDateValue);
-
-    return birthday && birthday.daysUntil >= 0 && birthday.daysUntil < 35 ? [birthday] : [];
-  });
-
-  return birthdays.sort((first, second) => first.daysUntil - second.daysUntil)[0] ?? null;
-}
-
-function birthdayCountdownLabel(daysUntil: number) {
-  if (daysUntil === 0) {
-    return "today";
-  }
-
-  if (daysUntil === 1) {
-    return "tomorrow";
-  }
-
-  return `in ${daysUntil} days`;
-}
-
-function birthdayDateLabel(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric"
-  }).format(date);
 }
 
 function createUserProfile(form: SignupForm, provider: SignupProvider, account?: AuthAccount | null): UserProfile {
@@ -3868,82 +2934,9 @@ function clearPendingSignupForm() {
   }
 }
 
-function providerLabel(provider: SignupProvider) {
-  const labels: Record<SignupProvider, string> = {
-    email: "Email",
-    google: "Google",
-    phone: "Phone"
-  };
-
-  return labels[provider];
-}
-
 function profileFirstName(name: string, email: string) {
   const source = name.trim() || email.split("@")[0] || "Profile";
   return source.split(/\s+/).filter(Boolean)[0] ?? "Profile";
-}
-
-function compactCityLabel(city: string) {
-  const stateMap: Record<string, string> = {
-    Alabama: "AL",
-    Alaska: "AK",
-    Arizona: "AZ",
-    Arkansas: "AR",
-    California: "CA",
-    Colorado: "CO",
-    Connecticut: "CT",
-    Delaware: "DE",
-    Florida: "FL",
-    Georgia: "GA",
-    Hawaii: "HI",
-    Idaho: "ID",
-    Illinois: "IL",
-    Indiana: "IN",
-    Iowa: "IA",
-    Kansas: "KS",
-    Kentucky: "KY",
-    Louisiana: "LA",
-    Maine: "ME",
-    Maryland: "MD",
-    Massachusetts: "MA",
-    Michigan: "MI",
-    Minnesota: "MN",
-    Mississippi: "MS",
-    Missouri: "MO",
-    Montana: "MT",
-    Nebraska: "NE",
-    Nevada: "NV",
-    "New Hampshire": "NH",
-    "New Jersey": "NJ",
-    "New Mexico": "NM",
-    "New York": "NY",
-    "North Carolina": "NC",
-    "North Dakota": "ND",
-    Ohio: "OH",
-    Oklahoma: "OK",
-    Oregon: "OR",
-    Pennsylvania: "PA",
-    "Rhode Island": "RI",
-    "South Carolina": "SC",
-    "South Dakota": "SD",
-    Tennessee: "TN",
-    Texas: "TX",
-    Utah: "UT",
-    Vermont: "VT",
-    Virginia: "VA",
-    Washington: "WA",
-    "West Virginia": "WV",
-    Wisconsin: "WI",
-    Wyoming: "WY"
-  };
-  const withoutCountry = city.replace(/,\s*United States$/i, "").trim();
-
-  return withoutCountry
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .map((part, index) => (index > 0 && stateMap[part] ? stateMap[part] : part))
-    .join(", ");
 }
 
 function readableNameList(names: string[]) {
@@ -4043,195 +3036,6 @@ function BrandAsterisk({ size = 28 }: { size?: number }) {
       </g>
     </svg>
   );
-}
-
-function GoogleIcon() {
-  return (
-    <svg className="google-mark" aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-      <path d="M19.6 10.23c0-.71-.06-1.39-.18-2.05H10v3.87h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.31 2.98-7.35Z" fill="#4285F4" />
-      <path d="M10 20c2.7 0 4.96-.9 6.62-2.42l-3.23-2.51c-.9.6-2.04.95-3.39.95a5.9 5.9 0 0 1-5.6-4.12H1.06v2.59A9.99 9.99 0 0 0 10 20Z" fill="#34A853" />
-      <path d="M4.4 11.9a6.01 6.01 0 0 1 0-3.8V5.51H1.06a10 10 0 0 0 0 8.98L4.4 11.9Z" fill="#FBBC04" />
-      <path d="M10 3.98c1.47 0 2.79.5 3.82 1.49l2.87-2.86A9.6 9.6 0 0 0 10 0 9.99 9.99 0 0 0 1.06 5.51L4.4 8.1A5.9 5.9 0 0 1 10 3.98Z" fill="#E94235" />
-    </svg>
-  );
-}
-
-function detailMetaRows(meta: string) {
-  const parts = meta.split("·").map((part) => part.trim()).filter(Boolean);
-
-  if (parts.length === 0) {
-    return [{ label: "Context", value: "Field guide" }];
-  }
-
-  return parts.map((part, index) => {
-    const lower = part.toLowerCase();
-    const label = lower.includes("orb")
-      ? "Orb"
-      : lower.includes("house")
-        ? "House"
-        : lower.includes("chapter")
-          ? "Chapter"
-      : lower === "today" || lower.includes("about ") || lower.includes("until ") || lower.includes("near exact")
-        ? "Duration"
-        : index === 0
-          ? "Signature"
-          : "Duration";
-
-    return { label, value: part };
-  });
-}
-
-function articleTitleSignGlyph(title: string, meta = "") {
-  const source = `${title} ${meta}`;
-  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(source));
-
-  return sign ? zodiacSignGlyphs[sign] ?? "" : "";
-}
-
-type ArticleEyebrowGlyph = {
-  key: string;
-  label: string;
-  text?: string;
-  href?: string | null;
-  house?: boolean;
-};
-
-function textArticleGlyph(text: string, label = text): ArticleEyebrowGlyph | null {
-  return text ? { key: `text-${label}-${text}`, label, text } : null;
-}
-
-function signArticleGlyph(sign: string): ArticleEyebrowGlyph | null {
-  const normalizedSign = zodiacSigns.find((candidate) => candidate.toLowerCase() === sign.toLowerCase());
-
-  if (!normalizedSign) {
-    return null;
-  }
-
-  return {
-    key: `sign-${normalizedSign}`,
-    label: normalizedSign,
-    text: signGlyph(normalizedSign),
-    href: zodiacAssetHref(zodiacSignIconFiles[normalizedSign])
-  };
-}
-
-function uniqueArticleGlyphs(glyphs: Array<ArticleEyebrowGlyph | null>) {
-  const seen = new Set<string>();
-
-  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph => {
-    if (!glyph || seen.has(glyph.key)) {
-      return false;
-    }
-
-    seen.add(glyph.key);
-    return true;
-  });
-}
-
-function articleTitleHouseToken(title: string, meta = "") {
-  const match = `${title} ${meta}`.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+house\b/i);
-
-  return match ? `${match[1]}H` : "";
-}
-
-function articleHouseToken(house: string | number) {
-  const parsedHouse = typeof house === "number" ? house : Number.parseInt(house, 10);
-
-  return Number.isFinite(parsedHouse) && parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
-}
-
-function articlePlacementGlyphs(title: string, meta = "") {
-  const source = `${title} ${meta}`;
-  const match = source.match(
-    /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
-  );
-
-  if (!match) {
-    return [];
-  }
-
-  const [, body, retrograde, sign, house] = match;
-  return uniqueArticleGlyphs([
-    textArticleGlyph(pointGlyph(body.trim()), body.trim()),
-    retrograde ? textArticleGlyph("℞", "Retrograde") : null,
-    signArticleGlyph(sign.trim()),
-    house ? { key: `house-${house}`, label: `${house} house`, text: articleHouseToken(house), house: true } : null
-  ]);
-}
-
-function articleEyebrowLabel(title: string, kicker?: string) {
-  if (/\b(?:rx|retrograde)\b/i.test(title)) {
-    return "Retrograde";
-  }
-
-  if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
-    return "Aspect";
-  }
-
-  if (articleTitleSignGlyph(title)) {
-    return "Placement";
-  }
-
-  return kicker?.trim() || "Article";
-}
-
-function articleEyebrowGlyphs({
-  glyph,
-  meta,
-  title
-}: {
-  glyph?: string;
-  meta?: string;
-  title: string;
-}) {
-  const placementGlyphs = articlePlacementGlyphs(title, meta);
-
-  if (placementGlyphs.length > 0) {
-    return placementGlyphs;
-  }
-
-  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(`${title} ${meta}`));
-
-  return uniqueArticleGlyphs([
-    ...(glyph ? glyph.split(/\s+/).filter(Boolean).map((part) => textArticleGlyph(part)) : []),
-    sign ? signArticleGlyph(sign) : null,
-    articleTitleHouseToken(title, meta)
-      ? { key: `house-${articleTitleHouseToken(title, meta)}`, label: articleTitleHouseToken(title, meta), text: articleTitleHouseToken(title, meta), house: true }
-      : null
-  ]);
-}
-
-function stripArticleTitlePrefix(value: string, title: string) {
-  const cleaned = stripTldrPrefix(value)
-    .replace(/\s+/g, " ")
-    .trim();
-  const normalizedTitle = title.replace(/\s+/g, " ").trim();
-
-  if (!cleaned || !normalizedTitle) {
-    return cleaned;
-  }
-
-  return cleaned
-    .replace(new RegExp(`^${escapeRegExpLiteral(normalizedTitle)}\\s*[:\\-–—]?\\s*`, "i"), "")
-    .trim();
-}
-
-function articleTldrText(value: string, title = "") {
-  return stripArticleTitlePrefix(value, title);
-}
-
-function isArticleTldrBodyDuplicate(tldr: string, bodyCopies: Set<string>) {
-  const normalizedTldr = comparableText(tldr).replace(/\b\.\.\.$/u, "").trim();
-
-  if (!normalizedTldr) {
-    return true;
-  }
-
-  return Array.from(bodyCopies).some((body) => (
-    body === normalizedTldr
-    || body.startsWith(normalizedTldr)
-    || normalizedTldr.startsWith(body)
-  ));
 }
 
 const averageDailyMotion: Record<string, number> = {
@@ -4769,467 +3573,8 @@ function skyAspectTimingDisplay(aspect: SkySnapshot["aspects"][number], generate
   return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt), true);
 }
 
-function detailSectionTitle(index: number) {
-  const titles = ["What it means", "How it shows up", "What to do with it", "Keep in mind"];
-
-  return titles[index] ?? "Further notes";
-}
-
-function isTimingOnlyArticleSection(section: { heading: string; body: ReactNode }) {
-  const bodyText = typeof section.body === "string" ? section.body.trim() : "";
-
-  return /^(pre-shadow|retrograde|post-shadow):/i.test(bodyText);
-}
-
-function isSuppressedSkyDetailSectionHeading(heading: string) {
-  const normalized = heading.trim().toLowerCase();
-
-  return normalized === "logic" || normalized === "large scale" || normalized === "large-scale";
-}
-
-function isLegacySkyArticleScaffoldHeading(heading: string) {
-  const normalized = heading.trim().toLowerCase().replace(/:+$/u, "");
-
-  return [
-    "tldr",
-    "what you may notice",
-    "what to do",
-    "timing",
-    "reflection",
-    "integration",
-    "closing",
-    "closing statement",
-    "planetary meaning",
-    "how it may show up",
-    "how to work with it",
-    "home and family"
-  ].includes(normalized);
-}
-
-function stripLegacySkyArticleScaffoldPrefix(text: string) {
-  return text.replace(
-    /^(?:TLDR|What You May Notice|What To Do|Timing|Reflection|Integration|Closing|Closing Statement|Planetary Meaning|How It May Show Up|How To Work With It|Home And Family)\s*:\s*/iu,
-    ""
-  ).trim();
-}
-
-function isRetrogradeTimelineNode(node: ReactNode) {
-  if (!isValidElement<{ className?: string }>(node)) {
-    return false;
-  }
-
-  return typeof node.props.className === "string" && node.props.className.includes("retrograde-detail-line");
-}
-
-const aspectTypePattern = /\b(conjunction|conjunct|sextile|square|trine|opposition|opposite|quincunx|inconjunct)\b/i;
-
 function normalizedAspectToneBucket(aspectType?: string): AspectToneBucket {
-  return natalAspectGroupKey(normalizeAspectType(aspectType ?? ""));
-}
-
-function aspectTypeFromText(value: string) {
-  const match = value.match(aspectTypePattern)?.[1] ?? "";
-  return normalizeAspectType(match);
-}
-
-function aspectGlyphTypeFromText(value: string) {
-  const normalized = aspectTypeFromText(value);
-
-  if (normalized === "conjunct") {
-    return "conjunction";
-  }
-
-  if (normalized === "opposite") {
-    return "opposition";
-  }
-
-  return normalized;
-}
-
-function aspectGlyphPartsFromHeading(heading: string) {
-  const match = heading.match(/^\s*(.+?)\s+(conjunction|conjunct|sextile|square|trine|opposition|opposite|quincunx|inconjunct)\s+(.+?)\s*$/iu);
-
-  if (!match) {
-    return null;
-  }
-
-  return {
-    from: match[1].trim(),
-    aspect: aspectGlyphTypeFromText(match[2]),
-    to: match[3].trim()
-  };
-}
-
-function normalizeRelatedAspectRow(row: ReactNode | SkyDetailRelatedAspectRow, index: number): SkyDetailRelatedAspectRow {
-  if (
-    row
-    && typeof row === "object"
-    && "node" in row
-    && !isValidElement(row)
-  ) {
-    const relatedRow = row as SkyDetailRelatedAspectRow;
-    return {
-      ...relatedRow,
-      key: relatedRow.key || `related-aspect-${index}`,
-      group: relatedRow.group ?? normalizedAspectToneBucket(relatedRow.aspectType)
-    };
-  }
-
-  return {
-    key: `related-aspect-${index}`,
-    aspectType: "",
-    group: "lessons",
-    node: row
-  };
-}
-
-function SkyDetailArticle({
-  detail,
-  onClose
-}: {
-  detail: SkyDetail;
-  onClose: () => void;
-}) {
-  useLayoutEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [detail.title, detail.meta]);
-
-  const metaRows = detailMetaRows(detail.meta);
-  const articleBody = detail.body.filter((node) => (
-    !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
-  ));
-  const paragraphs = articleBody;
-  const rawGeneratedSections = (detail.sections ?? []).filter(
-    (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
-  ).map((section) => ({
-    ...section,
-    heading: cleanGeneratedSectionHeading(section.heading)
-  })).map((section) => ({
-    ...section,
-    heading: isLegacySkyArticleScaffoldHeading(section.heading) ? "" : section.heading,
-    body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
-  })).filter((section) => typeof section.body !== "string" || isReaderFacingCopy(section.body));
-  const generatedSections = dedupeArticleSectionHeadings(rawGeneratedSections, detail.title);
-  const contentSections = generatedSections.filter((section) => section.role !== "aspect");
-  const aspectSections = generatedSections
-    .filter((section) => section.role === "aspect")
-    .map((section, index) => ({
-      ...section,
-      key: `${section.heading || "aspect"}-${index}`,
-      aspectType: section.aspectType || aspectTypeFromText(`${section.heading} ${typeof section.body === "string" ? section.body : ""}`),
-      group: section.group ?? normalizedAspectToneBucket(section.aspectType || aspectTypeFromText(section.heading))
-    }));
-  const drilldown = detail.astrologyDrilldown;
-  const authoredTldr = detail.tldr ? stripArticleTitlePrefix(detail.tldr, detail.title) : "";
-  const articleBodyComparableCopies = new Set(
-    [
-      ...paragraphs.filter((paragraph): paragraph is string => typeof paragraph === "string"),
-      ...generatedSections.flatMap((section) => (
-        typeof section.body === "string"
-          ? section.body.split(/\n{2,}/)
-          : []
-      ))
-    ]
-      .map((paragraph) => comparableText(stripTldrPrefix(stripLegacySkyArticleScaffoldPrefix(paragraph))))
-      .filter(Boolean)
-  );
-  // TLDR is an explicit authored slot; subtitle and body are never substitutes.
-  const articleSubCandidate = detail.suppressTldr ? "" : articleTldrText(authoredTldr, detail.title);
-  const articleSub = isReaderFacingCopy(articleSubCandidate) && !isArticleTldrBodyDuplicate(articleSubCandidate, articleBodyComparableCopies)
-    ? articleSubCandidate
-    : "";
-  const articleSubComparable = comparableText(articleSub);
-  const displaySections = contentSections.filter((section, index) => {
-    if (index !== 0 || !articleSubComparable || typeof section.body !== "string") {
-      return true;
-    }
-
-    return comparableText(stripLegacySkyArticleScaffoldPrefix(section.body)) !== articleSubComparable;
-  });
-  const fallbackParagraphs = paragraphs.filter((paragraph) => (
-    typeof paragraph !== "string" || comparableText(stripTldrPrefix(paragraph)) !== articleSubComparable
-  ));
-  const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
-  const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
-  const eyebrowGlyphs = articleEyebrowGlyphs({
-    glyph: detail.glyph,
-    meta: metaRows.map((row) => row.value).join(" "),
-    title: detail.title
-  });
-  const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
-  const aspectGroups = ([
-    { id: "gifts" as const, label: "Gifts" },
-    { id: "lessons" as const, label: "Lessons" }
-  ]).map((group) => ({
-    ...group,
-    sections: aspectSections.filter((section) => section.group === group.id),
-    rows: relatedAspectRows.filter((row) => row.group === group.id)
-  })).filter((group) => group.sections.length > 0 || group.rows.length > 0);
-  const hasAspectCard = aspectGroups.length > 0;
-  const hasReadableBody = Boolean(
-    detail.lensHint ||
-      (detail.plainBody && fallbackParagraphs.length > 0) ||
-      displaySections.length > 0 ||
-      fallbackParagraphs.length > 0 ||
-      drilldown
-  );
-  const isAspectsOnlyArticle = hasAspectCard && !hasReadableBody;
-
-  return (
-    <section
-      className={`article-page sky-detail-page${detail.compactHeader ? " you-transit-article-page" : ""}`}
-      aria-label={`${detail.title} field guide`}
-      aria-labelledby="sky-detail-title"
-    >
-      <button className="sky-detail-back floating-back-button" type="button" aria-label="Close detail" onClick={onClose}>
-        <ChevronLeft size={18} aria-hidden="true" />
-        <span>Back</span>
-      </button>
-      <article className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
-        <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
-          <header className="article-id sky-detail-id">
-            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>
-              <span>{eyebrowLabel}</span>
-              {eyebrowGlyphs.length ? (
-                <>
-                  <span className="article-eyebrow__slash" aria-hidden="true">/</span>
-                  <span className="article-eyebrow__glyphs" aria-hidden="true">
-                    {eyebrowGlyphs.map((glyph) => (
-                      <span className={glyph.house ? "article-eyebrow__house" : glyph.href ? "article-eyebrow__icon" : undefined} key={glyph.key}>
-                        {glyph.href ? <img src={glyph.href} alt="" aria-hidden="true" /> : glyph.text}
-                      </span>
-                    ))}
-                  </span>
-                </>
-              ) : null}
-            </div>
-            <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
-            {detail.tagline ? (
-              <p className="article-sub sky-detail-tagline">{detail.tagline}</p>
-            ) : null}
-            {detail.duration ? (
-              <p className="article-duration">{detail.duration}</p>
-            ) : null}
-            {detail.risingHoroscopes?.length ? (
-              <a className="article-duration" href="#sky-rising-horoscopes">Jump to horoscopes</a>
-            ) : null}
-            {articleSub ? (
-              <div className="article-tldr">
-                <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
-                <p className="article-sub article-tldr__copy">{articleSub}</p>
-              </div>
-            ) : null}
-          </header>
-
-          {hasReadableBody ? <hr className="article-rule" /> : null}
-
-          {hasReadableBody ? (
-          <div className="article-body-card sky-detail-body">
-            <div className="article-body-inner">
-              {detail.lensHint ? (
-                <aside className="article-lens-hint" aria-label="Placement lens">
-                  {typeof detail.lensHint === "string" ? <p>{detail.lensHint}</p> : detail.lensHint}
-                </aside>
-              ) : null}
-              {detail.plainBody && fallbackParagraphs.length > 0 ? (
-                <section className="article-section sky-detail-section sky-detail-plain-section">
-                  {fallbackParagraphs.map((paragraph, paragraphIndex) => (
-                    <p key={`plain-${paragraphIndex}`}>{paragraph}</p>
-                  ))}
-                </section>
-              ) : displaySections.length > 0 ? (
-                <>
-                  {detail.bodyBeforeSections && fallbackParagraphs.length > 0 ? (
-                    <section className="article-section sky-detail-section sky-detail-intro-section">
-                      {fallbackParagraphs.map((paragraph, paragraphIndex) => (
-                        <p key={`intro-${paragraphIndex}`}>{paragraph}</p>
-                      ))}
-                    </section>
-                  ) : null}
-                  {displaySections.map((section, index) => {
-                    const bodyParagraphs = typeof section.body === "string"
-                      ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
-                      : [];
-                    const sectionHeading = typeof section.heading === "string" ? section.heading : "";
-                    const sourceTag = inferredSectionQaSourceTag(section);
-                    const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;
-
-                    return (
-                      <section className="article-section sky-detail-section" key={`${section.heading || "section"}-${index}`}>
-                        {sectionHeading ? <h3>{sectionHeading}</h3> : null}
-                        {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
-                        {bodyParagraphs.length > 0
-                          ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                            <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
-                          ))
-                          : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
-                      </section>
-                    );
-                  })}
-                </>
-              ) : (
-                <>
-                  {bodyLede ? (
-                    <section className="article-section sky-detail-section">
-                      <p className="sky-detail-lede">{bodyLede}</p>
-                    </section>
-                  ) : null}
-                  {bodySectionParagraphs.length > 0 ? (
-                    <section className="article-section sky-detail-section">
-                      {bodySectionParagraphs.map((paragraph, index) => (
-                        <p key={index}>{paragraph}</p>
-                      ))}
-                    </section>
-                  ) : null}
-                </>
-              )}
-              {detail.keyDates?.length ? (
-                <section className="article-section sky-detail-section sky-placement-key-dates" aria-label="Key dates">
-                  <h3>Key dates</h3>
-                  <dl>
-                    {detail.keyDates.map((keyDate) => (
-                      <div key={`${keyDate.date}-${keyDate.label}`}>
-                        <dt>{keyDate.date}</dt>
-                        <dd>{keyDate.label}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </section>
-              ) : null}
-              {detail.closingCharge ? (
-                <section className="article-section sky-detail-section sky-placement-closing-charge">
-                  <p>{detail.closingCharge}</p>
-                </section>
-              ) : null}
-              {detail.risingHoroscopes?.length ? (
-                <section
-                  className="article-section sky-detail-section"
-                  id="sky-rising-horoscopes"
-                  aria-label="Horoscopes by rising sign"
-                >
-                  <h3>Horoscopes by rising sign</h3>
-                  {detail.risingHoroscopes.map((entry) => (
-                    <div key={entry.risingSign}>
-                      <h4>{entry.risingSign} rising</h4>
-                      {readerFacingParagraphs([entry.body]).map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-              ) : null}
-              {detail.moves?.length ? (
-                <section className="article-section sky-detail-section sky-placement-moves" aria-label="Try this">
-                  <h3>Try this</h3>
-                  {detail.movesPresentation === "plain" ? (
-                    <div className="sky-placement-moves-lines">
-                      {detail.moves.map((move) => <p key={move}>{move}</p>)}
-                    </div>
-                  ) : (
-                    <ul>
-                      {detail.moves.map((move) => <li key={move}>{move}</li>)}
-                    </ul>
-                  )}
-                </section>
-              ) : null}
-              {detail.seriesLine ? (
-                <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
-                  <p>{detail.seriesLine}</p>
-                </aside>
-              ) : null}
-              {detail.mechanicsCaption ? (
-                <aside className="article-section sky-detail-section sky-aspect-mechanics" aria-label="What this looks like in space">
-                  <h3>What this looks like in space</h3>
-                  <p>{detail.mechanicsCaption}</p>
-                </aside>
-              ) : null}
-              {drilldown ? (
-                <details className="sky-detail-drilldown">
-                  <summary>{drilldown.title || "Why this?"}</summary>
-                  <div className="sky-detail-drilldown-body">
-                    {drilldown.summary ? <p>{drilldown.summary}</p> : null}
-                    {drilldown.factors.length > 0 ? (
-                      <dl>
-                        {drilldown.factors.map((factor) => (
-                          <div key={`${factor.label}-${factor.technicalFact}`}>
-                            <dt>{factor.label}</dt>
-                            <dd>
-                              <strong>{factor.technicalFact}</strong>
-                              <span>{factor.plainMeaning}</span>
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    ) : null}
-                    {drilldown.whyThisScene ? <p>{drilldown.whyThisScene}</p> : null}
-                    {drilldown.timingNote ? <p>{drilldown.timingNote}</p> : null}
-                  </div>
-                </details>
-              ) : null}
-              {detail.historicalLookback ? (
-                <section className="article-section sky-detail-section sky-detail-historical-lookback" aria-label="Historical context">
-                  <h3>{detail.historicalLookback.heading}</h3>
-                  <p className="sky-detail-historical-lookback__date">{detail.historicalLookback.dateLabel}</p>
-                  {detail.historicalLookback.paragraphs.map((paragraph, index) => (
-                    <p key={`historical-${index}`}>{paragraph}</p>
-                  ))}
-                </section>
-              ) : null}
-              <div className="sky-detail-end" aria-hidden="true">✦</div>
-            </div>
-          </div>
-          ) : null}
-        </div>
-
-        {hasAspectCard ? aspectGroups.map((group) => (
-          <Fragment key={group.id}>
-            <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">{group.label}</span>
-            <section className="article-card article-related-aspects article-related-aspects-card" aria-label={group.label}>
-              <div className="article-related-aspects__group">
-                {group.sections.length ? (
-                  <div className="article-related-aspects__copy-list">
-                    {group.sections.map((section) => {
-                      const bodyParagraphs = typeof section.body === "string"
-                        ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
-                        : [];
-                      const sectionHeading = typeof section.heading === "string" ? section.heading : "";
-                      const glyphParts = sectionHeading ? aspectGlyphPartsFromHeading(sectionHeading) : null;
-                      const sourceTag = inferredSectionQaSourceTag(section);
-                      const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;
-
-                      return (
-                        <section className="article-section sky-detail-section article-related-aspects__copy" key={section.key}>
-                          {sectionHeading ? (
-                            <div className="article-related-aspects__copy-heading">
-                              {glyphParts ? <AspectGlyphs from={glyphParts.from} aspect={glyphParts.aspect} to={glyphParts.to} /> : null}
-                              <h3>{sectionHeading}</h3>
-                            </div>
-                          ) : null}
-                          {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
-                          {bodyParagraphs.length > 0
-                            ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                              <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
-                            ))
-                            : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
-                        </section>
-                      );
-                    })}
-                  </div>
-                ) : null}
-                {group.rows.length ? (
-                  <div className="article-related-aspects__list aspect-row-list">
-                    {group.rows.map((row) => (
-                      <Fragment key={row.key}>{row.node}</Fragment>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </section>
-          </Fragment>
-        )) : null}
-      </article>
-    </section>
-  );
+  return normalizedArticleAspectToneBucket(aspectType);
 }
 
 const sampleTransits: TransitItem[] = [
@@ -5365,14 +3710,6 @@ const sampleTransits: TransitItem[] = [
   }
 ];
 
-const transitAspectDefinitions = [
-  { type: "conjunction", exact: 0, orb: 4 },
-  { type: "sextile", exact: 60, orb: 3 },
-  { type: "square", exact: 90, orb: 4 },
-  { type: "trine", exact: 120, orb: 4 },
-  { type: "opposition", exact: 180, orb: 4 }
-] as const;
-
 const longTransitPlanets = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node", "South Node", "True Node"]);
 const slowChapterPlanets = new Set(["Saturn", "Uranus", "Neptune", "Pluto"]);
 const transitPriorityTargets = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant", "Midheaven"]);
@@ -5440,10 +3777,6 @@ type AspectCopyContext = {
 
 function skyAspectPosition(point: string, positions?: PlanetPosition[]) {
   return positions?.find((position) => position.planet === point) ?? null;
-}
-
-function comparableText(value: string) {
-  return value.replace(/\s+/g, " ").trim().toLowerCase();
 }
 
 function aspectRelationshipDescription(firstPoint: string, aspect: string, secondPoint: string, context?: AspectCopyContext) {
@@ -5612,12 +3945,144 @@ function generatedSkyAspectWritingSection(
   return {
     slot: "meaning",
     required: true,
-    layer: "authored",
+    layer: "generated",
     tier: "generated-sky-aspect-lint-v1",
     sourceKeys: [resolved.content.contentKey, resolved.pairSource],
     heading: resolved.content.headline || skyAspectDisplayTitle(aspect),
     body: resolved.body
   };
+}
+
+function approvedExactSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+): NormalizedSkyAspectSection | null {
+  const registry = contentRegistryFor("sky");
+
+  if (!registry) {
+    void loadContentRegistry("sky");
+    return null;
+  }
+
+  const copy = registry.approvedExactSkyAspectCopy?.(aspect.from, aspect.type, aspect.to);
+
+  if (!copy) {
+    return null;
+  }
+
+  const body = interpolateTemplateString(copy.body, skyAspectTemplateSlots(aspect, positions), {
+    contentKey: copy.contentId,
+    field: "body"
+  });
+  const paragraphs = readerFacingParagraphs([body]);
+
+  if (paragraphs.length === 0) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "approved-exact-sky-aspect-v1",
+    sourceKeys: [copy.contentId, `packages/astro-knowledge/data/transits/${copy.sourceId}.json`],
+    heading: skyAspectDisplayTitle(aspect),
+    body: paragraphs.join("\n\n")
+  };
+}
+
+function reviewedSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  positions: PlanetPosition[] | undefined,
+  scope: "sign-aware" | "generic"
+): NormalizedSkyAspectSection | null {
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
+      a: normalizeContentIdPart(aspect.from),
+      b: normalizeContentIdPart(aspect.to),
+      aspect: normalizeContentIdPart(aspect.type),
+      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
+      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
+    });
+
+    if (!rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
+      return null;
+    }
+
+    const isSignAware = rendered.contentKey.startsWith("fallback-hook/sky-aspect-sign/");
+    if ((scope === "sign-aware") !== isSignAware) {
+      return null;
+    }
+
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "fallback",
+      tier: "reviewed-sky-aspect-phrasebook-v1",
+      sourceKeys: [rendered.contentKey],
+      heading: rendered.headline || skyAspectDisplayTitle(aspect),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+function fallbackSkyAspectWritingSection(
+  aspect: SkySnapshot["aspects"][number],
+  positions?: PlanetPosition[]
+): NormalizedSkyAspectSection | null {
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
+      a: normalizeContentIdPart(aspect.from),
+      b: normalizeContentIdPart(aspect.to),
+      aspect: normalizeContentIdPart(aspect.type),
+      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
+      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
+    });
+
+    if (rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
+      return null;
+    }
+
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body || !isReaderFacingCopy(body)) {
+      return null;
+    }
+
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "fallback",
+      tier: "fallback-architecture-v3",
+      sourceKeys: [rendered.templateKey],
+      heading: rendered.headline || skyAspectDisplayTitle(aspect),
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 type SkyWritingAspectBeat = {
@@ -5639,8 +4104,28 @@ function normalizeSkyAspectSurface(
   positions?: PlanetPosition[],
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
-  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const sections = generatedSection ? [generatedSection] : [];
+  const signAwareSection = reviewedSkyAspectWritingSection(aspect, positions, "sign-aware");
+  const authoredSection = signAwareSection ? null : approvedExactSkyAspectWritingSection(aspect, positions);
+  const reviewedSection = signAwareSection || authoredSection
+    ? null
+    : reviewedSkyAspectWritingSection(aspect, positions, "generic");
+  const generatedSection = signAwareSection || authoredSection || reviewedSection
+    ? null
+    : generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
+  const fallbackSection = signAwareSection || authoredSection || reviewedSection || generatedSection
+    ? null
+    : fallbackSkyAspectWritingSection(aspect, positions);
+  const sections = signAwareSection
+    ? [signAwareSection]
+    : authoredSection
+      ? [authoredSection]
+      : reviewedSection
+        ? [reviewedSection]
+        : generatedSection
+          ? [generatedSection]
+          : fallbackSection
+            ? [fallbackSection]
+            : [];
 
   return {
     surface: "sky-aspect",
@@ -6973,17 +5458,6 @@ function signAtWholeSignHouse(ascendant: string, house: number) {
   }
 
   return zodiacSigns[(ascendantIndex + house - 1) % 12] ?? "";
-}
-
-function wholeSignHouseForSign(sign: string, ascendant: string) {
-  const signIndex = zodiacSigns.indexOf(sign);
-  const ascendantIndex = zodiacSigns.indexOf(ascendant);
-
-  if (signIndex < 0 || ascendantIndex < 0) {
-    return null;
-  }
-
-  return ((signIndex - ascendantIndex + 12) % 12) + 1;
 }
 
 function chartRulerForAscendant(ascendant: string) {
@@ -8945,16 +7419,8 @@ function renderReaderDirectedSynastryContact(
   }
 }
 
-function natalAspectGroupKey(aspect: string): FriendNatalAspectGroup["key"] {
+function natalAspectGroupKey(aspect: string): AspectGiftLessonKey {
   return aspectGiftOrLesson(aspect);
-}
-
-function groupFriendNatalAspects(aspects: SkySnapshot["aspects"]): FriendNatalAspectGroup[] {
-  return groupAspectsByGiftLesson(
-    uniqueNatalAspectRows(aspects),
-    (aspect) => aspect.type,
-    (aspect) => aspect.orb
-  );
 }
 
 function stripSkyAspectTimingPrefix(summary: string, timing: { durationLabel: string; rangeLabel: string }) {
@@ -9594,48 +8060,12 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
     return highlights;
   }
 
-  const synastryHits = profileNatalSky.positions.flatMap((yourPosition) => (
-    friendSky.positions.flatMap((theirPosition) => {
-      const separation = angularDistance(zodiacLongitude(yourPosition), zodiacLongitude(theirPosition));
-      const aspect = transitAspectDefinitions
-        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, theirPosition.planet, yourPosition.planet))
-        .sort((first, second) => first.orbValue - second.orbValue)[0];
-
-      return aspect ? [{
-        yourPosition,
-        theirPosition,
-        aspect,
-        score: synastryContactScore(theirPosition.planet, yourPosition.planet, aspect.type, aspect.orbValue)
-      }] : [];
-    })
-  ))
-    .filter((hit) => ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.yourPosition.planet) && ["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"].includes(hit.theirPosition.planet))
-    .sort((first, second) => second.score - first.score || first.aspect.orbValue - second.aspect.orbValue);
-
-  const topHit = synastryHits.find((hit) => synastryContactSignalTier(hit.theirPosition.planet, hit.yourPosition.planet) !== "background")
-    ?? synastryHits[0];
+  const topHit = compatibilityHighlightContact(profileNatalSky, chart);
   if (topHit) {
-    const title = relationshipThemeTitle(topHit.theirPosition.planet, topHit.yourPosition.planet, topHit.aspect.type);
+    const title = relationshipThemeTitle(topHit.friendPoint.name, topHit.yourPoint.name, topHit.aspect);
     const contact = {
-      id: `${chart.id}-${topHit.theirPosition.planet}-${topHit.aspect.type}-${topHit.yourPosition.planet}`.toLowerCase().replace(/\s+/g, "-"),
-      friendPoint: {
-        name: topHit.theirPosition.planet,
-        glyph: topHit.theirPosition.glyph,
-        longitude: zodiacLongitude(topHit.theirPosition),
-        role: comparisonPointRole(topHit.theirPosition.planet)
-      },
-      yourPoint: {
-        name: topHit.yourPosition.planet,
-        glyph: topHit.yourPosition.glyph,
-        longitude: zodiacLongitude(topHit.yourPosition),
-        role: comparisonPointRole(topHit.yourPosition.planet)
-      },
-      aspect: topHit.aspect.type,
-      orb: topHit.aspect.orbValue,
-      score: topHit.score,
-      tone: synastryTone(topHit.aspect.type),
-      contentKeys: synastryContactContentKeys(topHit.theirPosition.planet, topHit.aspect.type, topHit.yourPosition.planet)
+      ...topHit,
+      contentKeys: synastryContactContentKeys(topHit.friendPoint.name, topHit.aspect, topHit.yourPoint.name)
     };
     const normalized = normalizeSynastryContactSurface(
       chart.displayName,
@@ -9656,9 +8086,9 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
         primaryName: chart.displayName,
         comparisonName: "You",
         comparisonIsSelf: true,
-        primaryPoint: topHit.theirPosition.planet,
-        comparisonPoint: topHit.yourPosition.planet,
-        aspect: topHit.aspect.type,
+        primaryPoint: topHit.friendPoint.name,
+        comparisonPoint: topHit.yourPoint.name,
+        aspect: topHit.aspect,
         romanticAllowed: false
       }
     );
@@ -9684,143 +8114,6 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   }
 
   return highlights.slice(0, 3);
-}
-
-function comparisonPointRole(point: string) {
-  const roles: Record<string, string> = {
-    Ascendant: "presence, attraction, and first impression",
-    Midheaven: "public direction and life trajectory",
-    Sun: "identity, vitality, and what feels central",
-    Moon: "emotional needs, instincts, and private reactions",
-    Mercury: "communication, interpretation, and daily thinking",
-    Venus: "affection, pleasure, values, and how love is offered",
-    Mars: "desire, pursuit, conflict, and physical chemistry",
-    Jupiter: "trust, encouragement, growth, and shared belief",
-    Saturn: "commitment, limits, duty, and the pressure to mature",
-    Uranus: "freedom, disruption, and the need for space",
-    Neptune: "idealization, longing, imagination, and blurred boundaries",
-    Pluto: "intensity, control, vulnerability, and deep change",
-    "North Node": "familiarity, direction, and timing",
-    "True Node": "familiarity, direction, and timing"
-  };
-
-  return roles[point] ?? point.toLowerCase();
-}
-
-const synastryPersonalPoints = new Set(["sun", "moon", "mercury", "venus", "mars"]);
-const synastryAngles = new Set(["ascendant", "midheaven"]);
-const synastrySocialOuterPoints = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
-
-function synastryPointKey(point: string) {
-  return normalizeContentIdPart(point);
-}
-
-function isSynastryPersonalOrAngle(point: string) {
-  const key = synastryPointKey(point);
-  return synastryPersonalPoints.has(key) || synastryAngles.has(key);
-}
-
-function isSameSocialOrOuterSynastryContact(firstPoint: string, secondPoint: string) {
-  const firstKey = synastryPointKey(firstPoint);
-  const secondKey = synastryPointKey(secondPoint);
-  return firstKey === secondKey && synastrySocialOuterPoints.has(firstKey);
-}
-
-function synastryAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
-  const baseLimits: Record<string, number> = {
-    conjunction: 4,
-    opposition: 3.5,
-    square: 3.5,
-    trine: 3,
-    sextile: 2.5
-  };
-  const baseLimit = baseLimits[aspect] ?? 3;
-  const firstIsPersonalOrAngle = isSynastryPersonalOrAngle(firstPoint);
-  const secondIsPersonalOrAngle = isSynastryPersonalOrAngle(secondPoint);
-
-  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
-    return Math.min(baseLimit, 1.25);
-  }
-
-  if (firstIsPersonalOrAngle && secondIsPersonalOrAngle) {
-    return baseLimit + 0.5;
-  }
-
-  if (firstIsPersonalOrAngle || secondIsPersonalOrAngle) {
-    return baseLimit;
-  }
-
-  return Math.min(baseLimit, 2);
-}
-
-function synastryWheelAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
-  const listLimit = synastryAspectOrbLimit(aspect, firstPoint, secondPoint);
-
-  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
-    return listLimit;
-  }
-
-  if (isSynastryPersonalOrAngle(firstPoint) || isSynastryPersonalOrAngle(secondPoint)) {
-    return Math.max(listLimit, 4.5);
-  }
-
-  return listLimit;
-}
-
-function synastryContactSignalTier(firstPoint: string, secondPoint: string) {
-  if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {
-    return "background";
-  }
-
-  if (isSynastryPersonalOrAngle(firstPoint) || isSynastryPersonalOrAngle(secondPoint)) {
-    return "primary";
-  }
-
-  if ([firstPoint, secondPoint].includes("Saturn")) {
-    return "secondary";
-  }
-
-  return "background";
-}
-
-function synastryWheelAspectLines(profileNatalSky: SkySnapshot | null, chart: ManualChart): InterChartAspectLine[] {
-  const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
-  const yourPoints = comparisonPointsFromSky(profileNatalSky);
-
-  return friendPoints
-    .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
-      const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
-      const aspect = transitAspectDefinitions
-        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= synastryWheelAspectOrbLimit(definition.type, friendPoint.name, yourPoint.name))
-        .sort((first, second) => first.orbValue - second.orbValue)[0];
-
-      if (!aspect) {
-        return [];
-      }
-
-      return [{
-        id: `${chart.id}-wheel-${friendPoint.name}-${aspect.type}-${yourPoint.name}`.toLowerCase().replace(/\s+/g, "-"),
-        fromLongitude: friendPoint.longitude,
-        toLongitude: yourPoint.longitude,
-        type: aspect.type,
-        orb: aspect.orbValue,
-        fromPointId: `outer:${friendPoint.name}`,
-        toPointId: `inner:${yourPoint.name}`,
-        score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue)
-      }];
-    }))
-    .sort((first, second) => second.score - first.score || first.orb - second.orb)
-    .slice(0, 18)
-    .map(({ id, fromLongitude, toLongitude, type, orb, fromPointId, toPointId }) => ({
-      id,
-      fromLongitude,
-      toLongitude,
-      type,
-      orb,
-      fromPointId,
-      toPointId
-    }));
 }
 
 function transitWheelAspectLines(currentSky: SkySnapshot, natalSky: SkySnapshot | null, transits: TransitItem[]): InterChartAspectLine[] {
@@ -9901,70 +8194,6 @@ function houseOverlayConcreteExamples(house: number) {
   };
 
   return examples[house] ?? houseLifeAreas[house] ?? "the concrete details of this house";
-}
-
-function synastryPointWeight(point: string) {
-  const weights: Record<string, number> = {
-    Sun: 18,
-    Moon: 22,
-    Ascendant: 22,
-    Midheaven: 14,
-    Venus: 18,
-    Mars: 18,
-    Saturn: 17,
-    Mercury: 13,
-    Jupiter: 12,
-    Pluto: 11,
-    Neptune: 9,
-    Uranus: 9,
-    "North Node": 20,
-    "True Node": 20
-  };
-
-  return weights[point] ?? 6;
-}
-
-function synastryAspectWeight(aspect: string) {
-  const weights: Record<string, number> = {
-    conjunction: 26,
-    opposition: 18,
-    square: 18,
-    trine: 14,
-    sextile: 10
-  };
-
-  return weights[aspect] ?? 6;
-}
-
-function synastryOrbWeight(orb: number) {
-  if (orb <= 0.5) return 30;
-  if (orb <= 1) return 24;
-  if (orb <= 2) return 16;
-  if (orb <= 3) return 10;
-  return 4;
-}
-
-function synastryContactScore(friendPoint: string, yourPoint: string, aspect: string, orb: number) {
-  const signalTier = synastryContactSignalTier(friendPoint, yourPoint);
-  const sameSocialOrOuterPoint = signalTier === "background" && isSameSocialOrOuterSynastryContact(friendPoint, yourPoint);
-  const personalPairBonus = ["Sun", "Moon", "Mercury", "Venus", "Mars"].includes(friendPoint)
-    && ["Sun", "Moon", "Mercury", "Venus", "Mars", "Ascendant"].includes(yourPoint)
-    ? 12
-    : 0;
-  const saturnBondBonus = [friendPoint, yourPoint].includes("Saturn") && !sameSocialOrOuterPoint ? 5 : 0;
-  const angleBonus = [friendPoint, yourPoint].some((point) => ["Ascendant", "Midheaven"].includes(point)) ? 8 : 0;
-  const signalBonus = signalTier === "primary" ? 14 : signalTier === "secondary" ? 5 : 0;
-  const generationalContextPenalty = sameSocialOrOuterPoint ? 32 : 0;
-
-  return synastryOrbWeight(orb)
-    + synastryAspectWeight(aspect)
-    + synastryPointWeight(friendPoint)
-    + synastryPointWeight(yourPoint)
-    + personalPairBonus
-    + saturnBondBonus
-    + angleBonus
-    + signalBonus
-    - generationalContextPenalty;
 }
 
 function synastryAspectPhrase(aspect: string) {
@@ -10145,59 +8374,8 @@ function richSynastryContactContentKeys(
   ));
 }
 
-function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoint[] {
-  if (!sky) {
-    return [];
-  }
-
-  const points = sky.positions
-    .filter((position) => position.planet !== "North Node" && position.planet !== "True Node")
-    .map((position) => ({
-      name: position.planet,
-      glyph: position.glyph,
-      longitude: zodiacLongitude(position),
-      role: comparisonPointRole(position.planet)
-    }));
-
-  if (typeof sky.ascendantLongitude === "number") {
-    points.push({
-      name: "Ascendant",
-      glyph: "Asc",
-      longitude: normalizedAngle(sky.ascendantLongitude),
-      role: comparisonPointRole("Ascendant")
-    });
-  }
-
-  if (typeof sky.midheavenLongitude === "number") {
-    points.push({
-      name: "Midheaven",
-      glyph: "MC",
-      longitude: normalizedAngle(sky.midheavenLongitude),
-      role: comparisonPointRole("Midheaven")
-    });
-  }
-
-  return points;
-}
-
-function synastryTone(aspect: string) {
-  if (["square", "opposition"].includes(aspect)) {
-    return "Friction";
-  }
-
-  if (["trine", "sextile"].includes(aspect)) {
-    return "Flow";
-  }
-
-  return "Fusion";
-}
-
 function possessiveLabel(name: string) {
   return possessiveName(name);
-}
-
-function escapeRegExpLiteral(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function ownerDisplayPronouns(ownerName: string, ownerPronouns?: PronounChoice | null) {
@@ -10956,65 +9134,30 @@ function synastryContacts(
   romanticAllowed = false,
   relationshipType?: string | null
 ): SynastryContact[] {
-  const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
-  const yourPoints = comparisonPointsFromSky(profileNatalSky);
+  return calculatedSynastryContacts(profileNatalSky, chart).map((contact) => {
+    const baseContact = {
+      ...contact,
+      contentKeys: synastryContactContentKeys(contact.friendPoint.name, contact.aspect, contact.yourPoint.name, relationshipType)
+    };
 
-  const contacts = friendPoints
-    .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
-      const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
-      const aspect = transitAspectDefinitions
-        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, friendPoint.name, yourPoint.name))
-        .sort((first, second) => first.orbValue - second.orbValue)[0];
-
-      if (!aspect) {
-        return [];
-      }
-
-      const baseContact = {
-        id: `${chart.id}-${friendPoint.name}-${aspect.type}-${yourPoint.name}`.toLowerCase().replace(/\s+/g, "-"),
-        friendPoint,
-        yourPoint,
-        aspect: aspect.type,
-        orb: aspect.orbValue,
-        score: synastryContactScore(friendPoint.name, yourPoint.name, aspect.type, aspect.orbValue),
-        tone: synastryTone(aspect.type),
-        contentKeys: synastryContactContentKeys(friendPoint.name, aspect.type, yourPoint.name, relationshipType)
-      };
-
-      return [{
-        ...baseContact,
-        summary: synastryContactSummary(
-          chart.displayName,
-          comparisonName,
-          comparisonIsSelf,
-          baseContact,
-          generatedContent,
-          chart.pronouns,
-          comparisonPronouns,
-          romanticAllowed,
-          relationshipType
-        )
-      }];
-    }));
-  const orderedContacts = contacts.sort((first, second) => second.score - first.score || first.orb - second.orb);
-  const primaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "primary");
-  const secondaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "secondary");
-  const backgroundContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "background");
-
-  return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, 16);
+    return {
+      ...baseContact,
+      summary: synastryContactSummary(
+        chart.displayName,
+        comparisonName,
+        comparisonIsSelf,
+        baseContact,
+        generatedContent,
+        chart.pronouns,
+        comparisonPronouns,
+        romanticAllowed,
+        relationshipType
+      )
+    };
+  });
 }
 
 const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
-
-function samePlanetExactAspect(personAPosition: PlanetPosition, personBPosition: PlanetPosition) {
-  const separation = angularDistance(zodiacLongitude(personAPosition), zodiacLongitude(personBPosition));
-
-  return transitAspectDefinitions
-    .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-    .filter((definition) => definition.orbValue <= synastryAspectOrbLimit(definition.type, personBPosition.planet, personAPosition.planet))
-    .sort((first, second) => first.orbValue - second.orbValue)[0] ?? null;
-}
 
 function compatibilityPlanetCards(
   profileNatalSky: SkySnapshot | null,
@@ -11373,91 +9516,6 @@ function compositeRelationshipTypeParagraphs(
     typeof variant.advice === "string" ? variant.advice : "",
     typeof variant.astro === "string" ? `The astro: ${variant.astro}.` : ""
   ]);
-}
-
-function relationshipMidpointLongitude(first: number, second: number) {
-  const distance = normalizedAngle(second - first);
-  const shortestDistance = distance > 180 ? distance - 360 : distance;
-
-  return normalizedAngle(first + shortestDistance / 2);
-}
-
-function relationshipCompositeSky(profileNatalSky: SkySnapshot | null, chart: ManualChart): SkySnapshot | null {
-  const friendSky = chart.natalChart;
-
-  if (!profileNatalSky || !friendSky) {
-    return null;
-  }
-
-  const compositeAscendantLongitude = typeof profileNatalSky.ascendantLongitude === "number" && typeof friendSky.ascendantLongitude === "number"
-    ? relationshipMidpointLongitude(profileNatalSky.ascendantLongitude, friendSky.ascendantLongitude)
-    : undefined;
-  const compositeMidheavenLongitude = typeof profileNatalSky.midheavenLongitude === "number" && typeof friendSky.midheavenLongitude === "number"
-    ? relationshipMidpointLongitude(profileNatalSky.midheavenLongitude, friendSky.midheavenLongitude)
-    : undefined;
-  const compositeAscendant = typeof compositeAscendantLongitude === "number"
-    ? zodiacSignForLongitude(compositeAscendantLongitude)
-    : friendSky.ascendant;
-  const compositeMidheaven = typeof compositeMidheavenLongitude === "number"
-    ? zodiacSignForLongitude(compositeMidheavenLongitude)
-    : friendSky.midheaven;
-  const friendPositions = new Map(friendSky.positions.map((position) => [position.planet, position]));
-  const positions = profileNatalSky.positions.flatMap((yourPosition) => {
-    const friendPosition = friendPositions.get(yourPosition.planet);
-
-    if (!friendPosition || yourPosition.planet === "North Node" || yourPosition.planet === "True Node") {
-      return [];
-    }
-
-    const longitude = relationshipMidpointLongitude(zodiacLongitude(yourPosition), zodiacLongitude(friendPosition));
-    const sign = zodiacSignForLongitude(longitude);
-
-    return [{
-      planet: yourPosition.planet,
-      glyph: yourPosition.glyph,
-      sign,
-      signGlyph: zodiacSignGlyphs[sign] ?? "",
-      degree: normalizedAngle(longitude) % 30,
-      house: wholeSignHouseForSign(sign, compositeAscendant) ?? 0,
-      motion: "direct" as const,
-      theme: `Shared ${comparisonPointRole(yourPosition.planet)}`
-    }];
-  });
-
-  const aspects = positions.flatMap((fromPosition, fromIndex) => (
-    positions.slice(fromIndex + 1).flatMap((toPosition) => {
-      const separation = angularDistance(zodiacLongitude(fromPosition), zodiacLongitude(toPosition));
-      const aspect = transitAspectDefinitions
-        .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= definition.orb)
-        .sort((first, second) => first.orbValue - second.orbValue)[0];
-
-      return aspect
-        ? [{
-            from: fromPosition.planet,
-            to: toPosition.planet,
-            type: aspect.type,
-            orb: aspect.orbValue,
-            meaning: `${fromPosition.planet} ${aspect.type} ${toPosition.planet}`
-          }]
-        : [];
-    })
-  ))
-    .sort((first, second) => first.orb - second.orb)
-    .slice(0, 12);
-
-  return {
-    location: profileNatalSky.location,
-    generatedAt: profileNatalSky.generatedAt,
-    ascendant: compositeAscendant,
-    ascendantLongitude: compositeAscendantLongitude,
-    midheaven: compositeMidheaven,
-    midheavenLongitude: compositeMidheavenLongitude,
-    moonPhase: "Relationship chart",
-    dominantElement: natalElementBalance(positions).sort((first, second) => second.count - first.count)[0]?.element ?? "Fire",
-    positions,
-    aspects
-  };
 }
 
 function sourceGroundedCompositeSection({
@@ -12040,6 +10098,18 @@ const YouPage = lazy(() =>
   }))
 );
 
+const NatalAspectPatternsSection = lazy(() =>
+  import("./features/you/NatalAspectPatternsSection").then((module) => ({
+    default: module.NatalAspectPatternsSection
+  }))
+);
+
+const NatalAspectPatternActivationsSection = lazy(() =>
+  import("./features/you/NatalAspectPatternsSection").then((module) => ({
+    default: module.NatalAspectPatternActivationsSection
+  }))
+);
+
 const YouRoute = lazy(() =>
   import("./routes/YouRoute").then((module) => ({
     default: module.YouRoute
@@ -12052,9 +10122,34 @@ const CalendarRoute = lazy(() =>
   }))
 );
 
+const loadFriendsWorkspaceShell = () => import("./features/friends/FriendsWorkspaceShell");
+const loadFriendsExperience = () => Promise.all([
+  import("./routes/FriendsRoute"),
+  loadFriendsWorkspaceShell()
+]);
+const preloadFriendsExperience = () => {
+  void loadFriendsExperience();
+};
+
 const FriendsRoute = lazy(() =>
-  import("./routes/FriendsRoute").then((module) => ({
-    default: module.FriendsRoute
+  loadFriendsExperience().then(([module]) => ({ default: module.FriendsRoute }))
+);
+
+const FriendsWorkspaceShell = lazy(() =>
+  loadFriendsWorkspaceShell().then((module) => ({
+    default: module.FriendsWorkspaceShell
+  }))
+);
+
+const FriendCompositeTab = lazy(() =>
+  import("./features/friends/FriendCompositeTab").then((module) => ({
+    default: module.FriendCompositeTab
+  }))
+);
+
+const AspectGiftLessonGroup = lazy(() =>
+  import("./components/charts/AspectGiftLessonGroup").then((module) => ({
+    default: module.AspectGiftLessonGroup
   }))
 );
 
@@ -12064,21 +10159,39 @@ const SettingsRoute = lazy(() =>
   }))
 );
 
+const SignupView = lazy(() =>
+  import("./features/auth/SignupView").then((module) => ({
+    default: module.SignupView
+  }))
+);
+
+const GuestSettingsView = lazy(() =>
+  import("./features/settings/GuestSettingsView").then((module) => ({
+    default: module.GuestSettingsView
+  }))
+);
+
+const MemberSettingsView = lazy(() =>
+  import("./features/settings/MemberSettingsView").then((module) => ({
+    default: module.MemberSettingsView
+  }))
+);
+
+const AccountView = lazy(() =>
+  import("./features/settings/MemberSettingsView").then((module) => ({
+    default: module.AccountView
+  }))
+);
+
 const SkyRoute = lazy(() =>
   import("./routes/SkyRoute").then((module) => ({
     default: module.SkyRoute
   }))
 );
 
-const FriendChartsList = lazy(() =>
-  import("./features/friends/FriendChartsList").then((module) => ({
-    default: module.FriendChartsList
-  }))
-);
-
-const SocialFriendsPanel = lazy(() =>
-  import("./features/friends/SocialFriendsPanel").then((module) => ({
-    default: module.SocialFriendsPanel
+const SkyDetailArticle = lazy(() =>
+  import("./features/sky/SkyDetailArticle").then((module) => ({
+    default: module.SkyDetailArticle
   }))
 );
 
@@ -12094,15 +10207,39 @@ const FriendDetail = lazy(() =>
   }))
 );
 
-const RelationshipChartFullscreen = lazy(() =>
-  import("./features/friends/RelationshipChartFullscreen").then((module) => ({
-    default: module.RelationshipChartFullscreen
+const FriendNatalTab = lazy(() =>
+  import("./features/friends/FriendNatalTab").then((module) => ({
+    default: module.FriendNatalTab
   }))
 );
 
-const RelationshipComparePicker = lazy(() =>
-  import("./features/friends/RelationshipComparePicker").then((module) => ({
-    default: module.RelationshipComparePicker
+const FriendTransitsTab = lazy(() =>
+  import("./features/friends/FriendTransitsTab").then((module) => ({
+    default: module.FriendTransitsTab
+  }))
+);
+
+const FriendProfileChartRail = lazy(() =>
+  import("./features/friends/FriendDetail").then((module) => ({
+    default: module.FriendProfileChartRail
+  }))
+);
+
+const FriendSynastryTab = lazy(() =>
+  import("./features/friends/FriendSynastryTab").then((module) => ({
+    default: module.FriendSynastryTab
+  }))
+);
+
+const CompatibilityTab = lazy(() =>
+  import("./features/friends/CompatibilityTab").then((module) => ({
+    default: module.CompatibilityTab
+  }))
+);
+
+const FriendProfileChartFullscreen = lazy(() =>
+  import("./features/friends/RelationshipChartFullscreen").then((module) => ({
+    default: module.FriendProfileChartFullscreen
   }))
 );
 
@@ -12112,26 +10249,6 @@ async function getAstrodienstSky(
   const { getAstrodienstSky: calculateSky } = await import("./services/ephemeris");
 
   return calculateSky(...args);
-}
-
-async function natalSkyWithAspectPatternsForStorage(
-  natalSky: SkySnapshot,
-  location: LocationInput,
-  date: Date,
-  timeKnown: boolean,
-  enabled: boolean
-) {
-  if (!enabled) {
-    return natalSky;
-  }
-
-  try {
-    const aspectPatterns = await fetchNatalAspectPatternsWithCopy(location, date, { timeKnown });
-    return skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
-  } catch (error) {
-    console.warn("Natal aspect-pattern summary could not be stored with this chart.", error);
-    return natalSky;
-  }
 }
 
 function FeatureLoadingFallback() {
@@ -12274,8 +10391,6 @@ export function App() {
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [profileNatalAspectPatternStatus, setProfileNatalAspectPatternStatus] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
-  const [personalTiming, setPersonalTiming] = useState<PersonalTimingResponse | null>(null);
-  const [personalTimingStatus, setPersonalTimingStatus] = useState<PersonalTimingStatus>("idle");
   const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
   const [personalTimingGeneratedStatus, setPersonalTimingGeneratedStatus] = useState<PersonalTimingStatus>("idle");
   const [personalTransitGeneratedContent, setPersonalTransitGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
@@ -12291,12 +10406,13 @@ export function App() {
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
-  const [skyAspectContentStatus, setSkyAspectContentStatus] = useState<SkyAspectContentStatus>(initialCachedSky ? "loading" : "idle");
   const [calendarContentStatus, setCalendarContentStatus] = useState<CalendarContentStatus>("idle");
   const [calendarContentRequest, setCalendarContentRequest] = useState<CalendarContentRequest | null>(null);
   const calendarContentCacheRef = useRef(new Map<string, CalendarContentCacheEntry>());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
+  const [friendNatalContentRequested, setFriendNatalContentRequested] = useState(false);
+  const [friendRelationshipContentRequested, setFriendRelationshipContentRequested] = useState(false);
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
@@ -12324,6 +10440,50 @@ export function App() {
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
+  const primaryProfileChart = userProfile?.charts[0];
+  const personalTimingSettings = useMemo(
+    () => apiSettingsFromChartSettings(userProfile?.settings),
+    [userProfile?.settings]
+  );
+  const personalTimingSubject = useMemo(
+    () => userProfile
+      ? apiSubjectFromUserChart(userProfile, primaryProfileChart, userProfile.settings)
+      : null,
+    [
+      primaryProfileChart?.birthDate,
+      primaryProfileChart?.birthLocation?.label,
+      primaryProfileChart?.birthLocation?.latitude,
+      primaryProfileChart?.birthLocation?.longitude,
+      primaryProfileChart?.birthLocation?.timeZone,
+      primaryProfileChart?.birthTime,
+      userProfile?.name,
+      userProfile?.settings
+    ]
+  );
+  const personalTimingLocation = useMemo(
+    () => userProfile?.currentLocationData
+      ? withTimeZone(userProfile.currentLocationData)
+      : userProfile?.currentLocation
+        ? locationFromLabel(userProfile.currentLocation)
+        : null,
+    [
+      userProfile?.currentLocation,
+      userProfile?.currentLocationData?.label,
+      userProfile?.currentLocationData?.latitude,
+      userProfile?.currentLocationData?.longitude,
+      userProfile?.currentLocationData?.timeZone
+    ]
+  );
+  const {
+    response: personalTiming,
+    status: personalTimingStatus
+  } = usePersonalTiming({
+    enabled: isProfileMode,
+    natalSubject: personalTimingSubject,
+    settings: personalTimingSettings,
+    targetDate: skyDate,
+    targetLocation: personalTimingLocation
+  });
   const requestCalendarContent = useCallback((request: CalendarContentRequest) => {
     setCalendarContentRequest((current) => (
       current?.cacheKey === request.cacheKey
@@ -12331,6 +10491,14 @@ export function App() {
         ? current
         : request
     ));
+  }, []);
+  const requestFriendProfileContent = useCallback((tab: FriendProfileTab) => {
+    if (tab === "natal") {
+      setFriendNatalContentRequested(true);
+      return;
+    }
+
+    setFriendRelationshipContentRequested(true);
   }, []);
 
   useEffect(() => {
@@ -12360,6 +10528,10 @@ export function App() {
   }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
 
   useEffect(() => {
+    if (mode === "friends") {
+      return;
+    }
+
     if (!userProfile || !remoteAccountId || !remoteProfileReady) {
       setPendingFriendRequestCount(0);
       return;
@@ -12390,7 +10562,7 @@ export function App() {
       window.removeEventListener("focus", refreshPendingFriendRequests);
       unsubscribeFromSocialChanges();
     };
-  }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
+  }, [mode, remoteAccountId, remoteProfileReady, userProfile?.id]);
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
@@ -12595,6 +10767,34 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
 
+    if (
+      mode === "guest"
+      || mode === "member"
+      || (mode === "friends" && !friendRelationshipContentRequested)
+    ) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadDeferredFallbackArchitectureV3Bundle()
+      .then((installed) => {
+        if (installed && !cancelled) {
+          setFallbackArchitectureV3Version((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Deferred transit and relationship fallbacks failed to load; core fallbacks remain active.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [friendRelationshipContentRequested, mode]);
+
+  useEffect(() => {
+    let cancelled = false;
+
     loadFallbackArchitectureV3DashboardBundle()
       .then((bundle) => {
         if (!bundle || cancelled) {
@@ -12756,14 +10956,12 @@ export function App() {
 
     if (!shouldLoadSkyGenerated || !sky) {
       setSkyGeneratedContent(normalizedSkySnapshotContent);
-      setSkyAspectContentStatus("idle");
       return () => {
         cancelled = true;
       };
     }
 
     if (mode === "calendar") {
-      setSkyAspectContentStatus("idle");
       setCalendarContentStatus("loading");
 
       if (!calendarContentRequest) {
@@ -12823,7 +11021,6 @@ export function App() {
     }
 
     setSkyGeneratedContent(normalizedSkySnapshotContent);
-    setSkyAspectContentStatus("loading");
 
     const aspectContentKeys = sky.aspects.flatMap((aspect) => {
       const firstSign = skyAspectPosition(aspect.from, sky.positions)?.sign;
@@ -12859,14 +11056,10 @@ export function App() {
       .then((content) => {
         if (!cancelled) {
           setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
-          setSkyAspectContentStatus("ready");
         }
       })
       .catch((error) => {
-        console.warn("Current Sky aspect interpretations failed to load; factual aspects remain available.", error);
-        if (!cancelled) {
-          setSkyAspectContentStatus("ready");
-        }
+        console.warn("Current Sky interpretations failed to load; approved fallback copy remains available.", error);
       });
 
     return () => {
@@ -12876,7 +11069,8 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadNatal = ["guest", "member", "profile", "friends"].includes(mode);
+    const shouldLoadNatal = ["guest", "member", "profile"].includes(mode)
+      || (mode === "friends" && friendNatalContentRequested);
 
     if (!shouldLoadNatal) {
       setNatalGeneratedContent(new Map());
@@ -12901,14 +11095,18 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [generatedContentPreviewMode, mode, skyDate]);
+  }, [friendNatalContentRequested, generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadRelationships = mode === "friends";
+    const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequested;
 
     if (!shouldLoadRelationships) {
       setRelationshipGeneratedContent(new Map());
+      if (mode !== "friends") {
+        setFriendNatalContentRequested(false);
+        setFriendRelationshipContentRequested(false);
+      }
       return () => {
         cancelled = true;
       };
@@ -12930,7 +11128,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [generatedContentPreviewMode, mode, skyDate]);
+  }, [friendRelationshipContentRequested, generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     if (!datePickerOpen) {
@@ -12985,6 +11183,8 @@ export function App() {
 
     function closeMobileSkyControls(restoreFocus = true) {
       setMobileSkyControlsOpen(false);
+      setCityPickerOpen(false);
+      setCityPickerOpenedFromMobileControls(false);
       if (restoreFocus) {
         mobileDatePickerTriggerRef.current?.focus();
       }
@@ -13568,76 +11768,6 @@ export function App() {
     activeSunriseOrbDegrees,
     showNatalAspectPatterns,
     showNatalAspectPatternActivation
-  ]);
-
-  useEffect(() => {
-    if (!isProfileMode || !userProfile || !isTldrAstroApiConfigured) {
-      setPersonalTiming(null);
-      setPersonalTimingStatus("idle");
-      return;
-    }
-
-    const primaryChart = userProfile.charts[0];
-    const natalSubject = apiSubjectFromUserChart(userProfile, primaryChart, userProfile.settings);
-    const currentLocation = userProfile.currentLocationData
-      ? withTimeZone(userProfile.currentLocationData)
-      : userProfile.currentLocation
-        ? locationFromLabel(userProfile.currentLocation)
-        : null;
-
-    if (!natalSubject || !natalSubject.datetime.timeKnown || !currentLocation) {
-      setPersonalTiming(null);
-      setPersonalTimingStatus("idle");
-      return;
-    }
-
-    let cancelled = false;
-    setPersonalTimingStatus("loading");
-
-    getPersonalTiming({
-      natalSubject,
-      targetDatetime: {
-        date: skyDate,
-        time: "12:00",
-        timeKnown: true,
-        timeZone: currentLocation.timeZone
-      },
-      targetLocation: currentLocation,
-      settings: apiSettingsFromChartSettings(userProfile.settings),
-      includeContentFacts: true,
-      maxTransits: 8
-    })
-      .then((response) => {
-        if (!cancelled) {
-          setPersonalTiming(response);
-          setPersonalTimingStatus("ready");
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          console.warn("TLDR Astro personal timing API failed; using local transit rows.", error);
-          setPersonalTiming(null);
-          setPersonalTimingStatus("error");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    userProfile?.id,
-    userProfile?.name,
-    userProfile?.settings,
-    userProfile?.charts[0]?.birthDate,
-    userProfile?.charts[0]?.birthTime,
-    userProfile?.charts[0]?.birthCity,
-    userProfile?.charts[0]?.birthLocation?.label,
-    userProfile?.charts[0]?.birthLocation?.timeZone,
-    userProfile?.currentLocation,
-    userProfile?.currentLocationData?.label,
-    userProfile?.currentLocationData?.timeZone,
-    isProfileMode,
-    skyDate
   ]);
 
   useEffect(() => {
@@ -14379,10 +12509,15 @@ export function App() {
   }
 
   function openMobileCityPicker() {
-    setMobileSkyControlsOpen(false);
     setDatePickerOpen(false);
     setCityPickerOpenedFromMobileControls(true);
     setCityPickerOpen(true);
+  }
+
+  function closeMobileCityPicker() {
+    setCityPickerOpen(false);
+    setCityPickerOpenedFromMobileControls(false);
+    window.requestAnimationFrame(() => cityPickerTriggerRef.current?.focus());
   }
 
   async function acceptSocialInvitation() {
@@ -14467,7 +12602,9 @@ export function App() {
                     className={`primary-friends-nav ${mode === "friends" ? "active" : ""}`}
                     type="button"
                     aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
+                    onFocus={preloadFriendsExperience}
                     onClick={navigateToFriends}
+                    onPointerEnter={preloadFriendsExperience}
                   >
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
@@ -14511,40 +12648,90 @@ export function App() {
               role="dialog"
               aria-label="Sky controls"
             >
-              <div className="mobile-sky-controls__tabs" role="group" aria-label="Sky date shortcuts">
-                <button
-                  type="button"
-                  className={skyDate === todaySkyDate ? "active" : ""}
-                  onClick={() => selectSkyDateFromMobileControls(todaySkyDate)}
+              {cityPickerOpenedFromMobileControls ? (
+                <form
+                  className="city-picker mobile-sky-controls__city-picker"
+                  ref={cityPickerRef}
+                  aria-label="Change location"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    applyManualLocation();
+                  }}
                 >
-                  Today
-                </button>
-                <button
-                  type="button"
-                  className={skyDate === tomorrowSkyDate ? "active" : ""}
-                  onClick={() => selectSkyDateFromMobileControls(tomorrowSkyDate)}
-                >
-                  Tomorrow
-                </button>
-                <button
-                  type="button"
-                  className={skyDate !== todaySkyDate && skyDate !== tomorrowSkyDate ? "active" : ""}
-                  ref={datePickerTriggerRef}
-                  onClick={openMobileDatePicker}
-                >
-                  Date
-                </button>
-              </div>
-              <span className="mobile-sky-controls__label">Location</span>
-              <button
-                type="button"
-                className="mobile-sky-controls__location"
-                ref={cityPickerTriggerRef}
-                onClick={openMobileCityPicker}
-              >
-                <MapPin size={18} aria-hidden="true" />
-                <span>{compactCityLabel(location.label)}</span>
-              </button>
+                  <div className="mobile-sky-controls__city-header">
+                    <button
+                      type="button"
+                      className="mobile-sky-controls__back"
+                      aria-label="Back to Sky controls"
+                      onClick={closeMobileCityPicker}
+                    >
+                      <ChevronLeft size={20} aria-hidden="true" />
+                    </button>
+                    <strong>Change location</strong>
+                    <span aria-hidden="true" />
+                  </div>
+                  <label>
+                    <span>City</span>
+                    <input
+                      ref={cityPickerInputRef}
+                      value={manualLocation}
+                      onChange={(event) => setManualLocation(event.target.value)}
+                      aria-label="City"
+                      placeholder="Search for a city"
+                      autoFocus
+                    />
+                  </label>
+                  <CitySuggestions
+                    suggestions={citySuggestions}
+                    status={citySearchStatus}
+                    mapboxEnabled={hasMapboxToken()}
+                    onSelect={applyCitySuggestion}
+                  />
+                  <div className="city-picker-actions">
+                    <button type="button" onClick={closeMobileCityPicker}>
+                      Cancel
+                    </button>
+                    <button type="submit">Update</button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className="mobile-sky-controls__tabs" role="group" aria-label="Sky date shortcuts">
+                    <button
+                      type="button"
+                      className={skyDate === todaySkyDate ? "active" : ""}
+                      onClick={() => selectSkyDateFromMobileControls(todaySkyDate)}
+                    >
+                      Today
+                    </button>
+                    <button
+                      type="button"
+                      className={skyDate === tomorrowSkyDate ? "active" : ""}
+                      onClick={() => selectSkyDateFromMobileControls(tomorrowSkyDate)}
+                    >
+                      Tomorrow
+                    </button>
+                    <button
+                      type="button"
+                      className={skyDate !== todaySkyDate && skyDate !== tomorrowSkyDate ? "active" : ""}
+                      ref={datePickerTriggerRef}
+                      onClick={openMobileDatePicker}
+                    >
+                      Date
+                    </button>
+                  </div>
+                  <span className="mobile-sky-controls__label">Location</span>
+                  <button
+                    type="button"
+                    className="mobile-sky-controls__location"
+                    ref={cityPickerTriggerRef}
+                    onClick={openMobileCityPicker}
+                  >
+                    <MapPin size={18} aria-hidden="true" />
+                    <span>{compactCityLabel(location.label)}</span>
+                  </button>
+                </>
+              )}
             </div>
           )}
           <button
@@ -14625,7 +12812,9 @@ export function App() {
                     type="button"
                     role="menuitem"
                     aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
+                    onFocus={preloadFriendsExperience}
                     onClick={() => { setSelectedSkyDetail(null); navigateToFriends(); setMenuOpen(false); }}
+                    onPointerEnter={preloadFriendsExperience}
                   >
                     <FriendsNavIcon size={22} />
                     <span>Friends</span>
@@ -14646,7 +12835,21 @@ export function App() {
                 <span>Settings</span>
               </button>
               {userProfile ? (
-                <button className="site-menu-signout" type="button" role="menuitem" onClick={async () => { setSelectedSkyDetail(null); await signOutAuth(); setUserProfile(null); navigateToPortalMode("profile"); setMenuOpen(false); }}>
+                <button
+                  className="site-menu-signout"
+                  type="button"
+                  role="menuitem"
+                  onClick={async () => {
+                    flushSync(() => {
+                      setSelectedSkyDetail(null);
+                      setUserProfile(null);
+                      setOwnSocialProfile(null);
+                      navigateToPortalMode("profile");
+                      setMenuOpen(false);
+                    });
+                    await signOutAuth();
+                  }}
+                >
                   <LogOut size={20} aria-hidden="true" />
                   <span>Sign out</span>
                 </button>
@@ -14687,7 +12890,9 @@ export function App() {
       )}
 
       {selectedSkyDetail ? (
+        <Suspense fallback={<FeatureLoadingFallback />}>
           <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
+        </Suspense>
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
@@ -14736,9 +12941,9 @@ export function App() {
                         }}
                       />
                     )}
-                    {cityPickerOpen && (
+                    {cityPickerOpen && !cityPickerOpenedFromMobileControls && (
                       <form
-                        className={`city-picker hero-city-picker${cityPickerOpenedFromMobileControls ? " hero-city-picker--mobile" : ""}`}
+                        className="city-picker hero-city-picker"
                         id="city-picker"
                         ref={cityPickerRef}
                         onSubmit={(event) => {
@@ -14840,7 +13045,6 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
-                      aspectContentStatus={skyAspectContentStatus}
                       lifeAreaFocus={[]}
                       onOpenDetail={openSkyDetail}
                     />
@@ -14851,7 +13055,6 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
-                      aspectContentStatus={skyAspectContentStatus}
                       lifeAreaFocus={userLifeAreaFocus}
                       onOpenDetail={openSkyDetail}
                     />
@@ -14889,7 +13092,6 @@ export function App() {
                     <ProfileView
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
-                      onUpdateProfile={setUserProfile}
                       targetDate={skyDate}
                       transitForm={transitForm}
                       transitItems={activeTransits}
@@ -14902,7 +13104,6 @@ export function App() {
                       personalTimingStatus={personalTimingStatus}
                       personalTransitGeneratedContent={personalTransitGeneratedContent}
                       transitsDrawn={transitsDrawn}
-                      selectedTransit={selectedTransit}
                       selectedTransitId={selectedTransitId}
                       setSelectedTransitId={setSelectedTransitId}
                       skyGeneratedAt={sky?.generatedAt ?? ""}
@@ -14913,28 +13114,33 @@ export function App() {
                       generatedContent={natalGeneratedContent}
                     />
                   ) : (
-                    <SignupView
-                      initialMode={accountIntent}
-                      onClose={() => {
-                        setAccountIntent("create");
-                        navigateToPortalMode(userProfile ? "profile" : "guest");
-                      }}
-                      onCreateProfile={(nextProfile, context) => {
-                        setUserProfile(nextProfile);
-                        if (
-                          context?.isNewAccount
-                          && context.provider === "phone"
-                          && !pendingInvitationCapturedRef.current
-                        ) {
-                          setLaunchChartSetupAfterAuth(true);
-                        }
-                        navigateToPortalMode("profile");
-                      }}
-                    />
+                    <Suspense fallback={<FeatureLoadingFallback />}>
+                      <SignupView
+                        initialForm={defaultSignupForm}
+                        initialMode={accountIntent}
+                        onAuthenticated={({ account, form, isNewAccount, provider }) => {
+                          setUserProfile(createUserProfile(form, provider, account));
+                          if (
+                            isNewAccount
+                            && provider === "phone"
+                            && !pendingInvitationCapturedRef.current
+                          ) {
+                            setLaunchChartSetupAfterAuth(true);
+                          }
+                          navigateToPortalMode("profile");
+                        }}
+                        onClearPendingForm={clearPendingSignupForm}
+                        onClose={() => {
+                          setAccountIntent("create");
+                          navigateToPortalMode(userProfile ? "profile" : "guest");
+                        }}
+                        onSavePendingForm={savePendingSignupForm}
+                      />
+                    </Suspense>
                   )}
                 </YouRoute>
               )}
-              {mode === "friends" && userProfile && sky && (
+              {mode === "friends" && userProfile && (
                 <FriendsRoute>
                   <ManualChartsPanel
                     profile={userProfile}
@@ -14948,37 +13154,76 @@ export function App() {
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
                     chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
-                    allowCachedChartsWhileLoading={!isAuthConfigured}
+                    allowCachedChartsWhileLoading={!isAuthConfigured || authAccountChecked}
                     onPendingRequestCountChange={setPendingFriendRequestCount}
+                    onFriendProfileContentRequest={requestFriendProfileContent}
                     onOpenDetail={openSkyDetail}
                   />
                 </FriendsRoute>
               )}
               {mode === "account" && userProfile && (
-                <AccountView
-                  profile={userProfile}
-                  onSocialProfileChange={setOwnSocialProfile}
-                  onAccountDeleted={() => {
-                    setUserProfile(null);
-                    setOwnSocialProfile(null);
-                    navigateToPortalMode("profile");
-                  }}
-                  onSignOut={async () => {
-                    await signOutAuth();
-                    setUserProfile(null);
-                    setOwnSocialProfile(null);
-                    navigateToPortalMode("profile");
-                  }}
-                  onUpdateProfile={setUserProfile}
-                />
+                <Suspense fallback={<FeatureLoadingFallback />}>
+                  <AccountView
+                    profile={userProfile}
+                    savedBirthCity={validChartBirthCity(userProfile.charts[0])}
+                    savedBirthDate={validChartBirthDate(userProfile.charts[0])}
+                    savedBirthTime={validChartBirthTime(userProfile.charts[0])}
+                    onAccountDeleted={() => {
+                      setUserProfile(null);
+                      setOwnSocialProfile(null);
+                      navigateToPortalMode("profile");
+                    }}
+                    onBirthDetailsChange={({ birthCity, birthDate, birthTime }) => {
+                      const primaryChart = userProfile.charts[0];
+                      const baseChart: UserChart = primaryChart ?? {
+                        id: `chart-${Date.now()}`,
+                        name: chartNameFromProfile(userProfile.name),
+                        type: "Birth chart",
+                        birthDate: "Birth date needed",
+                        birthTime: "Birth time needed",
+                        birthCity: "Birth city needed",
+                        birthLocation: null
+                      };
+                      const nextChart: UserChart = {
+                        ...baseChart,
+                        name: baseChart.name || chartNameFromProfile(userProfile.name),
+                        birthDate: birthDate || "Birth date needed",
+                        birthTime: birthTime || "Birth time needed",
+                        birthCity: birthCity || "Birth city needed",
+                        birthLocation: baseChart.birthLocation ?? null
+                      };
+
+                      setUserProfile({
+                        ...userProfile,
+                        sun: birthDate ? zodiacFromBirthDate(birthDate) : userProfile.sun,
+                        charts: primaryChart
+                          ? userProfile.charts.map((chart, index) => (index === 0 ? nextChart : chart))
+                          : [nextChart]
+                      });
+                    }}
+                    onPhoneChange={(phone) => setUserProfile({ ...userProfile, phone })}
+                    onSocialProfileChange={setOwnSocialProfile}
+                    onSignOut={async () => {
+                      flushSync(() => {
+                        setUserProfile(null);
+                        setOwnSocialProfile(null);
+                        navigateToPortalMode("profile");
+                      });
+                      await signOutAuth();
+                    }}
+                  />
+                </Suspense>
               )}
               {mode === "settings" && (
                 <SettingsRoute>
                   {userProfile ? (
-                    <SettingsView
-                      profile={userProfile}
+                    <MemberSettingsView
+                      currentLocation={userProfile.currentLocation}
+                      currentLocationData={userProfile.currentLocationData}
+                      currentCityDisplay={compactCityLabel(userProfile.currentLocation || defaultLocation.label)}
+                      defaultLocation={withTimeZone(defaultLocation)}
+                      houseSignLabelStyle={normalizeChartSettings(userProfile.settings).houseSignLabelStyle}
                       socialProfile={ownSocialProfile}
-                      onUpdateProfile={setUserProfile}
                       onSocialProfileChange={setOwnSocialProfile}
                       theme={theme}
                       sunriseOrbEnabled={sunriseOrbEnabled}
@@ -14986,12 +13231,29 @@ export function App() {
                       onSunriseOrbChange={setSunriseOrbEnabled}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                      onHouseSignLabelStyleChange={setGuestHouseSignLabelStyle}
+                      onCurrentLocationChange={(nextLocation) => {
+                        setUserProfile({
+                          ...userProfile,
+                          currentLocation: nextLocation.label,
+                          currentLocationData: nextLocation
+                        });
+                      }}
+                      onHouseSignLabelStyleChange={(houseSignLabelStyle) => {
+                        setGuestHouseSignLabelStyle(houseSignLabelStyle);
+                        setUserProfile({
+                          ...userProfile,
+                          settings: {
+                            ...normalizeChartSettings(userProfile.settings),
+                            houseSignLabelStyle
+                          }
+                        });
+                      }}
+                      resolveLocationLabel={locationFromLabel}
                     />
                   ) : (
                     <GuestSettingsView
                       theme={theme}
-                      location={location}
+                      locationLabel={compactCityLabel(location.label)}
                       sunriseOrbEnabled={sunriseOrbEnabled}
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
@@ -15257,58 +13519,6 @@ function SkyDatePicker({
         </button>
       </div>
     </section>
-  );
-}
-
-function CitySuggestions({
-  suggestions,
-  status,
-  mapboxEnabled,
-  onSelect
-}: {
-  suggestions: CitySuggestion[];
-  status: "idle" | "loading" | "ready" | "empty" | "error";
-  mapboxEnabled: boolean;
-  onSelect: (suggestion: CitySuggestion) => void;
-}) {
-  if (!mapboxEnabled) {
-    return (
-      <p className="city-picker-note">
-        Add VITE_MAPBOX_ACCESS_TOKEN to enable suggested city search.
-      </p>
-    );
-  }
-
-  if (status === "idle") {
-    return <p className="city-picker-note">Start typing to see suggested cities.</p>;
-  }
-
-  if (status === "loading") {
-    return <p className="city-picker-note">Searching cities...</p>;
-  }
-
-  if (status === "error") {
-    return <p className="city-picker-note">City suggestions are unavailable right now.</p>;
-  }
-
-  if (status === "empty") {
-    return <p className="city-picker-note">No city suggestions found.</p>;
-  }
-
-  return (
-    <div className="city-suggestions" role="listbox" aria-label="Suggested cities">
-      {suggestions.map((suggestion) => (
-        <button
-          key={suggestion.id}
-          type="button"
-          role="option"
-          onClick={() => onSelect(suggestion)}
-        >
-          <strong>{suggestion.label}</strong>
-          {suggestion.region && <span>{suggestion.region}</span>}
-        </button>
-      ))}
-    </div>
   );
 }
 
@@ -15894,38 +14104,6 @@ function natalPlacementSkyDetail(
   };
 }
 
-const signElementMap: Record<string, "Fire" | "Earth" | "Air" | "Water"> = {
-  Aries: "Fire",
-  Leo: "Fire",
-  Sagittarius: "Fire",
-  Taurus: "Earth",
-  Virgo: "Earth",
-  Capricorn: "Earth",
-  Gemini: "Air",
-  Libra: "Air",
-  Aquarius: "Air",
-  Cancer: "Water",
-  Scorpio: "Water",
-  Pisces: "Water"
-};
-
-function natalElementBalance(positions: PlanetPosition[]) {
-  const counts = { Fire: 0, Earth: 0, Air: 0, Water: 0 };
-
-  positions.forEach((position) => {
-    const element = signElementMap[position.sign];
-
-    if (element) {
-      counts[element] += 1;
-    }
-  });
-
-  return (["Fire", "Earth", "Air", "Water"] as const).map((element) => ({
-    element,
-    count: counts[element]
-  }));
-}
-
 function elementalBalanceSummary(balance: ReturnType<typeof natalElementBalance>) {
   const ranked = [...balance].sort((first, second) => second.count - first.count);
   const [leader, runnerUp] = ranked;
@@ -16456,156 +14634,11 @@ function RetrogradeCallout({
   );
 }
 
-function CitySearchField({
-  label,
-  value,
-  onChange,
-  onSelect,
-  placeholder,
-  optional = false,
-  optionalLabel = "Optional",
-  icon,
-  className = ""
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  onSelect?: (suggestion: CitySuggestion) => void;
-  placeholder: string;
-  optional?: boolean;
-  optionalLabel?: string;
-  icon?: ReactNode;
-  className?: string;
-}) {
-  const fieldRef = useRef<HTMLDivElement | null>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
-  const query = value.trim();
-
-  useEffect(() => {
-    if (!isActive) {
-      return;
-    }
-
-    function handlePointerDown(event: PointerEvent) {
-      const target = event.target as Node | null;
-
-      if (!target || fieldRef.current?.contains(target)) {
-        return;
-      }
-
-      setIsActive(false);
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsActive(false);
-      }
-    }
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isActive]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    if (!isActive || !hasMapboxToken() || query.length < 2) {
-      setSuggestions([]);
-      setStatus("idle");
-      return;
-    }
-
-    setStatus("loading");
-    const searchTimer = window.setTimeout(() => {
-      searchCities(query)
-        .then((nextSuggestions) => {
-          if (cancelled) {
-            return;
-          }
-
-          setSuggestions(nextSuggestions);
-          setStatus(nextSuggestions.length > 0 ? "ready" : "empty");
-        })
-        .catch(() => {
-          if (cancelled) {
-            return;
-          }
-
-          setSuggestions([]);
-          setStatus("error");
-        });
-    }, 260);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(searchTimer);
-    };
-  }, [isActive, query]);
-
-  function chooseSuggestion(suggestion: CitySuggestion) {
-    if (onSelect) {
-      onSelect(suggestion);
-    } else {
-      onChange(suggestion.label);
-    }
-    setSuggestions([]);
-    setStatus("idle");
-    setIsActive(false);
-  }
-
-  const input = (
-    <input
-      aria-label={label}
-      value={value}
-      onChange={(event) => {
-        onChange(event.target.value);
-        setIsActive(true);
-      }}
-      onFocus={() => setIsActive(true)}
-      placeholder={placeholder}
-    />
-  );
-
-  return (
-    <div ref={fieldRef} className={`field-line city-search-field ${className}`}>
-      <label>
-        <span>
-          {label}
-          {optional && <em>{optionalLabel}</em>}
-        </span>
-        {icon ? (
-          <div className="city-search-control">
-            {icon}
-            {input}
-          </div>
-        ) : input}
-      </label>
-
-      {isActive && (
-        <CitySuggestions
-          suggestions={suggestions}
-          status={status}
-          mapboxEnabled={hasMapboxToken()}
-          onSelect={chooseSuggestion}
-        />
-      )}
-    </div>
-  );
-}
-
 function TodayView({
   positions,
   aspects,
   generatedAt,
   generatedContent,
-  aspectContentStatus,
   lifeAreaFocus,
   onOpenDetail
 }: {
@@ -16613,7 +14646,6 @@ function TodayView({
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
-  aspectContentStatus: SkyAspectContentStatus;
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -16635,7 +14667,6 @@ function TodayView({
           positions={positions}
           generatedAt={generatedAt}
           generatedContent={generatedContent}
-          contentStatus={aspectContentStatus}
           onOpenDetail={onOpenDetail}
         />
       )}
@@ -16659,31 +14690,18 @@ function ActiveAspects({
   positions,
   generatedAt,
   generatedContent,
-  contentStatus,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
-  contentStatus: SkyAspectContentStatus;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const aspectGroups = useMemo(
     () => groupAspectsByGiftLesson(aspects, (aspect) => aspect.type, (aspect) => aspect.orb),
     [aspects]
   );
-
-  if (contentStatus === "loading") {
-    return (
-      <SkyAspectsSection>
-        <div className="sky-aspect-content-loading" role="status" aria-label="Loading aspect write-ups">
-          <SkyLoadingCard compact />
-          <SkyLoadingCard compact />
-        </div>
-      </SkyAspectsSection>
-    );
-  }
 
   const visibleAspectGroups = aspectGroups
     .map((group) => ({
@@ -16696,12 +14714,6 @@ function ActiveAspects({
         .filter(({ normalized }) => normalized.sections.length > 0)
     }))
     .filter((group) => group.aspects.length > 0);
-  const editorialAspectIds = new Set(
-    visibleAspectGroups.flatMap((group) => group.aspects.map(({ aspect }) => aspect.id ?? `${aspect.from}|${aspect.type}|${aspect.to}`))
-  );
-  const calculatedOnlyAspects = aspects.filter((aspect) => (
-    !editorialAspectIds.has(aspect.id ?? `${aspect.from}|${aspect.type}|${aspect.to}`)
-  ));
 
   return (
     <SkyAspectsSection>
@@ -16744,43 +14756,6 @@ function ActiveAspects({
           })}
         </SkyAspectGroup>
       ))}
-      {calculatedOnlyAspects.length > 0 ? (
-        <details className="calculated-aspects-disclosure">
-          <summary>
-            <span>All calculated aspects ({calculatedOnlyAspects.length})</span>
-            <span className="calculated-aspects-disclosure__hint">Facts only</span>
-          </summary>
-          <div className="aspects-card aspect-row-card calculated-aspects-card">
-            <div className="aspect-row-list">
-              {calculatedOnlyAspects.map((aspect) => {
-                const first = skyAspectPosition(aspect.from, positions);
-                const second = skyAspectPosition(aspect.to, positions);
-                const exactDate = skyPlacementAspectExactDate(aspect, generatedAt, positions);
-
-                return (
-                  <div
-                    className="aspect-row aspect-row-static calculated-aspect-row"
-                    key={aspect.id ?? `${aspect.from}-${aspect.type}-${aspect.to}`}
-                  >
-                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                    <div className="aspect-row-copy">
-                      <h3>{`${aspect.from} ${aspect.type} ${aspect.to}`}</h3>
-                      <span className="calculated-aspect-row__facts">
-                        {first && second
-                          ? `${first.planet} in ${first.sign} · ${second.planet} in ${second.sign}`
-                          : `${aspect.from} · ${aspect.to}`}
-                      </span>
-                      <span className="calculated-aspect-row__facts">
-                        {`${wholeDegreeOrb(aspect.orb)} orb · Exact ${exactDate}`}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </details>
-      ) : null}
     </SkyAspectsSection>
   );
 }
@@ -16956,26 +14931,6 @@ function CalculationDiagnosticsPanel({
         <dd>{validation.ok ? "valid primary calculation" : validation.diagnostics.join("; ")}</dd>
       </dl>
     </details>
-  );
-}
-
-function CalculationMethodSettingsGroup() {
-  return (
-    <section className="settings-group" aria-label="Calculation method">
-      <span className="settings-group-label">Calculation method</span>
-      <div className="settings-card">
-        <div className="settings-list">
-          <div className="settings-row">
-            <div className="settings-row-copy">
-              <span className="settings-row-title">Ephemeris</span>
-              <small className="settings-row-description">
-                Planetary positions are calculated with Swiss Ephemeris and independently verified against NASA/JPL.
-              </small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -17369,1774 +15324,6 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
   );
 }
 
-function SignupView({
-  initialMode = "create",
-  onClose,
-  onCreateProfile
-}: {
-  initialMode?: AuthMode;
-  onClose: () => void;
-  onCreateProfile: (profile: UserProfile, context?: { isNewAccount: boolean; provider: SignupProvider }) => void;
-}) {
-  const [authMode, setAuthMode] = useState<AuthMode>(initialMode);
-  const [form, setForm] = useState<SignupForm>(defaultSignupForm);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
-  const [authMessage, setAuthMessage] = useState("");
-  const [phoneAuthOpen, setPhoneAuthOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [phoneCode, setPhoneCode] = useState("");
-  const [phoneCodeSent, setPhoneCodeSent] = useState(false);
-  const [phoneOtpDestination, setPhoneOtpDestination] = useState("");
-  const [phoneResendSeconds, setPhoneResendSeconds] = useState(0);
-  const phoneVerificationCodeRef = useRef("");
-  const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(defaultSignupForm.birthDate));
-  const birthTimeParts = splitSignupBirthTime(form.birthTime);
-  const isLogin = authMode === "login";
-
-  useEffect(() => {
-    setAuthMode(initialMode);
-  }, [initialMode]);
-
-  useEffect(() => {
-    if (phoneResendSeconds <= 0) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setPhoneResendSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [phoneResendSeconds]);
-
-  function resetPhoneChallenge() {
-    setPhoneCodeSent(false);
-    setPhoneCode("");
-    setPhoneOtpDestination("");
-    setPhoneResendSeconds(0);
-    setAuthMessage("");
-  }
-
-  function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
-    setForm({ ...form, [key]: value });
-  }
-
-  function updateBirthTime(part: keyof SignupTimeParts, value: string) {
-    const nextParts = {
-      ...birthTimeParts,
-      [part]: part === "meridiem" ? value as SignupTimeParts["meridiem"] : value.replace(/\D/g, "").slice(0, 2)
-    };
-
-    updateField("birthTime", formatSignupBirthTime(nextParts));
-  }
-
-  function updateBirthDate(part: keyof SignupDateParts, value: string) {
-    const maxLength = part === "year" ? 4 : 2;
-    const nextParts = {
-      ...birthDateParts,
-      [part]: value.replace(/\D/g, "").slice(0, maxLength)
-    };
-
-    setBirthDateParts(nextParts);
-    updateField("birthDate", formatSignupBirthDate(nextParts));
-  }
-
-  async function submitSignup(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!isAuthConfigured) {
-      setAuthMessage(`Add Supabase environment variables to enable real email ${isLogin ? "login" : "signup"}.`);
-      return;
-    }
-
-    if (!form.email.trim() || !form.password.trim()) {
-      setAuthMessage(`Add an email and password to ${isLogin ? "log in" : "create your account"}.`);
-      return;
-    }
-
-    setAuthStatus("loading");
-    setAuthMessage("");
-    if (!isLogin) {
-      savePendingSignupForm(form);
-    }
-
-    try {
-      const account = isLogin
-        ? await signInWithEmail({
-            email: form.email.trim(),
-            password: form.password
-          })
-        : await signUpWithEmail({
-            email: form.email.trim(),
-            password: form.password,
-            fullName: form.fullName.trim()
-          });
-
-      if (account) {
-        onCreateProfile(createUserProfile(form, "email", account), {
-          isNewAccount: !isLogin,
-          provider: "email"
-        });
-        clearPendingSignupForm();
-      } else {
-        setAuthMessage("Check your email to confirm your account.");
-      }
-    } catch (error) {
-      setAuthMessage(error instanceof Error ? error.message : "Email signup failed.");
-    } finally {
-      setAuthStatus("idle");
-    }
-  }
-
-  async function socialSignup(provider: "google") {
-    if (!isAuthConfigured) {
-      setAuthMessage("Add Supabase environment variables to enable real social sign-on.");
-      return;
-    }
-
-    setAuthStatus("loading");
-    setAuthMessage("");
-    if (authMode === "create") {
-      savePendingSignupForm(form);
-    } else {
-      clearPendingSignupForm();
-    }
-
-    try {
-      await signInWithProvider(provider);
-    } catch (error) {
-      setAuthStatus("idle");
-      setAuthMessage(error instanceof Error ? error.message : `${providerLabel(provider)} sign-on failed.`);
-    }
-  }
-
-  async function sendPhoneCode(isResend = false) {
-    if (!phoneNumber.trim()) {
-      setAuthMessage("Enter your phone number.");
-      return;
-    }
-
-    setAuthStatus("loading");
-    setAuthMessage("");
-
-    try {
-      const destination = await sendPhoneSignInCode(phoneNumber, {
-        shouldCreateUser: !isLogin
-      });
-
-      setPhoneOtpDestination(destination);
-      setPhoneCodeSent(true);
-      setPhoneResendSeconds(30);
-      setAuthMessage(isResend ? "A new code is on its way." : "");
-    } catch (error) {
-      setAuthMessage(error instanceof Error ? error.message : "Could not send the phone code.");
-    } finally {
-      setAuthStatus("idle");
-    }
-  }
-
-  async function verifyPhoneCode(code = phoneCode) {
-    const verificationCode = code.trim();
-
-    if (verificationCode.length !== 6) {
-      setAuthMessage("Enter the six-digit code.");
-      return;
-    }
-
-    if (phoneVerificationCodeRef.current === verificationCode) {
-      return;
-    }
-
-    phoneVerificationCodeRef.current = verificationCode;
-    setAuthStatus("loading");
-    setAuthMessage("");
-
-    if (!isLogin) {
-      savePendingSignupForm(form);
-    }
-
-    try {
-      const account = await verifyPhoneSignInCode({
-        phone: phoneOtpDestination || phoneNumber,
-        code: verificationCode
-      });
-
-      if (account) {
-        onCreateProfile(createUserProfile(form, "phone", account), {
-          isNewAccount: !isLogin,
-          provider: "phone"
-        });
-        clearPendingSignupForm();
-      }
-    } catch (error) {
-      setAuthMessage(error instanceof Error ? error.message : "The phone code could not be verified.");
-    } finally {
-      phoneVerificationCodeRef.current = "";
-      setAuthStatus("idle");
-    }
-  }
-
-  return (
-    <section className="auth-page signup-split" aria-label={isLogin ? "Log in" : "Create account"}>
-      <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
-        <X size={20} aria-hidden="true" />
-      </button>
-      <div className="auth-shell">
-        <form
-          className={`signup-form auth-card${phoneAuthOpen ? " auth-card--phone" : ""}`}
-          onSubmit={(event) => {
-            if (!phoneAuthOpen) {
-              submitSignup(event);
-              return;
-            }
-
-            event.preventDefault();
-            if (phoneCodeSent) {
-              void verifyPhoneCode();
-            } else {
-              void sendPhoneCode();
-            }
-          }}
-        >
-          {!phoneAuthOpen && (
-            <div className="signup-heading">
-              <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
-              {isLogin && <h3>Return to your sky.</h3>}
-            </div>
-          )}
-
-        {!isAuthConfigured && (
-          <p className="auth-message">
-            Add VITE_SUPABASE_URL and a Supabase publishable key to enable live sign-on.
-          </p>
-        )}
-
-        {!phoneAuthOpen && (
-          <div className="social-signons" aria-label="Social sign on">
-            <button className="google-auth-button" type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
-              <GoogleIcon />
-              Continue with Google
-            </button>
-            {isPhoneAuthEnabled && (
-              <button
-                className="google-auth-button"
-                type="button"
-                disabled={authStatus === "loading"}
-                onClick={() => {
-                  setPhoneAuthOpen(true);
-                  setAuthMessage("");
-                }}
-              >
-                Continue with phone
-              </button>
-            )}
-          </div>
-        )}
-
-        {isPhoneAuthEnabled && phoneAuthOpen && (
-          <div className="phone-auth-fields" aria-label="Phone sign in">
-            <div className="phone-auth-heading">
-              <span className="phone-auth-eyebrow">{phoneCodeSent ? "Check your phone" : "Sign in"}</span>
-              <h2 className="phone-auth-title">{phoneCodeSent ? "Enter the code" : "Sign in with your phone"}</h2>
-              {phoneCodeSent ? (
-                <div className="phone-auth-destination-row">
-                  <p>
-                    We sent a code to <strong>{maskPhoneNumber(phoneOtpDestination)}</strong>.
-                  </p>
-                  <button
-                    className="phone-auth-inline-action"
-                    type="button"
-                    disabled={authStatus === "loading"}
-                    onClick={resetPhoneChallenge}
-                  >
-                    Edit number
-                  </button>
-                </div>
-              ) : (
-                <p>We’ll text you a six-digit code to confirm your number.</p>
-              )}
-            </div>
-
-            {!phoneCodeSent && (
-              <label className="signup-field auth-field">
-                <span className="auth-label">Mobile number</span>
-                <div className="phone-auth-number-control">
-                  <select
-                    className="phone-auth-country-select"
-                    aria-label="Country code"
-                    value={supportedPhoneCountry.code}
-                    onChange={() => undefined}
-                  >
-                    <option value={supportedPhoneCountry.code}>
-                      US {supportedPhoneCountry.callingCode}
-                    </option>
-                  </select>
-                  <input
-                    className="auth-input"
-                    type="tel"
-                    inputMode="tel"
-                    enterKeyHint="send"
-                    autoComplete="tel-national"
-                    autoFocus
-                    aria-describedby="phone-auth-number-help"
-                    placeholder="(212) 555-0100"
-                    value={phoneNumber}
-                    onChange={(event) => {
-                      setPhoneNumber(formatUsPhoneInput(event.target.value));
-                      setAuthMessage("");
-                    }}
-                  />
-                </div>
-                <small className="phone-auth-help" id="phone-auth-number-help">
-                  Message and data rates may apply.
-                </small>
-              </label>
-            )}
-            {phoneCodeSent && (
-              <label className="signup-field auth-field">
-                <span className="auth-label">Six-digit code</span>
-                <div className="phone-auth-code-control">
-                  <input
-                    className="phone-auth-code-input"
-                    inputMode="numeric"
-                    enterKeyHint="done"
-                    pattern="[0-9]*"
-                    autoComplete="one-time-code"
-                    autoFocus
-                    aria-describedby="phone-auth-code-help"
-                    aria-label="Six-digit verification code"
-                    maxLength={6}
-                    value={phoneCode}
-                    onChange={(event) => {
-                      const nextCode = event.target.value.replace(/\D/g, "").slice(0, 6);
-
-                      setPhoneCode(nextCode);
-                      setAuthMessage("");
-                      if (nextCode.length === 6) {
-                        window.setTimeout(() => void verifyPhoneCode(nextCode), 0);
-                      }
-                    }}
-                  />
-                  <span className="phone-auth-code-slots" aria-hidden="true">
-                    {Array.from({ length: 6 }, (_, index) => (
-                      <span className={phoneCode[index] ? "filled" : ""} key={index}>
-                        {phoneCode[index] ?? ""}
-                      </span>
-                    ))}
-                  </span>
-                </div>
-                <small className="phone-auth-help" id="phone-auth-code-help">
-                  The code may fill automatically from your messages.
-                </small>
-              </label>
-            )}
-
-            {authMessage && <p className="auth-message">{authMessage}</p>}
-
-            <div className="phone-auth-actions">
-              {phoneCodeSent ? (
-                <>
-                  <button
-                    className="signup-submit phone-auth-primary"
-                    type="submit"
-                    disabled={authStatus === "loading" || phoneCode.length !== 6}
-                  >
-                    {authStatus === "loading" ? "Confirming…" : "Confirm code"}
-                  </button>
-                  <button
-                    className="phone-auth-resend-button"
-                    type="button"
-                    disabled={authStatus === "loading" || phoneResendSeconds > 0}
-                    onClick={() => void sendPhoneCode(true)}
-                  >
-                    {phoneResendSeconds > 0
-                      ? `Send a new code in 0:${String(phoneResendSeconds).padStart(2, "0")}`
-                      : "Send a new code"}
-                  </button>
-                  <button
-                    className="phone-auth-text-button"
-                    type="button"
-                    disabled={authStatus === "loading"}
-                    onClick={resetPhoneChallenge}
-                  >
-                    Use a different number
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="signup-submit phone-auth-primary"
-                  type="submit"
-                  disabled={authStatus === "loading" || !isValidUsPhoneNumber(phoneNumber)}
-                >
-                  {authStatus === "loading" ? "Sending…" : "Send code"}
-                </button>
-              )}
-            </div>
-            <button
-              className="phone-auth-back"
-              type="button"
-              disabled={authStatus === "loading"}
-              onClick={() => {
-                resetPhoneChallenge();
-                setPhoneAuthOpen(false);
-              }}
-            >
-              <ChevronLeft size={18} aria-hidden="true" />
-              Other sign-in options
-            </button>
-          </div>
-        )}
-
-        {!phoneAuthOpen && authMessage && <p className="auth-message">{authMessage}</p>}
-
-        {!phoneAuthOpen && (
-          <>
-            <div className="email-divider auth-divider"><span>or with email</span></div>
-
-            <div className="signup-fields">
-          {!isLogin && (
-            <label className="signup-field auth-field">
-              <span className="auth-label">Full name</span>
-              <div>
-                <input className="auth-input" value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
-              </div>
-            </label>
-          )}
-
-          <label className="signup-field auth-field">
-            <span className="auth-label">Email</span>
-            <div>
-              <input className="auth-input" type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@somewhere.com" />
-            </div>
-          </label>
-
-          <label className="signup-field auth-field">
-            <span className="auth-label">Password</span>
-            <div className="password-control">
-              <input
-                className="auth-input"
-                type={passwordVisible ? "text" : "password"}
-                value={form.password}
-                onChange={(event) => updateField("password", event.target.value)}
-                placeholder="at least 8 characters"
-              />
-              <button
-                type="button"
-                aria-label={passwordVisible ? "Hide password" : "Show password"}
-                title={passwordVisible ? "Hide password" : "Show password"}
-                onClick={() => setPasswordVisible((isVisible) => !isVisible)}
-              >
-                {passwordVisible ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
-              </button>
-            </div>
-          </label>
-
-          {!isLogin && (
-            <>
-              <CitySearchField
-                label="Birth city"
-                value={form.birthCity}
-                onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
-                onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
-                placeholder="Birth city"
-                className="signup-city-search"
-              />
-
-              <div className="signup-grid auth-birth-grid">
-                <label className="signup-field auth-field">
-                  <span className="auth-label">Birth date</span>
-                  <div className="signup-date-control auth-date-inputs">
-                    <input
-                      className="auth-input"
-                      aria-label="Birth month"
-                      inputMode="numeric"
-                      placeholder="MM"
-                      value={birthDateParts.month}
-                      onChange={(event) => updateBirthDate("month", event.target.value)}
-                    />
-                    <span aria-hidden="true">/</span>
-                    <input
-                      className="auth-input"
-                      aria-label="Birth day"
-                      inputMode="numeric"
-                      placeholder="DD"
-                      value={birthDateParts.day}
-                      onChange={(event) => updateBirthDate("day", event.target.value)}
-                    />
-                    <span aria-hidden="true">/</span>
-                    <input
-                      className="auth-input"
-                      aria-label="Birth year"
-                      inputMode="numeric"
-                      placeholder="YYYY"
-                      value={birthDateParts.year}
-                      onChange={(event) => updateBirthDate("year", event.target.value)}
-                    />
-                  </div>
-                </label>
-
-                <label className="signup-field auth-field">
-                  <span className="auth-label">Birth time</span>
-                  <div className="signup-time-control auth-time-inputs">
-                    <input
-                      className="auth-input"
-                      aria-label="Birth hour"
-                      inputMode="numeric"
-                      placeholder="HH"
-                      value={birthTimeParts.hour}
-                      disabled={form.unknownBirthTime}
-                      onChange={(event) => updateBirthTime("hour", event.target.value)}
-                    />
-                    <span className="time-separator" aria-hidden="true">:</span>
-                    <input
-                      className="auth-input"
-                      aria-label="Birth minute"
-                      inputMode="numeric"
-                      placeholder="MM"
-                      value={birthTimeParts.minute}
-                      disabled={form.unknownBirthTime}
-                      onChange={(event) => updateBirthTime("minute", event.target.value)}
-                    />
-                    <div className="signup-meridiem auth-ampm-toggle" aria-label="AM or PM">
-                      {(["AM", "PM"] as const).map((period) => (
-                        <button
-                          key={period}
-                          type="button"
-                          className={birthTimeParts.meridiem === period ? "active is-active" : ""}
-                          disabled={form.unknownBirthTime}
-                          aria-pressed={birthTimeParts.meridiem === period}
-                          onClick={() => updateBirthTime("meridiem", period)}
-                        >
-                          {period}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </label>
-              </div>
-
-              <label className="unknown-time auth-checkbox-row">
-                <input
-                  type="checkbox"
-                  checked={form.unknownBirthTime}
-                  onChange={(event) => {
-                    setForm({ ...form, unknownBirthTime: event.target.checked, birthTime: event.target.checked ? "12:00 PM" : form.birthTime });
-                  }}
-                />
-                <span>I don't know my birth time.</span>
-              </label>
-            </>
-          )}
-            </div>
-
-            <button className="signup-submit auth-primary-button" type="submit" disabled={authStatus === "loading"}>
-              {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
-            </button>
-            <p className="signin-note">
-              {isLogin ? "New here?" : "Already have an account?"}{" "}
-              <button
-                type="button"
-                onClick={() => {
-                  resetPhoneChallenge();
-                  setPhoneAuthOpen(false);
-                  setAuthMessage("");
-                  setAuthMode(isLogin ? "create" : "login");
-                }}
-              >
-                {isLogin ? "Create an account" : "Login"}
-              </button>
-            </p>
-          </>
-        )}
-        </form>
-      </div>
-    </section>
-  );
-}
-
-function SettingsView({
-  profile,
-  socialProfile,
-  onUpdateProfile,
-  onSocialProfileChange,
-  theme,
-  sunriseOrbEnabled,
-  dyslexiaFriendlyFont,
-  onThemeChange,
-  onSunriseOrbChange,
-  onDyslexiaFontChange,
-  onHouseSignLabelStyleChange
-}: {
-  profile: UserProfile;
-  socialProfile: SocialProfile | null;
-  onUpdateProfile: (profile: UserProfile) => void;
-  onSocialProfileChange: (socialProfile: SocialProfile) => void;
-  theme: UiTheme;
-  sunriseOrbEnabled: boolean;
-  dyslexiaFriendlyFont: boolean;
-  onThemeChange: (theme: UiTheme) => void;
-  onSunriseOrbChange: (enabled: boolean) => void;
-  onDyslexiaFontChange: (enabled: boolean) => void;
-  onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
-}) {
-  const [currentCity, setCurrentCity] = useState(profile.currentLocation ?? "");
-  const [currentLocationData, setCurrentLocationData] = useState<LocationInput | null>(profile.currentLocationData ?? null);
-  const [currentLocationEditing, setCurrentLocationEditing] = useState(false);
-  const [settingsSubpage, setSettingsSubpage] = useState<SettingsSubpage>(settingsSubpageFromUrl);
-  const [accountPrivate, setAccountPrivate] = useState(socialProfile?.isPrivate ?? false);
-  const [privacyStatus, setPrivacyStatus] = useState<"ready" | "saving">("ready");
-  const [privacyMessage, setPrivacyMessage] = useState("");
-  const currentCityDisplay = compactCityLabel(profile.currentLocation || defaultLocation.label);
-  const chartSettings = normalizeChartSettings(profile.settings);
-
-  useEffect(() => {
-    function syncSettingsRoute() {
-      setSettingsSubpage(settingsSubpageFromUrl());
-    }
-
-    window.addEventListener("popstate", syncSettingsRoute);
-    window.addEventListener("hashchange", syncSettingsRoute);
-    window.addEventListener(settingsRouteChangeEvent, syncSettingsRoute);
-
-    return () => {
-      window.removeEventListener("popstate", syncSettingsRoute);
-      window.removeEventListener("hashchange", syncSettingsRoute);
-      window.removeEventListener(settingsRouteChangeEvent, syncSettingsRoute);
-    };
-  }, []);
-
-  useEffect(() => {
-    setAccountPrivate(socialProfile?.isPrivate ?? false);
-  }, [socialProfile?.isPrivate]);
-
-  function updateHouseSignLabelStyle(houseSignLabelStyle: HouseSignLabelStyle) {
-    onHouseSignLabelStyleChange(houseSignLabelStyle);
-    onUpdateProfile({
-      ...profile,
-      settings: {
-        ...chartSettings,
-        houseSignLabelStyle
-      }
-    });
-  }
-
-  function startCurrentLocationEdit() {
-    setCurrentCity(profile.currentLocation || defaultLocation.label);
-    setCurrentLocationData(profile.currentLocationData ?? withTimeZone(defaultLocation));
-    setCurrentLocationEditing(true);
-  }
-
-  function cancelCurrentLocationEdit() {
-    setCurrentCity(profile.currentLocation ?? "");
-    setCurrentLocationData(profile.currentLocationData ?? null);
-    setCurrentLocationEditing(false);
-  }
-
-  function saveCurrentLocation() {
-    const trimmed = currentCity.trim();
-    const nextLocation = trimmed
-      ? currentLocationData?.label === trimmed
-        ? withTimeZone(currentLocationData)
-        : locationFromLabel(trimmed)
-      : withTimeZone(defaultLocation);
-
-    onUpdateProfile({
-      ...profile,
-      currentLocation: nextLocation.label,
-      currentLocationData: nextLocation
-    });
-    setCurrentCity(nextLocation.label);
-    setCurrentLocationData(nextLocation);
-    setCurrentLocationEditing(false);
-  }
-
-  async function updateAccountPrivacy(nextPrivate: boolean) {
-    setPrivacyStatus("saving");
-    setPrivacyMessage("");
-
-    try {
-      const savedProfile = await saveSocialPrivacy(nextPrivate);
-      setAccountPrivate(savedProfile.isPrivate);
-      setPrivacyMessage(
-        savedProfile.isPrivate
-          ? "Your account is hidden from search. Existing friends keep their current access."
-          : "People can now find you by name or @handle."
-      );
-      onSocialProfileChange(savedProfile);
-    } catch (error) {
-      setPrivacyMessage(error instanceof Error ? error.message : "Could not update your Social privacy.");
-    } finally {
-      setPrivacyStatus("ready");
-    }
-  }
-
-  if (settingsSubpage === "blocked-accounts") {
-    return (
-      <BlockedAccountsSettings
-        onBack={() => {
-          updateSettingsSubpageUrl("root", "replace");
-          setSettingsSubpage("root");
-        }}
-      />
-    );
-  }
-
-  return (
-    <section className="settings-page page-shell--narrow" aria-label="Settings">
-      <div className="settings-header">
-        <h1>settings.</h1>
-      </div>
-
-      <div className="settings-panel">
-        <section className="settings-group" aria-label="Personalization settings">
-          <span className="settings-group-label">Account</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Account settings">
-              {currentLocationEditing ? (
-                <div className="settings-row settings-location-editor">
-                  <CitySearchField
-                    label="Current location"
-                    value={currentCity}
-                    onChange={(value) => {
-                      setCurrentCity(value);
-                      setCurrentLocationData(null);
-                    }}
-                    onSelect={(suggestion) => {
-                      setCurrentCity(suggestion.label);
-                      setCurrentLocationData(suggestion);
-                    }}
-                    placeholder={defaultLocation.label}
-                    className="settings-city-search"
-                  />
-                  <div className="settings-location-actions">
-                    <button className="settings-location-cancel" type="button" onClick={cancelCurrentLocationEdit}>
-                      Cancel
-                    </button>
-                    <button className="settings-location-save" type="button" onClick={saveCurrentLocation}>
-                      Save location
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button className="settings-row settings-row-button" type="button" onClick={startCurrentLocationEdit}>
-                  <span className="settings-row__label">Current location</span>
-                  <span className="settings-row__field">
-                    <span className="settings-row__value">{currentCityDisplay}</span>
-                    <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-                  </span>
-                </button>
-              )}
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Social settings">
-          <span className="settings-group-label">Social</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Social settings">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Private account</span>
-                  <small className="settings-row-description">
-                    Hide your profile from Find Friends. People you already accepted can still view your shared chart.
-                  </small>
-                </div>
-                <SwitchControl
-                  checked={accountPrivate}
-                  disabled={privacyStatus === "saving"}
-                  label="Make account private"
-                  onChange={(nextPrivate) => void updateAccountPrivacy(nextPrivate)}
-                />
-              </div>
-              {privacyMessage && (
-                <p className="settings-social-message" role="status" aria-live="polite">
-                  {privacyMessage}
-                </p>
-              )}
-              <button
-                className="settings-row settings-row-button"
-                type="button"
-                onClick={() => {
-                  updateSettingsSubpageUrl("blocked-accounts");
-                  setSettingsSubpage("blocked-accounts");
-                }}
-              >
-                <span className="settings-row-copy">
-                  <span className="settings-row-title">Blocked accounts</span>
-                  <small className="settings-row-description">
-                    Review and manage people you have blocked.
-                  </small>
-                </span>
-                <span className="settings-row__field">
-                  <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-                </span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Display settings">
-          <span className="settings-group-label">Display</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Display settings">
-              <div className="settings-row settings-row-control">
-                <span className="settings-row__label">Theme</span>
-                <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Gradient</span>
-                  <small className="settings-row-description">Show the sunrise gradient background across the website.</small>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle gradient background"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Dyslexia-friendly font</span>
-                  <small className="settings-row-description">Use a more open, readable text face across the app.</small>
-                </div>
-                <SwitchControl
-                  checked={dyslexiaFriendlyFont}
-                  label="Toggle dyslexia-friendly font"
-                  onChange={onDyslexiaFontChange}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Astrology settings">
-          <span className="settings-group-label">Astrology settings</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Astrology settings">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">House sign labels</span>
-                  <small className="settings-row-description">How the house sign names appear around the zodiac wheel.</small>
-                </div>
-                <HouseSignLabelToggle
-                  value={chartSettings.houseSignLabelStyle}
-                  onChange={updateHouseSignLabelStyle}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Chart defaults">
-          <span className="settings-group-label">Birth chart</span>
-          <div className="settings-card">
-            <div className="settings-list" aria-label="Birth chart settings">
-              <div className="settings-row">
-                <span className="settings-row__label">House system</span>
-                <span className="settings-row__value">Whole Sign</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <CalculationMethodSettingsGroup />
-
-      </div>
-    </section>
-  );
-}
-
-function GuestSettingsView({
-  theme,
-  location,
-  sunriseOrbEnabled,
-  dyslexiaFriendlyFont,
-  onThemeChange,
-  onSunriseOrbChange,
-  onDyslexiaFontChange,
-  houseSignLabelStyle,
-  onHouseSignLabelStyleChange
-}: {
-  theme: UiTheme;
-  location: LocationInput;
-  sunriseOrbEnabled: boolean;
-  dyslexiaFriendlyFont: boolean;
-  onThemeChange: (theme: UiTheme) => void;
-  onSunriseOrbChange: (enabled: boolean) => void;
-  onDyslexiaFontChange: (enabled: boolean) => void;
-  houseSignLabelStyle: HouseSignLabelStyle;
-  onHouseSignLabelStyleChange: (style: HouseSignLabelStyle) => void;
-}) {
-  return (
-    <section className="settings-page page-shell--narrow guest-settings-page" aria-label="Settings">
-      <div className="settings-header">
-        <h1>settings.</h1>
-      </div>
-
-      <div className="settings-panel">
-        <section className="settings-group" aria-label="Personal settings">
-          <span className="settings-group-label">Account</span>
-          <div className="settings-card">
-            <div className="settings-list">
-              <div className="settings-row">
-                <span className="settings-row__label">Current location</span>
-                <span className="settings-row__value">{compactCityLabel(location.label)}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Display settings">
-          <span className="settings-group-label">Display</span>
-          <div className="settings-card">
-            <div className="settings-list">
-              <div className="settings-row settings-row-control">
-                <span className="settings-row__label">Theme</span>
-                <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Gradient</span>
-                  <small className="settings-row-description">Show the sunrise gradient background across the website.</small>
-                </div>
-                <SwitchControl
-                  checked={sunriseOrbEnabled}
-                  label="Toggle gradient background"
-                  onChange={onSunriseOrbChange}
-                />
-              </div>
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">Dyslexia-friendly font</span>
-                  <small className="settings-row-description">Use a more open, readable text face across the app.</small>
-                </div>
-                <SwitchControl
-                  checked={dyslexiaFriendlyFont}
-                  label="Toggle dyslexia-friendly font"
-                  onChange={onDyslexiaFontChange}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="settings-group" aria-label="Astrology settings">
-          <span className="settings-group-label">Astrology settings</span>
-          <div className="settings-card">
-            <div className="settings-list">
-              <div className="settings-row settings-row-control">
-                <div className="settings-row-copy">
-                  <span className="settings-row-title">House sign labels</span>
-                  <small className="settings-row-description">How the house sign names appear around the zodiac wheel.</small>
-                </div>
-                <HouseSignLabelToggle
-                  value={houseSignLabelStyle}
-                  onChange={onHouseSignLabelStyleChange}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <CalculationMethodSettingsGroup />
-
-      </div>
-    </section>
-  );
-}
-
-function AccountView({
-  profile,
-  onAccountDeleted,
-  onSignOut,
-  onSocialProfileChange,
-  onUpdateProfile
-}: {
-  profile: UserProfile;
-  onAccountDeleted: () => void;
-  onSignOut: () => void | Promise<void>;
-  onSocialProfileChange: (socialProfile: SocialProfile) => void;
-  onUpdateProfile: (profile: UserProfile) => void;
-}) {
-  const primaryChart = profile.charts[0];
-  const savedBirthDate = validChartBirthDate(primaryChart);
-  const savedBirthTime = validChartBirthTime(primaryChart);
-  const savedBirthCity = validChartBirthCity(primaryChart);
-  const [draftBirthDate, setDraftBirthDate] = useState(savedBirthDate);
-  const [draftBirthTime, setDraftBirthTime] = useState(savedBirthTime);
-  const [draftBirthCity, setDraftBirthCity] = useState(savedBirthCity);
-  const [socialHandle, setSocialHandle] = useState<string | null>(null);
-  const [handleDraft, setHandleDraft] = useState("");
-  const [handleStatus, setHandleStatus] = useState<"loading" | "ready" | "saving" | "unavailable">("loading");
-  const [handleEditing, setHandleEditing] = useState(false);
-  const [handleMessage, setHandleMessage] = useState("");
-  const [accountActionStatus, setAccountActionStatus] = useState<"idle" | "exporting" | "deleting">("idle");
-  const [accountActionMessage, setAccountActionMessage] = useState("");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteConfirmation, setDeleteConfirmation] = useState("");
-  const [phoneChangeOpen, setPhoneChangeOpen] = useState(false);
-  const [phoneChangeStep, setPhoneChangeStep] = useState<"current-code" | "new-number" | "new-code" | "success">("current-code");
-  const [phoneChangeStatus, setPhoneChangeStatus] = useState<"idle" | "loading">("idle");
-  const [phoneChangeMessage, setPhoneChangeMessage] = useState("");
-  const [currentPhoneCode, setCurrentPhoneCode] = useState("");
-  const [newPhoneNumber, setNewPhoneNumber] = useState("");
-  const [newPhoneCode, setNewPhoneCode] = useState("");
-  const [phoneChangeDestination, setPhoneChangeDestination] = useState("");
-  const [phoneChangeResendSeconds, setPhoneChangeResendSeconds] = useState(0);
-
-  useEffect(() => {
-    setDraftBirthDate(savedBirthDate);
-    setDraftBirthTime(savedBirthTime);
-    setDraftBirthCity(savedBirthCity);
-  }, [savedBirthDate, savedBirthTime, savedBirthCity]);
-
-  useEffect(() => {
-    if (phoneChangeResendSeconds <= 0) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setPhoneChangeResendSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [phoneChangeResendSeconds]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    setHandleStatus("loading");
-    setHandleMessage("");
-
-    loadOwnSocialProfile()
-      .then((socialProfile) => {
-        if (cancelled) {
-          return;
-        }
-
-        const nextHandle = socialProfile?.handle ?? null;
-        setSocialHandle(nextHandle);
-        setHandleDraft(nextHandle ?? "");
-        setHandleStatus("ready");
-        if (socialProfile) {
-          onSocialProfileChange(socialProfile);
-        }
-      })
-      .catch((error) => {
-        if (cancelled) {
-          return;
-        }
-
-        setHandleStatus("unavailable");
-        setHandleMessage(error instanceof Error ? error.message : "Could not load your handle.");
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [onSocialProfileChange, profile.id]);
-
-  const birthDraftDirty =
-    draftBirthDate !== savedBirthDate ||
-    draftBirthTime !== savedBirthTime ||
-    draftBirthCity !== savedBirthCity;
-  const normalizedHandleDraft = normalizeSocialHandle(handleDraft);
-  const handleDraftValid = socialHandleIsValid(normalizedHandleDraft);
-  const handleDraftDirty = normalizedHandleDraft !== (socialHandle ?? "");
-
-  const startHandleEdit = () => {
-    setHandleDraft(socialHandle ?? "");
-    setHandleEditing(true);
-    setHandleMessage("");
-  };
-
-  const cancelHandleEdit = () => {
-    setHandleDraft(socialHandle ?? "");
-    setHandleEditing(false);
-    setHandleMessage("");
-  };
-
-  const saveHandle = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!handleDraftValid) {
-      setHandleMessage("Use 3–24 characters, starting with a letter. Letters, numbers, and underscores only.");
-      return;
-    }
-
-    setHandleStatus("saving");
-    setHandleMessage("");
-
-    try {
-      const savedProfile = await saveSocialHandle({
-        handle: normalizedHandleDraft,
-        displayName: profile.name,
-        avatarUrl: profile.avatarUrl
-      });
-      const nextHandle = savedProfile.handle ?? normalizedHandleDraft;
-
-      setSocialHandle(nextHandle);
-      setHandleDraft(nextHandle);
-      setHandleEditing(false);
-      setHandleStatus("ready");
-      setHandleMessage(`Handle updated to @${nextHandle}.`);
-      onSocialProfileChange(savedProfile);
-    } catch (error) {
-      setHandleStatus("ready");
-      setHandleMessage(error instanceof Error ? error.message : "Could not update your handle.");
-    }
-  };
-
-  const saveBirthChartDetails = () => {
-    const nextBirthDate = draftBirthDate.trim();
-    const nextBirthTime = draftBirthTime.trim();
-    const nextBirthCity = draftBirthCity.trim();
-    const baseChart: UserChart = primaryChart ?? {
-      id: `chart-${Date.now()}`,
-      name: chartNameFromProfile(profile.name),
-      type: "Birth chart",
-      birthDate: "Birth date needed",
-      birthTime: "Birth time needed",
-      birthCity: "Birth city needed",
-      birthLocation: null
-    };
-    const nextChart: UserChart = {
-      ...baseChart,
-      name: baseChart.name || chartNameFromProfile(profile.name),
-      birthDate: nextBirthDate || "Birth date needed",
-      birthTime: nextBirthTime || "Birth time needed",
-      birthCity: nextBirthCity || "Birth city needed",
-      birthLocation: baseChart.birthLocation ?? null
-    };
-
-    onUpdateProfile({
-      ...profile,
-      sun: nextBirthDate ? zodiacFromBirthDate(nextBirthDate) : profile.sun,
-      charts: primaryChart
-        ? profile.charts.map((chart, index) => (index === 0 ? nextChart : chart))
-        : [nextChart]
-    });
-  };
-
-  const exportAccountData = async () => {
-    setAccountActionStatus("exporting");
-    setAccountActionMessage("");
-
-    try {
-      const social = await exportSocialAccountBundle();
-      const exportPayload = {
-        exportedAt: new Date().toISOString(),
-        account: {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          provider: profile.provider
-        },
-        profile,
-        social
-      };
-      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
-        type: "application/json"
-      });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-
-      anchor.href = url;
-      anchor.download = `tldr-astro-${social.profile?.handle ?? "account"}-export.json`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      URL.revokeObjectURL(url);
-      setAccountActionMessage("Your account export was downloaded.");
-    } catch (error) {
-      setAccountActionMessage(error instanceof Error ? error.message : "Could not export your account.");
-    } finally {
-      setAccountActionStatus("idle");
-    }
-  };
-
-  const deleteAccount = async () => {
-    if (deleteConfirmation !== "DELETE") {
-      return;
-    }
-
-    setAccountActionStatus("deleting");
-    setAccountActionMessage("");
-
-    try {
-      await deleteOwnAccount();
-      setDeleteDialogOpen(false);
-      onAccountDeleted();
-    } catch (error) {
-      setAccountActionStatus("idle");
-      setAccountActionMessage(error instanceof Error ? error.message : "Could not delete your account.");
-    }
-  };
-
-  const openPhoneChange = async () => {
-    if (!profile.phone) {
-      return;
-    }
-
-    setPhoneChangeOpen(true);
-    setPhoneChangeStep("current-code");
-    setPhoneChangeStatus("loading");
-    setPhoneChangeMessage("");
-    setCurrentPhoneCode("");
-    setNewPhoneNumber("");
-    setNewPhoneCode("");
-    setPhoneChangeDestination("");
-
-    try {
-      await sendPhoneSignInCode(profile.phone, {
-        shouldCreateUser: false
-      });
-      setPhoneChangeResendSeconds(30);
-    } catch (error) {
-      setPhoneChangeMessage(error instanceof Error ? error.message : "Could not send a code to your current number.");
-    } finally {
-      setPhoneChangeStatus("idle");
-    }
-  };
-
-  const verifyCurrentPhone = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!profile.phone || currentPhoneCode.length !== 6) {
-      return;
-    }
-
-    setPhoneChangeStatus("loading");
-    setPhoneChangeMessage("");
-
-    try {
-      await verifyPhoneSignInCode({
-        phone: profile.phone,
-        code: currentPhoneCode
-      });
-      setPhoneChangeStep("new-number");
-      setPhoneChangeResendSeconds(0);
-    } catch (error) {
-      setPhoneChangeMessage(error instanceof Error ? error.message : "That code could not be confirmed.");
-    } finally {
-      setPhoneChangeStatus("idle");
-    }
-  };
-
-  const sendNewPhoneCode = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!isValidUsPhoneNumber(newPhoneNumber)) {
-      return;
-    }
-
-    setPhoneChangeStatus("loading");
-    setPhoneChangeMessage("");
-
-    try {
-      const destination = await startPhoneNumberChange(newPhoneNumber);
-
-      setPhoneChangeDestination(destination);
-      setPhoneChangeStep("new-code");
-      setPhoneChangeResendSeconds(30);
-    } catch (error) {
-      setPhoneChangeMessage(error instanceof Error ? error.message : "Could not send a code to the new number.");
-    } finally {
-      setPhoneChangeStatus("idle");
-    }
-  };
-
-  const confirmNewPhone = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!phoneChangeDestination || newPhoneCode.length !== 6) {
-      return;
-    }
-
-    setPhoneChangeStatus("loading");
-    setPhoneChangeMessage("");
-
-    try {
-      const account = await verifyPhoneNumberChange({
-        phone: phoneChangeDestination,
-        code: newPhoneCode
-      });
-
-      onUpdateProfile({
-        ...profile,
-        phone: account?.phone || phoneChangeDestination
-      });
-      setPhoneChangeStep("success");
-      setPhoneChangeResendSeconds(0);
-    } catch (error) {
-      setPhoneChangeMessage(error instanceof Error ? error.message : "That code could not be confirmed.");
-    } finally {
-      setPhoneChangeStatus("idle");
-    }
-  };
-
-  const resendPhoneChangeCode = async () => {
-    const destination = phoneChangeStep === "current-code" ? profile.phone : phoneChangeDestination;
-
-    if (!destination) {
-      return;
-    }
-
-    setPhoneChangeStatus("loading");
-    setPhoneChangeMessage("");
-
-    try {
-      if (phoneChangeStep === "current-code") {
-        await sendPhoneSignInCode(destination, {
-          shouldCreateUser: false
-        });
-      } else {
-        await resendPhoneNumberChangeCode(destination);
-      }
-      setPhoneChangeResendSeconds(30);
-      setPhoneChangeMessage("A new code is on its way.");
-    } catch (error) {
-      setPhoneChangeMessage(error instanceof Error ? error.message : "Could not send a new code.");
-    } finally {
-      setPhoneChangeStatus("idle");
-    }
-  };
-
-  const profilePhoneLastFour = profile.phone ? phoneNumberLastFour(profile.phone) : "";
-  const accountLoginSummary = profile.provider === "phone" && profilePhoneLastFour
-    ? `Signed in with Phone ending in ${profilePhoneLastFour}`
-    : profile.email || `Signed in with ${providerLabel(profile.provider)}`;
-
-  return (
-    <section className="account-page page-shell--narrow" aria-label="Account">
-      <div className="account-page-heading">
-        <h1>account.</h1>
-      </div>
-
-      <section className="settings-card settings-account-card" aria-label="Account details">
-        <div className="settings-profile-row">
-          <ProfileAvatar avatarUrl={profile.avatarUrl} email={profile.email} name={profile.name} size="large" />
-          <div>
-            <h3>{profile.name}</h3>
-            <span>{accountLoginSummary}</span>
-          </div>
-        </div>
-
-        <div className="settings-list">
-          <div className="settings-row">
-            <span className="settings-row__label">Name</span>
-            <span className="settings-row__value">{profile.name}</span>
-          </div>
-          {profile.email && (
-            <div className="settings-row">
-              <span className="settings-row__label">Email</span>
-              <span className="settings-row__value">{profile.email}</span>
-            </div>
-          )}
-          {profile.phone && profilePhoneLastFour && (
-            <button
-              type="button"
-              className="settings-row settings-row-button"
-              onClick={() => void openPhoneChange()}
-            >
-              <span className="settings-row__label">Phone</span>
-              <span className="settings-row__field">
-                <span className="settings-row__value">{maskPhoneNumber(profile.phone)}</span>
-                <span className="settings-row__change">Change</span>
-                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-              </span>
-            </button>
-          )}
-          {handleEditing ? (
-            <form className="settings-row account-handle-edit-row" onSubmit={saveHandle}>
-              <label className="settings-row__label" htmlFor="account-social-handle">Handle</label>
-              <span className="account-handle-editor">
-                <span className="account-handle-input-wrap">
-                  <span aria-hidden="true">@</span>
-                  <input
-                    id="account-social-handle"
-                    value={handleDraft}
-                    onChange={(event) => {
-                      setHandleDraft(event.target.value);
-                      setHandleMessage("");
-                    }}
-                    placeholder="your_handle"
-                    autoCapitalize="none"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    aria-describedby="account-handle-help"
-                    autoFocus
-                  />
-                </span>
-                <span className="account-handle-actions">
-                  <button type="button" className="account-handle-cancel" onClick={cancelHandleEdit}>
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="account-handle-save"
-                    disabled={handleStatus === "saving" || !handleDraftValid || !handleDraftDirty}
-                  >
-                    {handleStatus === "saving" ? "Saving…" : "Save"}
-                  </button>
-                </span>
-              </span>
-            </form>
-          ) : (
-            <button
-              type="button"
-              className="settings-row settings-row-button account-handle-row"
-              onClick={startHandleEdit}
-              disabled={handleStatus !== "ready"}
-            >
-              <span className="settings-row__label">Handle</span>
-              <span className="settings-row__field">
-                <span className="settings-row__value">
-                  {handleStatus === "loading"
-                    ? "Loading…"
-                    : handleStatus === "unavailable"
-                      ? "Unavailable"
-                      : socialHandle
-                        ? `@${socialHandle}`
-                        : "Choose a handle"}
-                </span>
-                {handleStatus === "ready" && <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />}
-              </span>
-            </button>
-          )}
-          {(handleEditing || handleMessage) && (
-            <div
-              id="account-handle-help"
-              className={`account-handle-message${handleMessage ? " has-message" : ""}`}
-              role={handleMessage ? "status" : undefined}
-              aria-live="polite"
-            >
-              {handleMessage || "3–24 characters. Start with a letter; use letters, numbers, or underscores."}
-            </div>
-          )}
-          <div className="settings-row">
-            <span className="settings-row__label">Signed in with</span>
-            <span className="settings-row__value settings-row__value--provider">{providerLabel(profile.provider)}</span>
-          </div>
-          <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
-            <span className="settings-row__action">Sign out</span>
-            <ChevronRight size={18} aria-hidden="true" />
-          </button>
-        </div>
-      </section>
-
-      <section className="settings-group account-chart-group" aria-label="Birth chart">
-        <span className="settings-group-label">Birth chart</span>
-        <div className="settings-card">
-          <div className="settings-list">
-            <label className="settings-row account-editable-row">
-              <span className="settings-row__label">Date</span>
-              <span className="settings-row__field">
-                <input
-                  className="account-row-input"
-                  type="date"
-                  value={draftBirthDate}
-                  onChange={(event) => setDraftBirthDate(event.target.value)}
-                  aria-label="Birth date"
-                />
-                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-              </span>
-            </label>
-            <label className="settings-row account-editable-row">
-              <span className="settings-row__label">Time</span>
-              <span className="settings-row__field">
-                <input
-                  className="account-row-input"
-                  type="text"
-                  inputMode="text"
-                  value={draftBirthTime}
-                  onChange={(event) => setDraftBirthTime(event.target.value)}
-                  placeholder="Not set"
-                  aria-label="Birth time"
-                />
-                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-              </span>
-            </label>
-            <label className="settings-row account-editable-row">
-              <span className="settings-row__label">Place</span>
-              <span className="settings-row__field">
-                <input
-                  className="account-row-input"
-                  type="text"
-                  value={draftBirthCity}
-                  onChange={(event) => setDraftBirthCity(event.target.value)}
-                  placeholder="Not set"
-                  aria-label="Birth place"
-                />
-                <ChevronRight className="settings-row__chevron" size={18} aria-hidden="true" />
-              </span>
-            </label>
-            <div className="settings-row">
-              <span className="settings-row__label">House system</span>
-              <span className="settings-row__value">Whole Sign</span>
-            </div>
-            {birthDraftDirty && (
-              <div className="settings-row account-birth-save-row">
-                <span>Birth details</span>
-                <button
-                  className="account-birth-save-button"
-                  type="button"
-                  onClick={saveBirthChartDetails}
-                >
-                  Save changes
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="settings-group account-data-group" aria-label="Account data">
-        <span className="settings-group-label">Your data</span>
-        <div className="settings-card">
-          <div className="settings-list">
-            <button
-              type="button"
-              className="settings-row settings-row-button account-data-action"
-              disabled={accountActionStatus !== "idle"}
-              onClick={() => void exportAccountData()}
-            >
-              <span className="settings-row-copy">
-                <span className="settings-row-title">Export account</span>
-                <small className="settings-row-description">
-                  Download your profile, chart data, friendships, requests, and blocked accounts.
-                </small>
-              </span>
-              <Download size={19} aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className="settings-row settings-row-button account-data-action account-delete-action"
-              disabled={accountActionStatus !== "idle"}
-              onClick={() => {
-                setDeleteConfirmation("");
-                setDeleteDialogOpen(true);
-                setAccountActionMessage("");
-              }}
-            >
-              <span className="settings-row-copy">
-                <span className="settings-row-title">Delete account</span>
-                <small className="settings-row-description">
-                  Permanently remove your account, profile, friendships, requests, and saved charts.
-                </small>
-              </span>
-              <Trash2 size={19} aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-        {accountActionMessage && (
-          <p className="account-action-message" role="status" aria-live="polite">
-            {accountActionMessage}
-          </p>
-        )}
-      </section>
-
-      {deleteDialogOpen && (
-        <ModalPortal
-          closeOnBackdrop={accountActionStatus !== "deleting"}
-          onClose={() => {
-            if (accountActionStatus !== "deleting") {
-              setDeleteDialogOpen(false);
-            }
-          }}
-          panelClassName="account-delete-modal"
-          titleId="account-delete-title"
-          width="min(500px, calc(100vw - 32px))"
-        >
-          <button
-            className="modal-close"
-            type="button"
-            aria-label="Close delete account dialog"
-            disabled={accountActionStatus === "deleting"}
-            onClick={() => setDeleteDialogOpen(false)}
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-          <span className="eyebrow section-label">Permanent action</span>
-          <h2 id="account-delete-title">Delete your TLDR Astro account?</h2>
-          <p>
-            This permanently removes your profile, charts, friend connections, requests, blocks, and account login.
-            This cannot be undone.
-          </p>
-          <label htmlFor="account-delete-confirmation">
-            Type <strong>DELETE</strong> to confirm
-          </label>
-          <input
-            id="account-delete-confirmation"
-            value={deleteConfirmation}
-            onChange={(event) => setDeleteConfirmation(event.target.value)}
-            autoComplete="off"
-            spellCheck={false}
-          />
-          <div className="account-delete-actions">
-            <button
-              type="button"
-              className="account-handle-cancel"
-              disabled={accountActionStatus === "deleting"}
-              onClick={() => setDeleteDialogOpen(false)}
-            >
-              Keep account
-            </button>
-            <button
-              type="button"
-              className="account-delete-confirm-button"
-              disabled={deleteConfirmation !== "DELETE" || accountActionStatus === "deleting"}
-              onClick={() => void deleteAccount()}
-            >
-              {accountActionStatus === "deleting" ? "Deleting…" : "Delete account"}
-            </button>
-          </div>
-        </ModalPortal>
-      )}
-
-      {phoneChangeOpen && (
-        <ModalPortal
-          closeOnBackdrop={phoneChangeStatus !== "loading"}
-          onClose={() => {
-            if (phoneChangeStatus !== "loading") {
-              setPhoneChangeOpen(false);
-            }
-          }}
-          panelClassName="account-phone-modal"
-          titleId="account-phone-title"
-          width="min(500px, calc(100vw - 32px))"
-        >
-          <button
-            className="modal-close"
-            type="button"
-            aria-label="Close change phone dialog"
-            disabled={phoneChangeStatus === "loading"}
-            onClick={() => setPhoneChangeOpen(false)}
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-
-          {phoneChangeStep === "current-code" && (
-            <form onSubmit={verifyCurrentPhone}>
-              <span className="eyebrow section-label">Verify it’s you</span>
-              <h2 id="account-phone-title">Check your current phone</h2>
-              <p>Enter the code sent to {profile.phone ? maskPhoneNumber(profile.phone) : "your current number"}.</p>
-              <label>
-                <span>Six-digit code</span>
-                <input
-                  value={currentPhoneCode}
-                  onChange={(event) => {
-                    setCurrentPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6));
-                    setPhoneChangeMessage("");
-                  }}
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  maxLength={6}
-                  autoFocus
-                />
-              </label>
-              {phoneChangeMessage && <p className="account-phone-message" role="status">{phoneChangeMessage}</p>}
-              <button className="account-phone-primary" type="submit" disabled={phoneChangeStatus === "loading" || currentPhoneCode.length !== 6}>
-                {phoneChangeStatus === "loading" ? "Confirming…" : "Confirm current number"}
-              </button>
-              <button
-                className="account-phone-secondary"
-                type="button"
-                disabled={phoneChangeStatus === "loading" || phoneChangeResendSeconds > 0}
-                onClick={() => void resendPhoneChangeCode()}
-              >
-                {phoneChangeResendSeconds > 0
-                  ? `Send a new code in 0:${String(phoneChangeResendSeconds).padStart(2, "0")}`
-                  : "Send a new code"}
-              </button>
-            </form>
-          )}
-
-          {phoneChangeStep === "new-number" && (
-            <form onSubmit={sendNewPhoneCode}>
-              <span className="eyebrow section-label">New number</span>
-              <h2 id="account-phone-title">Enter your new phone</h2>
-              <p>We’ll text a six-digit code to confirm the change.</p>
-              <label>
-                <span>Mobile number</span>
-                <div className="phone-auth-number-control">
-                  <select className="phone-auth-country-select" aria-label="Country code" value={supportedPhoneCountry.code} onChange={() => undefined}>
-                    <option value={supportedPhoneCountry.code}>US {supportedPhoneCountry.callingCode}</option>
-                  </select>
-                  <input
-                    type="tel"
-                    inputMode="tel"
-                    autoComplete="tel-national"
-                    placeholder="(212) 555-0100"
-                    value={newPhoneNumber}
-                    onChange={(event) => {
-                      setNewPhoneNumber(formatUsPhoneInput(event.target.value));
-                      setPhoneChangeMessage("");
-                    }}
-                    autoFocus
-                  />
-                </div>
-              </label>
-              {phoneChangeMessage && <p className="account-phone-message" role="status">{phoneChangeMessage}</p>}
-              <button className="account-phone-primary" type="submit" disabled={phoneChangeStatus === "loading" || !isValidUsPhoneNumber(newPhoneNumber)}>
-                {phoneChangeStatus === "loading" ? "Sending…" : "Send code"}
-              </button>
-            </form>
-          )}
-
-          {phoneChangeStep === "new-code" && (
-            <form onSubmit={confirmNewPhone}>
-              <span className="eyebrow section-label">Confirm new number</span>
-              <h2 id="account-phone-title">Enter the code</h2>
-              <p>Enter the code sent to {maskPhoneNumber(phoneChangeDestination)}.</p>
-              <label>
-                <span>Six-digit code</span>
-                <input
-                  value={newPhoneCode}
-                  onChange={(event) => {
-                    setNewPhoneCode(event.target.value.replace(/\D/g, "").slice(0, 6));
-                    setPhoneChangeMessage("");
-                  }}
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  maxLength={6}
-                  autoFocus
-                />
-              </label>
-              {phoneChangeMessage && <p className="account-phone-message" role="status">{phoneChangeMessage}</p>}
-              <button className="account-phone-primary" type="submit" disabled={phoneChangeStatus === "loading" || newPhoneCode.length !== 6}>
-                {phoneChangeStatus === "loading" ? "Confirming…" : "Confirm new number"}
-              </button>
-              <button
-                className="account-phone-secondary"
-                type="button"
-                disabled={phoneChangeStatus === "loading" || phoneChangeResendSeconds > 0}
-                onClick={() => void resendPhoneChangeCode()}
-              >
-                {phoneChangeResendSeconds > 0
-                  ? `Send a new code in 0:${String(phoneChangeResendSeconds).padStart(2, "0")}`
-                  : "Send a new code"}
-              </button>
-            </form>
-          )}
-
-          {phoneChangeStep === "success" && (
-            <div>
-              <span className="eyebrow section-label">Phone updated</span>
-              <h2 id="account-phone-title">Your phone number has been updated</h2>
-              <p>Future sign-in codes will go to {maskPhoneNumber(phoneChangeDestination)}.</p>
-              <button className="account-phone-primary" type="button" onClick={() => setPhoneChangeOpen(false)}>
-                Done
-              </button>
-            </div>
-          )}
-        </ModalPortal>
-      )}
-    </section>
-  );
-}
 
 function ProfileView({
   profile,
@@ -19161,7 +15348,6 @@ function ProfileView({
 }: {
   profile: UserProfile;
   profileHandle?: string | null;
-  onUpdateProfile: (profile: UserProfile) => void;
   targetDate: string;
   transitForm: TransitForm;
   transitItems: TransitItem[];
@@ -19174,7 +15360,6 @@ function ProfileView({
   personalTimingStatus: PersonalTimingStatus;
   personalTransitGeneratedContent: GeneratedContentMap;
   transitsDrawn: boolean;
-  selectedTransit: TransitItem;
   selectedTransitId: string;
   setSelectedTransitId: (id: string) => void;
   skyGeneratedAt: string;
@@ -19315,7 +15500,7 @@ function ProfileView({
   const natalChartTableRows = natalSky
     ? completeNatalChartTableRows(natalSky, natalChartTableBaseRows)
     : [];
-  const chartSettings = normalizeChartSettings(profile.settings);
+  const chartSettings = useMemo(() => normalizeChartSettings(profile.settings), [profile.settings]);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
@@ -19960,42 +16145,6 @@ function ProfileView({
           status: personalTimingStatus
         }
       : null;
-  const natalChart = natalSky ? (
-    <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
-      <div className="chart-frame">
-        <SkyWheel
-          positions={natalSky.positions}
-          aspects={natalSky.aspects}
-          ascendant={natalSky.ascendant}
-          ascendantLongitude={natalSky.ascendantLongitude}
-          midheavenLongitude={natalSky.midheavenLongitude}
-          showHouses
-          houseSignLabelStyle={houseSignLabelStyle}
-          variant="natal"
-          aspectInspector
-        />
-      </div>
-    </div>
-  ) : null;
-  const updatesChart = natalSky && currentSky ? (
-    <div className="wheel natal-wheel chart-shell" id="wheel-updates-transits" aria-label="Transit chart wheel">
-      <div className="chart-frame">
-        <SkyWheel
-          positions={natalSky.positions}
-          aspects={[]}
-          transitPositions={currentSky.positions}
-          transitAspects={updateTransitAspectLines}
-          ascendant={natalSky.ascendant}
-          ascendantLongitude={natalSky.ascendantLongitude}
-          midheavenLongitude={natalSky.midheavenLongitude}
-          showHouses
-          houseSignLabelStyle={houseSignLabelStyle}
-          variant="natal"
-        />
-      </div>
-    </div>
-  ) : null;
-
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
       <YouPage
@@ -20012,14 +16161,16 @@ function ProfileView({
         emptyHouseRows={emptyHouseRows}
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
+        currentSky={currentSky}
+        houseSignLabelStyle={houseSignLabelStyle}
         natalAspectGroups={natalAspectGroups}
         natalAspectPatternItems={natalAspectPatternItems}
         natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
         natalAspectPatternStatus={natalAspectPatternStatus}
-        natalChart={natalChart}
+        natalSky={natalSky}
         natalChartPending={!natalSky}
         natalTableRows={natalChartTableRows}
-        updatesChart={updatesChart}
+        updateTransitAspectLines={updateTransitAspectLines}
         onCreateChart={onCreateChart}
         onCloseTransitArticle={() => {
           setActivePlacementRouteId(null);
@@ -20045,40 +16196,6 @@ function ProfileView({
   );
 }
 
-function RelationshipApiSummary({
-  mode,
-  response,
-  status
-}: {
-  mode: "synastry" | "composite";
-  response: RelationshipCompareResponse | null;
-  status: RelationshipCompareStatus;
-}) {
-  if (!response && status !== "loading") {
-    return null;
-  }
-
-  const headline = response?.app.headline ?? "Calculating relationship pattern";
-  const summary = response?.app.summary
-    ?? "Checking synastry contacts, composite aspects, and relationship patterns.";
-  const keyFactors = response?.app.keyFactors ?? [];
-
-  return (
-    <section className="relationship-api-summary" aria-label={`${mode} relationship summary`}>
-      <span className="eyebrow section-label">{mode === "synastry" ? "Relationship patterns" : "Composite pattern"}</span>
-      <h3>{headline}</h3>
-      <p>{summary}</p>
-      {keyFactors.length > 0 && (
-        <ul>
-          {keyFactors.slice(0, 4).map((factor) => (
-            <li key={factor}>{factor}</li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
 function ManualChartsPanel({
   profile,
   currentSky,
@@ -20093,10 +16210,11 @@ function ManualChartsPanel({
   chartsReady,
   allowCachedChartsWhileLoading,
   onPendingRequestCountChange,
+  onFriendProfileContentRequest,
   onOpenDetail
 }: {
   profile: UserProfile;
-  currentSky: SkySnapshot;
+  currentSky: SkySnapshot | null;
   profileNatalSky: SkySnapshot | null;
   profileTransits: TransitItem[];
   natalGeneratedContent: GeneratedContentMap;
@@ -20108,40 +16226,50 @@ function ManualChartsPanel({
   chartsReady: boolean;
   allowCachedChartsWhileLoading: boolean;
   onPendingRequestCountChange: (count: number) => void;
+  onFriendProfileContentRequest: (tab: FriendProfileTab) => void;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
-  const initialCachedCharts = useMemo(
-    () => listCachedManualCharts([chartOwnerUserId, profile.id]),
-    [chartOwnerUserId, profile.id]
-  );
-  const [charts, setCharts] = useState<ManualChart[]>(() => (
-    allowCachedChartsWhileLoading ? initialCachedCharts : []
-  ));
   const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);
-  const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
-  const [editingChartId, setEditingChartId] = useState<string | null>(null);
-  const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
-  const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
-  const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
-  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<NatalChartViewMode>("circle");
-  const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
-  const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
-  const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
-  const [relationshipCompare, setRelationshipCompare] = useState<RelationshipCompareResponse | null>(null);
-  const [relationshipCompareStatus, setRelationshipCompareStatus] = useState<RelationshipCompareStatus>("idle");
-  const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
-  const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
-  const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
-  const [status, setStatus] = useState<"idle" | "loading" | "saving" | "deleting">(
-    () => allowCachedChartsWhileLoading && initialCachedCharts.length > 0 ? "idle" : "loading"
-  );
-  const [message, setMessage] = useState("");
-  const chartsLoadedRef = useRef(false);
-  const chartOwnerUserIdRef = useRef(chartOwnerUserId);
   const socialFriendCharts = useMemo(
     () => socialFriends.map(socialFriendToChart),
     [socialFriends]
   );
+  const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
+  const {
+    charts,
+    editingChartId,
+    form,
+    formCopy,
+    message,
+    selectedChartId,
+    setForm,
+    setSelectedChartId,
+    status,
+    addBirthTime: prepareBirthTimeEdit,
+    editChart: prepareChartEdit,
+    removeChart: deleteStoredChart,
+    resetForm,
+    saveChart,
+    updateChartType,
+    updateField
+  } = useManualChartsController({
+    allowCachedChartsWhileLoading,
+    chartOwnerUserId,
+    chartRefreshKey,
+    chartsReady,
+    profileId: profile.id,
+    showNatalAspectPatterns: showFriendNatalAspectPatterns,
+    socialFriendCharts
+  });
+  const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
+  const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
+  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<FriendNatalChartViewMode>("circle");
+  const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
+  const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
+  const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
+  const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
+  const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
+  const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
   const allFriendCharts = useMemo(
     () => [...socialFriendCharts, ...charts],
     [charts, socialFriendCharts]
@@ -20152,10 +16280,9 @@ function ManualChartsPanel({
     ? socialFriends.find((friend) => socialFriendToChart(friend).id === selectedChart.id) ?? null
     : null;
   const isEventForm = form.chartType === "event";
-  const formCopy = chartFormCopy[form.chartType];
   const selectedChartIsEvent = selectedChart?.chartType === "event";
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
-  const chartSettings = normalizeChartSettings(profile.settings);
+  const chartSettings = useMemo(() => normalizeChartSettings(profile.settings), [profile.settings]);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const friendGeneratedContent = useMemo(
@@ -20163,29 +16290,13 @@ function ManualChartsPanel({
     [natalGeneratedContent, relationshipGeneratedContent]
   );
   const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
-  const relationshipComparisonOptions = useMemo<RelationshipComparisonOption[]>(() => {
-    const selfInitials = profileInitials(profile.name, profile.email);
-    const selfOption: RelationshipComparisonOption = {
-      id: "self",
-      displayName: "You",
-      initials: selfInitials,
-      subtitle: profileNatalSky ? "Your birth chart" : "Birth chart pending",
-      natalChart: profileNatalSky,
-      isSelf: true
-    };
-    const chartOptions = allFriendCharts
-      .filter((chart) => chart.id !== selectedChart?.id && chart.chartType !== "event")
-      .map((chart) => ({
-        id: chart.id,
-        displayName: chart.displayName,
-        initials: profileInitials(chart.displayName, chart.displayName),
-        subtitle: manualChartSubtitle(chart),
-        natalChart: chart.natalChart ?? null,
-        isSelf: false
-      }));
-
-    return [selfOption, ...chartOptions];
-  }, [allFriendCharts, profile.email, profile.name, profileNatalSky, selectedChart?.id]);
+  const relationshipComparisonOptions = useMemo(() => buildRelationshipComparisonOptions({
+    allFriendCharts,
+    profileEmail: profile.email,
+    profileName: profile.name,
+    profileNatalSky,
+    selectedChartId: selectedChart?.id ?? null
+  }), [allFriendCharts, profile.email, profile.name, profileNatalSky, selectedChart?.id]);
   const selectedRelationshipComparison = relationshipComparisonOptions.find((option) => option.id === relationshipComparisonChartId) ?? relationshipComparisonOptions[0];
   const relationshipComparisonSky = selectedRelationshipComparison?.natalChart ?? null;
   const relationshipComparisonName = selectedRelationshipComparison?.displayName ?? "You";
@@ -20200,10 +16311,37 @@ function ManualChartsPanel({
   const selectedRelationshipRomantic = selectedRelationshipContextType
     ? isExplicitRomanticRelationship(selectedRelationshipContextType)
     : false;
-  const selectedSynastryContacts = selectedChart
-    ? selectedChartIsEvent
-      ? []
-      : rankSynastryContactsByLifeAreaFocus(
+  const relationshipApiSettings = useMemo(
+    () => apiSettingsFromChartSettings(profile.settings),
+    [profile.settings]
+  );
+  const relationshipPersonA = useMemo(
+    () => apiSubjectFromManualChart(selectedChart, relationshipApiSettings),
+    [relationshipApiSettings, selectedChart]
+  );
+  const relationshipPersonB = useMemo(
+    () => relationshipComparisonChartId === "self"
+      ? apiSubjectFromUserChart(profile, profile.charts[0], profile.settings)
+      : apiSubjectFromManualChart(relationshipComparisonManualChart, relationshipApiSettings),
+    [profile, relationshipApiSettings, relationshipComparisonChartId, relationshipComparisonManualChart]
+  );
+  const {
+    response: relationshipCompare,
+    status: relationshipCompareStatus
+  } = useRelationshipCompare({
+    enabled: friendProfileTab === "composite" && Boolean(selectedChart) && !selectedChartIsEvent,
+    personA: relationshipPersonA,
+    personB: relationshipPersonB,
+    relationshipType: selectedRelationshipContextType,
+    settings: relationshipApiSettings
+  });
+  const friendProfileWork = friendProfileWorkForTab(friendProfileTab);
+  const selectedSynastryContacts = useMemo(() => {
+    if (!friendProfileWork.synastryContacts || !selectedChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    return rankSynastryContactsByLifeAreaFocus(
         synastryContacts(
           relationshipComparisonSky,
           selectedChart,
@@ -20215,40 +16353,149 @@ function ManualChartsPanel({
           selectedRelationshipContextType
         ),
         lifeAreaFocus
-      )
-    : [];
-  const selectedSynastryAspectGroups = groupAspectsByGiftLesson(
-    selectedSynastryContacts,
-    (contact) => contact.aspect,
-    (contact) => contact.orb
-  );
-  const selectedCompatibilityCards = selectedChart && !selectedChartIsEvent
-    ? compatibilityPlanetCards(
+      );
+  }, [
+    friendProfileWork.synastryContacts,
+    lifeAreaFocus,
+    relationshipComparisonIsSelf,
+    relationshipComparisonName,
+    relationshipComparisonPronouns,
+    relationshipComparisonSky,
+    relationshipGeneratedContent,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedRelationshipContextType,
+    selectedRelationshipRomantic
+  ]);
+  const selectedSynastryAspectGroups = useMemo(() => (
+    friendProfileWork.synastry
+      ? groupAspectsByGiftLesson(
+          selectedSynastryContacts,
+          (contact) => contact.aspect,
+          (contact) => contact.orb
+        )
+      : []
+  ), [friendProfileWork.synastry, selectedSynastryContacts]);
+  const selectedSynastryViewGroups = useMemo<FriendSynastryAspectGroup[]>(() => (
+    selectedSynastryAspectGroups.map((group) => ({
+      key: group.key,
+      label: group.label,
+      contacts: group.aspects.map((contact) => {
+        const rendered = renderReaderDirectedSynastryContact(contact, selectedChart?.displayName ?? "Friend");
+
+        return {
+          id: contact.id,
+          aspect: contact.aspect,
+          orb: contact.orb,
+          title: rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart?.displayName ?? "Friend"}'s ${contact.friendPoint.name}`,
+          subtitle: rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect),
+          description: rendered?.body ? textPreview(rendered.body) : "",
+          yourPoint: contact.yourPoint,
+          friendPoint: contact.friendPoint
+        };
+      })
+    }))
+  ), [selectedChart?.displayName, selectedSynastryAspectGroups]);
+  const selectedCompatibilityCards = useMemo(() => {
+    if (!friendProfileWork.compatibility || !selectedChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    return compatibilityPlanetCards(
         relationshipComparisonSky,
         selectedChart,
         relationshipGeneratedContent,
         selectedRelationshipContextType,
         relationshipComparisonName,
         relationshipComparisonIsSelf
-      )
-    : [];
-  const selectedCompatibilityDynamics = compatibilityDynamicsFromContacts(
-    selectedSynastryContacts,
-    selectedChart?.displayName ?? "Friend",
-    relationshipComparisonName,
+      );
+  }, [
+    friendProfileWork.compatibility,
     relationshipComparisonIsSelf,
+    relationshipComparisonName,
+    relationshipComparisonSky,
+    relationshipGeneratedContent,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedRelationshipContextType
+  ]);
+  const selectedCompatibilityDynamics = useMemo(() => (
+    friendProfileWork.compatibility
+      ? compatibilityDynamicsFromContacts(
+          selectedSynastryContacts,
+          selectedChart?.displayName ?? "Friend",
+          relationshipComparisonName,
+          relationshipComparisonIsSelf,
+          selectedChart?.pronouns,
+          relationshipComparisonPronouns
+        )
+      : []
+  ), [
+    friendProfileWork.compatibility,
+    relationshipComparisonIsSelf,
+    relationshipComparisonName,
+    relationshipComparisonPronouns,
+    selectedChart?.displayName,
     selectedChart?.pronouns,
-    relationshipComparisonPronouns
-  );
-  const selectedSynastryAspectLines: InterChartAspectLine[] = selectedChart && !selectedChartIsEvent
-    ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
-    : [];
-  const selectedCompositeSky = selectedChart && !selectedChartIsEvent ? relationshipCompositeSky(relationshipComparisonSky, selectedChart) : null;
-  const selectedCompositeAspectGroups = groupAspectsByGiftLesson(
-    selectedCompositeSky?.aspects ?? [],
-    (aspect) => aspect.type,
-    (aspect) => aspect.orb
-  );
+    selectedSynastryContacts
+  ]);
+  const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
+    (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && !selectedChartIsEvent
+      ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
+      : []
+  ), [
+    friendProfileWork.compatibility,
+    friendProfileWork.synastry,
+    relationshipComparisonSky,
+    selectedChart,
+    selectedChartIsEvent
+  ]);
+  const selectedCompositeSky = useMemo(() => (
+    friendProfileWork.composite && selectedChart && !selectedChartIsEvent
+      ? relationshipCompositeSky(relationshipComparisonSky, selectedChart)
+      : null
+  ), [friendProfileWork.composite, relationshipComparisonSky, selectedChart, selectedChartIsEvent]);
+  const selectedCompositeAspectGroups = useMemo(() => (
+    friendProfileWork.composite
+      ? groupAspectsByGiftLesson(
+          selectedCompositeSky?.aspects ?? [],
+          (aspect) => aspect.type,
+          (aspect) => aspect.orb
+        )
+      : []
+  ), [friendProfileWork.composite, selectedCompositeSky]);
+  const selectedCompositePlacementRows = useMemo(() => (
+    selectedCompositeSky
+      ? compositePlacementRows(selectedCompositeSky, relationshipGeneratedContent)
+      : []
+  ), [relationshipGeneratedContent, selectedCompositeSky]);
+  const selectedCompositeViewGroups = useMemo<FriendCompositeAspectGroup[]>(() => (
+    selectedCompositeAspectGroups.map((group) => ({
+      key: group.key,
+      label: group.label,
+      aspects: group.aspects.map((aspect) => ({
+        from: aspect.from,
+        type: aspect.type,
+        to: aspect.to,
+        orb: aspect.orb,
+        summary: compositeAspectSummary(
+          aspect,
+          selectedChart?.displayName ?? "Friend",
+          relationshipComparisonName,
+          relationshipComparisonIsSelf,
+          relationshipGeneratedContent,
+          selectedChart?.relationshipType
+        )
+      }))
+    }))
+  ), [
+    relationshipComparisonIsSelf,
+    relationshipComparisonName,
+    relationshipGeneratedContent,
+    selectedChart?.displayName,
+    selectedChart?.relationshipType,
+    selectedCompositeAspectGroups
+  ]);
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedChart?.natalChart)
     : friendProfileTab === "transits"
@@ -20260,14 +16507,27 @@ function ManualChartsPanel({
       : friendProfileTab === "synastry"
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
-  const selectedFriendTransits = selectedChart && !selectedChartIsEvent
-    ? dedupeSameBeatPersonalTransits(
-      rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
-      currentSky.generatedAt
-    ).slice(0, 8)
-    : [];
-  const selectedFriendHouseTransitCards = selectedChart?.natalChart && !selectedChartIsEvent
-    ? currentSkyHouseActivations(currentSky, selectedChart.natalChart)
+  const selectedFriendTransits = useMemo(() => (
+    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
+      ? dedupeSameBeatPersonalTransits(
+          rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
+          currentSky.generatedAt
+        ).slice(0, 8)
+      : []
+  ), [
+    currentSky,
+    friendProfileWork.transits,
+    lifeAreaFocus,
+    selectedChart,
+    selectedChartIsEvent,
+    sunriseOrbDegrees
+  ]);
+  const selectedFriendHouseTransitCards = useMemo(() => {
+    if (!friendProfileWork.transits || !currentSky || !selectedChart?.natalChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    return currentSkyHouseActivations(currentSky, selectedChart.natalChart)
       .slice(0, 4)
       .map((activation) => {
         const transit = {
@@ -20303,10 +16563,17 @@ function ManualChartsPanel({
           title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
         };
-      })
-    : [];
-  const selectedBondTransitCards = selectedChart && !selectedChartIsEvent
-    ? activeBondTransitCards(
+      });
+  }, [
+    currentSky,
+    friendProfileWork.transits,
+    selectedChart,
+    selectedChartIsEvent,
+    selectedFriendTransits
+  ]);
+  const selectedBondTransitCards = useMemo(() => (
+    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
+      ? activeBondTransitCards(
         selectedSynastryContacts,
         selectedFriendTransits,
         profileTransits,
@@ -20314,68 +16581,175 @@ function ManualChartsPanel({
         selectedChart.pronouns,
         currentSky.generatedAt
       )
-    : [];
-  const selectedFriendTransitAspectLines = selectedChart && !selectedChartIsEvent
-    ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
-    : [];
-  const selectedFriendPlacementRows = selectedChart?.natalChart ? socialPlacementRows(selectedChart.natalChart) : [];
-  const selectedFriendBigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
-  const selectedFriendBigThreeDisplayRows: SocialPlacementRow[] = selectedFriendBigThreeRows.length
-    ? selectedFriendBigThreeRows
-    : [
-      {
-        id: "Sun",
-        glyph: "☉",
-        label: "Sun",
-        sign: selectedFriendBigThree?.sun ?? "pending",
-        degree: 0,
-        house: null,
-        retrograde: false
-      },
-      {
-        id: "Moon",
-        glyph: "☽",
-        label: "Moon",
-        sign: selectedFriendBigThree?.moon ?? "pending",
-        degree: 0,
-        house: null,
-        retrograde: false
-      },
-      {
-        id: "Ascendant",
-        glyph: "↑",
-        label: "Ascendant",
-        sign: selectedFriendBigThree?.rising ?? "pending",
-        degree: 0,
-        house: null,
-        retrograde: false
-      }
-    ];
-  const selectedFriendNatalPlacementRows = selectedChartIsEvent
-    ? selectedFriendPlacementRows
-    : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row));
-  const selectedFriendNatalTableBaseRows = selectedFriendPlacementRows.map(natalChartTableRowFromSocial);
-  const selectedFriendNatalTableRows = selectedChart?.natalChart
-    ? completeNatalChartTableRows(selectedChart.natalChart, selectedFriendNatalTableBaseRows)
-    : [];
-  const selectedFriendNatalAspectGroups = selectedChart?.natalChart
-    ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
-    : [];
-  const showFriendNatalAspectPatterns = natalAspectPatternReaderEnabled();
-  const selectedFriendNatalAspectPatternItems = showFriendNatalAspectPatterns && selectedChart
-    ? natalAspectPatternReaderItemsForOwner(
-        selectedChart.natalChart ?? null,
-        selectedChart.displayName,
-        selectedChartIsEvent ? "chart" : "person",
-        selectedChart.pronouns
-      )
-    : [];
-  const selectedFriendNatalAspectPatternTimingOverrides = activationTimingOverridesForTransits(
-    selectedFriendNatalAspectPatternItems,
+      : []
+  ), [
+    currentSky?.generatedAt,
+    friendProfileWork.transits,
+    profileTransits,
+    selectedChart,
+    selectedChartIsEvent,
     selectedFriendTransits,
-    currentSky.generatedAt
-  );
-  const selectedFriendNatalAspectPatternStatus = showFriendNatalAspectPatterns && selectedChart?.natalChart
+    selectedSynastryContacts
+  ]);
+  const selectedFriendTransitAspectLines = useMemo(() => (
+    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
+      ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
+      : []
+  ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
+  const selectedBondTransitViewCards = useMemo<FriendBondTransitView[]>(() => (
+    selectedBondTransitCards.map((card) => ({
+      id: card.id,
+      headline: card.headline,
+      effectBody: card.effectBody,
+      activationBody: card.activationBody
+    }))
+  ), [selectedBondTransitCards]);
+  const selectedFriendHouseTransitViewCards = useMemo<FriendHouseTransitView[]>(() => (
+    selectedFriendHouseTransitCards.map((card) => ({
+      id: card.contentKey,
+      transitPlanet: card.transit.transitPlanet,
+      title: card.title,
+      durationLabel: card.durationLabel,
+      timingRange: card.timingRange,
+      rowSummary: card.rowSummary,
+      termLabel: longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term",
+      keywords: houseLifeAreaKeywords(card.activation.house),
+      house: card.activation.house,
+      houseLabel: `${ordinalHouse(card.activation.house)} house`
+    }))
+  ), [selectedFriendHouseTransitCards]);
+  const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => {
+    if (!currentSky) {
+      return [];
+    }
+
+    return (["short", "long"] as const).flatMap((durationClass) => {
+      const transits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
+
+      if (transits.length === 0 || !selectedChart) {
+        return [];
+      }
+
+      return [{
+        key: durationClass,
+        label: durationClass === "short" ? "Short-term themes" : "Long-term themes",
+        transits: transits.map((transit) => {
+          const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
+
+          return {
+            id: transit.id,
+            title: `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`,
+            durationLabel: timing.durationLabel,
+            rangeLabel: timing.rangeLabel,
+            timingLabel: timing.label,
+            summary: friendTransitSummary(
+              transit,
+              relationshipGeneratedContent,
+              selectedChart.displayName,
+              selectedChart.pronouns,
+              currentSky.generatedAt
+            ),
+            orb: transit.orb
+          };
+        })
+      }];
+    });
+  }, [currentSky, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
+  const selectedFriendPlacementRows = useMemo(() => (
+    friendProfileWork.natal && selectedChart?.natalChart
+      ? socialPlacementRows(selectedChart.natalChart)
+      : []
+  ), [friendProfileWork.natal, selectedChart?.natalChart]);
+  const selectedFriendBigThreeDisplayRows = useMemo<SocialPlacementRow[]>(() => {
+    if (!friendProfileWork.natal) {
+      return [];
+    }
+
+    const bigThreeRows = selectedFriendPlacementRows.filter(isSocialBigThreeRow);
+
+    return bigThreeRows.length
+      ? bigThreeRows
+      : [
+          {
+            id: "Sun",
+            glyph: "☉",
+            label: "Sun",
+            sign: selectedFriendBigThree?.sun ?? "pending",
+            degree: 0,
+            house: null,
+            retrograde: false
+          },
+          {
+            id: "Moon",
+            glyph: "☽",
+            label: "Moon",
+            sign: selectedFriendBigThree?.moon ?? "pending",
+            degree: 0,
+            house: null,
+            retrograde: false
+          },
+          {
+            id: "Ascendant",
+            glyph: "↑",
+            label: "Ascendant",
+            sign: selectedFriendBigThree?.rising ?? "pending",
+            degree: 0,
+            house: null,
+            retrograde: false
+          }
+        ];
+  }, [friendProfileWork.natal, selectedFriendBigThree, selectedFriendPlacementRows]);
+  const selectedFriendNatalPlacementRows = useMemo(() => (
+    selectedChartIsEvent
+      ? selectedFriendPlacementRows
+      : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row))
+  ), [selectedChartIsEvent, selectedFriendPlacementRows]);
+  const selectedFriendNatalTableRows = useMemo(() => {
+    if (!friendProfileWork.natal || !selectedChart?.natalChart) {
+      return [];
+    }
+
+    return completeNatalChartTableRows(
+      selectedChart.natalChart,
+      selectedFriendPlacementRows.map(natalChartTableRowFromSocial)
+    );
+  }, [friendProfileWork.natal, selectedChart?.natalChart, selectedFriendPlacementRows]);
+  const selectedFriendNatalAspectGroups = useMemo(() => (
+    friendProfileWork.natal && selectedChart?.natalChart
+      ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
+      : []
+  ), [friendProfileWork.natal, selectedChart?.natalChart]);
+  const selectedFriendNatalAspectPatternItems = useMemo(() => (
+    showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
+      ? natalAspectPatternReaderItemsForOwner(
+          selectedChart.natalChart ?? null,
+          selectedChart.displayName,
+          selectedChartIsEvent ? "chart" : "person",
+          selectedChart.pronouns
+        )
+      : []
+  ), [
+    friendProfileWork.natal,
+    friendProfileWork.transits,
+    selectedChart,
+    selectedChartIsEvent,
+    showFriendNatalAspectPatterns
+  ]);
+  const selectedFriendNatalAspectPatternTimingOverrides = useMemo(() => (
+    friendProfileWork.transits && currentSky
+      ? activationTimingOverridesForTransits(
+          selectedFriendNatalAspectPatternItems,
+          selectedFriendTransits,
+          currentSky.generatedAt
+        )
+      : {}
+  ), [
+    currentSky?.generatedAt,
+    friendProfileWork.transits,
+    selectedFriendNatalAspectPatternItems,
+    selectedFriendTransits
+  ]);
+  const selectedFriendNatalAspectPatternStatus = friendProfileWork.natal && showFriendNatalAspectPatterns && selectedChart?.natalChart
     ? natalAspectPatternReaderStatus(
         showFriendNatalAspectPatterns,
         selectedChart.natalChart,
@@ -20383,15 +16757,71 @@ function ManualChartsPanel({
         selectedChart.natalChart.aspectPatterns?.interpretationContexts ? "ready" : "unavailable"
       )
     : undefined;
-  const selectedFriendOccupiedHouses = new Set(
-    (selectedChart?.natalChart?.positions ?? [])
-      .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
-      .map((position) => position.house)
-      .filter((house): house is number => typeof house === "number")
-  );
-  const selectedFriendEmptyHouses = selectedChart?.natalChart && !selectedChartIsEvent
-    ? Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !selectedFriendOccupiedHouses.has(house))
-    : [];
+  const selectedFriendEmptyHouses = useMemo(() => {
+    if (!friendProfileWork.natal || !selectedChart?.natalChart || selectedChartIsEvent) {
+      return [];
+    }
+
+    const occupiedHouses = new Set(
+      selectedChart.natalChart.positions
+        .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
+        .map((position) => position.house)
+        .filter((house): house is number => typeof house === "number")
+    );
+
+    return Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !occupiedHouses.has(house));
+  }, [friendProfileWork.natal, selectedChart?.natalChart, selectedChartIsEvent]);
+  const selectedFriendEmptyHouseViewRows = useMemo<FriendNatalEmptyHouseRow[]>(() => {
+    const friendNatalChart = selectedChart?.natalChart;
+
+    if (!friendNatalChart || !selectedChart) {
+      return [];
+    }
+
+    return selectedFriendEmptyHouses.map((house) => {
+      const houseSign = signAtWholeSignHouse(friendNatalChart.ascendant, house);
+      const title = emptyHouseTitle(house, friendNatalChart);
+
+      return {
+        house,
+        glyph: houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○",
+        title,
+        ariaLabel: `Read more about ${title}`,
+        description: emptyHouseCardDescription(
+          house,
+          friendNatalChart,
+          "friend",
+          selectedChart.displayName,
+          selectedChart.pronouns,
+          selectedFriendEmptyHouses
+        )
+      };
+    });
+  }, [selectedChart, selectedFriendEmptyHouses]);
+  const selectedFriendNatalAspectViewGroups = useMemo<FriendNatalViewAspectGroup[]>(() => (
+    selectedFriendNatalAspectGroups.map((group) => ({
+      key: group.key,
+      label: group.label,
+      aspects: group.aspects.map((aspect) => {
+        const normalized = normalizeNatalAspectSurface(aspect, {
+          ownerName: selectedChart?.displayName ?? "Friend",
+          ownerKind: selectedChartIsEvent ? "chart" : "person",
+          ownerPronouns: selectedChart?.pronouns
+        });
+        const renderedSection = normalized.sections[0];
+
+        return {
+          id: `${aspect.from}-${aspect.type}-${aspect.to}`,
+          from: aspect.from,
+          type: aspect.type,
+          to: aspect.to,
+          orb: aspect.orb,
+          title: renderedSection?.heading ?? `${selectedChart?.displayName ?? "Friend"}'s ${aspect.from} ${aspect.type} ${aspect.to}`,
+          summary: normalizedSurfacePreview(normalized)
+        };
+      })
+    }))
+  ), [selectedChart?.displayName, selectedChart?.pronouns, selectedChartIsEvent, selectedFriendNatalAspectGroups]);
   const openFriendCompatibilityCardDetail = (card: CompatibilityPlanetCard, paragraphs: string[]) => {
     if (!selectedChart) {
       return;
@@ -20440,6 +16870,15 @@ function ManualChartsPanel({
       })),
       relatedAspects: article.relatedAspects
     });
+  };
+  const openFriendNatalAspectById = (aspectId: string) => {
+    const aspect = selectedFriendNatalAspectGroups
+      .flatMap((group) => group.aspects)
+      .find((candidate) => `${candidate.from}-${candidate.type}-${candidate.to}` === aspectId);
+
+    if (aspect) {
+      openFriendNatalAspectDetail(aspect);
+    }
   };
   const openFriendNatalAspectPatternDetail = (
     item: NatalAspectPatternReaderItem,
@@ -20574,6 +17013,13 @@ function ManualChartsPanel({
       }))
     });
   };
+  const openFriendHouseTransitById = (cardId: string) => {
+    const card = selectedFriendHouseTransitCards.find((candidate) => candidate.contentKey === cardId);
+
+    if (card) {
+      openFriendHouseTransitDetail(card);
+    }
+  };
   const openBondTransitDetail = (
     card: (typeof selectedBondTransitCards)[number]
   ) => {
@@ -20609,8 +17055,40 @@ function ManualChartsPanel({
       }))
     });
   };
-  const openFriendTransitDetail = (transit: TransitItem) => {
+  const openBondTransitById = (cardId: string) => {
+    const card = selectedBondTransitCards.find((candidate) => candidate.id === cardId);
+
+    if (card) {
+      openBondTransitDetail(card);
+    }
+  };
+  const openFriendSynastryContactDetail = (contactId: string) => {
     if (!selectedChart) {
+      return;
+    }
+
+    const contact = selectedSynastryContacts.find((candidate) => candidate.id === contactId);
+
+    if (!contact) {
+      return;
+    }
+
+    const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
+    const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
+    const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
+
+    onOpenDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "synastry", `synastry-${contact.id}`),
+      glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
+      kicker: "Synastry",
+      title,
+      meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+      body: rendered?.body ? [rendered.body] : [],
+      content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
+    });
+  };
+  const openFriendTransitDetail = (transit: TransitItem) => {
+    if (!currentSky || !selectedChart) {
       return;
     }
 
@@ -20643,6 +17121,13 @@ function ManualChartsPanel({
         sourceKeys: section.sourceKeys
       }))
     });
+  };
+  const openFriendTransitById = (transitId: string) => {
+    const transit = selectedFriendTransits.find((candidate) => candidate.id === transitId);
+
+    if (transit) {
+      openFriendTransitDetail(transit);
+    }
   };
   function selectFriendsTab(nextTab: FriendsTab, historyMode: "push" | "replace" = "push") {
     storeFriendsTab(nextTab);
@@ -20699,6 +17184,12 @@ function ManualChartsPanel({
   }, [landingKey]);
 
   useEffect(() => {
+    if (resolvedFriendsMainView === "profile" && selectedChart) {
+      onFriendProfileContentRequest(friendProfileTab);
+    }
+  }, [friendProfileTab, onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id]);
+
+  useEffect(() => {
     function handlePopState() {
       if (!applyFriendsRouteStateFromUrl()) {
         const nextTab = initialFriendsTab();
@@ -20727,262 +17218,15 @@ function ManualChartsPanel({
     }
   }, [friendProfileTab, selectedChartIsEvent]);
 
-  useEffect(() => {
-    const shouldLoadRelationshipCompare = friendProfileTab === "composite";
-
-    if (!shouldLoadRelationshipCompare || !isTldrAstroApiConfigured || !selectedChart || selectedChartIsEvent) {
-      setRelationshipCompare(null);
-      setRelationshipCompareStatus("idle");
-      return;
-    }
-
-    const personA = apiSubjectFromManualChart(selectedChart, profile.settings);
-    const personB = relationshipComparisonChartId === "self"
-      ? apiSubjectFromUserChart(profile, profile.charts[0], profile.settings)
-      : apiSubjectFromManualChart(relationshipComparisonManualChart, profile.settings);
-
-    if (!personA || !personB) {
-      setRelationshipCompare(null);
-      setRelationshipCompareStatus("idle");
-      return;
-    }
-
-    let cancelled = false;
-    setRelationshipCompareStatus("loading");
-
-    compareRelationship({
-      personA,
-      personB,
-      relationshipContext: relationshipContextFromRole(selectedRelationshipContextType),
-      settings: apiSettingsFromChartSettings(profile.settings),
-      includeContentFacts: true
-    })
-      .then((response) => {
-        if (!cancelled) {
-          setRelationshipCompare(response);
-          setRelationshipCompareStatus("ready");
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          console.warn("TLDR Astro relationship compare API failed; using local relationship rows.", error);
-          setRelationshipCompare(null);
-          setRelationshipCompareStatus("error");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    selectedChart?.id,
-    selectedChart?.birthDate,
-    selectedChart?.birthTime,
-    selectedChart?.birthTimeUnknown,
-    selectedChart?.birthLocation?.label,
-    selectedChart?.birthLocation?.timeZone,
-    selectedRelationshipContextType,
-    selectedChartIsEvent,
-    relationshipComparisonChartId,
-    relationshipComparisonManualChart?.id,
-    relationshipComparisonManualChart?.birthDate,
-    relationshipComparisonManualChart?.birthTime,
-    relationshipComparisonManualChart?.birthTimeUnknown,
-    relationshipComparisonManualChart?.birthLocation?.label,
-    relationshipComparisonManualChart?.birthLocation?.timeZone,
-    friendProfileTab,
-    profile.id,
-    profile.name,
-    profile.settings,
-    profile.charts[0]?.birthDate,
-    profile.charts[0]?.birthTime,
-    profile.charts[0]?.birthCity,
-    profile.charts[0]?.birthLocation?.label,
-    profile.charts[0]?.birthLocation?.timeZone
-  ]);
   const isLoadingCharts = status === "loading";
   const friendChartListItems = useMemo(
-    () => charts.map((chart) => {
-      const bigThree = manualChartBigThree(chart);
-
-      return {
-        chart,
-        initials: profileInitials(chart.displayName, chart.displayName),
-        sun: bigThree.sun,
-        moon: bigThree.moon,
-        rising: bigThree.rising,
-        needsBirthTime: manualChartNeedsBirthTime(chart),
-        active: selectedChart?.id === chart.id,
-        patternSummary: showFriendNatalAspectPatterns && chart.chartType === "person"
-          ? natalAspectPatternPillSummary(chart.natalChart)
-          : null
-      };
-    }),
+    () => buildFriendChartListItems(
+      charts,
+      selectedChart?.id ?? null,
+      showFriendNatalAspectPatterns
+    ),
     [charts, selectedChart?.id, showFriendNatalAspectPatterns]
   );
-  useEffect(() => {
-    let cancelled = false;
-    const chartOwnerChanged = chartOwnerUserIdRef.current !== chartOwnerUserId;
-
-    if (chartOwnerChanged) {
-      chartOwnerUserIdRef.current = chartOwnerUserId;
-      chartsLoadedRef.current = false;
-      setSelectedChartId(null);
-    }
-
-    if (!chartsReady) {
-      const cachedCharts = listCachedManualCharts([
-        chartOwnerUserId,
-        profile.id,
-        ...listLocalManualChartUserIds()
-      ]);
-
-      if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
-        chartsLoadedRef.current = true;
-        setCharts(cachedCharts);
-        setStatus("idle");
-      } else {
-        setCharts([]);
-        setStatus("loading");
-      }
-
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    if (allowCachedChartsWhileLoading && !chartsLoadedRef.current) {
-      const cachedCharts = listCachedManualCharts([
-        chartOwnerUserId,
-        profile.id,
-        ...listLocalManualChartUserIds()
-      ]);
-
-      if (cachedCharts.length > 0) {
-        chartsLoadedRef.current = true;
-        setCharts(cachedCharts);
-        setStatus("idle");
-      }
-    }
-
-    if (!chartsLoadedRef.current) {
-      setStatus("loading");
-    }
-    listManualCharts(chartOwnerUserId)
-      .then((nextCharts) => {
-        if (!cancelled) {
-          chartsLoadedRef.current = true;
-          setCharts(nextCharts);
-          setSelectedChartId((currentId) => (
-            currentId && (
-              nextCharts.some((chart) => chart.id === currentId)
-              || socialFriendCharts.some((chart) => chart.id === currentId)
-            )
-              ? currentId
-              : null
-          ));
-          setMessage("");
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          chartsLoadedRef.current = true;
-          setMessage(error instanceof Error ? error.message : "Could not load manual charts.");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setStatus("idle");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profile.id, socialFriendCharts]);
-
-  useEffect(() => {
-    if (!chartsReady || charts.length === 0) {
-      return;
-    }
-
-    const chartsToRepair = charts.filter(manualChartNeedsNatalRepair);
-
-    if (chartsToRepair.length === 0) {
-      return;
-    }
-
-    let cancelled = false;
-
-    Promise.allSettled(chartsToRepair.map(async (chart) => {
-      const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
-      if (!birthLocation) {
-        return null;
-      }
-
-      if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
-        return null;
-      }
-
-      const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-      const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
-      const calculatedNatalChart = await getAstrodienstSky(
-        birthLocation,
-        birthDateTime
-      );
-      const natalChart = await natalSkyWithAspectPatternsForStorage(
-        calculatedNatalChart,
-        birthLocation,
-        birthDateTime,
-        !chart.birthTimeUnknown,
-        showFriendNatalAspectPatterns
-      );
-      const input: ManualChartInput = {
-        chartType: chart.chartType,
-        displayName: chart.displayName,
-        firstName: chart.firstName ?? null,
-        lastName: chart.lastName ?? null,
-        pronouns: chart.pronouns,
-        relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
-        birthDate: chart.birthDate,
-        birthTime: chart.birthTime,
-        birthTimeUnknown: chart.birthTimeUnknown,
-        birthPlace: chart.birthPlace,
-        birthLocation,
-        natalChart,
-        notes: chart.notes ?? null
-      };
-
-      return updateManualChart(chartOwnerUserId, chart.id, input);
-    }))
-      .then((results) => {
-        if (cancelled) {
-          return;
-        }
-
-        const repairedCharts = results
-          .filter((result): result is PromiseFulfilledResult<ManualChart | null> => result.status === "fulfilled")
-          .map((result) => result.value)
-          .filter((chart): chart is ManualChart => Boolean(chart));
-
-        if (repairedCharts.length === 0) {
-          return;
-        }
-
-        setCharts((currentCharts) => {
-          const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
-
-          return currentCharts
-            .map((chart) => repairedById.get(chart.id) ?? chart)
-            .sort((first, second) => first.displayName.localeCompare(second.displayName));
-        });
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [chartOwnerUserId, charts, chartsReady]);
-
   useEffect(() => {
     setRelationshipComparisonPickerOpen(false);
     setRelationshipComparisonChartId((currentId) => {
@@ -21058,12 +17302,6 @@ function ManualChartsPanel({
     };
   }, [openChartMenuId]);
 
-  function resetForm(nextMessage = "") {
-    setForm(defaultManualChartForm);
-    setEditingChartId(null);
-    setMessage(nextMessage);
-  }
-
   function openAddChartModal() {
     resetForm();
     setOpenChartMenuId(null);
@@ -21076,22 +17314,14 @@ function ManualChartsPanel({
   }
 
   function editChart(chart: ManualChart) {
-    setEditingChartId(chart.id);
-    setForm(manualChartFormFromChart(chart));
+    prepareChartEdit(chart);
     setOpenChartMenuId(null);
-    setMessage("");
     setFriendChartModalOpen(true);
   }
 
   function addBirthTime(chart: ManualChart) {
-    setEditingChartId(chart.id);
-    setForm({
-      ...manualChartFormFromChart(chart),
-      birthTime: "",
-      birthTimeUnknown: false
-    });
+    prepareBirthTimeEdit(chart);
     setOpenChartMenuId(null);
-    setMessage("");
     setFriendChartModalOpen(true);
   }
 
@@ -21117,174 +17347,71 @@ function ManualChartsPanel({
     }
   }
 
-  function updateField<Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) {
-    setForm({ ...form, [key]: value });
-  }
-
-  function updateChartType(chartType: ManualChartType) {
-    setForm((currentForm) => ({
-      ...currentForm,
-      chartType,
-      pronouns: chartType === "event" ? defaultPronounChoice : currentForm.pronouns,
-      relationshipType: chartType === "event" ? "friend" : normalizeRelationshipContextKey(currentForm.relationshipType)
-    }));
-  }
-
   async function saveManualChart(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+    const result = await saveChart(event);
 
-    const displayName = form.displayName.trim();
-    const birthDate = form.birthDate;
-    const birthPlace = form.birthPlace.trim();
-    const selectedBirthLocation = birthPlace && form.birthLocation?.label === birthPlace
-      ? form.birthLocation
-      : null;
-    const birthLocation = selectedBirthLocation ? withTimeZone(selectedBirthLocation) : null;
-
-    if (!displayName || !birthDate || !birthPlace || !birthLocation) {
-      setMessage(!birthLocation && birthPlace ? "Choose a city from the birth place suggestions. If it is already selected, timezone lookup is unavailable." : formCopy.requiredMessage);
+    if (!result) {
       return;
     }
 
-    if (!form.birthTimeUnknown && !form.birthTime) {
-      setMessage(formCopy.timeMessage);
-      return;
-    }
-
-    setStatus("saving");
-    setMessage("");
-
-    try {
-      const birthTimeForChart = form.birthTimeUnknown
-        ? "12:00 PM"
-        : twentyFourHourTimeToDisplay(form.birthTime);
-      const birthDateTime = zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone);
-      const calculatedNatalChart = await getAstrodienstSky(
-        birthLocation,
-        birthDateTime
-      );
-      const natalChart = await natalSkyWithAspectPatternsForStorage(
-        calculatedNatalChart,
-        birthLocation,
-        birthDateTime,
-        !form.birthTimeUnknown,
-        showFriendNatalAspectPatterns
-      );
-      const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
-      const input: ManualChartInput = {
-        chartType: form.chartType,
-        displayName,
-        firstName,
-        lastName: lastNameParts.join(" ") || null,
-        pronouns: form.chartType === "event" ? defaultPronounChoice : form.pronouns,
-        relationshipType: form.chartType === "event" ? null : normalizeRelationshipContextKey(form.relationshipType),
-        birthDate,
-        birthTime: form.birthTimeUnknown ? null : form.birthTime,
-        birthTimeUnknown: form.birthTimeUnknown,
-        birthPlace: birthLocation.label,
-        birthLocation,
-        natalChart,
-        notes: null
-      };
-      const savedChart = editingChartId
-        ? await updateManualChart(chartOwnerUserId, editingChartId, input)
-        : await createManualChart(chartOwnerUserId, input);
-
-      setCharts((currentCharts) => {
-        const nextCharts = editingChartId
-          ? currentCharts.map((chart) => chart.id === savedChart.id ? savedChart : chart)
-          : [...currentCharts, savedChart];
-
-        return nextCharts.sort((first, second) => first.displayName.localeCompare(second.displayName));
-      });
-      setSelectedChartId(savedChart.id);
-      setFriendsMainView("profile");
-      setFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
-      setRelationshipComparisonChartId("self");
-      setRelationshipComparisonPickerOpen(false);
-      updateFriendProfileUrl(savedChart.id, savedChart.chartType === "event" ? "natal" : "compatibility", "replace");
-      resetForm(editingChartId ? "Chart updated." : "Chart created.");
-      setFriendChartModalOpen(false);
-    } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : typeof error === "object" && error && "message" in error && typeof error.message === "string"
-          ? error.message
-          : "Could not save chart.";
-
-      setMessage(message);
-    } finally {
-      setStatus("idle");
-    }
+    const { chart: savedChart, wasEditing } = result;
+    setFriendsMainView("profile");
+    setFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
+    setRelationshipComparisonChartId("self");
+    setRelationshipComparisonPickerOpen(false);
+    updateFriendProfileUrl(savedChart.id, savedChart.chartType === "event" ? "natal" : "compatibility", "replace");
+    resetForm(wasEditing ? "Chart updated." : "Chart created.");
+    setFriendChartModalOpen(false);
   }
 
   async function removeChart(chart: ManualChart) {
     setOpenChartMenuId(null);
-    setStatus("deleting");
-    setMessage("");
+    const deleted = await deleteStoredChart(chart);
 
-    try {
-      await deleteManualChart(chartOwnerUserId, chart.id);
-      setCharts((currentCharts) => currentCharts.filter((candidate) => candidate.id !== chart.id));
-      setRelationshipComparisonChartId((currentId) => currentId === chart.id ? "self" : currentId);
-      setRelationshipComparisonPickerOpen(false);
-      setSelectedChartId((currentId) => {
-        if (currentId === chart.id) {
-          selectFriendsTab("charts", "replace");
-          return null;
-        }
-
-        return currentId;
-      });
-      if (editingChartId === chart.id) {
-        resetForm();
-      }
-      setMessage("Chart deleted.");
-      setDeleteCandidateChart(null);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not delete chart.");
-    } finally {
-      setStatus("idle");
+    if (!deleted) {
+      return;
     }
+
+    setRelationshipComparisonChartId((currentId) => currentId === chart.id ? "self" : currentId);
+    setRelationshipComparisonPickerOpen(false);
+    if (selectedChartId === chart.id) {
+      selectFriendsTab("charts", "replace");
+    }
+    setDeleteCandidateChart(null);
   }
 
   const isFriendDetailView = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
 
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
-      <FriendsPageShell
+      <FriendsWorkspaceShell
         activeView={resolvedFriendsMainView}
-        beforeTabs={(
-          <SocialFriendsPanel
-            activeView={resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView}
-            chartContent={(
-              <FriendChartsList
-                charts={friendChartListItems}
-                embedded
-                isLoading={isLoadingCharts}
-                message={message}
-                openChartMenuId={openChartMenuId}
-                showMessage={!friendChartModalOpen}
-                onAddBirthTime={addBirthTime}
-                onAddChart={openAddChartModal}
-                onDeleteChart={requestDeleteChart}
-                onEditChart={editChart}
-                onOpenChart={openFriendProfile}
-                onToggleChartMenu={(chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)}
-              />
-            )}
-            chartCount={friendChartListItems.length}
-            onAddChart={openAddChartModal}
-            onFriendsChange={setSocialFriends}
-            onOpenFriend={(friend) => openFriendProfile(socialFriendToChart(friend))}
-            onPendingRequestCountChange={onPendingRequestCountChange}
-            onSelectView={(view, historyMode) => selectFriendsTab(view, historyMode)}
-            showPatternPills={showFriendNatalAspectPatterns}
-          />
-        )}
+        chartListProps={{
+          charts: friendChartListItems,
+          isLoading: isLoadingCharts,
+          message,
+          openChartMenuId,
+          showMessage: !friendChartModalOpen,
+          onAddBirthTime: addBirthTime,
+          onAddChart: openAddChartModal,
+          onDeleteChart: requestDeleteChart,
+          onEditChart: editChart,
+          onOpenChart: openFriendProfile,
+          onToggleChartMenu: (chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)
+        }}
         detailVariant={friendProfileTab}
         isDetailView={isFriendDetailView}
         onBackToCharts={() => selectFriendsTab("charts")}
+        socialPanelProps={{
+          activeView: resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView,
+          chartCount: friendChartListItems.length,
+          onAddChart: openAddChartModal,
+          onFriendsChange: setSocialFriends,
+          onOpenFriend: (friend) => openFriendProfile(socialFriendToChart(friend)),
+          onPendingRequestCountChange,
+          onSelectView: (view, historyMode) => selectFriendsTab(view, historyMode),
+          showPatternPills: showFriendNatalAspectPatterns
+        }}
       >
 
       {friendChartModalOpen && (
@@ -21363,71 +17490,29 @@ function ManualChartsPanel({
         </ModalPortal>
       )}
       {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
-        relationshipChartFullscreenMode === "synastry" && selectedChart.natalChart && relationshipComparisonSky ? (
-          <RelationshipChartFullscreen
-            comparisonOptions={relationshipComparisonOptions}
-            comparisonPickerOpen={relationshipComparisonPickerOpen}
-            comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
-            mode="synastry"
-            outerName={selectedChart.displayName}
-            outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
-            title={`${selectedChart.displayName} × ${relationshipComparisonName} · Synastry`}
-            onClose={() => {
-              setRelationshipComparisonPickerOpen(false);
-              setRelationshipChartFullscreenMode(null);
-            }}
-            onComparisonSelect={(id) => {
-              setRelationshipComparisonChartId(id);
-              setRelationshipComparisonPickerOpen(false);
-            }}
-            onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-          >
-            <SynastryWheel
-              outerPositions={selectedChart.natalChart.positions}
-              innerPositions={relationshipComparisonSky.positions}
-              interAspects={selectedSynastryAspectLines}
-              ascendant={selectedChart.natalChart.ascendant}
-              ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-              midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-              innerAscendant={relationshipComparisonSky.ascendant}
-              innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
-              innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
-              houseSignLabelStyle={houseSignLabelStyle}
-              aspectInspector
-              outerLabel={selectedChart.displayName}
-              innerLabel={relationshipComparisonName}
-            />
-          </RelationshipChartFullscreen>
-        ) : relationshipChartFullscreenMode === "composite" && selectedCompositeSky ? (
-          <RelationshipChartFullscreen
+        <FriendProfileChartFullscreen
+          chartName={selectedChart.displayName}
+          comparisonName={relationshipComparisonName}
           comparisonOptions={relationshipComparisonOptions}
           comparisonPickerOpen={relationshipComparisonPickerOpen}
           comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
-            mode="composite"
-            title={`${selectedChart.displayName} × ${relationshipComparisonName} · Composite`}
-            onClose={() => {
-              setRelationshipComparisonPickerOpen(false);
-              setRelationshipChartFullscreenMode(null);
-            }}
-            onComparisonSelect={(id) => {
-              setRelationshipComparisonChartId(id);
-              setRelationshipComparisonPickerOpen(false);
-            }}
-            onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-          >
-            <SkyWheel
-              positions={selectedCompositeSky.positions}
-              aspects={selectedCompositeSky.aspects}
-              ascendant={selectedCompositeSky.ascendant}
-              ascendantLongitude={selectedCompositeSky.ascendantLongitude}
-              midheavenLongitude={selectedCompositeSky.midheavenLongitude}
-              showHouses
-              houseSignLabelStyle={houseSignLabelStyle}
-              variant="composite"
-              aspectInspector
-            />
-          </RelationshipChartFullscreen>
-        ) : null
+          compositeSky={selectedCompositeSky}
+          houseSignLabelStyle={houseSignLabelStyle}
+          mode={relationshipChartFullscreenMode}
+          natalSky={selectedChart.natalChart ?? null}
+          onClose={() => {
+            setRelationshipComparisonPickerOpen(false);
+            setRelationshipChartFullscreenMode(null);
+          }}
+          onComparisonSelect={(id) => {
+            setRelationshipComparisonChartId(id);
+            setRelationshipComparisonPickerOpen(false);
+          }}
+          onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+          outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+          relationshipComparisonSky={relationshipComparisonSky}
+          synastryAspects={selectedSynastryAspectLines}
+        />
       )}
       {resolvedFriendsMainView === "profile" && selectedChart && (
         <FriendDetail
@@ -21435,156 +17520,32 @@ function ManualChartsPanel({
           ariaLabel={`${selectedChart.displayName} chart profile`}
           avatarUrl={selectedSocialFriend?.avatarUrl}
           chartRail={(
-            <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-label={selectedChartIsEvent ? "Event chart" : "Relationship chart"}>
-              {friendProfileTab === "natal" && selectedChart.natalChart && (
-                <div className="friend-synastry-wheel-shell">
-                  <SegmentedControl
-                    value={friendNatalChartViewMode}
-                    options={[
-                      { value: "circle", label: "Circle" },
-                      { value: "table", label: "Table" }
-                    ]}
-                    onChange={setFriendNatalChartViewMode}
-                    ariaLabel={`${selectedChart.displayName} natal chart display`}
-                    className="natal-chart-view-toggle"
-                    compact
-                  />
-                  {friendNatalChartViewMode === "table" ? (
-                    <NatalChartDataTable
-                      rows={selectedFriendNatalTableRows}
-                      title={`${selectedChart.displayName} natal placement table`}
-                    />
-                  ) : (
-                    <div className="chart-shell">
-                      <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} natal chart wheel`}>
-                        <SkyWheel
-                          positions={selectedChart.natalChart.positions}
-                          aspects={selectedChart.natalChart.aspects}
-                          ascendant={selectedChart.natalChart.ascendant}
-                          ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                          midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                          showHouses
-                          houseSignLabelStyle={houseSignLabelStyle}
-                          variant="natal"
-                          aspectInspector
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              {friendProfileTab === "transits" && selectedChart.natalChart && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} transit chart wheel`}>
-                      <SkyWheel
-                        positions={selectedChart.natalChart.positions}
-                        aspects={[]}
-                        transitPositions={currentSky.positions}
-                        transitAspects={selectedFriendTransitAspectLines}
-                        ascendant={selectedChart.natalChart.ascendant}
-                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                        showHouses
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        variant="natal"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-              {friendProfileTab === "compatibility" && selectedChart.natalChart && relationshipComparisonSky && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} compatibility chart wheel`}>
-                      <SynastryWheel
-                        outerPositions={selectedChart.natalChart.positions}
-                        innerPositions={relationshipComparisonSky?.positions ?? []}
-                        interAspects={selectedSynastryAspectLines}
-                        ascendant={selectedChart.natalChart.ascendant}
-                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                        innerAscendant={relationshipComparisonSky.ascendant}
-                        innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
-                        innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        aspectInspector
-                        outerLabel={selectedChart.displayName}
-                        innerLabel={relationshipComparisonName}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-              {friendProfileTab === "synastry" && selectedChart.natalChart && relationshipComparisonSky && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} synastry chart wheel`}>
-                      <SynastryWheel
-                        outerPositions={selectedChart.natalChart.positions}
-                        innerPositions={relationshipComparisonSky?.positions ?? []}
-                        interAspects={selectedSynastryAspectLines}
-                        ascendant={selectedChart.natalChart.ascendant}
-                        ascendantLongitude={selectedChart.natalChart.ascendantLongitude}
-                        midheavenLongitude={selectedChart.natalChart.midheavenLongitude}
-                        innerAscendant={relationshipComparisonSky.ascendant}
-                        innerAscendantLongitude={relationshipComparisonSky.ascendantLongitude}
-                        innerMidheavenLongitude={relationshipComparisonSky.midheavenLongitude}
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        aspectInspector
-                        outerLabel={selectedChart.displayName}
-                        innerLabel={relationshipComparisonName}
-                      />
-                    </div>
-                  </div>
-                  <RelationshipComparePicker
-                    variant="synastry"
-                    outerName={selectedChart.displayName}
-                    outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
-                    options={relationshipComparisonOptions}
-                    selectedId={selectedRelationshipComparison?.id ?? "self"}
-                    open={relationshipComparisonPickerOpen}
-                    onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                    onSelect={(id) => {
-                      setRelationshipComparisonChartId(id);
-                      setRelationshipComparisonPickerOpen(false);
-                    }}
-                  />
-                </div>
-              )}
-              {friendProfileTab === "composite" && selectedCompositeSky && (
-                <div className="friend-synastry-wheel-shell">
-                  <div className="chart-shell chart-shell--composite-inspector">
-                    <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${selectedChart.displayName} and ${relationshipComparisonIsSelf ? "you" : relationshipComparisonName} composite chart wheel`}>
-                      <SkyWheel
-                        positions={selectedCompositeSky.positions}
-                        aspects={selectedCompositeSky.aspects}
-                        ascendant={selectedCompositeSky.ascendant}
-                        ascendantLongitude={selectedCompositeSky.ascendantLongitude}
-                        midheavenLongitude={selectedCompositeSky.midheavenLongitude}
-                        showHouses
-                        houseSignLabelStyle={houseSignLabelStyle}
-                        variant="composite"
-                        aspectInspector
-                        aspectInspectorControls={(
-                          <RelationshipComparePicker
-                            variant="composite"
-                            options={relationshipComparisonOptions}
-                            selectedId={selectedRelationshipComparison?.id ?? "self"}
-                            open={relationshipComparisonPickerOpen}
-                            onToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                            onSelect={(id) => {
-                              setRelationshipComparisonChartId(id);
-                              setRelationshipComparisonPickerOpen(false);
-                            }}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <FriendProfileChartRail
+              activeTab={friendProfileTab}
+              chartIsEvent={selectedChartIsEvent}
+              chartName={selectedChart.displayName}
+              comparisonIsSelf={relationshipComparisonIsSelf}
+              comparisonName={relationshipComparisonName}
+              comparisonOptions={relationshipComparisonOptions}
+              comparisonPickerOpen={relationshipComparisonPickerOpen}
+              comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
+              compositeSky={selectedCompositeSky}
+              currentSkyPositions={currentSky?.positions ?? []}
+              houseSignLabelStyle={houseSignLabelStyle}
+              natalSky={selectedChart.natalChart ?? null}
+              natalTableRows={selectedFriendNatalTableRows}
+              natalViewMode={friendNatalChartViewMode}
+              onComparisonSelect={(id) => {
+                setRelationshipComparisonChartId(id);
+                setRelationshipComparisonPickerOpen(false);
+              }}
+              onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+              onNatalViewModeChange={setFriendNatalChartViewMode}
+              outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+              relationshipComparisonSky={relationshipComparisonSky}
+              synastryAspects={selectedSynastryAspectLines}
+              transitAspects={selectedFriendTransitAspectLines}
+            />
           )}
           className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`}
           initials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
@@ -21631,457 +17592,64 @@ function ManualChartsPanel({
           )}
 
           {friendProfileTab === "natal" && (
-            <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
-              <div className="friend-profile-copy-column">
-                {selectedFriendNatalAspectPatternStatus && (
-                  <NatalAspectPatternsSection
-                    items={selectedFriendNatalAspectPatternItems}
-                    onOpenDetail={openFriendNatalAspectPatternDetail}
-                    status={selectedFriendNatalAspectPatternStatus}
-                    title={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}
-                  />
-                )}
-                <span className="eyebrow section-label friend-section-label">Big three</span>
-                <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${selectedChart.displayName} big three`}>
-                  {selectedFriendBigThreeDisplayRows.map((row) => {
-                    const title = row.label === "Ascendant"
-                      ? `Ascendant in ${row.sign}`
-                      : placementTitleFromParts(row.label, row.sign, row.retrograde);
-                    const body = selectedChart.birthTimeUnknown && row.label === "Ascendant"
-                      ? ""
-                      : friendPlacementDescription(row.label, row.sign);
-                    const canOpenDetail = Boolean(selectedChart.natalChart && !row.sign.toLowerCase().includes("pending"));
-
-                    return (
-                      <PlacementTableRow
-                        asButton={canOpenDetail}
-                        description={body}
-                        dignity={dignitiesFor(row.label, row.sign, "they")}
-                        glyph={row.glyph}
-                        key={row.id}
-                        onClick={canOpenDetail ? () => openFriendNatalPlacementDetail(row) : undefined}
-                        pointName={row.label}
-                        retrograde={row.retrograde}
-                        sign={row.sign}
-                        title={title}
-                        variant="friend"
-                      />
-                    );
-                  })}
-                </div>
-                {selectedChart.natalChart && (
-                  <>
-                    <span className="eyebrow section-label friend-section-label">{selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}</span>
-                    <FriendPlacementTable
-                      title={selectedChartIsEvent ? "Event placements" : `${selectedChart.displayName}'s natal placements`}
-                      rows={selectedFriendNatalPlacementRows}
-                      descriptionContext={selectedChartIsEvent ? "chart" : "person"}
-                      generatedContent={relationshipGeneratedContent}
-                      generatedContext="natal"
-                      onPlacementClick={openFriendNatalPlacementDetail}
-                      ownerName={selectedChart.displayName}
-                      showTitle={false}
-                    />
-                    {selectedFriendEmptyHouses.length > 0 && (
-                      <>
-                        <span className="eyebrow section-label friend-section-label">Empty houses</span>
-                        <div className="list you-list-card planet-placement-list" aria-label={`${selectedChart.displayName} empty houses`}>
-                          {selectedFriendEmptyHouses.map((house) => {
-                            const friendNatalChart = selectedChart.natalChart;
-
-                            if (!friendNatalChart) {
-                              return null;
-                            }
-
-                            const houseSign = signAtWholeSignHouse(friendNatalChart.ascendant, house);
-
-                            return (
-                              <PlacementTableRow
-                                ariaLabel={`Read more about ${emptyHouseTitle(house, friendNatalChart)}`}
-                                asButton
-                                description={emptyHouseCardDescription(
-                                  house,
-                                  friendNatalChart,
-                                  "friend",
-                                  selectedChart.displayName,
-                                  selectedChart.pronouns,
-                                  selectedFriendEmptyHouses
-                                )}
-                                glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
-                                house={house}
-                                key={`friend-empty-house-${house}`}
-                                onClick={() => openFriendEmptyHouseDetail(house)}
-                                title={emptyHouseTitle(house, friendNatalChart)}
-                                variant="friend"
-                              />
-                            );
-                          })}
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
-                {selectedFriendNatalAspectGroups.length ? (
-                  <>
-                    {selectedFriendNatalAspectGroups.map((group) => (
-                      <AspectGiftLessonGroup
-                        ariaLabel={`${selectedChart.displayName} natal aspect ${group.label}`}
-                        key={group.key}
-                        label={group.label}
-                        listAriaLabel={`${selectedChart.displayName} natal ${group.label.toLowerCase()}`}
-                        listClassName="friend-aspect-list friend-natal-aspects-list"
-                      >
-                        {group.aspects.map((aspect) => {
-                          const normalized = normalizeNatalAspectSurface(aspect, {
-                            ownerName: selectedChart.displayName,
-                            ownerKind: selectedChartIsEvent ? "chart" : "person",
-                            ownerPronouns: selectedChart.pronouns
-                          });
-                          const renderedSection = normalized.sections[0];
-                          const rowSummary = normalizedSurfacePreview(normalized);
-                          const title = renderedSection?.heading ?? `${selectedChart.displayName}'s ${aspect.from} ${aspect.type} ${aspect.to}`;
-
-                          return (
-                            <button
-                              aria-label={`Open full entry for ${title}`}
-                              className="aspect-row aspect-row-button friend-aspect-row"
-                              key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-                              onClick={() => openFriendNatalAspectDetail(aspect)}
-                              type="button"
-                            >
-                              <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                              <span className="aspect-row-copy">
-                                <h3>{title}</h3>
-                                {rowSummary ? <p>{rowSummary}</p> : null}
-                              </span>
-                              <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                                <span className="aspect-row-dot" aria-hidden="true" />
-                                <span>{wholeDegreeOrb(aspect.orb)}</span>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </AspectGiftLessonGroup>
-                    ))}
-                  </>
-                ) : null}
-              </div>
-            </div>
+            <FriendNatalTab
+              aspectGroups={selectedFriendNatalAspectViewGroups}
+              bigThreeRows={selectedFriendBigThreeDisplayRows}
+              birthTimeUnknown={selectedChart.birthTimeUnknown}
+              emptyHouseRows={selectedFriendEmptyHouseViewRows}
+              friendName={selectedChart.displayName}
+              hasNatalChart={Boolean(selectedChart.natalChart)}
+              isEventChart={Boolean(selectedChartIsEvent)}
+              onOpenAspect={openFriendNatalAspectById}
+              onOpenEmptyHouse={openFriendEmptyHouseDetail}
+              onOpenPattern={openFriendNatalAspectPatternDetail}
+              onOpenPlacement={openFriendNatalPlacementDetail}
+              patternItems={selectedFriendNatalAspectPatternItems}
+              patternStatus={selectedFriendNatalAspectPatternStatus}
+              patternTitle={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}
+              placementRows={selectedFriendNatalPlacementRows}
+            />
           )}
 
           {friendProfileTab === "transits" && (
-            <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${selectedChart.displayName} transits`}>
-              <div className="friend-profile-copy-column">
-                <NatalAspectPatternActivationsSection
-                  items={selectedFriendNatalAspectPatternItems}
-                  timingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
-                />
-                {selectedBondTransitCards.length > 0 ? (
-                  <section className="friend-transit-group" aria-label="Between you two right now">
-                    <span className="eyebrow section-label friend-section-label">Between you two right now</span>
-                    <div className="updates-aspect-list friend-transit-list">
-                      {selectedBondTransitCards.map((card) => (
-                        <button
-                          aria-label={`Open full entry for ${card.headline}`}
-                          className="updates-aspect-row friend-transit-row"
-                          key={card.id}
-                          onClick={() => openBondTransitDetail(card)}
-                          type="button"
-                        >
-                          <span className="updates-aspect-row__content">
-                            <h3 className="updates-aspect-row__title">{card.headline}</h3>
-                            <p className="updates-aspect-row__description">{card.effectBody}</p>
-                            {card.activationBody ? (
-                              <p className="updates-aspect-row__description friend-bond-transit-activation">
-                                {card.activationBody}
-                              </p>
-                            ) : null}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                ) : null}
-                {selectedFriendHouseTransitCards.length > 0 ? (
-                  <section className="friend-transit-group" aria-label="House transits">
-                    <span className="eyebrow section-label friend-section-label">House transits</span>
-                    <div className="updates-aspect-list friend-transit-list">
-                      {selectedFriendHouseTransitCards.map((card) => (
-                        <button
-                          className="updates-aspect-row updates-aspect-row--house"
-                          key={card.contentKey}
-                          onClick={() => openFriendHouseTransitDetail(card)}
-                          type="button"
-                        >
-                          <span className="updates-aspect-row__glyphs" aria-hidden="true">
-                            <span className="planet-glyph">{pointGlyph(card.transit.transitPlanet)}</span>
-                          </span>
-                          <span className="updates-aspect-row__content">
-                            <span className="updates-aspect-row__title">{card.title}</span>
-                            <span className="updates-aspect-row__meta-line">
-                              {card.durationLabel ? (
-                                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                                  <DurationLabelText label={card.durationLabel} />
-                                </span>
-                              ) : null}
-                              {card.timingRange ? <span>{card.timingRange}</span> : null}
-                            </span>
-                            {card.rowSummary ? (
-                              <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
-                            ) : null}
-                            <span className="house-transit-keywords" aria-label="House keywords">
-                              <span className="ui-pill house-transit-term-tag">
-                                {longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term"}
-                              </span>
-                              {houseLifeAreaKeywords(card.activation.house).map((keyword) => (
-                                <span
-                                  className="ui-pill ui-pill--muted house-transit-keyword"
-                                  key={`${card.contentKey}-${keyword}`}
-                                >
-                                  {keyword}
-                                </span>
-                              ))}
-                            </span>
-                          </span>
-                          <span
-                            className="updates-aspect-row__meta"
-                            aria-label={`${ordinalHouse(card.activation.house)} house`}
-                          >
-                            <span className="updates-aspect-row__dot" aria-hidden="true" />
-                            <span className="updates-aspect-row__orb">{card.activation.house}</span>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                ) : null}
-                {(["short", "long"] as const).map((durationClass) => {
-                  const durationTransits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
-
-                  if (durationTransits.length === 0) {
-                    return null;
-                  }
-
-                  return (
-                    <section
-                      className="friend-transit-group"
-                      aria-label={durationClass === "short" ? "Short-term themes" : "Long-term themes"}
-                      key={durationClass}
-                    >
-                      <span className="eyebrow section-label friend-section-label">
-                        {durationClass === "short" ? "Short-term themes" : "Long-term themes"}
-                      </span>
-                      <div className="updates-aspect-list friend-transit-list">
-                        {durationTransits.map((transit) => {
-                          const summary = friendTransitSummary(
-                            transit,
-                            relationshipGeneratedContent,
-                            selectedChart.displayName,
-                            selectedChart.pronouns,
-                            currentSky.generatedAt
-                          );
-                          const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
-
-                          return (
-                            <button
-                              aria-label={`Open full entry for ${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`}
-                              className="updates-aspect-row friend-transit-row"
-                              key={transit.id}
-                              onClick={() => openFriendTransitDetail(transit)}
-                              type="button"
-                            >
-                              <span className="updates-aspect-row__content">
-                                <h3 className="updates-aspect-row__title">{transit.transitPlanet} {transitAspectTechnicalVerb(transit.aspect)} {transit.natalPoint}</h3>
-                                <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
-                                  <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                                    <DurationLabelText label={timing.durationLabel} />
-                                  </span>
-                                  <span>{timing.rangeLabel}</span>
-                                </span>
-                                <p className="updates-aspect-row__description transit-card-preview">{summary}</p>
-                              </span>
-                              <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
-                                <span className="updates-aspect-row__dot" aria-hidden="true" />
-                                <span className="updates-aspect-row__orb">{transit.orb}</span>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  );
-                })}
-                {selectedFriendTransits.length === 0 && selectedFriendHouseTransitCards.length === 0 && (
-                  <article className="friends-logic-card">
-                    <span>Transits</span>
-                    <h3>No prioritized transits are active.</h3>
-                    <p>The sky is still moving, but no prioritized personalized transit is active for {selectedChart.displayName} in this window.</p>
-                  </article>
-                )}
-              </div>
-            </div>
+            <FriendTransitsTab
+              bondTransits={selectedBondTransitViewCards}
+              friendName={selectedChart.displayName}
+              houseTransits={selectedFriendHouseTransitViewCards}
+              onOpenBondTransit={openBondTransitById}
+              onOpenHouseTransit={openFriendHouseTransitById}
+              onOpenPersonalTransit={openFriendTransitById}
+              patternItems={selectedFriendNatalAspectPatternItems}
+              patternTimingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
+              personalTransitGroups={selectedFriendPersonalTransitGroups}
+            />
           )}
 
           {friendProfileTab === "synastry" && (
-            <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
-              <div className="friend-profile-copy-column">
-                <article className="relationship-explainer-card relationship-explainer-card--synastry" aria-label="What synastry shows">
-                  <span className="relationship-explainer-card__glyph" aria-hidden="true">
-                    <img src={zodiacAssetHref("tool-synastry.svg") ?? ""} alt="" />
-                  </span>
-                  <span className="relationship-explainer-card__copy">
-                    <span className="relationship-explainer-card__kicker">What synastry shows</span>
-                    <p>
-                      Where {possessiveLabel(selectedChart.displayName)} planets meet {relationshipComparisonIsSelf ? "yours" : `${relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf)} planets`} and what happens when they do. Why some things come easily between you and others take more work.
-                    </p>
-                  </span>
-                </article>
-                <SynastryPlacementsComparison
-                  outerName={selectedChart.displayName}
-                  outerSky={selectedChart.natalChart}
-                  innerName={relationshipComparisonName}
-                  innerSky={relationshipComparisonSky}
-                  innerIsSelf={relationshipComparisonIsSelf}
-                />
-                {selectedSynastryAspectGroups.map((group) => (
-                  <AspectGiftLessonGroup
-                    ariaLabel={`${selectedChart.displayName} synastry ${group.label}`}
-                    key={group.key}
-                    label={group.label}
-                    listAriaLabel={`${selectedChart.displayName} compatibility ${group.label.toLowerCase()}`}
-                    listClassName="friend-aspect-list"
-                  >
-                    {group.aspects.map((contact) => {
-                      const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
-                      const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
-                      const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
-                      const detailBody = rendered?.body ? [rendered.body] : [];
-                      const description = rendered?.body ? textPreview(rendered.body) : "";
-
-                      return (
-                        <button
-                          type="button"
-                          className="aspect-row aspect-row-button friend-aspect-row"
-                          key={contact.id}
-                          aria-label={`Open full entry for ${title}`}
-                          onClick={() => onOpenDetail({
-                            routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `synastry-${contact.id}`),
-                            glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
-                            kicker: "Synastry",
-                            title,
-                            meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
-                            body: detailBody,
-                            content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
-                          })}
-                        >
-                          <span className="aspect-row-glyphs" aria-hidden="true">
-                            <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} preferTextGlyph />
-                            <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
-                            <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
-                          </span>
-                          <span className="aspect-row-copy">
-                            <h3>{title}</h3>
-                            {description ? <p className="synastry-contact-description">{description}</p> : null}
-                            <span className="aspect-row-subtitle ui-pill ui-pill--muted">{subtitle}</span>
-                          </span>
-                          <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
-                            <span className="aspect-row-dot" aria-hidden="true" />
-                            <span>{wholeDegreeOrb(contact.orb)}</span>
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </AspectGiftLessonGroup>
-                ))}
-                {selectedSynastryContacts.length === 0 && (
-                  <article className="friends-logic-card">
-                    <span>Interaspects</span>
-                    <h3>Add both charts.</h3>
-                    <p>Complete birth details for both people will reveal their strongest synastry contacts.</p>
-                  </article>
-                )}
-              </div>
-            </div>
+            <FriendSynastryTab
+              contactGroups={selectedSynastryViewGroups}
+              explainer={`Where ${possessiveLabel(selectedChart.displayName)} planets meet ${relationshipComparisonIsSelf ? "yours" : `${relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf)} planets`} and what happens when they do. Why some things come easily between you and others take more work.`}
+              friendName={selectedChart.displayName}
+              innerIsSelf={relationshipComparisonIsSelf}
+              innerName={relationshipComparisonName}
+              innerSky={relationshipComparisonSky}
+              onOpenContact={openFriendSynastryContactDetail}
+              outerSky={selectedChart.natalChart}
+            />
           )}
 
           {friendProfileTab === "composite" && (
-            <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
-              <div className="friend-profile-copy-column">
-                <article className="relationship-explainer-card relationship-explainer-card--composite" aria-label="What a composite chart is">
-                  <span className="relationship-explainer-card__glyph" aria-hidden="true">
-                    <img src={zodiacAssetHref("tool-composite.svg") ?? ""} alt="" />
-                  </span>
-                  <span className="relationship-explainer-card__copy">
-                    <span className="relationship-explainer-card__kicker">What a composite chart is</span>
-                    <p>
-                      A composite chart is the relationship&apos;s own chart, built from the midpoints between two people&apos;s planets. It&apos;s read like a natal chart, but the placements describe the relationship instead of either person.
-                    </p>
-                  </span>
-                </article>
-                <RelationshipApiSummary
-                  mode="composite"
-                  response={relationshipCompare}
-                  status={relationshipCompareStatus}
-                />
-                {selectedCompositeSky && (
-                  <section className="composite-placements-section">
-                    <span className="eyebrow section-label friend-section-label">Composite placements</span>
-                    <FriendPlacementTable
-                      title="Composite placements"
-                      rows={compositePlacementRows(selectedCompositeSky, relationshipGeneratedContent)}
-                      compact
-                      descriptionContext="composite"
-                      generatedContent={relationshipGeneratedContent}
-                      generatedContext="composite"
-                      showTitle={false}
-                    />
-                  </section>
-                )}
-                {selectedCompositeSky ? (
-                  selectedCompositeAspectGroups.length > 0 ? (
-                    selectedCompositeAspectGroups.map((group) => (
-                      <AspectGiftLessonGroup
-                        ariaLabel={`Composite aspect ${group.label}`}
-                        key={group.key}
-                        label={group.label}
-                        listAriaLabel={`Composite ${group.label.toLowerCase()}`}
-                        listClassName="friend-aspect-list"
-                      >
-                        {group.aspects.map((aspect) => (
-                          <div className="aspect-row aspect-row-static friend-aspect-row" key={`${aspect.from}-${aspect.type}-${aspect.to}`}>
-                            <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                            <span className="aspect-row-copy">
-                              <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                              <p>{compositeAspectSummary(aspect, selectedChart.displayName, relationshipComparisonName, relationshipComparisonIsSelf, relationshipGeneratedContent, selectedChart.relationshipType)}</p>
-                            </span>
-                            <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                              <span className="aspect-row-dot" aria-hidden="true" />
-                              <span>{wholeDegreeOrb(aspect.orb)}</span>
-                            </span>
-                          </div>
-                        ))}
-                      </AspectGiftLessonGroup>
-                    ))
-                  ) : (
-                    <article className="friends-logic-card">
-                      <span>Composite aspects</span>
-                      <h3>No tight major aspects found.</h3>
-                      <p>The composite chart is ready, but no single aspect is leading the relationship pattern.</p>
-                    </article>
-                  )
-                ) : (
-                  <article className="friends-logic-card">
-                    <span>Composite</span>
-                    <h3>Composite chart needs both birth charts.</h3>
-                    <p>Add complete birth data for both people to generate the composite chart view.</p>
-                  </article>
-                )}
-              </div>
-            </div>
+            <FriendCompositeTab
+              aspectGroups={selectedCompositeViewGroups}
+              compositeAvailable={Boolean(selectedCompositeSky)}
+              placementRows={selectedCompositePlacementRows}
+              relationshipCompare={relationshipCompare}
+              relationshipCompareStatus={relationshipCompareStatus}
+            />
           )}
         </FriendDetail>
       )}
-      </FriendsPageShell>
+      </FriendsWorkspaceShell>
     </Suspense>
   );
 }

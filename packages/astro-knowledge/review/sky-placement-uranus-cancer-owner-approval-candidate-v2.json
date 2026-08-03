@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v2",
+  "surface": "sky-placement",
+  "planet": "uranus",
+  "sign": "cancer",
+  "editorialStatus": "collective_adaptation_candidate",
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "provenance": {
+    "preservesEarlierCandidate": "sky-placement-uranus-cancer-collective-owner-approval-candidate-v1",
+    "replacesApprovedCalibrationEvidence": false,
+    "frozenEvaluationFixture": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v2.json",
+    "frozenEvaluationPreserved": true,
+    "activeCalibrationReport": "review/sky-placement-judge-terra-promotion-calibration-v1.json",
+    "note": "Latest owner-directed editorial revision. Neither v1 nor v2 is owner-approved. This exact v2 wording requires explicit owner approval before it may become calibration evidence."
+  },
+  "ownerReviewGuidance": [
+    "Name observable behavior before reducing a person to a role such as the reliable person or the automatic backup.",
+    "Replace literary role labels and archetype lists with ordinary evidence: who remembers birthdays, knows where documents are, answers when a parent needs help, or handles an emergency.",
+    "Keep the astrology explanation brief after the human behavior is clear.",
+    "Moves must contain a recognizable pressure, choice, or consequence; useful policy instructions alone do not sound authored."
+  ],
+  "article": {
+    "tagline": "Change who carries it",
+    "hook": "The person everyone calls may stop answering every call. Uranus in Cancer changes the private rules around home and family, especially the rules that made one person responsible for remembering, helping, hosting, and handling every emergency.",
+    "lived": "Uranus spends roughly seven years in a sign, long enough to pry open the quiet rules nobody admits are rules. The baseline shifts without warning: the person who held everything together stops answering every call, a guest room turns into an office, and an emergency contact list gets quietly rewritten. What looked like connection turns out to be heavy obligation, and home changes shape the moment the old structure demands more than anyone should give.",
+    "turn": "Everyone may agree that the old setup was unfair and still expect the same person to fix it. They make the schedule, explain the new boundary, remind everyone what changed, and take the complaints when someone else is inconvenienced. A family role has not changed if one person is still doing all the work required to change it.",
+    "moves": [
+      "Give one recurring responsibility to the person who will actually handle it.",
+      "Update the emergency plan before the next emergency decides it for everyone.",
+      "Change one room, routine, or family agreement that only works because one person keeps giving more than everyone else."
+    ]
+  }
+}

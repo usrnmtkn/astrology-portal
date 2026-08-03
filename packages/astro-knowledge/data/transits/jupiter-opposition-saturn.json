@@ -24,6 +24,11 @@
     "cyclic": "humanistic / process-oriented source (cyclic model)"
   },
   "voiceNeutral": true,
-  "status": "DRAFT",
-  "base": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline. Psychologically the opposition is inner tension to integrate: Lurching between extremes, from let-loose to grind, without a steady middle. The growth is owning both sides instead of splitting them."
+  "status": "LIVE",
+  "base": "Expansion meets contraction. The swing between optimism and restraint, growth and discipline. Psychologically the opposition is inner tension to integrate: Lurching between extremes, from let-loose to grind, without a steady middle. The growth is owning both sides instead of splitting them.",
+  "readerCopy": {
+    "summary": "An organization advertises sweeping opportunity while the fine print tells a different story.",
+    "body": "An organization advertises sweeping opportunity while the fine print tells a different story. The campaign promises rapid expansion and easy results, but budgets, compliance rules, or existing debts make delivery far more restricted than the headline suggests. Jupiter spreads the optimistic promise, while Saturn upholds the institutional limit the promise still has to survive. The opposition places the expansive public story across from the conditions that narrow who can actually benefit. Even after the official numbers are released, the easier promise may keep outrunning the version people can verify.",
+    "approvedVia": "owner-refined Sky aspect v10.1 corpus; owner direction, chat 2026-08-01"
+  }
 }

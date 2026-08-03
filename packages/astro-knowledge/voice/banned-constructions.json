@@ -21,6 +21,150 @@
       "useInstead": "Describe the pressure and the practical opening separately."
     },
     {
+      "pattern": "Great question.",
+      "reason": "CC signature answer-opener.",
+      "useInstead": "Answer directly.",
+      "source": "CC"
+    },
+    {
+      "pattern": "Think: [image list]",
+      "reason": "CC colon-fragment image delivery.",
+      "useInstead": "Write the image as a sentence.",
+      "source": "CC"
+    },
+    {
+      "pattern": "Let's be real: / Full disclosure: / Spoiler alert:",
+      "reason": "CC confessional throat-clear openers.",
+      "useInstead": "Start with the point.",
+      "source": "CC"
+    },
+    {
+      "pattern": "[planet pet name: the messenger planet, our cosmic sovereign, Sol, Luna]",
+      "reason": "CC planet epithets.",
+      "useInstead": "Use the planet's name.",
+      "source": "CC"
+    },
+    {
+      "pattern": "[chat-app idiom: exiting the chat, main character energy, the overthinking Olympics]",
+      "reason": "CC millennial-idiom grafts.",
+      "useInstead": "Describe the behavior plainly.",
+      "source": "CC"
+    },
+    {
+      "pattern": "When distorted, [shadow] ... [redemption pivot]",
+      "reason": "CC mandated shadow-paragraph formula.",
+      "useInstead": "Show cost inside the same tension, no separate shadow module.",
+      "source": "CC"
+    },
+    {
+      "pattern": "redemption arc [as difficulty framing]",
+      "reason": "CC framing signature.",
+      "useInstead": "Name what changes and what it costs.",
+      "source": "CC"
+    },
+    {
+      "pattern": "[weather-not-curse metaphor: cosmic weather, stormy forecast not a curse]",
+      "reason": "CC signature metaphor family.",
+      "useInstead": "State what gets harder or easier.",
+      "source": "CC"
+    },
+    {
+      "pattern": "It's not X to be feared. It's Y to be [verbed].",
+      "reason": "CC reframe formula.",
+      "useInstead": "Say what it is.",
+      "source": "CC"
+    },
+    {
+      "pattern": "[alliterative rule-of-three: tricky, testy, and tedious]",
+      "reason": "CC cadence signature.",
+      "useInstead": "Use one precise word.",
+      "source": "CC"
+    },
+    {
+      "pattern": "(aka ...)",
+      "reason": "CC glossing tic.",
+      "useInstead": "Choose one term and use it.",
+      "source": "CC"
+    },
+    {
+      "pattern": "You got this. / There's no finish line.",
+      "reason": "CC pep-talk sign-offs.",
+      "useInstead": "End on the concrete choice.",
+      "source": "CC"
+    },
+    {
+      "pattern": "X is not Y. It is Z.",
+      "reason": "SD's most frequent construction (40+ instances in corpus); already a warn as not-X-but-Y.",
+      "useInstead": "State what it is without the negation setup.",
+      "source": "SD"
+    },
+    {
+      "pattern": "Welcome to another powerful week",
+      "reason": "SD verbatim weekly opener.",
+      "useInstead": "Open on what changes this week.",
+      "source": "SD"
+    },
+    {
+      "pattern": "Let's dive into what the stars have in store",
+      "reason": "SD verbatim transition.",
+      "useInstead": "No transition; start the first block.",
+      "source": "SD"
+    },
+    {
+      "pattern": "Here is to a week of [noun], [noun], and [phrase]",
+      "reason": "SD tricolon benediction.",
+      "useInstead": "One-sentence practical close.",
+      "source": "SD"
+    },
+    {
+      "pattern": "[Sign] reminds us that [lesson]",
+      "reason": "SD universal lesson-delivery sentence.",
+      "useInstead": "Deliver the lesson as an observation about behavior.",
+      "source": "SD"
+    },
+    {
+      "pattern": "[ritual-prop reflex: light a candle and name what you release]",
+      "reason": "SD ritual coda signature.",
+      "useInstead": "Only concrete actions that fit the surface.",
+      "source": "SD"
+    },
+    {
+      "pattern": "[nervous-system vocabulary: regulate, fight or flight, the real work starts in your nervous system]",
+      "reason": "SD register graft.",
+      "useInstead": "Name the feeling and the behavior.",
+      "source": "SD"
+    },
+    {
+      "pattern": "the version of you who already has it",
+      "reason": "SD future-self formula.",
+      "useInstead": "Name the concrete next step.",
+      "source": "SD"
+    },
+    {
+      "pattern": "You deserve to [feel good / shine]",
+      "reason": "SD affirmational permission; distinct from Marie's falsifiable permission lines.",
+      "useInstead": "Permission must be specific and falsifiable: allowed to do a nameable thing.",
+      "source": "SD"
+    },
+    {
+      "pattern": "[portal / transmission / light codes / frequency / highest timeline / downloads]",
+      "reason": "SD New Age register layer.",
+      "useInstead": "Outside the editorial frame; do not use.",
+      "source": "SD"
+    },
+    {
+      "pattern": "the universe is [saying yes / giving you a green light]",
+      "reason": "SD universe-as-agent.",
+      "useInstead": "Planets act; the universe does not speak.",
+      "source": "SD"
+    },
+    {
+      "pattern": "You just need to take the next inspired step",
+      "reason": "SD cadence formula.",
+      "useInstead": "Name the actual step.",
+      "source": "SD"
+    },
+    {
       "pattern": "Right now, [planet] in [sign] is [aspect] [planet] in [sign], and for the collective,",
       "reason": "The aspect fallback generator's fingerprint; stacks keyword lists into prose shape. Owner retired it Jul 31.",
       "useInstead": "Open on the event or the recognizable behavior; name the placements inside the second sentence, per the Sun-opposite-Pluto exemplar.",

@@ -1,0 +1,435 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { Dispatch, FormEvent, SetStateAction } from "react";
+import { twentyFourHourTimeToDisplay } from "../../services/chartTime";
+import {
+  createManualChart,
+  deleteManualChart,
+  listCachedManualCharts,
+  listManualCharts,
+  manualChartNeedsNatalRepair,
+  resolvedManualChartBirthLocationForRepair,
+  updateManualChart
+} from "../../services/manualCharts";
+import type { ManualChart, ManualChartInput, ManualChartType } from "../../services/manualCharts";
+import {
+  fetchNatalAspectPatternsWithCopy,
+  skyWithNatalAspectPatternCopy
+} from "../../services/natalAspectPatterns";
+import { defaultPronounChoice } from "../../services/personReferences";
+import { normalizeRelationshipContextKey } from "../../services/relationshipContext";
+import { withTimeZone, zonedDateTimeToUtc } from "../../services/timezones";
+import type { LocationInput, SkySnapshot } from "../../types";
+import {
+  defaultManualChartForm,
+  manualChartFormCopy,
+  manualChartFormFromChart
+} from "./manualChartForm";
+import type { ManualChartForm } from "./manualChartForm";
+
+type ManualChartsStatus = "idle" | "loading" | "saving" | "deleting";
+
+type UseManualChartsControllerOptions = {
+  allowCachedChartsWhileLoading: boolean;
+  chartOwnerUserId: string;
+  chartRefreshKey: number;
+  chartsReady: boolean;
+  profileId: string;
+  showNatalAspectPatterns: boolean;
+  socialFriendCharts: ManualChart[];
+};
+
+type SavedManualChart = {
+  chart: ManualChart;
+  wasEditing: boolean;
+};
+
+export type ManualChartsController = {
+  charts: ManualChart[];
+  editingChartId: string | null;
+  form: ManualChartForm;
+  formCopy: (typeof manualChartFormCopy)[ManualChartType];
+  message: string;
+  selectedChartId: string | null;
+  setForm: Dispatch<SetStateAction<ManualChartForm>>;
+  setSelectedChartId: Dispatch<SetStateAction<string | null>>;
+  status: ManualChartsStatus;
+  addBirthTime: (chart: ManualChart) => void;
+  editChart: (chart: ManualChart) => void;
+  removeChart: (chart: ManualChart) => Promise<boolean>;
+  resetForm: (nextMessage?: string) => void;
+  saveChart: (event: FormEvent<HTMLFormElement>) => Promise<SavedManualChart | null>;
+  updateChartType: (chartType: ManualChartType) => void;
+  updateField: <Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) => void;
+};
+
+async function calculateSky(location: LocationInput, date: Date) {
+  const { getAstrodienstSky } = await import("../../services/ephemeris");
+  return getAstrodienstSky(location, date);
+}
+
+async function natalSkyWithAspectPatternsForStorage(
+  natalSky: SkySnapshot,
+  location: LocationInput,
+  date: Date,
+  timeKnown: boolean,
+  enabled: boolean
+) {
+  if (!enabled) {
+    return natalSky;
+  }
+
+  try {
+    const aspectPatterns = await fetchNatalAspectPatternsWithCopy(location, date, { timeKnown });
+    return skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
+  } catch (error) {
+    console.warn("Natal aspect-pattern summary could not be stored with this chart.", error);
+    return natalSky;
+  }
+}
+
+export function useManualChartsController({
+  allowCachedChartsWhileLoading,
+  chartOwnerUserId,
+  chartRefreshKey,
+  chartsReady,
+  profileId,
+  showNatalAspectPatterns,
+  socialFriendCharts
+}: UseManualChartsControllerOptions): ManualChartsController {
+  const initialCachedCharts = useMemo(
+    () => listCachedManualCharts([chartOwnerUserId, profileId]),
+    [chartOwnerUserId, profileId]
+  );
+  const [charts, setCharts] = useState<ManualChart[]>(() => (
+    allowCachedChartsWhileLoading ? initialCachedCharts : []
+  ));
+  const [form, setForm] = useState<ManualChartForm>(defaultManualChartForm);
+  const [editingChartId, setEditingChartId] = useState<string | null>(null);
+  const [selectedChartId, setSelectedChartId] = useState<string | null>(null);
+  const [status, setStatus] = useState<ManualChartsStatus>(
+    () => allowCachedChartsWhileLoading && initialCachedCharts.length > 0 ? "idle" : "loading"
+  );
+  const [message, setMessage] = useState("");
+  const chartsLoadedRef = useRef(false);
+  const chartOwnerUserIdRef = useRef(chartOwnerUserId);
+  const socialFriendChartsRef = useRef(socialFriendCharts);
+  socialFriendChartsRef.current = socialFriendCharts;
+  const formCopy = manualChartFormCopy[form.chartType];
+
+  useEffect(() => {
+    let cancelled = false;
+    const chartOwnerChanged = chartOwnerUserIdRef.current !== chartOwnerUserId;
+
+    if (chartOwnerChanged) {
+      chartOwnerUserIdRef.current = chartOwnerUserId;
+      chartsLoadedRef.current = false;
+      setSelectedChartId(null);
+    }
+
+    if (!chartsReady) {
+      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profileId]);
+
+      if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
+        chartsLoadedRef.current = true;
+        setCharts(cachedCharts);
+        setStatus("idle");
+      } else {
+        setCharts([]);
+        setStatus("loading");
+      }
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    if (allowCachedChartsWhileLoading && !chartsLoadedRef.current) {
+      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profileId]);
+
+      if (cachedCharts.length > 0) {
+        chartsLoadedRef.current = true;
+        setCharts(cachedCharts);
+        setStatus("idle");
+      }
+    }
+
+    if (!chartsLoadedRef.current) {
+      setStatus("loading");
+    }
+
+    listManualCharts(chartOwnerUserId)
+      .then((nextCharts) => {
+        if (!cancelled) {
+          chartsLoadedRef.current = true;
+          setCharts(nextCharts);
+          setSelectedChartId((currentId) => (
+            currentId && (
+              nextCharts.some((chart) => chart.id === currentId)
+              || socialFriendChartsRef.current.some((chart) => chart.id === currentId)
+            )
+              ? currentId
+              : null
+          ));
+          setMessage("");
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          chartsLoadedRef.current = true;
+          setMessage(error instanceof Error ? error.message : "Could not load manual charts.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setStatus("idle");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [allowCachedChartsWhileLoading, chartOwnerUserId, chartRefreshKey, chartsReady, profileId]);
+
+  useEffect(() => {
+    if (!chartsReady || charts.length === 0) {
+      return;
+    }
+
+    const chartsToRepair = charts.filter(manualChartNeedsNatalRepair);
+
+    if (chartsToRepair.length === 0) {
+      return;
+    }
+
+    let cancelled = false;
+    const repairCharts = async () => {
+      const repairedCharts: ManualChart[] = [];
+
+      for (const chart of chartsToRepair) {
+        if (cancelled) {
+          return;
+        }
+
+        try {
+          const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
+          if (!birthLocation) {
+            continue;
+          }
+
+          if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
+            continue;
+          }
+
+          const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
+          const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
+          const calculatedNatalChart = await calculateSky(birthLocation, birthDateTime);
+          const natalChart = await natalSkyWithAspectPatternsForStorage(
+            calculatedNatalChart,
+            birthLocation,
+            birthDateTime,
+            !chart.birthTimeUnknown,
+            showNatalAspectPatterns
+          );
+          const input: ManualChartInput = {
+            chartType: chart.chartType,
+            displayName: chart.displayName,
+            firstName: chart.firstName ?? null,
+            lastName: chart.lastName ?? null,
+            pronouns: chart.pronouns,
+            relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
+            birthDate: chart.birthDate,
+            birthTime: chart.birthTime,
+            birthTimeUnknown: chart.birthTimeUnknown,
+            birthPlace: chart.birthPlace,
+            birthLocation,
+            natalChart,
+            notes: chart.notes ?? null
+          };
+          const repairedChart = await updateManualChart(chartOwnerUserId, chart.id, input);
+
+          repairedCharts.push(repairedChart);
+        } catch {
+          // Keep incomplete charts usable while a background repair retries later.
+        }
+      }
+
+      if (cancelled || repairedCharts.length === 0) {
+        return;
+      }
+
+      setCharts((currentCharts) => {
+        const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
+
+        return currentCharts
+          .map((chart) => repairedById.get(chart.id) ?? chart)
+          .sort((first, second) => first.displayName.localeCompare(second.displayName));
+      });
+    };
+    const repairTimer = window.setTimeout(() => {
+      void repairCharts();
+    }, 1_500);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(repairTimer);
+    };
+  }, [chartOwnerUserId, charts, chartsReady, showNatalAspectPatterns]);
+
+  function resetForm(nextMessage = "") {
+    setForm(defaultManualChartForm);
+    setEditingChartId(null);
+    setMessage(nextMessage);
+  }
+
+  function editChart(chart: ManualChart) {
+    setEditingChartId(chart.id);
+    setForm(manualChartFormFromChart(chart));
+    setMessage("");
+  }
+
+  function addBirthTime(chart: ManualChart) {
+    setEditingChartId(chart.id);
+    setForm({
+      ...manualChartFormFromChart(chart),
+      birthTime: "",
+      birthTimeUnknown: false
+    });
+    setMessage("");
+  }
+
+  function updateField<Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) {
+    setForm((currentForm) => ({ ...currentForm, [key]: value }));
+  }
+
+  function updateChartType(chartType: ManualChartType) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      chartType,
+      pronouns: chartType === "event" ? defaultPronounChoice : currentForm.pronouns,
+      relationshipType: chartType === "event" ? "friend" : normalizeRelationshipContextKey(currentForm.relationshipType)
+    }));
+  }
+
+  async function saveChart(event: FormEvent<HTMLFormElement>): Promise<SavedManualChart | null> {
+    event.preventDefault();
+
+    const displayName = form.displayName.trim();
+    const birthDate = form.birthDate;
+    const birthPlace = form.birthPlace.trim();
+    const selectedBirthLocation = birthPlace && form.birthLocation?.label === birthPlace
+      ? form.birthLocation
+      : null;
+    const birthLocation = selectedBirthLocation ? withTimeZone(selectedBirthLocation) : null;
+
+    if (!displayName || !birthDate || !birthPlace || !birthLocation) {
+      setMessage(!birthLocation && birthPlace
+        ? "Choose a city from the birth place suggestions. If it is already selected, timezone lookup is unavailable."
+        : formCopy.requiredMessage);
+      return null;
+    }
+
+    if (!form.birthTimeUnknown && !form.birthTime) {
+      setMessage(formCopy.timeMessage);
+      return null;
+    }
+
+    setStatus("saving");
+    setMessage("");
+
+    try {
+      const birthTimeForChart = form.birthTimeUnknown
+        ? "12:00 PM"
+        : twentyFourHourTimeToDisplay(form.birthTime);
+      const birthDateTime = zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone);
+      const calculatedNatalChart = await calculateSky(birthLocation, birthDateTime);
+      const natalChart = await natalSkyWithAspectPatternsForStorage(
+        calculatedNatalChart,
+        birthLocation,
+        birthDateTime,
+        !form.birthTimeUnknown,
+        showNatalAspectPatterns
+      );
+      const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
+      const input: ManualChartInput = {
+        chartType: form.chartType,
+        displayName,
+        firstName,
+        lastName: lastNameParts.join(" ") || null,
+        pronouns: form.chartType === "event" ? defaultPronounChoice : form.pronouns,
+        relationshipType: form.chartType === "event" ? null : normalizeRelationshipContextKey(form.relationshipType),
+        birthDate,
+        birthTime: form.birthTimeUnknown ? null : form.birthTime,
+        birthTimeUnknown: form.birthTimeUnknown,
+        birthPlace: birthLocation.label,
+        birthLocation,
+        natalChart,
+        notes: null
+      };
+      const wasEditing = Boolean(editingChartId);
+      const savedChart = editingChartId
+        ? await updateManualChart(chartOwnerUserId, editingChartId, input)
+        : await createManualChart(chartOwnerUserId, input);
+
+      setCharts((currentCharts) => {
+        const nextCharts = editingChartId
+          ? currentCharts.map((chart) => chart.id === savedChart.id ? savedChart : chart)
+          : [...currentCharts, savedChart];
+
+        return nextCharts.sort((first, second) => first.displayName.localeCompare(second.displayName));
+      });
+      setSelectedChartId(savedChart.id);
+      return { chart: savedChart, wasEditing };
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : typeof error === "object" && error && "message" in error && typeof error.message === "string"
+          ? error.message
+          : "Could not save chart.";
+
+      setMessage(errorMessage);
+      return null;
+    } finally {
+      setStatus("idle");
+    }
+  }
+
+  async function removeChart(chart: ManualChart) {
+    setStatus("deleting");
+    setMessage("");
+
+    try {
+      await deleteManualChart(chartOwnerUserId, chart.id);
+      setCharts((currentCharts) => currentCharts.filter((candidate) => candidate.id !== chart.id));
+      setSelectedChartId((currentId) => currentId === chart.id ? null : currentId);
+      if (editingChartId === chart.id) {
+        resetForm();
+      }
+      setMessage("Chart deleted.");
+      return true;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not delete chart.");
+      return false;
+    } finally {
+      setStatus("idle");
+    }
+  }
+
+  return {
+    charts,
+    editingChartId,
+    form,
+    formCopy,
+    message,
+    selectedChartId,
+    setForm,
+    setSelectedChartId,
+    status,
+    addBirthTime,
+    editChart,
+    removeChart,
+    resetForm,
+    saveChart,
+    updateChartType,
+    updateField
+  };
+}

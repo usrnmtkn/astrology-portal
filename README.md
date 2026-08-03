@@ -172,9 +172,19 @@ Release order matters:
 npm run dev
 npm run dev:web
 npm run build
+npm test
 npm run typecheck
+npm run qa:bundle
 npm run build:knowledge
 ```
+
+`npm test` is deterministic and does not require network access. Run
+`npm run test:content:live` separately when validating the configured Supabase
+content mirror against reviewed source rows.
+
+See the [web performance guide](docs/web-performance.md) for current bundle
+measurements, CI budgets, and the safety criteria for route-level content
+deferral.
 
 Use `npm run dev:vercel` for local app work that touches admin or backend routes. It starts Vercel dev on `http://localhost:3000`, so `/api/*` functions are available while Vercel runs the frontend dev command behind it. Use `npm run dev` or `npm run dev:web` only for pure frontend work; those start Vite by itself on `http://127.0.0.1:5173`, and admin API routes will fail unless an API server is also running on `127.0.0.1:3000`.
 

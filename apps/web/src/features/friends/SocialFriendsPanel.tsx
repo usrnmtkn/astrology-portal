@@ -40,7 +40,7 @@ import {
   type SocialProfile
 } from "../../services/socialFriends";
 
-type SocialFriendsPanelProps = {
+export type SocialFriendsPanelProps = {
   activeView: FriendsTopLevelView;
   chartContent: ReactNode;
   chartCount: number;
@@ -294,36 +294,49 @@ export function SocialFriendsPanel({
     onFriendsChange(nextFriends);
   }, [onFriendsChange]);
 
-  const refreshSocialData = useCallback(async () => {
-    const [nextProfile, nextRequests, loadedFriends, nextNotifications, nextInvitations] = await Promise.all([
-      loadOwnSocialProfile(),
-      listSocialFriendRequests(),
-      listSocialFriends(),
+  const refreshSocialActivity = useCallback(async () => {
+    const [nextNotifications, nextInvitations] = await Promise.all([
       listSocialNotifications(),
       listSocialInvitations()
     ]);
+
+    setNotifications(nextNotifications);
+    setInvitations(nextInvitations);
+  }, []);
+
+  const refreshSocialData = useCallback(async () => {
+    const profileRequest = loadOwnSocialProfile()
+      .then(setProfile)
+      .catch(() => undefined);
+    const loadedFriends = await listSocialFriends();
     const pendingRemoval = pendingRemovalRef.current?.friend.userId;
     const nextFriends = pendingRemoval
       ? loadedFriends.filter((friend) => friend.userId !== pendingRemoval)
       : loadedFriends;
 
-    setProfile(nextProfile);
-    setRequests(nextRequests);
-    setNotifications(nextNotifications);
-    setInvitations(nextInvitations);
     publishFriends(nextFriends);
-    onPendingRequestCountChange?.(
-      nextRequests.filter((request) => request.direction === "incoming").length
-    );
+    void profileRequest;
+    void listSocialFriendRequests()
+      .then((nextRequests) => {
+        setRequests(nextRequests);
+        onPendingRequestCountChange?.(
+          nextRequests.filter((request) => request.direction === "incoming").length
+        );
+      })
+      .catch(() => undefined);
 
     return nextFriends;
   }, [onPendingRequestCountChange, publishFriends]);
 
   useEffect(() => {
-    if (activeView === "requests" && requestActivityCount === 0 && available === true) {
-      onSelectView("circle");
+    if (!available || activeView === "charts") {
+      return;
     }
-  }, [activeView, available, onSelectView, requestActivityCount]);
+
+    void refreshSocialActivity().catch(() => {
+      // Activity history can hydrate after the core Friends view is usable.
+    });
+  }, [activeView, available, refreshSocialActivity]);
 
   useEffect(() => {
     let cancelled = false;
@@ -362,6 +375,11 @@ export function SocialFriendsPanel({
       void refreshSocialData().catch(() => {
         // Keep the last authorized snapshot while the connection recovers.
       });
+      if (activeViewRef.current !== "charts") {
+        void refreshSocialActivity().catch(() => {
+          // Keep the last activity snapshot while the connection recovers.
+        });
+      }
     };
     const unsubscribe = subscribeToSocialChanges(() => {
       window.clearTimeout(refreshTimer);
@@ -375,7 +393,7 @@ export function SocialFriendsPanel({
       window.removeEventListener("focus", refreshOnFocus);
       unsubscribe();
     };
-  }, [refreshSocialData]);
+  }, [refreshSocialActivity, refreshSocialData]);
 
   useEffect(() => {
     return () => {
@@ -1035,7 +1053,7 @@ export function SocialFriendsPanel({
     );
   }
 
-  if (available === null) {
+  if (available === null && activeView !== "charts") {
     return (
       <section className="friends-unified-panel" aria-label="Social friends">
         <div className="friends-unified-search-row">
@@ -1047,7 +1065,7 @@ export function SocialFriendsPanel({
             <button className={activeView === "circle" ? "active" : ""} type="button" disabled>
               Circle · 0
             </button>
-            <button className={activeView === "charts" ? "active" : ""} type="button" disabled>
+            <button type="button" disabled>
               Charts · {chartCount}
             </button>
           </span>

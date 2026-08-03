@@ -32,6 +32,7 @@
         "releaseId": { "type": "string", "minLength": 1 },
         "provider": { "enum": ["openai", "claude", "local"] },
         "model": { "type": "string", "minLength": 1 },
+        "reasoningEffort": { "enum": ["none", "low", "medium", "high", "xhigh", "max"] },
         "promptVersion": { "type": "string", "minLength": 1 },
         "rubricVersion": { "type": "string", "minLength": 1 },
         "evaluationSetVersion": { "type": "string", "minLength": 1 },

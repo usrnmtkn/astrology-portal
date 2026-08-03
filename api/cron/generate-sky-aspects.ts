@@ -383,11 +383,12 @@ async function saveRoutedCard({
         target_date: null,
         block_type: "sky_aspect",
         facts: immutableFacts,
-        knowledge_ids: [result.facts.pairKey].filter(Boolean),
+        knowledge_ids: [result.facts.exactAspectSource, result.facts.pairKey].filter(Boolean),
         source_snapshot: {
           contentType: "sky-aspect-card",
           pairKey: result.facts.pairKey,
           pairSource,
+          exactAspectSource: result.facts.exactAspectSource ?? null,
           cardFacts,
           skyAspectVoiceLint: result.lint,
           skyAspectJudge: persistedJudge,
@@ -395,7 +396,8 @@ async function saveRoutedCard({
           skyAspectLintRetryAvoidTerms: routed.lintRetryAvoidTerms,
           generationAttempts: routed.totalAttempts,
           judgePasses: routed.judgePasses,
-          temperature: result.temperature
+          temperature: result.temperature,
+          reasoningEffort: result.reasoningEffort ?? null
         },
         judge_score: result.judge?.score ?? null,
         judge_verdict: judgeVerdict,

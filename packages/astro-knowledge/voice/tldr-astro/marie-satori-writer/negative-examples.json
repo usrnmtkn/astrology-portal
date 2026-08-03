@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "marie-satori-negative-writing-examples-v1",
+  "records": [
+    {
+      "id": "unnatural-banished-want",
+      "surface": "sky-placement",
+      "articleBeat": "hook",
+      "text": "The banished want refuses to stay reasonable.",
+      "failureTags": ["unnatural_personification", "requires_interpretation", "polished_but_flat"],
+      "reason": "A central sentence fails literal English and asks the reader to decode an abstraction.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-placement-judge-targeted-v3.json"
+    },
+    {
+      "id": "unnatural-first-idea",
+      "surface": "sky-placement",
+      "articleBeat": "lived",
+      "text": "The first idea has spent its excitement.",
+      "failureTags": ["unnatural_personification", "requires_interpretation"],
+      "reason": "An idea cannot literally spend excitement.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-placement-judge-targeted-v3.json"
+    },
+    {
+      "id": "unnatural-arrangement-truth",
+      "surface": "sky-placement",
+      "articleBeat": "turn",
+      "text": "The arrangement stopped telling the truth.",
+      "failureTags": ["unnatural_personification", "abstract_consequence"],
+      "reason": "Name the broken agreement or behavior instead of making an arrangement speak.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/sky-placement.json"
+    },
+    {
+      "id": "polished-disappearance",
+      "surface": "sky-placement",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "articleBeat": "hook",
+      "text": "Work that holds its value over time needs a structure that does not depend on disappearance.",
+      "failureTags": ["abstract_consequence", "requires_interpretation", "polished_but_flat"],
+      "reason": "The sentence hides lost evenings, weekends, and days off inside an abstract noun.",
+      "sourcePath": "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md"
+    },
+    {
+      "id": "polished-peace-staged",
+      "surface": "sky-placement",
+      "planet": "neptune",
+      "sign": "libra",
+      "articleBeat": "hook",
+      "text": "Peace can be staged.",
+      "failureTags": ["abstract_hook", "behavior_missing", "polished_but_flat"],
+      "reason": "The line sounds composed but does not yet show the agreement and later cancellation.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json"
+    },
+    {
+      "id": "generic-private-public",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "hook",
+      "text": "A private feeling becomes a public decision.",
+      "failureTags": ["abstract_consequence", "behavior_missing", "generic_coverage_sentence"],
+      "reason": "Name the repeated denial, compared evidence, and public complaint.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json"
+    },
+    {
+      "id": "generic-new-age-close",
+      "surface": "sky-placement",
+      "articleBeat": "turn",
+      "text": "Embrace the change and trust the process. Wishing you a beautiful transit.",
+      "failureTags": ["generic_new_age", "stacked_ending", "second_conclusion", "swappable_astrology"],
+      "reason": "Generic reassurance replaces a placement-specific consequence and stacks a blessing after the close.",
+      "sourcePath": "packages/astro-knowledge/scripts/generate-sky-placement-articles.js"
+    }
+  ]
+}
