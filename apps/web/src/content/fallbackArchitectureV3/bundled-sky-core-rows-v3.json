@@ -1623,6 +1623,16 @@
       "approved_via": "owner sign-off, chat 2026-07-21"
     },
     {
+      "contentKey": "fallback-hook/sky-event/ingress/venus/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{aRef}} enters {{signTitle}} {{dateLineLower}}, shifting attention toward balance, cooperation, and mutual respect in relationships. Over the next few weeks, compromise may come more easily, but keeping the peace should not require avoiding honest conversations. Healthy relationships can make room for disagreement without losing respect.",
+      "body_they": "{{aRef}} enters {{signTitle}} {{dateLineLower}}, shifting attention toward balance, cooperation, and mutual respect in relationships. Over the next few weeks, compromise may come more easily, but keeping the peace should not require avoiding honest conversations. Healthy relationships can make room for disagreement without losing respect.",
+      "review_status": "approved",
+      "notes": "Calendar ingress copy for Venus entering Libra.",
+      "approved_via": "owner sign-off, chat 2026-08-03"
+    },
+    {
       "contentKey": "fallback-hook/sky-event/station-retro",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",

@@ -210,6 +210,10 @@ const appSource = read("apps/web/src/App.tsx");
 const routeSource = read("apps/web/src/routes/CalendarRoute.tsx");
 const calendarSource = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const calendarCss = read("apps/web/src/styles/lunar-calendar.css");
+const bundledSkyCore = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"));
+const venusLibraIngress = bundledSkyCore.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/sky-event/ingress/venus/libra"
+);
 
 assert.doesNotMatch(
   appSource,
@@ -269,6 +273,86 @@ assert.match(
 assert.match(routeSource, /onGeneratedContentRequest/u, "CalendarRoute must forward exact-key requests.");
 assert.match(calendarSource, /lunarDayGeneratedContentKeys\(selectedDay, editorialEvents\)/u);
 assert.match(calendarSource, /contentStatus === "loading"/u);
+assert.match(
+  calendarSource,
+  /fallback-hook\/sky-event\/ingress\/\$\{planetPart\}\/\$\{signPart\}[\s\S]*?fallback-hook\/sky-event\/ingress/u,
+  "Calendar ingress copy must prefer an approved planet-and-sign-specific row before the generic frame."
+);
+assert.equal(
+  venusLibraIngress?.body_you,
+  "{{aRef}} enters {{signTitle}} {{dateLineLower}}, shifting attention toward balance, cooperation, and mutual respect in relationships. Over the next few weeks, compromise may come more easily, but keeping the peace should not require avoiding honest conversations. Healthy relationships can make room for disagreement without losing respect.",
+  "Venus entering Libra must use the owner-approved plain-language Calendar copy."
+);
+assert.doesNotMatch(
+  venusLibraIngress?.body_you ?? "",
+  /tone shifts|Libra trap|thinner than it looked/u,
+  "The Venus-in-Libra override must not reintroduce the rejected language."
+);
+assert.doesNotMatch(
+  calendarSource,
+  /Show day theme|Hide day theme/u,
+  "Weekly day themes must render without progressive-disclosure buttons."
+);
+assert.doesNotMatch(
+  calendarSource,
+  />Day theme</u,
+  "Weekly Moon guidance must identify its Moon sign instead of using a vague label."
+);
+assert.match(
+  calendarSource,
+  /<p>Moon in \{day\.moonSign\}<\/p>/u,
+  "Weekly Moon guidance must label the sign driving the interpretation."
+);
+assert.ok(
+  calendarSource.indexOf("{showGuidance && guidance?.body && (")
+    < calendarSource.indexOf("{visibleEvents.length > 0 && ("),
+  "Weekly Moon-in-sign guidance must render before that day's aspects and movements."
+);
+assert.match(
+  calendarSource,
+  /const showGuidance = Boolean\(guidance\?\.body\)/u,
+  "Weekly guidance must remain visible when the day also has an event description."
+);
+assert.match(
+  calendarCss,
+  /\.lunar-weekly-jump \{[\s\S]*?position: sticky;[\s\S]*?top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 8px\);/u,
+  "The weekly day selector must stay below the floating navigation."
+);
+assert.match(
+  calendarCss,
+  /\.lunar-weekly-day \{[\s\S]*?scroll-margin-top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 88px\);/u,
+  "Jump-to-day scrolling must clear both the global navigation and sticky week selector."
+);
+assert.match(
+  calendarCss,
+  /\.app-shell\.mode-calendar \{[\s\S]*?overflow-x: clip;/u,
+  "Calendar must not create a false scroll container that disables sticky controls."
+);
+assert.match(
+  calendarCss,
+  /html:has\(\.app-shell\.mode-calendar\)[\s\S]*?#root:has\(\.app-shell\.mode-calendar\)[\s\S]*?overflow-x: clip;/u,
+  "Calendar document ancestors must preserve viewport-based sticky positioning."
+);
+assert.match(
+  calendarCss,
+  /\.mode-calendar \.detail-panel\.calendar-content-column \{[\s\S]*?overflow-x: clip;/u,
+  "The mobile Calendar content column must not disable its sticky week selector."
+);
+assert.match(
+  calendarCss,
+  /\.lunar-calendar-month-primary \{[\s\S]*?grid-template-columns: minmax\(0, 1\.65fr\) minmax\(300px, 0\.85fr\);/u,
+  "The Month view must preserve its calendar-and-detail desktop grid at laptop widths."
+);
+assert.match(
+  calendarCss,
+  /@media \(max-width: 820px\) \{[\s\S]*?\.lunar-calendar-month-primary \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\);/u,
+  "The Month view must stack only at the narrow tablet/mobile breakpoint."
+);
+assert.match(
+  calendarSource,
+  /viewMode === "month" && window\.matchMedia\("\(max-width: 820px\)"\)\.matches/u,
+  "Month day selection must scroll to the stacked detail only at the same narrow breakpoint."
+);
 assert.match(
   calendarSource,
   /containsEditorialMetadata[\s\S]*?return false/u,

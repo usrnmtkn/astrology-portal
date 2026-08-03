@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-01b",
-  "contentHash": "e5efcf649793ad204fc7808230945674",
-  "keyManifestHash": "9a813e266cd182028a0fc8e8c9502a76",
-  "keyCount": 7182,
+  "contentHash": "637ec0708fa1dfa42c3d82ba862f6640",
+  "keyManifestHash": "699aea677a143e536a01156900aac057",
+  "keyCount": 7183,
   "keys": [
     "authored:authored/calendar-weekly-moon/aquarius",
     "authored:authored/calendar-weekly-moon/aquarius/variant-2",
@@ -4291,6 +4291,7 @@
     "hook:fallback-hook/sky-event/eclipse-solar",
     "hook:fallback-hook/sky-event/full-moon",
     "hook:fallback-hook/sky-event/ingress",
+    "hook:fallback-hook/sky-event/ingress/venus/libra",
     "hook:fallback-hook/sky-event/moon-aspect-conjunction",
     "hook:fallback-hook/sky-event/moon-aspect-hard",
     "hook:fallback-hook/sky-event/moon-aspect-soft",

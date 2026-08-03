@@ -1299,6 +1299,22 @@ test.describe("client-facing user flow case studies", () => {
       await expect(firstCalendarDay.locator('[tabindex="0"]')).toHaveCount(0);
 
       await captureResponsiveSurface(page, "desktop", "calendar-month");
+      await page.setViewportSize({ width: 896, height: 900 });
+      const laptopMonthLayout = await page.locator(".lunar-calendar-month-primary").evaluate((layout) => {
+        const grid = layout.querySelector(".lunar-calendar-grid-panel")?.getBoundingClientRect();
+        const detail = layout.querySelector(".lunar-calendar-month-detail")?.getBoundingClientRect();
+
+        return grid && detail
+          ? {
+              sameRow: Math.abs(grid.top - detail.top) < 2,
+              detailFollowsGrid: detail.left >= grid.right
+            }
+          : null;
+      });
+      expect(laptopMonthLayout, "Month view exposes both calendar and selected-day panels").not.toBeNull();
+      expect(laptopMonthLayout?.sameRow, "Month view remains two-column at a 896px laptop viewport").toBe(true);
+      expect(laptopMonthLayout?.detailFollowsGrid, "Selected-day detail remains to the right of the month grid").toBe(true);
+      await page.setViewportSize({ width: 1440, height: 1000 });
       await page.reload();
       await expect(page.getByRole("tab", { name: "Month" })).toHaveAttribute("aria-selected", "true");
       if (selectedDate) {
@@ -1376,13 +1392,30 @@ test.describe("client-facing user flow case studies", () => {
       has: page.getByRole("heading", { name: "Moon in Capricorn", exact: true })
     });
     await expect(capricornDays).toHaveCount(3);
-    await expect(capricornDays.locator('[data-guidance-source="moon"]')).toHaveCount(1);
+    const capricornMoonGuidance = capricornDays.locator('[data-guidance-source="moon"]');
+    await expect(capricornMoonGuidance).toHaveCount(2);
+    const capricornMoonBodies = await capricornMoonGuidance.locator("div").allTextContents();
+    expect(
+      new Set(capricornMoonBodies).size,
+      "Consecutive Capricorn days use distinct Moon-in-sign variants before the Full Moon phase copy"
+    ).toBe(capricornMoonBodies.length);
     const weeklyEventBodies = await weeklyView.locator(".lunar-weekly-event__body").allTextContents();
     expect(weeklyEventBodies.some((body) => /\bToday\b/.test(body)), "Weekly events use their weekday instead of repeating Today").toBe(false);
     const weeklyAspectEvents = weeklyView.locator(".lunar-weekly-event.event-aspect");
     const weeklyAspectEventCount = await weeklyAspectEvents.count();
     expect(weeklyAspectEventCount, "Weekly aspects are present in the fixture week").toBeGreaterThan(0);
     await expect(weeklyAspectEvents.locator(".lunar-weekly-event__body")).toHaveCount(weeklyAspectEventCount);
+    expect(
+      await weeklyAspectEvents.first().evaluate((aspect) => {
+        const content = aspect.closest(".lunar-weekly-day__content");
+        const guidance = content?.querySelector(".lunar-weekly-day__guidance");
+        const events = content?.querySelector(".lunar-weekly-day__events");
+        const children = content ? Array.from(content.children) : [];
+
+        return Boolean(guidance && events && children.indexOf(guidance) < children.indexOf(events));
+      }),
+      "Weekly aspects render below the Moon-in-sign write-up"
+    ).toBe(true);
     const overlappingCards = await weeklyView.evaluate((weekly) => (
       Array.from(weekly.querySelectorAll(".lunar-weekly-day"))
         .filter((card) => {
@@ -1395,16 +1428,18 @@ test.describe("client-facing user flow case studies", () => {
 
           const eventsRect = events.getBoundingClientRect();
           const guidanceRect = guidance.getBoundingClientRect();
-          return eventsRect.bottom > guidanceRect.top;
+          return guidanceRect.bottom > eventsRect.top;
         })
         .length
     ));
     expect(overlappingCards, "Weekly event write-ups and Moon guidance do not overlap").toBe(0);
     const moonGuidanceBlocks = weeklyView.locator(".lunar-weekly-day__guidance");
     expect(await moonGuidanceBlocks.count()).toBeGreaterThan(1);
-    await expect(moonGuidanceBlocks.locator(":scope > p")).toHaveText(
-      Array(await moonGuidanceBlocks.count()).fill("Day theme")
-    );
+    const moonGuidanceLabels = await moonGuidanceBlocks.locator(":scope > p").allTextContents();
+    expect(
+      moonGuidanceLabels.every((label) => /^Moon in [A-Z][a-z]+$/.test(label)),
+      "Weekly guidance identifies the Moon sign instead of the rejected Day theme label"
+    ).toBe(true);
     await expect(weeklyView.getByText(/Weekly Moon:/i)).toHaveCount(0);
     const moonGuidance = await moonGuidanceBlocks.locator("div").allTextContents();
     expect(new Set(moonGuidance).size, "Weekly guidance does not repeat").toBe(moonGuidance.length);
