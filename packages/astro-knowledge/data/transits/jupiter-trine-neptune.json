@@ -15,6 +15,11 @@
   "shadow": "The ease lets excess and overreach and illusion and escapism go unchecked, or the opening pass unused.",
   "arcApplying": "Ease and support build and arrive on their own.",
   "arcSeparating": "The ease withdraws; the flow passes, used or not.",
+  "readerCopy": {
+    "summary": "Hope and imagination reinforce each other for a few days. Jupiter trine Neptune makes it easier to trust a creative idea, take a meaningful risk, or rest without treating the pause as wasted time. Inspiration helps. It is not the same thing as a finished plan.",
+    "body": "Hope has somewhere to go. The ambitious pitch, the creative risk, the plan that sounded too big last week can suddenly feel possible enough to begin. With {{planetA}} in {{signA}} trine {{planetB}} in {{signB}}, confidence and imagination reinforce each other: Jupiter wants the vision seen and believed in; Neptune wants it moving before doubt drains the charge.\n\nWe are more willing to trust what has not proved itself yet, which is sometimes how a brave idea gets its start. It is also how enthusiasm gets mistaken for evidence and inspiration for a finished plan. The opening is real. It still needs a structure.",
+    "approvedVia": "owner direction, chat 2026-08-01"
+  },
   "composedFrom": [
     "pair:jupiter-neptune",
     "aspect:trine"
@@ -25,6 +30,6 @@
     "cyclic": "humanistic / process-oriented source (cyclic model)"
   },
   "voiceNeutral": true,
-  "status": "DRAFT",
+  "status": "LIVE",
   "base": "Expansion meets imagination. Idealism and vision on a large scale. The trine makes this a natural strength: Imaginative ideas that turn out to have practical application. The growth edge is not to coast on the ease."
 }

@@ -2,21 +2,10 @@ import { Clock, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { ManualChart } from "../../services/manualCharts";
-import type { NatalAspectPatternPillSummary } from "../../services/natalAspectPatterns";
 import { ChartPatternPill } from "./ChartPatternPill";
+import type { FriendChartListItem } from "./friendChartModel";
 
-export type FriendChartListItem = {
-  chart: ManualChart;
-  initials: string;
-  sun: string;
-  moon: string;
-  rising: string;
-  needsBirthTime: boolean;
-  active: boolean;
-  patternSummary: NatalAspectPatternPillSummary | null;
-};
-
-type FriendChartsListProps = {
+export type FriendChartsListProps = {
   birthdayChiclet?: ReactNode;
   charts: FriendChartListItem[];
   isLoading: boolean;

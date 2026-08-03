@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "2026-07-31.1",
+  "registryVersion": "2026-08-03.7",
   "policyVersion": "editorial-model-promotion-v1",
   "lanes": {
     "generation:default": {
@@ -15,7 +15,41 @@
         "evaluationSetVersion": "sky-generation-contracts-v1",
         "policyVersion": "editorial-generation-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "generation-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "none",
+        "promptVersion": "sky-generation-prompts-v1",
+        "rubricVersion": "not-applicable",
+        "evaluationSetVersion": "sky-generation-contracts-v1",
+        "policyVersion": "editorial-generation-policy-v1"
+      },
+      "rollback": null,
+      "history": []
+    },
+    "generation:sky-exact-aspect": {
+      "role": "generation",
+      "surface": "sky-exact-aspect",
+      "active": {
+        "releaseId": "sky-exact-aspect-generation-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "sky-exact-aspect-generation-v1:prompt-v1",
+        "rubricVersion": "not-applicable",
+        "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+        "policyVersion": "editorial-generation-policy-v1"
+      },
+      "candidate": {
+        "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-exact-aspect-generation-v7:literal-brief+voice-v1",
+        "rubricVersion": "not-applicable",
+        "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+        "policyVersion": "editorial-generation-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -31,7 +65,41 @@
         "evaluationSetVersion": "sky-aspect-approved-weak-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "sky-aspect-judge-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-aspect-voice-v1:prompt-v1",
+        "rubricVersion": "sky-aspect-voice-v1",
+        "evaluationSetVersion": "sky-aspect-approved-weak-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
+      "rollback": null,
+      "history": []
+    },
+    "judge:sky-exact-aspect": {
+      "role": "judge",
+      "surface": "sky-exact-aspect",
+      "active": {
+        "releaseId": "sky-exact-aspect-judge-openai-gpt-4.1-mini-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "sky-exact-aspect-voice-v1:prompt-v1",
+        "rubricVersion": "sky-exact-aspect-voice-v1",
+        "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
+      "candidate": {
+        "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-exact-aspect-voice-v5+natural-english-evidence-v1",
+        "rubricVersion": "sky-exact-aspect-voice-v5+natural-english-evidence-v1",
+        "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -39,6 +107,28 @@
       "role": "judge",
       "surface": "sky-placement",
       "active": {
+        "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-placement-voice-v5:first-read-severity+collective-protection+stacked-ending+owner-gold-v3",
+        "rubricVersion": "sky-placement-voice-v5",
+        "evaluationSetVersion": "sky-placement-owner-approved-v3+weak-v5",
+        "policyVersion": "editorial-judge-policy-v1",
+        "notes": "Terra-low Sky Placement release evaluated only against explicitly approved v3 judge-calibration evidence. No governed content or generation-evidence promotion is implied."
+      },
+      "candidate": {
+        "releaseId": "sky-placement-judge-openai-gpt-5.6-sol-candidate-v2",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "promptVersion": "sky-placement-voice-v4:provenance-separated-no-active-golds",
+        "rubricVersion": "sky-placement-voice-v4",
+        "evaluationSetVersion": "sky-placement-targeted-provenance-v3",
+        "policyVersion": "editorial-judge-policy-v1",
+        "notes": "Unpromoted future experiment. The completed comparison did not justify routine use; no promotion is authorized. Pro mode and max reasoning remain excluded from this lane."
+      },
+      "rollback": {
         "releaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
         "provider": "openai",
         "model": "gpt-4.1-mini",
@@ -47,9 +137,32 @@
         "evaluationSetVersion": "sky-placement-approved-weak-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
-      "rollback": null,
-      "history": []
+      "history": [
+        {
+          "action": "promote",
+          "recordedAt": "2026-08-03T02:52:23.738Z",
+          "approvedBy": "owner",
+          "fromReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+          "toReleaseId": "sky-placement-judge-openai-gpt-5.6-terra-v1",
+          "calibrationReportSha256": "8c25c35230022fc10279e09aba8b0aabd642a09709f6d7caaf38b16f2f9ec55b"
+        },
+        {
+          "action": "rollback",
+          "recordedAt": "2026-08-03T03:00:44.377Z",
+          "approvedBy": "owner-provenance-correction",
+          "fromReleaseId": "sky-placement-judge-openai-gpt-5.6-terra-v1",
+          "toReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+          "calibrationReportSha256": null
+        },
+        {
+          "action": "promote",
+          "recordedAt": "2026-08-03T03:13:36.158Z",
+          "approvedBy": "owner",
+          "fromReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+          "toReleaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+          "calibrationReportSha256": "413eb7bf47ff42eb2b3a5ebf0210ce83db3dc768527c7078659e54f5d77d2f8d"
+        }
+      ]
     },
     "judge:sky-article-longform": {
       "role": "judge",
@@ -63,7 +176,16 @@
         "evaluationSetVersion": "sky-article-longform-approved-weak-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "sky-article-judge-openai-gpt-5.6-sol-candidate-v6",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "low",
+        "promptVersion": "sky-article-longform-v6:prompt-v1",
+        "rubricVersion": "sky-article-longform-v6",
+        "evaluationSetVersion": "sky-article-longform-owner-corpus-diagnostic-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -79,7 +201,16 @@
         "evaluationSetVersion": "pattern-aspect-approved-gold-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "natal-pattern-judge-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "pattern-aspect-voice-v1:prompt-v1",
+        "rubricVersion": "pattern-aspect-voice-v1",
+        "evaluationSetVersion": "pattern-aspect-approved-gold-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     },
@@ -95,7 +226,16 @@
         "evaluationSetVersion": "editorial-source-bank-owner-approved-v1",
         "policyVersion": "editorial-judge-policy-v1"
       },
-      "candidate": null,
+      "candidate": {
+        "releaseId": "editorial-source-bank-judge-openai-gpt-5.6-terra-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "promptVersion": "editorial-source-bank-v1:prompt-v1",
+        "rubricVersion": "editorial-source-bank-v1",
+        "evaluationSetVersion": "editorial-source-bank-owner-approved-v1",
+        "policyVersion": "editorial-judge-policy-v1"
+      },
       "rollback": null,
       "history": []
     }

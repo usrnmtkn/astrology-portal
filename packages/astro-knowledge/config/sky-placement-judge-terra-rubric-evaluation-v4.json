@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "evaluationId": "sky-placement-judge-terra-rubric-v4",
+  "surface": "sky-placement",
+  "status": "completed-directional",
+  "liveRerunAllowed": false,
+  "promotionAuthorized": false,
+  "runtime": {
+    "activeReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+    "unchanged": true,
+    "note": "Terra-low is the quality/cost recommendation under evaluation. It is not the active production release until the separate promotion gate is satisfied."
+  },
+  "treatment": {
+    "role": "single-model-rubric-rerun",
+    "provider": "openai",
+    "model": "gpt-5.6-terra",
+    "reasoningEffort": "low",
+    "reasoningMode": "standard"
+  },
+  "promptVersion": "sky-placement-voice-v5:first-read-severity+collective-protection+stacked-ending",
+  "rubricVersion": "sky-placement-voice-v5",
+  "evaluationSetVersion": "sky-placement-targeted-provenance-v3",
+  "samplesPerFixture": 1,
+  "fixtureSource": "voice/tldr-astro/fixtures/sky-placement-judge-targeted-v3.json",
+  "pricingSourceManifest": "config/sky-placement-judge-ab-evaluation-v1.json",
+  "previousTerraScores": {
+    "target-001": 2,
+    "target-002": 3,
+    "target-003": 2,
+    "target-004": 2,
+    "target-005": 1,
+    "target-006": 2,
+    "target-007": 2,
+    "target-008": 2,
+    "target-009": 2
+  },
+  "expectedEffectiveScores": {
+    "target-001": 2,
+    "target-002": 3,
+    "target-003": 2,
+    "target-004": 2,
+    "target-005": 1,
+    "target-006": 1,
+    "target-007": 2,
+    "target-008": 3,
+    "target-009": 2
+  },
+  "deterministicPolicy": {
+    "firstReadNaturalEnglish": "A reviewed opaque-personification literal forces score 1.",
+    "secondPerson": "A Current Sky second-person finding prevents score 3; the publication linter remains a hard gate.",
+    "otherLintFailures": "Remain publication blockers but do not silently rewrite the editorial judge's diagnostic score in this directional comparison."
+  },
+  "completedRun": {
+    "runId": "sky-placement-terra-rubric-2026-08-03T02-23-38-989Z",
+    "recordedAt": "2026-08-03T02:23:38.989Z",
+    "fixtureCount": 9,
+    "requestCount": 9,
+    "expectedEffectiveMatches": 9,
+    "changedFromPrevious": ["target-006", "target-008"],
+    "totalInputTokens": 18988,
+    "totalOutputTokens": 2148,
+    "totalReasoningTokens": 1540,
+    "averageLatencyMs": 3630.67,
+    "estimatedCostUsd": 0.0732325,
+    "promotionRecommended": false,
+    "activeRuntimeChanged": false
+  },
+  "promotionGate": {
+    "thisRunPromotionEligible": false,
+    "explicitOwnerAuthorizationRequired": true,
+    "minimumSamplesPerFixtureForPromotion": 5,
+    "note": "This nine-call rerun tests rubric behavior only. It cannot change the active runtime release."
+  }
+}

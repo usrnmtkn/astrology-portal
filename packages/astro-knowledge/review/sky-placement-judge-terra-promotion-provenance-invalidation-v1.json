@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "invalidationId": "sky-placement-judge-terra-promotion-provenance-invalidation-v1",
+  "recordedAt": "2026-08-02",
+  "laneId": "judge:sky-placement",
+  "calibrationReport": "review/sky-placement-judge-terra-promotion-calibration-v1.json",
+  "calibrationReportSha256": "8c25c35230022fc10279e09aba8b0aabd642a09709f6d7caaf38b16f2f9ec55b",
+  "technicalModelEvaluationValid": true,
+  "promotionAuthorityValid": false,
+  "promotionEligibleAfterProvenanceAudit": false,
+  "reason": "The positive control had been labeled owner-approved without valid explicit exact-wording approval. Positive editorial feedback cannot be converted into owner approval by an assistant.",
+  "invalidatedEvidenceId": "sky-placement-uranus-cancer-owner-approved-calibration-v1",
+  "runtimeDisposition": {
+    "terraActivation": "rolled-back",
+    "activeModel": "gpt-4.1-mini",
+    "terraAvailability": "rollback-release",
+    "solCandidatePromotionAuthorized": false
+  },
+  "nextRequiredEvidence": "Explicit owner approval of the complete exact v2 article, followed by a new promotion-grade calibration against valid owner-approved evidence.",
+  "billedCalibrationRerunAuthorized": false
+}

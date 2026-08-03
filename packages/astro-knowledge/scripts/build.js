@@ -145,6 +145,7 @@ function webSkyKnowledge(packageJson, generatedAt, collections) {
       "transiting",
       "aspect",
       "other",
+      "readerCopy",
       "business",
       "shadow",
       "status"

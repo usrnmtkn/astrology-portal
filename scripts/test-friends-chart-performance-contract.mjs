@@ -6,8 +6,28 @@ import assert from "node:assert/strict";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
 const appSource = fs.readFileSync(appSourcePath, "utf8");
+const manualChartsControllerPath = path.join(
+  repoRoot,
+  "apps/web/src/features/friends/useManualChartsController.ts"
+);
+const manualChartsControllerSource = fs.readFileSync(manualChartsControllerPath, "utf8");
+const relationshipCompareHookSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/useRelationshipCompare.ts"),
+  "utf8"
+);
 const manualChartsSourcePath = path.join(repoRoot, "apps/web/src/services/manualCharts.ts");
 const manualChartsSource = fs.readFileSync(manualChartsSourcePath, "utf8");
+const authSourcePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
+const authSource = fs.readFileSync(authSourcePath, "utf8");
+const socialFriendsSourcePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
+const socialFriendsSource = fs.readFileSync(socialFriendsSourcePath, "utf8");
+const tldrAstroApiSourcePath = path.join(repoRoot, "apps/web/src/services/tldrastroApi.ts");
+const tldrAstroApiSource = fs.readFileSync(tldrAstroApiSourcePath, "utf8");
+const socialFriendsPanelSourcePath = path.join(
+  repoRoot,
+  "apps/web/src/features/friends/SocialFriendsPanel.tsx"
+);
+const socialFriendsPanelSource = fs.readFileSync(socialFriendsPanelSourcePath, "utf8");
 
 const createManualChartStart = manualChartsSource.indexOf(
   "export async function createManualChart"
@@ -28,10 +48,10 @@ const markPendingEnd = manualChartsSource.indexOf(
   markPendingStart
 );
 const markPendingSource = manualChartsSource.slice(markPendingStart, markPendingEnd);
-const cachedHydrationIndex = appSource.indexOf(
+const cachedHydrationIndex = manualChartsControllerSource.indexOf(
   "const cachedCharts = listCachedManualCharts"
 );
-const remoteListIndex = appSource.indexOf(
+const remoteListIndex = manualChartsControllerSource.indexOf(
   "listManualCharts(chartOwnerUserId)",
   cachedHydrationIndex
 );
@@ -64,8 +84,8 @@ assert.match(
   "A failed remote chart write must keep the chart in local storage with retryable sync state."
 );
 
-const repairFunctionMatch = appSource.match(
-  /function manualChartNeedsNatalRepair\(chart: ManualChart\) \{(?<body>[\s\S]*?)\n\}/
+const repairFunctionMatch = manualChartsSource.match(
+  /export function manualChartNeedsNatalRepair\(chart: ManualChart\) \{(?<body>[\s\S]*?)\n\}/
 );
 
 assert.ok(
@@ -88,12 +108,12 @@ assert.match(
 );
 
 assert.match(
-  appSource,
+  manualChartsControllerSource,
   /const chartsToRepair = charts\.filter\(manualChartNeedsNatalRepair\);/,
   "Friends chart repair must filter incomplete charts before starting async repair work."
 );
 
-const readyCacheHydrationMatch = appSource.match(
+const readyCacheHydrationMatch = manualChartsControllerSource.match(
   /if \(allowCachedChartsWhileLoading && !chartsLoadedRef\.current\) \{(?<body>[\s\S]*?)\n    \}\n\n    if \(!chartsLoadedRef\.current\)/
 );
 
@@ -104,18 +124,181 @@ assert.ok(
 
 assert.match(
   readyCacheHydrationMatch.groups.body,
-  /listCachedManualCharts\(\[\s*chartOwnerUserId,\s*profile\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\)/,
-  "Friends chart ready-load path must include all locally cached manual chart owners before remote refresh."
+  /listCachedManualCharts\(\[chartOwnerUserId, profileId\]\)/,
+  "Friends chart ready-load path must paint only the resolved profile's local chart cache before remote refresh."
 );
 
 assert.ok(
-  appSource.indexOf("if (allowCachedChartsWhileLoading && !chartsLoadedRef.current)") <
-    appSource.indexOf("listManualCharts(chartOwnerUserId)"),
+  manualChartsControllerSource.indexOf("if (allowCachedChartsWhileLoading && !chartsLoadedRef.current)") <
+    manualChartsControllerSource.indexOf("listManualCharts(chartOwnerUserId)"),
   "Friends chart cache hydration must run before the Supabase manual chart fetch."
+);
+
+assert.match(
+  socialFriendsPanelSource,
+  /if \(available === null && activeView !== "charts"\)/,
+  "The Charts landing view must render cached chart rows without waiting for social-profile availability."
+);
+
+assert.match(
+  appSource,
+  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
+  "Friends charts must paint their account-scoped cache after authentication resolves."
+);
+assert.doesNotMatch(
+  appSource,
+  /mode === "friends" && userProfile && sky &&/,
+  "The Friends landing page must not wait for current-sky calculation before showing saved charts."
+);
+assert.match(
+  appSource,
+  /const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequested;/,
+  "Friends relationship and composite content must wait until a relationship-oriented profile tab requests it."
+);
+assert.match(
+  appSource,
+  /const shouldLoadNatal = \["guest", "member", "profile"\]\.includes\(mode\)\s*\|\| \(mode === "friends" && friendNatalContentRequested\);/,
+  "Friends natal and You content must wait until the Natal profile tab requests it."
+);
+assert.doesNotMatch(
+  appSource,
+  /const shouldLoadRelationships = mode === "friends";$/m,
+  "Opening the Friends Circle or Charts landing view must not fetch all relationship content."
+);
+assert.match(
+  appSource,
+  /if \(resolvedFriendsMainView === "profile" && selectedChart\) \{\s*onFriendProfileContentRequest\(friendProfileTab\);/,
+  "A Friends chart profile must request only the active tab's deferred content after the landing view is usable."
+);
+assert.match(
+  appSource,
+  /\|\| \(mode === "friends" && !friendRelationshipContentRequested\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
+  "Bare Friends and Natal-only views must not download the deferred transit and relationship fallback bundle."
+);
+assert.match(
+  appSource,
+  /const requestFriendProfileContent = useCallback\(\(tab: FriendProfileTab\) => \{\s*if \(tab === "natal"\) \{\s*setFriendNatalContentRequested\(true\);\s*return;\s*\}\s*setFriendRelationshipContentRequested\(true\);/,
+  "Friends must request natal and relationship interpretation payloads independently by active profile tab."
+);
+assert.match(
+  appSource,
+  /currentSky: SkySnapshot \| null;[\s\S]*friendProfileWork\.transits && currentSky && selectedChart/,
+  "Friends transit calculations must tolerate a chart list that renders before current-sky data is ready."
+);
+assert.match(
+  appSource,
+  /\(friendProfileWork\.compatibility \|\| friendProfileWork\.synastry\) && selectedChart && !selectedChartIsEvent/,
+  "Compatibility and Synastry wheels must both receive their inspector aspect lines when active."
+);
+
+const verifiedAuthUserMatch = authSource.match(
+  /export async function getVerifiedAuthUser[\s\S]*?\n\}/
+);
+
+assert.ok(
+  verifiedAuthUserMatch,
+  "Friends data loading must expose a shared verified-user request."
+);
+assert.match(
+  verifiedAuthUserMatch[0],
+  /verifiedAuthUserRequest\?\.accessToken !== accessToken/,
+  "Friends data loading must reuse authentication verification for the active access token."
+);
+assert.match(
+  manualChartsSource,
+  /const user = await getVerifiedAuthUser\(supabase\);/,
+  "Manual charts must share the verified-user request instead of starting another auth network call."
+);
+assert.match(
+  socialFriendsSource,
+  /const user = await getVerifiedAuthUser\(client\);/,
+  "Social friends must share the verified-user request across its parallel data queries."
+);
+
+const socialCoreRefreshMatch = socialFriendsPanelSource.match(
+  /const refreshSocialData = useCallback\(async \(\) => \{(?<body>[\s\S]*?)\n  \}, \[onPendingRequestCountChange, publishFriends\]\);/
+);
+
+assert.ok(
+  socialCoreRefreshMatch?.groups?.body,
+  "Friends performance QA must be able to inspect the core social refresh."
+);
+assert.match(
+  socialCoreRefreshMatch.groups.body,
+  /const profileRequest = loadOwnSocialProfile\(\)[\s\S]*const loadedFriends = await listSocialFriends\(\);/,
+  "Own-profile hydration must start in parallel without blocking visible friend rows."
+);
+assert.doesNotMatch(
+  socialCoreRefreshMatch.groups.body,
+  /await Promise\.all\(\[\s*loadOwnSocialProfile\(\),\s*listSocialFriends\(\)/,
+  "The visible Friends list must not wait for the own-profile query."
+);
+assert.match(
+  socialCoreRefreshMatch.groups.body,
+  /publishFriends\(nextFriends\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
+  "Pending requests must start only after the visible Friends list is published."
+);
+assert.doesNotMatch(
+  socialCoreRefreshMatch.groups.body,
+  /listSocialNotifications|listSocialInvitations/,
+  "The core Friends refresh must not fetch Circle-only activity while Charts is active."
+);
+assert.match(
+  socialFriendsPanelSource,
+  /if \(!available \|\| activeView === "charts"\) \{\s*return;\s*\}[\s\S]*void refreshSocialActivity\(\)/,
+  "Notifications and invitation history must wait until a non-Charts Friends view is active."
+);
+const globalPendingRequestEffectStart = appSource.lastIndexOf(
+  "useEffect(() => {",
+  appSource.indexOf("function refreshPendingFriendRequests")
+);
+const globalPendingRequestEffectEnd = appSource.indexOf(
+  "function openSkyDetail",
+  globalPendingRequestEffectStart
+);
+const globalPendingRequestEffect = appSource.slice(
+  globalPendingRequestEffectStart,
+  globalPendingRequestEffectEnd
+);
+
+assert.match(
+  globalPendingRequestEffect,
+  /if \(mode === "friends"\) \{\s*return;\s*\}/,
+  "The app-wide pending-request monitor must pause while the Friends panel owns request refresh."
+);
+assert.match(
+  globalPendingRequestEffect,
+  /\}, \[mode, remoteAccountId, remoteProfileReady, userProfile\?\.id\]\);/,
+  "The app-wide pending-request monitor must restart when navigation leaves Friends."
+);
+assert.match(
+  socialFriendsPanelSource,
+  /onPendingRequestCountChange\?\.\([\s\S]*request\.direction === "incoming"/,
+  "The Friends panel must keep publishing its pending-request count while the app-wide monitor is paused."
+);
+assert.match(
+  tldrAstroApiSource,
+  /export function compareRelationship\([\s\S]*options\?: TldrAstroRequestOptions[\s\S]*postTldrAstro<RelationshipCompareResponse>\("\/relationship\/compare", request, options\)/,
+  "Relationship comparison requests must accept cancellation options."
+);
+assert.match(
+  relationshipCompareHookSource,
+  /const controller = new AbortController\(\);[\s\S]*compareRelationship\([\s\S]*signal: controller\.signal[\s\S]*return \(\) => \{\s*cancelled = true;\s*controller\.abort\(\);/,
+  "Leaving Composite or changing charts must abort obsolete relationship comparison work."
+);
+assert.doesNotMatch(
+  appSource,
+  /setRelationshipCompareStatus|compareRelationship\(\{/,
+  "ManualChartsPanel must not re-embed relationship request state or cancellation."
+);
+assert.match(
+  manualChartsControllerSource,
+  /const repairTimer = window\.setTimeout\(\(\) => \{\s*void repairCharts\(\);\s*\}, 1_500\);/,
+  "Incomplete chart repair must wait until after initial interaction instead of competing with first paint."
 );
 
 console.log(JSON.stringify({
   status: "PASS",
   surface: "friends chart performance",
-  contract: "Complete friend charts do not trigger background natal/timezone repair, and chart rows hydrate from local cache before remote refresh."
+  contract: "Friends and chart rows paint from cache/core data first, share auth verification, and defer incomplete-chart repair."
 }, null, 2));

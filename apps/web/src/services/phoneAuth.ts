@@ -1,34 +1,23 @@
-import { AsYouType, parsePhoneNumberFromString } from "libphonenumber-js/max";
-
 const usCountryCallingCode = "+1";
 const usNationalNumberLength = 10;
 
-export function formatUsPhoneInput(value: string) {
+function usNationalDigits(value: string) {
   const digits = value.replace(/\D/g, "");
-  const nationalDigits = (
+
+  return (
     digits.length > usNationalNumberLength && digits.startsWith("1")
       ? digits.slice(1)
       : digits
   ).slice(0, usNationalNumberLength);
-
-  return new AsYouType("US").input(nationalDigits);
 }
 
-export function normalizeUsPhoneNumber(value: string) {
-  const parsedPhone = parsePhoneNumberFromString(value, {
-    defaultCountry: "US",
-    extract: false
-  });
+export function formatUsPhoneInput(value: string) {
+  const digits = usNationalDigits(value);
 
-  if (!parsedPhone || !parsedPhone.isValid() || parsedPhone.country !== "US") {
-    throw new Error("Enter a valid United States mobile number.");
-  }
-
-  return parsedPhone.number;
-}
-
-export function formatPhoneNumberForDisplay(value: string) {
-  return parsePhoneNumberFromString(value)?.formatInternational() ?? value;
+  if (digits.length < 3) return digits;
+  if (digits.length === 3) return `(${digits})`;
+  if (digits.length < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 }
 
 export function phoneNumberLastFour(value: string) {
@@ -44,12 +33,16 @@ export function maskPhoneNumber(value: string) {
 }
 
 export function isValidUsPhoneNumber(value: string) {
-  try {
-    normalizeUsPhoneNumber(value);
-    return true;
-  } catch {
-    return false;
-  }
+  if (/^\s*\+(?!1(?:\D|$))/u.test(value)) return false;
+
+  const digits = value.replace(/\D/g, "");
+  const nationalDigits = digits.length === 11 && digits.startsWith("1")
+    ? digits.slice(1)
+    : digits;
+
+  // Fast form feedback for the North American numbering shape. The metadata-
+  // backed validation still runs before an OTP request leaves the browser.
+  return /^[2-9]\d{2}[2-9]\d{6}$/u.test(nationalDigits);
 }
 
 export const supportedPhoneCountry = {

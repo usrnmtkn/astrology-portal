@@ -26,6 +26,7 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWords || [];
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const pat = readJson(path.join(voiceRoot, "tldr-astro", "pattern-aspect.json"));
+const { findBannedConstructions } = require("./banned-construction-matcher.js");
 
 const L1_BODY_IDS = ["feel", "shows_up", "complicated", "another_response"];
 
@@ -91,13 +92,7 @@ function lintPatternCard(card) {
     const m = text.match(toRegex(term));
     if (m) findings.push({ severity: "fail", source: "banned-words", term, match: m[0] });
   }
-  // ---- banned contrast-reveal constructions (loose phrase match) ----
-  for (const c of bannedConstructions) {
-    const probe = (c.pattern || "").replace(/\[[^\]]*\]/g, "").trim();
-    if (probe && text.toLowerCase().includes(probe.toLowerCase().slice(0, 24))) {
-      findings.push({ severity: "warn", source: "banned-constructions", term: c.pattern });
-    }
-  }
+  findings.push(...findBannedConstructions(text, bannedConstructions));
   // ---- surface fail + warn from pattern-aspect.json ----
   for (const b of pat.outputBans.fail) {
     const m = text.match(toRegex(b.term));

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "evaluationId": "sky-placement-judge-terra-low-vs-sol-xhigh-v1",
+  "surface": "sky-placement",
+  "status": "completed-superseded",
+  "liveRerunAllowed": false,
+  "supersededBy": "sky-placement-judge-targeted-rules-v2",
+  "validityNote": "Retained as evidence about natural-language and abstraction detection. Do not rerun or use for promotion because its approved fixture set conflicted with the Current Sky no-second-person rule.",
+  "promotionAuthorized": false,
+  "runtime": {
+    "activeReleaseId": "sky-placement-judge-openai-gpt-4.1-mini-v1",
+    "unchanged": true,
+    "note": "Terra-low is the evaluation baseline, not the active production judge."
+  },
+  "promptVersion": "sky-placement-voice-v2:literal-english+collective-sky+owner-vocab-v2",
+  "rubricVersion": "sky-placement-voice-v2",
+  "evaluationSetVersion": "sky-placement-approved-weak-v3",
+  "samplesPerFixture": 1,
+  "blindedOwnerReview": true,
+  "treatments": {
+    "baseline": {
+      "role": "baseline",
+      "provider": "openai",
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "reasoningMode": "standard"
+    },
+    "candidate": {
+      "role": "candidate",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "reasoningMode": "standard",
+      "releaseId": "sky-placement-judge-openai-gpt-5.6-sol-candidate-v2"
+    }
+  },
+  "pricing": {
+    "currency": "USD",
+    "unit": "per_1m_tokens",
+    "retrievedAt": "2026-08-02",
+    "source": "https://developers.openai.com/api/docs/pricing",
+    "shortContextMaximumInputTokens": 272000,
+    "shortContext": {
+      "gpt-5.6-terra": { "input": 2, "cachedInput": 0.2, "cacheWrite": 2.5, "output": 12 },
+      "gpt-5.6-sol": { "input": 5, "cachedInput": 0.5, "cacheWrite": 6.25, "output": 30 }
+    },
+    "longContext": {
+      "gpt-5.6-terra": { "input": 4, "cachedInput": 0.4, "cacheWrite": 5, "output": 18 },
+      "gpt-5.6-sol": { "input": 10, "cachedInput": 1, "cacheWrite": 12.5, "output": 45 }
+    }
+  },
+  "excludedExperiments": {
+    "pro": {
+      "included": false,
+      "reason": "Pro is a separate reasoning-mode experiment and is intentionally not confounded with the model/effort comparison."
+    },
+    "max": {
+      "supportedByRegistry": true,
+      "included": false,
+      "reason": "The first quality-first candidate uses xhigh; max is recorded but deferred until evidence justifies another experiment."
+    }
+  },
+  "promotionGate": {
+    "ownerAcceptanceIsPrimary": true,
+    "automaticCalibrationIsSecondary": true,
+    "explicitOwnerAuthorizationRequired": true,
+    "minimumSamplesPerFixtureForPromotion": 5,
+    "thisRunPromotionEligible": false,
+    "requirements": [
+      "Materially higher blinded owner acceptance",
+      "More substantive voice failures caught",
+      "No increase in false positives or unnecessary rewrites",
+      "Acceptable latency and estimated cost",
+      "A separate promotion-grade calibration run"
+    ]
+  }
+}

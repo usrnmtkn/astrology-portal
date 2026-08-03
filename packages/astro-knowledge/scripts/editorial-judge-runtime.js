@@ -91,7 +91,8 @@ async function runJudgeSamples({
     }
   }
 
-  const fn = judgeFn || ((value) => generateJudge(value, { temperature }));
+  const modelSurface = context.modelSurface || context.surface || "default";
+  const fn = judgeFn || ((value) => generateJudge(value, { temperature, surface: modelSurface }));
   const count = Math.max(1, Number(samples) || 1);
   const verdicts = [];
   for (let i = 0; i < count; i += 1) {
@@ -102,6 +103,8 @@ async function runJudgeSamples({
   const median = scores[Math.floor(scores.length / 2)];
   const chosen = verdicts.find((verdict) => normalizeScore(verdict.score) === median) || verdicts[0];
   const disagreement = new Set(scores).size > 1 || new Set(verdicts.map((verdict) => verdict.verdict || "")).size > 1;
+  const contractViolation = verdicts.some((verdict) => verdict.contractViolation);
+  const contractIssues = [...new Set(verdicts.flatMap((verdict) => Array.isArray(verdict.contractIssues) ? verdict.contractIssues : []))];
   const audit = {
     schemaVersion: 1,
     recordedAt: new Date().toISOString(),
@@ -119,6 +122,7 @@ async function runJudgeSamples({
     registryOverride: Boolean(config.registryOverride),
     evaluationSetVersion: config.evaluationSetVersion || null,
     policyVersion: config.policyVersion || null,
+    reasoningEffort: config.reasoningEffort || null,
     temperature,
     samples: count,
     scores,
@@ -126,9 +130,13 @@ async function runJudgeSamples({
       score: normalizeScore(verdict.score),
       verdict: verdict.verdict || "",
       failedChecks: Array.isArray(verdict.failedChecks) ? verdict.failedChecks : [],
+      contractViolation: Boolean(verdict.contractViolation),
+      contractIssues: Array.isArray(verdict.contractIssues) ? verdict.contractIssues : [],
       outputSha256: sha256(JSON.stringify(verdict))
     })),
     disagreement,
+    contractViolation,
+    contractIssues,
     privacyMode,
     redactionCount,
     context
@@ -141,6 +149,8 @@ async function runJudgeSamples({
     score: median,
     samples: count,
     disagreement,
+    contractViolation,
+    contractIssues,
     audit
   };
 }

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-03T03:28:47.641Z",
+  "sourceBundle": "review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
+  "release": {
+    "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-terra",
+    "reasoningEffort": "low",
+    "registryState": "active",
+    "registryOverride": false
+  },
+  "requestCount": 6,
+  "samplesPerArticle": 1,
+  "promotionAuthorized": false,
+  "governedContentChanged": false,
+  "ownerApprovalImplied": false,
+  "results": [
+    {
+      "candidateId": "sky-placement-v4-mars-capricorn",
+      "score": 3,
+      "verdict": "in-voice",
+      "weakest": "Progress is measured by what is complete.",
+      "why": "The placement is unmistakable: Mars supplies action and follow-through, while Capricorn makes it disciplined, outcome-driven, and willing to carry unglamorous work to completion.",
+      "editorialDecision": "preserve_for_owner_review"
+    },
+    {
+      "candidateId": "sky-placement-v4-saturn-capricorn",
+      "score": 2,
+      "verdict": "borderline",
+      "weakest": "Saturn in Capricorn puts ambition under pressure.",
+      "why": "The opening is an abstract placement summary, not a recognizable standalone observation someone would send to a friend; the rest is specific and well-grounded.",
+      "editorialDecision": "revise_hook_only"
+    },
+    {
+      "candidateId": "sky-placement-v4-neptune-libra",
+      "score": 2,
+      "verdict": "borderline",
+      "weakest": "Peace can be staged.",
+      "why": "The placement is unmistakable and the turn is strong, but the hook opens on a polished abstraction rather than a recognizable behavior or pressure.",
+      "editorialDecision": "revise_hook_only"
+    },
+    {
+      "candidateId": "sky-placement-v4-venus-aries",
+      "score": 3,
+      "verdict": "in-voice",
+      "weakest": "The first move matters.",
+      "why": "The placement is unmistakable: Venus names desire, taste, attraction, and value, while Aries makes them immediate and initiating; the lived sequence and observable chase behavior give it real bite.",
+      "editorialDecision": "preserve_for_owner_review"
+    },
+    {
+      "candidateId": "sky-placement-v4-uranus-cancer",
+      "score": 2,
+      "verdict": "borderline",
+      "weakest": "The baseline changes when protection starts costing someone a life of their own.",
+      "why": "The body is specific and placement-true, but the hook opens in polished abstraction rather than a recognizable behavior or decision.",
+      "editorialDecision": "use_existing_owner_approved_v3_as_review_reference"
+    },
+    {
+      "candidateId": "sky-placement-v4-uranus-pisces",
+      "score": 2,
+      "verdict": "borderline",
+      "weakest": "Write, organize, make art, or donate before another hour disappears into watching.",
+      "why": "The core meaning and turn are strong, but the lived beat leans into broad civic inventory, and this move could fit many collective transits rather than only Uranus in Pisces.",
+      "editorialDecision": "revise_lived_sequence_and_moves"
+    }
+  ]
+}

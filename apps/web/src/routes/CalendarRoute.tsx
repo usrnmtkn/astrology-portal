@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { LocationInput } from "../types";
 import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { LiveGeneratedContent } from "../services/generatedContent";
+import "../styles/lunar-calendar.css";
 
 const LunarCalendar = lazy(() =>
   import("../features/calendar/LunarCalendar").then((module) => ({

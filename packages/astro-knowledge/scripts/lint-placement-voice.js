@@ -24,6 +24,7 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWords || [];
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const spec = readJson(path.join(voiceRoot, "tldr-astro", "sky-placement.json"));
+const { findBannedConstructions } = require("./banned-construction-matcher.js");
 
 const META = /[\\^$.*+?()[\]{}|]/;
 function toRegex(term) {
@@ -38,7 +39,8 @@ const SLOTS = ["hook", "lived", "turn"];
 const EXTENDED_SLOTS = ["tagline", "moves"];
 const sentencesOf = (text) => (String(text).match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
 
-// { hook, lived, turn, tagline?, moves?, planet? } -> { score, fails, warns, findings, notes }
+// { hook, lived, turn, tagline?, moves?, planet?, sign?, allowLegacySecondPerson? }
+// -> { score, fails, warns, findings, notes }
 function lintArticle(article) {
   const findings = [];
   const notes = [];
@@ -52,6 +54,22 @@ function lintArticle(article) {
     ...(moves ?? [])
   ].filter(Boolean).join("\n\n");
   const planet = article?.planet ? String(article.planet).toLowerCase() : null;
+
+  // Current Sky is collective. Historical originals live in a separate fixture
+  // file and never enter this active linter path. Transit-to-natal copy belongs
+  // to a different surface and linter.
+  if (!article?.allowLegacySecondPerson) {
+    const secondPerson = full.match(/\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/i);
+    if (secondPerson) {
+      findings.push({
+        severity: "fail",
+        source: "current-sky-person",
+        term: "second-person",
+        match: secondPerson[0],
+        reason: "Current Sky placement copy is collective; second person belongs to transit-to-natal copy"
+      });
+    }
+  }
 
   // -- missing slots are hard fails: the renderer needs all three.
   for (const slot of SLOTS) {
@@ -80,16 +98,27 @@ function lintArticle(article) {
     if (m) findings.push({ severity: "fail", source: "banned-words", term, match: m[0] });
   }
 
-  // -- banned contrast-reveal constructions (loose phrase match)
-  for (const c of bannedConstructions) {
-    const probe = (c.pattern || "").replace(/\[[^\]]*\]/g, "").trim();
-    if (probe && full.toLowerCase().includes(probe.toLowerCase().slice(0, 24))) {
-      findings.push({ severity: "warn", source: "banned-constructions", term: c.pattern });
+  findings.push(...findBannedConstructions(full, bannedConstructions));
+
+  // Known first-read natural-English failures are deterministic. Broader
+  // personification families remain judge territory; only reviewed literals
+  // and their narrow grammatical variants belong here.
+  for (const pattern of spec.severityRules?.firstReadNaturalEnglish?.mechanicalFailPatterns || []) {
+    const m = full.match(new RegExp(pattern, "i"));
+    if (m) {
+      findings.push({
+        severity: "fail",
+        source: "first-read-natural-english",
+        term: "opaque-personification",
+        match: m[0],
+        reason: "central phrasing does not make literal sense on the first read"
+      });
     }
   }
 
   // -- surface bans from sky-placement.json
   for (const b of spec.outputBans.fail) {
+    if (article?.allowLegacySecondPerson && b.term === "\\bperform(ance|ing|s|ed)?\\b") continue;
     const m = full.match(toRegex(b.term));
     if (m) findings.push({ severity: "fail", source: "sky-placement", term: b.term, match: m[0], reason: b.reason });
   }
@@ -187,7 +216,7 @@ if (require.main === module) {
   if (arg === "--exemplars") {
     let bad = 0;
     for (const e of spec.exemplars) {
-      const r = lintArticle({ hook: e.hook, lived: e.lived, turn: e.turn, planet: e.planet });
+      const r = lintArticle({ tagline: e.tagline, hook: e.hook, lived: e.lived, turn: e.turn, moves: e.moves, planet: e.planet, sign: e.sign });
       if (r.fails || r.warns) bad++;
       const flag = r.score === 3 ? "OK " : "!! ";
       console.log(`${flag} score ${r.score} (fails ${r.fails}, warns ${r.warns})  ${e.sourceId}${r.notes.length ? "  [" + r.notes.join("; ") + "]" : ""}`);

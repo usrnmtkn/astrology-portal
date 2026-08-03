@@ -35,6 +35,8 @@ Route by surface and block type. Never blend. A natal page is never the transit 
 - Name the actual subject. Never use a vague placeholder like "the thing," "the tender thing," or "the careful thing" to stand in for something you could name. If you cannot name it, you have not interpreted it yet.
 - Never use the word "leak" or "leaks" for emotion or expression. Use surfaces, shows, comes out, spills.
 - Cadence is full sentences with rhythm, not clipped fragments. Avoid strings of stacked imperatives or command-list sentences ("Send the message, define the terms, organize the facts"). Directness comes from complete thoughts with a subject, context, and consequence, not from chopping the line into instructions.
+- Concrete is not the same as lived. Do not line up a family example, a workplace example, and a relationship example as proof that a theme applies everywhere. That is an administrative inventory, even when every noun is specific. Build pressure, movement, and consequence inside one charged sequence. One scene that changes is better than three representative scenarios.
+- Name the actor. Do not use generic plural "people" as a placeholder when the sentence can name the caretaker, partner, family, workplace, institution, or group. This is not a global ban on the word; use it only when people collectively are the actual subject.
 
 ---
 
@@ -180,6 +182,16 @@ Core moves:
 - Concrete over abstract. Pull from universal lived experience, a message sent and not answered, a conversation that loops in your head, waiting longer than you expected. Avoid location-specific imagery.
 - Anchor in the body and in behavior: the held breath, the second-guessing, the coping move and what it costs.
 - Direct "you" throughout. End on a line that is concise and undeniable.
+
+Current Sky is the exception to the general direct-address rule. Sky-to-sky placement and aspect copy describes shared weather and stays collective: use "we," "someone," or a concrete group or scene. Never use "you," "your," or "part of you." Second person belongs to transit-to-natal copy.
+
+For Current Sky placement articles, run a literal-English pass before approval:
+- Begin with recognizable pressure, behavior, or a decision before explaining the placement.
+- Every sentence must make literal sense on the first read. Do not make an arrangement, desire, structure, fear, plan, or feeling perform an unnatural human action.
+- Prefer plain observation over a phrase that merely sounds polished. A metaphor may sharpen the point, but it may not require decoding.
+- Name the exact cost in the turn, then stop at the strongest sentence. Do not add a dramatic image or a second aphorism after the point lands.
+- Preserve clear owner-written lines. Do not rewrite them merely to make the copy sound more polished.
+- Do not infer career from a sign alone. Taurus covers money, resources, possessions, food, housing, the body, comfort, values, and self-worth; job language needs support from another chart factor or the supplied source.
 
 ### Name the actual form of self-reduction
 

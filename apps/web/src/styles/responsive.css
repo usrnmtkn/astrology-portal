@@ -387,6 +387,13 @@
   }
 }
 
+/* Responsive: constrained header navigation */
+@media (max-width: 1080px) {
+  .site-nav {
+    display: none;
+  }
+}
+
 /* Responsive: tablet nav collapse */
 @media (max-width: 820px) {
   .nav-pill {
@@ -413,10 +420,6 @@
     box-shadow: var(--shadow-topbar-scrolled);
     backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
     -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-  }
-
-  .site-nav {
-    display: none;
   }
 
   .mode-guest .today-hero,
@@ -676,8 +679,10 @@
 
   .nav-pill {
     gap: 8px;
+    width: 100%;
+    min-width: 0;
     min-height: var(--top-control-height);
-    max-width: calc(100vw - var(--mobile-nav-reserved-width));
+    max-width: 100%;
     border-color: var(--nav-border);
     background: var(--nav-surface);
     box-shadow: var(--nav-rest-shadow);
@@ -910,12 +915,6 @@
     width: min(340px, calc(100vw - var(--mobile-control-inset) * 2));
     max-width: 100%;
     margin-top: 0;
-  }
-
-  .hero-city-picker--mobile {
-    left: var(--mobile-control-inset);
-    right: var(--mobile-control-inset);
-    width: auto;
   }
 
   .page-shell,

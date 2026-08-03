@@ -73,3 +73,23 @@ export function SwitchControl({
     </button>
   );
 }
+
+export function CalculationMethodSettingsGroup() {
+  return (
+    <section className="settings-group" aria-label="Calculation method">
+      <span className="settings-group-label">Calculation method</span>
+      <div className="settings-card">
+        <div className="settings-list">
+          <div className="settings-row">
+            <div className="settings-row-copy">
+              <span className="settings-row-title">Ephemeris</span>
+              <small className="settings-row-description">
+                Planetary positions are calculated with Swiss Ephemeris and independently verified against NASA/JPL.
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

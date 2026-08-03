@@ -24,6 +24,7 @@ const fs = require("fs");
 const path = require("path");
 const { lintArticle, SLOTS } = require("./lint-placement-voice.js");
 const { generate } = require("./generate-sky-aspect-cards.js");
+const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
 
 const root = path.join(__dirname, "..");
 const repoRoot = path.resolve(root, "..", "..");
@@ -195,7 +196,11 @@ function normalizeArgs({ planet, sign }) {
 // few-shot: two exemplar trios, preferring the SAME tier so the register is
 // taught like-to-like, topped up from other tiers when the tier is thin.
 function fewShot(tier, n = 2) {
-  const all = spec.exemplars.filter((e) => e.canonical);
+  const all = spec.exemplars.filter((e) =>
+    e.canonical === true
+    && e.ownerApproved === true
+    && e.editorialStatus === "current_sky_owner_approved"
+  );
   const same = all.filter((e) => e.tier === tier);
   const pool = [...same, ...all.filter((e) => !same.includes(e))];
   return pool.slice(0, n);
@@ -231,6 +236,7 @@ function buildPrompt(args) {
     `VOICE: ${spec.voiceDescription}`,
     `PERSON: ${spec.personNote}`,
     `REGISTER: this is a ${tier} placement - ${tierHint}. Pace: ${TITLE[planet]} spends ${pace} in a sign; the article must land that pace somewhere, usually in LIVED.`,
+    buildOwnerVocabularyPrompt({ surface: "planet-article", maxCore: 14, maxShared: 10, maxAcShared: 8, maxSdAdditions: 6 }),
     ``,
     `SOURCE MEANING (the boundary - do not add claims beyond this):`,
     meaning.tldr ? `  tldr: ${meaning.tldr}` : null,
@@ -261,6 +267,7 @@ function buildPrompt(args) {
     `  - Do not use the word "steady" AT ALL - it burned five drafts in the last sweep. Use grounded, solid, sure, calm, or unhurried. Em dash is banned; use a spaced hyphen " - ".`,
     `  - ${spec.loreBoundary}`,
     `  - No absolute dates, degrees, or ephemeris facts; the app appends the computed current-aspect line separately.`,
+    `  - CURRENT SKY IS COLLECTIVE: never use "you", "your", "yours", "yourself", "yourselves", or "part of you". Use "we", "someone", "people" when they are the real subject, or a concrete collective scene. Second person belongs to transit-to-natal copy.`,
     `  - HOOK SENTENCE 1 is a standalone recognition quote. The reader renders it separately in bold and removes it from the body. It must make sense on its own.`,
     `  - The rest of HOOK is the meaning paragraph: explain what ${TITLE[planet]} governs and how ${cap(sign)} changes its method, pace, or priorities. Translate the source layer into natural prose and behavior; never recite a keyword list.`,
     ``,
@@ -269,12 +276,26 @@ function buildPrompt(args) {
     `  - The turn ends on the line with the most bite. Nothing after it: no blessing, no "wishing you", no motivational recap, no soft summary.`,
     `  - Do not stack closing aphorisms; one truth, one catch at most.`,
     `  - The shadow is observable behavior (what someone does), never an abstract warning.`,
+    `  - FIRST-READ NATURAL ENGLISH RULE: every sentence must make literal sense on the first read. Do not make an arrangement, desire, structure, fear, plan, or feeling perform an unnatural human action. Never write "The banished want refuses to stay reasonable," "The first idea has spent its excitement," or "The arrangement stopped telling the truth." Conventional astrology language such as "Mars governs action" is allowed; decorative personification is not.`,
+    `  - OBSERVATION BEFORE POLISH: begin with recognizable pressure, behavior, or a decision. Do not substitute a slogan, dressed-up abstraction, or metaphor that has to be decoded.`,
+    `  - STACKED ENDING RULE: the turn must name the actual consequence and stop at the strongest plain sentence. Once the behavior and cost have landed, delete any following slogan, metaphor, reassurance, or second conclusion. Do not rewrite the whole article to fix one extra ending.`,
+    `  - Do not infer employment or career from a sign alone. Taurus covers money, resources, possessions, food, housing, the body, comfort, values, and self-worth; work language needs support from the planet or supplied source.`,
     `  - No "the [sign] trap" framing, no "for everyone at once" wrapper, no coverage checklist. If a sentence exists only to satisfy coverage, cut it.`,
+    `  - SCENE, NOT INVENTORY: do not line up three peer examples from work, family, relationships, or public life to prove coverage. Concrete nouns do not make an administrative list feel lived. Build pressure -> choice -> consequence. One charged sequence beats three representative scenarios.`,
+    `  - ALLOWED COLLECTIVE LANGUAGE: do not avoid or flag "people", "someone", or "we" merely because they are collective. Use them when they are the real subject; replace them only when they conceal a behavior that should be named more specifically.`,
     `  - A directive is allowed only when it is specific ("Say what happened, say what you need"), never generic ("embrace the change").`,
+    `  - The quoted directives above are explanations, not copy. Never repeat "Say what happened, say what you need" or any sentence from the rules or exemplars.`,
+    `  - Do not open TURN with "The problem starts when" or "The trouble starts when". Those batch formulas are retired. Enter the shadow through placement-specific behavior instead.`,
+    `  - Rephrase the source layer into this exact combination. No sentence from PLANET + SIGN MEANING LAYER may appear verbatim, even when it already sounds polished. Do not reuse a planet-function sentence such as "Uranus breaks stale patterns" across signs.`,
     `  - SAMENESS IS THE ENEMY. The first batch failed because every card reached for the same objects and openers. Banned outright: "coffee order", "unsent", "overfilled calendar", "group chat", hooks starting "You catch yourself" or "You find yourself", and moves built on "Send the/one message". Invent evidence and moves that could ONLY belong to this placement. Vary the hook form: a claim, a scene, a question, an overheard line - not always second-person observation.`,
     ``,
-    `IN-VOICE EXEMPLARS (match this register and shape, do not copy any phrasing):`,
-    ...shots.map((e, i) => `  [${i + 1}] ${TITLE[e.planet]} in ${cap(e.sign)}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`),
+    `OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE (positive feedback, not exact-wording approval; match movement, never wording):`,
+    ...(spec.ownerReviewedBeatCandidates || []).map((e) => `  [${e.sourceId}] ${e.slot.toUpperCase()} movement: ${e.text}\n      WHY IT WORKS: ${e.use}`),
+    ``,
+    `CURRENT SKY OWNER-APPROVED FULL-ARTICLE EXEMPLARS:`,
+    ...(shots.length
+      ? shots.map((e, i) => `  [${i + 1}] ${TITLE[e.planet]} in ${cap(e.sign)}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`)
+      : [`  None yet. Do not treat collective adaptation candidates as owner-approved voice evidence; use the rules and approved beat evidence.`]),
     ...extendedShapeExamples().map((l) => `  ${l}`),
     ``,
     `OUT OF VOICE (a weak draft - do NOT write like this: lore-led, listy, kumbaya close, generic moves):`,
@@ -367,7 +388,7 @@ async function generateArticle(args, {
       lastAttempt = { raw, article: null, lint: null };
       continue;
     }
-    const lint = lintArticle({ ...article, planet: normalized.planet });
+    const lint = lintArticle({ ...article, planet: normalized.planet, sign: normalized.sign });
     lastAttempt = { raw, article, lint };
     if (lint.score === 3 && lint.fails === 0) {
       const result = {
