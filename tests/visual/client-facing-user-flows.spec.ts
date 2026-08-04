@@ -1281,7 +1281,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByLabel("Lunar calendar")).toBeVisible();
     await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByLabel("Selected lunar day")).toContainText("Today’s Moon");
+    await expect(page.getByRole("region", { name: "Moon guidance" })).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "calendar-day");
 
     const monthTab = page.getByRole("tab", { name: "Month" });
@@ -1354,10 +1354,13 @@ test.describe("client-facing user flow case studies", () => {
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
       await eventButton.click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-      const detailParagraph = page.locator(".sky-detail-body p").first();
+      const detailParagraphs = page.locator(".app-shell.mode-detail article p");
 
-      await expect(detailParagraph, `${eventCase.title} detail includes reader-facing prose`).toBeVisible();
-      expect((await detailParagraph.innerText()).trim().length).toBeGreaterThan(20);
+      await expect(detailParagraphs.first(), `${eventCase.title} detail includes reader-facing prose`).toBeVisible();
+      expect(
+        (await detailParagraphs.allTextContents()).some((paragraph) => paragraph.trim().length > 20),
+        `${eventCase.title} includes a substantive reader-facing paragraph`
+      ).toBe(true);
     }
 
     await assertNoClientErrors();
@@ -1393,32 +1396,20 @@ test.describe("client-facing user flow case studies", () => {
     await expect(currentDayCard.locator(".lunar-weekly-day__guidance")).toBeVisible();
     await expect(weeklyView.locator(".lunar-weekly-event__body").first()).toBeVisible({ timeout: 15_000 });
     await expect(weeklyView.locator('[data-weekly-day-role="lunation"]')).toHaveCount(1);
-    const weeklyHighlight = weeklyView.locator(".lunar-weekly-hero");
-    await expect(weeklyHighlight.locator(".lunar-weekly-hero__eyebrow")).toHaveText("Weekly forecast");
-    await expect(weeklyHighlight.locator("h2")).toHaveText(/Moon in [A-Z][a-z]+ sets the emotional tone/);
-    await expect(weeklyHighlight).toHaveAttribute(
-      "data-weekly-moon-key",
-      /^authored\/calendar-weekly-moon\//
-    );
-    await expect(weeklyHighlight.locator(".lunar-weekly-hero__body p")).toHaveCount(1);
-    await expect(weeklyHighlight).not.toContainText("friendship that only works because one person keeps organizing everything");
-    await expect(weeklyHighlight).not.toContainText("The consequence still needs a plan");
-    await expect(weeklyHighlight).not.toContainText("A planet changes direction");
-    await expect(weeklyHighlight.locator("time")).toHaveCount(0);
-    await expect(weeklyHighlight.locator(".lunar-weekly-hero__meta")).toHaveCount(0);
+    await expect(weeklyView.locator(".lunar-weekly-hero")).toHaveCount(0);
     await expect(weeklyView.locator(".lunar-weekly-event.event-lunation")).toHaveCount(1);
     const integrationDays = weeklyView.locator('[data-weekly-day-role="integration"]');
     expect(await integrationDays.count()).toBeGreaterThan(0);
     const capricornDays = weeklyView.locator(".lunar-weekly-day").filter({
       has: page.getByRole("heading", { name: "Moon in Capricorn", exact: true })
     });
-    await expect(capricornDays).toHaveCount(3);
+    await expect(capricornDays).toHaveCount(2);
     const capricornMoonGuidance = capricornDays.locator('[data-guidance-source="moon"]');
     await expect(capricornMoonGuidance).toHaveCount(2);
     const capricornMoonBodies = await capricornMoonGuidance.locator("div").allTextContents();
     expect(
       new Set(capricornMoonBodies).size,
-      "Consecutive Capricorn days use distinct Moon-in-sign variants before the Full Moon phase copy"
+      "Consecutive Capricorn days use distinct Moon-in-sign variants"
     ).toBe(capricornMoonBodies.length);
     const weeklyEventBodies = await weeklyView.locator(".lunar-weekly-event__body").allTextContents();
     expect(weeklyEventBodies.some((body) => /\bToday\b/.test(body)), "Weekly events use their weekday instead of repeating Today").toBe(false);
@@ -1477,38 +1468,14 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar Week overview connects the weekly shifts without replacing calculated events", async ({ page }) => {
+  test("calendar Week keeps calculated events after the duplicate overview is removed", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-03T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=weekly&date=2026-08-03");
 
     const weeklyView = page.locator(".lunar-weekly-view");
-    const weeklyOverview = weeklyView.locator(".lunar-weekly-hero");
-    await expect(weeklyOverview).toHaveAttribute("data-weekly-source", "generated-fallback");
-    await expect(weeklyOverview.locator("h2")).not.toHaveText("Moon in Aries sets the emotional tone");
-    await expect(weeklyOverview).toHaveAttribute(
-      "data-weekly-moon-key",
-      "authored/calendar-weekly-moon/aries"
-    );
-    await expect(weeklyOverview.locator(".lunar-weekly-hero__body p")).toHaveCount(1);
-    await expect(weeklyOverview.locator(".lunar-weekly-hero__body")).not.toContainText(
-      "tired of waiting for permission that's never coming"
-    );
-    await expect(weeklyOverview.locator(".lunar-weekly-hero__body")).not.toContainText(
-      "long personal project"
-    );
-    await expect(weeklyOverview).not.toContainText("A plan may finally get an answer");
-    await expect(weeklyOverview).not.toContainText("The waning Moon carries things out");
-    await expect(weeklyOverview.locator(".lunar-weekly-hero__shifts > p")).toHaveText("Key shifts");
-    const weeklyShiftTitles = await weeklyOverview.locator(".lunar-weekly-hero__shifts li").allTextContents();
-    expect(weeklyShiftTitles).toEqual(expect.arrayContaining([
-      "Last Quarter Moon in Taurus",
-      "Venus enters Libra",
-      "Sun trine Saturn",
-      "Mercury enters Leo"
-    ]));
-    expect(new Set(weeklyShiftTitles).size).toBe(weeklyShiftTitles.length);
+    await expect(weeklyView.locator(".lunar-weekly-hero")).toHaveCount(0);
     const weeklyEvents = weeklyView.locator(".lunar-weekly-event");
     const lastQuarterTaurus = weeklyEvents.filter({
       has: page.getByRole("heading", { name: "Last Quarter Moon in Taurus" })
@@ -1527,7 +1494,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator("#lunar-weekly-2026-08-06 .lunar-weekly-day__facts span").first()).toHaveText("Waning Crescent");
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await expect(weeklyOverview).toBeVisible();
+    await expect(weeklyView).toBeVisible();
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth),
       "Weekly overview must not introduce mobile horizontal overflow."
@@ -1571,7 +1538,7 @@ test.describe("client-facing user flow case studies", () => {
 
     for (const dateKey of expectedByDate.keys()) {
       await expectClientRouteLoads(page, `/#calendar?view=daily&date=${dateKey}`);
-      const dayGuidance = page.locator('.lunar-selected-card__body-section[aria-labelledby="lunar-selected-moon-heading"]');
+      const dayGuidance = page.getByRole("region", { name: "Moon guidance" });
       await expect(dayGuidance).toHaveCount(1);
       await expect(dayGuidance).toHaveAttribute("data-guidance-key", expectedByDate.get(dateKey)?.contentKey ?? "");
       await expect(dayGuidance.locator("p")).toHaveText(expectedByDate.get(dateKey)?.body ?? "");
