@@ -1,0 +1,41 @@
+{
+  "astrology": {
+    "passed": true,
+    "planetNamed": true,
+    "signNamed": true,
+    "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+  },
+  "engineSlots": {
+    "passed": true,
+    "entryDateInOpening": true,
+    "exitDateInClose": true
+  },
+  "pronouns": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "cycleFactsInProse": {
+    "passed": true,
+    "prohibitedMatch": null,
+    "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+  },
+  "surfaceLint": {
+    "score": 2,
+    "fails": 0,
+    "warns": 1,
+    "findings": [
+      {
+        "severity": "warn",
+        "source": "sky-placement",
+        "term": "\\breveals?\\b",
+        "match": "reveal",
+        "reason": "old-surface watch word; prefer shows, exposes"
+      }
+    ],
+    "notes": [
+      "lived is 5 sentences; spec says 2-4",
+      "turn is 8 sentences; spec says 2-5 with one close"
+    ]
+  },
+  "overallPassed": true
+}

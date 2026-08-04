@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0c9cc8f6ec59b5b2006a7253d1872881a1b73b5fad8d5945ba",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 7982,
+    "input_tokens_details": {
+      "cache_write_tokens": 7979,
+      "cached_tokens": 0
+    },
+    "output_tokens": 9467,
+    "output_tokens_details": {
+      "reasoning_tokens": 9068
+    },
+    "total_tokens": 17449
+  },
+  "outputText": "{\"opening\":\"Chiron returns to Aries on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, bringing the pressure back to wanting, beginning, and taking up space. A hand rises, then drops. A clear preference becomes \\\"either is fine.\\\" In another moment, the freeze is covered by an answer sharper than the question.\",\"tension\":\"Chiron in Aries exposes the tender spot around wanting, beginning, and existing without apology. Acting before confidence arrives can interrupt the old response that made silence feel safer. But when every hesitation feels shameful, movement becomes a test of worth. We force an answer, treat a pause as rejection, or push past a limit just to prove nobody can stop us. What began as courage leaves no space for uncertainty, and the original fear still decides the pace.\",\"development\":\"Chiron last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and this return puts the same pressure back into ordinary moments. Someone volunteers to go first, then spends the rest of the day replaying how it looked. At a family table, a sibling stops laughing along with the old joke about being too much. Elsewhere, a simple no holds through the silence that follows. The wound around identity remains. What changes is how we carry it. A want is spoken without becoming a demand. A refusal stands without turning into a fight.\",\"close\":\"Before {{exitDate}}, swallowing a want to avoid discomfort leaves the decision to someone else, while delivering it as a threat makes others defend themselves instead of hearing what was wanted.\",\"try_this\":[\"We can go first in one low-stakes moment where we usually wait for a cue.\",\"We can ask for one wrong order to be corrected in a calm sentence.\",\"We can repeat one clear no in the same tone when someone pushes again.\"]}"
+}

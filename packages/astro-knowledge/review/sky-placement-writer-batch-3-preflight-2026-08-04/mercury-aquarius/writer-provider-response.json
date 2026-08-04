@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_014e3da820df3d7a006a72456e088481a2a49df5cce113e8c4",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8166,
+    "input_tokens_details": {
+      "cache_write_tokens": 8163,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5034,
+    "output_tokens_details": {
+      "reasoning_tokens": 4660
+    },
+    "total_tokens": 13200
+  },
+  "outputText": "{\"opening\":\"Mercury in Aquarius makes the odd idea sound more useful than the familiar answer. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Aquarius on {{entryDate}}, and our attention shifts toward patterns, future possibilities, and unusual solutions. A question opens a new route through a stuck conversation. Notes that seemed unrelated form a clear pattern. A strange suggestion becomes the first answer that fits.\",\"tension\":\"The speed of that insight creates distance when everyone else is still catching up. We skip the explanation, point out the flaw, and move straight to a solution that feels obvious to us. If someone hesitates, we may argue harder or take the opposite side just to keep the thinking alive. The idea gets more interesting, but the exchange gets colder. What began as a useful break from convention ends with the person hearing it feeling treated like part of the problem.\",\"development\":\"Mercury last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now a group discussion can start chasing the most original take instead of the useful one. A writer can keep refining the theory while missing the sentence that would make it clear. We can spot the system behind a recurring problem and still lose trust by treating every objection as outdated. When every answer has to sound original, useful questions go unsaid. Decisions then rest on a clever pattern that nobody had enough time to examine.\",\"close\":\"Before {{exitDate}}, the strongest idea may still go nowhere once questioning it feels like admitting we cannot keep up.\",\"try_this\":[\"We can explain one original idea in three plain sentences and add one concrete example.\",\"We can test one unconventional solution on a small recurring problem and write down what changed.\"]}"
+}

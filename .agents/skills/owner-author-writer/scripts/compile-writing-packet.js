@@ -8,7 +8,7 @@ const { buildIndex, repoRoot } = require("./build-voice-index.js");
 const { readRegistry, resolveCandidateRelease } = require(path.join(repoRoot, "packages", "astro-knowledge", "scripts", "editorial-model-registry.js"));
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const PACKET_VERSION = "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found";
+const PACKET_VERSION = "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1";
 const RELEASE_ID = "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2";
 const promptConfig = require(path.join(packageRoot, "config", "sky-placement-writer-prompt-v5.json"));
 const compiledWriterPolicy = require(path.join(packageRoot, "voice", "tldr-astro", "writer-policy.generated.json"));
@@ -31,7 +31,12 @@ const UNSUPPORTED_DOMAIN_PATTERNS = {
   spending: /\b(?:spend|spends|spending|spent|purchase|purchases|buy|buying|bought)\b/iu,
   technology: /\b(?:technology|technologies|digital|internet|platform|platforms|algorithm|algorithms|social networks?|search engines?|artificial intelligence|\bAI\b)\b/iu,
   politics: /\b(?:politics|political|government|governments|president|presidents|leader|leaders|policy|policies)\b/iu,
+  political: /\b(?:politics|political|government|governments|president|presidents|leader|leaders|policy|policies)\b/iu,
   war: /\b(?:war|wars|warfare|bomb|bombs|bombed|bombing|military|invasion|invasions|bunker|bunkers|defense)\b/iu,
+  health: /\b(?:health|medical|medicine|diagnosis|diagnoses|disease|illness|treatment|symptom|symptoms)\b/iu,
+  medical: /\b(?:health|medical|medicine|diagnosis|diagnoses|disease|illness|treatment|symptom|symptoms)\b/iu,
+  romance: /\b(?:romance|romantic|dating|date|dates|lover|lovers)\b/iu,
+  prediction: /\b(?:predict|predicts|predicted|prediction|predictions|will happen|is going to happen)\b/iu,
   travel: /\b(?:travel|travels|traveling|travelling|trip|trips|journey|journeys|abroad)\b/iu,
   "higher education": /\b(?:higher education|college|colleges|university|universities|degree|degrees|academic|academia)\b/iu,
   law: /\b(?:law|laws|legal|court|courts|lawsuit|lawsuits)\b/iu,
@@ -53,7 +58,29 @@ const SUPPORTED_DOMAIN_PATTERNS = {
   compromise: /\b(?:compromise|compromises|compromised|compromising)\b/iu,
   negotiation: /\b(?:negotiate|negotiates|negotiated|negotiating|negotiation|negotiations)\b/iu,
   "artistic judgment": /\b(?:art|artist|artists|artistic|creative|creativity|design|taste)\b/iu,
-  beauty: /\b(?:beauty|beautiful|attractive|attraction|aesthetic|aesthetics)\b/iu
+  beauty: /\b(?:beauty|beautiful|attractive|attraction|aesthetic|aesthetics)\b/iu,
+  ideals: /\b(?:ideal|ideals|idealism|idealistic|principle|principles)\b/iu,
+  imagination: /\b(?:imagination|imagine|imagines|imagined|imagining|dream|dreams|vision|visions|visionary)\b/iu,
+  inspiration: /\b(?:inspiration|inspire|inspires|inspired|inspiring)\b/iu,
+  belief: /\b(?:belief|beliefs|believe|believes|believed|believing|faith)\b/iu,
+  courage: /\b(?:courage|courageous|brave|bravery|bold|boldly)\b/iu,
+  "new beginnings": /\b(?:new beginning|new beginnings|begin|begins|beginning|beginnings|start|starts|starting|initiate|initiative)\b/iu,
+  "uncertainty around action": /\b(?:uncertain|uncertainty|hesitate|hesitation|action|act|acting|decision|decide)\b/iu,
+  power: /\b(?:power|powers|powerful|control|controls|authority|influence)\b/iu,
+  systems: /\b(?:system|systems|structure|structures|institution|institutions|organize|organization)\b/iu,
+  "groups and networks": /\b(?:group|groups|network|networks|community|communities|collective|collectives)\b/iu,
+  "technology's effect on both": /\b(?:technology|technologies|digital|internet|platform|platforms|algorithm|algorithms|network|networks)\b/iu,
+  "generational change": /\b(?:generation|generational|era|change|changes|changing|transform|transformation)\b/iu,
+  identity: /\b(?:identity|self|sense of self|who .* (?:is|are))\b/iu,
+  assertion: /\b(?:assert|asserts|assertion|assertive|speak up|stand up|say no)\b/iu,
+  "self-worth": /\b(?:self-worth|self worth|worth|worthy|deserve|deserving)\b/iu,
+  "taking up space": /\b(?:take up space|taking up space|room|presence|visible|visibility)\b/iu,
+  "healing and repair (wound language is literal here and licensed)": /\b(?:heal|heals|healing|repair|repairs|wound|wounds|hurt|tender)\b/iu,
+  "growth direction and release": /\b(?:growth|develop|development|direction|release|letting go|move toward|moves toward)\b/iu,
+  "personal spotlight versus community": /\b(?:spotlight|center stage|community|collective|group|groups|shared)\b/iu,
+  "attention and applause": /\b(?:attention|applause|approval|recognition|seen|visibility)\b/iu,
+  "shared projects": /\b(?:shared project|shared projects|project|projects|build together|work together)\b/iu,
+  collaboration: /\b(?:collaborate|collaborates|collaborated|collaborating|collaboration|collaborations|collaborator|collaborators)\b/iu
 };
 const OUTPUT_BAN_META = /[\\^$.*+?()[\]{}|]/u;
 const NON_QUOTABLE_FACT_KEYS = new Set([
@@ -299,7 +326,14 @@ const ownerEvidenceExclusions = (compiledVocabularyPolicy.exclusions || [])
 const ownerEvidenceExclusionPattern = ownerEvidenceExclusions.length
   ? new RegExp(`\\b(?:${ownerEvidenceExclusions.join("|")})\\b`, "iu")
   : null;
-const incompatibleCurrentSkyEvidencePattern = /\b(?:shadow work|healing|rewrite the script|reflect on patterns|usefulness addiction|weaponiz(?:e|es|ed|ing)|battlefields?|wounds?|archetypes?|warrior|peacemaker|freedom fighter|scent-memory|fiery voyage|liminal|tide|fog|elemental tension|cardinal waters|builds? walls?|break through those walls|what was carried|bombs?|radical act|world hell-bent)\b/iu;
+const incompatibleCurrentSkyEvidencePattern = /\b(?:shadow work|rewrite the script|reflect on patterns|usefulness addiction|weaponiz(?:e|es|ed|ing)|battlefields?|archetypes?|warrior|peacemaker|freedom fighter|scent-memory|fiery voyage|liminal|tide|fog|elemental tension|cardinal waters|builds? walls?|break through those walls|what was carried|bombs?|radical act|world hell-bent)\b/iu;
+const chironLicensedWoundEvidencePattern = /\b(?:heal|heals|healed|healing|wound|wounds|wounded)\b/iu;
+
+function passageUsesIncompatibleCurrentSkyEvidence(entry, target) {
+  const text = String(entry?.text || "");
+  if (incompatibleCurrentSkyEvidencePattern.test(text)) return true;
+  return target?.planet !== "chiron" && chironLicensedWoundEvidencePattern.test(text);
+}
 
 function structureFor(entry) {
   if (entry.articleBeat === "hook") return "opening";
@@ -344,7 +378,7 @@ function passagePassesCurrentSkySurface(entry, target) {
   });
   if (lint.findings.some((finding) => finding.severity === "fail" || finding.severity === "warn")) return false;
   if (/\b(?:campaigns?|organizers?|organizing|polic(?:y|ies|y reform)|federal aid|government structures?|public complaints?|social movements?|collective healing|community care|systemic harm|land back|domestic issues|headlines?)\b/iu.test(entry.text)) return false;
-  if (incompatibleCurrentSkyEvidencePattern.test(entry.text)) return false;
+  if (passageUsesIncompatibleCurrentSkyEvidence(entry, target)) return false;
   return true;
 }
 
@@ -563,6 +597,9 @@ function selectOwnerCorpusWarmthEvidence({ planet, sign, voiceIndex }) {
     if (indexed.authorityClass !== "owner_authored_final" || indexed.ownerAuthored !== true || indexed.ownerApproved !== true) {
       throw new Error(`Warmth foundation ${record.id} source ${source.sourceId} is not eligible owner-authored final evidence.`);
     }
+    if (passageUsesIncompatibleCurrentSkyEvidence({ text: source.sourceExcerpt }, { planet, sign })) {
+      throw new Error(`Warmth foundation ${record.id} source ${source.sourceId} is incompatible with the Current Sky target.`);
+    }
   }
   return {
     ...record,
@@ -575,7 +612,104 @@ function selectOwnerCorpusWarmthEvidence({ planet, sign, voiceIndex }) {
   };
 }
 
+function nodeAxisDescriptor(planet, sign) {
+  if (planet !== "nodes") return null;
+  const [northSign, southSign, extra] = String(sign || "").split("-");
+  if (!northSign || !southSign || extra) {
+    throw new Error("Combined Nodes packet mode requires --planet nodes --sign <north-sign>-<south-sign>.");
+  }
+  const northPath = path.join(packageRoot, "data", "placements", "sign", `north-node-${northSign}.json`);
+  const southPath = path.join(packageRoot, "data", "placements", "sign", `south-node-${southSign}.json`);
+  if (!fs.existsSync(northPath) || !fs.existsSync(southPath)) {
+    throw new Error(`Missing combined Nodes placement facts for ${northSign}/${southSign}.`);
+  }
+  const north = JSON.parse(fs.readFileSync(northPath, "utf8"));
+  const south = JSON.parse(fs.readFileSync(southPath, "utf8"));
+  const axisId = `nodes-${northSign}-${southSign}`;
+  const reciprocal = north.axisPair?.axisId === axisId
+    && south.axisPair?.axisId === axisId
+    && north.axisPair?.role === "growth-direction"
+    && south.axisPair?.role === "release"
+    && north.axisPair?.pairedPlacementId === south.id
+    && south.axisPair?.pairedPlacementId === north.id
+    && north.axisPair?.pairedPlanet === "south-node"
+    && south.axisPair?.pairedPlanet === "north-node"
+    && north.axisPair?.pairedSign === southSign
+    && south.axisPair?.pairedSign === northSign;
+  if (!reciprocal) throw new Error(`Combined Nodes placement pair ${axisId} lacks an explicit reciprocal pair link.`);
+  if (north.runtimeEligible !== false || south.runtimeEligible !== false) {
+    throw new Error(`Combined Nodes placement pair ${axisId} must remain runtimeEligible false.`);
+  }
+  for (const field of ["supportedDomains", "unsupportedDomainWarnings", "scenarioPolicy"]) {
+    if (JSON.stringify(north[field]) !== JSON.stringify(south[field])) {
+      throw new Error(`Combined Nodes placement pair ${axisId} has mismatched ${field}.`);
+    }
+  }
+  return { axisId, northSign, southSign, northPath, southPath, north, south };
+}
+
 function astrologyEvidence(planet, sign, surface) {
+  const axis = nodeAxisDescriptor(planet, sign);
+  if (axis) {
+    const planetaryPath = path.join(packageRoot, "data", "planetary", "lunar-nodes.json");
+    const planetary = JSON.parse(fs.readFileSync(planetaryPath, "utf8"));
+    const northExpression = planetary.signs?.find((entry) => entry.sign === `north-node-${axis.northSign}`)?.body || null;
+    const southExpression = planetary.signs?.find((entry) => entry.sign === `south-node-${axis.southSign}`)?.body || null;
+    const failures = [
+      ...(!planetary.overview ? ["node-axis function is missing"] : []),
+      ...(!northExpression ? ["North Node sign expression is missing"] : []),
+      ...(!southExpression ? ["South Node sign expression is missing"] : []),
+      ...(!axis.north.body || !axis.south.body ? ["combined node-axis placement meaning is missing"] : []),
+      ...(!planetary.cycle ? ["node-axis timing is missing"] : [])
+    ];
+    return {
+      axisMode: "combined-node-axis",
+      axisPair: {
+        axisId: axis.axisId,
+        pairLink: `${axis.north.id}<->${axis.south.id}`,
+        reciprocal: true,
+        northNode: { placementId: axis.north.id, sign: axis.northSign, role: "growth-direction" },
+        southNode: { placementId: axis.south.id, sign: axis.southSign, role: "release" }
+      },
+      planetFunction: planetary.overview || null,
+      signExpression: [northExpression, southExpression].filter(Boolean).join(" "),
+      combinedMeaning: [axis.north.body, axis.south.body].filter(Boolean).join(" "),
+      collectiveGift: [axis.north.tldr, axis.south.tldr].filter(Boolean).join(" "),
+      observableShadowBehaviors: [axis.north.challenge, axis.south.challenge].filter(Boolean),
+      timing: planetary.cycle || surface.pace.labels["north-node"] || null,
+      supportedDomains: axis.north.supportedDomains || [],
+      unsupportedDomainWarnings: axis.north.unsupportedDomainWarnings || [],
+      sourceRegisterBoundary: "The source passages below may use natal or second-person register. Extract their astrology only. Never reproduce their person, address the reader, or treat natal wording as Current Sky voice evidence.",
+      scenarioPolicy: [
+        "The writer may create related lived moments only inside the supported domains. The transit remains the subject, and no single invented scenario may carry the whole card. The moments may be invented; the astrology may not.",
+        axis.north.scenarioPolicy
+      ].filter(Boolean).join(" "),
+      sourcePassages: [
+        {
+          sourcePath: path.relative(repoRoot, axis.northPath).replaceAll(path.sep, "/"),
+          status: axis.north.status,
+          register: "source_meaning_only_may_be_natal",
+          personBoundary: "Do not reproduce second-person or natal address from this source.",
+          text: axis.north.body
+        },
+        {
+          sourcePath: path.relative(repoRoot, axis.southPath).replaceAll(path.sep, "/"),
+          status: axis.south.status,
+          register: "source_meaning_only_may_be_natal",
+          personBoundary: "Do not reproduce second-person or natal address from this source.",
+          text: axis.south.body
+        },
+        {
+          sourcePath: path.relative(repoRoot, planetaryPath).replaceAll(path.sep, "/"),
+          status: planetary.status,
+          register: "source_meaning_only_may_be_natal",
+          personBoundary: "Do not reproduce second-person or natal address from this source.",
+          text: [planetary.overview, planetary.cycle, northExpression, southExpression].filter(Boolean).join(" ")
+        }
+      ],
+      validation: { complete: failures.length === 0, failures }
+    };
+  }
   const placementPath = path.join(packageRoot, "data", "placements", "sign", `${planet}-${sign}.json`);
   const planetaryId = planet === "north-node" || planet === "south-node" ? "lunar-nodes" : planet;
   const planetarySign = planetaryId === "lunar-nodes" ? `${planet}-${sign}` : sign;
@@ -631,10 +765,16 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
   const resolvedBeat = requestedBeat || beat;
   if (!planet || !sign || !resolvedBeat || !task) throw new Error("planet, sign, requestedBeat, and task are required.");
   const release = resolveCandidateRelease({ role: "writer", surface: "sky-placement", releaseId: RELEASE_ID, registry });
-  const factPath = path.join(packageRoot, "data", "placements", "sign", `${planet}-${sign}.json`);
-  if (!fs.existsSync(factPath)) throw new Error(`Missing placement fact boundary: ${planet}-${sign}.json`);
-  const facts = JSON.parse(fs.readFileSync(factPath, "utf8"));
-  if (!["REVIEWED", "LIVE", "APPROVED"].includes(facts.status)) throw new Error(`Placement facts are not verified: ${facts.status || "missing status"}.`);
+  const axis = nodeAxisDescriptor(planet, sign);
+  const factRows = axis ? [axis.north, axis.south] : (() => {
+    const factPath = path.join(packageRoot, "data", "placements", "sign", `${planet}-${sign}.json`);
+    if (!fs.existsSync(factPath)) throw new Error(`Missing placement fact boundary: ${planet}-${sign}.json`);
+    return [JSON.parse(fs.readFileSync(factPath, "utf8"))];
+  })();
+  const unverified = factRows.find((facts) => !["REVIEWED", "LIVE", "APPROVED"].includes(facts.status));
+  if (unverified) throw new Error(`Placement facts are not verified: ${unverified.status || "missing status"}.`);
+  const selectionPlanet = axis ? "north-node" : planet;
+  const selectionSign = axis ? axis.northSign : sign;
   const surface = JSON.parse(fs.readFileSync(path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json"), "utf8"));
   const selectionBeat = resolvedBeat === "full_article" ? (emphasisBeat || "turn") : resolvedBeat;
   const verifiedAstrology = astrologyEvidence(planet, sign, surface);
@@ -649,13 +789,13 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
   });
   const selectedOwnerPassages = currentSky && resolvedBeat === "full_article"
     ? selectAffinitySix({
-      planet,
-      sign,
+      planet: selectionPlanet,
+      sign: selectionSign,
       beat: selectionBeat,
       supportedDomains: verifiedAstrology.supportedDomains,
       unsupportedDomainWarnings: verifiedAstrology.unsupportedDomainWarnings
     }, voiceIndex)
-    : selectSix(eligibleEntries(voiceIndex, { planet, sign }), { planet, sign, beat: selectionBeat });
+    : selectSix(eligibleEntries(voiceIndex, { planet: selectionPlanet, sign: selectionSign }), { planet: selectionPlanet, sign: selectionSign, beat: selectionBeat });
   const ownerPassages = selectedOwnerPassages.map((entry) => ({
     sourceId: entry.sourceId,
     sourceArticleId: entry.sourceRecordId ? sourceArticleIdFor(entry.sourceRecordId) : entry.sourceId,
@@ -672,18 +812,18 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
     entry.authorityClass === "owner_authored_final"
     && entry.ownerAuthored === true
     && entry.ownerApproved === true
-    && (entry.sign === sign || entry.planet === planet)
+    && (entry.sign === selectionSign || entry.planet === selectionPlanet)
   );
   const preferredVocabulary = selectOwnerVocabulary({
     surface: "planet-article",
-    planet,
-    sign,
+    planet: selectionPlanet,
+    sign: selectionSign,
     verifiedAstrology,
     ownerPassages,
     affinityEntries,
     currentSky
   });
-  const structuralSlots = buildFactGatedStructure({ planet, surface, engineFacts });
+  const structuralSlots = buildFactGatedStructure({ planet: selectionPlanet, surface, engineFacts });
   assertPacketQuotablesPassOutputBans({ verifiedAstrology, structuralSlots, surface });
   const eligibleFormatExemplarIds = new Set(surface.formatExemplarPolicy?.eligible || []);
   const formatExemplars = formatExemplarDataset.cards
@@ -725,7 +865,10 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
       benchmarkText: entry.benchmarkText,
       benchmarkRules: entry.benchmarkRules
     }));
-  const writerPrompt = currentSky ? `${promptConfig.basePrompt}\n\n${promptConfig.currentSkyAppendix}` : promptConfig.basePrompt;
+  const axisAppendix = axis
+    ? `\n\nCOMBINED NODE-AXIS MODE\nWrite the North Node in ${axis.northSign} and South Node in ${axis.southSign} as one inseparable axis story. Every scene must show both the growth direction and the release. Name both Nodes and both signs in the opening. Do not split the result into two articles.`
+    : "";
+  const writerPrompt = `${currentSky ? `${promptConfig.basePrompt}\n\n${promptConfig.currentSkyAppendix}` : promptConfig.basePrompt}${axisAppendix}`;
   return {
     schemaVersion: 2,
     packetVersion: PACKET_VERSION,
@@ -747,6 +890,12 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
     surfaceRequirements: {
       contractId: surface.id,
       runtimeContractId: "sky-placement-continuous-v2",
+      axisMode: axis ? {
+        mode: "combined-node-axis",
+        axisId: axis.axisId,
+        pairLink: `${axis.north.id}<->${axis.south.id}`,
+        fallbackContentKey: `fallback-hook/sky-sign-copy/nodes/${sign}`
+      } : null,
       compiledPolicySource: compiledWriterPolicy.decisionSource,
       compiledPolicySha256: compiledWriterPolicy.decisionSourceSha256,
       universalHardConstraints: compiledWriterPolicy.firstCallConstraints.filter((entry) => !["CF-006", "ED-015"].includes(entry.id)),
@@ -783,7 +932,7 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
       requestedBeat: resolvedBeat,
       emphasisBeat,
       beatRequirement: [...surface.shape.beats, ...surface.shape.extendedSlots].find((item) => item.beat === resolvedBeat || item.slot.includes(`-${resolvedBeat}/`))?.does || "Follow the complete Sky Placement article contract.",
-      pace: surface.pace.labels[planet]
+      pace: surface.pace.labels[selectionPlanet]
     },
     voiceDevices: {
       maxPerArticle: Math.min(surface.voiceDevices?.maxPerArticle || 0, 2),
@@ -840,7 +989,7 @@ function main() {
   console.log(`Compiled four-to-six-passage affinity packet at ${args.out}. No model call was made.`);
 }
 
-module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesUnsupportedDomain, renderModelInput, selectAffinitySix, selectOwnerCorpusWarmthEvidence, selectSix, selectVoiceDevices, structureFor };
+module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesIncompatibleCurrentSkyEvidence, passageUsesUnsupportedDomain, renderModelInput, selectAffinitySix, selectOwnerCorpusWarmthEvidence, selectSix, selectVoiceDevices, structureFor };
 if (require.main === module) {
   try { main(); } catch (error) { console.error(error instanceof Error ? error.message : error); process.exitCode = 1; }
 }

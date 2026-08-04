@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "auditId": "sky-placement-writer-heldout-fixture-audit-v1",
-  "sourceRecordCount": 17,
+  "sourceRecordCount": 29,
   "targetFixtureCount": 20,
   "validFixtureCount": 6,
   "exactShortfall": 14,
@@ -197,6 +197,150 @@
     },
     {
       "id": "timing-event-v2-jupiter-leo-ingress-owner-approved",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-jupiter-libra-owner-merged-candidate-v1",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-pilot-mars-libra-owner-line-edit-v1",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-pilot-uranus-gemini-owner-line-edit-v1",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1-exact-approval",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-pilot-mars-libra-owner-line-edit-v1-exact-approval",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-pilot-uranus-gemini-owner-line-edit-v1-exact-approval",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04-exact-approval",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-mars-aries-owner-selected-generation-benchmark-v1",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-writer-batch-1-corpus-warmth-revisions-v4-exact-approval",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-writer-batch-2-owner-edited-approved-v1-exact-approval",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-writer-batch-4-owner-edited-approved-v1-exact-approval",
       "preservedRejectedWording": true,
       "exactOwnerWrittenReplacement": false,
       "clearOwnerProvenance": true,

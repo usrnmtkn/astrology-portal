@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "neptune",
+  "sign": "aries",
+  "timeZone": "America/New_York",
+  "transitStart": "January 26, 2026",
+  "transitEnd": "May 21, 2038",
+  "transitStartIso": "2026-01-26T17:34:28.999Z",
+  "transitEndIso": "2038-05-22T00:12:26.999Z",
+  "priorSign": "pisces",
+  "priorSignEntryDate": "October 22, 2025",
+  "priorSignExitDate": "January 26, 2026",
+  "previousResidency": null,
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-neptune-sextile-pluto-2026-07-25t05:26:37.999z",
+      "body": "neptune-sextile-pluto",
+      "bodies": [
+        "neptune",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "July 25, 2026",
+      "dateIso": "2026-07-25T05:26:37.999Z",
+      "rank": 1,
+      "meaning": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. The sextile makes this a natural strength: Heightened collective vision. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json"
+    },
+    {
+      "id": "aspect-uranus-sextile-neptune-2026-07-15t20:35:48.999z",
+      "body": "neptune-sextile-uranus",
+      "bodies": [
+        "uranus",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "July 15, 2026",
+      "dateIso": "2026-07-15T20:35:48.999Z",
+      "rank": 14,
+      "meaning": "Disruption meets imagination. A generational signature: radical ideals and visionary change. The sextile makes this a natural strength: Visionary ideals expressed in livable ways. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/uranus-sextile-neptune.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json",
+      "packages/astro-knowledge/data/transits/uranus-sextile-neptune.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "nodes",
+  "sign": "aquarius-leo",
+  "axisPair": {
+    "axisId": "nodes-aquarius-leo",
+    "pairLink": "north-node-aquarius<->south-node-leo",
+    "reciprocal": true,
+    "northNode": {
+      "planet": "north-node",
+      "sign": "aquarius"
+    },
+    "southNode": {
+      "planet": "south-node",
+      "sign": "leo"
+    }
+  },
+  "timeZone": "America/New_York",
+  "transitStart": "July 26, 2026",
+  "transitEnd": "March 26, 2028",
+  "transitStartIso": "2026-07-27T00:47:41.999Z",
+  "transitEndIso": "2028-03-26T16:03:26.999Z",
+  "priorSign": "pisces-virgo",
+  "priorSignEntryDate": "January 11, 2025",
+  "priorSignExitDate": "July 26, 2026",
+  "previousResidency": {
+    "sign": "aquarius-leo",
+    "entryDate": "December 18, 2007",
+    "exitDate": "August 21, 2009",
+    "entryDateIso": "2007-12-18T06:06:57.999Z",
+    "exitDateIso": "2009-08-21T17:49:45.999Z"
+  },
+  "eventsDuringTransit": [],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": []
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}
