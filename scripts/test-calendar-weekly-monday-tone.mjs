@@ -17,6 +17,10 @@ const calendarSource = fs.readFileSync(path.join(
   repoRoot,
   "apps/web/src/features/calendar/LunarCalendar.tsx"
 ), "utf8");
+const phaseLabelSource = fs.readFileSync(path.join(
+  repoRoot,
+  "apps/web/src/features/calendar/calendarPhaseLabel.ts"
+), "utf8");
 const ephemerisSource = fs.readFileSync(path.join(
   repoRoot,
   "apps/web/src/services/ephemeris.ts"
@@ -95,7 +99,7 @@ assert.match(
 assert.match(
   calendarSource,
   /const weeklySupportingShifts = weeklyMainShifts;/u,
-  "Key shifts must include every qualifying weekly movement."
+  "Key shifts must use the ranked, governed weekly selection."
 );
 assert.doesNotMatch(
   calendarSource,
@@ -124,11 +128,11 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /className="lunar-calendar-event-pill__label">Void<\/span>/u,
-  "Month cells must show an understandable Void label instead of clipped time fragments."
+  /className="lunar-calendar-event-pill__label">VoC \{voidLabel\}<\/span>/u,
+  "Month cells must show the operative Void-of-Course time instead of an unexplained label."
 );
 assert.match(
-  calendarSource,
+  phaseLabelSource,
   /if \(day\.illumination >= 50\)[\s\S]*?Waning Gibbous[\s\S]*?Waning Crescent/u,
   "Daily phase labels must distinguish broad waning phases from the exact quarter event."
 );
@@ -136,6 +140,40 @@ assert.match(
   calendarSource,
   /data-weekly-moon-key=\{weeklyMondayMoonTone\?\.contentKey\}/u,
   "The weekly hero must expose the exact owner source key for QA."
+);
+assert.match(
+  calendarSource,
+  /function calendarEventEditorialContent\(/u,
+  "Day, Week, Weekly, and Month event copy must resolve through one canonical editorial-content adapter."
+);
+assert.ok(
+  (calendarSource.match(/calendarEventEditorialContent\(/gu) ?? []).length >= 5,
+  "Every Calendar view must reuse the canonical event editorial-content adapter."
+);
+assert.match(
+  calendarSource,
+  /data-content-key=\{editorial\.contentKey\}/u,
+  "Rendered event cards must expose their canonical content key for cross-view QA."
+);
+assert.match(
+  calendarSource,
+  /function calendarCanonicalEventDateLine\([\s\S]*?weekday: "long",[\s\S]*?month: "long",[\s\S]*?day: "numeric"/u,
+  "Every view must assemble event copy with the same absolute local date line."
+);
+assert.match(
+  calendarSource,
+  /generated\/calendar-event\/\$\{event\.type\}\/\$\{event\.id\}/u,
+  "Generated event content keys must be event-specific rather than shared by an entire event type."
+);
+assert.match(
+  calendarSource,
+  /calendarAdjacentCopyIsDistinct\(candidate\.body, previousGuidanceBody\)/u,
+  "Adjacent daily Moon guidance must reject substantially repeated copy."
+);
+assert.match(
+  calendarSource,
+  /const selectedPackageWeeklyMoon = selectedWeekWriteup[\s\S]*?\? selectedWeekWriteup\.guidance[\s\S]*?: selectedDay/u,
+  "Day and Month must honor the same daily Moon source gap resolved by Weekly."
 );
 assert.match(
   resolverSource,
@@ -155,6 +193,12 @@ assert.equal(ownerReviewCandidate.serving, false);
 assert.equal(ownerReviewCandidate.weekStart, "2026-08-03");
 assert.equal(ownerReviewCandidate.weekEnd, "2026-08-09");
 assert.equal(ownerReviewCandidate.headline, "The decision may be easier than maintaining it");
+assert.equal(ownerReviewCandidate.keyShifts[0], "Last Quarter Moon in Taurus");
 assert.equal(ownerReviewCandidate.keyShifts.at(-1), "Mercury enters Leo");
+assert.doesNotMatch(
+  ownerReviewCandidate.body,
+  /Chiron/u,
+  "The owner-review candidate must not pull the preceding Sunday station into the Monday-Sunday week."
+);
 
 console.log("Calendar weekly synthesis contract passed (Monday-Sunday chronology, phase precision, owner candidate held for review). ");
