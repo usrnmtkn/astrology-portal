@@ -1637,13 +1637,14 @@ test.describe("client-facing user flow case studies", () => {
 
   test("Calendar Day and Month reuse the approved Sky aspect write-up", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
+    const sharedAspectContentKey = "sky.aspect.venus.square.mars.virgo.gemini";
     const sharedAspectBody = "One approved Sky write-up appears unchanged in Calendar Day and Month.";
 
     await seedClientState(page, {
       now: "2026-07-30T12:00:00.000Z",
       generatedInterpretations: [{
         id: "calendar-sky-aspect-row",
-        content_key: "sky.aspect.venus.square.mars.virgo.gemini",
+        content_key: sharedAspectContentKey,
         surface: "sky",
         mode: "article",
         status: "LIVE",
@@ -1684,6 +1685,9 @@ test.describe("client-facing user flow case studies", () => {
       name: /Full Moon\. Moon in Aquarius\. Venus square Mars/
     });
     await aspectDay.click();
+    await expect(
+      selectedDay.locator(`.lunar-selected-card__daily-event[data-content-key="${sharedAspectContentKey}"]`)
+    ).toBeVisible({ timeout: 15_000 });
     await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
 
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
