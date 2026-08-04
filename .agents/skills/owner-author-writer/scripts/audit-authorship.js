@@ -140,7 +140,11 @@ const semanticQuestions = [
   "Could it move to another placement with minimal changes?",
   "Does it continue the article's sequence?",
   "Is the cost named specifically?",
-  "Is the sentence needed, or is it filling paragraph length?"
+  "Is the sentence needed, or is it filling paragraph length?",
+  "Does it avoid the generic sentence opener 'People ...'?",
+  "Does a communication scene default to ordinary message or response language when its delivery method is irrelevant?",
+  "If the copy names an email, screenshot, notice, or physical letter, does the scene specifically depend on that medium?",
+  "Is harm the exact needed word, or can the sentence name the damage, cost, pressure, loss, or event?"
 ];
 
 const articleQuestions = [
@@ -152,6 +156,7 @@ const articleQuestions = [
   "The ending does not stack another metaphor, slogan, or conclusion.",
   "Moves carry pressure, choice, or consequence instead of administration.",
   "Current Sky contains no second person.",
+  "Current Sky contains no generic 'People ...' sentence opener.",
   "The article did not become more polished at the expense of natural English."
 ];
 

@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "reportId": "sky-placement-writer-jupiter-libra-full-article-evidence-shortfall-v1",
+  "status": "rejected_evidence_shortfall",
+  "modelReady": false,
+  "modelCallAuthorized": false,
+  "requestedTask": {
+    "exactInstruction": "Write one complete Current Sky Sky Placement article for Jupiter in Libra, with particular attention to the turn.",
+    "requestedBeat": "full_article",
+    "emphasisBeat": "turn",
+    "requiredSlots": [
+      "tagline",
+      "hook",
+      "lived",
+      "turn",
+      "moves"
+    ]
+  },
+  "correctedRetrievalQuery": {
+    "exactPassageCount": 6,
+    "composition": [
+      "two complete or near-complete owner-authored Current Sky articles demonstrating full article movement",
+      "one owner-authored passage showing jupiter's function in lived language",
+      "one owner-authored passage showing libra's pattern in lived language",
+      "two owner-authored turn passages moving from gift to observable shadow behavior and a specific cost"
+    ],
+    "minimumSameOrEquivalentSurfacePassages": 4,
+    "minimumSourceArticles": 3,
+    "maximumPassagesPerArticle": 2,
+    "requirePlanetMatch": true,
+    "requireSignMatch": true,
+    "minimumEmphasisBeatMatches": 2,
+    "requireCompleteArticleStructure": true,
+    "prohibitedEvidence": [
+      "unrelated filler passages",
+      "lyrical seasonal passages for a direct compact target",
+      "calibration-only evidence",
+      "AI candidates",
+      "assistant rewrites",
+      "judge copy"
+    ]
+  },
+  "availability": {
+    "eligibleCompleteOrNearCompleteCurrentSkyArticles": 0,
+    "requiredCompleteOrNearCompleteCurrentSkyArticles": 2,
+    "exactStructuralShortfall": 2,
+    "ineligibleStructuredSources": [
+      {
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-placement-historical-second-person.json",
+        "reason": "historical second-person; generationEvidence is false"
+      },
+      {
+        "sourcePath": "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v3.json",
+        "reason": "owner approval is judge-calibration-only; generation evidence is forbidden"
+      },
+      {
+        "sourcePattern": "packages/astro-knowledge/review/sky-placement-*-candidates.json",
+        "reason": "AI or assistant-generated candidates are not positive voice evidence"
+      }
+    ]
+  },
+  "rejectedPacketPassageAudit": [
+    {
+      "sourceId": "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p010",
+      "eligibleForCorrectedPacket": false,
+      "failures": [
+        "adjacent relationship-year surface, not compact Current Sky",
+        "isolated turn only",
+        "no Jupiter focus",
+        "second-person register"
+      ]
+    },
+    {
+      "sourceId": "owner-article:new-moon-solar-eclipse-in-virgo:p017",
+      "eligibleForCorrectedPacket": false,
+      "failures": [
+        "lunation surface, not compact Current Sky",
+        "Virgo/perfectionism/rest theme is unrelated to Jupiter in Libra",
+        "isolated turn only",
+        "second-person register"
+      ]
+    },
+    {
+      "sourceId": "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p001",
+      "eligibleForCorrectedPacket": false,
+      "failures": [
+        "adjacent relationship-year surface, not compact Current Sky",
+        "isolated hook only",
+        "no Jupiter focus",
+        "second-person register"
+      ]
+    },
+    {
+      "sourceId": "owner-article:virgo-season-2025:p025",
+      "eligibleForCorrectedPacket": false,
+      "failures": [
+        "seasonal surface, not compact Current Sky",
+        "Virgo/productivity/routine/control theme is unrelated to Jupiter in Libra",
+        "isolated turn only",
+        "second-person register"
+      ]
+    },
+    {
+      "sourceId": "owner-article:new-moon-solar-eclipse-in-virgo:p031",
+      "eligibleForCorrectedPacket": false,
+      "failures": [
+        "lyrical seasonal metaphor does not match the direct compact register",
+        "misleading as moves evidence because it is not a concrete Sky Placement moves list",
+        "no Jupiter or Libra focus",
+        "second-person register"
+      ]
+    },
+    {
+      "sourceId": "owner-article:virgo-season-2025:p024",
+      "eligibleForCorrectedPacket": false,
+      "failures": [
+        "seasonal surface, not compact Current Sky",
+        "Virgo/perfectionism/helpfulness/control theme is unrelated to Jupiter in Libra",
+        "isolated turn only",
+        "no Jupiter or Libra focus"
+      ]
+    }
+  ],
+  "replacementOwnerPassages": [],
+  "replacementPassageStatus": "not_compiled_because_hard_requirements_cannot_be_met",
+  "expandedVerifiedAstrology": {
+    "planetFunction": "Jupiter describes growth, wisdom, opportunity, belief, generosity, risk, confidence, and the instinct to expand beyond what is already known. It shows where someone seeks meaning, trusts possibility, and learns through experience.",
+    "signExpression": "If Jupiter is in Libra, you’re blessed with a keen sense of balance and diplomacy. Opportunities might abound in partnerships and social settings, and you’re likely to excel in situations that require compromise, negotiation, or artistic sense.",
+    "combinedMeaning": "Jupiter in Libra: you grow through relationship, fairness, and beauty. Luck comes via partnership and diplomacy. Watch: indecision and over-accommodating.",
+    "collectiveGift": "Jupiter in Libra: you grow through relationship, fairness, and beauty",
+    "observableShadowBehaviors": [
+      "indecision",
+      "over-accommodating"
+    ],
+    "concreteCosts": [],
+    "timing": "Jupiter takes about twelve years to move through the zodiac and spends about one year in each sign. Its sign describes the style of growth; its house shows where opportunity, perspective, and excess can become visible.",
+    "supportedDomains": [
+      "partnerships",
+      "social settings",
+      "compromise",
+      "negotiation",
+      "artistic sense"
+    ],
+    "unsupportedDomainWarnings": [
+      "No verified source supports shared projects, dinners, travel, spending, or credit as the article's main scenario."
+    ],
+    "sourcePassages": [
+      {
+        "sourcePath": "packages/astro-knowledge/data/placements/sign/jupiter-libra.json",
+        "status": "REVIEWED",
+        "text": "Jupiter in Libra: you grow through relationship, fairness, and beauty. Luck comes via partnership and diplomacy. Watch: indecision and over-accommodating."
+      },
+      {
+        "sourcePath": "packages/astro-knowledge/data/planetary/jupiter.json",
+        "status": "REVIEWED",
+        "text": "Jupiter describes growth, wisdom, opportunity, belief, generosity, risk, confidence, and the instinct to expand beyond what is already known. It shows where someone seeks meaning, trusts possibility, and learns through experience. Jupiter takes about twelve years to move through the zodiac and spends about one year in each sign. Its sign describes the style of growth; its house shows where opportunity, perspective, and excess can become visible. If Jupiter is in Libra, you’re blessed with a keen sense of balance and diplomacy. Opportunities might abound in partnerships and social settings, and you’re likely to excel in situations that require compromise, negotiation, or artistic sense."
+      }
+    ],
+    "validation": {
+      "complete": false,
+      "failures": [
+        "placement gift field is grammatically incomplete",
+        "combined meaning remains broad and keyword-led",
+        "no verified concrete costs are supplied",
+        "sources do not establish a main lived scenario"
+      ]
+    }
+  },
+  "sourceSupportsEveryPlannedLivedExample": false,
+  "plannedLivedExamples": [],
+  "blockingFailures": [
+    "no eligible complete owner-authored collective Current Sky structural exemplar exists",
+    "the required two complete or near-complete same-surface articles are unavailable",
+    "placement gift field is grammatically incomplete",
+    "combined meaning remains broad and keyword-led",
+    "no verified concrete costs are supplied",
+    "sources do not establish a main lived scenario"
+  ],
+  "disposition": "Stop before writing. Add eligible exact owner evidence and verified concrete consequences before compiling a model input."
+}

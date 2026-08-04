@@ -19,6 +19,10 @@ const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards
 const skyPlacementOutputPath = path.join(packageRoot, "bundled-sky-placement-rows-v3.json");
 const coreManifestOutputPath = path.join(packageRoot, "bundled-core-manifest-v3.json");
 const skyPlacementManifestOutputPath = path.join(packageRoot, "bundled-sky-placement-manifest-v3.json");
+const skyPlacementOwnerApprovedReaderOutputPath = path.join(
+  packageRoot,
+  "bundled-sky-placement-owner-approved-reader-v1.json"
+);
 const checkOnly = process.argv.includes("--check");
 
 function readJson(relativePath) {
@@ -114,6 +118,16 @@ function isDistributionEligible(row) {
     && release.approved_keys?.includes(row.contentKey);
 }
 
+function skyPlacementOwnerApprovedReaderRows() {
+  const source = readJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+
+  return {
+    schemaVersion: 1,
+    generatedFrom: "source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+    rows: source.rows.map(({ body_you: _legacyBody, note: _note, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row)
+  };
+}
+
 function isReaderEligible(row, allowBlank = false) {
   const status = String(row.review_status ?? "").trim().toLowerCase();
   return (
@@ -158,6 +172,7 @@ function fullReaderBundle() {
   const skyPlanetRows = readJson("source-rows/sky-planet-frames-v1.json");
   const skyPlacementRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skySignRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
+  const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templates = readJson("templates/fallback-templates-v3.json");
@@ -181,7 +196,8 @@ function fullReaderBundle() {
         ...skyAspectRows.hookRows,
         ...skyPlanetRows.rows,
         ...skyPlacementRows.rows,
-        ...skySignRows
+        ...skySignRows,
+        ...skyPlacementOwnerApprovedRows.rows
       ]),
       vocabularyRows: latestReaderEligible([
         ...sourceRows.vocabularyRows,
@@ -203,6 +219,7 @@ const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
 const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
 const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
+const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
 const skySignCopyRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
 const skyCoreRows = {
   hookRows: sourceRows.hookRows.filter((row) => isSkyCoreHook(row) && !isSkyPlacementDeferredHook(row)),
@@ -223,7 +240,8 @@ const skyPlacementRows = {
     ...sourceRows.hookRows.filter(isSkyPlacementDeferredHook),
     ...(skyPlanetFrameRows.rows ?? []),
     ...(skyPlacementVoicePassRows.rows ?? []),
-    ...skySignCopyRows
+    ...skySignCopyRows,
+    ...skyPlacementOwnerApprovedRows.rows
   ]),
   vocabularyRows: []
 };
@@ -271,6 +289,7 @@ const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
 const serializedSkyPlacement = `${JSON.stringify(skyPlacementRows, null, 2)}\n`;
 const serializedCoreManifest = `${JSON.stringify(coreManifest, null, 2)}\n`;
 const serializedSkyPlacementManifest = `${JSON.stringify(skyPlacementManifest, null, 2)}\n`;
+const serializedSkyPlacementOwnerApprovedReader = `${JSON.stringify(skyPlacementOwnerApprovedReaderRows(), null, 2)}\n`;
 
 if (checkOnly) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
@@ -281,6 +300,9 @@ if (checkOnly) {
   const existingSkyPlacement = fs.existsSync(skyPlacementOutputPath) ? fs.readFileSync(skyPlacementOutputPath, "utf8") : "";
   const existingCoreManifest = fs.existsSync(coreManifestOutputPath) ? fs.readFileSync(coreManifestOutputPath, "utf8") : "";
   const existingSkyPlacementManifest = fs.existsSync(skyPlacementManifestOutputPath) ? fs.readFileSync(skyPlacementManifestOutputPath, "utf8") : "";
+  const existingSkyPlacementOwnerApprovedReader = fs.existsSync(skyPlacementOwnerApprovedReaderOutputPath)
+    ? fs.readFileSync(skyPlacementOwnerApprovedReaderOutputPath, "utf8")
+    : "";
 
   if (
     existing !== serialized
@@ -291,6 +313,7 @@ if (checkOnly) {
     || existingSkyPlacement !== serializedSkyPlacement
     || existingCoreManifest !== serializedCoreManifest
     || existingSkyPlacementManifest !== serializedSkyPlacementManifest
+    || existingSkyPlacementOwnerApprovedReader !== serializedSkyPlacementOwnerApprovedReader
   ) {
     console.error("Bundled fallback manifest is stale. Run npm run build:fallback-manifest.");
     process.exit(1);
@@ -306,6 +329,7 @@ if (checkOnly) {
   fs.writeFileSync(skyPlacementOutputPath, serializedSkyPlacement);
   fs.writeFileSync(coreManifestOutputPath, serializedCoreManifest);
   fs.writeFileSync(skyPlacementManifestOutputPath, serializedSkyPlacementManifest);
+  fs.writeFileSync(skyPlacementOwnerApprovedReaderOutputPath, serializedSkyPlacementOwnerApprovedReader);
   console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${manifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
@@ -314,4 +338,5 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementOutputPath)} (${skyPlacementRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, coreManifestOutputPath)} (${coreManifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementManifestOutputPath)} (${skyPlacementManifest.keyCount} keys).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyPlacementOwnerApprovedReaderOutputPath)} (11 metadata-free reader rows).`);
 }

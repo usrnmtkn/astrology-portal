@@ -32,10 +32,29 @@ const lunationBlendRows = readPackageJson("source-rows/lunation-blend-units-v1.j
 const skyArticleRows = readPackageJson("source-rows/sky-article-v1.json");
 const skyAspectPhrasebook = readPackageJson("source-rows/sky-aspect-phrasebook-v1.json");
 const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+const skyPlacementOwnerApprovedFallbacks = readPackageJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+const skyPlacementOwnerApprovedReaderFallbacks = readPackageJson("bundled-sky-placement-owner-approved-reader-v1.json");
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
+
+assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 11);
+assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 11);
+assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
+assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => (
+  !Object.hasOwn(row, "note")
+  && !Object.hasOwn(row, "source_keys")
+  && !Object.hasOwn(row, "approved_via")
+  && !Object.hasOwn(row, "body_you")
+)), "Reader serving rows must exclude editorial provenance metadata.");
+assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => !/\b(?:you|your|yours|yourself|yourselves)\b/iu.test([
+  row.opening,
+  row.tension,
+  row.development,
+  row.close,
+  ...(row.try_this ?? [])
+].join("\n"))), "Legacy body_you storage must not introduce second-person Current Sky copy.");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
@@ -694,7 +713,8 @@ try {
         ...skyArticleRows.hookRows,
         ...skyAspectPhrasebook.hookRows,
         ...skyPlanetFrames.rows,
-        ...skySignCopySun.rows
+        ...skySignCopySun.rows,
+        ...skyPlacementOwnerApprovedReaderFallbacks.rows
       ],
       vocabularyRows: [
         ...sourceRows.vocabularyRows,
@@ -750,6 +770,14 @@ try {
     assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
     assert.equal(materializedRow.body, row.body_you);
     assert.equal(materializedRow.status, "DRAFT");
+    assert.equal(materializedRow.source_snapshot.review_status, "approved");
+    assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+  }
+
+  for (const row of skyPlacementOwnerApprovedFallbacks.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    assert.equal(materializedRow.body, row.body_you);
     assert.equal(materializedRow.source_snapshot.review_status, "approved");
     assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
   }

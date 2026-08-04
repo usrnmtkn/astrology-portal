@@ -32,6 +32,8 @@ export type HookRow = {
   content_role?: string | null;
   title?: string | null;
   body?: string | null;
+  // Legacy package field name. Current Sky continuous rows are collective;
+  // the renderer reads their structured fields and performs no pronoun rewrite.
   body_you?: string | null;
   body_they?: string | null;
   body_sky?: string | null;

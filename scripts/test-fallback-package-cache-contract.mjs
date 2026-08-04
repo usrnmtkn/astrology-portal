@@ -99,6 +99,7 @@ const placementRows = readJson(`${packageDir}/source-rows/placement-interim-fixe
 const skyArticleRows = readJson(`${packageDir}/source-rows/sky-article-v1.json`);
 const skyAspectPhrasebook = readJson(`${packageDir}/source-rows/sky-aspect-phrasebook-v1.json`);
 const skyPlacementVoicePass = readJson(`${packageDir}/source-rows/sky-placement-inventories-voice-pass-v1.json`);
+const skyPlacementOwnerApprovedFallbacks = readJson(`${packageDir}/bundled-sky-placement-owner-approved-reader-v1.json`);
 const skyPlanetFrames = readJson(`${packageDir}/source-rows/sky-planet-frames-v1.json`);
 const servingManifest = readJson(`${packageDir}/authored-inputs/sky-placement-serving-manifest-v1.json`);
 const servingReleaseByKey = new Map(servingManifest.releases.flatMap((release) => (
@@ -152,7 +153,8 @@ const expectedManifest = createPackageManifest({
       ...skyAspectPhrasebook.hookRows,
       ...skyPlanetFrames.rows,
       ...skyPlacementVoicePass.rows,
-      ...skySignCopyRows
+      ...skySignCopyRows,
+      ...skyPlacementOwnerApprovedFallbacks.rows
     ]),
     vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,
@@ -177,7 +179,8 @@ const skyPlacementRows = latestEligible([
   ...sourceRows.hookRows.filter(isSkyPlacementPartitionRow),
   ...skyPlanetFrames.rows,
   ...skyPlacementVoicePass.rows,
-  ...skySignCopyRows
+  ...skySignCopyRows,
+  ...skyPlacementOwnerApprovedFallbacks.rows
 ]);
 const skyPlacementKeys = new Set(skyPlacementRows.map((row) => row.contentKey));
 const expectedCoreManifest = createPackageManifest({
@@ -295,8 +298,13 @@ try {
   assert.deepEqual(
     continuousServingRows
       .filter((row) => row.content_key.startsWith("fallback-hook/sky-sign-copy/"))
-      .map((row) => row.content_key),
-    ["fallback-hook/sky-sign-copy/sun/leo"],
+      .map((row) => row.content_key)
+      .sort(),
+    servingManifest.releases
+      .filter((release) => release.distribution_state === "serving")
+      .flatMap((release) => release.approved_keys)
+      .filter((contentKey) => contentKey.startsWith("fallback-hook/sky-sign-copy/"))
+      .sort(),
     "The dashboard partition must expose only the exact owner-approved continuous serving diff."
   );
   assert.ok(
