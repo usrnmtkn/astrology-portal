@@ -26,8 +26,8 @@ Active regression cases: 63
 
 ## Runtime traceability
 
-Runtime rules inspected: 110
-Traced to an approved authoritative decision: 12
+Runtime rules inspected: 106
+Traced to an approved authoritative decision: 8
 Not yet traced to an approved authoritative decision: 98
 
 - TRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `—` ← `ED-004`
@@ -87,10 +87,6 @@ Not yet traced to an approved authoritative decision: 98
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `invit(es|ation|ing) (you|us)`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bletters?\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bcorrespondence\b`
-- TRACED `voice/banned-words.json#bannedWords` `leak` ← `CF-018`
-- TRACED `voice/banned-words.json#bannedWords` `leaks` ← `CF-018`
-- TRACED `voice/banned-words.json#bannedWords` `leaked` ← `CF-018`
-- TRACED `voice/banned-words.json#bannedWords` `leaking` ← `CF-018`
 - UNTRACED `voice/banned-words.json#bannedWords` `reckoning`
 - UNTRACED `voice/banned-words.json#bannedWords` `profound`
 - UNTRACED `voice/banned-words.json#bannedWords` `whisper`

@@ -21,22 +21,6 @@
   },
   "bannedWords": [
     {
-      "term": "leak",
-      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
-    },
-    {
-      "term": "leaks",
-      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
-    },
-    {
-      "term": "leaked",
-      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
-    },
-    {
-      "term": "leaking",
-      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
-    },
-    {
       "term": "reckoning",
       "reason": "Overused dramatic reveal language.",
       "useInstead": [
