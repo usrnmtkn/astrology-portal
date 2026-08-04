@@ -441,6 +441,29 @@ function zonedDateTimeToUtc(timeZone: string, year: number, month: number, day: 
   return utcDate;
 }
 
+export function calendarDateKeyAnchor(dateKey: string, timeZone: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
+
+  if (!match) {
+    throw new Error(`Invalid calendar date key: ${dateKey}`);
+  }
+
+  const [, year, month, day] = match;
+  const anchor = zonedDateTimeToUtc(
+    timeZone,
+    Number(year),
+    Number(month),
+    Number(day),
+    12
+  );
+
+  if (localDateKey(anchor, timeZone) !== dateKey) {
+    throw new Error(`Invalid calendar date key: ${dateKey}`);
+  }
+
+  return anchor;
+}
+
 function localDayRange(date: Date, timeZone?: string) {
   const zone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
   const parts = new Intl.DateTimeFormat("en-US", {

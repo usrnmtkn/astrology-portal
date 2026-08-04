@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import {
+  calendarDateKeyAnchor,
   getLunarCalendarMonth,
   getLunarCalendarRangeEvents,
   getLunarCalendarWeek,
@@ -292,7 +293,11 @@ async function loadCalendarData(
   try {
     return await getLunarCalendarFromApi(location, dataMode, anchor, detail);
   } catch {
-    return loadCalendar(location, anchor, { detail });
+    const fallbackAnchor = dataMode === "week"
+      ? calendarDateKeyAnchor(dateKeyFromDate(anchor), location.timeZone || "UTC")
+      : anchor;
+
+    return loadCalendar(location, fallbackAnchor, { detail });
   }
 }
 
