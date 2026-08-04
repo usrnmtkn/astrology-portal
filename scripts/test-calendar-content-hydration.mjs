@@ -426,8 +426,8 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /getLunarCalendarRangeEvents\([\s\S]*?dateFromDateKey\(season\.start\),[\s\S]*?dateFromDateKey\(season\.end\)/u,
-  "Calendar must load the zodiac season's lean event range for lunar milestones."
+  /getLunarCalendarRangeEvents\([\s\S]*?dateFromDateKey\(season\.start, location\.timeZone \|\| "UTC"\),[\s\S]*?dateFromDateKey\(season\.end, location\.timeZone \|\| "UTC"\)/u,
+  "Calendar must load the zodiac season's lean event range using the selected location's civil dates."
 );
 assert.match(
   calendarSource,
