@@ -1302,58 +1302,94 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .lunar-moon-disc {
+  --moon-phase-scale: 0;
   position: relative;
   display: inline-block;
   width: 36px;
   height: 36px;
   overflow: hidden;
   border-radius: var(--radius-pill);
-  background: var(--lunar-moon-disc-bg);
-  box-shadow: var(--shadow-lunar-phase);
+  background: var(--lunar-new-moon-bg);
+  box-shadow: var(--shadow-lunar-phase-dark);
 }
 
 .lunar-moon-disc::before {
   content: "";
   position: absolute;
-  top: -1px;
-  bottom: -1px;
-  width: var(--moon-dark, 50%);
-  background: var(--lunar-moon-shadow-bg);
-  box-shadow: var(--shadow-lunar-phase-ring);
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-size: 200% 100%;
 }
 
 .lunar-moon-disc::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--lunar-moon-overlay-bg);
-  mix-blend-mode: multiply;
-  opacity: 0.5;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transform: scaleX(var(--moon-phase-scale));
   pointer-events: none;
 }
 
 .lunar-moon-disc.is-waxing::before {
-  left: -1px;
-  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+  right: 0;
+  background-position: right center;
 }
 
 .lunar-moon-disc.is-waning::before {
-  right: -1px;
-  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+  left: 0;
+  background-position: left center;
 }
 
-.lunar-moon-disc.is-full::before {
-  opacity: 0;
+.lunar-moon-disc.is-waxing.is-crescent::after {
+  left: 50%;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0 / 50%;
+  background: var(--lunar-moon-shadow-bg);
+  transform-origin: left center;
 }
 
-.lunar-moon-disc.is-new {
-  background: var(--lunar-new-moon-bg);
-  box-shadow: var(--shadow-lunar-phase-dark);
+.lunar-moon-disc.is-waning.is-crescent::after {
+  right: 50%;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill) / 50%;
+  background: var(--lunar-moon-shadow-bg);
+  transform-origin: right center;
 }
 
-.lunar-moon-disc.is-new::before {
-  opacity: 0;
+.lunar-moon-disc.is-waxing.is-gibbous::after {
+  right: 50%;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill) / 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-position: left center;
+  background-size: 200% 100%;
+  transform-origin: right center;
+}
+
+.lunar-moon-disc.is-waning.is-gibbous::after {
+  left: 50%;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0 / 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-position: right center;
+  background-size: 200% 100%;
+  transform-origin: left center;
+}
+
+.lunar-moon-disc.is-full {
+  background: var(--lunar-moon-disc-bg);
+  box-shadow: var(--shadow-lunar-phase);
+}
+
+.lunar-moon-disc.is-full::before,
+.lunar-moon-disc.is-full::after,
+.lunar-moon-disc.is-new::before,
+.lunar-moon-disc.is-new::after,
+.lunar-moon-disc.is-quarter::after {
+  display: none;
+}
+
+.lunar-moon-disc:not(.is-new) {
+  box-shadow: var(--shadow-lunar-phase);
 }
 
 .lunar-milestones {
