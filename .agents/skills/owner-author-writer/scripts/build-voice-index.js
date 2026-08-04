@@ -261,7 +261,9 @@ function reviewCandidateEntries() {
     "sky-placement-voice-pass-v3-candidates.json",
     "sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
     "sky-placement-voice-pass-v6-targeted-candidates.json",
-    "sky-placement-voice-pass-v7-writer-candidates.json"
+    "sky-placement-voice-pass-v7-writer-candidates.json",
+    "sky-placement-voice-pass-v8-source-derived-candidates.json",
+    "sky-placement-voice-pass-v9-neptune-libra-owner-turn-candidate.json"
   ].map((name) => path.join(packageRoot, "review", name));
   const entries = [];
   for (const file of files) {
@@ -286,6 +288,23 @@ function reviewCandidateEntries() {
     } : {}));
   }
   return entries;
+}
+
+function approvedFormatExemplarEntries() {
+  const file = path.join(writerRoot, "sky-placement-format-exemplars-v4.json");
+  if (!fs.existsSync(file)) return [];
+  const dataset = readJson(file);
+  return (dataset.cards || []).flatMap((candidate) => articleSlotEntries(file, { ...candidate, candidateId: candidate.id }, {
+    author: "Owner-approved exact wording",
+    origin: "owner-approved-voice-format-evidence",
+    authorityClass: "exact_owner_approved",
+    ownerApproved: candidate.ownerApproved === true,
+    reviewStatus: candidate.reviewStatus || "needs_review",
+    editorialStatus: "exact_owner_approved",
+    canonical: false,
+    useAsPositiveVoiceEvidence: candidate.generationEvidenceAuthorized === true,
+    provenance: "Exact wording approved for writer voice-format evidence only. Production approval, canonical status, factual authority, and serving promotion remain unauthorized."
+  }));
 }
 
 function historicalEntries() {
@@ -423,6 +442,7 @@ function buildIndex() {
     ...activeOwnerEntries(),
     ...ownerCorpusEntries(),
     ...reviewCandidateEntries(),
+    ...approvedFormatExemplarEntries(),
     ...historicalEntries(),
     ...contrastiveEntries(),
     ...negativeEntries(),

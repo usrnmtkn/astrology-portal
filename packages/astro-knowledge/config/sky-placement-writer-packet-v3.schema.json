@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/sky-placement-writer-packet-v3.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "packetVersion", "positiveEvidencePoolId", "formatExemplars", "formatExemplarStatus", "routing", "verifiedAstrology", "surfaceRequirements", "voiceDevices", "movesExemplar", "task", "ownerPassages", "preferredVocabulary", "structuralSlots", "writerPrompt"],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "packetVersion": { "const": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1" },
+    "positiveEvidencePoolId": { "const": "sky-placement-owner-affinity-v1" },
+    "formatExemplars": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "planet", "sign", "authorityClass", "approvalScope", "article"],
+        "properties": {
+          "authorityClass": { "const": "exact_owner_approved" },
+          "approvalScope": { "const": "voice_format_generation_evidence_only" },
+          "article": {
+            "type": "object",
+            "required": ["tagline", "hook", "lived", "turn", "moves"]
+          }
+        }
+      }
+    },
+    "formatExemplarStatus": { "const": "owner_approved_voice_format_evidence" },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["laneId", "releaseId", "registryState", "requestedModel", "requestedReasoningEffort", "promptVersion"],
+      "properties": {
+        "laneId": { "const": "writer:sky-placement" },
+        "releaseId": { "const": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2" },
+        "registryState": { "const": "candidate" },
+        "requestedModel": { "const": "gpt-5.6-sol" },
+        "requestedReasoningEffort": { "const": "xhigh" },
+        "promptVersion": { "const": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1" }
+      }
+    },
+    "verifiedAstrology": { "type": "object" },
+    "surfaceRequirements": {
+      "type": "object",
+      "required": ["runtimeContractId", "generatedSlots", "engineOwnedSlots"],
+      "properties": {
+        "runtimeContractId": { "const": "sky-placement-continuous-v2" },
+        "generatedSlots": { "const": ["opening", "tension", "development", "close", "try_this"] },
+        "engineOwnedSlots": { "const": ["headline", "fact_line", "aspect_insert", "entryDate", "exitDate", "priorSign", "priorSignEntryDate", "priorSignExitDate", "previousResidencyEntryDate", "previousResidencyExitDate"] }
+      }
+    },
+    "voiceDevices": {
+      "type": "object",
+      "required": ["maxPerArticle", "selected"],
+      "properties": {
+        "maxPerArticle": { "type": "integer", "maximum": 2 },
+        "selected": { "type": "array", "maxItems": 2 }
+      }
+    },
+    "movesExemplar": { "type": "object" },
+    "task": { "type": "object" },
+    "ownerPassages": { "type": "array", "minItems": 4, "maxItems": 6 },
+    "preferredVocabulary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sourceBankId", "authority", "use", "selection", "words", "phrases"],
+      "properties": {
+        "sourceBankId": { "const": "owner-vocabulary-bank-v1" },
+        "authority": { "const": "owner-first" },
+        "use": { "const": "optional_menu_not_quota" },
+        "words": { "type": "array", "minItems": 1, "maxItems": 12 },
+        "phrases": { "type": "array", "maxItems": 3 }
+      }
+    },
+    "structuralSlots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceStatus", "fallbackOutputShapeUnchanged", "active", "inactive"],
+      "properties": {
+        "sourceStatus": { "enum": ["DRAFT", "REVIEWED", "APPROVED", "LIVE"] },
+        "fallbackOutputShapeUnchanged": { "const": true },
+        "active": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "required": ["id", "rule", "requiresFact", "maxOccurrences", "continuousFallbackTarget", "renderOwner", "facts"],
+            "properties": {
+              "id": { "enum": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"] },
+              "maxOccurrences": { "const": 1 }
+            }
+          }
+        },
+        "inactive": { "type": "array" }
+      }
+    },
+    "writerPrompt": { "type": "string", "minLength": 1 }
+  }
+}
