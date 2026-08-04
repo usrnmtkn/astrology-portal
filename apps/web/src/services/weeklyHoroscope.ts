@@ -332,17 +332,17 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
     const { getAstrodienstSky, getLunarCalendarRangeEvents } = await import("./ephemeris");
     const [rangeEvents, ...snapshots] = await Promise.all([
       getLunarCalendarRangeEvents(location, rangeStart, rangeEnd),
-      ...calculationDates.map((date) => getAstrodienstSky(location, date))
+      ...calculationDates.map((date) => getAstrodienstSky(location, date, { includeTransitWindows: true }))
     ]);
     const dateKeySet = new Set(window.dateKeys);
     const events = rangeEvents
       .filter((event) => dateKeySet.has(event.dateKey))
       .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
-    const lunationEvents = events.filter((event) => event.type === "lunation");
+    const lunationEvents = events.filter(isPrincipalLunation);
     const lunationEventSkies = new Map<string, SkySnapshot>(
       await Promise.all(lunationEvents.map(async (event) => [
         event.id,
-        await getAstrodienstSky(location, new Date(event.startsAt))
+        await getAstrodienstSky(location, new Date(event.startsAt), { includeTransitWindows: true })
       ] as const))
     );
 
@@ -550,8 +550,8 @@ function renderContact(contact: TransitContact, source: "return" | "heavy", vari
 }
 
 function weekTypeFor(events: LunarCalendarEvent[], contacts: TransitContact[]): WeeklyHoroscopeWeekType {
-  if (events.some((event) => event.type === "lunation" && event.eclipseType)) return "eclipse";
-  if (events.some((event) => event.type === "lunation")) return "lunation";
+  if (events.some((event) => isPrincipalLunation(event) && isEclipseLunation(event))) return "eclipse";
+  if (events.some(isPrincipalLunation)) return "lunation";
   if (events.some(isExactStation)) return "station";
   if (contacts.some((contact) => (
     contact.orb <= 0.25
@@ -565,7 +565,7 @@ function weekTypeFor(events: LunarCalendarEvent[], contacts: TransitContact[]): 
 }
 
 function openerFor(weekType: WeeklyHoroscopeWeekType, events: LunarCalendarEvent[], rows = sourceRows) {
-  const lunation = events.find((event) => event.type === "lunation");
+  const lunation = events.find(isPrincipalLunation);
   const key = weekType === "eclipse" || weekType === "lunation"
     ? lunation?.title.toLowerCase().includes("new") ? "new-moon" : "full-moon"
     : weekType;
@@ -1164,7 +1164,7 @@ export async function buildWeeklyHoroscope({
   const candidates: WeeklySectionCandidate[] = [];
 
   events
-    .filter((event) => event.type === "lunation" || isExactStation(event))
+    .filter((event) => isPrincipalLunation(event) || isExactStation(event))
     .forEach((event) => {
       try {
         if (event.type === "lunation") {
@@ -1299,7 +1299,7 @@ export async function buildWeeklyHoroscope({
     sections = sections.map((section, index) => ({ ...section, accented: index === accentIndex }));
   }
 
-  const macroEvent = events.find((event) => event.type === "lunation");
+  const macroEvent = events.find(isPrincipalLunation);
   let macro: WeeklyHoroscopeAssembly["macro"];
   if (macroEvent) {
     try {
