@@ -64,6 +64,17 @@ const fullKnowledge = JSON.parse(read("packages/astro-knowledge/dist/knowledge.j
 const skyWebKnowledge = JSON.parse(read("packages/astro-knowledge/dist/sky-web.json"));
 const natalWebKnowledge = JSON.parse(read("packages/astro-knowledge/dist/natal-web.json"));
 
+for (const [bundleName, bundle] of [
+  ["Sky", skyWebKnowledge],
+  ["Natal", natalWebKnowledge]
+]) {
+  assert.equal(
+    bundle.placements.some((entry) => Object.hasOwn(entry, "note")),
+    false,
+    `${bundleName} reader placement rows must not expose editorial provenance notes.`
+  );
+}
+
 for (const reviewOnlyPlacementId of [
   "chiron-aries",
   "north-node-aquarius",

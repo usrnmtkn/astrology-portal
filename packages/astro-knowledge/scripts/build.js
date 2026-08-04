@@ -165,7 +165,6 @@ function webSkyKnowledge(packageJson, generatedAt, collections) {
       "tldr",
       "gift",
       "challenge",
-      "note",
       "status"
     ])),
     pointPlacements: collections.pointPlacements.map((entry) => pick(entry, [
@@ -224,7 +223,6 @@ function webNatalKnowledge(packageJson, generatedAt, collections) {
       "body",
       "gift",
       "challenge",
-      "note",
       "status"
     ])),
     pointPlacements: collections.pointPlacements.map((entry) => pick(entry, [
