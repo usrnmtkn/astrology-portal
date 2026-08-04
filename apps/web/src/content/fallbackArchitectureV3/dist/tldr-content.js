@@ -843,6 +843,7 @@ ${fogNote}`;
     const rev = fwd ? null : hooks.get(`fallback-hook/synastry-pair/${planetB}/${planetA}/${g}`);
     const pairRow = fwd ?? rev;
     const holders = fwd ? { holder1: "you", holder2: otherName, holder1Poss: "your", holder2Poss: `${otherName}'s`, holder1PossCap: "Your", holder2PossCap: `${otherName}'s` } : { holder1: otherName, holder2: "you", holder1Poss: `${otherName}'s`, holder2Poss: "your", holder1PossCap: `${otherName}'s`, holder2PossCap: "Your" };
+    const pairVoice = fwd ? pairRow?.body_you : pairRow?.body_they;
     const modeA = hooks.get(`fallback-hook/planet-mode/${planetA}`)?.body_you;
     const modeB = hooks.get(`fallback-hook/planet-mode/${planetB}`)?.body_they;
     const typeRow = hooks.get(`fallback-hook/synastry-aspect-type/${aspect}`);
@@ -865,7 +866,7 @@ ${fogNote}`;
         askA: vocab.get(`fallback-vocab/planet-ask/${planetA}`)?.body,
         askB: vocab.get(`fallback-vocab/planet-ask/${planetB}`)?.body
       }) : null,
-      pairSentences: pairRow?.body_you ? fill(pairRow.body_you, holders) : null,
+      pairSentences: pairVoice ? fill(pairVoice, holders) : null,
       // signature closing formula for the assembled fallback (matches the natal-aspect close)
       closingLine: (() => {
         const coreA = vocab.get(`fallback-vocab/planet-core/${planetA}`)?.body;
@@ -1729,7 +1730,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-03b";
+var PACKAGE_VERSION = "v3-2026-08-03c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

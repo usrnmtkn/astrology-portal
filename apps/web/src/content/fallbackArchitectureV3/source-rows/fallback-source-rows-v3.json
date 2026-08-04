@@ -31043,40 +31043,43 @@
    "contentKey": "fallback-hook/synastry-pair/uranus/ascendant/conjunction",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Uranus lands on {{holder2Poss}} Ascendant, so the friendship refuses a routine. Plans mutate, subjects swerve, and somehow that is the appeal: each keeps the other from going stale. What it costs is predictability, which some seasons of life genuinely need. Protect a few fixed points and let the rest spin. That's {{holder1Poss}} Uranus on {{holder2Poss}} Ascendant: the wildcard and the face running as one instinct.",
-   "body_they": "{{holder1PossCap}} Uranus lands on {{holder2Poss}} Ascendant, so the friendship refuses a routine. Plans mutate, subjects swerve, and somehow that is the appeal: each keeps the other from going stale. What it costs is predictability, which some seasons of life genuinely need. Protect a few fixed points and let the rest spin. That's {{holder1Poss}} Uranus on {{holder2Poss}} Ascendant: the wildcard and the face running as one instinct.",
+   "body_you": "You bring out a side of {{holder2}} that usually takes longer to show. Around you, {{holder2}} may react before deciding how they want to act. It can feel freeing, but it can also catch {{holder2}} off guard.",
+   "body_they": "{{holder1}} brings out a side of you that usually takes longer to show. Around them, you may react before deciding how you want to act. It can feel freeing, but it can also catch you off guard.",
    "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts."
+   "notes": "Owner-authored Uranus-to-Ascendant conjunction copy. Complete reader and other-person voice fields preserve the approved wording while applying required grammatical inflection in both directions; supersedes the rejected friendship, scheduling, and stock-ending claims.",
+   "approved_via": "owner-authored final confirmed in Codex task, 2026-08-03"
   },
   {
    "contentKey": "fallback-hook/synastry-pair/uranus/ascendant/hard",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Uranus sits at a hard angle to {{holder2Poss}} Ascendant, so the friendship keeps changing shape without warning. Plans flip, moods pivot, and {{holder2Poss}} settled manner absorbs jolt after jolt until it stops absorbing. The chaos is not carelessness; it is a nervous system that treats sameness as suffocation. Agree on the few things that never change, and let everything else stay loose. That's {{holder1Poss}} Uranus against {{holder2Poss}} Ascendant: the jolt and the composure pulling against each other until the friction builds muscle.",
-   "body_they": "{{holder1PossCap}} Uranus sits at a hard angle to {{holder2Poss}} Ascendant, so the friendship keeps changing shape without warning. Plans flip, moods pivot, and {{holder2Poss}} settled manner absorbs jolt after jolt until it stops absorbing. The chaos is not carelessness; it is a nervous system that treats sameness as suffocation. Agree on the few things that never change, and let everything else stay loose. That's {{holder1Poss}} Uranus against {{holder2Poss}} Ascendant: the jolt and the composure pulling against each other until the friction builds muscle.",
+   "body_you": "Because you can be unpredictable, {{holder2}} may not know how to act around you. That can make {{holder2}} hold back or act more cautiously.",
+   "body_they": "Because {{holder1}} can be unpredictable, you may not know how to act around them. That can make you hold back or act more cautiously.",
    "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts."
+   "notes": "Owner-authored Uranus-to-Ascendant hard-aspect copy. Complete reader and other-person voice fields preserve the approved wording while applying required grammatical inflection in both directions; supersedes the rejected friendship, scheduling, nervous-system, and friction metaphors.",
+   "approved_via": "owner-authored final confirmed in Codex task, 2026-08-03"
   },
   {
    "contentKey": "fallback-hook/synastry-pair/uranus/ascendant/soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Uranus refreshes {{holder2Poss}} Ascendant: novelty in a form the friendship can absorb. The odd plan, the different route, the out-of-character yes that turns out right. Staleness cannot get comfortable around this connection. Take the detours it proposes. That's {{holder1Poss}} Uranus with {{holder2Poss}} Ascendant: the new and the familiar face on the same side without trying.",
-   "body_they": "{{holder1PossCap}} Uranus refreshes {{holder2Poss}} Ascendant: novelty in a form the friendship can absorb. The odd plan, the different route, the out-of-character yes that turns out right. Staleness cannot get comfortable around this connection. Take the detours it proposes. That's {{holder1Poss}} Uranus with {{holder2Poss}} Ascendant: the new and the familiar face on the same side without trying.",
+   "body_you": "You can make it easier for {{holder2}} to show a side that other people do not always see right away. Around you, {{holder2}} may feel less pressure to make the expected first impression. The difference is visible, but it does not knock {{holder2}} off balance.",
+   "body_they": "{{holder1}} can make it easier for you to show a side that other people do not always see right away. Around them, you may feel less pressure to make the expected first impression. The difference is visible, but it does not knock you off balance.",
    "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts."
+   "notes": "Owner-authored Uranus-to-Ascendant soft-aspect copy. Complete reader and other-person voice fields preserve the approved wording while applying required grammatical inflection in both directions; supersedes the rejected friendship, plan, route, detour, and stock-ending claims.",
+   "approved_via": "owner-authored final confirmed in Codex task, 2026-08-03"
   },
   {
    "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/conjunction",
