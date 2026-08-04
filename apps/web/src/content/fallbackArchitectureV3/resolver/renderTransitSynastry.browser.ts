@@ -93,6 +93,11 @@ export interface SkyPlacementFacts {
   articleKey?: string | null;
   entryDate?: string | null;
   exitDate?: string | null;
+  priorSign?: string | null;
+  priorSignEntryDate?: string | null;
+  priorSignExitDate?: string | null;
+  previousResidencyEntryDate?: string | null;
+  previousResidencyExitDate?: string | null;
   hasPriorIngress?: boolean;
   historyEligible?: boolean;
   historyEntryDate?: string | null;
@@ -154,6 +159,8 @@ export interface TransitRenderResult {
   parts: string[];
   templateKey: string;
   contentKey?: string;
+  sourceKeys?: string[];
+  phaseSignSpecificity?: "exact-reviewed" | "sign-derived";
   window?: string | null;
   tagline?: string | null;
   moves?: string[];
@@ -1239,7 +1246,18 @@ export function createTransitSynastryRenderer(
 
   function renderContinuousSkyPlacement(
     signCopy: HookRow,
-    { planet, sign, events, entryDate, exitDate }: SkyPlacementFacts
+    {
+      planet,
+      sign,
+      events,
+      entryDate,
+      exitDate,
+      priorSign,
+      priorSignEntryDate,
+      priorSignExitDate,
+      previousResidencyEntryDate,
+      previousResidencyExitDate
+    }: SkyPlacementFacts
   ): TransitRenderResult {
     if (!entryDate || !exitDate) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
@@ -1250,7 +1268,16 @@ export function createTransitSynastryRenderer(
     }
 
     const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
-    const ctx = { entryDate: dates.entry.body, exitDate: dates.exit.body, signTitle: title(sign) };
+    const ctx = {
+      entryDate: dates.entry.body,
+      exitDate: dates.exit.body,
+      signTitle: title(sign),
+      priorSign: priorSign ? title(priorSign) : null,
+      priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
+      priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
+      previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
+      previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+    };
     const factLine = dates.factLine;
     const collective = [signCopy.opening, signCopy.tension, signCopy.development]
       .map((part) => fillKeep(part as string, ctx));
@@ -1349,6 +1376,11 @@ export function createTransitSynastryRenderer(
     articleKey,
     entryDate,
     exitDate,
+    priorSign,
+    priorSignEntryDate,
+    priorSignExitDate,
+    previousResidencyEntryDate,
+    previousResidencyExitDate,
     hasPriorIngress = false,
     historyEligible,
     historyEntryDate,
@@ -1485,7 +1517,12 @@ export function createTransitSynastryRenderer(
         sign,
         events,
         entryDate,
-        exitDate
+        exitDate,
+        priorSign,
+        priorSignEntryDate,
+        priorSignExitDate,
+        previousResidencyEntryDate,
+        previousResidencyExitDate
       });
     }
 
@@ -1697,15 +1734,56 @@ export function createTransitSynastryRenderer(
   // markers, and the owner's weekly Moon-sign tone. Replaces the legacy phase sidebar copy. ----
 
   // phase: new-moon | waxing-crescent | first-quarter | waxing-gibbous | full-moon |
-  // disseminating | last-quarter | balsamic. sign = the sign of the cycle's NEW MOON.
-  function renderCalendarPhase({ phase, sign }: { phase: string; sign?: string }): TransitRenderResult {
-    const r = hooks.get(`fallback-hook/moon-phase/${phase}`) as ({ contentKey: string; body_you: string; title?: string } | undefined);
-    if (!r) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
-    const body = fill(r.body_you, { signTitle: sign ? title(sign) : "" }).replace(/^in \. /, "");
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} missing cycle sign`);
+  // disseminating | last-quarter | balsamic. sign is always the Moon's current,
+  // ephemeris-calculated sign. The generic phase row supplies phase metadata only;
+  // reader copy must resolve through the exact phase x current-sign lane.
+  function renderCalendarPhase({ phase, sign }: { phase: string; sign: string }): TransitRenderResult {
+    const normalizedSign = sign.trim().toLowerCase();
+    if (!normalizedSign) {
+      throw new SourceGapError(`SOURCE_GAP: current Moon sign required for phase ${phase}`);
+    }
+    const phaseRow = hooks.get(`fallback-hook/moon-phase/${phase}`) as ({ contentKey: string; body_you: string; title?: string } | undefined);
+    if (!phaseRow) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
+    const exactKey = `fallback-hook/moon-phase/${phase}/${normalizedSign}`;
+    const exactRow = hooks.get(exactKey) as ({ contentKey: string; body_you: string; title?: string } | undefined);
+    const compactLunationRow = phase === "new-moon" || phase === "full-moon"
+      ? hooks.get(`fallback-hook/lunation-sign-compact/${phase}/${normalizedSign}`) as ({ contentKey: string; body_you: string } | undefined)
+      : undefined;
+    const variantByPhase: Record<string, number> = {
+      "new-moon": 1,
+      "waxing-crescent": 2,
+      "first-quarter": 3,
+      "waxing-gibbous": 4,
+      "full-moon": 1,
+      "disseminating": 2,
+      "last-quarter": 3,
+      "balsamic": 4
+    };
+    const preferredVariant = variantByPhase[phase] ?? 1;
+    const variantSuffix = preferredVariant > 1 ? `/variant-${preferredVariant}` : "";
+    const signRow = card(`authored/calendar-weekly-moon/${normalizedSign}${variantSuffix}`)
+      ?? card(`authored/calendar-weekly-moon/${normalizedSign}`);
+    if (!exactRow && !compactLunationRow && !signRow) {
+      throw new SourceGapError(`SOURCE_GAP: no approved Moon-sign row for ${phase} in ${normalizedSign}`);
+    }
+    const selectedRow = exactRow ?? compactLunationRow ?? signRow;
+    const rawBody = exactRow?.body_you ?? compactLunationRow?.body_you ?? String(signRow?.body ?? "");
+    const body = fill(rawBody, { signTitle: title(normalizedSign) }).replace(/^in \. /, "");
+    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} in ${normalizedSign} has an unfilled slot`);
     const PHASE_NAMES: Record<string, string> = { "new-moon": "New Moon", "waxing-crescent": "Waxing Crescent Moon", "first-quarter": "First Quarter Moon", "waxing-gibbous": "Waxing Gibbous Moon", "full-moon": "Full Moon", "disseminating": "Disseminating Moon", "last-quarter": "Last Quarter Moon", "balsamic": "Balsamic Moon" };
-    const plain = `${PHASE_NAMES[phase] ?? title(phase)}${sign ? ` in ${title(sign)}` : ""}`;
-    return { headline: plain, tagline: r.title ?? "", body, parts: [body], templateKey: "fallback-template/calendar.phase", contentKey: r.contentKey } as TransitRenderResult & { tagline: string };
+    const plain = `${PHASE_NAMES[phase] ?? title(phase)} in ${title(normalizedSign)}`;
+    return {
+      headline: plain,
+      tagline: exactRow?.title ?? phaseRow.title ?? "",
+      body,
+      parts: [body],
+      templateKey: "fallback-template/calendar.phase-sign",
+      contentKey: selectedRow?.contentKey === exactKey
+        ? exactKey
+        : `fallback-hook/moon-phase-sign/${phase}/${normalizedSign}`,
+      sourceKeys: [phaseRow.contentKey, selectedRow?.contentKey].filter((key): key is string => Boolean(key)),
+      phaseSignSpecificity: exactRow || compactLunationRow ? "exact-reviewed" : "sign-derived"
+    } as TransitRenderResult & { tagline: string };
   }
 
   function renderVoidOfCourse({ sign, nextSign }: { sign: string; nextSign: string }): TransitRenderResult {
@@ -1726,8 +1804,19 @@ export function createTransitSynastryRenderer(
   // Owner's weekly Moon-sign tone. variant rotates the authored alternates (suggested:
   // stable per ISO week, e.g. (isoWeek % variantCount) + 1; 1 or absent = base card).
   function renderWeeklyMoon({ sign, variant }: { sign: string; variant?: number }): TransitRenderResult & { focus: string | null; strategy: string | null } {
-    const c = ((variant && variant > 1 ? card(`authored/calendar-weekly-moon/${sign}/variant-${variant}`) : null)
-      ?? card(`authored/calendar-weekly-moon/${sign}`)) as (AuthoredCard & { focus?: string; strategy?: string }) | null;
+    const rejectedOwnerFeedbackKeys = new Set([
+      // Owner rejection, 2026-08-03: contains “The Cancer Moon doesn't make you weak; it makes you aware.”
+      "authored/calendar-weekly-moon/cancer"
+    ]);
+    const candidateKeys = [
+      variant && variant > 1 ? `authored/calendar-weekly-moon/${sign}/variant-${variant}` : null,
+      `authored/calendar-weekly-moon/${sign}`,
+      ...[2, 3, 4].map((candidateVariant) => `authored/calendar-weekly-moon/${sign}/variant-${candidateVariant}`)
+    ].filter((key): key is string => Boolean(key));
+    const contentKey = [...new Set(candidateKeys)].find((key) => (
+      !rejectedOwnerFeedbackKeys.has(key) && Boolean(card(key))
+    ));
+    const c = (contentKey ? card(contentKey) : null) as (AuthoredCard & { focus?: string; strategy?: string }) | null;
     if (!c) throw new SourceGapError(`SOURCE_GAP: no weekly moon card for ${sign}`);
     return { headline: `Weekly Moon: ${title(sign)}`, body: c.body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [c.body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
   }
