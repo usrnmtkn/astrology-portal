@@ -538,9 +538,9 @@ assert.match(
   /const openBondTransitDetail[\s\S]*?body: card\.effectBody \? \[card\.effectBody\] : \[\][\s\S]*?heading: index === 0 \? "What this activates"/u,
   "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
-assert.match(
-  friendTransitsTabSource,
-  /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u,
+assert.ok(
+  /function FriendPersonalTransitCard[\s\S]*?onClick=\{\(\) => onOpen\(transit\.id\)\}/u.test(friendTransitsTabSource)
+    || /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u.test(friendTransitsTabSource),
   "Friend personal-transit cards must open a detail view."
 );
 assert.match(
