@@ -880,18 +880,6 @@ export function calendarAdjacentCopyIsDistinct(
   return !repeatsFormula && calendarCopySimilarity(candidate, previous) < maximumSimilarity;
 }
 
-export function calendarWeeklyExcerpt(value: string, maximumSentences = 2) {
-  const trimmed = value.trim();
-  if (!trimmed || maximumSentences <= 0) return "";
-
-  const segments = Array.from(new Intl.Segmenter("en", { granularity: "sentence" }).segment(trimmed));
-  return segments
-    .slice(0, maximumSentences)
-    .map((segment) => segment.segment)
-    .join("")
-    .trim();
-}
-
 export function calendarWeeklyNarrativeBody({
   overview,
   source,

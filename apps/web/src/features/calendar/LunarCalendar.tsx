@@ -17,8 +17,6 @@ import {
 } from "../../services/generatedContent";
 import {
   calendarAdjacentCopyIsDistinct,
-  calendarWeeklyExcerpt,
-  calendarWeeklyNarrativeShifts,
   resolveCalendarWeeklyMoonTone,
   resolveCalendarWeeklyOverview,
   type CalendarEditorialContent
@@ -2045,46 +2043,11 @@ export function LunarCalendar({
     : undefined;
   const weeklyLeadMoon = weeklyDayWriteups.find((writeup) => writeup.guidance?.body)?.guidance ?? null;
   const weeklyMainShifts = weeklyForecast?.mainShifts ?? [];
-  const weeklyForecastHeadline = weeklyMondayMoonTone?.headline
-    ?? weeklyForecast?.weeklyHeadline
+  const weeklyForecastHeadline = weeklyForecast?.weeklyHeadline
     ?? weeklyLeadMoon?.headline
     ?? "Your week in the sky";
-  const weeklyNarrativeEvents = calendarWeeklyNarrativeShifts(
-    weeklyMainShifts,
-    weeklyForecast?.mainEvent
-  );
-  const weeklyNarrativeSections = [
-    ...(weeklyMondayMoonTone?.body && weeklyMonday
-      ? [{
-          contentKey: weeklyMondayMoonTone.contentKey,
-          label: `Monday · Moon in ${weeklyMonday.day.moonSign}`,
-          body: calendarWeeklyExcerpt(weeklyMondayMoonTone.body)
-        }]
-      : []),
-    ...weeklyNarrativeEvents.flatMap((event) => {
-      const writeup = weeklyDayWriteups.find((candidate) => candidate.day.dateKey === event.dateKey);
-      const eventWriteup = writeup?.events.find((candidate) => candidate.event.id === event.id);
-      if (!writeup || !eventWriteup?.description) return [];
-
-      const weekday = new Intl.DateTimeFormat("en-US", {
-        timeZone: zone,
-        weekday: "long"
-      }).format(new Date(writeup.day.date));
-
-      return [{
-        contentKey: eventWriteup.editorial.contentKey,
-        label: `${weekday} · ${eventWriteup.title}`,
-        body: calendarWeeklyExcerpt(eventWriteup.description)
-      }];
-    }).slice(0, 2)
-  ].filter((section, index, sections) => (
-    section.body
-    && sections.findIndex((candidate) => candidate.body === section.body) === index
-  ));
   const weeklySupportingShifts = weeklyMainShifts;
-  const weeklyForecastBody = weeklyNarrativeSections.length === 0
-    ? weeklyForecast?.weeklyOverview ?? ""
-    : "";
+  const weeklyForecastBody = weeklyForecast?.weeklyOverview ?? "";
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {
@@ -2816,20 +2779,6 @@ export function LunarCalendar({
             <h2 id="lunar-weekly-title">
               {weeklyForecastHeadline}
             </h2>
-            {weeklyNarrativeSections.length > 0 && (
-              <div className="lunar-weekly-hero__body lunar-weekly-hero__narrative">
-                {weeklyNarrativeSections.map((section) => (
-                  <section
-                    className="lunar-weekly-hero__narrative-section"
-                    key={section.contentKey}
-                    data-content-key={section.contentKey}
-                  >
-                    <h3>{section.label}</h3>
-                    <p>{section.body}</p>
-                  </section>
-                ))}
-              </div>
-            )}
             {weeklyForecastBody && (
               <div className="lunar-weekly-hero__body">
                 {weeklyForecastBody.split(/\n\s*\n/u).map((paragraph) => (
