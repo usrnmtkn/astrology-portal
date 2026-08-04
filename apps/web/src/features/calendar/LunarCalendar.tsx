@@ -2159,11 +2159,13 @@ export function LunarCalendar({
   const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
-  // Week view may use a short factual continuation when the Moon remains in
-  // the same sign on consecutive days. Day view is the expanded reading, so
-  // it always resolves its complete approved Moon-in-sign unit independently.
+  // Day and Week share the same dated guidance selection so the reader does
+  // not get a different Moon interpretation when switching views.
+  const selectedWeeklyGuidance = selectedDay
+    ? weeklyDayWriteups.find(({ day }) => day.dateKey === selectedDay.dateKey)?.guidance ?? null
+    : null;
   const selectedPackageWeeklyMoon = selectedDay
-    ? (() => {
+    ? selectedWeeklyGuidance ?? (() => {
         try {
           return calendarFallbackRendererV3.renderWeeklyMoon({
             sign: slugContentPart(selectedDay.moonSign),
