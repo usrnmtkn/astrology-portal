@@ -11,7 +11,7 @@
 .sky-wheel-shell {
   display: grid;
   justify-items: center;
-  gap: 10px;
+  gap: var(--gap-10);
   position: relative;
   width: min(100%, var(--chart-size));
   min-width: 0;
@@ -71,7 +71,7 @@
 
 .aspect-inspector-summary__list {
   display: grid;
-  gap: 7px;
+  gap: var(--gap-7);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -81,7 +81,7 @@
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr) max-content;
   align-items: center;
-  gap: 8px;
+  gap: var(--gap-8);
   min-width: 0;
   color: var(--muted);
   font-size: var(--type-sm);
@@ -393,7 +393,7 @@
 .floating-tooltip--planet {
   display: grid;
   max-width: min(var(--container-chart-mobile), calc(100vw - 32px));
-  gap: 5px;
+  gap: var(--gap-5);
 }
 
 .floating-tooltip--planet strong,
@@ -764,7 +764,7 @@
   --chart-fullscreen-rail-width: min(var(--chart-fullscreen-wheel-size), 760px);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 14px;
+  gap: var(--gap-14);
   min-height: min(960px, calc(100svh - 28px));
   padding: clamp(calc(var(--space-4) + var(--space-1) / 2), 3vw, calc(var(--space-7) - var(--space-1) / 2));
   box-sizing: border-box;
@@ -782,7 +782,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--gap-16);
 }
 
 .chart-fullscreen-title {
@@ -840,7 +840,7 @@
   display: grid;
   align-content: start;
   justify-items: center;
-  gap: 12px;
+  gap: var(--gap-12);
 }
 
 .chart-fullscreen-controls,
@@ -903,7 +903,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--gap-8);
   min-width: 0;
   height: var(--top-control-height);
   border: 1px solid var(--floating-button-border);

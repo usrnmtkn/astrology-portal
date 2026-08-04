@@ -59,7 +59,7 @@ html[data-scrolled] .topbar {
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--gap-8);
   height: var(--top-control-height);
   min-height: var(--top-control-height);
   max-width: calc(100vw - 210px);
@@ -125,13 +125,13 @@ html[data-scrolled] .topbar {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--gap-2);
 }
 
 .site-nav button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--gap-7);
   border: 0;
   border-radius: var(--button-radius);
   background: transparent;
@@ -176,15 +176,15 @@ html[data-scrolled] .nav-pill {
   min-width: 18px;
   height: 18px;
   place-items: center;
-  padding: 0 5px;
+  padding: 0 calc(var(--space-1) + var(--space-1) / 4);
   border-radius: var(--radius-pill);
   background: var(--ink);
   color: var(--surface);
   font-family: var(--font-sans);
-  font-size: 0.65rem;
+  font-size: var(--friend-nav-badge-size);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 .primary-friends-nav.active .friends-nav-badge {
@@ -405,7 +405,7 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: var(--gap-12);
   width: 100%;
   min-height: 52px;
   border: 0;

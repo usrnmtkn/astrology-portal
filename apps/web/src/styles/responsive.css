@@ -195,7 +195,7 @@
       "meta"
       "status"
       "description";
-    gap: 8px;
+    gap: var(--gap-8);
   }
 
   .placement-table-row__topline {
@@ -337,7 +337,7 @@
   }
 
   .nl-top {
-    gap: 12px;
+    gap: var(--gap-12);
   }
 
   .nl-top h4 {
@@ -376,7 +376,7 @@
     align-items: center;
     display: inline-grid;
     grid-auto-flow: column;
-    gap: 6px;
+    gap: var(--gap-6);
     justify-self: end;
     justify-content: end;
     justify-items: end;
@@ -536,7 +536,7 @@
     display: grid;
     min-width: 0;
     align-content: center;
-    gap: 4px;
+    gap: var(--gap-4);
   }
 
   .mobile-full-chart-card__copy strong {
@@ -678,7 +678,7 @@
   }
 
   .nav-pill {
-    gap: 8px;
+    gap: var(--gap-8);
     width: 100%;
     min-width: 0;
     min-height: var(--top-control-height);
@@ -729,7 +729,7 @@
   .mode-calendar .nav-pill,
   .mode-detail .nav-pill {
     align-items: center;
-    gap: 10px;
+    gap: var(--gap-10);
     padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-2);
   }
 
@@ -757,7 +757,7 @@
   }
 
   .sky-header-date-button {
-    gap: 8px;
+    gap: var(--gap-8);
     max-width: min(42vw, 210px);
     padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-6);
     font-family: var(--font-ui);
@@ -791,7 +791,7 @@
     left: var(--mobile-page-gutter);
     z-index: calc(var(--z-topbar) - 1);
     display: grid;
-    gap: 16px;
+    gap: var(--gap-16);
     border: 1px solid var(--overlay-border);
     border-radius: var(--radius);
     background: var(--surface);
@@ -800,14 +800,14 @@
   }
 
   .date-picker {
-    gap: 14px;
+    gap: var(--gap-14);
     width: min(330px, calc(100vw - var(--mobile-page-gutter) * 2));
     padding: calc(var(--space-3) + var(--space-1) / 2);
   }
 
   .date-picker-header {
     grid-template-columns: 42px minmax(0, 1fr) auto;
-    gap: 8px;
+    gap: var(--gap-8);
   }
 
   .date-picker-header strong {
@@ -815,7 +815,7 @@
   }
 
   .date-picker-header-actions {
-    gap: 6px;
+    gap: var(--gap-6);
   }
 
   .date-picker-nav,
@@ -826,7 +826,7 @@
 
   .date-picker-weekdays,
   .date-picker-grid {
-    gap: 5px;
+    gap: var(--gap-5);
   }
 
   .date-picker-weekdays span {
@@ -842,7 +842,7 @@
   }
 
   .date-picker-actions {
-    gap: 10px;
+    gap: var(--gap-10);
     justify-content: flex-end;
     margin-top: calc(var(--space-1) / 2);
   }
@@ -868,7 +868,7 @@
   .mobile-sky-controls__location {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: var(--gap-14);
     width: 100%;
     min-height: 54px;
     border: 1px solid var(--input-border);
@@ -896,7 +896,7 @@
 
   .mode-guest .topbar-actions,
   .mode-member .topbar-actions {
-    gap: 10px;
+    gap: var(--gap-10);
   }
 
   .site-menu {
@@ -938,7 +938,7 @@
 
   .chart-layout,
   .sky-layout {
-    gap: 24px;
+    gap: var(--gap-24);
   }
 
   .mode-guest .sky-layout,
@@ -988,7 +988,7 @@
   .mode-guest .today-hero,
   .mode-member .today-hero {
     order: 1;
-    gap: 18px;
+    gap: var(--gap-18);
     overflow: clip;
   }
 
@@ -1000,13 +1000,13 @@
   .mode-guest .today-summary-cards,
   .mode-member .today-summary-cards {
     order: 1;
-    gap: 18px;
+    gap: var(--gap-18);
   }
 
   .mode-guest .detail-panel,
   .mode-member .detail-panel {
     order: 2;
-    gap: 18px;
+    gap: var(--gap-18);
     overflow: visible;
   }
 
@@ -1125,7 +1125,7 @@
     display: grid;
     min-width: 0;
     align-content: center;
-    gap: 4px;
+    gap: var(--gap-4);
   }
 
   .mobile-full-chart-card__copy strong {
@@ -1235,7 +1235,7 @@
   .mode-member .retrograde-section,
   .mode-guest .placement-section,
   .mode-member .placement-section {
-    gap: 20px;
+    gap: var(--gap-20);
   }
 
   .mode-guest :where(.section-label, .aspect-section-label, .placements-heading .eyebrow, .ro-group-label),
@@ -1321,7 +1321,7 @@
   .aspect-inspector-summary__head {
     flex-direction: column;
     align-items: flex-start;
-    gap: 2px;
+    gap: var(--gap-2);
   }
 
   .aspect-inspector-summary__item {
@@ -1397,7 +1397,7 @@
 
   .retro-top {
     display: grid;
-    gap: 10px;
+    gap: var(--gap-10);
   }
 
   .retro-until {
@@ -1536,7 +1536,7 @@
     grid-area: select;
     grid-template-columns: 58px minmax(0, 1fr);
     align-items: start;
-    gap: 16px;
+    gap: var(--gap-16);
     padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-10) - var(--space-1) - var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2) var(--space-5);
   }
 
@@ -1618,7 +1618,7 @@
       "glyphs meta"
       "copy copy";
     align-items: start;
-    gap: 14px 16px;
+    gap: var(--gap-14) var(--gap-16);
   }
 
   .app-shell.mode-profile :where(.aspect-row, .aspect-row-button, .aspect-row-static),
@@ -1628,7 +1628,7 @@
       "glyphs meta"
       "copy copy";
     align-items: start;
-    gap: 14px 16px;
+    gap: var(--gap-14) var(--gap-16);
   }
 
   .app-shell.mode-profile .aspect-row-glyphs,
@@ -1683,7 +1683,7 @@
   }
 
   .settings-row-control {
-    gap: 18px;
+    gap: var(--gap-18);
   }
 
   .settings-row__field,

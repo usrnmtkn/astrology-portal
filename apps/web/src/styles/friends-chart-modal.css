@@ -2,7 +2,7 @@
 .add-chart-city-search {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--gap-6);
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-section-label-size);
@@ -28,7 +28,7 @@
 .add-chart-field > label,
 .add-chart-city-search label {
   display: grid;
-  gap: 6px;
+  gap: var(--gap-6);
 }
 
 .add-chart-field input:not([type="checkbox"]),
@@ -107,7 +107,7 @@
 .add-chart-pronoun-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 16px;
+  gap: var(--gap-10) var(--gap-16);
   margin-top: var(--space-3);
 }
 
@@ -119,7 +119,7 @@
   font-family: var(--font-body);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
-  gap: 8px;
+  gap: var(--gap-8);
 }
 
 .add-chart-pronoun-option input {
@@ -194,7 +194,7 @@
 }
 
 .add-chart-birth-grid {
-  gap: 12px;
+  gap: var(--gap-12);
   align-items: start;
   grid-template-columns: minmax(0, 1fr);
 }
@@ -206,7 +206,7 @@
 .add-chart-form .checkbox-row {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--gap-8);
   width: 100%;
   color: var(--card-meta-color);
   font-family: var(--font-body);

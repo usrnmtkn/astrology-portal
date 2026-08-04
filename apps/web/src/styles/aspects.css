@@ -180,7 +180,7 @@
   justify-content: center;
   width: var(--aspect-row-meta-width);
   min-width: var(--aspect-row-meta-width);
-  gap: 5px;
+  gap: var(--gap-5);
   padding-top: calc(var(--space-1) + var(--space-1) / 4);
   color: var(--card-meta-color);
   font-family: var(--font-body);
@@ -282,7 +282,7 @@
 .daily-horoscope-summary__writeup,
 .daily-horoscope-writeup {
   display: grid;
-  gap: 18px;
+  gap: var(--gap-18);
 }
 
 .daily-horoscope-summary__writeup {
@@ -329,7 +329,7 @@
 
 .summary-skeleton {
   display: grid;
-  gap: 8px;
+  gap: var(--gap-8);
   width: min(var(--container-picker), 100%);
   margin-top: calc(var(--space-1) / 2);
 }
@@ -371,7 +371,7 @@
 .personal-timing-summary ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--gap-8);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -454,7 +454,7 @@
   min-width: 0;
   height: 24px;
   margin-top: calc(var(--space-1) / 2);
-  gap: 6px;
+  gap: var(--gap-6);
   color: var(--ink);
   font-family: var(--font-glyph);
   font-size: var(--updates-aspect-row-glyph-size);
@@ -467,7 +467,7 @@
 }
 
 .updates-aspect-row__glyphs .aspect-row-glyphs {
-  gap: 6px;
+  gap: var(--gap-6);
   font-size: inherit;
 }
 
@@ -487,7 +487,7 @@
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0 8px;
+  gap: 0 var(--gap-8);
   color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
@@ -557,7 +557,7 @@
   justify-items: center;
   width: var(--updates-aspect-meta-width);
   min-width: var(--updates-aspect-meta-width);
-  gap: 6px;
+  gap: var(--gap-6);
   padding-top: calc(var(--space-1) / 2);
   color: var(--card-meta-color);
   font-family: var(--font-body);

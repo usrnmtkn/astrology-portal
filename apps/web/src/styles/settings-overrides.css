@@ -6,7 +6,7 @@
 .settings-location-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--gap-12);
 }
 
 .settings-location-cancel {

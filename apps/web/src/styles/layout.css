@@ -235,7 +235,7 @@ body.modal-open {
 
 .chart-modal-heading {
   display: grid;
-  gap: 8px;
+  gap: var(--gap-8);
   margin-bottom: var(--space-6);
 }
 

@@ -5,7 +5,10 @@ import path from "node:path";
 import process from "node:process";
 
 const root = process.cwd();
-const cssRoot = path.join(root, "apps/web/src");
+const cssRoots = [
+  path.join(root, "apps/web/src"),
+  path.join(root, "apps/admin/src")
+];
 const reportDir = path.join(root, "test-results/css-audit");
 const reportPath = path.join(reportDir, "form-typography.md");
 
@@ -76,7 +79,7 @@ function isTokenizedSize(value) {
   );
 }
 
-const files = await collectCssFiles(cssRoot);
+const files = (await Promise.all(cssRoots.map(collectCssFiles))).flat();
 const findings = [];
 let scannedRules = 0;
 

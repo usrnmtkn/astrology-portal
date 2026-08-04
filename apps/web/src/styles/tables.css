@@ -421,7 +421,7 @@ button.planet-placement-row {
 }
 
 .spl-status-item {
-  gap: 0.4em;
+  gap: var(--gap-em-40);
 }
 
 .placement-row-titleline {

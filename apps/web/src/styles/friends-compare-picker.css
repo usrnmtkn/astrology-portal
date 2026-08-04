@@ -28,7 +28,7 @@
   justify-content: center;
   max-width: 100%;
   min-width: 0;
-  gap: 11px;
+  gap: var(--gap-11);
 }
 
 .friend-compare-pill svg {
@@ -102,7 +102,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: var(--gap-18);
   margin-bottom: var(--space-4);
 }
 
@@ -138,7 +138,7 @@
   grid-template-columns: 44px minmax(0, 1fr) 28px;
   align-items: center;
   min-height: 82px;
-  gap: 16px;
+  gap: var(--gap-16);
   padding: calc(var(--space-4) + var(--space-1) / 4) var(--space-5);
   border: 0;
   border-bottom: 1px solid var(--table-row-border);
@@ -164,7 +164,7 @@
 .friend-compare-option-copy {
   display: grid;
   min-width: 0;
-  gap: 5px;
+  gap: var(--gap-5);
   line-height: var(--leading-title);
 }
 
