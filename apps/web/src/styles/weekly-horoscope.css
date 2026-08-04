@@ -25,6 +25,12 @@
   flex: 0 0 auto;
 }
 
+.weekly-horoscope--embedded {
+  display: grid;
+  gap: var(--card-list-gap);
+  margin-top: var(--space-2);
+}
+
 .weekly-horoscope__macro,
 .weekly-horoscope__aspect,
 .weekly-horoscope__reading {

@@ -15379,7 +15379,6 @@ function ProfileView({
 }) {
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
-  const [weeklyHoroscopeRequested, setWeeklyHoroscopeRequested] = useState(false);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
   useContentRegistryRevision();
   const primaryChart = profile.charts[0];
@@ -15405,7 +15404,7 @@ function ProfileView({
   const safeRising = displayRising || "your rising sign";
   const natalPositions = natalSky?.positions ?? [];
   useEffect(() => {
-    if (!weeklyHoroscopeRequested || !natalSky || !displayRising || displayRising === "Rising pending") {
+    if (!natalSky || !displayRising || displayRising === "Rising pending") {
       setWeeklyHoroscopeAssembly(null);
       return;
     }
@@ -15467,8 +15466,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
-    targetDate,
-    weeklyHoroscopeRequested
+    targetDate
   ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
     ? timingContextForChart({
@@ -16163,7 +16161,6 @@ function ProfileView({
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
         dailyUpdateSummary={dailyUpdateSummary}
         weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
-        onRequestWeeklyHoroscope={() => setWeeklyHoroscopeRequested(true)}
         displayMoon={displayMoon}
         displayRising={displayRising}
         displaySun={displaySun}
