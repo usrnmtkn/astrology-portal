@@ -1,0 +1,39 @@
+{
+  "id": "sky-placement-writer-batch-4-harvest-audit-2026-08-04",
+  "billedCallsMade": 0,
+  "diagnosis": {
+    "originalNoneFoundCause": "The governed placement warmth table used an exact planet/sign lookup and had no chiron/aries or nodes/aquarius-leo record. Neither result represented a completed corpus miss.",
+    "chironFilterFinding": "The global incompatible Current Sky evidence pattern also rejected wound and healing language before target-specific domain licensing.",
+    "correction": "Literal wound and healing terms are eligible when the target planet is Chiron. Battlefield and other war metaphors remain incompatible because the Chiron row licenses literal wound language, not war metaphor. Warmth source excerpts are now checked with the same target-aware compatibility rule."
+  },
+  "results": [
+    {
+      "id": "chiron-aries",
+      "harvest_mode": "matched",
+      "emotionalCore": "the wound feels like identity",
+      "primary": {
+        "foundationText": "Chiron does not promise that the wound disappears. It shows us how to carry it differently.",
+        "sourceId": "owner-article:chiron-retrograde-in-aries:p009",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md"
+      },
+      "alternates": ["owner-article:pisces-season-2025:p054"]
+    },
+    {
+      "id": "nodes-aquarius-leo",
+      "harvest_mode": "matched",
+      "emotionalCore": "release the need for applause",
+      "searchedSouthNodeLeoCore": ["applause", "spotlight", "seen", "performing", "recognition", "creative expression", "worth"],
+      "primary": {
+        "foundationText": "Creative expression does not require applause to exist.",
+        "sourceId": "owner-article:this-weeks-astrology-august-24th-31st:p015",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/this-weeks-astrology-august-24th-31st.md",
+        "samePrimarySourceAsJupiterLeo": true
+      },
+      "alternates": [
+        "owner-article:leo-new-moon-2025:p012",
+        "owner-article:leo-full-moon-2025:p061"
+      ]
+    }
+  ],
+  "ov042": "The five other batch-4 units retain non-blocking none_found results. Missing warmth evidence does not block generation."
+}
