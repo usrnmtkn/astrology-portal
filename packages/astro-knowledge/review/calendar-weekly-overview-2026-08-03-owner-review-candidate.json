@@ -4,9 +4,8 @@
   "weekStart": "2026-08-03",
   "weekEnd": "2026-08-09",
   "headline": "The decision may be easier than maintaining it",
-  "body": "Monday and Tuesday bring enough impatience to move a conversation, application, purchase, or plan that has been sitting in discussion. Chiron stations retrograde in Taurus on Monday, and the decision may press on an older fear about money, stability, or whether you can afford to stop proving that you can manage without help.\n\nBy Wednesday, the Last Quarter Moon in Taurus makes the cost harder to ignore. The plan may be possible, but the schedule, budget, or division of labor does not work yet. If everyone agreed and one person is still expected to absorb the extra responsibility, the agreement is not finished.\n\nVenus enters Libra on Thursday, followed by the Sun trine Saturn. A vague promise can become a fairer arrangement now. Name the deadline. Clarify who is paying. Divide the work before resentment becomes part of the plan. You do not need to abandon a good idea because the first version was unrealistic. You need a version people can actually maintain.",
+  "body": "Monday begins with the Moon in Aries, and the impatience may be enough to move a conversation, application, purchase, or decision that has been sitting in discussion. Before treating delay as rejection, check whether the answer is actually missing or whether no one has agreed who carries the next step.\n\nBy Wednesday, the Last Quarter Moon in Taurus makes the practical cost harder to ignore. The decision may be possible, but the schedule, budget, or division of labor does not work yet. If everyone agreed and one person is still expected to absorb the extra responsibility, the agreement is not finished.\n\nVenus enters Libra on Thursday, followed by the Sun trine Saturn. A vague promise can become a fairer arrangement now. Name the deadline. Clarify who is paying. Divide the work before resentment becomes part of the agreement. When Mercury enters Leo on Sunday, say the part that needs recognition and put the revised terms where everyone can see them. Keep the idea if it still matters. Replace the version that no one can maintain.",
   "keyShifts": [
-    "Chiron stations retrograde in Taurus",
     "Last Quarter Moon in Taurus",
     "Venus enters Libra",
     "Sun trine Saturn",
@@ -17,6 +16,23 @@
   "promotionAuthorized": false,
   "canonical": false,
   "serving": false,
-  "provenance": "User-supplied product review attachment, 2026-08-03",
-  "notes": "Preserved verbatim as an owner-review candidate. Explicit exact-wording approval is still required before reader promotion."
+  "evidenceSources": {
+    "runtimeFacts": "apps/web/src/services/ephemeris.ts",
+    "knowledge": [
+      "packages/astro-knowledge/data/frameworks/lunar-cycle-framework.json",
+      "packages/astro-knowledge/data/frameworks/lunar-event-content-architecture.json",
+      "packages/astro-knowledge/data/modifiers/moon-phase.json",
+      "packages/astro-knowledge/data/modifiers/retrograde-planet-meanings.json"
+    ],
+    "voice": [
+      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json",
+      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/authority-policy.json"
+    ],
+    "vocabulary": [
+      "packages/astro-knowledge/voice/tldr-astro/owner-vocabulary-bank.json",
+      "packages/astro-knowledge/voice/tldr-astro/style-guide.md"
+    ]
+  },
+  "provenance": "Implementation candidate based on the owner-supplied Calendar content-system brief, 2026-08-03",
+  "notes": "Held as a non-serving owner-review candidate. Chiron was removed after the ephemeris fixture confirmed that its station falls on the preceding local Sunday. Explicit exact-wording approval is still required before reader promotion."
 }
