@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-04c");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-04d");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -307,11 +307,15 @@ try {
       .sort(),
     "The dashboard partition must expose only the exact owner-approved continuous serving diff."
   );
+  const batch2Rows = placementProviderRows
+    .filter((row) => row.source_snapshot?.releaseBatch === "2");
+  assert.equal(batch2Rows.length, 7, "Batch 2 must materialize exactly its seven approved keys.");
   assert.ok(
-    placementProviderRows
-      .filter((row) => row.source_snapshot?.releaseBatch === "2")
-      .every((row) => row.source_snapshot?.distributionState === "staged" && row.lane === "reference"),
-    "Batch-2 dashboard rows must remain staged in the reference lane."
+    batch2Rows.every((row) => (
+      row.source_snapshot?.distributionState === "serving"
+      && row.lane === "reference"
+    )),
+    "Owner-approved batch-2 rows must be serving in the on-demand reference partition."
   );
 } finally {
   fs.rmSync(tempDir, { recursive: true, force: true });

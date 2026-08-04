@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "sky-placement-batch-2-serving-diff-proposal-2026-08-04",
+  "createdAt": "2026-08-04",
+  "status": "explicit_owner_serving_approval_recorded",
+  "runtimeChanged": false,
+  "servingDiffAppliedLocally": true,
+  "productionDeployed": false,
+  "sourcePayload": {
+    "path": "packages/astro-knowledge/review/sky-placement-writer-batch-2-owner-edited-approved-v1.json",
+    "articlesSha256": "1bd9b0be3876d458d5d23a325365b2d2272d2dfd090181294e7911522e3d6e9c",
+    "articleCount": 7,
+    "reviewStatus": "approved",
+    "ownerApproved": true,
+    "servingStatus": "staged_pending_batch_2_serving_diff"
+  },
+  "proposedManifestTransition": {
+    "release_id": "sky-placement-batch-2",
+    "release_batch": "2",
+    "distribution_state_from": "staged",
+    "distribution_state_to": "serving",
+    "transition": "staged_to_serving",
+    "required_runtime_capability": "sky-placement-on-demand-v1",
+    "migration_gate": {
+      "status": "verified",
+      "deployed_package_version": "v3-2026-08-04b",
+      "verified_at": "2026-08-04T18:17:03Z",
+      "source": "packages/astro-knowledge/review/sky-placement-production-deployment-evidence-2026-08-04.json#Vercel-dpl_GxWYk5B8bKdxEices36VEmf1G2mA"
+    },
+    "approved_keys": [
+      "fallback-hook/sky-sign-copy/mercury/aries",
+      "fallback-hook/sky-sign-copy/mercury/taurus",
+      "fallback-hook/sky-sign-copy/mercury/cancer",
+      "fallback-hook/sky-sign-copy/mercury/leo",
+      "fallback-hook/sky-sign-copy/mercury/libra",
+      "fallback-hook/sky-sign-copy/mercury/scorpio",
+      "fallback-hook/sky-sign-copy/mercury/sagittarius"
+    ],
+    "owner_approval": {
+      "statement": "I explicitly approve the exact seven-key batch-2 staged_to_serving diff recorded in sky-placement-batch-2-serving-diff-proposal-2026-08-04.json.",
+      "approved_at": "2026-08-04",
+      "source": "owner statement in Codex task",
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/mercury/aries",
+        "fallback-hook/sky-sign-copy/mercury/taurus",
+        "fallback-hook/sky-sign-copy/mercury/cancer",
+        "fallback-hook/sky-sign-copy/mercury/leo",
+        "fallback-hook/sky-sign-copy/mercury/libra",
+        "fallback-hook/sky-sign-copy/mercury/scorpio",
+        "fallback-hook/sky-sign-copy/mercury/sagittarius"
+      ]
+    }
+  },
+  "expectedServingDiff": {
+    "addedKeys": 7,
+    "removedKeys": 0,
+    "changedExistingKeys": 0,
+    "payloadSourceIsExactOwnerApprovedArtifact": true,
+    "readerBundleExcludesEditorialMetadata": [
+      "note",
+      "source_keys",
+      "approved_via",
+      "body_you"
+    ],
+    "dashboardSyncAuthorized": false,
+    "productionDeploymentAuthorized": false
+  },
+  "approvalRequired": {
+    "statement": "The owner explicitly approved this exact seven-key staged_to_serving diff on 2026-08-04.",
+    "approvalRecorded": true
+  }
+}
