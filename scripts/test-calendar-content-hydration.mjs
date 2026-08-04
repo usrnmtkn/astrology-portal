@@ -183,7 +183,7 @@ await build({
   platform: "node"
 });
 
-const { getLunarCalendarMonth } = await import(`${pathToFileURL(ephemerisBundleFile).href}?t=${Date.now()}`);
+const { getLunarCalendarMonth, getLunarCalendarRangeEvents } = await import(`${pathToFileURL(ephemerisBundleFile).href}?t=${Date.now()}`);
 const ingressCalendar = await getLunarCalendarMonth({
   label: "Portsmouth, NH",
   latitude: 43.0718,
@@ -254,6 +254,21 @@ assert.equal(
   sunIngressSeasonSign("2026-08-25", augustCalendar.events),
   "Virgo",
   "August 25, 2026 must resolve to Virgo season after the Sun ingress."
+);
+
+const leoSeasonEvents = await getLunarCalendarRangeEvents({
+  label: "Portsmouth, NH",
+  latitude: 43.0718,
+  longitude: -70.7626,
+  timeZone: "America/New_York"
+}, new Date("2026-07-22T00:00:00.000Z"), new Date("2026-08-23T00:00:00.000Z"));
+assert.ok(
+  leoSeasonEvents.some((event) => event.type === "lunation" && event.title.startsWith("New Moon")),
+  "The Leo-season range feed must include its New Moon for the Day season chip."
+);
+assert.ok(
+  leoSeasonEvents.some((event) => event.type === "lunation" && event.title.startsWith("Full Moon")),
+  "The Leo-season range feed must include its Full Moon for the Day season chip."
 );
 
 fs.rmSync(ephemerisBundleFile, { force: true });
@@ -411,18 +426,28 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /loadCalendarData\(location, "month", monthStartFromDateKey\(selectedDateKey\), "full"\)/u,
-  "Day view must load the selected month's events for zodiac-season lunar milestones."
+  /getLunarCalendarRangeEvents\([\s\S]*?dateFromDateKey\(season\.start\),[\s\S]*?dateFromDateKey\(season\.end\)/u,
+  "Calendar must load the zodiac season's lean event range for lunar milestones."
 );
 assert.match(
   calendarSource,
   /const \[seasonEvents, setSeasonEvents\][\s\S]*?\.\.\.seasonEvents/u,
-  "The season panel must merge month-wide events when selecting its New and Full Moon."
+  "The season panel must merge season-wide events when selecting its New and Full Moon."
 );
 assert.match(
   calendarSource,
-  /if \(!hasNewMoon \|\| !hasFullMoon\)[\s\S]*?coverageStart > season\.start[\s\S]*?coverageEnd < seasonLastDateKey/u,
-  "The season milestone loader must cover zodiac seasons that cross a month-grid boundary."
+  /setSeasonEvents\(events\.filter\(\(event\) => \([\s\S]*?event\.type === "lunation"[\s\S]*?event\.dateKey >= season\.start[\s\S]*?event\.dateKey < season\.end/u,
+  "The season milestone loader must retain the New and Full Moon across the complete zodiac season."
+);
+assert.match(
+  calendarSource,
+  /moonDiscClass\(phase: string, illumination: number\)[\s\S]*?is-crescent[\s\S]*?is-gibbous[\s\S]*?is-quarter/u,
+  "Calendar Moon discs must distinguish crescent, gibbous, and quarter geometry."
+);
+assert.match(
+  calendarCss,
+  /\.lunar-moon-disc\.is-waxing\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waxing\.is-gibbous::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-gibbous::after/u,
+  "Calendar Moon discs must render waxing and waning geometry on opposite sides."
 );
 assert.ok(
   calendarSource.indexOf("{showGuidance && guidance?.body && (")

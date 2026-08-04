@@ -1313,71 +1313,94 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .lunar-moon-disc {
+  --moon-phase-scale: 0;
   position: relative;
   display: inline-block;
   width: 36px;
   height: 36px;
   overflow: hidden;
   border-radius: var(--radius-pill);
-  background:
-    radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.48), transparent 12%),
-    radial-gradient(circle at 58% 58%, rgba(96, 72, 25, 0.18), transparent 16%),
-    radial-gradient(circle at 39% 68%, rgba(77, 59, 24, 0.14), transparent 13%),
-    radial-gradient(circle at 66% 36%, rgba(89, 69, 28, 0.12), transparent 10%),
-    radial-gradient(circle at 48% 54%, var(--color-moon-phase-light), #b79c57 74%);
-  box-shadow: var(--shadow-lunar-phase);
+  background: var(--lunar-new-moon-bg);
+  box-shadow: var(--shadow-lunar-phase-dark);
 }
 
 .lunar-moon-disc::before {
   content: "";
   position: absolute;
-  top: -1px;
-  bottom: -1px;
-  width: var(--moon-dark, 50%);
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04), transparent 44%),
-    var(--moon-shadow-edge);
-  box-shadow: var(--shadow-lunar-phase-ring);
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-size: 200% 100%;
 }
 
 .lunar-moon-disc::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at 36% 38%, rgba(72, 57, 26, 0.16), transparent 8%),
-    radial-gradient(circle at 58% 58%, rgba(72, 57, 26, 0.12), transparent 10%),
-    radial-gradient(circle at 48% 72%, rgba(255, 255, 255, 0.12), transparent 10%);
-  mix-blend-mode: multiply;
-  opacity: 0.5;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transform: scaleX(var(--moon-phase-scale));
   pointer-events: none;
 }
 
 .lunar-moon-disc.is-waxing::before {
-  left: -1px;
-  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+  right: 0;
+  background-position: right center;
 }
 
 .lunar-moon-disc.is-waning::before {
-  right: -1px;
-  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+  left: 0;
+  background-position: left center;
 }
 
-.lunar-moon-disc.is-full::before {
-  opacity: 0;
+.lunar-moon-disc.is-waxing.is-crescent::after {
+  left: 50%;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0 / 50%;
+  background: var(--lunar-moon-shadow-bg);
+  transform-origin: left center;
 }
 
-.lunar-moon-disc.is-new {
-  background:
-    radial-gradient(circle at 42% 34%, rgba(255, 255, 255, 0.05), transparent 17%),
-    radial-gradient(circle at 58% 58%, rgba(255, 255, 255, 0.035), transparent 18%),
-    var(--lunar-moon-dark);
-  box-shadow: var(--shadow-lunar-phase-dark);
+.lunar-moon-disc.is-waning.is-crescent::after {
+  right: 50%;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill) / 50%;
+  background: var(--lunar-moon-shadow-bg);
+  transform-origin: right center;
 }
 
-.lunar-moon-disc.is-new::before {
-  opacity: 0;
+.lunar-moon-disc.is-waxing.is-gibbous::after {
+  right: 50%;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill) / 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-position: left center;
+  background-size: 200% 100%;
+  transform-origin: right center;
+}
+
+.lunar-moon-disc.is-waning.is-gibbous::after {
+  left: 50%;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0 / 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-position: right center;
+  background-size: 200% 100%;
+  transform-origin: left center;
+}
+
+.lunar-moon-disc.is-full {
+  background: var(--lunar-moon-disc-bg);
+  box-shadow: var(--shadow-lunar-phase);
+}
+
+.lunar-moon-disc.is-full::before,
+.lunar-moon-disc.is-full::after,
+.lunar-moon-disc.is-new::before,
+.lunar-moon-disc.is-new::after,
+.lunar-moon-disc.is-quarter::after {
+  display: none;
+}
+
+.lunar-moon-disc:not(.is-new) {
+  box-shadow: var(--shadow-lunar-phase);
 }
 
 .lunar-milestones {
