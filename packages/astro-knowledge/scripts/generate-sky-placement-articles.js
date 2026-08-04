@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 //
-// Generate-then-lint harness for sky placement (planet-in-sign) articles.
+// LEGACY AUDIT HARNESS for the retired five-row sky placement article format.
+//
+// Do not use this file to create current runtime fallbacks. The reader now
+// requires sky-placement-continuous-v2 rows. Use:
+//   node scripts/run-sky-placement-writer-sample.js --plan --planet jupiter --sign capricorn
+// Live CLI generation and batch modes below fail closed by design. Exported
+// helpers remain only for historical fixture and regression tests.
 //
 // This does NOT invent astrology. It assembles a generation prompt from:
 //   - source meaning: data/placements/sign/{planet}-{sign}.json (10 classical
@@ -264,10 +270,10 @@ function buildPrompt(args) {
     ``,
     `RULES:`,
     `  - Never use these words/phrases: ${failList}.`,
-    `  - Do not use the word "steady" AT ALL - it burned five drafts in the last sweep. Use grounded, solid, sure, calm, or unhurried. Em dash is banned; use a spaced hyphen " - ".`,
+    `  - "Steady" is allowed for observable effort, pace, support, light, or reliability; do not use it as vague energy language or an empty positive adjective. Use perform/performance only for literal acting, music, presentations, or measurable job performance. Em dash is banned; use a spaced hyphen " - ".`,
     `  - ${spec.loreBoundary}`,
     `  - No absolute dates, degrees, or ephemeris facts; the app appends the computed current-aspect line separately.`,
-    `  - CURRENT SKY IS COLLECTIVE: never use "you", "your", "yours", "yourself", "yourselves", or "part of you". Use "we", "someone", "people" when they are the real subject, or a concrete collective scene. Second person belongs to transit-to-natal copy.`,
+    `  - CURRENT SKY IS COLLECTIVE: never use "people", "you", "your", "yours", "yourself", "yourselves", or "part of you". Use "we", "someone", a named group, or the actual subject. Second person belongs to transit-to-natal copy.`,
     `  - HOOK SENTENCE 1 is a standalone recognition quote. The reader renders it separately in bold and removes it from the body. It must make sense on its own.`,
     `  - The rest of HOOK is the meaning paragraph: explain what ${TITLE[planet]} governs and how ${cap(sign)} changes its method, pace, or priorities. Translate the source layer into natural prose and behavior; never recite a keyword list.`,
     ``,
@@ -282,7 +288,8 @@ function buildPrompt(args) {
     `  - Do not infer employment or career from a sign alone. Taurus covers money, resources, possessions, food, housing, the body, comfort, values, and self-worth; work language needs support from the planet or supplied source.`,
     `  - No "the [sign] trap" framing, no "for everyone at once" wrapper, no coverage checklist. If a sentence exists only to satisfy coverage, cut it.`,
     `  - SCENE, NOT INVENTORY: do not line up three peer examples from work, family, relationships, or public life to prove coverage. Concrete nouns do not make an administrative list feel lived. Build pressure -> choice -> consequence. One charged sequence beats three representative scenarios.`,
-    `  - ALLOWED COLLECTIVE LANGUAGE: do not avoid or flag "people", "someone", or "we" merely because they are collective. Use them when they are the real subject; replace them only when they conceal a behavior that should be named more specifically.`,
+    `  - CURRENT SKY SUBJECTS: do not use the generic noun "people". "Someone", "we", a named group, and a concrete subject are allowed. Name who acts and what changes.`,
+    `  - EVERYDAY LANGUAGE: match the words to the scene. Do not turn an ordinary choice into a "fair counteroffer", "both sides", a "real say", or a "thoughtful compromise". Name what someone says, chooses, changes, refuses, or goes along with. Do not use "tilt" as a dressed-up substitute for change.`,
     `  - A directive is allowed only when it is specific ("Say what happened, say what you need"), never generic ("embrace the change").`,
     `  - The quoted directives above are explanations, not copy. Never repeat "Say what happened, say what you need" or any sentence from the rules or exemplars.`,
     `  - Do not open TURN with "The problem starts when" or "The trouble starts when". Those batch formulas are retired. Enter the shadow through placement-specific behavior instead.`,
@@ -388,7 +395,7 @@ async function generateArticle(args, {
       lastAttempt = { raw, article: null, lint: null };
       continue;
     }
-    const lint = lintArticle({ ...article, planet: normalized.planet, sign: normalized.sign });
+    const lint = lintArticle({ ...article, planet: normalized.planet, sign: normalized.sign, allowLegacyUntracedTiming: true });
     lastAttempt = { raw, article, lint };
     if (lint.score === 3 && lint.fails === 0) {
       const result = {
@@ -507,24 +514,11 @@ if (require.main === module) {
       process.exit(2);
     }
   } else if (mode === "--run" && planet && sign) {
-    generateArticle({ planet, sign }, { withJudge: true })
-      .then((r) => {
-        console.log(JSON.stringify(r, null, 2));
-        if (r.status !== "clean") process.exitCode = 2;
-      })
-      .catch((error) => {
-        console.error(error instanceof Error ? error.message : error);
-        process.exitCode = 1;
-      });
+    console.error("The five-row Sky Placement generator is retired. Use run-sky-placement-writer-sample.js --authorize-live to create a review-gated continuous-v2 candidate.");
+    process.exitCode = 2;
   } else if (mode === "--batch") {
-    // --batch [limit] [planet,planet,...]   e.g. --batch 24 sun,moon
-    const limit = planet && /^\d+$/.test(planet) ? Number(planet) : Infinity;
-    const planetsArg = (planet && !/^\d+$/.test(planet) ? planet : sign) || null;
-    runBatch({ limit, planets: planetsArg ? planetsArg.split(",") : null })
-      .catch((error) => {
-        console.error(error instanceof Error ? error.message : error);
-        process.exitCode = 1;
-      });
+    console.error("The five-row Sky Placement batch generator is retired. Continuous-v2 candidates must be planned and reviewed one placement at a time.");
+    process.exitCode = 2;
   } else {
     console.error("usage: --dry-run <planet> <sign> | --run <planet> <sign> | --grid | --batch [limit] [planets]");
     process.exit(1);

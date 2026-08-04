@@ -1,0 +1,34 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "owner_revised_candidate",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-pilot-uranus-gemini-owner-line-edit-v1",
+    "surface": "sky-placement",
+    "planet": "uranus",
+    "sign": "gemini",
+    "articleBeat": "full_article",
+    "before": "Uranus takes about 84 years to circle the zodiac and stays about 7 years in each sign. Before {{exitDate}}, we can choose one new way of communicating that deserves to last and let one distracting format go.",
+    "after": "Uranus in Gemini takes about 84 years to move through all twelve signs and stays about 7 years in each sign. Before {{exitDate}}, we can let one distracting format go.",
+    "whatChanged": "Removed the recurring Sol 'circle the zodiac' attractor, explicitly named Gemini in the opening, and reduced the close from two choices to one. The scene and all other wording remain unchanged.",
+    "ownerReason": "The class-teaching-itself scene is strong; the failures are mechanical and should be corrected without regenerating the draft.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [
+      "banned-zodiac-wording",
+      "missing-sign-name",
+      "two-action-close"
+    ],
+    "approvalLevel": "owner_revised_candidate",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-pilot-uranus-gemini-v1/result.json"
+    ],
+    "provenance": "preferred_version: Apply the owner-directed line edits: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, name Gemini in the opening, reduce the close to one action, re-lint, and hold for owner voice review.",
+    "feedbackKind": "preferred_version",
+    "exactApprovalScope": "not_exact_approval"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

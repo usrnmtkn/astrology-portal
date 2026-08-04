@@ -26,6 +26,11 @@ export type PlanetPosition = {
   transitEnd?: string | null;
   transitTimeZone?: string | null;
   transitRemainingLabel?: string | null;
+  priorTransitSign?: string | null;
+  priorTransitStart?: string | null;
+  priorTransitEnd?: string | null;
+  previousSignResidencyStart?: string | null;
+  previousSignResidencyEnd?: string | null;
   retrogradeStart?: string | null;
   retrogradeEnd?: string | null;
   retrogradeWindowSource?: "station" | "sign-transit" | null;
