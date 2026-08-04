@@ -1136,7 +1136,18 @@ ${fogNote}`;
     const factLine = entry.year && exit.year ? entry.year === exit.year ? `${entry.body} to ${exit.body}, ${exit.year}` : `${entry.body}, ${entry.year} to ${exit.body}, ${exit.year}` : `${entry.body} to ${exit.body}`;
     return { entry, exit, factLine };
   }
-  function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDate, exitDate }) {
+  function renderContinuousSkyPlacement(signCopy, {
+    planet,
+    sign,
+    events,
+    entryDate,
+    exitDate,
+    priorSign,
+    priorSignEntryDate,
+    priorSignExitDate,
+    previousResidencyEntryDate,
+    previousResidencyExitDate
+  }) {
     if (!entryDate || !exitDate) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
     }
@@ -1145,7 +1156,16 @@ ${fogNote}`;
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement structure ${planet}/${sign}`);
     }
     const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
-    const ctx = { entryDate: dates.entry.body, exitDate: dates.exit.body, signTitle: title2(sign) };
+    const ctx = {
+      entryDate: dates.entry.body,
+      exitDate: dates.exit.body,
+      signTitle: title2(sign),
+      priorSign: priorSign ? title2(priorSign) : null,
+      priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
+      priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
+      previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
+      previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+    };
     const factLine = dates.factLine;
     const collective = [signCopy.opening, signCopy.tension, signCopy.development].map((part) => fillKeep(part, ctx));
     const close = fillKeep(signCopy.close, ctx);
@@ -1216,6 +1236,11 @@ ${fogNote}`;
     articleKey,
     entryDate,
     exitDate,
+    priorSign,
+    priorSignEntryDate,
+    priorSignExitDate,
+    previousResidencyEntryDate,
+    previousResidencyExitDate,
     hasPriorIngress = false,
     historyEligible,
     historyEntryDate,
@@ -1340,7 +1365,12 @@ ${fogNote}`;
         sign,
         events,
         entryDate,
-        exitDate
+        exitDate,
+        priorSign,
+        priorSignEntryDate,
+        priorSignExitDate,
+        previousResidencyEntryDate,
+        previousResidencyExitDate
       });
     }
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
@@ -1509,13 +1539,47 @@ ${fogNote}`;
     return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
   }
   function renderCalendarPhase({ phase, sign }) {
-    const r = hooks.get(`fallback-hook/moon-phase/${phase}`);
-    if (!r) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
-    const body = fill(r.body_you, { signTitle: sign ? title2(sign) : "" }).replace(/^in \. /, "");
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} missing cycle sign`);
+    const normalizedSign = sign.trim().toLowerCase();
+    if (!normalizedSign) {
+      throw new SourceGapError(`SOURCE_GAP: current Moon sign required for phase ${phase}`);
+    }
+    const phaseRow = hooks.get(`fallback-hook/moon-phase/${phase}`);
+    if (!phaseRow) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
+    const exactKey = `fallback-hook/moon-phase/${phase}/${normalizedSign}`;
+    const exactRow = hooks.get(exactKey);
+    const compactLunationRow = phase === "new-moon" || phase === "full-moon" ? hooks.get(`fallback-hook/lunation-sign-compact/${phase}/${normalizedSign}`) : void 0;
+    const variantByPhase = {
+      "new-moon": 1,
+      "waxing-crescent": 2,
+      "first-quarter": 3,
+      "waxing-gibbous": 4,
+      "full-moon": 1,
+      "disseminating": 2,
+      "last-quarter": 3,
+      "balsamic": 4
+    };
+    const preferredVariant = variantByPhase[phase] ?? 1;
+    const variantSuffix = preferredVariant > 1 ? `/variant-${preferredVariant}` : "";
+    const signRow = card(`authored/calendar-weekly-moon/${normalizedSign}${variantSuffix}`) ?? card(`authored/calendar-weekly-moon/${normalizedSign}`);
+    if (!exactRow && !compactLunationRow && !signRow) {
+      throw new SourceGapError(`SOURCE_GAP: no approved Moon-sign row for ${phase} in ${normalizedSign}`);
+    }
+    const selectedRow = exactRow ?? compactLunationRow ?? signRow;
+    const rawBody = exactRow?.body_you ?? compactLunationRow?.body_you ?? String(signRow?.body ?? "");
+    const body = fill(rawBody, { signTitle: title2(normalizedSign) }).replace(/^in \. /, "");
+    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} in ${normalizedSign} has an unfilled slot`);
     const PHASE_NAMES = { "new-moon": "New Moon", "waxing-crescent": "Waxing Crescent Moon", "first-quarter": "First Quarter Moon", "waxing-gibbous": "Waxing Gibbous Moon", "full-moon": "Full Moon", "disseminating": "Disseminating Moon", "last-quarter": "Last Quarter Moon", "balsamic": "Balsamic Moon" };
-    const plain = `${PHASE_NAMES[phase] ?? title2(phase)}${sign ? ` in ${title2(sign)}` : ""}`;
-    return { headline: plain, tagline: r.title ?? "", body, parts: [body], templateKey: "fallback-template/calendar.phase", contentKey: r.contentKey };
+    const plain = `${PHASE_NAMES[phase] ?? title2(phase)} in ${title2(normalizedSign)}`;
+    return {
+      headline: plain,
+      tagline: exactRow?.title ?? phaseRow.title ?? "",
+      body,
+      parts: [body],
+      templateKey: "fallback-template/calendar.phase-sign",
+      contentKey: selectedRow?.contentKey === exactKey ? exactKey : `fallback-hook/moon-phase-sign/${phase}/${normalizedSign}`,
+      sourceKeys: [phaseRow.contentKey, selectedRow?.contentKey].filter((key) => Boolean(key)),
+      phaseSignSpecificity: exactRow || compactLunationRow ? "exact-reviewed" : "sign-derived"
+    };
   }
   function renderVoidOfCourse({ sign, nextSign }) {
     const r = hooks.get("fallback-hook/moon-void");
@@ -1530,7 +1594,17 @@ ${fogNote}`;
     return { headline: r.title ?? "", body: r.body_you, parts: [r.body_you], templateKey: "fallback-template/calendar.season-marker", contentKey: r.contentKey };
   }
   function renderWeeklyMoon({ sign, variant }) {
-    const c = (variant && variant > 1 ? card(`authored/calendar-weekly-moon/${sign}/variant-${variant}`) : null) ?? card(`authored/calendar-weekly-moon/${sign}`);
+    const rejectedOwnerFeedbackKeys = /* @__PURE__ */ new Set([
+      // Owner rejection, 2026-08-03: contains “The Cancer Moon doesn't make you weak; it makes you aware.”
+      "authored/calendar-weekly-moon/cancer"
+    ]);
+    const candidateKeys = [
+      variant && variant > 1 ? `authored/calendar-weekly-moon/${sign}/variant-${variant}` : null,
+      `authored/calendar-weekly-moon/${sign}`,
+      ...[2, 3, 4].map((candidateVariant) => `authored/calendar-weekly-moon/${sign}/variant-${candidateVariant}`)
+    ].filter((key) => Boolean(key));
+    const contentKey = [...new Set(candidateKeys)].find((key) => !rejectedOwnerFeedbackKeys.has(key) && Boolean(card(key)));
+    const c = contentKey ? card(contentKey) : null;
     if (!c) throw new SourceGapError(`SOURCE_GAP: no weekly moon card for ${sign}`);
     return { headline: `Weekly Moon: ${title2(sign)}`, body: c.body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [c.body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
   }
