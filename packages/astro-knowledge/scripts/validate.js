@@ -488,6 +488,16 @@ function flattenText(value) {
   return "";
 }
 
+function isNonServingSourceLedger(value) {
+  return Boolean(
+    value
+    && typeof value === "object"
+    && Array.isArray(value.sourceRecords)
+    && value.sourceRecords.length > 0
+    && value.sourceRecords.every((record) => record && record.serving === false)
+  );
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -526,6 +536,9 @@ function validateVoicePolicy(errors) {
 
   for (const filePath of listJsonFiles(dataRoot)) {
     const json = readJson(filePath);
+    // Evidence ledgers are search inputs, not reader-facing copy. Their selected
+    // output is still required to pass the ban list in the packet builder.
+    if (isNonServingSourceLedger(json)) continue;
     const text = flattenText(json);
     for (const check of checks) {
       if (check.pattern.test(text)) {

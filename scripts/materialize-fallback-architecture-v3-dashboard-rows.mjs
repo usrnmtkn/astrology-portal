@@ -354,6 +354,7 @@ function readPackageSources() {
   const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skyPlanetFrames = readJson("source-rows/sky-planet-frames-v1.json");
   const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
+  const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
@@ -370,6 +371,7 @@ function readPackageSources() {
     skyPlacementVoicePass,
     skyPlanetFrames,
     skySignCopySun,
+    timingEventRows,
     weeklyRows,
     templateRows
   };
@@ -404,7 +406,8 @@ function readerPackageBundle(sources) {
         ...sources.authoredRows.authoredCards,
         ...sources.lunationBlendRows.authoredCards,
         ...sources.skyArticleRows.authoredCards,
-        ...sources.weeklyRows
+        ...sources.weeklyRows,
+        ...sources.timingEventRows.authoredCards
       ])
     },
     rowsFile: {
@@ -439,6 +442,7 @@ function materializeRows(sources) {
     ...sources.lunationBlendRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.skyArticleRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.timingEventRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),

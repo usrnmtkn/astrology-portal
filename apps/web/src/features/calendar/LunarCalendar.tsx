@@ -4,13 +4,21 @@ import type { CSSProperties, KeyboardEvent } from "react";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import {
   getLunarCalendarMonth,
+  getLunarCalendarRangeEvents,
   getLunarCalendarWeek,
   type LunarCalendarDay,
   type LunarCalendarEvent,
   type LunarCalendarMonth as LunarCalendarMonthData
 } from "../../services/ephemeris";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
-import { generatedContentParagraphs, type LiveGeneratedContent } from "../../services/generatedContent";
+import {
+  fallbackArchitectureV3AuthoredContentForKey,
+  generatedContentParagraphs,
+  type LiveGeneratedContent
+} from "../../services/generatedContent";
+import {
+  type CalendarEditorialContent
+} from "../../services/weeklyHoroscope";
 import {
   fallbackV3HookBody,
   fallbackV3PlanetTopic,
@@ -22,9 +30,10 @@ import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerS
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import { hasMapboxToken, searchCities, type CitySuggestion } from "../../services/mapbox";
-import { timeZoneForLocation, withTimeZone } from "../../services/timezones";
+import { timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys } from "./calendarContentKeys";
+import { calendarMoonContinuationText, calendarPhaseLabelForDay } from "./calendarPhaseLabel";
 import { lunarDayGeneratedContentKeys, resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
@@ -73,7 +82,7 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-const calendarStorageVersion = "v7";
+const calendarStorageVersion = "v8";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -94,9 +103,11 @@ function calendarRouteStateFromUrl(fallbackDate: string) {
     const params = new URLSearchParams(query);
     const rawView = params.get("view");
     const rawDate = params.get("date");
-    const view: LunarCalendarViewMode = rawView === "week" || rawView === "weekly" || rawView === "month"
-      ? rawView
-      : "week";
+    const view: LunarCalendarViewMode = rawView === "day" || rawView === "daily" || rawView === "week"
+      ? "week"
+      : rawView === "weekly" || rawView === "month"
+        ? rawView
+        : "week";
     const date = rawDate && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
       ? rawDate
       : fallbackDate;
@@ -112,7 +123,7 @@ function updateCalendarRouteUrl(view: LunarCalendarViewMode, date: string, mode:
     const url = new URL(window.location.href);
     const params = new URLSearchParams();
 
-    params.set("view", view);
+    params.set("view", view === "week" ? "day" : view);
     params.set("date", date);
     url.hash = `calendar?${params.toString()}`;
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
@@ -172,16 +183,21 @@ function dateKeyFromDate(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
-function monthStartFromDateKey(dateKey: string) {
+function monthStartFromDateKey(
+  dateKey: string,
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+) {
   const [year = new Date().getFullYear(), month = 1] = dateKey.split("-").map(Number);
+  const monthKey = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-01`;
 
-  return new Date(year, month - 1, 1);
+  return zonedDateTimeToUtc(monthKey, "12:00 PM", timeZone);
 }
 
-function dateFromDateKey(dateKey: string) {
-  const [year = new Date().getFullYear(), month = 1, day = 1] = dateKey.split("-").map(Number);
-
-  return new Date(year, month - 1, day);
+function dateFromDateKey(
+  dateKey: string,
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+) {
+  return zonedDateTimeToUtc(dateKey, "12:00 PM", timeZone);
 }
 
 function weeklyMoonVariantForDate(dateKey: string) {
@@ -199,9 +215,11 @@ function weeklyMoonVariantForDate(dateKey: string) {
 
 function startOfWeekDate(date: Date) {
   const start = new Date(date);
+  const weekday = start.getDay();
+  const daysSinceMonday = weekday === 0 ? 6 : weekday - 1;
 
   start.setHours(0, 0, 0, 0);
-  start.setDate(start.getDate() - start.getDay());
+  start.setDate(start.getDate() - daysSinceMonday);
 
   return start;
 }
@@ -362,15 +380,6 @@ function formatWeeklyDate(day: LunarCalendarDay, timeZone: string) {
   }).format(new Date(day.date));
 }
 
-function formatWeeklyEventDateLine(day: LunarCalendarDay, timeZone: string, _eventIndex: number) {
-  const weekday = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    weekday: "long"
-  }).format(new Date(day.date));
-
-  return `On ${weekday}`;
-}
-
 function formatWeeklyRange(days: LunarCalendarDay[], timeZone: string) {
   const first = days[0];
   const last = days.at(-1);
@@ -446,12 +455,12 @@ function formatSeasonRange(startDateKey: string, endDateKey: string, timeZone: s
     timeZone,
     month: "short",
     day: "numeric"
-  }).format(dateFromDateKey(startDateKey));
+  }).format(dateFromDateKey(startDateKey, timeZone));
   const end = new Intl.DateTimeFormat("en-US", {
     timeZone,
     month: "short",
     day: "numeric"
-  }).format(dateFromDateKey(endDateKey));
+  }).format(dateFromDateKey(endDateKey, timeZone));
 
   return `${start} – ${end}`;
 }
@@ -518,19 +527,6 @@ function weeklyWriteupEvents(day: LunarCalendarDay) {
   }
 
   return [...byMovement.values()];
-}
-
-function cycleNewMoonSignForDay(day: LunarCalendarDay, events: LunarCalendarEvent[]) {
-  const selectedTime = dayKeyToUtcTime(day.dateKey) + 86_400_000;
-  const previousNewMoon = events
-    .filter((event) => (
-      event.type === "lunation"
-      && event.title.startsWith("New Moon")
-      && new Date(event.startsAt).getTime() < selectedTime
-    ))
-    .sort((first, second) => new Date(second.startsAt).getTime() - new Date(first.startsAt).getTime())[0];
-
-  return previousNewMoon?.sign ?? day.moonSign;
 }
 
 function monthTransitCardEvents(days: LunarCalendarDay[]) {
@@ -666,7 +662,7 @@ function calendarDayTooltipLines(
 
   return [
     formatSelectedDay(day, timeZone),
-    phaseLabelForDay(day, calendarDays),
+    calendarPhaseLabelForDay(day, calendarDays),
     `Moon in ${day.moonSign}`,
     ...events.map((event) => event.title),
     ...(voidWindow ? [`Void of course · ${voidWindow}`] : [])
@@ -775,33 +771,6 @@ function primaryLunationForDay(day: LunarCalendarDay) {
     event.type === "lunation"
     && (event.title.startsWith("New Moon") || event.title.startsWith("Full Moon"))
   ));
-}
-
-function phaseLabelForDay(day: LunarCalendarDay, calendarDays: LunarCalendarDay[]) {
-  const lunation = primaryLunationForDay(day);
-
-  if (lunation) {
-    return lunationDisplayLabel(lunation);
-  }
-
-  if (day.moonPhase !== "Full Moon" && day.moonPhase !== "New Moon") {
-    return day.moonPhase;
-  }
-
-  const dayIndex = calendarDays.findIndex((calendarDay) => calendarDay.dateKey === day.dateKey);
-  const previousDay = dayIndex > 0 ? calendarDays[dayIndex - 1] : null;
-  const nextDay = dayIndex >= 0 && dayIndex < calendarDays.length - 1 ? calendarDays[dayIndex + 1] : null;
-  const illuminationTrend = nextDay
-    ? nextDay.illumination - day.illumination
-    : previousDay
-      ? day.illumination - previousDay.illumination
-      : 0;
-
-  if (day.moonPhase === "Full Moon") {
-    return illuminationTrend >= 0 ? "Waxing Gibbous" : "Waning Gibbous";
-  }
-
-  return illuminationTrend >= 0 ? "Waxing Crescent" : "Waning Crescent";
 }
 
 function compactEventLabel(event: LunarCalendarEvent) {
@@ -979,10 +948,6 @@ function liveCalendarEventContent(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   event: LunarCalendarEvent
 ) {
-  if (!generatedContent) {
-    return null;
-  }
-
   if (
     event.type === "aspect"
     && event.planets
@@ -990,6 +955,10 @@ function liveCalendarEventContent(
     && event.fromSign
     && event.toSign
   ) {
+    if (!generatedContent) {
+      return null;
+    }
+
     const [first, second] = event.planets;
 
     return resolveSkyAspectGeneratedContent({
@@ -1001,6 +970,18 @@ function liveCalendarEventContent(
       secondSign: event.toSign,
       targetDate: event.dateKey || event.startsAt.slice(0, 10)
     })?.content ?? null;
+  }
+
+  for (const contentKey of calendarEventGeneratedContentKeys(event)) {
+    const content = fallbackArchitectureV3AuthoredContentForKey(contentKey);
+
+    if (content && contentMatchesCalendarEventFacts(event, content)) {
+      return content;
+    }
+  }
+
+  if (!generatedContent) {
+    return null;
   }
 
   for (const contentKey of calendarEventGeneratedContentKeys(event)) {
@@ -1066,8 +1047,10 @@ function calendarIngressPackageDescription(event: LunarCalendarEvent, dateLine: 
 
   const signPart = slugContentPart(sign);
   const planetPart = slugContentPart(event.planet);
-  const frame = fallbackV3HookBody(`fallback-hook/sky-event/ingress/${planetPart}/${signPart}`)
-    || fallbackV3HookBody("fallback-hook/sky-event/ingress");
+  // The former generic ingress frame was explicitly rejected because it used
+  // the same "tone shifts / takes on that flavor / sign trap" construction for
+  // every planet. Fail closed until an exact reviewed planet-sign row exists.
+  const frame = fallbackV3HookBody(`fallback-hook/sky-event/ingress/${planetPart}/${signPart}`);
   const planetTopic = fallbackV3PlanetTopic(event.planet);
   const signNeed = fallbackV3VocabularyBody(`fallback-vocab/sign-need/${signPart}`);
   const signTrap = fallbackV3HookBody(`fallback-hook/sky-sign-trap/${signPart}`);
@@ -1093,8 +1076,9 @@ function calendarIngressPackageDescription(event: LunarCalendarEvent, dateLine: 
 function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "Today") {
   if (event.type === "lunation" && event.sign) {
     try {
+      const phase = calendarPhaseContentKey(lunationDisplayLabel(event));
       const rendered = calendarFallbackRendererV3.renderCalendarPhase({
-        phase: calendarPhaseContentKey(lunationDisplayLabel(event)),
+        phase,
         sign: slugContentPart(event.sign)
       });
 
@@ -1243,14 +1227,48 @@ function normalizeCalendarEventSurface(
   };
 }
 
-function calendarEventDescription(
-  event: LunarCalendarEvent,
-  generatedContent?: Map<string, LiveGeneratedContent>,
-  dateLine = "Today"
-) {
-  const content = liveCalendarEventContent(generatedContent, event);
+function calendarCanonicalEventDateLine(event: LunarCalendarEvent, timeZone: string) {
+  return `On ${new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "long",
+    month: "long",
+    day: "numeric"
+  }).format(new Date(event.startsAt))}`;
+}
 
-  return normalizeCalendarEventSurface(event, content, dateLine).sections[0]?.body ?? "";
+function calendarEventEditorialContent(
+  event: LunarCalendarEvent,
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  timeZone: string
+): CalendarEditorialContent {
+  const dateLine = calendarCanonicalEventDateLine(event, timeZone);
+  const content = liveCalendarEventContent(generatedContent, event);
+  const normalized = normalizeCalendarEventSurface(event, content, dateLine);
+  const description = normalized.sections[0];
+  const headline = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
+  const fallbackContentKey = `generated/calendar-event/${event.type}/${event.id}`;
+
+  return {
+    contentKey: description?.layer === "authored"
+      ? description.sourceKeys[0] ?? `owner-approved/calendar-event/${event.id}`
+      : description
+        ? fallbackContentKey
+        : `source-gap/calendar-event/${event.id}`,
+    contentSource: description?.layer === "authored" ? "owner_approved" : "generated_fallback",
+    eventId: event.id,
+    dateRange: {
+      start: event.startsAt,
+      end: event.endsAt ?? event.startsAt
+    },
+    headline,
+    eventCopy: description?.body ?? "",
+    provenance: {
+      sourceId: description?.sourceKeys[0],
+      generatedBy: description?.tier,
+      templateVersion: description?.layer === "fallback" ? "calendar-event-fallback.v3" : undefined,
+      reviewStatus: description?.layer === "authored" ? "reader-eligible" : "assembled-fallback"
+    }
+  };
 }
 
 function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
@@ -1342,13 +1360,28 @@ function isWaxingPhase(phase: string) {
   return phase.includes("Waxing") || phase.includes("First Quarter") || phase.includes("New Moon");
 }
 
+function moonDiscClass(phase: string, illumination: number) {
+  const normalizedPhase = phase.toLowerCase();
+  const visible = Math.max(0, Math.min(100, illumination));
+
+  if (normalizedPhase.includes("new moon") || visible <= 1) return "is-new";
+  if (normalizedPhase.includes("full moon") || visible >= 99) return "is-full";
+
+  const direction = isWaxingPhase(phase) ? "is-waxing" : "is-waning";
+  const shape = visible < 49.5
+    ? "is-crescent"
+    : visible > 50.5
+      ? "is-gibbous"
+      : "is-quarter";
+
+  return `${direction} ${shape}`;
+}
+
 function moonDiscStyle(day: LunarCalendarDay) {
   const visible = Math.max(0, Math.min(100, day.illumination));
-  const dark = 100 - visible;
 
   return {
-    "--moon-visible": `${visible}%`,
-    "--moon-dark": `${dark}%`
+    "--moon-phase-scale": Math.abs(visible - 50) / 50
   } as CSSProperties;
 }
 
@@ -1463,8 +1496,13 @@ function isSeasonStart(day: LunarCalendarDay) {
 
 function seasonEyebrowForDay(day: LunarCalendarDay, timeZone: string, events?: LunarCalendarEvent[]) {
   const seasonSign = sunIngressSeasonSign(day.dateKey, events ?? []);
+  const dateLabel = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    month: "short",
+    day: "numeric"
+  }).format(new Date(day.date));
 
-  return `${seasonSign} season${isSeasonStart(day) ? " begins" : ""}`;
+  return `${dateLabel} · ${seasonSign} season${isSeasonStart(day) ? " begins" : ""}`;
 }
 
 function titleForDay(day: LunarCalendarDay) {
@@ -1518,7 +1556,9 @@ function dateKeyFromUtcTime(time: number) {
 
 function dateKeyInSameWeek(dateKey: string, weekDateKey: string) {
   const weekTime = dayKeyToUtcTime(weekDateKey);
-  const weekStart = weekTime - new Date(weekTime).getUTCDay() * 86_400_000;
+  const weekday = new Date(weekTime).getUTCDay();
+  const daysSinceMonday = weekday === 0 ? 6 : weekday - 1;
+  const weekStart = weekTime - daysSinceMonday * 86_400_000;
   const time = dayKeyToUtcTime(dateKey);
 
   return time >= weekStart && time < weekStart + 7 * 86_400_000;
@@ -1568,11 +1608,15 @@ export function LunarCalendar({
     [location.timeZone]
   );
   const initialDateKey = initialRouteState?.date ?? todayKey(location.timeZone || "UTC");
-  const [visibleMonth, setVisibleMonth] = useState(() => monthStartFromDateKey(initialDateKey));
+  const [visibleMonth, setVisibleMonth] = useState(() => monthStartFromDateKey(
+    initialDateKey,
+    location.timeZone || "UTC"
+  ));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => initialDateKey);
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>(initialRouteState?.view ?? "week");
   const [calendar, setCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
+  const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
@@ -1586,7 +1630,9 @@ export function LunarCalendar({
   useEffect(() => {
     let cancelled = false;
     let cancelHydration: (() => void) | null = null;
-    const visibleAnchor = isWeekBasedView(viewMode) ? dateFromDateKey(visibleWeekDateKey) : visibleMonth;
+    const visibleAnchor = isWeekBasedView(viewMode)
+      ? dateFromDateKey(visibleWeekDateKey, location.timeZone || "UTC")
+      : visibleMonth;
     const storedCalendarKey = calendarStorageKey(location, viewMode, visibleAnchor);
     const storedCalendar = readStoredCalendar(storedCalendarKey);
     const initialDetail = viewMode === "weekly" ? "full" : "basic";
@@ -1673,7 +1719,7 @@ export function LunarCalendar({
       setViewMode(routeState.view);
       setSelectedDateKey(routeState.date);
       setVisibleWeekDateKey(routeState.date);
-      setVisibleMonth(monthStartFromDateKey(routeState.date));
+      setVisibleMonth(monthStartFromDateKey(routeState.date, location.timeZone || "UTC"));
     }
 
     window.addEventListener("popstate", syncCalendarRoute);
@@ -1712,7 +1758,11 @@ export function LunarCalendar({
 
     let cancelled = false;
 
-    getLunarCalendarMonth(location, monthStartFromDateKey(selectedDateKey), { detail: "full" })
+    getLunarCalendarMonth(
+      location,
+      monthStartFromDateKey(selectedDateKey, location.timeZone || "UTC"),
+      { detail: "full" }
+    )
       .then((nextSelectedCalendar) => {
         if (!cancelled) {
           setSelectedCalendar(nextSelectedCalendar);
@@ -1726,6 +1776,51 @@ export function LunarCalendar({
       cancelled = true;
     };
   }, [calendar, location, selectedCalendar, selectedDateKey, viewMode, visibleMonth, visibleWeekDateKey]);
+
+  useEffect(() => {
+    if (!enableLunarArcContent || !selectedDateKey) {
+      setSeasonEvents([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    const localEvents = [
+      ...(calendar?.events ?? []),
+      ...(selectedCalendar?.events ?? [])
+    ];
+    const season = sunIngressSeasonWindow(selectedDateKey, localEvents);
+
+    // The day and week surfaces intentionally load a seven-day calendar for a
+    // fast first paint. Fetch only the season's lunation/station feed so the
+    // season chip can still name its New and Full Moon without calculating an
+    // additional 42-day visual calendar.
+    getLunarCalendarRangeEvents(
+      location,
+      dateFromDateKey(season.start, location.timeZone || "UTC"),
+      dateFromDateKey(season.end, location.timeZone || "UTC")
+    )
+      .then((events) => {
+        if (!cancelled) {
+          setSeasonEvents(events.filter((event) => (
+            event.type === "lunation"
+            && event.dateKey >= season.start
+            && event.dateKey < season.end
+          )));
+        }
+      })
+      .catch((error) => {
+        console.warn("Zodiac season lunar milestones failed to load.", error);
+
+        if (!cancelled) {
+          setSeasonEvents([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [calendar, location, selectedCalendar, selectedDateKey]);
 
   useEffect(() => {
     if (!locationPickerOpen) {
@@ -1813,7 +1908,7 @@ export function LunarCalendar({
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
       ...(selectedDay ? lunarDayGeneratedContentKeys(selectedDay, editorialEvents) : [])
-    ];
+    ].filter((contentKey) => !fallbackArchitectureV3AuthoredContentForKey(contentKey));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;
     const locationKey = `${location.latitude.toFixed(3)},${location.longitude.toFixed(3)},${calendar.timeZone}`;
@@ -1848,7 +1943,7 @@ export function LunarCalendar({
     ]));
 
     return selectedWeekDays.map((day, weekDayIndex) => {
-      const phase = phaseLabelForDay(day, calendar.days);
+      const phase = calendarPhaseLabelForDay(day, calendar.days);
       const significantEvents = significantEventsByDate.get(day.dateKey) ?? [];
       const calendarDayIndex = calendar.days.findIndex((calendarDay) => calendarDay.dateKey === day.dateKey);
       const previousDay = calendarDayIndex > 0 ? calendar.days[calendarDayIndex - 1] : null;
@@ -1867,25 +1962,25 @@ export function LunarCalendar({
           : [],
         isLastDay: weekDayIndex === selectedWeekDays.length - 1
       });
-      const events = significantEvents.map((event, eventIndex) => {
-        const content = liveCalendarEventContent(generatedContent, event);
-        const normalizedEvent = normalizeCalendarEventSurface(
+      const events = significantEvents.map((event) => {
+        const editorial = calendarEventEditorialContent(
           event,
-          content,
-          formatWeeklyEventDateLine(day, zone, eventIndex)
+          generatedContent,
+          zone
         );
 
         return {
           event,
-          title: calendarEventTitleWithSign(event, calendarEventTitle(event, content)),
-          description: normalizedEvent.sections[0]?.body ?? ""
+          editorial,
+          title: editorial.headline ?? event.title,
+          description: editorial.eventCopy ?? ""
         };
       });
       let guidance: {
         headline: string;
         body: string;
         contentKey: string;
-        source: "phase" | "moon";
+        source: "phase" | "moon" | "continuation";
       } | null = null;
 
       if (day.moonSign !== activeMoonSign) {
@@ -1929,11 +2024,14 @@ export function LunarCalendar({
         try {
           const candidate = calendarFallbackRendererV3.renderCalendarPhase({
             phase: calendarPhaseContentKey(phase),
-            sign: slugContentPart(cycleNewMoonSignForDay(day, calendar.events))
+            sign: slugContentPart(day.moonSign)
           });
           const body = firstReaderFacingCopy(candidate.parts);
 
-          if (body && !usedGuidanceBodies.has(body)) {
+          if (
+            body
+            && !usedGuidanceBodies.has(body)
+          ) {
             return {
               headline: candidate.headline,
               body,
@@ -1957,6 +2055,25 @@ export function LunarCalendar({
         guidance = renderMoonGuidance() ?? renderPhaseGuidance();
       }
 
+      if (!guidance) {
+        const continuationBody = calendarMoonContinuationText({
+          date: day.date,
+          timeZone: zone,
+          moonSign: day.moonSign,
+          phase,
+          previousMoonSign: previousDay?.moonSign
+        });
+
+        if (continuationBody) {
+          guidance = {
+            headline: `Moon in ${day.moonSign}`,
+            body: continuationBody,
+            contentKey: `generated/calendar-moon-continuation/${day.dateKey}`,
+            source: "continuation"
+          };
+        }
+      }
+
       if (guidance) {
         usedGuidanceBodies.add(guidance.body);
 
@@ -1978,30 +2095,21 @@ export function LunarCalendar({
       };
     });
   }, [calendar, generatedContent, selectedWeekDays, zone]);
-  const weeklyLeadEvent = weeklyDayWriteups
-    .flatMap((writeup) => writeup.events.map((event) => ({ ...event, day: writeup.day })))
-    .sort((first, second) => (
-      eventPriority(first.event) - eventPriority(second.event)
-      || first.event.startsAt.localeCompare(second.event.startsAt)
-    ))
-    .find((event) => event.description)
-    ?? null;
-  const weeklyLeadMoon = weeklyDayWriteups.find((writeup) => writeup.guidance?.body)?.guidance ?? null;
-  const weeklyLeadDescription = weeklyLeadEvent?.event.type === "lunation"
-    ? weeklyLunationArticleOpening(weeklyLeadEvent.event) || weeklyLeadEvent.description
-    : weeklyLeadEvent?.description ?? weeklyLeadMoon?.body ?? "";
-  const weeklyEventCount = weeklyDayWriteups.reduce((total, writeup) => total + writeup.events.length, 0);
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {
     const eventsById = new Map<string, LunarCalendarEvent>();
 
-    for (const event of [...(calendar?.events ?? []), ...(selectedCalendar?.events ?? [])]) {
+    for (const event of [
+      ...(calendar?.events ?? []),
+      ...(selectedCalendar?.events ?? []),
+      ...seasonEvents
+    ]) {
       eventsById.set(event.id, event);
     }
 
     return [...eventsById.values()];
-  }, [calendar, selectedCalendar]);
+  }, [calendar, seasonEvents, selectedCalendar]);
   const selectedLunarDay = useMemo(() => (
     selectedDay
       ? resolveLunarDay({
@@ -2039,9 +2147,8 @@ export function LunarCalendar({
       // Use the same reviewed, sign-specific aspect content selected for Sky.
       // When that exact row is unavailable, preserve Calendar coverage with
       // the package renderer instead of leaving the write-up blank.
-      const content = liveCalendarEventContent(generatedContent, event);
-      const normalizedEvent = normalizeCalendarEventSurface(event, content);
-      const body = normalizedEvent.sections[0]?.body ?? "";
+      const editorial = calendarEventEditorialContent(event, generatedContent, zone);
+      const body = editorial.eventCopy ?? "";
 
       if (body) {
         seenAspectKeys.add(aspectKey);
@@ -2053,7 +2160,7 @@ export function LunarCalendar({
   }, [generatedContent, selectedDayTransits]);
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedDayPhase = selectedDay && calendar
-    ? phaseLabelForDay(selectedDay, calendar.days)
+    ? calendarPhaseLabelForDay(selectedDay, calendar.days)
     : null;
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
@@ -2066,8 +2173,13 @@ export function LunarCalendar({
   const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
+  // Day and Week share the same dated guidance selection so the reader does
+  // not get a different Moon interpretation when switching views.
+  const selectedWeeklyGuidance = selectedDay
+    ? weeklyDayWriteups.find(({ day }) => day.dateKey === selectedDay.dateKey)?.guidance ?? null
+    : null;
   const selectedPackageWeeklyMoon = selectedDay
-    ? (() => {
+    ? selectedWeeklyGuidance ?? (() => {
         try {
           return calendarFallbackRendererV3.renderWeeklyMoon({
             sign: slugContentPart(selectedDay.moonSign),
@@ -2222,8 +2334,11 @@ export function LunarCalendar({
           {(selectedDayBodyPresentation.main.length > 0 || selectedDayAspectWriteups.length > 0) && (
             <div className="lunar-selected-card__body">
               {selectedDayBodyPresentation.main.length > 0 && (
-                <section className="lunar-selected-card__body-section" aria-labelledby="lunar-selected-moon-heading">
-                  <h3 id="lunar-selected-moon-heading">Today’s Moon</h3>
+                <section
+                  className="lunar-selected-card__body-section"
+                  aria-label="Moon guidance"
+                  data-guidance-key={selectedPackageWeeklyMoon?.contentKey}
+                >
                   {selectedDayBodyPresentation.main.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
@@ -2283,17 +2398,18 @@ export function LunarCalendar({
                   {selectedDayTransits.every(isActiveRetrogradeEvent) ? "Longer background" : "Sky movements"}
                 </span>
                 {selectedDayTransits.map((event) => {
-                  const content = liveCalendarEventContent(generatedContent, event);
-                  const eventTitle = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
-                  const description = calendarEventDescription(
+                  const editorial = calendarEventEditorialContent(
                     event,
                     generatedContent,
-                    `On ${formatEventDateMonthDay(event.startsAt, zone)}`
+                    zone
                   );
+                  const eventTitle = editorial.headline ?? event.title;
+                  const description = editorial.eventCopy ?? "";
 
                   return (
                     <button
                       className={`lunar-selected-card__daily-event event-${event.type}`}
+                      data-content-key={editorial.contentKey}
                       type="button"
                       key={event.id}
                       aria-label={eventTitle}
@@ -2395,7 +2511,7 @@ export function LunarCalendar({
     setSelectedDateKey(dateKey);
     setVisibleWeekDateKey(dateKey);
     if (!dateKeyInMonth(dateKey, visibleMonth)) {
-      setVisibleMonth(monthStartFromDateKey(dateKey));
+      setVisibleMonth(monthStartFromDateKey(dateKey, location.timeZone || "UTC"));
     }
     updateCalendarRouteUrl(viewMode, dateKey);
 
@@ -2430,7 +2546,7 @@ export function LunarCalendar({
 
     setSelectedDateKey(nextDateKey);
     setVisibleWeekDateKey(nextDateKey);
-    setVisibleMonth(monthStartFromDateKey(nextDateKey));
+    setVisibleMonth(monthStartFromDateKey(nextDateKey, location.timeZone || "UTC"));
     updateCalendarRouteUrl(viewMode, nextDateKey);
   };
   const handleCalendarNavigation = (direction: -1 | 1) => {
@@ -2438,7 +2554,7 @@ export function LunarCalendar({
       const nextWeekDateKey = dateKeyFromUtcTime(dayKeyToUtcTime(visibleWeekDateKey) + direction * 7 * 86_400_000);
 
       setVisibleWeekDateKey(nextWeekDateKey);
-      setVisibleMonth(monthStartFromDateKey(nextWeekDateKey));
+      setVisibleMonth(monthStartFromDateKey(nextWeekDateKey, location.timeZone || "UTC"));
       const nextDateKey = selectedDateKey
         ? dateKeyFromUtcTime(dayKeyToUtcTime(selectedDateKey) + direction * 7 * 86_400_000)
         : nextWeekDateKey;
@@ -2608,7 +2724,7 @@ export function LunarCalendar({
             {selectedWeekDays.map((day, index) => {
               const isSelected = selectedDateKey === day.dateKey;
               const isToday = day.dateKey === currentDateKey;
-              const dayPhase = phaseLabelForDay(day, calendar.days);
+              const dayPhase = calendarPhaseLabelForDay(day, calendar.days);
               const marker = day.events.find((event) => event.type === "lunation");
               const tooltipClass = [
                 index >= 5 ? "is-tooltip-left" : index <= 1 ? "is-tooltip-right" : "",
@@ -2635,7 +2751,7 @@ export function LunarCalendar({
                 >
                   <span className="lunar-week-day__weekday">{formatWeekday(day, zone)}</span>
                   <span className="lunar-week-day__date">{formatDayNumber(day, zone)}</span>
-                  <span className={`lunar-moon-disc ${isWaxingPhase(dayPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
+                  <span className={`lunar-moon-disc ${moonDiscClass(dayPhase, day.illumination)}`} style={moonDiscStyle(day)} aria-hidden="true" />
                   <span className={`lunar-week-day__sign lunar-moon-sign-glyph ${elementClassForSign(day.moonSign)}`}>
                     {day.moonSignGlyph}
                   </span>
@@ -2703,26 +2819,7 @@ export function LunarCalendar({
 
       {viewMode === "weekly" && (
         <div className="lunar-weekly-view">
-          <section className="lunar-weekly-hero" aria-labelledby="lunar-weekly-title">
-            <div className="lunar-weekly-hero__meta">
-              <span>{weeklyRangeLabel}</span>
-              <span>{formatEventCount(weeklyEventCount)}</span>
-            </div>
-            <p className="lunar-weekly-hero__eyebrow">The Weekly</p>
-            <h2 id="lunar-weekly-title">
-              {weeklyLeadEvent?.title ?? weeklyLeadMoon?.headline ?? "Your week in the sky"}
-            </h2>
-            {weeklyLeadDescription && (
-              <p className="lunar-weekly-hero__body">
-                {weeklyLeadDescription}
-              </p>
-            )}
-          </section>
-
           <section className="lunar-weekly-days" aria-label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
-            <div className="lunar-weekly-days__heading">
-              <p>Day by day</p>
-            </div>
             <nav className="lunar-weekly-jump" aria-label="Jump to a day">
               {weeklyDayWriteups.map(({ day, events }) => (
                 <button
@@ -2740,9 +2837,7 @@ export function LunarCalendar({
             <ol>
               {weeklyDayWriteups.map(({ day, events, guidance, phase, role, showGuidance }) => {
                 const voidWindow = formatVoidCourseDetailWindow(day, zone);
-                const visibleEvents = weeklyLeadEvent?.event.type === "lunation"
-                  ? events.filter(({ event }) => event.id !== weeklyLeadEvent.event.id)
-                  : events;
+                const visibleEvents = events;
                 const isToday = day.dateKey === currentDateKey;
 
                 return (
@@ -2759,7 +2854,7 @@ export function LunarCalendar({
                           <h3>Moon in {day.moonSign}</h3>
                         </div>
                         <span
-                          className={`lunar-moon-disc ${isWaxingPhase(phase) ? "is-waxing" : "is-waning"}`}
+                          className={`lunar-moon-disc ${moonDiscClass(phase, day.illumination)}`}
                           style={moonDiscStyle(day)}
                           aria-hidden="true"
                         />
@@ -2773,16 +2868,23 @@ export function LunarCalendar({
                       {(visibleEvents.length > 0 || (showGuidance && guidance?.body)) && (
                         <div className="lunar-weekly-day__content">
                           {showGuidance && guidance?.body && (
-                            <section className="lunar-weekly-day__guidance" data-guidance-source={guidance.source}>
-                              <p>Moon in {day.moonSign}</p>
+                            <section
+                              className="lunar-weekly-day__guidance"
+                              data-guidance-key={guidance.contentKey}
+                              data-guidance-source={guidance.source}
+                            >
                               <div>{guidance.body}</div>
                             </section>
                           )}
 
                           {visibleEvents.length > 0 && (
                             <div className="lunar-weekly-day__events" aria-label={`${formatWeeklyDate(day, zone)} movements`}>
-                              {visibleEvents.map(({ event, title, description }) => (
-                                <section className={`lunar-weekly-event event-${event.type}`} key={event.id}>
+                              {visibleEvents.map(({ event, editorial, title, description }) => (
+                                <section
+                                  className={`lunar-weekly-event event-${event.type}`}
+                                  data-content-key={editorial.contentKey}
+                                  key={event.id}
+                                >
                                   <div className="lunar-weekly-event__heading">
                                     <span aria-hidden="true">{monthCellEventLabel(event)}</span>
                                     <div>
@@ -2829,7 +2931,7 @@ export function LunarCalendar({
               {calendar.days.map((day, index) => {
                 const isSelected = selectedDateKey === day.dateKey;
                 const isToday = day.dateKey === currentDateKey;
-                const dayPhase = phaseLabelForDay(day, calendar.days);
+                const dayPhase = calendarPhaseLabelForDay(day, calendar.days);
                 const columnIndex = index % 7;
                 const rowIndex = Math.floor(index / 7);
                 const tooltipClass = [
@@ -2868,7 +2970,7 @@ export function LunarCalendar({
                       <span className="lunar-calendar-day__number">{formatDayNumber(day, zone)}</span>
                     </span>
                     <span className="lunar-calendar-day__lunar">
-                      <span className={`lunar-moon-disc ${isWaxingPhase(dayPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
+                      <span className={`lunar-moon-disc ${moonDiscClass(dayPhase, day.illumination)}`} style={moonDiscStyle(day)} aria-hidden="true" />
                       <span className={`lunar-calendar-day__moon lunar-moon-sign-glyph ${elementClassForSign(day.moonSign)}`}>
                         {day.moonSignGlyph}
                       </span>
@@ -2893,7 +2995,7 @@ export function LunarCalendar({
                           aria-hidden="true"
                         >
                           <span className="lunar-calendar-event-pill__dot" />
-                          <span className="lunar-calendar-event-pill__label">☾ {voidLabel}</span>
+                          <span className="lunar-calendar-event-pill__label">VoC {voidLabel}</span>
                         </span>
                       )}
                       {hiddenPreviewCount > 0 && (
@@ -2968,14 +3070,14 @@ function TransitCard({
   timeZone: string;
 }) {
   const glyphParts = transitCardGlyphParts(event);
-  const content = liveCalendarEventContent(generatedContent, event);
-  const title = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
-  const description = calendarEventDescription(
+  const editorial = calendarEventEditorialContent(
     event,
     generatedContent,
-    `On ${formatEventDateMonthDay(event.startsAt, timeZone)}`
+    timeZone
   );
-  const isContentLoading = contentStatus === "loading" && !content;
+  const title = editorial.headline ?? event.title;
+  const description = editorial.eventCopy ?? "";
+  const isContentLoading = contentStatus === "loading" && !description;
   const cardContent = (
     <>
       <span className="tx-glyphs" aria-hidden="true">
@@ -2999,6 +3101,7 @@ function TransitCard({
       <button
         aria-busy={isContentLoading}
         className={`aspect-card tx-card lunar-month-transit-card lunar-month-transit-card--button event-${event.type}`}
+        data-content-key={editorial.contentKey}
         onClick={() => onOpenTransit(event, description)}
         type="button"
       >
@@ -3008,7 +3111,11 @@ function TransitCard({
   }
 
   return (
-    <article aria-busy={isContentLoading} className={`aspect-card tx-card lunar-month-transit-card event-${event.type}`}>
+    <article
+      aria-busy={isContentLoading}
+      className={`aspect-card tx-card lunar-month-transit-card event-${event.type}`}
+      data-content-key={editorial.contentKey}
+    >
       {cardContent}
     </article>
   );

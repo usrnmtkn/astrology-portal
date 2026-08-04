@@ -10,6 +10,7 @@ import SwissEph from "swisseph-wasm";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-content-hydration.bundle.mjs");
 const lunarBundleFile = path.join(os.tmpdir(), "tldrastro-calendar-lunar-content-hydration.bundle.mjs");
+const seasonBundleFile = path.join(os.tmpdir(), "tldrastro-calendar-season-content-hydration.bundle.mjs");
 const ephemerisBundleDir = path.join(repoRoot, "node_modules/.cache/tldrastro");
 const ephemerisBundleFile = path.join(ephemerisBundleDir, "calendar-ingress-ephemeris.bundle.mjs");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
@@ -40,6 +41,18 @@ await build({
 });
 
 const { lunarDayGeneratedContentKeys } = await import(`${pathToFileURL(lunarBundleFile).href}?t=${Date.now()}`);
+
+await build({
+  bundle: true,
+  define: { "import.meta.env": "{}" },
+  entryPoints: [path.join(repoRoot, "apps/web/src/features/calendar/seasonWindow.ts")],
+  format: "esm",
+  logLevel: "silent",
+  outfile: seasonBundleFile,
+  platform: "node"
+});
+
+const { sunIngressSeasonSign } = await import(`${pathToFileURL(seasonBundleFile).href}?t=${Date.now()}`);
 
 const aspectEvent = {
   id: "venus-square-mars",
@@ -86,6 +99,39 @@ const directEvent = {
   direction: "direct",
   phase: "station-direct"
 };
+const mercuryStationEvent = {
+  id: "mercury-stations-retrograde-pisces",
+  type: "station",
+  title: "Mercury stations retrograde in Pisces",
+  startsAt: "2027-02-09T12:00:00.000Z",
+  dateKey: "2027-02-09",
+  planet: "Mercury",
+  sign: "Pisces",
+  direction: "retrograde",
+  phase: "station-retrograde"
+};
+const venusPassageEvent = {
+  id: "venus-retrograde-passage-scorpio",
+  type: "station",
+  title: "Venus retrograde in Scorpio",
+  startsAt: "2026-10-10T12:00:00.000Z",
+  dateKey: "2026-10-10",
+  planet: "Venus",
+  sign: "Scorpio",
+  direction: "retrograde",
+  phase: "retrograde-passage"
+};
+const chironStationEvent = {
+  id: "chiron-stations-retrograde-taurus",
+  type: "station",
+  title: "Chiron stations retrograde in Taurus",
+  startsAt: "2027-07-26T12:00:00.000Z",
+  dateKey: "2027-07-26",
+  planet: "Chiron",
+  sign: "Taurus",
+  direction: "retrograde",
+  phase: "station-retrograde"
+};
 
 const aspectKeys = calendarEventGeneratedContentKeys(aspectEvent);
 assert.equal(aspectKeys.length, 2, "Calendar aspects must request evergreen and dated approved-card keys.");
@@ -108,6 +154,19 @@ assert.ok(
 );
 
 assert.ok(
+  calendarEventGeneratedContentKeys(mercuryStationEvent).includes("sky.station.mercury.pisces.retrograde"),
+  "Mercury station cards must request their owner-approved exact row."
+);
+assert.ok(
+  calendarEventGeneratedContentKeys(venusPassageEvent).includes("sky.retrograde.venus.scorpio.retrograde_passage"),
+  "Venus retrograde passages must request their owner-approved exact row."
+);
+assert.ok(
+  calendarEventGeneratedContentKeys(chironStationEvent).includes("sky.station.chiron.taurus.retrograde"),
+  "Chiron station cards must request their owner-approved exact row."
+);
+
+assert.ok(
   calendarTransitDetailContentKeys(ingressEvent).includes("sky.placement.base.jupiter.leo"),
   "On-demand Calendar detail must include its placement article key."
 );
@@ -124,13 +183,19 @@ await build({
   platform: "node"
 });
 
-const { getLunarCalendarMonth } = await import(`${pathToFileURL(ephemerisBundleFile).href}?t=${Date.now()}`);
+const { getLunarCalendarMonth, getLunarCalendarRangeEvents } = await import(`${pathToFileURL(ephemerisBundleFile).href}?t=${Date.now()}`);
 const ingressCalendar = await getLunarCalendarMonth({
   label: "Portsmouth, NH",
   latitude: 43.0718,
   longitude: -70.7626,
   timeZone: "America/New_York"
 }, new Date("2026-07-15T12:00:00.000Z"), { detail: "full" });
+const augustCalendar = await getLunarCalendarMonth({
+  label: "Portsmouth, NH",
+  latitude: 43.0718,
+  longitude: -70.7626,
+  timeZone: "America/New_York"
+}, new Date("2026-08-15T12:00:00.000Z"), { detail: "full" });
 const directEphemeris = new SwissEph();
 await directEphemeris.initSwissEph();
 
@@ -171,6 +236,41 @@ for (const expected of [
   );
 }
 
+const virgoIngress = augustCalendar.events.find((candidate) => candidate.title === "Sun enters Virgo");
+assert.ok(virgoIngress, "The August 2026 Calendar must include the computed Sun ingress into Virgo.");
+assert.equal(virgoIngress.dateKey, "2026-08-22", "Virgo season must begin on the computed local-date Sun ingress.");
+const directVirgoIngress = directIngressFacts(virgoIngress, directEphemeris.SE_SUN);
+assert.equal(virgoIngress.direction, directVirgoIngress.direction, "The Sun ingress motion must match direct Swiss Ephemeris.");
+assert.ok(
+  Math.abs(virgoIngress.longitude - directVirgoIngress.longitude) < 0.0001,
+  "The Sun ingress longitude must match direct Swiss Ephemeris."
+);
+assert.equal(
+  sunIngressSeasonSign("2026-08-04", augustCalendar.events),
+  "Leo",
+  "August 4, 2026 must remain in Leo season."
+);
+assert.equal(
+  sunIngressSeasonSign("2026-08-25", augustCalendar.events),
+  "Virgo",
+  "August 25, 2026 must resolve to Virgo season after the Sun ingress."
+);
+
+const leoSeasonEvents = await getLunarCalendarRangeEvents({
+  label: "Portsmouth, NH",
+  latitude: 43.0718,
+  longitude: -70.7626,
+  timeZone: "America/New_York"
+}, new Date("2026-07-22T00:00:00.000Z"), new Date("2026-08-23T00:00:00.000Z"));
+assert.ok(
+  leoSeasonEvents.some((event) => event.type === "lunation" && event.title.startsWith("New Moon")),
+  "The Leo-season range feed must include its New Moon for the Day season chip."
+);
+assert.ok(
+  leoSeasonEvents.some((event) => event.type === "lunation" && event.title.startsWith("Full Moon")),
+  "The Leo-season range feed must include its Full Moon for the Day season chip."
+);
+
 fs.rmSync(ephemerisBundleFile, { force: true });
 
 const newMoonEvent = {
@@ -210,6 +310,7 @@ const appSource = read("apps/web/src/App.tsx");
 const routeSource = read("apps/web/src/routes/CalendarRoute.tsx");
 const calendarSource = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const calendarCss = read("apps/web/src/styles/lunar-calendar.css");
+const themeCss = read("apps/web/src/styles/theme.css");
 const bundledSkyCore = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"));
 const venusLibraIngress = bundledSkyCore.hookRows.find(
   (row) => row.contentKey === "fallback-hook/sky-event/ingress/venus/libra"
@@ -275,8 +376,13 @@ assert.match(calendarSource, /lunarDayGeneratedContentKeys\(selectedDay, editori
 assert.match(calendarSource, /contentStatus === "loading"/u);
 assert.match(
   calendarSource,
-  /fallback-hook\/sky-event\/ingress\/\$\{planetPart\}\/\$\{signPart\}[\s\S]*?fallback-hook\/sky-event\/ingress/u,
-  "Calendar ingress copy must prefer an approved planet-and-sign-specific row before the generic frame."
+  /const frame = fallbackV3HookBody\(`fallback-hook\/sky-event\/ingress\/\$\{planetPart\}\/\$\{signPart\}`\);/u,
+  "Calendar ingress copy must require an approved planet-and-sign-specific row."
+);
+assert.doesNotMatch(
+  calendarSource,
+  /\|\| fallbackV3HookBody\("fallback-hook\/sky-event\/ingress"\)/u,
+  "Calendar must not reactivate the rejected generic ingress wording."
 );
 assert.equal(
   venusLibraIngress?.body_you,
@@ -300,8 +406,48 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /<p>Moon in \{day\.moonSign\}<\/p>/u,
+  /<h3>Moon in \{day\.moonSign\}<\/h3>/u,
   "Weekly Moon guidance must label the sign driving the interpretation."
+);
+assert.match(
+  calendarSource,
+  /const selectedPackageWeeklyMoon = selectedDay[\s\S]*?renderWeeklyMoon\(\{[\s\S]*?sign: slugContentPart\(selectedDay\.moonSign\),[\s\S]*?variant: weeklyMoonVariantForDate\(selectedDay\.dateKey\)/u,
+  "Day view must resolve its complete approved Moon-in-sign write-up independently."
+);
+assert.doesNotMatch(
+  calendarSource,
+  /const selectedPackageWeeklyMoon = selectedWeekWriteup/u,
+  "Day view must not inherit Week view's abbreviated repeated-sign continuation."
+);
+assert.doesNotMatch(
+  calendarSource,
+  />Today’s Moon<\/h3>/u,
+  "The Day card must not repeat a redundant Today's Moon eyebrow."
+);
+assert.match(
+  calendarSource,
+  /getLunarCalendarRangeEvents\([\s\S]*?dateFromDateKey\(season\.start, location\.timeZone \|\| "UTC"\),[\s\S]*?dateFromDateKey\(season\.end, location\.timeZone \|\| "UTC"\)/u,
+  "Calendar must load the zodiac season's lean event range using the selected location's civil dates."
+);
+assert.match(
+  calendarSource,
+  /const \[seasonEvents, setSeasonEvents\][\s\S]*?\.\.\.seasonEvents/u,
+  "The season panel must merge season-wide events when selecting its New and Full Moon."
+);
+assert.match(
+  calendarSource,
+  /setSeasonEvents\(events\.filter\(\(event\) => \([\s\S]*?event\.type === "lunation"[\s\S]*?event\.dateKey >= season\.start[\s\S]*?event\.dateKey < season\.end/u,
+  "The season milestone loader must retain the New and Full Moon across the complete zodiac season."
+);
+assert.match(
+  calendarSource,
+  /moonDiscClass\(phase: string, illumination: number\)[\s\S]*?is-crescent[\s\S]*?is-gibbous[\s\S]*?is-quarter/u,
+  "Calendar Moon discs must distinguish crescent, gibbous, and quarter geometry."
+);
+assert.match(
+  calendarCss,
+  /\.lunar-moon-disc\.is-waxing\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waxing\.is-gibbous::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-gibbous::after/u,
+  "Calendar Moon discs must render waxing and waning geometry on opposite sides."
 );
 assert.ok(
   calendarSource.indexOf("{showGuidance && guidance?.body && (")
@@ -313,6 +459,16 @@ assert.match(
   /const showGuidance = Boolean\(guidance\?\.body\)/u,
   "Weekly guidance must remain visible when the day also has an event description."
 );
+assert.doesNotMatch(
+  calendarSource,
+  /calendarAdjacentCopyIsDistinct\(candidate\.body, previousGuidanceBody\)/u,
+  "Approved Moon-sign variants must not disappear merely because they share an editorial sentence pattern."
+);
+assert.match(
+  calendarSource,
+  /return `\$\{dateLabel\} · \$\{seasonSign\} season/u,
+  "The selected-day card must identify the date whose zodiac season it is showing."
+);
 assert.match(
   calendarCss,
   /\.lunar-weekly-jump \{[\s\S]*?position: sticky;[\s\S]*?top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 8px\);/u,
@@ -322,6 +478,16 @@ assert.match(
   calendarCss,
   /\.lunar-weekly-day \{[\s\S]*?scroll-margin-top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 88px\);/u,
   "Jump-to-day scrolling must clear both the global navigation and sticky week selector."
+);
+assert.match(
+  themeCss,
+  /--lunar-moon-shadow-bg:[\s\S]*?color-mix\(in srgb, var\(--lunar-moon-dark\) 78%, var\(--lunar-moon-dark-edge\)\);/u,
+  "The Moon phase shadow token must resolve independently so waxing and waning masks remain visible."
+);
+assert.doesNotMatch(
+  themeCss,
+  /--lunar-moon-shadow-bg:[\s\S]*?var\(--moon-shadow-edge\)/u,
+  "A root Moon token must not depend on a component-local custom property."
 );
 assert.match(
   calendarCss,
@@ -365,7 +531,7 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /selectedDayTransits\.map[\s\S]*?calendarEventDescription\([\s\S]*?onOpenTransit\?\.\(event, description\)/u,
+  /selectedDayTransits\.map[\s\S]*?calendarEventEditorialContent\([\s\S]*?const description = editorial\.eventCopy \?\? "";[\s\S]*?data-content-key=\{editorial\.contentKey\}[\s\S]*?onOpenTransit\?\.\(event, description\)/u,
   "Selected-day ingress, station, and aspect buttons must carry their approved rendered copy into detail."
 );
 assert.match(

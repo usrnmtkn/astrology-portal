@@ -1,0 +1,38 @@
+{
+  "artifactType": "calendar_weekly_overview_approval_record",
+  "contentKey": "approved/calendar-weekly-overview/2026-08-03",
+  "weekStart": "2026-08-03",
+  "weekEnd": "2026-08-09",
+  "headline": "Speed gets an answer. Fairness decides whether it holds.",
+  "body": "Monday’s Moon in Aries makes waiting harder. A delayed answer, unresolved conversation, or task everyone has been circling may finally get a direct response. The impulse is to settle it quickly, especially if silence has started to feel like rejection.\n\nThe Last Quarter Moon in Taurus on Wednesday slows that urgency enough to show the practical limit. Notice what the choice requires from your time, money, energy, or body. If the answer depends on someone quietly covering extra hours, expense, or care, the cost has not been fully named.\n\nVenus enters Libra on Thursday, and the Sun trine Saturn makes a fair correction easier to hold. Ask what each person agreed to, what support is available, and where a boundary needs to be explicit. Mercury enters Leo on Sunday and brings the unspoken need for recognition into the conversation. Say what matters plainly. A workable answer should leave room for honesty, contribution, and follow-through.",
+  "keyShifts": [
+    "Last Quarter Moon in Taurus",
+    "Venus enters Libra",
+    "Sun trine Saturn",
+    "Mercury enters Leo"
+  ],
+  "reviewStatus": "approved",
+  "ownerApproved": true,
+  "promotionAuthorized": true,
+  "canonical": true,
+  "serving": true,
+  "evidenceSources": {
+    "runtimeFacts": "apps/web/src/services/ephemeris.ts",
+    "knowledge": [
+      "packages/astro-knowledge/data/frameworks/lunar-cycle-framework.json",
+      "packages/astro-knowledge/data/frameworks/lunar-event-content-architecture.json",
+      "packages/astro-knowledge/data/modifiers/moon-phase.json",
+      "packages/astro-knowledge/data/modifiers/retrograde-planet-meanings.json"
+    ],
+    "voice": [
+      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json",
+      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/authority-policy.json"
+    ],
+    "vocabulary": [
+      "packages/astro-knowledge/voice/tldr-astro/owner-vocabulary-bank.json",
+      "packages/astro-knowledge/voice/tldr-astro/style-guide.md"
+    ]
+  },
+  "provenance": "Owner-approved in Codex chat on 2026-08-04 after the Calendar drift review.",
+  "notes": "Promoted after exact-copy owner approval. Chiron remains excluded because the ephemeris fixture confirms that its station falls on the preceding local Sunday. The approved overview connects Monday's Moon, the Last Quarter Moon, Venus entering Libra, Sun trine Saturn, and Mercury entering Leo in chronological order without duplicating the daily cards."
+}
