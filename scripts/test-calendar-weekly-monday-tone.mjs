@@ -93,23 +93,23 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /const weeklyForecastHeadline = weeklyMondayMoonTone\?\.headline/u,
-  "The weekly hero must begin with Monday's governed emotional tone."
+  /const weeklyForecastHeadline = weeklyForecast\?\.weeklyHeadline/u,
+  "The weekly hero must use the distinct governed weekly headline instead of promoting Monday's Moon label."
 );
 assert.match(
   calendarSource,
   /const weeklySupportingShifts = weeklyMainShifts;/u,
   "Key shifts must use the ranked, governed weekly selection."
 );
-assert.match(
+assert.doesNotMatch(
   calendarSource,
-  /const weeklyNarrativeSections = \[[\s\S]*?weeklyMondayMoonTone\.body[\s\S]*?weeklyNarrativeEvents\.flatMap/u,
-  "The weekly hero must combine Monday's approved tone with chronological approved event excerpts."
+  /weeklyNarrativeSections|calendarWeeklyExcerpt/u,
+  "The weekly hero must not repackage clipped daily cards as a weekly forecast."
 );
 assert.match(
   calendarSource,
-  /const weeklyForecastBody = weeklyNarrativeSections\.length === 0[\s\S]*?weeklyForecast\?\.weeklyOverview/u,
-  "The generic weekly fallback must render only when governed narrative sections are unavailable."
+  /const weeklyForecastBody = weeklyForecast\?\.weeklyOverview \?\? "";/u,
+  "The weekly hero must render the governed weekly overview rather than duplicated daily excerpts."
 );
 assert.match(
   calendarSource,
@@ -191,13 +191,13 @@ assert.match(
   "Weekly Moon resolution must skip content keys rejected by explicit owner feedback."
 );
 
-assert.equal(ownerReviewCandidate.reviewStatus, "needs_review");
-assert.equal(ownerReviewCandidate.ownerApproved, false);
-assert.equal(ownerReviewCandidate.promotionAuthorized, false);
-assert.equal(ownerReviewCandidate.serving, false);
+assert.equal(ownerReviewCandidate.reviewStatus, "approved");
+assert.equal(ownerReviewCandidate.ownerApproved, true);
+assert.equal(ownerReviewCandidate.promotionAuthorized, true);
+assert.equal(ownerReviewCandidate.serving, true);
 assert.equal(ownerReviewCandidate.weekStart, "2026-08-03");
 assert.equal(ownerReviewCandidate.weekEnd, "2026-08-09");
-assert.equal(ownerReviewCandidate.headline, "The decision may be easier than maintaining it");
+assert.equal(ownerReviewCandidate.headline, "Speed gets an answer. Fairness decides whether it holds.");
 assert.equal(ownerReviewCandidate.keyShifts[0], "Last Quarter Moon in Taurus");
 assert.equal(ownerReviewCandidate.keyShifts.at(-1), "Mercury enters Leo");
 assert.doesNotMatch(
@@ -206,4 +206,4 @@ assert.doesNotMatch(
   "The owner-review candidate must not pull the preceding Sunday station into the Monday-Sunday week."
 );
 
-console.log("Calendar weekly synthesis contract passed (Monday-Sunday chronology, phase precision, owner candidate held for review). ");
+console.log("Calendar weekly synthesis contract passed (Monday-Sunday chronology, phase precision, exact-copy owner approval). ");
