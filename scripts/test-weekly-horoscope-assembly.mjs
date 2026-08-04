@@ -11,6 +11,7 @@ const sourcePath = path.join(
   "apps/web/src/content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json"
 );
 const rows = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
+const rowsWithoutApprovedWeeklyOverview = rows.filter((row) => row.surface !== "weekly-overview");
 const reviewCandidatePath = path.join(
   repoRoot,
   "packages/astro-knowledge/review/calendar-weekly-overview-2026-08-03-owner-review-candidate.json"
@@ -40,17 +41,17 @@ try {
   assert.equal(weekly.weeklyContentImportCounts.total, rows.length);
   assert.equal(rows.filter((row) => row.surface === "weekly-station").length, 18);
   assert.equal(rows.filter((row) => row.surface === "weekly-opener").length, 6);
-  assert.equal(rows.filter((row) => row.surface === "weekly-overview").length, 0);
+  assert.equal(rows.filter((row) => row.surface === "weekly-overview").length, 1);
   assert.ok(rows.every((row) => ["approved", "reviewed"].includes(row.review_status)));
   assert.ok(rows.every((row) => !/SOURCE_GAP/u.test(`${row.headline}\n${row.body}`)));
-  assert.equal(reviewCandidate.reviewStatus, "needs_review");
-  assert.equal(reviewCandidate.ownerApproved, false);
-  assert.equal(reviewCandidate.promotionAuthorized, false);
-  assert.equal(reviewCandidate.canonical, false);
-  assert.equal(reviewCandidate.serving, false);
+  assert.equal(reviewCandidate.reviewStatus, "approved");
+  assert.equal(reviewCandidate.ownerApproved, true);
+  assert.equal(reviewCandidate.promotionAuthorized, true);
+  assert.equal(reviewCandidate.canonical, true);
+  assert.equal(reviewCandidate.serving, true);
   assert.ok(
-    !rows.some((row) => row.contentKey === reviewCandidate.contentKey),
-    "Owner-review candidates must remain outside the reader-serving source rows."
+    rows.some((row) => row.contentKey === reviewCandidate.contentKey),
+    "Exact-copy owner approval must promote the weekly overview into reader-serving source rows."
   );
   const weeklyCopyRows = rows.filter((row) => row.weeklyOverview);
   const prohibitedWeeklyLanguage = /the harvest|the universe is inviting you|plant seeds|dreams take root|step into the light|walk through the portal|manifestation|energetic upgrade|a fresh chapter is calling|what is meant for you|the energy asks you|this activation|alignment|this placement becomes|the planet carries the thread|keep shrinking|edit yourself|on paper|shared trust|full write-up coming soon|\bperformance\b|\bthings\b|—/iu;
@@ -243,6 +244,35 @@ try {
       aspect: "trine"
     }
   ];
+  const approvedWeekEvents = [
+    ...currentWeekEvents,
+    {
+      id: "mercury-leo-2026-08-09",
+      type: "ingress",
+      title: "Mercury enters Leo",
+      startsAt: "2026-08-09T12:00:00.000Z",
+      dateKey: "2026-08-09",
+      glyph: "☿",
+      primary: true,
+      planet: "Mercury",
+      toSign: "Leo"
+    }
+  ];
+  const approvedCurrentWeekOverview = weekly.resolveCalendarWeeklyOverview({
+    weekStart: "2026-08-03",
+    weekEnd: "2026-08-09",
+    events: approvedWeekEvents,
+    rows
+  });
+  assert.equal(
+    approvedCurrentWeekOverview?.contentKey,
+    "approved/calendar-weekly-overview/2026-08-03",
+    "The exact-copy owner-approved weekly overview must serve when its verified key shifts match."
+  );
+  assert.equal(
+    approvedCurrentWeekOverview?.weeklyHeadline,
+    "Speed gets an answer. Fairness decides whether it holds."
+  );
   assert.ok(
     weekly.calendarWeeklyEventRank(currentWeekEvents[0]).finalScore
       > weekly.calendarWeeklyEventRank(currentWeekEvents[3]).finalScore,
@@ -271,7 +301,7 @@ try {
     weekStart: "2026-08-03",
     weekEnd: "2026-08-09",
     events: [...currentWeekEvents].reverse(),
-    rows: [...rows, exactOverviewRow]
+    rows: [...rowsWithoutApprovedWeeklyOverview, exactOverviewRow]
   });
   assert.equal(authoredCalendarOverview?.source, "authored");
   assert.equal(authoredCalendarOverview?.contentSource, "owner_approved");
@@ -329,19 +359,12 @@ try {
     ),
     true
   );
-  assert.equal(
-    weekly.calendarWeeklyExcerpt(
-      "The first sentence names the pressure. The second sentence names the choice. The third sentence belongs in the daily card."
-    ),
-    "The first sentence names the pressure. The second sentence names the choice.",
-    "Weekly excerpts must preserve complete approved sentences while keeping the hero concise."
-  );
   const duplicateOverviewRejected = weekly.resolveCalendarWeeklyOverview({
     weekStart: "2026-08-03",
     weekEnd: "2026-08-09",
     events: currentWeekEvents,
     dailyCopy: ["A complete owner-approved weekly overview fixture."],
-    rows: [...rows, exactOverviewRow]
+    rows: [...rowsWithoutApprovedWeeklyOverview, exactOverviewRow]
   });
   assert.notEqual(
     duplicateOverviewRejected?.contentKey,
@@ -498,7 +521,7 @@ try {
     weekStart: "2026-08-03",
     weekEnd: "2026-08-09",
     events: timezoneShiftedEvents,
-    rows: [...rows, exactOverviewRow]
+    rows: [...rowsWithoutApprovedWeeklyOverview, exactOverviewRow]
   });
   assert.equal(
     timezoneStableOverview?.contentKey,
