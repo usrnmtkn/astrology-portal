@@ -70,18 +70,38 @@
     {
       "release_id": "sky-placement-batch-2",
       "release_batch": "2",
-      "distribution_state": "staged",
-      "transition": "none",
+      "distribution_state": "serving",
+      "transition": "staged_to_serving",
       "required_runtime_capability": "sky-placement-on-demand-v1",
       "migration_gate": {
-        "status": "blocked",
-        "deployed_package_version": null,
-        "verified_at": null,
-        "source": null
+        "status": "verified",
+        "deployed_package_version": "v3-2026-08-04b",
+        "verified_at": "2026-08-04T18:17:03Z",
+        "source": "packages/astro-knowledge/review/sky-placement-production-deployment-evidence-2026-08-04.json#Vercel-dpl_GxWYk5B8bKdxEices36VEmf1G2mA"
       },
-      "approved_keys": [],
-      "owner_approval": null,
-      "blocker": "Batch 2 requires a separate owner-approved serving diff after the on-demand migration is deployed and verified."
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/mercury/aries",
+        "fallback-hook/sky-sign-copy/mercury/taurus",
+        "fallback-hook/sky-sign-copy/mercury/cancer",
+        "fallback-hook/sky-sign-copy/mercury/leo",
+        "fallback-hook/sky-sign-copy/mercury/libra",
+        "fallback-hook/sky-sign-copy/mercury/scorpio",
+        "fallback-hook/sky-sign-copy/mercury/sagittarius"
+      ],
+      "owner_approval": {
+        "statement": "I explicitly approve the exact seven-key batch-2 staged_to_serving diff recorded in sky-placement-batch-2-serving-diff-proposal-2026-08-04.json.",
+        "approved_at": "2026-08-04",
+        "source": "packages/astro-knowledge/review/sky-placement-batch-2-serving-diff-proposal-2026-08-04.json",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/mercury/aries",
+          "fallback-hook/sky-sign-copy/mercury/taurus",
+          "fallback-hook/sky-sign-copy/mercury/cancer",
+          "fallback-hook/sky-sign-copy/mercury/leo",
+          "fallback-hook/sky-sign-copy/mercury/libra",
+          "fallback-hook/sky-sign-copy/mercury/scorpio",
+          "fallback-hook/sky-sign-copy/mercury/sagittarius"
+        ]
+      }
     }
   ]
 }

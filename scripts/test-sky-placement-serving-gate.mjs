@@ -53,12 +53,26 @@ for (const release of manifest.releases ?? []) {
 
 const batch2 = manifest.releases.find((release) => String(release.release_batch) === "2");
 assert.ok(batch2, "Batch 2 must have an explicit serving-manifest release.");
+const expectedBatch2Keys = [
+  "fallback-hook/sky-sign-copy/mercury/aries",
+  "fallback-hook/sky-sign-copy/mercury/taurus",
+  "fallback-hook/sky-sign-copy/mercury/cancer",
+  "fallback-hook/sky-sign-copy/mercury/leo",
+  "fallback-hook/sky-sign-copy/mercury/libra",
+  "fallback-hook/sky-sign-copy/mercury/scorpio",
+  "fallback-hook/sky-sign-copy/mercury/sagittarius"
+];
 if (batch2.distribution_state === "staged") {
   assert.ok(["blocked", "verified"].includes(batch2.migration_gate?.status));
   assert.deepEqual(batch2.approved_keys, []);
   assert.equal(batch2.owner_approval, null);
 } else {
   assert.equal(batch2.distribution_state, "serving");
+  assert.deepEqual(batch2.approved_keys, expectedBatch2Keys);
+  assert.deepEqual(batch2.owner_approval?.approved_keys, expectedBatch2Keys);
+  assert.equal(batch2.migration_gate?.deployed_package_version, "v3-2026-08-04b");
+  assert.equal(batch2.migration_gate?.verified_at, "2026-08-04T18:17:03Z");
+  assert.match(batch2.migration_gate?.source ?? "", /dpl_GxWYk5B8bKdxEices36VEmf1G2mA/u);
 }
 
 const runtimeSource = readSource("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
