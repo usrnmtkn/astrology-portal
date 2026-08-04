@@ -1590,6 +1590,7 @@ export function LunarCalendar({
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>(initialRouteState?.view ?? "week");
   const [calendar, setCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
+  const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
@@ -1743,6 +1744,84 @@ export function LunarCalendar({
       cancelled = true;
     };
   }, [calendar, location, selectedCalendar, selectedDateKey, viewMode, visibleMonth, visibleWeekDateKey]);
+
+  useEffect(() => {
+    if (!enableLunarArcContent || viewMode !== "week" || !selectedDateKey) {
+      setSeasonEvents([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    // Day view is intentionally backed by a seven-day calendar for its fast
+    // first paint. Load a month-wide event range separately so the season
+    // panel can still name the New and Full Moon beyond that week. Most month
+    // grids already cover both; when one falls over a grid boundary, fetch
+    // only the uncovered boundary month.
+    loadCalendarData(location, "month", monthStartFromDateKey(selectedDateKey), "full")
+      .then(async (selectedMonthCalendar) => {
+        const season = sunIngressSeasonWindow(selectedDateKey, selectedMonthCalendar.events);
+        const seasonEventsInSelectedMonth = selectedMonthCalendar.events.filter((event) => (
+          event.dateKey >= season.start && event.dateKey < season.end
+        ));
+        const hasNewMoon = seasonEventsInSelectedMonth.some((event) => (
+          event.type === "lunation" && event.title.startsWith("New Moon")
+        ));
+        const hasFullMoon = seasonEventsInSelectedMonth.some((event) => (
+          event.type === "lunation" && event.title.startsWith("Full Moon")
+        ));
+        const calendars = [selectedMonthCalendar];
+
+        if (!hasNewMoon || !hasFullMoon) {
+          const coverageStart = selectedMonthCalendar.days[0]?.dateKey ?? selectedDateKey;
+          const coverageEnd = selectedMonthCalendar.days.at(-1)?.dateKey ?? selectedDateKey;
+          const seasonEndDate = dateFromDateKey(season.end);
+
+          seasonEndDate.setDate(seasonEndDate.getDate() - 1);
+          const seasonLastDateKey = dateKeyFromDate(seasonEndDate);
+          const boundaryAnchors = new Map<string, Date>();
+
+          if (coverageStart > season.start) {
+            const anchor = monthStartFromDateKey(season.start);
+
+            boundaryAnchors.set(dateKeyFromDate(anchor), anchor);
+          }
+
+          if (coverageEnd < seasonLastDateKey) {
+            const anchor = monthStartFromDateKey(seasonLastDateKey);
+
+            boundaryAnchors.set(dateKeyFromDate(anchor), anchor);
+          }
+
+          calendars.push(...await Promise.all(
+            [...boundaryAnchors.values()].map((anchor) => (
+              loadCalendarData(location, "month", anchor, "full")
+            ))
+          ));
+        }
+
+        if (!cancelled) {
+          const eventsById = new Map<string, LunarCalendarEvent>();
+
+          for (const event of calendars.flatMap((seasonCalendar) => seasonCalendar.events)) {
+            eventsById.set(event.id, event);
+          }
+
+          setSeasonEvents([...eventsById.values()]);
+        }
+      })
+      .catch((error) => {
+        console.warn("Zodiac season lunar milestones failed to load.", error);
+
+        if (!cancelled) {
+          setSeasonEvents([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location, selectedDateKey, viewMode]);
 
   useEffect(() => {
     if (!locationPickerOpen) {
@@ -2053,12 +2132,16 @@ export function LunarCalendar({
   const arcEvents = useMemo(() => {
     const eventsById = new Map<string, LunarCalendarEvent>();
 
-    for (const event of [...(calendar?.events ?? []), ...(selectedCalendar?.events ?? [])]) {
+    for (const event of [
+      ...(calendar?.events ?? []),
+      ...(selectedCalendar?.events ?? []),
+      ...seasonEvents
+    ]) {
       eventsById.set(event.id, event);
     }
 
     return [...eventsById.values()];
-  }, [calendar, selectedCalendar]);
+  }, [calendar, seasonEvents, selectedCalendar]);
   const selectedLunarDay = useMemo(() => (
     selectedDay
       ? resolveLunarDay({
@@ -2122,13 +2205,11 @@ export function LunarCalendar({
   const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
-  const selectedWeekWriteup = selectedDay
-    ? weeklyDayWriteups.find((writeup) => writeup.day.dateKey === selectedDay.dateKey) ?? null
-    : null;
-  const selectedPackageWeeklyMoon = selectedWeekWriteup
-    ? selectedWeekWriteup.guidance
-    : selectedDay
-      ? (() => {
+  // Week view may use a short factual continuation when the Moon remains in
+  // the same sign on consecutive days. Day view is the expanded reading, so
+  // it always resolves its complete approved Moon-in-sign unit independently.
+  const selectedPackageWeeklyMoon = selectedDay
+    ? (() => {
         try {
           return calendarFallbackRendererV3.renderWeeklyMoon({
             sign: slugContentPart(selectedDay.moonSign),
@@ -2139,7 +2220,7 @@ export function LunarCalendar({
           throw error;
         }
       })()
-      : null;
+    : null;
   const selectedDayBodyPresentation = {
     main: selectedPackageWeeklyMoon ? [selectedPackageWeeklyMoon.body] : [],
     loreTitle: null,
@@ -2285,10 +2366,9 @@ export function LunarCalendar({
               {selectedDayBodyPresentation.main.length > 0 && (
                 <section
                   className="lunar-selected-card__body-section"
-                  aria-labelledby="lunar-selected-moon-heading"
+                  aria-label="Moon guidance"
                   data-guidance-key={selectedPackageWeeklyMoon?.contentKey}
                 >
-                  <h3 id="lunar-selected-moon-heading">Today’s Moon</h3>
                   {selectedDayBodyPresentation.main.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}

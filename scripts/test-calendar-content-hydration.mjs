@@ -308,6 +308,36 @@ assert.match(
   /<h3>Moon in \{day\.moonSign\}<\/h3>/u,
   "Weekly Moon guidance must label the sign driving the interpretation."
 );
+assert.match(
+  calendarSource,
+  /const selectedPackageWeeklyMoon = selectedDay[\s\S]*?renderWeeklyMoon\(\{[\s\S]*?sign: slugContentPart\(selectedDay\.moonSign\),[\s\S]*?variant: weeklyMoonVariantForDate\(selectedDay\.dateKey\)/u,
+  "Day view must resolve its complete approved Moon-in-sign write-up independently."
+);
+assert.doesNotMatch(
+  calendarSource,
+  /const selectedPackageWeeklyMoon = selectedWeekWriteup/u,
+  "Day view must not inherit Week view's abbreviated repeated-sign continuation."
+);
+assert.doesNotMatch(
+  calendarSource,
+  />Today’s Moon<\/h3>/u,
+  "The Day card must not repeat a redundant Today's Moon eyebrow."
+);
+assert.match(
+  calendarSource,
+  /loadCalendarData\(location, "month", monthStartFromDateKey\(selectedDateKey\), "full"\)/u,
+  "Day view must load the selected month's events for zodiac-season lunar milestones."
+);
+assert.match(
+  calendarSource,
+  /const \[seasonEvents, setSeasonEvents\][\s\S]*?\.\.\.seasonEvents/u,
+  "The season panel must merge month-wide events when selecting its New and Full Moon."
+);
+assert.match(
+  calendarSource,
+  /if \(!hasNewMoon \|\| !hasFullMoon\)[\s\S]*?coverageStart > season\.start[\s\S]*?coverageEnd < seasonLastDateKey/u,
+  "The season milestone loader must cover zodiac seasons that cross a month-grid boundary."
+);
 assert.ok(
   calendarSource.indexOf("{showGuidance && guidance?.body && (")
     < calendarSource.indexOf("{visibleEvents.length > 0 && ("),
