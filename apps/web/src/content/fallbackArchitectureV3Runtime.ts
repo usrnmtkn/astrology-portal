@@ -9,6 +9,7 @@ import skyAspectPhrasebookV1 from "./fallbackArchitectureV3/source-rows/sky-aspe
 import skyPlacementVoicePassV1 from "./fallbackArchitectureV3/source-rows/sky-placement-inventories-voice-pass-v1.json";
 import skyPlanetFramesV1 from "./fallbackArchitectureV3/source-rows/sky-planet-frames-v1.json";
 import skySignCopySunV1 from "./fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json";
+import timingEventReaderCopyV2 from "./fallbackArchitectureV3/source-rows/timing-event-reader-copy-v2.json";
 import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
@@ -311,13 +312,36 @@ function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhraseboo
 
 assertSkyAspectPhrasebookV1Import(skyAspectPhrasebookV1);
 
+function assertTimingEventReaderCopyV2Import(
+  source: typeof timingEventReaderCopyV2
+) {
+  const cards = source.authoredCards;
+  const keys = new Set(cards.map((card) => card.contentKey));
+
+  if (
+    source.version !== "timing-event-reader-copy-v2"
+    || cards.length !== 4
+    || keys.size !== 4
+    || cards.some((card) => card.review_status !== "approved")
+    || cards.some((card) => card.content_role !== "full_copy")
+    || cards.some((card) => !card.owner_authored)
+    || cards.some((card) => !card.headline.trim() || !card.body.includes("\n\n"))
+    || cards.some((card) => !card.source_keys.includes("owner/timing-event-reader-copy-v2-approved"))
+  ) {
+    throw new Error("Timing-event reader copy V2 must contain four unique, owner-approved exact cards.");
+  }
+}
+
+assertTimingEventReaderCopyV2Import(timingEventReaderCopyV2);
+
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: [
       ...(bundledSkyAuthoredCardsV3.authoredCards as AuthoredCard[]),
       ...(lunationBlendUnitsV1.authoredCards as AuthoredCard[]),
       ...(skyArticleV1.authoredCards as AuthoredCard[]),
-      ...(weeklySourceRowsV1 as AuthoredCard[])
+      ...(weeklySourceRowsV1 as AuthoredCard[]),
+      ...(timingEventReaderCopyV2.authoredCards as AuthoredCard[])
     ]
   },
   templatesFile: {
