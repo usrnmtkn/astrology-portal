@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-01b",
-  "contentHash": "e022ceaad5151376b74d7c60d845c79a",
-  "keyManifestHash": "be95d249b684ee4d97881af3c4396b59",
-  "keyCount": 7184,
+  "packageVersion": "v3-2026-08-04a",
+  "contentHash": "85f0c7ccd4927bd84ea5621a9fad197c",
+  "keyManifestHash": "a7cd9e557f225ef18161f97f07461345",
+  "keyCount": 7188,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -2768,6 +2768,10 @@
     "authored:authored/week-opener/station",
     "authored:sky-article/saturn/aries/2026",
     "authored:sky-article/saturn/pisces/2023",
+    "authored:sky.ingress.jupiter.leo",
+    "authored:sky.retrograde.venus.scorpio.retrograde_passage",
+    "authored:sky.station.chiron.taurus.retrograde",
+    "authored:sky.station.mercury.pisces.retrograde",
     "hook:fallback-hook/angle-intro/ascendant",
     "hook:fallback-hook/angle-intro/descendant",
     "hook:fallback-hook/angle-intro/imum-coeli",

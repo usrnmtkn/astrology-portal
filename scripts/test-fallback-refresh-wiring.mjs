@@ -34,6 +34,7 @@ const skyAspectPhrasebook = readPackageJson("source-rows/sky-aspect-phrasebook-v
 const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
+const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
@@ -46,7 +47,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-01b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-04a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -681,7 +682,8 @@ try {
         ...transitRows.authoredCards,
         ...lunationBlendRows.authoredCards,
         ...skyArticleRows.authoredCards,
-        ...weeklyRows
+        ...weeklyRows,
+        ...timingEventRows.authoredCards
       ]
     },
     rowsFile: {

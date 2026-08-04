@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-01b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-04a");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -101,6 +101,7 @@ const skyAspectPhrasebook = readJson(`${packageDir}/source-rows/sky-aspect-phras
 const skyPlacementVoicePass = readJson(`${packageDir}/source-rows/sky-placement-inventories-voice-pass-v1.json`);
 const skyPlanetFrames = readJson(`${packageDir}/source-rows/sky-planet-frames-v1.json`);
 const skySignCopySun = readJson(`${packageDir}/source-rows/sky-sign-copy-sun-v1.json`);
+const timingEventRows = readJson(`${packageDir}/source-rows/timing-event-reader-copy-v2.json`);
 const weeklyRows = readJson(`${packageDir}/source-rows/station-cards-week-openers-v1.json`);
 const templates = readJson(`${packageDir}/templates/fallback-templates-v3.json`);
 const eligible = (row, allowBlank = false) => (
@@ -124,7 +125,8 @@ const expectedManifest = createPackageManifest({
       ...transitRows.authoredCards,
       ...lunationRows.authoredCards,
       ...skyArticleRows.authoredCards,
-      ...weeklyRows
+      ...weeklyRows,
+      ...timingEventRows.authoredCards
     ])
   },
   rowsFile: {
