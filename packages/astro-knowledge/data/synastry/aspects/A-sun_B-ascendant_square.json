@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "square",
   "plainTranslation": "Their sense of identity, confidence, and direction press against how freely you present yourself and enter situations.",
+  "humanMoment": "Around {{holder1}}, {{holder2}} may feel that {{holder1}} decides the tone and direction, so {{holder2}} works harder to make their own personality and choices clear.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,
