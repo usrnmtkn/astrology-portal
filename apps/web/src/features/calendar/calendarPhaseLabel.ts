@@ -46,3 +46,26 @@ export function calendarPhaseLabelForDay(
 
   return isWaxing ? "Waxing Crescent" : "Waning Crescent";
 }
+
+export function calendarMoonContinuationText({
+  date,
+  timeZone,
+  moonSign,
+  phase,
+  previousMoonSign
+}: {
+  date: string;
+  timeZone: string;
+  moonSign: string;
+  phase: string;
+  previousMoonSign?: string | null;
+}) {
+  if (!previousMoonSign || previousMoonSign !== moonSign) return "";
+
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "long"
+  }).format(new Date(date));
+
+  return `The Moon remains in ${moonSign} on ${weekday}, continuing the ${phase.toLowerCase()} phase.`;
+}

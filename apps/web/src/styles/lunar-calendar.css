@@ -2218,6 +2218,31 @@ a.tx-card.has-article:hover .tx-more {
   margin: 0;
 }
 
+.lunar-weekly-hero__narrative {
+  gap: var(--lunar-space-10);
+}
+
+.lunar-weekly-hero__narrative-section {
+  display: grid;
+  gap: var(--lunar-space-3);
+}
+
+.lunar-weekly-hero__narrative-section + .lunar-weekly-hero__narrative-section {
+  padding-top: var(--lunar-space-8);
+  border-top: 1px solid var(--line);
+}
+
+.lunar-weekly-hero__narrative-section h3 {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-label);
+  font-size: var(--lunar-type-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-label);
+  text-transform: uppercase;
+}
+
 .lunar-weekly-hero__shifts {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

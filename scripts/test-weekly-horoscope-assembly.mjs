@@ -329,6 +329,13 @@ try {
     ),
     true
   );
+  assert.equal(
+    weekly.calendarWeeklyExcerpt(
+      "The first sentence names the pressure. The second sentence names the choice. The third sentence belongs in the daily card."
+    ),
+    "The first sentence names the pressure. The second sentence names the choice.",
+    "Weekly excerpts must preserve complete approved sentences while keeping the hero concise."
+  );
   const duplicateOverviewRejected = weekly.resolveCalendarWeeklyOverview({
     weekStart: "2026-08-03",
     weekEnd: "2026-08-09",
