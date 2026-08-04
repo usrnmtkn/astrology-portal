@@ -7,6 +7,17 @@
   "body": "With Pluto in Aquarius, deep change works on systems: who holds power, how groups organize, and what technology does to both. The transformation is generational rather than personal.",
   "gift": "Structural insight, collective power, and the will to rebuild systems that stopped serving.",
   "challenge": "Ideological control, the group swallowing the person, and revolution that reproduces the old power.",
+  "supportedDomains": [
+    "power",
+    "systems",
+    "groups and networks",
+    "technology's effect on both",
+    "generational change"
+  ],
+  "unsupportedDomainWarnings": [
+    "do not make personal money, career, or romance the main domain; no named political events."
+  ],
+  "scenarioPolicy": "era scale; the group and the person inside it.",
   "note": "Composed (planet x sign, dignity-aware); refine from authored material.",
   "voiceNeutral": true,
   "status": "REVIEWED"

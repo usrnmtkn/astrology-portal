@@ -106,8 +106,8 @@ const entryShapes = {
   placement: {
     schemaFile: "placement.schema.json",
     required: ["id", "kind", "planet", "key", "tldr", "body", "gift", "challenge", "voiceNeutral", "status"],
-    types: { id: "string", kind: "string", planet: "string", key: "string|number", tldr: "string", body: "string", gift: "string", challenge: "string", collectiveGift: "string", supportedDomains: "array:string", unsupportedDomainWarnings: "array:string", scenarioPolicy: "string", runtimeEligible: "boolean", note: "string" },
-    optional: ["source", "note", "collectiveGift", "supportedDomains", "unsupportedDomainWarnings", "scenarioPolicy", "runtimeEligible"],
+    types: { id: "string", kind: "string", planet: "string", key: "string|number", tldr: "string", body: "string", gift: "string", challenge: "string", collectiveGift: "string", supportedDomains: "array:string", unsupportedDomainWarnings: "array:string", scenarioPolicy: "string", axisPair: "object", runtimeEligible: "boolean", note: "string" },
+    optional: ["source", "note", "collectiveGift", "supportedDomains", "unsupportedDomainWarnings", "scenarioPolicy", "axisPair", "runtimeEligible"],
     enums: { kind: ["sign", "house"] }
   },
   angle: {

@@ -21,3 +21,16 @@ The 12 existing contrastive records yield **6 valid held-out fixtures**. The exa
 | timing-event-v2-venus-scorpio-retrograde-passage-owner-approved | ineligible | record does not prove the replacement was written verbatim by the owner |
 | timing-event-v2-chiron-taurus-station-retrograde-owner-approved | ineligible | record does not prove the replacement was written verbatim by the owner |
 | timing-event-v2-jupiter-leo-ingress-owner-approved | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-jupiter-libra-owner-merged-candidate-v1 | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-pilot-mercury-pisces-owner-line-edit-v1 | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-pilot-mars-libra-owner-line-edit-v1 | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-pilot-uranus-gemini-owner-line-edit-v1 | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-pilot-mercury-pisces-owner-line-edit-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-pilot-mars-libra-owner-line-edit-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-pilot-uranus-gemini-owner-line-edit-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-mars-aries-owner-selected-generation-benchmark-v1 | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-writer-batch-1-corpus-warmth-revisions-v4-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-writer-batch-2-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-writer-batch-4-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-writer-batch-3-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |

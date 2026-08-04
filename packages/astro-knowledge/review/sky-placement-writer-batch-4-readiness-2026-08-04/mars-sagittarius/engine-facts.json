@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mars",
+  "sign": "sagittarius",
+  "timeZone": "America/New_York",
+  "transitStart": "October 15, 2027",
+  "transitEnd": "November 25, 2027",
+  "transitStartIso": "2027-10-15T23:13:55.999Z",
+  "transitEndIso": "2027-11-25T18:38:08.999Z",
+  "priorSign": "scorpio",
+  "priorSignEntryDate": "September 1, 2027",
+  "priorSignExitDate": "October 15, 2027",
+  "previousResidency": {
+    "sign": "sagittarius",
+    "entryDate": "November 4, 2025",
+    "exitDate": "December 15, 2025",
+    "entryDateIso": "2025-11-04T13:01:14.999Z",
+    "exitDateIso": "2025-12-15T07:33:48.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mars-sextile-pluto-2027-10-22t14:34:05.999z",
+      "body": "mars-sextile-pluto",
+      "bodies": [
+        "mars",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "October 22, 2027",
+      "dateIso": "2027-10-22T14:34:05.999Z",
+      "rank": 1,
+      "meaning": "Drive meets power. Relentless force and a 'win at any cost' edge, with real capacity to eliminate or transform. The sextile makes this a natural strength: Strength and stamina without the strain. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-sextile-pluto.json"
+    },
+    {
+      "id": "aspect-mars-trine-neptune-2027-10-22t09:31:55.999z",
+      "body": "mars-trine-neptune",
+      "bodies": [
+        "mars",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "October 22, 2027",
+      "dateIso": "2027-10-22T09:31:55.999Z",
+      "rank": 2,
+      "meaning": "Drive meets imagination. Energy steered by vision and a persuasive, magnetic pull. The trine makes this a natural strength: Charismatic motivation; action aligned with imagination. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-trine-neptune.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mars-sextile-pluto.json",
+      "packages/astro-knowledge/data/transits/mars-trine-neptune.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}
