@@ -25,6 +25,12 @@
   flex: 0 0 auto;
 }
 
+.weekly-horoscope--embedded {
+  display: grid;
+  gap: var(--card-list-gap);
+  margin-top: var(--space-2);
+}
+
 .weekly-horoscope__macro,
 .weekly-horoscope__aspect,
 .weekly-horoscope__reading {
@@ -36,6 +42,20 @@
   color: var(--card-meta-color);
   font-size: var(--text-compact-caption);
   margin-top: calc(var(--space-1) * -1);
+}
+
+.weekly-horoscope__timing {
+  color: var(--card-meta-color);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--text-compact-caption);
+  gap: var(--space-1);
+  margin-top: calc(var(--space-2) * -1);
+}
+
+.weekly-horoscope__timing span {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
 }
 
 .weekly-horoscope__loading {
