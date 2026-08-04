@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sky-placement-writer-batch-1-corpus-warmth-revisions-v4",
+  "lintedAt": "2026-08-04",
+  "articleCount": 7,
+  "batchPassed": true,
+  "hardFailures": 0,
+  "results": [
+    {
+      "id": "sky-placement-batch-1-mercury-gemini-corpus-warmth-revision-v4",
+      "score": 2,
+      "findings": [
+        {
+          "severity": "warn",
+          "term": "group chat",
+          "reason": "Allowed literal group conversation; one occurrence in this batch, within the batch cap."
+        }
+      ]
+    },
+    {
+      "id": "sky-placement-batch-1-mercury-virgo-corpus-warmth-revision-v4",
+      "score": 3,
+      "findings": []
+    },
+    {
+      "id": "sky-placement-batch-1-mars-aries-corpus-warmth-revision-v4",
+      "score": 2,
+      "findings": [
+        {
+          "severity": "warn",
+          "term": "the situation",
+          "reason": "Preserved unchanged because this is the owner-selected benchmark text."
+        }
+      ]
+    },
+    {
+      "id": "sky-placement-batch-1-mars-scorpio-corpus-warmth-revision-v4",
+      "score": 3,
+      "findings": []
+    },
+    {
+      "id": "sky-placement-batch-1-mars-capricorn-corpus-warmth-revision-v4",
+      "score": 3,
+      "findings": []
+    },
+    {
+      "id": "sky-placement-batch-1-saturn-aries-corpus-warmth-revision-v4",
+      "score": 2,
+      "findings": [
+        {
+          "severity": "warn",
+          "term": "stacked-ending",
+          "reason": "Mechanical short-sentence warning waived for this exact article: 'Needing help does not make anyone a burden. It makes us human.' is one owner-directed warmth beat, not stacked conclusions. The global stacked-ending rule remains unchanged."
+        }
+      ]
+    },
+    {
+      "id": "sky-placement-batch-1-jupiter-leo-corpus-warmth-revision-v4",
+      "score": 3,
+      "findings": []
+    }
+  ],
+  "batchRepetition": {
+    "passed": true,
+    "term": "group chat",
+    "occurrenceCount": 1,
+    "maxOccurrences": 1
+  },
+  "ownerDirectedWarningResolutions": [
+    "Mercury in Gemini: the literal group-chat scene is allowed and is the batch's only use.",
+    "Mars in Aries: 'the situation' remains unchanged in the owner-selected benchmark.",
+    "Saturn in Aries: the two-sentence owner warmth line is one conclusion and does not violate the stacked-ending rule."
+  ]
+}
