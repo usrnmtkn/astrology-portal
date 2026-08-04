@@ -140,10 +140,10 @@ assert.match(
   /generated\/calendar-event\/\$\{event\.type\}\/\$\{event\.id\}/u,
   "Generated event content keys must be event-specific rather than shared by an entire event type."
 );
-assert.match(
+assert.doesNotMatch(
   calendarSource,
   /calendarAdjacentCopyIsDistinct\(candidate\.body, previousGuidanceBody\)/u,
-  "Adjacent daily Moon guidance must reject substantially repeated copy."
+  "Approved daily Moon variants must not be hidden by a broad writing-formula similarity guard."
 );
 assert.match(
   calendarSource,
