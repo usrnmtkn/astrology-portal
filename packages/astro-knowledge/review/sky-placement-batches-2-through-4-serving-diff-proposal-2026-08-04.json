@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "id": "sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04",
   "createdAt": "2026-08-04",
-  "status": "awaiting_explicit_owner_serving_approval",
+  "status": "explicit_owner_serving_approval_recorded",
   "runtimeChanged": false,
-  "servingDiffAppliedLocally": false,
+  "servingDiffAppliedLocally": true,
   "productionDeployed": false,
   "currentState": {
     "batch2": {
@@ -142,10 +142,10 @@
         "fallback-hook/sky-sign-copy/mars/virgo"
       ],
       "owner_approval": {
-        "approvalRecorded": false,
-        "statement": null,
-        "approved_at": null,
-        "source": null,
+        "approvalRecorded": true,
+        "statement": "I explicitly approve the exact 12-key batches 3 and 4 staged_to_serving diff, producing the combined 19-key batches 2 through 4 serving set, recorded in sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json.",
+        "approved_at": "2026-08-04",
+        "source": "packages/astro-knowledge/review/sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json",
         "approved_keys": [
           "fallback-hook/sky-sign-copy/mercury/capricorn",
           "fallback-hook/sky-sign-copy/mercury/aquarius",
@@ -178,10 +178,10 @@
         "fallback-hook/sky-sign-copy/pluto/aquarius"
       ],
       "owner_approval": {
-        "approvalRecorded": false,
-        "statement": null,
-        "approved_at": null,
-        "source": null,
+        "approvalRecorded": true,
+        "statement": "I explicitly approve the exact 12-key batches 3 and 4 staged_to_serving diff, producing the combined 19-key batches 2 through 4 serving set, recorded in sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json.",
+        "approved_at": "2026-08-04",
+        "source": "packages/astro-knowledge/review/sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json",
         "approved_keys": [
           "fallback-hook/sky-sign-copy/mars/sagittarius",
           "fallback-hook/sky-sign-copy/mars/aquarius",
@@ -531,7 +531,9 @@
     "productionDeploymentAuthorized": false
   },
   "approvalRequired": {
-    "approvalRecorded": false,
-    "statementTemplate": "I explicitly approve the exact 12-key batches 3 and 4 staged_to_serving diff, producing the combined 19-key batches 2 through 4 serving set, recorded in sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json."
+    "approvalRecorded": true,
+    "statement": "I explicitly approve the exact 12-key batches 3 and 4 staged_to_serving diff, producing the combined 19-key batches 2 through 4 serving set, recorded in sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json.",
+    "approvedAt": "2026-08-04",
+    "source": "owner statement in Codex task"
   }
 }
