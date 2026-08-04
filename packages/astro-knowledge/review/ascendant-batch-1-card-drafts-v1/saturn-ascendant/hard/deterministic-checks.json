@@ -1,0 +1,51 @@
+{
+  "target": "saturn-ascendant-hard",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "none_found",
+    "reason": "none_found correctly carries no invented warmth provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "You may point out problems in how Bird comes across or tell them to be more careful. They can start rehearsing what to say and checking their behavior before ordinary interactions. When they expect you to notice something wrong, it becomes harder for them to act naturally.",
+    "readerIsAscendantHolder": "Bird may point out problems in how you come across or tell you to be more careful. You can start rehearsing what to say and checking your behavior before ordinary interactions. When you expect Bird to notice something wrong, it becomes harder to act naturally."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

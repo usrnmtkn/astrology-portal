@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0138dc268367e18e006a726199c604819eb0aa9c15bc03fc15",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 834,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 652,
+    "output_tokens_details": {
+      "reasoning_tokens": 516
+    },
+    "total_tokens": 1486
+  },
+  "outputText": "{\"body_you\":\"You respond warmly to the way {{holder2}} naturally comes across. That makes {{holder2}} more relaxed around you and less likely to monitor how they are presenting themselves. The ease can go mostly unnoticed because neither of you has to work hard to create it.\",\"body_they\":\"{{holder1}} responds warmly to the way you naturally come across. That makes you more relaxed around {{holder1}} and less likely to monitor how you are presenting yourself. The ease can go mostly unnoticed because neither of you has to work hard to create it.\",\"warmthSource\":null,\"labels\":[]}",
+  "error": null
+}

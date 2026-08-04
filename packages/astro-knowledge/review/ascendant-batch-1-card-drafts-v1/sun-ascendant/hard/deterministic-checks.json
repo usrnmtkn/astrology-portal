@@ -1,0 +1,51 @@
+{
+  "target": "sun-ascendant-hard",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 4,
+    "body_they": 4
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "matched",
+    "reason": "Used foundation line has complete exact provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "You often set the tone or direction before Bird has had room to show how they want to come across. They may explain their choices more firmly or push back, which can lead you to press your point again. Repeating that pattern can leave them feeling crowded out and you feeling challenged. If they have felt stuck or hesitant to make bold moves, this friction can push them into action.",
+    "readerIsAscendantHolder": "Bird often sets the tone or direction before you have had room to show how you want to come across. You may explain your choices more firmly or push back, which can lead them to press their point again. Repeating that pattern can leave you feeling crowded out and them feeling challenged. If you have felt stuck or hesitant to make bold moves, this friction can push you into action."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

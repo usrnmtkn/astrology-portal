@@ -1,0 +1,17 @@
+{
+  "score": 3,
+  "verdict": "in-voice",
+  "weakestField": "body_you",
+  "weakest": "“Speak up and join in” is a slightly broader rendering than the supplied human moment, but it remains supported by the Ascendant holder’s presentation and entry into situations.",
+  "why": "The Mercury holder’s questions, explanations, and replies clearly act on the Ascendant holder, producing a plain mutual loop: one person says what they mean, and the other demonstrates understanding without requiring exhaustive explanation. The low-effort close is supported by the source’s easy, low-demand quality. Both reader variants preserve the same direction and read naturally.",
+  "failedChecks": [],
+  "strengths": [
+    "Fixed Mercury-to-Ascendant direction is maintained in both variants.",
+    "The interaction is concrete, ordinary, and literal rather than astrological or abstract.",
+    "The response loop is explicit: expression is met with clear understanding.",
+    "The final sentence communicates ease and low relational cost without adding advice or a second conclusion.",
+    "No invented warmth, events, outcomes, scenarios, or excluded claims appear."
+  ],
+  "sourceFidelity": "High. The draft closely and naturally renders the governed source boundary and approved human-moment input, including ease of expression, being understood, and little effort.",
+  "foundationTrace": "No owner foundation lines were supplied and harvest mode is none_found. The draft appropriately relies on the governed source boundary and approved human-moment input without inventing a warmth beat."
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "saturn-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/saturn-ascendant/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_with_required_ascii_normalization",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "5c3d02018685697ce1d6fbf6474197e9926e341a62c1dde8120cf35e93339036",
+  "payload": {
+    "body_you": "You may point out {{holder2}}'s tone, reactions, or way of entering a situation when these do not meet your standards. They may start monitoring themselves and holding back parts of their personality to avoid your criticism. Your standards can help {{holder2}} take themselves seriously when they are not so high that {{holder2}} feels like a failure.",
+    "body_they": "{{holder1}} may point out your tone, reactions, or way of entering a situation when these do not meet their standards. You may start monitoring yourself and holding back parts of your personality to avoid their criticism. Their standards can help you take yourself seriously when they are not so high that you feel like a failure.",
+    "warmthSource": {
+      "sourceArticleId": "new-moon-solar-eclipse-in-virgo",
+      "originalLine": "Question those impossibly high standards that leave you feeling like a failure.",
+      "usedForm": {
+        "body_you": "Your standards can help {{holder2}} take themselves seriously when they are not so high that {{holder2}} feels like a failure.",
+        "body_they": "Their standards can help you take yourself seriously when they are not so high that you feel like a failure."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "foundationLineDisposition": "retained",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "17689e8426461b22bb027c5e4c60d42e3bf780bd9e945a8d0aab67f5d3b5e1ad",
+    "writerProviderResponseSha256": "244b684685b383c830a34896d0799625286460e0a19338a5094b6271a8b72800"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/saturn-ascendant/conjunction/exact-approval.json"
+}
