@@ -37,12 +37,65 @@ export type WeeklyHoroscopeReading = {
 };
 
 export type CalendarWeeklyOverview = {
+  headline: string;
+  overview: string;
   weeklyHeadline: string;
   weeklyOverview: string;
   mainShifts: LunarCalendarEvent[];
   mainEvent?: LunarCalendarEvent;
   source: "authored" | "generated-fallback";
+  contentSource: CalendarEditorialContentSource;
   contentKey: string;
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  keyShiftIds: string[];
+  keyShiftLabels: string[];
+  provenance: CalendarEditorialProvenance;
+};
+
+export type CalendarEditorialContentSource =
+  | "owner_authored"
+  | "owner_approved"
+  | "generated_fallback"
+  | "emergency_fallback";
+
+export type CalendarEditorialProvenance = {
+  sourcePath?: string;
+  sourceId?: string;
+  generatedBy?: string;
+  templateVersion?: string;
+  reviewStatus?: string;
+  approvedVia?: string;
+};
+
+export type CalendarEditorialContent = {
+  contentKey: string;
+  contentSource: CalendarEditorialContentSource;
+  eventId?: string;
+  dateRange?: {
+    start: string;
+    end: string;
+  };
+  headline?: string;
+  overview?: string;
+  dailyMoonCopy?: string;
+  eventCopy?: string;
+  keyShiftIds?: string[];
+  keyShiftLabels?: string[];
+  practicalActions?: string[];
+  provenance: CalendarEditorialProvenance;
+};
+
+export type WeeklyEventRank = {
+  eventId: string;
+  baseImportance: number;
+  exactnessWeight: number;
+  durationWeight: number;
+  rarityWeight: number;
+  userVisibilityWeight: number;
+  finalScore: number;
 };
 
 export type CalendarWeeklyMoonTone = {
@@ -86,6 +139,8 @@ type WeeklySourceRow = {
   mainShifts?: string[];
   mainEvent?: string;
   review_status: string;
+  approved_via?: string;
+  source_keys?: string[];
 };
 
 type WeeklyWindow = {
@@ -170,6 +225,12 @@ export const weeklyContentImportCounts = Object.freeze({
 
 function isReaderEligible(row: WeeklySourceRow) {
   return readerEligibleReviewStatuses.has(row.review_status.trim().toLowerCase());
+}
+
+function contentSourceForRow(row: Pick<WeeklySourceRow, "approved_via">): CalendarEditorialContentSource {
+  return /owner\s+(?:rewrite|authored|final)/iu.test(row.approved_via ?? "")
+    ? "owner_authored"
+    : "owner_approved";
 }
 
 function normalizeId(value: string) {
@@ -448,7 +509,18 @@ function isExactStation(event: LunarCalendarEvent) {
 }
 
 function isPrincipalLunation(event: LunarCalendarEvent) {
-  return event.type === "lunation" && event.primary;
+  if (event.type !== "lunation" || event.primary === false) return false;
+
+  const title = event.title.toLowerCase();
+  return title.startsWith("new moon")
+    || title.startsWith("full moon")
+    || title.includes("solar eclipse")
+    || title.includes("lunar eclipse");
+}
+
+function isEclipseLunation(event: LunarCalendarEvent) {
+  return event.type === "lunation"
+    && (Boolean(event.eclipseType) || event.title.toLowerCase().includes("eclipse"));
 }
 
 function approvedSourceRow(contentKey: string, rows = sourceRows) {
@@ -609,7 +681,9 @@ function openerFor(weekType: WeeklyHoroscopeWeekType, events: LunarCalendarEvent
       return {
         headline: leadEventTitle,
         body: rendered.body,
-        contentKey: rendered.contentKey
+        contentKey: rendered.contentKey,
+        reviewStatus: row.review_status,
+        approvedVia: row.approved_via
       };
     } catch (error) {
       if (!(error instanceof SourceGapError)) throw error;
@@ -627,7 +701,9 @@ function openerFor(weekType: WeeklyHoroscopeWeekType, events: LunarCalendarEvent
   return {
     headline: leadEventTitle || weeklyHeadline,
     body: weeklyOverview,
-    contentKey: row.contentKey
+    contentKey: row.contentKey,
+    reviewStatus: row.review_status,
+    approvedVia: row.approved_via
   };
 }
 
@@ -656,6 +732,40 @@ function normalizedWeeklyEventTitle(value: string) {
     .toLowerCase();
 }
 
+function weeklyEventBaseImportance(event: LunarCalendarEvent) {
+  if (isPrincipalLunation(event) && isEclipseLunation(event)) return 600;
+  if (isPrincipalLunation(event)) return 550;
+  if (event.type === "station") return 500;
+  if (event.type === "lunation") return 450;
+  if (event.type === "ingress") return 400;
+  if (event.type === "aspect") return 300;
+  return 0;
+}
+
+export function calendarWeeklyEventRank(event: LunarCalendarEvent): WeeklyEventRank {
+  const baseImportance = weeklyEventBaseImportance(event);
+  const exactnessWeight = event.type === "lunation" || event.type === "station" || event.type === "aspect"
+    ? 20
+    : 0;
+  const durationWeight = event.type === "station" || event.type === "ingress" ? 10 : 0;
+  const rarityWeight = isEclipseLunation(event) ? 40 : 0;
+  const userVisibilityWeight = event.primary ? 5 : 0;
+
+  return {
+    eventId: event.id,
+    baseImportance,
+    exactnessWeight,
+    durationWeight,
+    rarityWeight,
+    userVisibilityWeight,
+    finalScore: baseImportance
+      + exactnessWeight
+      + durationWeight
+      + rarityWeight
+      + userVisibilityWeight
+  };
+}
+
 function calendarWeeklyEventTitle(event?: LunarCalendarEvent) {
   if (!event) return "";
   return event.sign
@@ -665,27 +775,52 @@ function calendarWeeklyEventTitle(event?: LunarCalendarEvent) {
       : event.title;
 }
 
-export function calendarWeeklyMainShifts(events: LunarCalendarEvent[]) {
+export function calendarWeeklyMainShifts(events: LunarCalendarEvent[], maximum = 6) {
   const shifts = events
     .filter((event) => (
       event.type === "lunation"
       || event.type === "ingress"
       || event.type === "station"
       || (event.type === "aspect" && event.primary && !event.planets?.includes("Moon"))
-    ))
-    .sort((first, second) => (
-      new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime()
     ));
   const byTitle = new Map<string, LunarCalendarEvent>();
 
   for (const event of shifts) {
     const titleKey = normalizedWeeklyEventTitle(event.title);
-    if (!byTitle.has(titleKey)) {
+    const existing = byTitle.get(titleKey);
+    const eventRank = calendarWeeklyEventRank(event);
+    const existingRank = existing ? calendarWeeklyEventRank(existing) : null;
+
+    if (
+      !existing
+      || (existingRank && eventRank.finalScore > existingRank.finalScore)
+      || (
+        existingRank
+        && eventRank.finalScore === existingRank.finalScore
+        && new Date(event.startsAt).getTime() < new Date(existing.startsAt).getTime()
+      )
+    ) {
       byTitle.set(titleKey, event);
     }
   }
 
-  return [...byTitle.values()];
+  const selectedIds = new Set(
+    [...byTitle.values()]
+      .sort((first, second) => {
+        const scoreDifference = calendarWeeklyEventRank(second).finalScore
+          - calendarWeeklyEventRank(first).finalScore;
+
+        return scoreDifference || new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime();
+      })
+      .slice(0, Math.max(0, maximum))
+      .map((event) => event.id)
+  );
+
+  return [...byTitle.values()]
+    .filter((event) => selectedIds.has(event.id))
+    .sort((first, second) => (
+      new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime()
+    ));
 }
 
 export function calendarWeeklySupportingShifts(
@@ -780,6 +915,62 @@ function weeklyNarrativeBodyForEvent(
   return eventBody || guidanceBody;
 }
 
+function normalizedCopyBigrams(value: string) {
+  const words = value
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]+/gu, " ")
+    .split(/\s+/u)
+    .filter(Boolean);
+
+  return new Set(words.slice(0, -1).map((word, index) => `${word} ${words[index + 1]}`));
+}
+
+export function calendarCopySimilarity(first: string, second: string) {
+  const firstBigrams = normalizedCopyBigrams(first);
+  const secondBigrams = normalizedCopyBigrams(second);
+
+  if (firstBigrams.size === 0 || secondBigrams.size === 0) return 0;
+
+  let shared = 0;
+  for (const bigram of firstBigrams) {
+    if (secondBigrams.has(bigram)) shared += 1;
+  }
+
+  return shared / Math.min(firstBigrams.size, secondBigrams.size);
+}
+
+export function calendarAdjacentCopyIsDistinct(
+  candidate: string,
+  previous: string,
+  maximumSimilarity = 0.18
+) {
+  if (!previous) return true;
+
+  const formulaFamilies = (value: string) => {
+    const normalized = value.normalize("NFKD").toLowerCase().replace(/[’]/gu, "'").trim();
+    const families = new Set<string>();
+
+    if (/^(?:you|your)\s+(?:may|might)\b/u.test(normalized)) families.add("modal-opening");
+    if (/\bgood for\b/u.test(normalized)) families.add("good-for-list");
+    if (/\byou're allowed to\b/u.test(normalized)) families.add("permission-close");
+    if (
+      /\b(?:mind|mental|think)\b/u.test(normalized)
+      && /\b(?:feel|feeling|emotion|emotional)\b/u.test(normalized)
+      && /\b(?:avoid|deflection|distraction|out of)\b/u.test(normalized)
+    ) {
+      families.add("thinking-to-avoid-feeling");
+    }
+
+    return families;
+  };
+  const candidateFamilies = formulaFamilies(candidate);
+  const previousFamilies = formulaFamilies(previous);
+  const repeatsFormula = [...candidateFamilies].some((family) => previousFamilies.has(family));
+
+  return !repeatsFormula && calendarCopySimilarity(candidate, previous) < maximumSimilarity;
+}
+
 export function calendarWeeklyNarrativeBody({
   overview,
   source,
@@ -822,7 +1013,8 @@ function exactCalendarWeeklyOverviewRow(
   weekStart: string,
   weekEnd: string,
   mainShifts: LunarCalendarEvent[],
-  rows: WeeklySourceRow[]
+  rows: WeeklySourceRow[],
+  dailyCopy: string[]
 ) {
   const row = rows.find((candidate) => (
     candidate.surface === "weekly-overview"
@@ -832,6 +1024,9 @@ function exactCalendarWeeklyOverviewRow(
   ));
 
   if (!row?.weeklyHeadline || !row.weeklyOverview) return undefined;
+  if (dailyCopy.some((body) => calendarCopySimilarity(row.weeklyOverview ?? "", body) >= 0.72)) {
+    return undefined;
+  }
 
   const actualTitles = mainShifts.map((event) => normalizedWeeklyEventTitle(event.title));
   const expectedTitles = (row.mainShifts ?? []).map(normalizedWeeklyEventTitle);
@@ -852,15 +1047,21 @@ export function resolveCalendarWeeklyOverview({
   weekStart,
   weekEnd,
   events,
+  dailyCopy = [],
   rows = sourceRows
 }: {
   weekStart: string;
   weekEnd: string;
   events: LunarCalendarEvent[];
+  dailyCopy?: string[];
   rows?: WeeklySourceRow[];
 }): CalendarWeeklyOverview | undefined {
-  const mainShifts = calendarWeeklyMainShifts(events);
-  const authored = exactCalendarWeeklyOverviewRow(weekStart, weekEnd, mainShifts, rows);
+  const eventsInWeek = events.filter((event) => {
+    const localDateKey = event.dateKey || event.startsAt.slice(0, 10);
+    return localDateKey >= weekStart && localDateKey <= weekEnd;
+  });
+  const mainShifts = calendarWeeklyMainShifts(eventsInWeek);
+  const authored = exactCalendarWeeklyOverviewRow(weekStart, weekEnd, mainShifts, rows, dailyCopy);
 
   if (authored) {
     const mainEvent = authored.mainEvent
@@ -869,24 +1070,57 @@ export function resolveCalendarWeeklyOverview({
         ))
       : undefined;
     return {
+      headline: authored.weeklyHeadline!,
+      overview: authored.weeklyOverview!,
       weeklyHeadline: authored.weeklyHeadline!,
       weeklyOverview: authored.weeklyOverview!,
       mainShifts,
       mainEvent,
       source: "authored",
-      contentKey: authored.contentKey
+      contentSource: contentSourceForRow(authored),
+      contentKey: authored.contentKey,
+      dateRange: { start: weekStart, end: weekEnd },
+      keyShiftIds: mainShifts.map((event) => event.id),
+      keyShiftLabels: mainShifts.map(calendarWeeklyEventTitle),
+      provenance: {
+        sourcePath: "apps/web/src/content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json",
+        sourceId: authored.contentKey,
+        reviewStatus: authored.review_status,
+        approvedVia: authored.approved_via
+      }
     };
   }
 
-  const fallback = openerFor(calendarWeekTypeFor(events), events, rows);
+  const fallback = openerFor(calendarWeekTypeFor(eventsInWeek), eventsInWeek, rows);
   if (!fallback) return undefined;
 
+  const mainEvent = [...mainShifts]
+    .sort((first, second) => (
+      calendarWeeklyEventRank(second).finalScore - calendarWeeklyEventRank(first).finalScore
+    ))[0];
+
   return {
+    headline: fallback.headline,
+    overview: fallback.body,
     weeklyHeadline: fallback.headline,
     weeklyOverview: fallback.body,
     mainShifts,
+    mainEvent,
     source: "generated-fallback",
-    contentKey: fallback.contentKey
+    contentSource: /owner\s+(?:rewrite|authored|final)/iu.test(fallback.approvedVia ?? "")
+      ? "owner_authored"
+      : "owner_approved",
+    contentKey: fallback.contentKey,
+    dateRange: { start: weekStart, end: weekEnd },
+    keyShiftIds: mainShifts.map((event) => event.id),
+    keyShiftLabels: mainShifts.map(calendarWeeklyEventTitle),
+    provenance: {
+      sourcePath: "apps/web/src/content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json",
+      sourceId: fallback.contentKey,
+      templateVersion: "calendar-weekly-fallback.v2",
+      reviewStatus: fallback.reviewStatus,
+      approvedVia: fallback.approvedVia
+    }
   };
 }
 
