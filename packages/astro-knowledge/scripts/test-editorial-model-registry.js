@@ -35,7 +35,11 @@ function restoreEnv(name, value) {
 try {
   const registry = readRegistry();
   validateRegistry(registry);
-  assert.strictEqual(Object.keys(registry.lanes).length, 8);
+  assert.strictEqual(Object.keys(registry.lanes).length, 9);
+  assert.strictEqual(registry.lanes["writer:sky-placement"].active, null);
+  assert.strictEqual(registry.lanes["writer:sky-placement"].candidate.model, "gpt-5.6-sol");
+  assert.strictEqual(registry.lanes["writer:sky-placement"].candidate.reasoningEffort, "xhigh");
+  assert.throws(() => resolveActiveRelease({ role: "writer", surface: "sky-placement", registry }), /no active release/);
 
   const release = resolveActiveRelease({
     role: "judge",
@@ -253,7 +257,7 @@ try {
     /explicitly authorized judge calibration/
   );
 
-  console.log("Editorial model registry: 8 lanes valid; stage, gated promotion, rollback, and override audit passed.");
+  console.log("Editorial model registry: 9 lanes valid; inactive writer candidate, stage, gated promotion, rollback, and override audit passed.");
 } finally {
   restoreEnv("TLDR_ALLOW_MODEL_PROMOTION", originalPromotionAuth);
   restoreEnv("CONTENT_JUDGE_PROVIDER", originalJudgeProvider);

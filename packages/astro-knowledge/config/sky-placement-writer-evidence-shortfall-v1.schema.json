@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "reportId", "status", "modelReady", "modelCallAuthorized", "requestedTask", "correctedRetrievalQuery", "availability", "rejectedPacketPassageAudit", "replacementOwnerPassages", "expandedVerifiedAstrology", "sourceSupportsEveryPlannedLivedExample", "blockingFailures", "disposition"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "status": { "const": "rejected_evidence_shortfall" },
+    "modelReady": { "const": false },
+    "modelCallAuthorized": { "const": false },
+    "replacementOwnerPassages": { "type": "array", "maxItems": 0 },
+    "sourceSupportsEveryPlannedLivedExample": { "const": false },
+    "blockingFailures": { "type": "array", "minItems": 1 }
+  }
+}
