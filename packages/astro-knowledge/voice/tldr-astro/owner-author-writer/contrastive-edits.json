@@ -13,7 +13,11 @@
       "whatChanged": "Replaced polished shorthand with the exact time and rest being lost.",
       "ownerReason": "Name the visible cost instead of asking the reader to interpret disappearance.",
       "reasonSource": "explicit_owner_provided_review",
-      "failureTags": ["abstract_consequence", "requires_interpretation", "polished_but_flat"],
+      "failureTags": [
+        "abstract_consequence",
+        "requires_interpretation",
+        "polished_but_flat"
+      ],
       "approvalLevel": "positive_direction_not_approved",
       "sourcePaths": [
         "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
@@ -32,7 +36,11 @@
       "whatChanged": "Restored the missing behavior that causes the later cancellation.",
       "ownerReason": "The real pattern begins when someone agrees to avoid disturbing the mood and cancels later.",
       "reasonSource": "explicit_owner_provided_review",
-      "failureTags": ["behavior_missing", "explanatory_before_observable", "polished_but_flat"],
+      "failureTags": [
+        "behavior_missing",
+        "explanatory_before_observable",
+        "polished_but_flat"
+      ],
       "approvalLevel": "owner_revised_candidate",
       "sourcePaths": [
         "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
@@ -51,7 +59,12 @@
       "whatChanged": "Replaced a civic category inventory with one observable escalation sequence.",
       "ownerReason": "Show private denial, repeated pattern, compared evidence, public complaint, and a challenge to the rule.",
       "reasonSource": "explicit_owner_provided_review",
-      "failureTags": ["category_inventory", "generic_coverage_sentence", "behavior_missing", "overbalanced_structure"],
+      "failureTags": [
+        "category_inventory",
+        "generic_coverage_sentence",
+        "behavior_missing",
+        "overbalanced_structure"
+      ],
       "approvalLevel": "owner_revised_candidate",
       "sourcePaths": [
         "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
@@ -70,7 +83,12 @@
       "whatChanged": "Showed the family role through ordinary evidence before explaining the astrology.",
       "ownerReason": "Name what the person actually does instead of turning them into a role or listing labor categories.",
       "reasonSource": "explicit_owner_review",
-      "failureTags": ["abstract_hook", "behavior_missing", "category_inventory", "explanatory_before_observable"],
+      "failureTags": [
+        "abstract_hook",
+        "behavior_missing",
+        "category_inventory",
+        "explanatory_before_observable"
+      ],
       "approvalLevel": "exact_owner_approved_calibration_only",
       "sourcePaths": [
         "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json",
@@ -89,9 +107,14 @@
       "whatChanged": "Replaced a generic change with an immediately visible use of space.",
       "ownerReason": "Specificity beats a broad description of change.",
       "reasonSource": "explicit_owner_edit_analysis",
-      "failureTags": ["generic_coverage_sentence", "behavior_missing"],
+      "failureTags": [
+        "generic_coverage_sentence",
+        "behavior_missing"
+      ],
       "approvalLevel": "positive_direction_not_approved",
-      "sourcePaths": ["packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"],
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"
+      ],
       "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval."
     },
     {
@@ -105,9 +128,14 @@
       "whatChanged": "Moved from a system label to the relational bond being reinterpreted.",
       "ownerReason": "Connection makes the realization more emotionally precise than stability.",
       "reasonSource": "explicit_owner_edit_analysis",
-      "failureTags": ["abstract_consequence", "polished_but_flat"],
+      "failureTags": [
+        "abstract_consequence",
+        "polished_but_flat"
+      ],
       "approvalLevel": "positive_direction_not_approved",
-      "sourcePaths": ["packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"],
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"
+      ],
       "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval."
     },
     {
@@ -121,10 +149,433 @@
       "whatChanged": "Changed a familiar carrying metaphor into direct pressure and a limit.",
       "ownerReason": "Demands names the pressure; anyone keeps the cost collective without second person.",
       "reasonSource": "explicit_owner_edit_analysis",
-      "failureTags": ["polished_but_flat", "requires_interpretation"],
+      "failureTags": [
+        "polished_but_flat",
+        "requires_interpretation"
+      ],
       "approvalLevel": "positive_direction_not_approved",
-      "sourcePaths": ["packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"],
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"
+      ],
       "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval."
+    },
+    {
+      "id": "sky-placement-communication-rejection-letter-to-message",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "hook",
+      "before": "three rejection letters",
+      "after": "three families receive the same rejection message",
+      "whatChanged": "Replaced a dated physical-mail object with ordinary medium-neutral wording and restored the acting families.",
+      "ownerReason": "Use messages as the normal, medium-neutral word unless the copy specifically depends on a paper letter.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "dated_communication_object"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-v7-v8-dated-register-audit-2026-08-03.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
+      ],
+      "provenance": "preferred_version: Change three rejection letters to three families receive the same rejection message."
+    },
+    {
+      "id": "sky-placement-communication-compare-letters-to-messages",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "lived",
+      "before": "Then three families compare letters and find identical wording, identical delays, and identical reasons for rejection.",
+      "after": "Then three families compare the messages they received and find the same wording, the same delays, and the same reason for being turned down.",
+      "whatChanged": "Replaced dated delivery language and formal repetition with ordinary current wording.",
+      "ownerReason": "Default to message or response instead of letter, correspondence, notice, or a technical delivery term when the medium is irrelevant.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "dated_communication_object",
+        "advocacy_case_study_language"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-v7-v8-dated-register-audit-2026-08-03.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
+      ],
+      "provenance": "preferred_version: Use: Then three families compare the messages they received and find the same wording, the same delays, and the same reason for being turned down."
+    },
+    {
+      "id": "sky-placement-communication-letters-pile-up-to-messages-return",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "lived",
+      "before": "the letters pile up",
+      "after": "the messages keep coming back with the same answer",
+      "whatChanged": "Replaced a physical-object image with the repeated answer the scene needs to show.",
+      "ownerReason": "Use ordinary current wording and show the repeated answer rather than a stack of paper.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "dated_communication_object",
+        "polished_but_flat"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-v7-v8-dated-register-audit-2026-08-03.md"
+      ],
+      "provenance": "preferred_version: Change the letters pile up to the messages keep coming back with the same answer."
+    },
+    {
+      "id": "sky-placement-communication-side-by-side-to-compare-messages",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "moves",
+      "before": "put the letters side by side",
+      "after": "compare the messages",
+      "whatChanged": "Removed the physical-paper instruction and kept the ordinary action.",
+      "ownerReason": "Use message as the medium-neutral default unless physical mail matters.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "dated_communication_object",
+        "administrative_instruction"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-v7-v8-dated-register-audit-2026-08-03.md"
+      ],
+      "provenance": "preferred_version: Change put the letters side by side to compare the messages."
+    },
+    {
+      "id": "sky-placement-neptune-libra-cancellation-shows-disagreement",
+      "surface": "sky-placement",
+      "planet": "neptune",
+      "sign": "libra",
+      "articleBeat": "turn",
+      "before": "The problem is not only the cancellation. It is the agreement that was never real. One person avoids discomfort in the moment; everyone else reorganizes later and learns not to trust the next yes. A plan is not shared when someone has to agree, cancel, and take the blame for being unreliable just to keep the peace.",
+      "after": "The cancellation is only where the disagreement finally shows up. Saying yes avoids the discomfort of saying no, then everyone else has to change their plans later. After enough of this, no one trusts what is said anymore.",
+      "whatChanged": "Replaced abstract and therapy-workbook phrasing with the exact behavioral sequence and its broader loss of trust.",
+      "ownerReason": "The cancellation is where avoided disagreement finally appears; repeated reversals force everyone else to change plans and eventually make what is said impossible to trust.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "therapy_workbook_language",
+        "repeated_generic_subject",
+        "abstract_summary"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v8-source-derived-candidates.json",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v9-neptune-libra-owner-turn-candidate.json",
+        "packages/astro-knowledge/review/sky-placement-v7-v8-dated-register-audit-2026-08-03.md"
+      ],
+      "provenance": "preferred_version: The cancellation is only where the disagreement finally shows up. Saying yes avoids the discomfort of saying no, then everyone else has to change their plans later. After enough of this, no one trusts what is said anymore."
+    },
+    {
+      "id": "sky-placement-writer-jupiter-libra-controlled-v3-owner-review",
+      "surface": "sky-placement",
+      "planet": "jupiter",
+      "sign": "libra",
+      "articleBeat": "full_article",
+      "before": "Tagline: Jupiter in Libra helps us grow through fair, honest partnership.\n\nHook: The dinner plan finally moves when everyone stops saying, ‘Anything is fine.’ Jupiter describes the confidence to reach beyond the first available choice and learn from what happens next. With Jupiter in Libra, more becomes possible when we compare preferences, negotiate fairly, and shape an answer that each side can support.\n\nLived: Over about a year, this transit returns us to shared choices long enough to notice how often politeness hides a real preference. A group of friends is arranging a long-delayed reunion: half want a quiet dinner, half want live music, and every polite response pushes the choice into another week. Someone asks each friend to name one detail that matters and one they can release. The group chooses a small place for dinner and live music nearby, so the reunion happens instead of slipping into another month of vague replies.\n\nTurn: The gift becomes the problem when diplomacy turns into avoidance. We praise every suggestion, hide the preference that might disappoint someone, and request another round of opinions. That can cost the group the date entirely or leave us committed to a one-sided plan because agreement came before honesty. Fairness requires each side to be heard before the choice is made.\n\nMoves: We can ask each side to name one must-have and one flexible detail before we propose a compromise. / We can set a decision time for shared plans and stop adding options once one choice meets the preferences already stated. / We can name the condition that would make a partner’s proposal feel mutual before we agree to it.",
+      "after": "[rejected without replacement]",
+      "whatChanged": "No replacement was supplied. Preserve the draft unchanged only as rejected negative evaluation evidence. It is not generation evidence, calibration evidence, production copy, canonical content, or promotion evidence.",
+      "ownerReason": "The failure spans the complete article: a swappable tagline, textbook planet explanation, formal negotiation language, workshop-style prompts, a manufactured compromise, a gift-to-shadow keyword inversion, a generic fairness conclusion, and no meaningful stakes. Terra reduced a full-draft failure to one weak tagline.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "generic_tagline",
+        "explanatory_before_observable",
+        "administrative_move",
+        "overbalanced_structure",
+        "swappable_astrology",
+        "generic_coverage_sentence",
+        "abstract_consequence"
+      ],
+      "approvalLevel": "owner_rejected",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions/writer-response.json",
+        "packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions/packet.json"
+      ],
+      "provenance": "rejection: The entire draft is off-voice."
+    },
+    {
+      "id": "timing-event-v2-mercury-pisces-station-retrograde-owner-approved",
+      "surface": "current-sky-timing-event",
+      "planet": "mercury",
+      "sign": "pisces",
+      "articleBeat": "body",
+      "before": "[no prior wording supplied]",
+      "after": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision. Mercury slows to a stop in Pisces and starts moving backward. In this sensitive water sign, we can catch tone, imagery, and feeling faster than facts, which makes intuition vivid and certainty less reliable.\n\nWhen the same conversation circles back, the repeated wording may expose an assumption that kept us talking past one another. We can restate the agreement and confirm the times before anything gets booked. Not every plan falls apart here. Some decisions made during the pause hold. The useful change is knowing which part was an impression and which part was confirmed.",
+      "whatChanged": "Owner explicitly approved the complete V2 timing-event body after source-overlap, instruction-list, repeated-ending, and plain-English revisions.",
+      "ownerReason": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+        "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.station.mercury.pisces.retrograde.json"
+      ],
+      "provenance": "exact_wording_approval: I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records."
+    },
+    {
+      "id": "timing-event-v2-venus-scorpio-retrograde-passage-owner-approved",
+      "surface": "current-sky-timing-event",
+      "planet": "venus",
+      "sign": "scorpio",
+      "articleBeat": "body",
+      "before": "[no prior wording supplied]",
+      "after": "An old relationship comes back around, and we feel the pull before we know whether anything has actually changed. We pause before answering and look at whether the old problem is different, not only whether the attraction has returned. Venus is retrograde in Scorpio, bringing love, loyalty, money, and private agreements back under review. The temptation is to treat the intensity as an answer, or to test the other person instead of asking them directly.\n\nWe return to the original arrangement and name what it has cost, what it has given, and which promises no longer fit. A commitment made years ago may still be worth keeping, but only if the bond gives something real now. Once those terms are spoken aloud, we can revise the commitment instead of forcing the old version to fit. What matters is whether we can keep the promise now, not how strong the pull is.",
+      "whatChanged": "Owner explicitly approved the complete V2 timing-event body after predictive phrasing, abstraction chains, list construction, and polished-flat closing revisions.",
+      "ownerReason": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+        "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.retrograde.venus.scorpio.retrograde_passage.json"
+      ],
+      "provenance": "exact_wording_approval: I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records."
+    },
+    {
+      "id": "timing-event-v2-chiron-taurus-station-retrograde-owner-approved",
+      "surface": "current-sky-timing-event",
+      "planet": "chiron",
+      "sign": "taurus",
+      "articleBeat": "body",
+      "before": "[no prior wording supplied]",
+      "after": "We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency. This is not an alarm or a verdict on the project. It is a regular pause for repair inside a story already unfolding. When we talk at home about why the work stopped, an old fear may become plain: rest feels unsafe, comfort feels unearned, and every material choice becomes a measure of worth.\n\nInstead of rushing back to the plan, we look at the survival response underneath it. Some of us stockpile to feel protected. Others refuse comfort entirely, to prove that no need can touch us. Living with this wound can make us unusually good at helping one another build stability without shame. The repair starts when being safe stops having to be earned.",
+      "whatChanged": "Owner explicitly approved the complete V2 timing-event body after stiff contrast, confusing closure, semicolon, and undecided steadiness-language revisions.",
+      "ownerReason": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+        "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.station.chiron.taurus.retrograde.json"
+      ],
+      "provenance": "exact_wording_approval: I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records."
+    },
+    {
+      "id": "timing-event-v2-jupiter-leo-ingress-owner-approved",
+      "surface": "current-sky-timing-event",
+      "planet": "jupiter",
+      "sign": "leo",
+      "articleBeat": "body",
+      "before": "[no prior wording supplied]",
+      "after": "We bring a creative pursuit into the open and invite friends to take part. What felt like a small pleasure can become the plan everyone wants to join before we know whether we can sustain it. As Jupiter enters Leo, we grow through visible self-expression, big-hearted generosity, and the confidence to risk a larger stage. Once praise starts coming, we commit more time, make bolder promises, and give the idea more room.\n\nWe feel the pressure when we begin judging the pursuit by the attention it receives. Jupiter expands whatever is already in motion, not only what deserves more room. Creative courage and inflated ego can grow together, until every setback threatens to become a drama. The desire does not need to shrink. The work is to keep sharing the thing without making the recognition the reason we stay. Once excitement settles into routine, we find out whether we are building a meaningful practice or only chasing applause.",
+      "whatChanged": "Owner explicitly approved the complete V2 timing-event body after the semicolon-parallel maxim was replaced with two immediately clear sentences.",
+      "ownerReason": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+        "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.ingress.jupiter.leo.json"
+      ],
+      "provenance": "exact_wording_approval: I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records."
+    },
+    {
+      "id": "sky-placement-jupiter-libra-owner-merged-candidate-v1",
+      "surface": "sky-placement",
+      "planet": "jupiter",
+      "sign": "libra",
+      "articleBeat": "full_article",
+      "before": "[No previously approved owner-reference fallback article for Jupiter in Libra.]",
+      "after": "Opening: After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Libra is the sign of balance, connection, and how we get along with each other. Together they make this a year where growth comes through who we meet and what becomes possible together: a friend's introduction leads to a creative collaboration, and the finished work reaches an audience neither person could have found alone. Jupiter spends about a year in each sign and takes about 12 years to visit all twelve.\n\nTension: Jupiter makes things bigger, and a few months in, the biggest thing is the list of what we have agreed to. Refusing feels rude, so we keep saying yes: another meeting, more of the work, another \"it's fine\" that is not true. Every extra request, correction, and follow-up starts going to the person who keeps saying yes. When a real choice comes up, we wait to hear what everyone else wants before saying what we want, and the decision goes to whoever speaks first. Somewhere along the way, being agreeable starts doing the work that honesty should be doing. The resentment stays quiet, because every one of these plans is something we technically agreed to.\n\nDevelopment: Jupiter last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and whatever was learned about fairness then gets its next round now. Just because nobody has complained does not mean an arrangement is fair. This year it helps to say what changed early: that Saturday does not work, that the effort stopped being even, that one voice keeps making the decisions. Some connections will get closer once that is said plainly. Others end when the person benefiting from the old agreement is asked to do more.\n\nClose: Before {{exitDate}}, we can quit one recurring commitment we have been keeping only because saying no feels rude.\n\nTry this:\n- We can answer one pending invitation with a clear yes or no instead of another maybe.\n- We can say which day works for us before asking what everyone else prefers.\n- We can stop sending reminders for a responsibility that belongs to someone else.",
+      "whatChanged": "The owner approved the complete merged continuous fallback article as an owner reference and authorized it as generation evidence for the Sky Placement surface.",
+      "ownerReason": "Exact owner approval and generation-evidence authorization supplied on 2026-08-04.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-jupiter-libra-owner-merged-candidate-v1.json"
+      ],
+      "provenance": "exact_wording_approval: I explicitly approve sky-placement-jupiter-libra-owner-merged-candidate-v1 exactly as written, as the owner-reference fallback article and generation evidence for the placement surface."
+    },
+    {
+      "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1",
+      "surface": "sky-placement",
+      "planet": "mercury",
+      "sign": "pisces",
+      "articleBeat": "full_article",
+      "before": "Mercury circles the zodiac in about 1 year because it stays near the Sun.",
+      "after": "Mercury moves through all twelve signs in about 1 year because it stays near the Sun.",
+      "whatChanged": "Replaced the recurring Sol 'circle the zodiac' attractor with the owner-directed ordinary cycle wording. The rest of the draft remains unchanged.",
+      "ownerReason": "The scene and sequence are strong; the failure is mechanical and should be corrected without regenerating the draft.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "banned-zodiac-wording"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-pilot-mercury-pisces-v1/result.json"
+      ],
+      "provenance": "preferred_version: Apply the owner-directed line edit: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, re-lint, and hold for owner voice review."
+    },
+    {
+      "id": "sky-placement-pilot-mars-libra-owner-line-edit-v1",
+      "surface": "sky-placement",
+      "planet": "mars",
+      "sign": "libra",
+      "articleBeat": "full_article",
+      "before": "Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to circle the zodiac.",
+      "after": "Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to move through all twelve signs.",
+      "whatChanged": "Replaced the recurring Sol 'circle the zodiac' attractor with the owner-directed ordinary cycle wording. The rest of the draft remains unchanged.",
+      "ownerReason": "The song-with-several-endings scene is strong; the failure is mechanical and should be corrected without regenerating the draft.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "banned-zodiac-wording"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-pilot-mars-libra-v1/result.json"
+      ],
+      "provenance": "preferred_version: Apply the owner-directed line edit: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, re-lint, and hold for owner voice review."
+    },
+    {
+      "id": "sky-placement-pilot-uranus-gemini-owner-line-edit-v1",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "gemini",
+      "articleBeat": "full_article",
+      "before": "Uranus takes about 84 years to circle the zodiac and stays about 7 years in each sign. Before {{exitDate}}, we can choose one new way of communicating that deserves to last and let one distracting format go.",
+      "after": "Uranus in Gemini takes about 84 years to move through all twelve signs and stays about 7 years in each sign. Before {{exitDate}}, we can let one distracting format go.",
+      "whatChanged": "Removed the recurring Sol 'circle the zodiac' attractor, explicitly named Gemini in the opening, and reduced the close from two choices to one. The scene and all other wording remain unchanged.",
+      "ownerReason": "The class-teaching-itself scene is strong; the failures are mechanical and should be corrected without regenerating the draft.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "banned-zodiac-wording",
+        "missing-sign-name",
+        "two-action-close"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-pilot-uranus-gemini-v1/result.json"
+      ],
+      "provenance": "preferred_version: Apply the owner-directed line edits: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, name Gemini in the opening, reduce the close to one action, re-lint, and hold for owner voice review."
+    },
+    {
+      "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1-exact-approval",
+      "surface": "sky-placement",
+      "planet": "mercury",
+      "sign": "pisces",
+      "articleBeat": "full_article",
+      "before": "The lint-clean Mercury in Pisces owner-revised candidate before the final two owner-directed prose polishes.",
+      "beforeIsRejected": false,
+      "after": "Opening: Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.\n\nTension: The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.\n\nDevelopment: Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.\n\nClose: Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.\n\nTry this:\n- We can reread one confusing message and copy the exact sentence that is shaping our interpretation.\n- We can send “Still deciding” instead of another maybe that could be read as yes or no.",
+      "whatChanged": "Applied the two final owner-directed Mercury prose polishes, retained the approved scene, and recorded exact fallback-article approval without serving or wiring authority.",
+      "ownerReason": "The mixed-signals sequence holds and the final changes remove the remaining machine fingerprints.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "exactApprovalScope": "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-pilot-mercury-pisces-v1/owner-line-edited-candidate.json"
+      ],
+      "provenance": "exact_wording_approval: With the three owner-directed line edits applied, I explicitly approve the exact wording of sky-placement-pilot-mercury-pisces-owner-line-edit-v1, sky-placement-pilot-mars-libra-owner-line-edit-v1, and sky-placement-pilot-uranus-gemini-owner-line-edit-v1 as owner-approved fallback articles for their placement pages. Serving and wiring remain separate."
+    },
+    {
+      "id": "sky-placement-pilot-mars-libra-owner-line-edit-v1-exact-approval",
+      "surface": "sky-placement",
+      "planet": "mars",
+      "sign": "libra",
+      "articleBeat": "full_article",
+      "before": "The lint-clean Mars in Libra owner-revised candidate before the final owner-directed prose polish.",
+      "beforeIsRejected": false,
+      "after": "Opening: When Mars enters Libra on {{entryDate}}, the song we have been shaping with a collaborator has several endings and no final version. One ending hits harder; another fits the rest of the song better, and we keep revising so neither preference is overruled. The care is useful: a choice made with attention to another response can become sharper than a solo decision. Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to move through all twelve signs. A retrograde can extend one sign stay to about 7 months.\n\nTension: Before the next rehearsal, we send another edit, ask for another reaction, and soften the strongest moment before anyone can object. Neither of us says which ending we actually want. No argument happens, but the song stays unfinished, and each of us starts resenting the other for a delay both of us are creating. The same social awareness that protects the partnership now keeps either side from taking a clear position.\n\nDevelopment: At the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.\n\nClose: Before {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.\n\nTry this:\n- We can replace one automatic “either is fine” with the option we actually prefer.\n- We can send one reply we have been softening, using a clear sentence without adding an apology.\n- We can make one visual or musical choice this week without collecting extra opinions.",
+      "whatChanged": "Applied the final owner-directed Mars prose polish, retained the song-with-several-endings scene, and recorded exact fallback-article approval without serving or wiring authority.",
+      "ownerReason": "The scene is detriment-true and the final change removes the remaining unnatural word order.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "exactApprovalScope": "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-pilot-mars-libra-v1/owner-line-edited-candidate.json"
+      ],
+      "provenance": "exact_wording_approval: With the three owner-directed line edits applied, I explicitly approve the exact wording of sky-placement-pilot-mercury-pisces-owner-line-edit-v1, sky-placement-pilot-mars-libra-owner-line-edit-v1, and sky-placement-pilot-uranus-gemini-owner-line-edit-v1 as owner-approved fallback articles for their placement pages. Serving and wiring remain separate."
+    },
+    {
+      "id": "sky-placement-pilot-uranus-gemini-owner-line-edit-v1-exact-approval",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "gemini",
+      "articleBeat": "full_article",
+      "before": "The owner-revised Uranus in Gemini candidate held for final voice review.",
+      "beforeIsRejected": false,
+      "after": "Opening: From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus in Gemini takes about 84 years to move through all twelve signs and stays about 7 years in each sign.\n\nTension: The pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.\n\nDevelopment: We do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.\n\nClose: Before {{exitDate}}, we can let one distracting format go.\n\nTry this:\n- We can finish one saved article or lesson before opening another tab on the same subject.\n- We can return to one message thread and answer the question we skipped when the subject changed.\n- We can compare one summary with its original source and correct one claim we repeated too quickly.",
+      "whatChanged": "Preserved the final lint-clean Uranus in Gemini wording and recorded exact fallback-article approval without serving or wiring authority.",
+      "ownerReason": "The scene, tension, and single-action close read clean without further changes.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "exactApprovalScope": "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-pilot-uranus-gemini-v1/owner-line-edited-candidate.json"
+      ],
+      "provenance": "exact_wording_approval: With the three owner-directed line edits applied, I explicitly approve the exact wording of sky-placement-pilot-mercury-pisces-owner-line-edit-v1, sky-placement-pilot-mars-libra-owner-line-edit-v1, and sky-placement-pilot-uranus-gemini-owner-line-edit-v1 as owner-approved fallback articles for their placement pages. Serving and wiring remain separate."
+    },
+    {
+      "id": "sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04-exact-approval",
+      "surface": "sky-placement-batch",
+      "articleBeat": "seven-full-articles",
+      "before": "Superseded seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json#articles",
+      "beforeIsRejected": true,
+      "after": "[No approved replacement. Seven editorial revisions remain needs_review.]",
+      "whatChanged": "Revoked an approval record that was attached to the wrong editorial state. The seven stored articles are rejected as written and retained only as superseded review history. The group-chat warning, settle waivers, and OV-040 policy changes remain active.",
+      "ownerReason": "The recorded approval statement predates the owner's rejection of the batch and does not apply to these seven articles.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "approval-recorded-in-error",
+        "owner-rejected-as-written",
+        "coaching-scaffold",
+        "scenario-dominates-transit",
+        "task-management-ending",
+        "cycle-fact-in-prose"
+      ],
+      "approvalLevel": "owner_rejected",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json",
+        "packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-re-lint-2026-08-04.json"
+      ],
+      "provenance": "rejection: Revoke the batch-1 approval recorded in sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json. That approval statement predates my rejection of the batch and does not apply; I rejected all seven as written.",
+      "exactApprovalScope": "none_superseded_record_only"
+    },
+    {
+      "id": "sky-placement-mars-aries-owner-selected-generation-benchmark-v1",
+      "surface": "sky-placement",
+      "planet": "mars",
+      "sign": "aries",
+      "articleBeat": "full_article",
+      "before": "The rejected Mars in Aries article in the superseded batch-1 approval payload.",
+      "beforeIsRejected": true,
+      "after": "Mars enters Aries on {{entryDate}}, and waiting starts to feel worse than whatever happens next. The call gets made. The answer gets demanded. The part everyone has been circling finally has a name.\n\nThe problem is that relief can look a lot like certainty. Once the pressure breaks, every delay feels personal and every objection feels like something to defeat. We answer before we know what was actually said. We fix the first problem we can reach, even when it is not the one causing the damage.\n\nMars in Aries is good at beginning. It is less interested in cleaning up what happened because nobody stopped long enough to decide what they were trying to change. Before {{exitDate}}, notice which fight is moving the situation forward and which one is only giving the anger somewhere to go.",
+      "whatChanged": "Replaced the coaching scaffold, single-scenario structure, embedded cycle facts, and task-management close with a transit-led pressure-and-consequence benchmark.",
+      "ownerReason": "The owner selected this rewrite as generation evidence and the benchmark for the Sky Placement surface.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "exactApprovalScope": "generation_evidence_and_surface_benchmark_only",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-mars-aries-owner-selected-generation-benchmark-v1.json"
+      ],
+      "provenance": "owner_selected_generation_benchmark: The wording originated in ChatGPT thread 6a711efa-0ec0-83ea-af3e-1cdde39828d1 and was selected by the owner for generation evidence. Source authorship remains assistant-generated; owner selection and authorization are exact and explicit."
+    },
+    {
+      "id": "sky-placement-writer-batch-1-corpus-warmth-revisions-v4-exact-approval",
+      "surface": "sky-placement-batch",
+      "articleBeat": "seven-full-continuous-fallback-articles",
+      "before": "The seven V4 warmth-revision candidates before the final Mars in Scorpio cut, Saturn in Aries cut, and optional Mercury in Virgo cadence cut.",
+      "beforeIsRejected": false,
+      "after": "Exact approved seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.json#articles (SHA-256 cdce0dc7b3bcfab0b1abecfa926f0c26c29e0104955b37f65f18626b14a333a0).",
+      "whatChanged": "Deleted the repeated trust sentence from Mars in Scorpio, ended Saturn in Aries at the owner's original 'It makes us human.' punch, and removed the near-identical 'ever would' cadence from the Mercury in Virgo close. No model or judge calls were made.",
+      "ownerReason": "The six corpus foundation lines landed; the final cuts remove repeated or diluted conclusions while preserving the exact approved batch.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [],
+      "approvalLevel": "exact_owner_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.json",
+        "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.md",
+        "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4-lint.json"
+      ],
+      "provenance": "exact_wording_approval: With the two required owner-directed edits and the optional Mercury in Virgo cadence edit applied, I explicitly approve all seven V4 articles as owner-approved fallback articles for their placement pages, exact wording. Serving and wiring remain separate. The group-chat and benchmark warnings are waived as previously ruled.",
+      "exactApprovalScope": "owner_approved_fallback_articles_for_placement_pages_serving_and_wiring_separate"
     }
   ]
 }
