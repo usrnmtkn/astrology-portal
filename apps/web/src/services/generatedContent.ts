@@ -20,6 +20,7 @@ import {
   fallbackArchitectureV3ManifestForBundle,
   fallbackArchitectureV3PackageVersion,
   loadFallbackArchitectureV3BundledManifest,
+  transitV3AuthoredCardForContentKey,
   type FallbackArchitectureV3Bundle,
   type FallbackArchitectureV3PackageManifest,
   type HookRow,
@@ -100,6 +101,51 @@ const fallbackArchitectureV3BundleCacheKey = "tldrastro:fallbackArchitectureV3:d
 const fallbackArchitectureV3BundleVersionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3";
 const fallbackArchitectureV3ImportBatchId = `fallback-architecture-${fallbackArchitectureV3PackageVersion}`;
+
+export function fallbackArchitectureV3AuthoredContentForKey(contentKey: string): LiveGeneratedContent | null {
+  const card = transitV3AuthoredCardForContentKey(contentKey);
+  const body = typeof card?.body === "string" ? card.body.trim() : "";
+
+  if (!card || !body) {
+    return null;
+  }
+
+  const headline = typeof card.headline === "string" && card.headline.trim()
+    ? card.headline.trim()
+    : null;
+  const surface = typeof card.surface === "string" && card.surface.trim()
+    ? card.surface.trim()
+    : "sky";
+  const sourceKeys = Array.isArray(card.source_keys)
+    ? card.source_keys.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+    : [];
+
+  return {
+    id: `fallback-architecture-v3:${contentKey}`,
+    contentKey,
+    surface,
+    mode: "article",
+    eventType: "timing-event",
+    targetDate: null,
+    headline,
+    summary: null,
+    body,
+    sections: [],
+    blockType: "essay",
+    provider: fallbackArchitectureV3Provider,
+    sourceSnapshot: {
+      canonicalKey: contentKey,
+      contentType: "authored-content",
+      contentRole: card.content_role ?? "full_copy",
+      reviewStatus: card.review_status ?? null,
+      sourceKeys
+    },
+    judgeScore: null,
+    judgeGate: null,
+    model: null,
+    updatedAt: ""
+  };
+}
 
 type FallbackArchitectureV3MirrorMetadata = {
   packageVersion: string;
