@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/sky-placement-writer-packet-v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "packetVersion", "routing", "verifiedAstrology", "surfaceRequirements", "task", "ownerPassages", "writerPrompt"],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "packetVersion": { "const": "sky-placement-writer-packet-v2:owner-six-minimal" },
+    "positiveEvidencePoolId": { "type": ["string", "null"] },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["laneId", "releaseId", "registryState", "requestedModel", "requestedReasoningEffort", "promptVersion"],
+      "properties": {
+        "laneId": { "const": "writer:sky-placement" },
+        "releaseId": { "type": "string" },
+        "registryState": { "const": "candidate" },
+        "requestedModel": { "const": "gpt-5.6-sol" },
+        "requestedReasoningEffort": { "const": "xhigh" },
+        "promptVersion": { "const": "sky-placement-writer-v4:compiled-owner-decisions" }
+      }
+    },
+    "verifiedAstrology": { "type": "object" },
+    "surfaceRequirements": { "type": "object" },
+    "task": { "type": "object" },
+    "ownerPassages": { "type": "array", "minItems": 6, "maxItems": 6 },
+    "writerPrompt": { "type": "string", "minLength": 1 }
+  }
+}
