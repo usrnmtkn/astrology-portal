@@ -59,8 +59,75 @@
       "articleBeat": "hook",
       "text": "A private feeling becomes a public decision.",
       "failureTags": ["abstract_consequence", "behavior_missing", "generic_coverage_sentence"],
-      "reason": "Name the repeated denial, compared evidence, and public complaint.",
+      "reason": "The sentence summarizes a civic process instead of following an ordinary repeated experience into a realization.",
       "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json"
+    },
+    {
+      "id": "generic-people-opener",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "hook",
+      "text": "People can care deeply and still leave the rule untouched.",
+      "failureTags": ["generic_collective_opener", "generic_coverage_sentence", "polished_but_flat"],
+      "reason": "The generic People opener states a thesis instead of naming the group, message, decision, or event.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
+    },
+    {
+      "id": "harsh-harm-summary",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "turn",
+      "text": "Once the harm becomes visible, every case can start to feel urgent.",
+      "failureTags": ["harsh_register", "generic_coverage_sentence", "requires_interpretation"],
+      "reason": "Harm is harsher and less exact than naming the recurring crisis, cost, or message that became impossible to ignore.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
+    },
+    {
+      "id": "dated-compare-letters",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "lived",
+      "text": "Then three families compare letters and find identical wording, identical delays, and identical reasons for rejection.",
+      "failureTags": ["dated_communication_object", "category_inventory", "polished_but_flat"],
+      "reason": "The communication object sounds dated, and the sentence preserves the rejected case-study structure. Default to message or response when the delivery method is irrelevant; do not replace letter with technical delivery language.",
+      "ownerDirection": "Then three families compare the messages they received and find the same wording, the same delays, and the same reason for being turned down.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
+    },
+    {
+      "id": "rejected-tagline-saturn-capricorn-v7",
+      "surface": "sky-placement",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "articleBeat": "tagline",
+      "text": "Build it without disappearing",
+      "failureTags": ["generic_tagline", "abstract_consequence", "requires_interpretation"],
+      "reason": "The owner rejected every V7 tagline; this one also returns to the disappearance shorthand already removed from the article.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
+    },
+    {
+      "id": "rejected-tagline-neptune-libra-v7",
+      "surface": "sky-placement",
+      "planet": "neptune",
+      "sign": "libra",
+      "articleBeat": "tagline",
+      "text": "Stop calling silence peace",
+      "failureTags": ["generic_tagline", "polished_but_flat"],
+      "reason": "The owner rejected every V7 tagline; this one reads as a polished summary rather than the article's decision.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
+    },
+    {
+      "id": "rejected-tagline-uranus-pisces-v7",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "tagline",
+      "text": "Make kindness practical",
+      "failureTags": ["generic_tagline", "generic_coverage_sentence", "swappable_astrology"],
+      "reason": "The owner rejected every V7 tagline; this virtue-level instruction could belong to many placements.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json"
     },
     {
       "id": "generic-new-age-close",

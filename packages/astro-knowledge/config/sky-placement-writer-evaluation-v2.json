@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "evaluationId": "sky-placement-writer-owner-preference-v2",
+  "surface": "sky-placement",
+  "status": "fixture-shortfall-no-evaluation-authorized",
+  "candidateReleaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+  "candidateModel": "gpt-5.6-sol",
+  "candidateReasoningEffort": "xhigh",
+  "targetHeldoutFixtureCount": 20,
+  "validHeldoutFixtureCount": 6,
+  "exactShortfall": 14,
+  "billedCallsAuthorized": false,
+  "promotionAuthorized": false,
+  "activeModelChangeAuthorized": false,
+  "gates": [
+    "blind owner preference",
+    "editing burden",
+    "first-read natural English",
+    "surface compliance",
+    "astrological specificity",
+    "no false abstraction",
+    "no unnecessary rewrites"
+  ],
+  "notes": "Do not run until 20 valid held-out owner fixtures exist and the owner separately authorizes the billed evaluation. Terra judge scores are not writer promotion evidence."
+}

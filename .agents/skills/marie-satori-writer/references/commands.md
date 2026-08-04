@@ -9,22 +9,69 @@ node .agents/skills/marie-satori-writer/scripts/build-voice-index.js
 node .agents/skills/marie-satori-writer/scripts/build-voice-index.js --check
 ```
 
-## Compile a ranked packet
+## Compile the minimal affinity packet
 
 ```bash
 node .agents/skills/marie-satori-writer/scripts/compile-writing-packet.js \
-  --surface sky-placement \
-  --planet saturn \
-  --sign capricorn \
-  --beat hook \
-  --goal "replace polished abstraction with the exact cost" \
-  --keywords "burnout,overtime,rest,work,achievement,indispensable,deadline,exhaustion" \
-  --failure-tags "abstract_consequence,requires_interpretation,polished_but_flat" \
-  --candidate-file packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json \
-  --candidate-id sky-placement-v6-saturn-capricorn
+  --planet jupiter \
+  --sign libra \
+  --requested-beat full_article \
+  --emphasis-beat turn \
+  --task "Write one complete Current Sky Sky Placement article for Jupiter in Libra, with particular attention to the turn." \
+  --out packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-controlled-v1
 ```
 
-The command writes an untracked JSON packet and a human-readable selection report under `packages/astro-knowledge/out/marie-satori-writer/` unless `--out-dir` is supplied.
+The command writes `packet.json` and the exact first-call `model-input.md`. It does not require an exact-placement owner article or a prewritten scenario, and it does not call a model.
+
+The superseded compiler is preserved as `compile-writing-packet-legacy-audit.js` for packet-exposure review only. Do not use it for writing.
+
+The active full-article packet targets `sky-placement-continuous-v2`: `opening`, `tension`, `development`, `close`, and `try_this`. Headline, fact line, dates, and approved aspect inserts remain engine-owned.
+
+## Plan or run one continuous fallback candidate
+
+Build the calculation-owned facts first. The command locates the requested
+transit with Swiss Ephemeris, renders dates in the supplied zone (or the
+machine's local zone), and joins event meanings from astro-knowledge. It does
+not call a model or serve content.
+
+```bash
+npm run build:sky-placement-engine-facts -- \
+  --planet jupiter \
+  --sign libra \
+  --time-zone America/New_York \
+  --out /tmp/jupiter-libra-engine-facts.json
+```
+
+```bash
+npm run plan:sky-placement-writer -w @tldr/astro-knowledge -- \
+  --planet jupiter \
+  --sign libra \
+  --engine-facts /tmp/jupiter-libra-engine-facts.json
+```
+
+This writes the exact packet and model input without making a billed call. It fails closed when placement facts are draft, missing, or incomplete.
+
+After explicit owner authorization only:
+
+```bash
+npm run write:sky-placement:live -w @tldr/astro-knowledge -- --planet jupiter --sign capricorn
+```
+
+The live command makes one Sol-xhigh writing call and one Terra-low review call. It emits one `sky-placement-continuous-v2` row with `review_status: needs_review` and `render_eligible: false`; it never imports or promotes the row.
+
+## Audit fallback coverage
+
+```bash
+npm run audit:sky-placement-fallback-readiness -w @tldr/astro-knowledge
+```
+
+## Audit held-out fixtures
+
+```bash
+node packages/astro-knowledge/scripts/audit-sky-placement-writer-fixtures.js
+```
+
+This is deterministic. It does not fabricate fixtures or call a model.
 
 ## Run authorship audit
 

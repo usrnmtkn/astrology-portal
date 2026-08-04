@@ -54,12 +54,13 @@ function validateRegistry(registry) {
   }
 
   for (const [laneId, lane] of Object.entries(registry.lanes)) {
-    if (!new Set(["generation", "judge"]).has(lane.role)) throw new Error(`${laneId}.role is invalid.`);
+    if (!new Set(["generation", "judge", "writer"]).has(lane.role)) throw new Error(`${laneId}.role is invalid.`);
     if (!lane.surface) throw new Error(`${laneId}.surface is required.`);
     if (laneId !== `${lane.role}:${lane.surface}`) {
       throw new Error(`${laneId} must match its role and surface (${lane.role}:${lane.surface}).`);
     }
-    validateRelease(lane.active, `${laneId}.active`);
+    if (lane.active) validateRelease(lane.active, `${laneId}.active`);
+    else if (lane.role !== "writer") throw new Error(`${laneId}.active is required.`);
     if (lane.candidate) validateRelease(lane.candidate, `${laneId}.candidate`);
     if (lane.rollback) validateRelease(lane.rollback, `${laneId}.rollback`);
     if (!Array.isArray(lane.history)) throw new Error(`${laneId}.history must be an array.`);
@@ -85,6 +86,7 @@ function resolveLane(registry, role, surface = "default") {
 
 function resolveActiveRelease({ role, surface = "default", registry = readRegistry() }) {
   const { laneId, lane } = resolveLane(registry, role, surface);
+  if (!lane.active) throw new Error(`${laneId} has no active release.`);
   return { laneId, registryVersion: registry.registryVersion, registryState: "active", ...lane.active };
 }
 
@@ -112,7 +114,7 @@ function stageCandidate(registry, laneId, release) {
   const lane = next.lanes[laneId];
   if (!lane) throw new Error(`Unknown model lane '${laneId}'.`);
   validateRelease(release, `${laneId}.candidate`);
-  if (release.releaseId === lane.active.releaseId || release.releaseId === lane.rollback?.releaseId) {
+  if (release.releaseId === lane.active?.releaseId || release.releaseId === lane.rollback?.releaseId) {
     throw new Error("Candidate releaseId must differ from active and rollback releases.");
   }
   lane.candidate = clone(release);
@@ -162,7 +164,7 @@ function promoteCandidate(registry, laneId, { approvedBy, calibrationReport, rec
     action: "promote",
     recordedAt,
     approvedBy: String(approvedBy).trim(),
-    fromReleaseId: previous.releaseId,
+    fromReleaseId: previous?.releaseId || null,
     toReleaseId: lane.active.releaseId,
     calibrationReportSha256: sha256(JSON.stringify(calibrationReport))
   });
