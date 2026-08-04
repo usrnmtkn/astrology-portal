@@ -1344,7 +1344,11 @@ export function createTransitSynastryRenderer(
       throw new SourceGapError(`SOURCE_GAP: retired Sun identity hook ${planet}/${sign}`);
     }
     for (const transitDate of [dates.entry.body, dates.exit.body]) {
-      if (renderedText.split(transitDate).length - 1 > 2) {
+      const priorSignExit = priorSignExitDate
+        ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body
+        : null;
+      const allowedUses = transitDate === dates.entry.body && priorSignExit === transitDate ? 3 : 2;
+      if (renderedText.split(transitDate).length - 1 > allowedUses) {
         throw new SourceGapError(`SOURCE_GAP: repeated sky placement date ${planet}/${sign}`);
       }
     }

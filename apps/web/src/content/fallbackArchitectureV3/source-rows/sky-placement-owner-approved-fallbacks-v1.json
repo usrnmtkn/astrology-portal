@@ -1,0 +1,214 @@
+{
+  "schema": "tldrastro-sky-placement-owner-approved-fallbacks-v1",
+  "version": "1.0.0",
+  "note": "Exact owner-approved Sky Placement fallback articles. Serving was authorized after wording approval; dates remain engine-owned resolver slots.",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/jupiter/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Libra is the sign of balance, connection, and how we get along with each other. Together they make this a year where growth comes through who we meet and what becomes possible together: a friend's introduction leads to a creative collaboration, and the finished work reaches an audience neither person could have found alone. Jupiter spends about a year in each sign and takes about 12 years to visit all twelve.",
+      "tension": "Jupiter makes things bigger, and a few months in, the biggest thing is the list of what we have agreed to. Refusing feels rude, so we keep saying yes: another meeting, more of the work, another \"it's fine\" that is not true. Every extra request, correction, and follow-up starts going to the person who keeps saying yes. When a real choice comes up, we wait to hear what everyone else wants before saying what we want, and the decision goes to whoever speaks first. Somewhere along the way, being agreeable starts doing the work that honesty should be doing. The resentment stays quiet, because every one of these plans is something we technically agreed to.",
+      "development": "Jupiter last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and whatever was learned about fairness then gets its next round now. Just because nobody has complained does not mean an arrangement is fair. This year it helps to say what changed early: that Saturday does not work, that the effort stopped being even, that one voice keeps making the decisions. Some connections will get closer once that is said plainly. Others end when the person benefiting from the old agreement is asked to do more.",
+      "close": "Before {{exitDate}}, we can quit one recurring commitment we have been keeping only because saying no feels rude.",
+      "try_this": [
+        "We can answer one pending invitation with a clear yes or no instead of another maybe.",
+        "We can say which day works for us before asking what everyone else prefers.",
+        "We can stop sending reminders for a responsibility that belongs to someone else."
+      ],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Libra is the sign of balance, connection, and how we get along with each other. Together they make this a year where growth comes through who we meet and what becomes possible together: a friend's introduction leads to a creative collaboration, and the finished work reaches an audience neither person could have found alone. Jupiter spends about a year in each sign and takes about 12 years to visit all twelve.\n\nJupiter makes things bigger, and a few months in, the biggest thing is the list of what we have agreed to. Refusing feels rude, so we keep saying yes: another meeting, more of the work, another \"it's fine\" that is not true. Every extra request, correction, and follow-up starts going to the person who keeps saying yes. When a real choice comes up, we wait to hear what everyone else wants before saying what we want, and the decision goes to whoever speaks first. Somewhere along the way, being agreeable starts doing the work that honesty should be doing. The resentment stays quiet, because every one of these plans is something we technically agreed to.\n\nJupiter last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and whatever was learned about fairness then gets its next round now. Just because nobody has complained does not mean an arrangement is fair. This year it helps to say what changed early: that Saturday does not work, that the effort stopped being even, that one voice keeps making the decisions. Some connections will get closer once that is said plainly. Others end when the person benefiting from the old agreement is asked to do more.\n\nBefore {{exitDate}}, we can quit one recurring commitment we have been keeping only because saying no feels rude.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/pisces",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.",
+      "tension": "The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.",
+      "development": "Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.",
+      "close": "Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.",
+      "try_this": [
+        "We can reread one confusing message and copy the exact sentence that is shaping our interpretation.",
+        "We can send “Still deciding” instead of another maybe that could be read as yes or no."
+      ],
+      "body_you": "Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.\n\nThe trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.\n\nClarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.\n\nBefore {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "When Mars enters Libra on {{entryDate}}, the song we have been shaping with a collaborator has several endings and no final version. One ending hits harder; another fits the rest of the song better, and we keep revising so neither preference is overruled. The care is useful: a choice made with attention to another response can become sharper than a solo decision. Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to move through all twelve signs. A retrograde can extend one sign stay to about 7 months.",
+      "tension": "Before the next rehearsal, we send another edit, ask for another reaction, and soften the strongest moment before anyone can object. Neither of us says which ending we actually want. No argument happens, but the song stays unfinished, and each of us starts resenting the other for a delay both of us are creating. The same social awareness that protects the partnership now keeps either side from taking a clear position.",
+      "development": "At the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.",
+      "close": "Before {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.",
+      "try_this": [
+        "We can replace one automatic “either is fine” with the option we actually prefer.",
+        "We can send one reply we have been softening, using a clear sentence without adding an apology.",
+        "We can make one visual or musical choice this week without collecting extra opinions."
+      ],
+      "body_you": "When Mars enters Libra on {{entryDate}}, the song we have been shaping with a collaborator has several endings and no final version. One ending hits harder; another fits the rest of the song better, and we keep revising so neither preference is overruled. The care is useful: a choice made with attention to another response can become sharper than a solo decision. Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to move through all twelve signs. A retrograde can extend one sign stay to about 7 months.\n\nBefore the next rehearsal, we send another edit, ask for another reaction, and soften the strongest moment before anyone can object. Neither of us says which ending we actually want. No argument happens, but the song stays unfinished, and each of us starts resenting the other for a delay both of us are creating. The same social awareness that protects the partnership now keeps either side from taking a clear position.\n\nAt the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.\n\nBefore {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/uranus/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus in Gemini takes about 84 years to move through all twelve signs and stays about 7 years in each sign.",
+      "tension": "The pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.",
+      "development": "We do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.",
+      "close": "Before {{exitDate}}, we can let one distracting format go.",
+      "try_this": [
+        "We can finish one saved article or lesson before opening another tab on the same subject.",
+        "We can return to one message thread and answer the question we skipped when the subject changed.",
+        "We can compare one summary with its original source and correct one claim we repeated too quickly."
+      ],
+      "body_you": "From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus in Gemini takes about 84 years to move through all twelve signs and stays about 7 years in each sign.\n\nThe pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.\n\nWe do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.\n\nBefore {{exitDate}}, we can let one distracting format go.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Mercury enters Gemini on {{entryDate}}, and one question becomes five before the first answer is finished. The original source gets found. A contradiction appears. The group chat fills with links, screenshots, and a version of the story that changes every ten minutes.",
+      "tension": "Mercury in Gemini moves quickly because every answer opens another route. That speed can find the missing fact, connect two ideas, or give a stuck conversation somewhere new to go. It can also outrun the point. More tabs open, side questions take over, and the quickest summary gets repeated while the slower source that contradicts it goes unread. The conversation stays lively after it has stopped helping.",
+      "development": "The cost shows up when a choice has to be made and nobody can tell which version is current. The confirmed detail is buried under commentary. Without grounding, curiosity becomes avoidance. Words become noise. The original question disappears under all the interesting questions that came after it.",
+      "close": "By {{exitDate}}, the useful answer may be the one we almost missed while proving how much else we could find.",
+      "try_this": [
+        "We can read the original source before repeating the quickest summary.",
+        "We can answer the question that was asked before adding another one.",
+        "We can let one interesting link wait until the decision in front of us is made."
+      ],
+      "body_you": "Mercury enters Gemini on {{entryDate}}, and one question becomes five before the first answer is finished. The original source gets found. A contradiction appears. The group chat fills with links, screenshots, and a version of the story that changes every ten minutes.\n\nMercury in Gemini moves quickly because every answer opens another route. That speed can find the missing fact, connect two ideas, or give a stuck conversation somewhere new to go. It can also outrun the point. More tabs open, side questions take over, and the quickest summary gets repeated while the slower source that contradicts it goes unread. The conversation stays lively after it has stopped helping.\n\nThe cost shows up when a choice has to be made and nobody can tell which version is current. The confirmed detail is buried under commentary. Without grounding, curiosity becomes avoidance. Words become noise. The original question disappears under all the interesting questions that came after it.\n\nBy {{exitDate}}, the useful answer may be the one we almost missed while proving how much else we could find.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/virgo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Mercury enters Virgo on {{entryDate}}, and the sentence that almost went out wrong gets caught in time. A number does not match. Two messages describe the same decision differently. Someone notices before the mistake becomes the version everyone remembers.",
+      "tension": "Mercury in Virgo is good at finding what needs to be corrected. The trouble begins when every detail starts to feel equally dangerous. A clear answer gets checked for tone, then punctuation, then every possible exception. Everyone is still waiting while the useful reply becomes a perfect reply that arrives too late.",
+      "development": "A mistake that changes the meaning deserves attention. A sentence that could simply be prettier does not carry the same risk. When that difference disappears, precision becomes a way to avoid being wrong in public. Perfectionism destroys more trust than an imperfect answer ever could. The extra checking creates the confusion it was supposed to prevent.",
+      "close": "Before {{exitDate}}, the late answer may cause more confusion than the imperfect one.",
+      "try_this": [
+        "We can compare the two messages and mark the detail that changes the decision.",
+        "We can ask the factual question underneath one recurring worry.",
+        "We can leave a harmless wording preference alone when the meaning is already clear."
+      ],
+      "body_you": "Mercury enters Virgo on {{entryDate}}, and the sentence that almost went out wrong gets caught in time. A number does not match. Two messages describe the same decision differently. Someone notices before the mistake becomes the version everyone remembers.\n\nMercury in Virgo is good at finding what needs to be corrected. The trouble begins when every detail starts to feel equally dangerous. A clear answer gets checked for tone, then punctuation, then every possible exception. Everyone is still waiting while the useful reply becomes a perfect reply that arrives too late.\n\nA mistake that changes the meaning deserves attention. A sentence that could simply be prettier does not carry the same risk. When that difference disappears, precision becomes a way to avoid being wrong in public. Perfectionism destroys more trust than an imperfect answer ever could. The extra checking creates the confusion it was supposed to prevent.\n\nBefore {{exitDate}}, the late answer may cause more confusion than the imperfect one.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Mars enters Aries on {{entryDate}}, and waiting starts to feel worse than whatever happens next. The call gets made. The answer gets demanded. The part everyone has been circling finally has a name.",
+      "tension": "The problem is that relief can look a lot like certainty. Once the pressure breaks, every delay feels personal and every objection feels like something to defeat. We answer before we know what was actually said. We fix the first problem we can reach, even when it is not the one causing the damage.",
+      "development": "Mars in Aries is good at beginning. It is less interested in cleaning up what happened because nobody stopped long enough to decide what they were trying to change.",
+      "close": "Before {{exitDate}}, notice which fight is moving the situation forward and which one is only giving the anger somewhere to go.",
+      "try_this": [
+        "We can make the call and ask the direct question before explaining our position.",
+        "We can stop a rushed fix when it becomes clear that it is solving the wrong problem."
+      ],
+      "body_you": "Mars enters Aries on {{entryDate}}, and waiting starts to feel worse than whatever happens next. The call gets made. The answer gets demanded. The part everyone has been circling finally has a name.\n\nThe problem is that relief can look a lot like certainty. Once the pressure breaks, every delay feels personal and every objection feels like something to defeat. We answer before we know what was actually said. We fix the first problem we can reach, even when it is not the one causing the damage.\n\nMars in Aries is good at beginning. It is less interested in cleaning up what happened because nobody stopped long enough to decide what they were trying to change.\n\nBefore {{exitDate}}, notice which fight is moving the situation forward and which one is only giving the anger somewhere to go.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/scorpio",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Mars enters Scorpio on {{entryDate}}, and the question nobody wanted to answer becomes the only one that matters. The story changes. A promise no longer matches what happened. Silence that once bought time starts to look like a decision.",
+      "tension": "Mars in Scorpio can stay with what others avoid. That is its strength. It becomes a problem when staying turns into watching, testing, and waiting for the next betrayal. We reread every response, hold back what we know, and ask the same question in a new form to see whether the answer changes. Trust gets replaced by an investigation that has no natural end.",
+      "development": "Catching the next lie will not repair the first one. If the answer keeps changing, the terms may need to change with it. If the answer is honest, another round of private testing only creates a new reason to guard every word. Naming what we want works better than testing whether anyone will guess it.",
+      "close": "Before {{exitDate}}, a broken agreement that never received an honest explanation may no longer deserve another investigation.",
+      "try_this": [
+        "We can write down what was said separately from what we suspect it means.",
+        "We can say what we already know instead of waiting to see whether someone admits it.",
+        "We can change the terms when the same answer keeps changing."
+      ],
+      "body_you": "Mars enters Scorpio on {{entryDate}}, and the question nobody wanted to answer becomes the only one that matters. The story changes. A promise no longer matches what happened. Silence that once bought time starts to look like a decision.\n\nMars in Scorpio can stay with what others avoid. That is its strength. It becomes a problem when staying turns into watching, testing, and waiting for the next betrayal. We reread every response, hold back what we know, and ask the same question in a new form to see whether the answer changes. Trust gets replaced by an investigation that has no natural end.\n\nCatching the next lie will not repair the first one. If the answer keeps changing, the terms may need to change with it. If the answer is honest, another round of private testing only creates a new reason to guard every word. Naming what we want works better than testing whether anyone will guess it.\n\nBefore {{exitDate}}, a broken agreement that never received an honest explanation may no longer deserve another investigation.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Mars enters Capricorn on {{entryDate}}, and the unfinished work stops looking impossible. The hard part gets done first. A vague goal becomes a deadline, a sequence, and visible proof that effort is leading somewhere. Progress replaces the argument about whether anyone feels ready.",
+      "tension": "Then the standard moves. A finished step gets one more improvement, then another. Breaks start to look like weakness. Waiting on someone else feels inefficient, so we take their part too. The goal keeps moving forward while the work required to call it finished keeps getting larger.",
+      "development": "Mars in Capricorn can keep going long after the original need has been met. Discipline loses its value when nothing is allowed to be enough. Rest does not have to be earned through exhaustion. Burnout is not a badge of honor; it is just burnout, even when the deadline gets met.",
+      "close": "Before {{exitDate}}, the version that does the job may be worth more than the perfect version that takes everything with it.",
+      "try_this": [
+        "We can compare the current work with the first definition of finished.",
+        "We can leave one optional improvement for later.",
+        "We can return one responsibility that was taken over only because waiting felt inefficient."
+      ],
+      "body_you": "Mars enters Capricorn on {{entryDate}}, and the unfinished work stops looking impossible. The hard part gets done first. A vague goal becomes a deadline, a sequence, and visible proof that effort is leading somewhere. Progress replaces the argument about whether anyone feels ready.\n\nThen the standard moves. A finished step gets one more improvement, then another. Breaks start to look like weakness. Waiting on someone else feels inefficient, so we take their part too. The goal keeps moving forward while the work required to call it finished keeps getting larger.\n\nMars in Capricorn can keep going long after the original need has been met. Discipline loses its value when nothing is allowed to be enough. Rest does not have to be earned through exhaustion. Burnout is not a badge of honor; it is just burnout, even when the deadline gets met.\n\nBefore {{exitDate}}, the version that does the job may be worth more than the perfect version that takes everything with it.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/saturn/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Saturn enters Aries on {{entryDate}}, and every delay begins to feel like a failure of nerve. A decision sits untouched until waiting becomes unbearable. Then it comes out as a declaration, and a choice that needed courage now has to be defended like a fight.",
+      "tension": "Saturn slows what Aries wants to begin immediately. We can agree for too long, refuse too sharply, and call the final explosion honesty. A question sounds like resistance. An offer of help sounds like doubt. Independence becomes harder to carry because every choice has to prove that nobody else was needed.",
+      "development": "Courage lasts longer when it does not have to prove itself through force. A limit said early stays a limit instead of turning into punishment. A first step can be small without being weak. Needing help does not make anyone a burden. It makes us human.",
+      "close": "By {{exitDate}}, self-direction built on constant combat may feel less like freedom and more like another position that can never be put down.",
+      "try_this": [
+        "We can say one no plainly the first time, instead of agreeing now and refusing sharply later.",
+        "We can make the smallest useful start on something delayed and let that start be enough for today.",
+        "We can accept one concrete offer of help without taking the task back midway."
+      ],
+      "body_you": "Saturn enters Aries on {{entryDate}}, and every delay begins to feel like a failure of nerve. A decision sits untouched until waiting becomes unbearable. Then it comes out as a declaration, and a choice that needed courage now has to be defended like a fight.\n\nSaturn slows what Aries wants to begin immediately. We can agree for too long, refuse too sharply, and call the final explosion honesty. A question sounds like resistance. An offer of help sounds like doubt. Independence becomes harder to carry because every choice has to prove that nobody else was needed.\n\nCourage lasts longer when it does not have to prove itself through force. A limit said early stays a limit instead of turning into punishment. A first step can be small without being weak. Needing help does not make anyone a burden. It makes us human.\n\nBy {{exitDate}}, self-direction built on constant combat may feel less like freedom and more like another position that can never be put down.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/jupiter/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Jupiter enters Leo on {{entryDate}}, and the work we kept private becomes easier to show. Someone posts the first piece, accepts the invitation, or puts their name on an idea that used to be described as a group effort. Visibility brings confidence. Confidence makes the next version larger.",
+      "tension": "Jupiter in Leo grows through creative courage and the willingness to be seen. The applause feels good because it confirms that the risk reached someone. Then the response becomes the measure. We promise more before the current work is finished, repeat the part that got noticed, and quietly drop what mattered when nobody praised it. Recognition starts deciding what deserves to exist.",
+      "development": "The work can grow without being shaped around the reaction. A larger audience does not make every larger promise worth keeping. Creative expression does not require applause to exist. Praise can show what connected with an audience without deciding what deserves to be made next.",
+      "close": "Before {{exitDate}}, work made only to hold attention may be harder to recognize as our own.",
+      "try_this": [
+        "We can show one finished piece before promising the next one.",
+        "We can keep one unusual part even when the familiar part gets more praise.",
+        "We can name what we want to make before reading the response."
+      ],
+      "body_you": "Jupiter enters Leo on {{entryDate}}, and the work we kept private becomes easier to show. Someone posts the first piece, accepts the invitation, or puts their name on an idea that used to be described as a group effort. Visibility brings confidence. Confidence makes the next version larger.\n\nJupiter in Leo grows through creative courage and the willingness to be seen. The applause feels good because it confirms that the risk reached someone. Then the response becomes the measure. We promise more before the current work is finished, repeat the part that got noticed, and quietly drop what mattered when nobody praised it. Recognition starts deciding what deserves to exist.\n\nThe work can grow without being shaped around the reaction. A larger audience does not make every larger promise worth keeping. Creative expression does not require applause to exist. Praise can show what connected with an audience without deciding what deserves to be made next.\n\nBefore {{exitDate}}, work made only to hold attention may be harder to recognize as our own.",
+      "review_status": "approved"
+    }
+  ]
+}
