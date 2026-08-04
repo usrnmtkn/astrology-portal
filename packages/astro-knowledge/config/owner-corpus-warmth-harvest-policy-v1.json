@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "owner-corpus-warmth-harvest-policy-v1",
+  "scope": "all_reader_copy_surfaces",
+  "modes": {
+    "matched": {
+      "blocking": false,
+      "writerRule": "Use at most one supplied owner-corpus foundation as a natural warmth beat. Preserve its meaning without forcing its wording.",
+      "judgeRule": "Judge a supplied warmth beat for naturalness and fidelity. Do not require verbatim reuse."
+    },
+    "none_found": {
+      "blocking": false,
+      "writerRule": "Keep the register plain. Do not invent a permission, reassurance, benediction, or turn-toward-the-reader line to imitate owner warmth.",
+      "judgeRule": "Do not require or penalize the absence of a permission, reassurance, benediction, or turn-toward-the-reader line. Flag invented imitation warmth when it appears.",
+      "editorialFlag": "Revisit non-blockingly if future owner writing covers this emotional core."
+    },
+    "vocabulary_only": {
+      "blocking": false,
+      "writerRule": "Use any supplied foundation only to guide ordinary word choice. Do not add a permission, reassurance, benediction, or turn-toward-the-reader sentence to short copy.",
+      "judgeRule": "Do not require a warmth beat on short copy. Judge any supplied foundation only as vocabulary guidance, and flag an added imitation-warmth sentence."
+    },
+    "not_supplied": {
+      "blocking": false,
+      "writerRule": "Do not infer or manufacture an owner warmth requirement.",
+      "judgeRule": "Do not infer a warmth requirement from the surface or from unrelated owner examples."
+    }
+  },
+  "aspectHumanMoment": {
+    "blocking": true,
+    "scope": "aspect_entry_editorial_data_completeness",
+    "ownerProseRequired": false,
+    "rule": "A missing human-moment beat is the only remaining fail-closed warmth-harvest case. It blocks a complete aspect entry and creates an editorial-data flag. It never demands new owner prose or an owner-corpus warmth line."
+  }
+}

@@ -3,10 +3,10 @@
   "$id": "https://tldrastro.local/schemas/sky-placement-writer-packet-v3.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "packetVersion", "positiveEvidencePoolId", "formatExemplars", "formatExemplarStatus", "routing", "verifiedAstrology", "surfaceRequirements", "voiceDevices", "movesExemplar", "task", "ownerPassages", "preferredVocabulary", "structuralSlots", "writerPrompt"],
+  "required": ["schemaVersion", "packetVersion", "positiveEvidencePoolId", "formatExemplars", "formatExemplarStatus", "ownerReferenceArticles", "ownerSelectedBenchmarks", "ownerCorpusWarmthEvidence", "routing", "verifiedAstrology", "surfaceRequirements", "voiceDevices", "movesExemplar", "task", "ownerPassages", "preferredVocabulary", "structuralSlots", "writerPrompt"],
   "properties": {
     "schemaVersion": { "const": 2 },
-    "packetVersion": { "const": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1" },
+    "packetVersion": { "const": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found" },
     "positiveEvidencePoolId": { "const": "sky-placement-owner-affinity-v1" },
     "formatExemplars": {
       "type": "array",
@@ -26,6 +26,61 @@
       }
     },
     "formatExemplarStatus": { "const": "owner_approved_voice_format_evidence" },
+    "ownerReferenceArticles": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "planet", "sign", "authorityClass", "approvalScope", "article"],
+        "properties": {
+          "id": { "const": "sky-placement-jupiter-libra-owner-merged-candidate-v1" },
+          "authorityClass": { "const": "exact_owner_approved" },
+          "approvalScope": { "const": "owner_reference_fallback_and_generation_evidence_for_sky_placement" },
+          "article": {
+            "type": "object",
+            "required": ["opening", "tension", "development", "close", "try_this"]
+          }
+        }
+      }
+    },
+    "ownerSelectedBenchmarks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "planet", "sign", "authorityClass", "authorship", "approvalScope", "benchmarkText", "benchmarkRules"],
+        "properties": {
+          "id": { "const": "sky-placement-mars-aries-owner-selected-generation-benchmark-v1" },
+          "authorityClass": { "const": "exact_owner_approved" },
+          "authorship": { "const": "assistant_generated_owner_selected" },
+          "approvalScope": { "const": "generation_evidence_and_surface_benchmark_only" },
+          "benchmarkText": { "type": "string", "minLength": 1 },
+          "benchmarkRules": { "type": "array", "minItems": 1 }
+        }
+      }
+    },
+    "ownerCorpusWarmthEvidence": {
+      "type": "object",
+      "required": ["id", "planet", "sign", "harvest_mode", "emotionalCore", "searchTerms", "primary", "authorityClass", "maxWarmthBeats", "method", "sourceIds", "editorial_flags"],
+      "properties": {
+        "harvest_mode": { "enum": ["matched", "none_found"] },
+        "authorityClass": { "enum": ["owner_corpus_derived_foundation", "owner_corpus_no_match"] },
+        "maxWarmthBeats": { "enum": [0, 1] },
+        "primary": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["foundationText", "sourceId", "sourcePath", "sourceExcerpt", "adaptation"]
+            }
+          ]
+        },
+        "sourceIds": { "type": "array", "items": { "type": "string" } },
+        "editorial_flags": { "type": "array" }
+      }
+    },
     "routing": {
       "type": "object",
       "additionalProperties": false,
@@ -36,7 +91,7 @@
         "registryState": { "const": "candidate" },
         "requestedModel": { "const": "gpt-5.6-sol" },
         "requestedReasoningEffort": { "const": "xhigh" },
-        "promptVersion": { "const": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1" }
+        "promptVersion": { "const": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1" }
       }
     },
     "verifiedAstrology": { "type": "object" },
@@ -46,7 +101,7 @@
       "properties": {
         "runtimeContractId": { "const": "sky-placement-continuous-v2" },
         "generatedSlots": { "const": ["opening", "tension", "development", "close", "try_this"] },
-        "engineOwnedSlots": { "const": ["headline", "fact_line", "aspect_insert", "entryDate", "exitDate", "priorSign", "priorSignEntryDate", "priorSignExitDate", "previousResidencyEntryDate", "previousResidencyExitDate"] }
+        "engineOwnedSlots": { "const": ["headline", "fact_line", "cycle_fact_line", "aspect_insert", "entryDate", "exitDate", "priorSign", "priorSignEntryDate", "priorSignExitDate", "previousResidencyEntryDate", "previousResidencyExitDate"] }
       }
     },
     "voiceDevices": {

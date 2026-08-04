@@ -8,13 +8,16 @@ const { buildIndex, repoRoot } = require("./build-voice-index.js");
 const { readRegistry, resolveCandidateRelease } = require(path.join(repoRoot, "packages", "astro-knowledge", "scripts", "editorial-model-registry.js"));
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const PACKET_VERSION = "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1";
+const PACKET_VERSION = "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found";
 const RELEASE_ID = "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2";
 const promptConfig = require(path.join(packageRoot, "config", "sky-placement-writer-prompt-v5.json"));
 const compiledWriterPolicy = require(path.join(packageRoot, "voice", "tldr-astro", "writer-policy.generated.json"));
 const compiledVocabularyPolicy = require(path.join(packageRoot, "voice", "tldr-astro", "vocabulary-policy.generated.json"));
 const retrievalExclusions = require(path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "retrieval-exclusions.json"));
 const formatExemplarDataset = require(path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "sky-placement-format-exemplars-v4.json"));
+const ownerCorpusWarmthFoundations = require(path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "owner-corpus-warmth-foundations-v1.json"));
+const ownerReferenceArticle = require(path.join(packageRoot, "review", "sky-placement-jupiter-libra-owner-merged-candidate-v1.json"));
+const ownerSelectedBenchmark = require(path.join(packageRoot, "review", "sky-placement-mars-aries-owner-selected-generation-benchmark-v1.json"));
 const planetCycleFacts = require(path.join(packageRoot, "data", "modifiers", "planet-cycle-facts.json"));
 const { lintArticle } = require(path.join(packageRoot, "scripts", "lint-placement-voice.js"));
 const { renderOwnerVocabularySelection, selectOwnerVocabulary } = require(path.join(packageRoot, "scripts", "owner-vocabulary-prompt.js"));
@@ -36,8 +39,14 @@ const UNSUPPORTED_DOMAIN_PATTERNS = {
   natal: /\b(?:natal|birth chart|birth charts)\b/iu
 };
 const SUPPORTED_DOMAIN_PATTERNS = {
+  connections: /\b(?:connection|connections|relationship|relationships|friend|friends|friendship|friendships|collaborator|collaborators|collaboration|collaborations|ally|allies|alliance|alliances|agreement|agreements|social ties?)\b/iu,
   relationships: /\b(?:relationship|relationships|relational|partner|partners|partnership|partnerships|couple|couples|friend|friends|friendship|friendships)\b/iu,
   partnerships: /\b(?:partner|partners|partnership|partnerships|collaborate|collaboration|collaborations)\b/iu,
+  friendships: /\b(?:friend|friends|friendship|friendships)\b/iu,
+  collaborations: /\b(?:collaborate|collaborates|collaborated|collaborating|collaboration|collaborations|collaborator|collaborators)\b/iu,
+  alliances: /\b(?:ally|allies|alliance|alliances)\b/iu,
+  agreements: /\b(?:agreement|agreements|agree|agrees|agreed|agreeing)\b/iu,
+  "romantic relationships": /\b(?:romantic|romance|dating|date|dates|couple|couples|partner|partners)\b/iu,
   "social settings": /\b(?:group|groups|meeting|meetings|conversation|conversations|gathering|gatherings|social)\b/iu,
   fairness: /\b(?:fair|fairness|unfair|equal|equality|balance|balanced|scales?)\b/iu,
   diplomacy: /\b(?:diplomacy|diplomatic|agreement|agreements|disagreement|disagreements|conflict|conflicts)\b/iu,
@@ -198,7 +207,7 @@ function buildFactGatedStructure({ planet, surface, engineFacts = {} }) {
     sourceStatus: planetCycleFacts.status,
     ...cycleFact
   } : null, cycleReady, {
-    renderOwner: "writer",
+    renderOwner: "engine",
     reviewState: planetCycleFacts.status,
     reason: cycleReady
       ? undefined
@@ -510,13 +519,62 @@ function sourceArticleIdFor(sourceRecordId) {
     .replace(/:e\d+.*$/u, "");
 }
 
+function sourceEntriesForWarmthRecord(record) {
+  return [record.primary, ...(record.supporting || []), ...(record.alternates || [])].filter(Boolean);
+}
+
+function selectOwnerCorpusWarmthEvidence({ planet, sign, voiceIndex }) {
+  const record = ownerCorpusWarmthFoundations.records.find((entry) => entry.planet === planet && entry.sign === sign) || null;
+  if (!record) {
+    return {
+      id: `owner-corpus-warmth-none-found:${planet}-${sign}`,
+      planet,
+      sign,
+      harvest_mode: "none_found",
+      emotionalCore: null,
+      searchTerms: [],
+      primary: null,
+      supporting: [],
+      alternates: [],
+      authorityClass: "owner_corpus_no_match",
+      maxWarmthBeats: 0,
+      method: ownerCorpusWarmthFoundations.method,
+      sourceIds: [],
+      editorial_flags: [{
+        id: "owner-corpus-warmth-none-found",
+        severity: "info",
+        blocking: false,
+        reason: "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }]
+    };
+  }
+  const sourceIndex = new Map(voiceIndex.entries.map((entry) => [entry.sourceId, entry]));
+  for (const source of sourceEntriesForWarmthRecord(record)) {
+    const indexed = sourceIndex.get(source.sourceId);
+    if (!indexed) throw new Error(`Warmth foundation ${record.id} references missing owner source ${source.sourceId}.`);
+    if (indexed.sourcePath !== source.sourcePath) throw new Error(`Warmth foundation ${record.id} source path does not match ${source.sourceId}.`);
+    if (!indexed.text.includes(source.sourceExcerpt)) throw new Error(`Warmth foundation ${record.id} excerpt is not exact owner-corpus text for ${source.sourceId}.`);
+    if (indexed.authorityClass !== "owner_authored_final" || indexed.ownerAuthored !== true || indexed.ownerApproved !== true) {
+      throw new Error(`Warmth foundation ${record.id} source ${source.sourceId} is not eligible owner-authored final evidence.`);
+    }
+  }
+  return {
+    ...record,
+    harvest_mode: "matched",
+    authorityClass: "owner_corpus_derived_foundation",
+    maxWarmthBeats: ownerCorpusWarmthFoundations.authorityPolicy.maxWarmthBeatsPerArticle,
+    method: ownerCorpusWarmthFoundations.method,
+    sourceIds: [...new Set(sourceEntriesForWarmthRecord(record).map((entry) => entry.sourceId))],
+    editorial_flags: []
+  };
+}
+
 function astrologyEvidence(planet, sign, surface) {
   const placementPath = path.join(packageRoot, "data", "placements", "sign", `${planet}-${sign}.json`);
   const planetaryPath = path.join(packageRoot, "data", "planetary", `${planet}.json`);
   const placement = JSON.parse(fs.readFileSync(placementPath, "utf8"));
   const planetary = fs.existsSync(planetaryPath) ? JSON.parse(fs.readFileSync(planetaryPath, "utf8")) : null;
   const signSpecific = planetary?.signs?.find((entry) => entry.sign === sign)?.body || null;
-  const isJupiterLibra = planet === "jupiter" && sign === "libra";
   const failures = [
     ...(!planetary?.overview ? ["planet function is missing"] : []),
     ...(!signSpecific ? ["sign expression is missing"] : []),
@@ -527,19 +585,17 @@ function astrologyEvidence(planet, sign, surface) {
     planetFunction: planetary?.overview || null,
     signExpression: signSpecific,
     combinedMeaning: placement.body || null,
-    collectiveGift: isJupiterLibra
-      ? "Growth and opportunity develop through fairness, partnership, diplomacy, compromise, negotiation, and artistic judgment."
-      : placement.tldr || null,
+    collectiveGift: placement.collectiveGift || placement.tldr || null,
     observableShadowBehaviors: String(placement.challenge || "").replace(/[.]$/u, "").split(/,|\band\b/u).map((item) => item.trim()).filter(Boolean),
     timing: planetary?.cycle || surface.pace.labels[planet] || null,
-    supportedDomains: isJupiterLibra
-      ? ["relationships", "partnerships", "social settings", "fairness", "diplomacy", "compromise", "negotiation", "artistic judgment", "beauty"]
-      : [],
-    unsupportedDomainWarnings: isJupiterLibra
-      ? ["Do not make career, work, money, credit, spending, technology, politics, war, travel, higher education, law, houses, or natal interpretation the article's main domain without another verified source."]
-      : ["Do not introduce a domain or consequence that is absent from the verified sources."],
+    supportedDomains: placement.supportedDomains || [],
+    unsupportedDomainWarnings: placement.unsupportedDomainWarnings
+      || ["Do not introduce a domain or consequence that is absent from the verified sources."],
     sourceRegisterBoundary: "The source passages below may use natal or second-person register. Extract their astrology only. Never reproduce their person, address the reader, or treat natal wording as Current Sky voice evidence.",
-    scenarioPolicy: "The writer may create one original lived sequence by combining the governed planet and sign meanings inside the supported domains. The scene may be invented; the astrology may not.",
+    scenarioPolicy: [
+      "The writer may create related lived moments by combining the governed planet and sign meanings inside the supported domains. The transit remains the subject, and no single invented scenario may carry the whole card. The moments may be invented; the astrology may not.",
+      placement.scenarioPolicy || null
+    ].filter(Boolean).join(" "),
     sourcePassages: [
       {
         sourcePath: path.relative(repoRoot, placementPath).replaceAll(path.sep, "/"),
@@ -578,6 +634,11 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
     throw new Error(`Verified astrology is incomplete: ${verifiedAstrology.validation.failures.join("; ")}.`);
   }
   const voiceIndex = buildIndex();
+  const ownerCorpusWarmthEvidence = selectOwnerCorpusWarmthEvidence({
+    planet,
+    sign,
+    voiceIndex
+  });
   const selectedOwnerPassages = currentSky && resolvedBeat === "full_article"
     ? selectAffinitySix({
       planet,
@@ -630,6 +691,32 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
       approvalScope: formatExemplarDataset.approvalScope,
       article: entry.article
     }));
+  const ownerReferenceArticles = [ownerReferenceArticle]
+    .filter((entry) => entry.authorityClass === "exact_owner_approved"
+      && entry.ownerApproved === true
+      && entry.generationEvidenceAuthorized === true)
+    .map((entry) => ({
+      id: entry.id,
+      planet: entry.planet,
+      sign: entry.sign,
+      authorityClass: entry.authorityClass,
+      approvalScope: entry.approvalScope,
+      article: entry.article
+    }));
+  const ownerSelectedBenchmarks = [ownerSelectedBenchmark]
+    .filter((entry) => entry.authorityClass === "exact_owner_approved"
+      && entry.ownerApproved === true
+      && entry.generationEvidenceAuthorized === true)
+    .map((entry) => ({
+      id: entry.id,
+      planet: entry.planet,
+      sign: entry.sign,
+      authorityClass: entry.authorityClass,
+      authorship: entry.authorship,
+      approvalScope: entry.approvalScope,
+      benchmarkText: entry.benchmarkText,
+      benchmarkRules: entry.benchmarkRules
+    }));
   const writerPrompt = currentSky ? `${promptConfig.basePrompt}\n\n${promptConfig.currentSkyAppendix}` : promptConfig.basePrompt;
   return {
     schemaVersion: 2,
@@ -637,6 +724,9 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
     positiveEvidencePoolId: currentSky && resolvedBeat === "full_article" ? AFFINITY_POOL_ID : null,
     formatExemplars,
     formatExemplarStatus: surface.formatExemplarPolicy?.status || "blocked_pending_exact_owner_approval",
+    ownerReferenceArticles,
+    ownerSelectedBenchmarks,
+    ownerCorpusWarmthEvidence,
     routing: {
       laneId: release.laneId,
       releaseId: release.releaseId,
@@ -658,6 +748,7 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
       engineOwnedSlots: [
         "headline",
         "fact_line",
+        "cycle_fact_line",
         "aspect_insert",
         "entryDate",
         "exitDate",
@@ -670,12 +761,13 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
       slotRequirements: {
         opening: "One paragraph showing recognizable ordinary evidence. Include the literal {{entryDate}} slot once. Do not define the planet or sign generically.",
         tension: "One paragraph naming one central tension and showing how the same useful behavior creates a cost when pushed too far.",
-        development: "One practical paragraph that continues the same tension through specific choices. Do not introduce a new theme.",
-        close: "One sentence naming one realistic choice. Include the literal {{exitDate}} slot once. No slogan, reassurance, or second conclusion.",
+        development: "Continue the transit's pressure through related lived moments and consequence. Do not announce advice with a coaching scaffold, introduce a new theme, or let one invented scenario carry the card.",
+        close: "One sentence that lands inside the consequence. Include the literal {{exitDate}} slot once. Do not assign a task, add reassurance, or stack a second conclusion.",
         try_this: "Two actions by default, or three only when the third adds something different. Each action must be possible this week and specific to the placement."
       },
       assembly: {
-        factLine: "{{entryDate}} to {{exitDate}}",
+        dateRange: "{{entryDate}} to {{exitDate}}",
+        cycleFactLine: "engine-rendered from reviewed planet-cycle-facts.json directly under the date range",
         aspectInsert: "{{aspectInsert}}",
         bodyOrder: ["opening", "tension", "development", "aspect_insert", "close", "try_this"],
         targetWordsWithoutAspect: "220-350"
@@ -702,6 +794,11 @@ function renderModelInput(packet) {
   const passages = packet.ownerPassages.map((entry, index) => `OWNER PASSAGE ${index + 1}\n${entry.text}`).join("\n\n");
   const devices = (packet.voiceDevices?.selected || []).map((entry) => `- ${entry.id}: ${entry.rule}\n  Owner example: ${entry.example}`).join("\n");
   const formatExemplars = (packet.formatExemplars || []).map((entry, index) => `FORMAT EXEMPLAR ${index + 1}: ${entry.planet} in ${entry.sign}\n${JSON.stringify(entry.article, null, 2)}`).join("\n\n");
+  const ownerReferenceArticles = (packet.ownerReferenceArticles || []).map((entry, index) => `OWNER REFERENCE ${index + 1}: ${entry.planet} in ${entry.sign}\n${JSON.stringify(entry.article, null, 2)}`).join("\n\n");
+  const ownerSelectedBenchmarks = (packet.ownerSelectedBenchmarks || []).map((entry, index) => `WRITING BENCHMARK ${index + 1}: ${entry.planet} in ${entry.sign}\nAuthorship: ${entry.authorship}\n${entry.benchmarkText}\n\nBenchmark rules:\n${(entry.benchmarkRules || []).map((rule) => `- ${rule}`).join("\n")}`).join("\n\n");
+  const ownerCorpusWarmthEvidence = packet.ownerCorpusWarmthEvidence.harvest_mode === "matched"
+    ? `harvest_mode: matched\nEmotional core: ${packet.ownerCorpusWarmthEvidence.emotionalCore}\nPrimary foundation: ${packet.ownerCorpusWarmthEvidence.primary.foundationText}\n${(packet.ownerCorpusWarmthEvidence.supporting || []).map((entry) => `Supporting foundation: ${entry.foundationText}`).join("\n")}\n${(packet.ownerCorpusWarmthEvidence.alternates || []).map((entry) => `Alternate foundation: ${entry.foundationText}`).join("\n")}`
+    : `harvest_mode: none_found\nNo qualifying owner-corpus foundation was found. This is non-blocking. Keep the register plain and do not invent permission, reassurance, benediction, or a turn-toward-the-reader line.`;
   const movesExemplar = packet.movesExemplar?.generationEvidenceAuthorized
     ? JSON.stringify(packet.movesExemplar.items, null, 2)
     : "Pending owner input. Do not infer or fabricate an exemplar; write ordinary actions and avoid facilitation language.";
@@ -715,7 +812,7 @@ function renderModelInput(packet) {
   const structuralBlock = activeStructuralSlots
     ? `ACTIVE FACT-GATED STRUCTURAL SLOTS\nOnly the slots below have backing facts. Use each at most once. The required output remains opening, tension, development, close, and try_this.\n\n${activeStructuralSlots}`
     : "ACTIVE FACT-GATED STRUCTURAL SLOTS\nNone supplied. Do not invent a handoff, cycle number, prior residency, or concurrent event.";
-  return `${packet.writerPrompt}\n\nVERIFIED ASTROLOGY\n${JSON.stringify(packet.verifiedAstrology, null, 2)}\n\nSURFACE REQUIREMENTS\n${JSON.stringify(packet.surfaceRequirements, null, 2)}\n\n${structuralBlock}\n\nOWNER VOICE MOVES - USE AT MOST ${packet.voiceDevices?.maxPerArticle || 0} PER ARTICLE\n${devices || "None selected."}\n\nFORMAT EXEMPLARS\nThese exact owner-approved cards establish register and beat movement only. Their tagline, hook, lived, turn, and moves fields are not the continuous fallback structure. Do not copy their astrology, scenarios, phrases, or date-token names; follow the supplied continuous output contract.\n\n${formatExemplars || "None supplied."}\n\nMOVES EXEMPLAR\nThis exact owner-approved list establishes the register for practical actions only. Do not copy its placement-specific actions.\n${movesExemplar}\n\n${preferredVocabulary}\n\nEXACT TASK\n${packet.task.exactInstruction}${packet.task.inputText ? `\n\nTEXT TO REVISE\n${packet.task.inputText}` : ""}\n\n${passages}\n`;
+  return `${packet.writerPrompt}\n\nVERIFIED ASTROLOGY\n${JSON.stringify(packet.verifiedAstrology, null, 2)}\n\nSURFACE REQUIREMENTS\n${JSON.stringify(packet.surfaceRequirements, null, 2)}\n\n${structuralBlock}\n\nOWNER VOICE MOVES - USE AT MOST ${packet.voiceDevices?.maxPerArticle || 0} PER ARTICLE\n${devices || "None selected."}\n\nFORMAT EXEMPLARS\nThese exact owner-approved cards establish register and beat movement only. Their tagline, hook, lived, turn, and moves fields are not the continuous fallback structure. Do not copy their astrology, scenarios, phrases, or date-token names; follow the supplied continuous output contract.\n\n${formatExemplars || "None supplied."}\n\nOWNER-APPROVED PLACEMENT REFERENCE\nThis exact owner-approved continuous article demonstrates the finished writing operation and natural register. Use its clarity, pressure-and-consequence movement, and stopping point as the standard. Do not copy its placement-specific astrology, scenario, phrases, or timing tokens.\n\n${ownerReferenceArticles || "None supplied."}\n\nOWNER-SELECTED WRITING BENCHMARK\nThis benchmark establishes the new surface standard: the transit remains the subject, lived moments illustrate it, coaching scaffolds are absent, and the ending lands inside the consequence. Use the writing operation, not the placement-specific wording.\n\n${ownerSelectedBenchmarks || "None supplied."}\n\nOWNER-CORPUS WARMTH HARVEST\nWhen harvest_mode is matched, use at most one supplied foundation near the end of development and preserve its meaning without forcing the words. When harvest_mode is none_found, add no imitation warmth; plain register is correct.\n${ownerCorpusWarmthEvidence}\n\nMOVES EXEMPLAR\nThis exact owner-approved list establishes the register for practical actions only. Do not copy its placement-specific actions.\n${movesExemplar}\n\n${preferredVocabulary}\n\nEXACT TASK\n${packet.task.exactInstruction}${packet.task.inputText ? `\n\nTEXT TO REVISE\n${packet.task.inputText}` : ""}\n\n${passages}\n`;
 }
 
 function parseArgs(argv) {
@@ -735,7 +832,7 @@ function main() {
   console.log(`Compiled four-to-six-passage affinity packet at ${args.out}. No model call was made.`);
 }
 
-module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesUnsupportedDomain, renderModelInput, selectAffinitySix, selectSix, selectVoiceDevices, structureFor };
+module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesUnsupportedDomain, renderModelInput, selectAffinitySix, selectOwnerCorpusWarmthEvidence, selectSix, selectVoiceDevices, structureFor };
 if (require.main === module) {
   try { main(); } catch (error) { console.error(error instanceof Error ? error.message : error); process.exitCode = 1; }
 }
