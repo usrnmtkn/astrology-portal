@@ -1,0 +1,20 @@
+{
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v2",
+  "retrievedOwnerSourceIds": [
+    "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+    "owner-article:libra-new-moon:p004:window-4-4",
+    "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e016:window-1-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p012:window-2-2",
+    "owner-article:cancer-full-moon-horoscopes-january-2025:p009:window-2-4"
+  ],
+  "routingMatchStatus": "matched",
+  "provider": "openai",
+  "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2"
+}

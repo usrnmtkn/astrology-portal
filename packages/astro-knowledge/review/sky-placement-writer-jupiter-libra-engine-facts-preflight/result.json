@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-jupiter-libra-engine-facts-preflight",
+  "recordedAt": "2026-08-04T02:21:25.641Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "jupiter",
+    "sign": "libra"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v2",
+    "retrievedOwnerSourceIds": [
+      "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+      "owner-article:libra-new-moon:p004:window-4-4",
+      "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e016:window-1-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p012:window-2-2",
+      "owner-article:cancer-full-moon-horoscopes-january-2025:p009:window-2-4"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "sky-placement",
+          "term": "\\bzodiac\\b",
+          "match": "zodiac",
+          "reason": "encyclopedia register"
+        }
+      ],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close",
+        "hook is long (97 words); the hook is the sendable line, not a paragraph",
+        "closer is long; end on a shorter line with bite"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After Jupiter's stay in {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter arrives in Libra on {{entryDate}}, and growth turns toward what becomes possible with someone else. A relationship that has been taken month by month starts asking for a firmer commitment. One partner wants more shared time and a place in the other's social circle; after several honest talks, the couple agrees to more time together and a deeper commitment. Jupiter takes about 12 years to complete the zodiac and stays about 1 year per sign, giving this way of growing time to shape more than one conversation.",
+    "tension": "The pressure appears when a clear no begins to feel ungenerous. The partner with less available time says every evening is workable, joins every gathering, and agrees to answer messages faster than can be sustained. Those yeses bring immediate closeness, so the pattern repeats. A few months later, plans are cancelled, replies are avoided, and warmth has become resentment. The partner who heard yes has no reason to know that the agreement only worked because the other kept hiding a no.",
+    "development": "Jupiter last occupied Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. During the current stay, the practical test comes before the next promise: can we stay open to a partner's needs without agreeing to more than we mean? We can say how much time we can honestly share, choose the gatherings we want to attend, and admit that we will not always answer messages right away. If disappointment follows, we can let it be part of the conversation instead of changing the answer to restore comfort. The relationship may grow more slowly, but both partners will know which promises can be trusted.",
+    "close": "Before {{exitDate}}, we can take back one promise made only to prevent disappointment and replace it with the commitment we are actually prepared to keep.",
+    "try_this": [
+      "We can answer one request from a partner with a clear yes or no instead of saying anything is fine.",
+      "We can let one disagreement stand overnight without sending another message to soften what we said."
+    ]
+  }
+}
