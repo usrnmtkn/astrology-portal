@@ -465,6 +465,16 @@ try {
     "Venus trine Uranus"
   ]);
   assert.equal(crowdedSupportingShifts.filter((event) => event.type === "aspect").length, 1);
+  const aspectOnlyNarrativeShifts = weekly.calendarWeeklyNarrativeShifts([
+    { ...stationEvent, id: "mars-neptune", type: "aspect", title: "Mars square Neptune", dateKey: "2026-08-17" },
+    { ...stationEvent, id: "mercury-saturn", type: "aspect", title: "Mercury trine Saturn", dateKey: "2026-08-19" },
+    { ...stationEvent, id: "venus-jupiter", type: "aspect", title: "Venus sextile Jupiter", dateKey: "2026-08-21" }
+  ]);
+  assert.deepEqual(
+    aspectOnlyNarrativeShifts.map((event) => event.title),
+    ["Mars square Neptune", "Mercury trine Saturn", "Venus sextile Jupiter"],
+    "Aspect-led weeks must keep three distinct reviewed events rather than stalling on a duplicated main event."
+  );
   const supportingDescriptions = new Map([
     ["eclipse", "This deliberately long lunation article must stay out of the weekly overview because the compact reviewed day guidance belongs there instead of a duplicated New Moon or Full Moon feature."],
     ["mercury-ingress", "Mercury enters Leo and changes how ideas are presented, making confidence and visibility part of the message without turning every conversation into a performance for approval."],
@@ -488,6 +498,37 @@ try {
       "Mars enters Cancer and redirects effort toward protection, home, and the decisions that cannot be separated from who needs care or what needs defending."
     ].join("\n\n"),
     "Weekly write-ups cover three chronological reviewed units and keep full lunation articles out of the overview."
+  );
+  assert.equal(
+    weekly.calendarWeeklyNarrativeBody({
+      overview: "A governed fallback opener.",
+      source: "generated-fallback",
+      narrativeShifts: [{
+        ...lunationEvent,
+        id: "quarter-moon",
+        title: "First Quarter Moon in Scorpio",
+        dateKey: "2026-08-19"
+      }, {
+        ...stationEvent,
+        id: "sun-ingress",
+        type: "ingress",
+        title: "Sun enters Virgo",
+        dateKey: "2026-08-23"
+      }],
+      eventDescriptions: new Map([
+        ["quarter-moon", "First resistance arrives right on schedule. Adjust the plan, not the intention."],
+        ["sun-ingress", "The Sun enters Virgo and shifts attention toward practical choices, useful adjustments, and work that can be improved through careful attention."]
+      ]),
+      dayGuidance: new Map([
+        ["2026-08-19", "The Moon remains in Scorpio on Wednesday, continuing the waxing crescent phase."],
+        ["2026-08-23", "The Sagittarius Moon points toward growth and a wider view."]
+      ])
+    }),
+    [
+      "First resistance arrives right on schedule. Adjust the plan, not the intention.",
+      "The Sun enters Virgo and shifts attention toward practical choices, useful adjustments, and work that can be improved through careful attention."
+    ].join("\n\n"),
+    "A weekly event must never borrow unrelated daily Moon guidance just because its reviewed event copy is concise."
   );
   assert.equal(
     weekly.calendarWeeklyNarrativeBody({
