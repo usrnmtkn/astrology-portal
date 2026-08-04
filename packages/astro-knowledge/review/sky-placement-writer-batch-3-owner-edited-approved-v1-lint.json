@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sky-placement-writer-batch-3-owner-edited-approved-v1",
+  "lintedAt": "2026-08-04T22:43:17.838Z",
+  "articleCount": 7,
+  "batchPassed": true,
+  "hardFailures": 0,
+  "warnings": 1,
+  "batchRepetition": {
+    "passed": true,
+    "maxOccurrences": 1,
+    "occurrenceCount": 0,
+    "occurrences": [],
+    "findings": []
+  },
+  "results": [
+    {
+      "id": "sky-placement-batch-3-mercury-capricorn-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-3-mercury-aquarius-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-3-mars-taurus-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-3-mars-gemini-owner-approved-v1",
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "shape",
+          "slot": "moves",
+          "term": "move-length",
+          "match": "We can ask, \"What are we actually trying to decide?\" when a ",
+          "reason": "each move is one short, doable sentence"
+        }
+      ],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-3-mars-cancer-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-3-mars-leo-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close",
+        "closer is long; end on a shorter line with bite"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-3-mars-virgo-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close",
+        "hook is long (73 words); the hook is the sendable line, not a paragraph"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    }
+  ]
+}

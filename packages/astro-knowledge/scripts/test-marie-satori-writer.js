@@ -107,6 +107,41 @@ function main() {
   assert.strictEqual(batch4Lint.results.find((entry) => entry.id.includes("nodes-aquarius-leo")).effectiveScore, 3);
   assert.strictEqual(batch4Lint.results.find((entry) => entry.id.includes("chiron-aries")).effectiveScore, 2);
 
+  const batch3Approved = require(path.join("..", "review", "sky-placement-writer-batch-3-owner-edited-approved-v1.json"));
+  const batch3Lint = require(path.join("..", "review", "sky-placement-writer-batch-3-owner-edited-approved-v1-lint.json"));
+  assert.strictEqual(batch3Approved.articles.length, 7);
+  assert.strictEqual(batch3Approved.ownerApproved, true);
+  assert.strictEqual(batch3Approved.servingAuthorized, false);
+  assert.strictEqual(batch3Approved.generationEvidence, false);
+  assert(batch3Approved.articles.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.reviewStatus === "approved"
+    && entry.ownerApproved === true
+    && entry.renderEligible === false
+    && entry.generationEvidence === false
+    && entry.promotionAuthorized === false
+    && entry.canonical === false
+  )));
+  assert(batch3Approved.articles.every((entry) => deterministicChecks(entry.article, {
+    planet: entry.planet,
+    sign: entry.sign
+  }).overallPassed));
+  const batch3MarsCancer = batch3Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "cancer").article;
+  assert.match(batch3MarsCancer.development, /naming the hurt would show how much it mattered/u);
+  assert.doesNotMatch(batch3MarsCancer.development, /naming the hurt would reveal how much it mattered/u);
+  const batch3MercuryAquarius = batch3Approved.articles.find((entry) => entry.planet === "mercury" && entry.sign === "aquarius").article;
+  assert.deepStrictEqual(batch3MercuryAquarius.try_this, [
+    "We can lead with the example instead of the theory in one explanation this week.",
+    "We can try the unusual fix on something low-stakes and write down what changed."
+  ]);
+  const batch3MarsGemini = batch3Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "gemini").article;
+  assert.strictEqual(batch3MarsGemini.try_this[0], "We can close the extra tabs and solve one concrete problem before opening anything new.");
+  const batch3MarsVirgo = batch3Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "virgo").article;
+  assert.strictEqual(batch3MarsVirgo.try_this[1], "We can do one necessary cleanup and leave the cosmetic flaws alone.");
+  assert.strictEqual(batch3Lint.batchPassed, true);
+  assert.strictEqual(batch3Lint.hardFailures, 0);
+  assert.strictEqual(batch3Lint.warnings, 1);
+
   const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
   const requiredTags = [
     "polished_but_flat", "abstract_hook", "abstract_consequence", "requires_interpretation",
@@ -693,7 +728,7 @@ function main() {
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
-  assert.strictEqual(fixtureAudit.sourceRecordCount, 29);
+  assert.strictEqual(fixtureAudit.sourceRecordCount, 30);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
   console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);

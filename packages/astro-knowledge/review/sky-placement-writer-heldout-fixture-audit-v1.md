@@ -33,3 +33,4 @@ The 12 existing contrastive records yield **6 valid held-out fixtures**. The exa
 | sky-placement-writer-batch-1-corpus-warmth-revisions-v4-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
 | sky-placement-writer-batch-2-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
 | sky-placement-writer-batch-4-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| sky-placement-writer-batch-3-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |

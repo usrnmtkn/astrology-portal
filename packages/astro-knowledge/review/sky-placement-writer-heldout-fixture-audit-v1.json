@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "auditId": "sky-placement-writer-heldout-fixture-audit-v1",
-  "sourceRecordCount": 29,
+  "sourceRecordCount": 30,
   "targetFixtureCount": 20,
   "validFixtureCount": 6,
   "exactShortfall": 14,
@@ -341,6 +341,18 @@
     },
     {
       "id": "sky-placement-writer-batch-4-owner-edited-approved-v1-exact-approval",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "sky-placement-writer-batch-3-owner-edited-approved-v1-exact-approval",
       "preservedRejectedWording": true,
       "exactOwnerWrittenReplacement": false,
       "clearOwnerProvenance": true,

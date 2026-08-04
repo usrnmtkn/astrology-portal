@@ -1,0 +1,21 @@
+{
+  "id": "sky-placement-writer-batch-3-owner-edited-approved-v1-exact-approval",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "sky-placement-batch",
+  "articleBeat": "seven-full-continuous-fallback-articles",
+  "ownerStatement": "With those applied and re-linted, I explicitly approve all seven batch-3 drafts as owner-approved fallback articles for their placement pages.",
+  "before": "The seven unchanged batch-3 Sol outputs before five exact substitutions contained in four owner-directed edits.",
+  "beforeIsRejected": false,
+  "after": "Exact approved seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-3-owner-edited-approved-v1.json#articles (SHA-256 c537f4626c66be809b3c41ef3e892d343b34b58af960cd37ef1e8afe4511f9ae).",
+  "whatChanged": "Applied five exact substitutions contained in four owner-directed edits and changed no other article wording. No model or judge calls were made in the approval pass.",
+  "ownerReason": "The edits replace the reveal watch word and make four practical actions more natural and specific.",
+  "failureTags": [],
+  "approvalScope": "owner_approved_fallback_articles_for_placement_pages_serving_separate",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/sky-placement-writer-batch-3-owner-edited-approved-v1.json",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-3-owner-edited-approved-v1.md",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-3-owner-edited-approved-v1-lint.json",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-3-preflight-2026-08-04/owner-review.md",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-3-preflight-2026-08-04/run-summary.json"
+  ]
+}
