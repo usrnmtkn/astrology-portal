@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "policyId": "sky-placement-writer-initial-retrieval-exclusions-v1",
+  "records": [
+    {
+      "bundle": "V7",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json",
+      "useAsPositiveVoiceEvidence": false,
+      "useAsStructuralTemplate": false,
+      "useAsWriterRetrieval": false
+    },
+    {
+      "bundle": "V8",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v8-source-derived-candidates.json",
+      "useAsPositiveVoiceEvidence": false,
+      "useAsStructuralTemplate": false,
+      "useAsWriterRetrieval": false
+    },
+    {
+      "bundle": "V9",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v9-neptune-libra-owner-turn-candidate.json",
+      "useAsPositiveVoiceEvidence": false,
+      "useAsStructuralTemplate": false,
+      "useAsWriterRetrieval": false
+    },
+    {
+      "bundle": "controlled-jupiter-libra-v3-incompatible-current-sky-set",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions/packet.json",
+      "writerRetrievalScope": "sky-placement-current-sky",
+      "excludedSourceIds": [
+        "owner-article:virgo-season-2025:p024",
+        "owner-article:new-moon-solar-eclipse-in-virgo:p018",
+        "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e001",
+        "owner-article:mars-direct-in-cancer:p010",
+        "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e002",
+        "owner-article:libra-season-autumn-equinox:p029"
+      ],
+      "useAsPositiveVoiceEvidence": true,
+      "useAsStructuralTemplate": true,
+      "useAsWriterRetrieval": false,
+      "reason": "Preserve these owner-authored passages in the corpus, but exclude this operation-mismatched set from Current Sky first-call retrieval."
+    }
+  ]
+}

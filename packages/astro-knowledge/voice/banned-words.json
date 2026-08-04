@@ -21,6 +21,22 @@
   },
   "bannedWords": [
     {
+      "term": "leak",
+      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
+    },
+    {
+      "term": "leaks",
+      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
+    },
+    {
+      "term": "leaked",
+      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
+    },
+    {
+      "term": "leaking",
+      "reason": "AI-tell language in Marie Satori editorial copy; name the observable action or consequence."
+    },
+    {
       "term": "reckoning",
       "reason": "Overused dramatic reveal language.",
       "useInstead": [
@@ -123,8 +139,8 @@
       "term": "self-punishment",
       "reason": "Banned phrasing.",
       "useInstead": [
-        "self-harm",
-        "turning pain back on yourself"
+        "name the exact behavior or consequence",
+        "punishing yourself"
       ]
     },
     {

@@ -24,7 +24,13 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWords || [];
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const spec = readJson(path.join(voiceRoot, "tldr-astro", "sky-placement.json"));
+const planetCycleFacts = readJson(path.join(voiceRoot, "..", "data", "modifiers", "planet-cycle-facts.json"));
+const compiledPolicy = readJson(path.join(voiceRoot, "tldr-astro", "linter-policy.generated.json"));
 const { findBannedConstructions } = require("./banned-construction-matcher.js");
+
+const compiledRules = compiledPolicy.rules || [];
+const compiledExistingTerms = new Set(compiledRules.flatMap((rule) => rule.mechanical?.existing_terms || []));
+const compiledTaglineRule = compiledRules.find((rule) => rule.mechanical?.kind === "tagline_sentence");
 
 const META = /[\\^$.*+?()[\]{}|]/;
 function toRegex(term) {
@@ -34,12 +40,259 @@ function toRegex(term) {
 }
 
 const SLOTS = ["hook", "lived", "turn"];
+const FACT_GATED_SLOTS = ["priorSignHandoff", "cycleLine", "concurrentEvents", "cycleLocation"];
 // CHANI-modeled extended slots (2026-07-27). Optional: the 7 approved trios
 // predate them, so they lint only when present. The engine always emits them.
 const EXTENDED_SLOTS = ["tagline", "moves"];
 const sentencesOf = (text) => (String(text).match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
 
-// { hook, lived, turn, tagline?, moves?, planet?, sign?, allowLegacySecondPerson? }
+const SIGN_MEME_SCENES = {
+  libra: [
+    /\bdinner[- ]plan\b/iu,
+    /\b(?:restaurant|dinner)\b.{0,100}\b(?:anything|either) is fine\b/isu,
+    /\b(?:friends?|group|everyone|nobody|no one)\b.{0,120}\b(?:choose|choosing|pick|picking|decide|deciding)\b.{0,60}\b(?:restaurant|dinner)\b/isu,
+    /\b(?:restaurant|dinner)\b.{0,80}\b(?:choose|choosing|pick|picking|decide|deciding|compromise)\b/isu
+  ],
+  virgo: [/\bcolor[- ]coded spreadsheet\b/iu, /\bspreadsheet\b.{0,40}\bcolor[- ]cod(?:e|ed|ing)\b/isu],
+  aries: [/\bgym\b/iu, /\bimpulsive haircut\b/iu, /\b(?:cut|cuts|cutting) (?:their|his|her) hair on impulse\b/iu],
+  cancer: [/\bbubble bath\b/iu, /\bcancel(?:s|ed|led|ing)? (?:the |their |our )?plans?\b/iu],
+  taurus: [/\bretail therapy\b/iu, /\b(?:shopping|retail)[- ]splurge\b/iu, /\bsplurge\b.{0,40}\b(?:shopping|retail|purchase)\b/isu],
+  gemini: [/\bdouble[- ]booked calendar\b/iu, /\bcalendar\b.{0,40}\bdouble[- ]book(?:ed|ing)?\b/isu]
+};
+
+const SLOW_TRANSIT_PLANETS = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node"]);
+const SINGLE_EVENING_LOGISTICS = /\b(?:dinner[- ]plan|where to eat|which restaurant|restaurant choice|quiet dinner|live music nearby|tonight['’]s plan|evening plan)\b/iu;
+const MOVES_FACILITATION_TERMS = [
+  "must-have", "flexible detail", "decision time", "each side", "proposal", "mutual",
+  "negotiate", "negotiates", "negotiated", "negotiating", "stakeholder", "stakeholders",
+  "align", "aligns", "aligned", "aligning", "alignment", "action item"
+];
+const NUMBER_WORDS = new Map([
+  ["a", 1], ["an", 1], ["one", 1], ["two", 2], ["three", 3], ["four", 4], ["five", 5],
+  ["six", 6], ["seven", 7], ["eight", 8], ["nine", 9], ["ten", 10], ["eleven", 11], ["twelve", 12],
+  ["fourteen", 14], ["eighteen", 18], ["twenty", 20], ["twenty-nine", 29], ["thirty-one", 31],
+  ["fifty", 50], ["eighty-four", 84], ["one hundred sixty-five", 165], ["two hundred forty-eight", 248]
+]);
+const DURATION_PATTERN = /\b(?:(?:about|roughly|around|approximately|up to|for)\s+)?(?:a few|two and a half|one hundred sixty-five|two hundred forty-eight|twenty-nine|thirty-one|eighty-four|eighteen|fourteen|twelve|eleven|twenty|fifty|one|two|three|four|five|six|seven|eight|nine|ten|a|an|\d+(?:\.\d+)?)(?:\s+(?:to|or)\s+(?:one|two|three|four|five|six|seven|eight|nine|ten|twelve|fourteen|eighteen|twenty|twenty-nine|thirty-one|fifty|eighty-four|\d+(?:\.\d+)?))?\s+(?:days?|weeks?|months?|years?|decades?)\b/giu;
+const MONTH_YEAR_PATTERN = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(?:18|19|20|21)\d{2}\b/gu;
+const MONTH_PATTERN = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b/gu;
+const YEAR_PATTERN = /\b(?:18|19|20|21)\d{2}\b/gu;
+const EVENT_TERMS = new Map([
+  ["sun", /\bSun\b/gu], ["moon", /\bMoon\b/gu], ["mercury", /\bMercury\b/gu], ["venus", /\bVenus\b/gu],
+  ["mars", /\bMars\b/gu], ["jupiter", /\bJupiter\b/gu], ["saturn", /\bSaturn\b/gu], ["uranus", /\bUranus\b/gu],
+  ["neptune", /\bNeptune\b/gu], ["pluto", /\bPluto\b/gu], ["chiron", /\bChiron\b/gu],
+  ["north-node", /\bNorth Node\b/gu], ["south-node", /\bSouth Node\b/gu],
+  ["solar-eclipse", /\bsolar eclipse\b/giu], ["lunar-eclipse", /\blunar eclipse\b/giu],
+  ["new-moon", /\bNew Moon\b/gu], ["full-moon", /\bFull Moon\b/gu]
+]);
+
+function escapedTerm(term) {
+  return String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function flattenFactStrings(value) {
+  if (typeof value === "string") return [value];
+  if (Array.isArray(value)) return value.flatMap(flattenFactStrings);
+  if (value && typeof value === "object") return Object.values(value).flatMap(flattenFactStrings);
+  return [];
+}
+
+function numberValue(raw) {
+  const normalized = String(raw).toLowerCase().trim();
+  if (normalized === "a few") return null;
+  if (normalized === "two and a half") return 2.5;
+  if (NUMBER_WORDS.has(normalized)) return NUMBER_WORDS.get(normalized);
+  const numeric = Number(normalized);
+  return Number.isFinite(numeric) ? numeric : null;
+}
+
+function durationSignature(text) {
+  const match = String(text).toLowerCase().match(/(a few|two and a half|one hundred sixty-five|two hundred forty-eight|twenty-nine|thirty-one|eighty-four|eighteen|fourteen|twelve|eleven|twenty|fifty|one|two|three|four|five|six|seven|eight|nine|ten|a|an|\d+(?:\.\d+)?)(?:\s+(?:to|or)\s+(one|two|three|four|five|six|seven|eight|nine|ten|twelve|fourteen|eighteen|twenty|twenty-nine|thirty-one|fifty|eighty-four|\d+(?:\.\d+)?))?\s+(days?|weeks?|months?|years?|decades?)/u);
+  if (!match) return null;
+  return {
+    min: numberValue(match[1]),
+    max: match[2] ? numberValue(match[2]) : numberValue(match[1]),
+    vagueFew: match[1] === "a few",
+    unit: match[3].replace(/s$/u, "")
+  };
+}
+
+function durationDays(signature) {
+  if (!signature || signature.min == null || signature.max == null) return null;
+  const factor = { day: 1, week: 7, month: 30.4375, year: 365.25, decade: 3652.5 }[signature.unit];
+  return factor ? { min: signature.min * factor, max: signature.max * factor } : null;
+}
+
+function factDurationRanges(text) {
+  const value = String(text || "");
+  const sameUnitRange = durationSignature(value);
+  if (sameUnitRange && sameUnitRange.min !== sameUnitRange.max) {
+    const range = durationDays(sameUnitRange);
+    if (range) return [range];
+  }
+  const atomic = /\b(a few|two and a half|one hundred sixty-five|two hundred forty-eight|twenty-nine|thirty-one|eighty-four|eighteen|fourteen|twelve|eleven|twenty|fifty|one|two|three|four|five|six|seven|eight|nine|ten|a|an|\d+(?:\.\d+)?)\s+(days?|weeks?|months?|years?|decades?)\b/giu;
+  const signatures = [...value.matchAll(atomic)].map((match) => durationDays({
+    min: numberValue(match[1]),
+    max: numberValue(match[1]),
+    unit: match[2].toLowerCase().replace(/s$/u, "")
+  })).filter(Boolean);
+  if (signatures.length >= 2 && /\b(?:to|or)\b/iu.test(value)) {
+    return [{ min: Math.min(signatures[0].min, signatures.at(-1).min), max: Math.max(signatures[0].max, signatures.at(-1).max) }];
+  }
+  return signatures;
+}
+
+function durationTracesToCycle(claim, planet) {
+  const target = durationSignature(claim);
+  const fact = planetCycleFacts.planets?.[planet];
+  if (!target || !fact) return false;
+  const fields = [fact.zodiacCircuit, fact.typicalSignStay, fact.variabilityNote].filter(Boolean);
+  if (target.vagueFew) return fields.some((value) => String(value).toLowerCase().includes(target.unit));
+  const targetDays = durationDays(target);
+  if (!targetDays) return false;
+  return fields.flatMap(factDurationRanges).some((entry) => targetDays.min >= entry.min && targetDays.max <= entry.max);
+}
+
+function suppliedFactContains(claim, factContext) {
+  const normalizedClaim = String(claim).toLowerCase().replace(/\s+/gu, " ").trim();
+  return flattenFactStrings(factContext).some((value) => String(value).toLowerCase().replace(/\s+/gu, " ").includes(normalizedClaim));
+}
+
+function sentenceAround(text, index) {
+  const before = text.lastIndexOf(".", index);
+  const afterCandidates = [text.indexOf(".", index), text.indexOf("!", index), text.indexOf("?", index)].filter((value) => value >= 0);
+  const after = afterCandidates.length ? Math.min(...afterCandidates) : text.length;
+  return text.slice(before + 1, after + 1).trim();
+}
+
+function addTemporalTraceFindings({ full, planet, factContext, findings }) {
+  const withoutTokens = full.replace(/\{\{[A-Za-z][A-Za-z0-9_]*\}\}/gu, "");
+  const dateClaims = [...withoutTokens.matchAll(MONTH_YEAR_PATTERN)].map((entry) => entry[0]);
+  const dateYears = new Set(dateClaims.flatMap((claim) => [...claim.matchAll(YEAR_PATTERN)].map((entry) => entry[0])));
+  const dateMonths = new Set(dateClaims.flatMap((claim) => [...claim.matchAll(MONTH_PATTERN)].map((entry) => entry[0].toLowerCase())));
+  for (const claim of dateClaims) {
+    if (suppliedFactContains(claim, factContext)) continue;
+    findings.push({ severity: "fail", source: "fact-trace", term: "untraced-date", match: claim, reason: "Every month or year must trace to a supplied engine fact or a render token." });
+  }
+  for (const match of withoutTokens.matchAll(MONTH_PATTERN)) {
+    const claim = match[0];
+    if (dateMonths.has(claim.toLowerCase()) || suppliedFactContains(claim, factContext)) continue;
+    findings.push({ severity: "fail", source: "fact-trace", term: "untraced-month", match: claim, reason: "Every month must trace to a supplied engine fact or a render token." });
+  }
+  for (const match of withoutTokens.matchAll(YEAR_PATTERN)) {
+    const claim = match[0];
+    if (dateYears.has(claim) || suppliedFactContains(claim, factContext)) continue;
+    findings.push({ severity: "fail", source: "fact-trace", term: "untraced-year", match: claim, reason: "Every year must trace to a supplied engine fact or a render token." });
+  }
+  for (const match of withoutTokens.matchAll(DURATION_PATTERN)) {
+    const claim = match[0];
+    const sentence = sentenceAround(withoutTokens, match.index || 0);
+    const isAstrologicalDuration = /\b(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|North Node|South Node|planet|transit|cycle|zodiac|sign|residency|retrograde|ingress)\b/iu.test(sentence)
+      || /^\s*(?:for|over|during)\b/iu.test(sentence);
+    if (!isAstrologicalDuration) continue;
+    if (durationTracesToCycle(claim, planet) || suppliedFactContains(claim, factContext)) continue;
+    findings.push({ severity: "fail", source: "fact-trace", term: "untraced-duration", match: claim, reason: "Every duration must trace to planet-cycle-facts.json or a supplied engine fact." });
+  }
+}
+
+function addConcurrentEventFindings({ concurrentEvents, factContext, findings }) {
+  if (!concurrentEvents) return;
+  const supplied = Array.isArray(factContext?.eventsDuringTransit) ? factContext.eventsDuringTransit : [];
+  if (!supplied.length) {
+    findings.push({ severity: "fail", source: "fact-trace", slot: "concurrentEvents", term: "unsupplied-concurrent-event", match: concurrentEvents, reason: "Concurrent-event copy requires an engine-ranked eventsDuringTransit fact." });
+    return;
+  }
+  const suppliedText = flattenFactStrings(supplied).join(" ").toLowerCase().replace(/[_\s]+/gu, "-");
+  for (const [term, pattern] of EVENT_TERMS) {
+    if (!pattern.test(concurrentEvents)) continue;
+    pattern.lastIndex = 0;
+    if (suppliedText.includes(term)) continue;
+    findings.push({ severity: "fail", source: "fact-trace", slot: "concurrentEvents", term: "event-not-supplied", match: term, reason: "The concurrent-events paragraph names an event absent from eventsDuringTransit." });
+  }
+}
+
+function compiledRuleApplies(rule) {
+  const labels = [...(rule.scope?.surfaces || []), ...(rule.scope?.prohibited || [])];
+  return labels.some((label) => ["sky-placement", "current-sky", "all-reader-copy", "all-editorial-copy", "all-generated-copy", "all-generated-astrology-copy", "sky-placement-tagline"].includes(label));
+}
+
+function addCompiledFinding(findings, rule, match, slot = null) {
+  findings.push({
+    severity: rule.mechanical.severity || "fail",
+    source: "compiled-editorial-decision",
+    decisionId: rule.id,
+    slot,
+    term: rule.mechanical.kind,
+    match,
+    reason: rule.mechanical.message || rule.rule
+  });
+}
+
+function applyCompiledRules({ full, tagline, findings, allowLegacyTagline = false, allowLegacyGenericPeople = false, allowLegacySecondPerson = false, allowLegacyRepeatedGenericPerson = false, allowLegacyPerformanceFraming = false }) {
+  for (const rule of compiledRules) {
+    if (!compiledRuleApplies(rule) || !rule.mechanical) continue;
+    if (allowLegacyGenericPeople && rule.id === "CF-001") continue;
+    if (allowLegacySecondPerson && rule.id === "ED-003") continue;
+    if (allowLegacyRepeatedGenericPerson && rule.id === "CF-013") continue;
+    if (allowLegacyPerformanceFraming && rule.id === "CF-002") continue;
+    const mechanical = rule.mechanical;
+    if (mechanical.kind === "tagline_sentence") {
+      if (allowLegacyTagline) continue;
+      if (tagline == null) continue;
+      const count = tagline.split(/\s+/u).filter(Boolean).length;
+      if (count < mechanical.min_words || count > mechanical.max_words) addCompiledFinding(findings, rule, tagline, "tagline");
+      continue;
+    }
+    if (mechanical.kind === "tagline_regex") {
+      if (tagline == null) continue;
+      const match = tagline.match(new RegExp(mechanical.pattern, mechanical.flags || "i"));
+      if (match) addCompiledFinding(findings, rule, match[0], "tagline");
+      continue;
+    }
+    if (mechanical.kind === "regex" || mechanical.kind === "regex_with_literal_exception") {
+      const flags = [...new Set(`${mechanical.flags || ""}g`)].join("");
+      const pattern = new RegExp(mechanical.pattern, flags);
+      let match;
+      while ((match = pattern.exec(full)) !== null) {
+        if (mechanical.kind === "regex_with_literal_exception" && mechanical.literal_context_pattern) {
+          const context = full.slice(Math.max(0, match.index - 60), Math.min(full.length, match.index + match[0].length + 60));
+          if (new RegExp(mechanical.literal_context_pattern, "i").test(context)) continue;
+        }
+        addCompiledFinding(findings, rule, match[0]);
+      }
+      continue;
+    }
+    if (mechanical.kind === "regex_count") {
+      const flags = [...new Set(`${mechanical.flags || ""}g`)].join("");
+      const matches = [...full.matchAll(new RegExp(mechanical.pattern, flags))];
+      if (matches.length >= (mechanical.min_occurrences || 2)) {
+        addCompiledFinding(findings, rule, `${matches.length} occurrences: ${matches.map((entry) => entry[0]).join(", ")}`);
+      }
+      continue;
+    }
+    if (mechanical.kind === "term_set") {
+      for (const term of mechanical.terms || []) {
+        const match = full.match(new RegExp(`\\b${escapedTerm(term)}\\b`, "i"));
+        if (match) addCompiledFinding(findings, rule, match[0]);
+      }
+      continue;
+    }
+    if (mechanical.kind === "dated_communication") {
+      for (const term of mechanical.terms || []) {
+        const pattern = new RegExp(`\\b${escapedTerm(term)}\\b`, "i");
+        const match = full.match(pattern);
+        if (!match) continue;
+        if (/^letters?$/iu.test(term) && mechanical.literal_context_pattern) {
+          const context = full.slice(Math.max(0, match.index - 48), Math.min(full.length, match.index + match[0].length + 64));
+          if (new RegExp(mechanical.literal_context_pattern, "i").test(context)) continue;
+        }
+        addCompiledFinding(findings, rule, match[0]);
+      }
+    }
+  }
+}
+
+// { hook, lived, turn, tagline?, moves?, planet?, sign?, allowLegacySecondPerson?, allowLegacyGenericPeople? }
 // -> { score, fails, warns, findings, notes }
 function lintArticle(article) {
   const findings = [];
@@ -48,12 +301,15 @@ function lintArticle(article) {
   for (const slot of SLOTS) slots[slot] = String(article?.[slot] ?? "").trim();
   const tagline = article?.tagline != null ? String(article.tagline).trim() : null;
   const moves = Array.isArray(article?.moves) ? article.moves.map((m) => String(m).trim()).filter(Boolean) : null;
+  const factGated = Object.fromEntries(FACT_GATED_SLOTS.map((slot) => [slot, String(article?.[slot] ?? "").trim()]));
   const full = [
     ...SLOTS.map((s) => slots[s]),
     tagline ?? "",
-    ...(moves ?? [])
+    ...(moves ?? []),
+    ...FACT_GATED_SLOTS.map((slot) => factGated[slot])
   ].filter(Boolean).join("\n\n");
   const planet = article?.planet ? String(article.planet).toLowerCase() : null;
+  const sign = article?.sign ? String(article.sign).toLowerCase() : null;
 
   // Current Sky is collective. Historical originals live in a separate fixture
   // file and never enter this active linter path. Transit-to-natal copy belongs
@@ -82,12 +338,35 @@ function lintArticle(article) {
   //    facts), no editorial metadata leaking into copy.
   const boundary = [
     { term: "degree/orb mechanics", pattern: /\b(?:orb|degrees?)\b|°/i, reason: "degrees and orb mechanics never appear in the article body" },
-    { term: "date", pattern: /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\b|\b20\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/i, reason: "absolute dates belong to the computed current-aspect line, not the evergreen article" },
     { term: "editorial metadata", pattern: /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i, reason: "reader copy must not expose editorial state" }
   ];
   for (const check of boundary) {
     const m = full.match(check.pattern);
     if (m) findings.push({ severity: "fail", source: "reader-boundary", term: check.term, match: m[0], reason: check.reason });
+  }
+  if (!article?.allowLegacyUntracedTiming) {
+    addTemporalTraceFindings({ full, planet, factContext: article?.factContext || {}, findings });
+  }
+  addConcurrentEventFindings({ concurrentEvents: factGated.concurrentEvents, factContext: article?.factContext || {}, findings });
+
+  const appositivePlanetDefinition = full.match(/\b(?:the )?(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|North Node|South Node)\s*,\s*the planet of\b[^.!?]*/iu);
+  if (appositivePlanetDefinition) findings.push({
+    severity: "fail",
+    source: "banned-constructions",
+    term: "appositive-planet-definition",
+    match: appositivePlanetDefinition[0],
+    reason: "Use the planet's name and show its function; do not attach a CC-style planet epithet."
+  });
+
+  for (const name of spec.excludedStructures?.culturalHistory?.knownCelebrityNamesForMechanicalCheck || []) {
+    const match = full.match(new RegExp(`\\b${escapedTerm(name)}\\b`, "iu"));
+    if (match) findings.push({
+      severity: "fail",
+      source: "excluded-cultural-history",
+      term: "celebrity-reference",
+      match: match[0],
+      reason: "Celebrity and pop-culture examples are excluded from Sky Placement history and cycle copy."
+    });
   }
 
   // -- meaning-level banned words are fails in output too
@@ -99,6 +378,64 @@ function lintArticle(article) {
   }
 
   findings.push(...findBannedConstructions(full, bannedConstructions));
+
+  applyCompiledRules({
+    full,
+    tagline,
+    findings,
+    allowLegacyTagline: article?.allowLegacyTagline === true,
+    allowLegacyGenericPeople: article?.allowLegacyGenericPeople === true,
+    allowLegacySecondPerson: article?.allowLegacySecondPerson === true,
+    allowLegacyRepeatedGenericPerson: article?.allowLegacyRepeatedGenericPerson === true,
+    allowLegacyPerformanceFraming: article?.allowLegacyPerformanceFraming === true
+  });
+
+  // OV-039: named sign memes are deterministic only when the matching sign is
+  // supplied. Novel sign cliches and broader transit-scale judgment remain in
+  // Terra's lane.
+  for (const pattern of SIGN_MEME_SCENES[sign] || []) {
+    const match = full.match(pattern);
+    if (!match) continue;
+    findings.push({
+      severity: "fail",
+      source: "sign-conditional-meme-scene",
+      decisionId: "ED-022",
+      term: `${sign}-stock-scene`,
+      match: match[0],
+      reason: "This is a stock sign scene rather than a sequence derived from this placement at this transit's scale."
+    });
+    break;
+  }
+  if (planet && SLOW_TRANSIT_PLANETS.has(planet)) {
+    const match = full.match(SINGLE_EVENING_LOGISTICS);
+    if (match) findings.push({
+      severity: "fail",
+      source: "transit-scale",
+      decisionId: "ED-022",
+      term: "single-evening-logistics",
+      match: match[0],
+      reason: `${planet} moves too slowly for one evening's logistics to carry the article's stakes.`
+    });
+  }
+
+  // Moves are deliberately checked in isolation. These terms can be literal
+  // elsewhere, but in a moves list they turn ordinary action into a workshop.
+  if (moves !== null) {
+    const movesText = moves.join("\n");
+    for (const term of MOVES_FACILITATION_TERMS) {
+      const match = movesText.match(new RegExp(`\\b${escapedTerm(term)}\\b`, "iu"));
+      if (!match) continue;
+      findings.push({
+        severity: "fail",
+        source: "moves-facilitation-register",
+        decisionId: "ED-023",
+        slot: "moves",
+        term,
+        match: match[0],
+        reason: "Moves must sound like an ordinary action, not facilitation or project-management instructions."
+      });
+    }
+  }
 
   // Known first-read natural-English failures are deterministic. Broader
   // personification families remain judge territory; only reviewed literals
@@ -118,17 +455,24 @@ function lintArticle(article) {
 
   // -- surface bans from sky-placement.json
   for (const b of spec.outputBans.fail) {
+    if (compiledExistingTerms.has(b.term)) continue;
     if (article?.allowLegacySecondPerson && b.term === "\\bperform(ance|ing|s|ed)?\\b") continue;
+    if (article?.allowLegacyGenericPeople && b.term === "\\bpeople\\b") continue;
     const m = full.match(toRegex(b.term));
     if (m) findings.push({ severity: "fail", source: "sky-placement", term: b.term, match: m[0], reason: b.reason });
   }
   for (const b of spec.outputBans.warn) {
     const m = full.match(toRegex(b.term));
+    if (m && b.term === "\\bletters?\\b") {
+      const context = full.slice(Math.max(0, m.index - 24), Math.min(full.length, m.index + m[0].length + 32));
+      if (/\b(?:paper|physical|mailed|handwritten) letters?\b|\bletters?\s+(?:arriv(?:e|es|ed)|(?:come|comes|came))\s+(?:by|in) (?:the )?(?:mail|post)\b/i.test(context)) continue;
+    }
     if (m) findings.push({ severity: "warn", source: "sky-placement", term: b.term, match: m[0], reason: b.reason });
   }
 
   // -- conditional bans (term allowed only if a qualifier appears before it)
   for (const c of spec.conditionalBans || []) {
+    if (compiledExistingTerms.has(c.term)) continue;
     const m = full.match(toRegex(c.term));
     if (m) {
       const before = full.slice(0, m.index).toLowerCase();
@@ -146,12 +490,14 @@ function lintArticle(article) {
 
   // -- extended slots (only when present)
   if (tagline !== null) {
-    const tagWords = tagline.split(/\s+/).filter(Boolean).length;
-    if (tagWords < 2 || tagWords > 5) {
-      findings.push({ severity: "fail", source: "shape", slot: "tagline", term: "tagline-length", match: tagline, reason: "tagline is 2-5 words" });
-    }
-    if (/[.!?]$/.test(tagline)) {
-      findings.push({ severity: "warn", source: "shape", slot: "tagline", term: "tagline-period", match: tagline, reason: "no terminal punctuation on the tagline" });
+    if (!compiledTaglineRule) {
+      const tagWords = tagline.split(/\s+/).filter(Boolean).length;
+      if (tagWords < 2 || tagWords > 5) {
+        findings.push({ severity: "fail", source: "shape", slot: "tagline", term: "tagline-length", match: tagline, reason: "tagline is 2-5 words" });
+      }
+      if (/[.!?]$/.test(tagline)) {
+        findings.push({ severity: "warn", source: "shape", slot: "tagline", term: "tagline-period", match: tagline, reason: "no terminal punctuation on the tagline" });
+      }
     }
   }
   if (moves !== null) {
@@ -209,14 +555,14 @@ function lintArticle(article) {
   return { score, fails, warns, findings, notes };
 }
 
-module.exports = { lintArticle, SLOTS, EXTENDED_SLOTS };
+module.exports = { FACT_GATED_SLOTS, lintArticle, SLOTS, EXTENDED_SLOTS };
 
 if (require.main === module) {
   const arg = process.argv.slice(2).join(" ");
   if (arg === "--exemplars") {
     let bad = 0;
     for (const e of spec.exemplars) {
-      const r = lintArticle({ tagline: e.tagline, hook: e.hook, lived: e.lived, turn: e.turn, moves: e.moves, planet: e.planet, sign: e.sign });
+      const r = lintArticle({ tagline: e.tagline, hook: e.hook, lived: e.lived, turn: e.turn, moves: e.moves, planet: e.planet, sign: e.sign, allowLegacyGenericPeople: true, allowLegacyTagline: true });
       if (r.fails || r.warns) bad++;
       const flag = r.score === 3 ? "OK " : "!! ";
       console.log(`${flag} score ${r.score} (fails ${r.fails}, warns ${r.warns})  ${e.sourceId}${r.notes.length ? "  [" + r.notes.join("; ") + "]" : ""}`);

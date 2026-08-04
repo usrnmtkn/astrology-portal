@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["requestedModel", "actualModel", "requestedReasoningEffort", "actualReasoningEffort", "laneId", "promptVersion", "packetVersion", "retrievedOwnerSourceIds", "routingMatchStatus"],
+  "properties": {
+    "requestedModel": { "const": "gpt-5.6-sol" },
+    "actualModel": { "const": "gpt-5.6-sol" },
+    "requestedReasoningEffort": { "const": "xhigh" },
+    "actualReasoningEffort": { "const": "xhigh" },
+    "laneId": { "const": "writer:sky-placement" },
+    "promptVersion": { "const": "sky-placement-writer-v4:compiled-owner-decisions" },
+    "packetVersion": { "const": "sky-placement-writer-packet-v2:owner-six-minimal" },
+    "retrievedOwnerSourceIds": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "type": "string" } },
+    "routingMatchStatus": { "const": "matched" }
+  }
+}

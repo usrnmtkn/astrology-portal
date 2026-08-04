@@ -5,9 +5,21 @@
     "laneId": "writer:sky-placement",
     "role": "writer",
     "surface": "sky-placement",
-    "runtimeRegistered": false,
-    "modelRegistryChanged": false,
-    "modelSelection": "Use the strongest editorial reasoning available in the current Codex session; model promotion requires a separate writer evaluation and explicit owner authorization."
+    "runtimeRegistered": true,
+    "registryState": "candidate",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v5:continuous-fallback-v2",
+    "promotionAuthorized": false,
+    "active": false
+  },
+  "outputContract": {
+    "id": "sky-placement-continuous-v2",
+    "writerFields": ["opening", "tension", "development", "close", "try_this"],
+    "engineFields": ["headline", "fact_line", "aspect_insert", "entryDate", "exitDate", "priorSign", "priorSignEntryDate", "priorSignExitDate", "previousResidencyEntryDate", "previousResidencyExitDate"],
+    "reviewStatus": "needs_review",
+    "renderEligible": false
   },
   "judge": {
     "laneId": "judge:sky-placement",
@@ -17,23 +29,70 @@
   },
   "order": [
     "validate_facts_and_surface",
-    "compile_ranked_evidence_packet",
-    "identify_central_lived_pressure",
-    "build_one_observable_sequence",
-    "draft_privately",
-    "sentence_by_sentence_authorship_rewrite",
+    "compile_minimal_six_passage_packet",
+    "verify_fail_closed_candidate_routing",
+    "write_one_complete_candidate",
     "deterministic_lint",
     "authorship_audit",
-    "rewrite_failed_sentences",
     "terra_acceptability_judge",
-    "return_candidate_evidence_and_change_log"
+    "provenance_and_governance_validation"
   ],
   "governance": {
     "ownerApprovalMayBeInferred": false,
     "writerMayPromoteContent": false,
-    "writerMayChangeModelRegistry": false,
+    "writerMayChangeActiveModel": false,
     "writerMayUseCalibrationOnlyEvidenceForGeneration": false,
     "writerMayUseThirdPartyPhrasingAsVoiceEvidence": false,
     "billedCallsRequireExplicitAuthorization": true
+  },
+  "voiceTarget": {
+    "permanentRule": "Chani-adjacent cadence is acceptable. Advocacy-default subject matter is not. Marie Satori voice is defined by the owner's writing, especially her attention to technology, power, gatekeeping, recognition, work, money, exclusion, and being pushed down.",
+    "deliveryMayBe": [
+      "warm",
+      "emotionally observant",
+      "permission-giving",
+      "lyrical in moderation",
+      "direct about vulnerability",
+      "compassionate without sounding clinical"
+    ],
+    "ownerRecurringConcerns": [
+      "technology",
+      "power",
+      "gatekeeping",
+      "being underestimated",
+      "being pushed down or kept out",
+      "access",
+      "recognition",
+      "work",
+      "money",
+      "status",
+      "control",
+      "exclusion",
+      "invisible labor",
+      "someone else setting the terms",
+      "being expected to accept less",
+      "refusing a limiting role"
+    ],
+    "advocacyDefaultSubjects": [
+      "campaigns",
+      "institutions denying services",
+      "public complaints",
+      "organizing",
+      "policy reform",
+      "advocacy work",
+      "social movements",
+      "collective healing",
+      "community care",
+      "systemic harm language"
+    ],
+    "advocacySubjectsRequireAstrologyAndOwnerSupport": true,
+    "thirdPartyProseIsVoiceEvidence": false,
+    "writerTest": [
+      "Did this scenario come from the astrology?",
+      "Did it come from Marie's actual writing?",
+      "Did the model choose activism only because the transit is collective?",
+      "Could the same meaning be expressed through technology, work, power, access, recognition, money, or gatekeeping?",
+      "Does the article sound like Marie's interests, or like a generic progressive astrology publication?"
+    ]
   }
 }
