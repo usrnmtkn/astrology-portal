@@ -42,6 +42,31 @@ function main() {
     assert.strictEqual(approvedFallback.useAsContextualEvidence, false);
   }
 
+  const batch2Approved = require(path.join("..", "review", "sky-placement-writer-batch-2-owner-edited-approved-v1.json"));
+  assert.strictEqual(batch2Approved.articles.length, 7);
+  assert.strictEqual(batch2Approved.ownerApproved, true);
+  assert.strictEqual(batch2Approved.servingAuthorized, false);
+  assert.strictEqual(batch2Approved.servingStatus, "staged_pending_batch_2_serving_diff");
+  assert.strictEqual(batch2Approved.generationEvidence, false);
+  assert(batch2Approved.articles.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.reviewStatus === "approved"
+    && entry.ownerApproved === true
+    && entry.renderEligible === false
+    && entry.servingStatus === "staged_pending_batch_2_serving_diff"
+    && entry.generationEvidence === false
+    && entry.promotionAuthorized === false
+    && entry.canonical === false
+  )));
+  assert(batch2Approved.articles.every((entry) => deterministicChecks(entry.article, {
+    planet: entry.planet,
+    sign: entry.sign
+  }).surfaceLint.score === 3));
+  assert(!/\b(?:leverage|reveals?)\b/iu.test(JSON.stringify(batch2Approved.articles.map((entry) => entry.article))));
+  const batch2Taurus = batch2Approved.articles.find((entry) => entry.sign === "taurus").article;
+  assert.strictEqual(batch2Taurus.close, "Before {{exitDate}}, the facts may have changed while the old answer still sounds certain.");
+  assert.strictEqual(batch2Taurus.try_this[0], "We can ask what has changed since we last looked at one thing we consider settled.");
+
   const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
   const requiredTags = [
     "polished_but_flat", "abstract_hook", "abstract_consequence", "requires_interpretation",
@@ -561,7 +586,7 @@ function main() {
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
-  assert.strictEqual(fixtureAudit.sourceRecordCount, 27);
+  assert.strictEqual(fixtureAudit.sourceRecordCount, 28);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
   console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);
