@@ -137,6 +137,10 @@ function pruneModifiersForWeb(modifiers) {
     .filter(Boolean);
 }
 
+function runtimeEligiblePlacements(placements) {
+  return placements.filter((entry) => entry.runtimeEligible !== false);
+}
+
 function webSkyKnowledge(packageJson, generatedAt, collections) {
   return withBundleMetadata(packageJson, generatedAt, {
     primitives: collections.primitives,
@@ -150,7 +154,7 @@ function webSkyKnowledge(packageJson, generatedAt, collections) {
       "shadow",
       "status"
     ])),
-    placements: collections.placements.map((entry) => pick(entry, [
+    placements: runtimeEligiblePlacements(collections.placements).map((entry) => pick(entry, [
       "id",
       "kind",
       "planet",
@@ -208,7 +212,7 @@ function webNatalKnowledge(packageJson, generatedAt, collections) {
       "policy",
       "status"
     ])),
-    placements: collections.placements.map((entry) => pick(entry, [
+    placements: runtimeEligiblePlacements(collections.placements).map((entry) => pick(entry, [
       "id",
       "kind",
       "planet",

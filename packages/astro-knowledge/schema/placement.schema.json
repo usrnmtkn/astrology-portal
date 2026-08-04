@@ -23,6 +23,7 @@
       "items": { "type": "string" }
     },
     "scenarioPolicy": { "type": "string" },
+    "runtimeEligible": { "type": "boolean" },
     "note": { "type": "string" },
     "source": {
       "type": "object",

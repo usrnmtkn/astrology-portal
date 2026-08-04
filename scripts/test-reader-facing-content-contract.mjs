@@ -60,6 +60,36 @@ const natalAspectPatterns = read("apps/web/src/services/natalAspectPatterns.ts")
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const lunarDayResolver = read("apps/web/src/features/calendar/lunarDayResolver.ts");
 const fallbackHookRows = fallbackSourceRowsV3.hookRows ?? [];
+const fullKnowledge = JSON.parse(read("packages/astro-knowledge/dist/knowledge.json"));
+const skyWebKnowledge = JSON.parse(read("packages/astro-knowledge/dist/sky-web.json"));
+const natalWebKnowledge = JSON.parse(read("packages/astro-knowledge/dist/natal-web.json"));
+
+for (const reviewOnlyPlacementId of [
+  "chiron-aries",
+  "north-node-aquarius",
+  "south-node-leo"
+]) {
+  const reviewOnlyPlacement = fullKnowledge.placements.find((entry) => entry.id === reviewOnlyPlacementId);
+  assert.ok(
+    reviewOnlyPlacement,
+    `${reviewOnlyPlacementId} must remain available in the full editorial knowledge package.`
+  );
+  assert.equal(
+    reviewOnlyPlacement.runtimeEligible,
+    false,
+    `${reviewOnlyPlacementId} must require an explicit serving approval before entering reader bundles.`
+  );
+  assert.equal(
+    skyWebKnowledge.placements.some((entry) => entry.id === reviewOnlyPlacementId),
+    false,
+    `${reviewOnlyPlacementId} must remain unavailable in the Sky reader bundle until serving is approved.`
+  );
+  assert.equal(
+    natalWebKnowledge.placements.some((entry) => entry.id === reviewOnlyPlacementId),
+    false,
+    `${reviewOnlyPlacementId} must remain unavailable in the Natal reader bundle until serving is approved.`
+  );
+}
 
 const relationshipRows = [
   ...(fallbackSourceRowsV3.hookRows ?? []),
