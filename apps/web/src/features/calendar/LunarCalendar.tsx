@@ -16,10 +16,6 @@ import {
   type LiveGeneratedContent
 } from "../../services/generatedContent";
 import {
-  calendarWeeklyNarrativeBody,
-  calendarWeeklyNarrativeHeadline,
-  calendarWeeklyNarrativeShifts,
-  calendarWeeklySupportingShifts,
   resolveCalendarWeeklyMoonTone,
   resolveCalendarWeeklyOverview
 } from "../../services/weeklyHoroscope";
@@ -106,9 +102,11 @@ function calendarRouteStateFromUrl(fallbackDate: string) {
     const params = new URLSearchParams(query);
     const rawView = params.get("view");
     const rawDate = params.get("date");
-    const view: LunarCalendarViewMode = rawView === "week" || rawView === "weekly" || rawView === "month"
-      ? rawView
-      : "week";
+    const view: LunarCalendarViewMode = rawView === "day" || rawView === "daily" || rawView === "week"
+      ? "week"
+      : rawView === "weekly" || rawView === "month"
+        ? rawView
+        : "week";
     const date = rawDate && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
       ? rawDate
       : fallbackDate;
@@ -124,7 +122,7 @@ function updateCalendarRouteUrl(view: LunarCalendarViewMode, date: string, mode:
     const url = new URL(window.location.href);
     const params = new URLSearchParams();
 
-    params.set("view", view);
+    params.set("view", view === "week" ? "day" : view);
     params.set("date", date);
     url.hash = `calendar?${params.toString()}`;
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
@@ -785,10 +783,6 @@ function phaseLabelForDay(day: LunarCalendarDay, calendarDays: LunarCalendarDay[
     return lunationDisplayLabel(lunation);
   }
 
-  if (day.moonPhase !== "Full Moon" && day.moonPhase !== "New Moon") {
-    return day.moonPhase;
-  }
-
   const dayIndex = calendarDays.findIndex((calendarDay) => calendarDay.dateKey === day.dateKey);
   const previousDay = dayIndex > 0 ? calendarDays[dayIndex - 1] : null;
   const nextDay = dayIndex >= 0 && dayIndex < calendarDays.length - 1 ? calendarDays[dayIndex + 1] : null;
@@ -798,11 +792,13 @@ function phaseLabelForDay(day: LunarCalendarDay, calendarDays: LunarCalendarDay[
       ? day.illumination - previousDay.illumination
       : 0;
 
-  if (day.moonPhase === "Full Moon") {
-    return illuminationTrend >= 0 ? "Waxing Gibbous" : "Waning Gibbous";
+  const isWaxing = illuminationTrend >= 0;
+
+  if (day.illumination >= 50) {
+    return isWaxing ? "Waxing Gibbous" : "Waning Gibbous";
   }
 
-  return illuminationTrend >= 0 ? "Waxing Crescent" : "Waning Crescent";
+  return isWaxing ? "Waxing Crescent" : "Waning Crescent";
 }
 
 function compactEventLabel(event: LunarCalendarEvent) {
@@ -2013,41 +2009,11 @@ export function LunarCalendar({
     : undefined;
   const weeklyLeadMoon = weeklyDayWriteups.find((writeup) => writeup.guidance?.body)?.guidance ?? null;
   const weeklyMainShifts = weeklyForecast?.mainShifts ?? [];
-  const weeklyEventDescriptions = new Map(weeklyDayWriteups.flatMap((writeup) => (
-    writeup.events.map(({ event, description }) => [event.id, description] as const)
-  )));
-  const weeklyGuidanceByDate = new Map(weeklyDayWriteups.flatMap((writeup) => (
-    writeup.guidance?.body ? [[writeup.day.dateKey, writeup.guidance.body] as const] : []
-  )));
-  const resolvedWeeklyNarrativeShifts = calendarWeeklyNarrativeShifts(
-    weeklyMainShifts,
-    weeklyForecast?.mainEvent
-  );
-  const weeklyNarrativeShifts = weeklyMondayMoonTone
-    ? []
-    : resolvedWeeklyNarrativeShifts;
-  const weeklyForecastHeadline = weeklyMondayMoonTone?.headline
-    ?? calendarWeeklyNarrativeHeadline(
-      weeklyNarrativeShifts,
-      weeklyForecast?.weeklyHeadline ?? weeklyLeadMoon?.headline ?? "Your week in the sky"
-    );
-  const weeklySupportingShifts = weeklyMondayMoonTone
-    ? weeklyMainShifts.slice(0, 4)
-    : calendarWeeklySupportingShifts(
-      weeklyMainShifts,
-      weeklyNarrativeShifts,
-      weeklyForecastHeadline
-    );
-  const weeklyForecastBody = weeklyForecast
-    ? calendarWeeklyNarrativeBody({
-        overview: weeklyForecast.weeklyOverview,
-        source: weeklyForecast.source,
-        mondayMoonTone: weeklyMondayMoonTone,
-        narrativeShifts: weeklyNarrativeShifts,
-        eventDescriptions: weeklyEventDescriptions,
-        dayGuidance: weeklyGuidanceByDate
-      })
-    : weeklyMondayMoonTone?.body ?? weeklyLeadMoon?.body ?? "";
+  const weeklyForecastHeadline = weeklyForecast?.weeklyHeadline
+    ?? weeklyLeadMoon?.headline
+    ?? "Your week in the sky";
+  const weeklySupportingShifts = weeklyMainShifts;
+  const weeklyForecastBody = weeklyForecast?.weeklyOverview ?? "";
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {
@@ -2770,7 +2736,7 @@ export function LunarCalendar({
           <section
             className="lunar-weekly-hero"
             aria-labelledby="lunar-weekly-title"
-            data-weekly-source={weeklyMondayMoonTone?.source ?? weeklyForecast?.source ?? "moon-fallback"}
+            data-weekly-source={weeklyForecast?.source ?? "moon-fallback"}
             data-weekly-moon-key={weeklyMondayMoonTone?.contentKey}
           >
             <p className="lunar-weekly-hero__eyebrow">Weekly forecast</p>
@@ -2785,8 +2751,8 @@ export function LunarCalendar({
               </div>
             )}
             {weeklySupportingShifts.length > 0 && (
-              <div className="lunar-weekly-hero__shifts" aria-label="Also this week">
-                <p>Also this week</p>
+              <div className="lunar-weekly-hero__shifts" aria-label="Key shifts">
+                <p>Key shifts</p>
                 <ul>
                   {weeklySupportingShifts.map((event) => (
                     <li key={event.id}>{calendarEventTitleWithSign(event, event.title)}</li>
@@ -2973,7 +2939,7 @@ export function LunarCalendar({
                           aria-hidden="true"
                         >
                           <span className="lunar-calendar-event-pill__dot" />
-                          <span className="lunar-calendar-event-pill__label">☾ {voidLabel}</span>
+                          <span className="lunar-calendar-event-pill__label">Void</span>
                         </span>
                       )}
                       {hiddenPreviewCount > 0 && (
