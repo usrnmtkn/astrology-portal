@@ -606,18 +606,18 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
-  "Dashboard cache payloads must be rejected when the bundled content hash changes."
+  /envelope\?\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\.runtimeCapability[\s\S]*envelope\?\.bundledContentHash !== bundledPartition\.contentHash/u,
+  "Dashboard cache payloads must be rejected when the runtime capability or partition hash changes."
 );
 assert.match(
   generatedContentSource,
-  /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
-  "Dashboard packages must be complete, same-or-newer, and hash-verified before installation."
+  /manifest\.contentHash !== bundledManifest\.contentHash[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
+  "Dashboard partitions must exactly match the bundled partition and mirror metadata before installation."
 );
 assert.match(
   generatedContentSource,
