@@ -94,6 +94,11 @@ function classicalPairSource(a, b) {
   };
 }
 
+function humanMomentFromPairSource(sourceText) {
+  const match = String(sourceText || "").match(/\bLooks like:\s*([\s\S]*?)(?=\s+Check:|$)/iu);
+  return String(match?.[1] || "").trim();
+}
+
 function pointTargets() {
   const rows = [];
   for (const [pairKey, source] of reviewPairSources()) {
@@ -113,7 +118,8 @@ function pointTargets() {
         pairKey,
         sourcePath: source.provenance?.source || "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
         sourceStatus: source.status || "needs_review",
-        sourceText: source.sourceText
+        sourceText: source.sourceText,
+        humanMoment: humanMomentFromPairSource(source.sourceText)
       });
     }
   }
@@ -242,6 +248,7 @@ module.exports = {
   batchCounts,
   bodyFor,
   classicalPairSource,
+  humanMomentFromPairSource,
   lintExactEntry,
   missingTargets,
   ownerCorpus,

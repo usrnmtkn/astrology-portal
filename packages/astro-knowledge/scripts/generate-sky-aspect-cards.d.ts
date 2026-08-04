@@ -40,6 +40,36 @@ export type SkyAspectCardLint = {
   notes: string[];
 };
 
+export type AspectWarmthFoundationLine = {
+  sourceArticleId: string;
+  sourcePath: string;
+  originalLine: string;
+  suppliedLine: string;
+  selectionReasons: string[];
+};
+
+export type AspectWarmthFlag = {
+  id: "owner-corpus-warmth-none-found" | "missing-human-moment-beat";
+  severity: "info" | "editorial";
+  blocking: boolean;
+  reason: string;
+};
+
+export type AspectWarmthHarvest = {
+  schemaVersion: number;
+  status: "ready" | "editorial_required";
+  generationAllowed: boolean;
+  surface: string;
+  voice: "collective" | "second_person";
+  harvest_mode: "matched" | "vocabulary_only" | "none_found";
+  humanMoment: string | null;
+  searchTerms: string[];
+  ownerFoundationLines: AspectWarmthFoundationLine[];
+  flags: AspectWarmthFlag[];
+  insertInstruction: string | null;
+  placementInstruction: string | null;
+};
+
 export type SkyAspectCardResult = {
   status: "clean" | "needs-review" | "skipped";
   reason?: string;
@@ -61,6 +91,15 @@ export type SkyAspectCardResult = {
     error?: string;
   };
   lintRetryAvoidTerms?: string[][];
+  harvest_mode?: "matched" | "vocabulary_only" | "none_found";
+  warmthHarvest?: AspectWarmthHarvest;
+  warmthSource?: {
+    sourceArticleId: string;
+    originalLine: string;
+    usedForm: string;
+  };
+  evidenceClass?: "owner-corpus-derived";
+  flags?: AspectWarmthFlag[];
   gate?: "auto-publish" | "human-review" | "regenerate";
   judge?: {
     score: 1 | 2 | 3;
@@ -163,8 +202,14 @@ export function repairCard(
   reason: string,
   options?: {
     generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
+    warmthHarvest?: AspectWarmthHarvest | null;
   }
 ): Promise<string>;
+
+export function aspectWarmthHarvest(
+  normalized: ReturnType<typeof normalizeCardArgs>,
+  format?: string
+): AspectWarmthHarvest;
 
 export function repairPlacementTopper(
   text: string,
@@ -175,6 +220,7 @@ export function repairPlacementTopper(
 ): Promise<string>;
 
 declare const generator: {
+  aspectWarmthHarvest: typeof aspectWarmthHarvest;
   closeBank: typeof closeBank;
   generateCard: typeof generateCard;
   generatePlacementTopper: typeof generatePlacementTopper;

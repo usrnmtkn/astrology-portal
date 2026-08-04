@@ -51,6 +51,16 @@ Do not confuse simplicity with flatness. A simple sentence is strong when it nam
 - Keep moves collective and concrete.
 - Keep moving dates, degrees, signs, and motion in the ephemeris layer.
 
+## Aspect warmth contract
+
+- Run the corpus warmth harvest before writing or revising an aspect entry.
+- Use the existing human-moment beat as the emotional core. If it is missing, stop and flag the entry for editorial work.
+- Treat supplied OWNER FOUNDATION LINES in a `harvest_mode: matched` packet as the only source for the turn toward the reader. Adapt at most one; verbatim or near-verbatim use is allowed. If the packet says `harvest_mode: none_found`, proceed without a warmth beat and do not invent one.
+- In a full card, use one warmth sentence after the shadow or cost, as the final or penultimate sentence. Never add a second warmth beat or conclusion.
+- In a TLDR line or short preview, use `harvest_mode: vocabulary_only`; foundation lines affect word choice but are not inserted.
+- Current Sky uses the packet's minimally collectivized lines. Natal, transit-to-natal, and synastry aspect surfaces may preserve the owner's second person.
+- Record `warmthSource: {sourceArticleId, originalLine, usedForm}` and the `owner-corpus-derived` evidence label whenever a foundation line is used. Neither field grants approval.
+
 ## Internal drafting process
 
 1. Read the ranked packet.
