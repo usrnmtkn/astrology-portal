@@ -1,0 +1,32 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "owner_revised_candidate",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1",
+    "surface": "sky-placement",
+    "planet": "mercury",
+    "sign": "pisces",
+    "articleBeat": "full_article",
+    "before": "Mercury circles the zodiac in about 1 year because it stays near the Sun.",
+    "after": "Mercury moves through all twelve signs in about 1 year because it stays near the Sun.",
+    "whatChanged": "Replaced the recurring Sol 'circle the zodiac' attractor with the owner-directed ordinary cycle wording. The rest of the draft remains unchanged.",
+    "ownerReason": "The scene and sequence are strong; the failure is mechanical and should be corrected without regenerating the draft.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [
+      "banned-zodiac-wording"
+    ],
+    "approvalLevel": "owner_revised_candidate",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-pilot-mercury-pisces-v1/result.json"
+    ],
+    "provenance": "preferred_version: Apply the owner-directed line edit: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, re-lint, and hold for owner voice review.",
+    "feedbackKind": "preferred_version",
+    "exactApprovalScope": "not_exact_approval"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

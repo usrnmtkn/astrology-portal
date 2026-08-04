@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "auditId": "sky-placement-writer-current-packet-audit-v1",
+  "legacyCompiler": ".agents/skills/marie-satori-writer/scripts/compile-writing-packet-legacy-audit.js",
+  "legacyPacketExposures": [
+    "three to five positive examples",
+    "two to four contrastive edits",
+    "one or two negative examples",
+    "current AI candidate article",
+    "failure tags",
+    "selection reasons",
+    "candidate-language ranking",
+    "governance state"
+  ],
+  "replacementPacket": "sky-placement-writer-packet-v2:owner-six-minimal",
+  "replacementContentsOnly": [
+    "routing request metadata",
+    "verified astrology",
+    "surface requirements",
+    "exact writing task",
+    "exactly six eligible owner-authored passages",
+    "concise writer prompt"
+  ],
+  "firstWritingCallExclusions": [
+    "current and previous AI candidates",
+    "assistant-generated rewrites",
+    "contrastive rejected text",
+    "negative examples",
+    "failure tags",
+    "source-selection explanations",
+    "candidate-language ranking",
+    "judge scores or explanations",
+    "calibration results",
+    "central-contradiction metadata",
+    "governance reports"
+  ],
+  "originalTextPolicy": "May appear only as task.inputText and never as voice evidence.",
+  "modelCallsMade": false
+}

@@ -212,7 +212,16 @@ function lintExactEntry(entry) {
   }
   for (const field of PROSE_FIELDS) {
     const value = String(entry[field] || "").trim();
-    if (!value) findings.push({ severity: "fail", field, reason: "missing field" });
+    if (!value && field === "humanMoment") {
+      findings.push({
+        severity: "fail",
+        field,
+        source: "editorial-data-completeness",
+        blocking: true,
+        ownerProseRequired: false,
+        reason: "missing human-moment beat; flag for aspect editorial work, not new owner prose"
+      });
+    } else if (!value) findings.push({ severity: "fail", field, reason: "missing field" });
     else if (sentenceCount(value) !== 1) findings.push({ severity: "fail", field, reason: `expected one sentence; found ${sentenceCount(value)}` });
     if (/—/.test(value)) findings.push({ severity: "fail", field, reason: "em dash" });
     if (/(^|[^-])\b(you|your|yours|yourself)\b/i.test(value)) findings.push({ severity: "fail", field, reason: "second person" });

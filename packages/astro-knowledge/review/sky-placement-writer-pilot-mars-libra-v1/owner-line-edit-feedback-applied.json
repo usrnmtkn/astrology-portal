@@ -1,0 +1,32 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "owner_revised_candidate",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-pilot-mars-libra-owner-line-edit-v1",
+    "surface": "sky-placement",
+    "planet": "mars",
+    "sign": "libra",
+    "articleBeat": "full_article",
+    "before": "Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to circle the zodiac.",
+    "after": "Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to move through all twelve signs.",
+    "whatChanged": "Replaced the recurring Sol 'circle the zodiac' attractor with the owner-directed ordinary cycle wording. The rest of the draft remains unchanged.",
+    "ownerReason": "The song-with-several-endings scene is strong; the failure is mechanical and should be corrected without regenerating the draft.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [
+      "banned-zodiac-wording"
+    ],
+    "approvalLevel": "owner_revised_candidate",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-pilot-mars-libra-v1/result.json"
+    ],
+    "provenance": "preferred_version: Apply the owner-directed line edit: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, re-lint, and hold for owner voice review.",
+    "feedbackKind": "preferred_version",
+    "exactApprovalScope": "not_exact_approval"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

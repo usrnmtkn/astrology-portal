@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "2026-08-03.7",
+  "registryVersion": "2026-08-04.1",
   "policyVersion": "editorial-model-promotion-v1",
   "lanes": {
     "generation:default": {
@@ -49,6 +49,24 @@
         "rubricVersion": "not-applicable",
         "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
         "policyVersion": "editorial-generation-policy-v1"
+      },
+      "rollback": null,
+      "history": []
+    },
+    "writer:sky-placement": {
+      "role": "writer",
+      "surface": "sky-placement",
+      "active": null,
+      "candidate": {
+        "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+        "rubricVersion": "not-applicable-writing-only",
+        "evaluationSetVersion": "sky-placement-writer-heldout-pending-v2",
+        "policyVersion": "editorial-writer-policy-v1",
+        "notes": "Unpromoted continuous Sky Placement fallback writer candidate only. Produces review-gated continuous-v2 rows; no active writer release exists and live use or promotion remains unauthorized."
       },
       "rollback": null,
       "history": []

@@ -165,6 +165,18 @@
       "source": "SD"
     },
     {
+      "pattern": "[theatrical transit title: Gilded Tempest / A Confusion of Crowns]",
+      "reason": "AC theatrical-title fingerprint. The timing devices may be adapted, but this adjacent voice's dramatic naming register stays out.",
+      "useInstead": "Use the aspect or placement name plainly.",
+      "source": "AC"
+    },
+    {
+      "pattern": "[dense stacked metaphor carrying several symbolic images in one sentence]",
+      "reason": "AC metaphor-stacked essay register.",
+      "useInstead": "Keep one image at most, then name the event or behavior plainly.",
+      "source": "AC"
+    },
+    {
       "pattern": "Right now, [planet] in [sign] is [aspect] [planet] in [sign], and for the collective,",
       "reason": "The aspect fallback generator's fingerprint; stacks keyword lists into prose shape. Owner retired it Jul 31.",
       "useInstead": "Open on the event or the recognizable behavior; name the placements inside the second sentence, per the Sun-opposite-Pluto exemplar.",

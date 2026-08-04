@@ -24,6 +24,7 @@ const examples = readJson(path.join(root, "voice", "tldr-astro", "examples.json"
 const PLACEMENT_MODE = "collective-placement-card";
 const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
 const PLACEMENT_WITH_TOPPER_MODE = "collective-placement-with-topper";
+const SKY_PROMPT_VERSION = "sky-aspect-voice-v1:prompt-warmth-harvest-v1";
 
 // planet -> tier, matching how exemplars are tagged. The judge must compare a
 // card against its OWN register: an outer/generational card judged against fast
@@ -89,7 +90,8 @@ function goldStandard(tier, n = 2, mode = "collective-aspect-card") {
 
 // The rubric the judge scores against. Concrete failure modes come from real
 // weak drafts, so the judge knows exactly what to catch.
-function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } = {}) {
+function buildJudgePrompt(card, options = {}) {
+  const { tier = "", mode = "collective-aspect-card" } = options;
   const placement = mode === PLACEMENT_MODE || mode === PLACEMENT_WITH_TOPPER_MODE;
   const placementWithTopper = mode === PLACEMENT_WITH_TOPPER_MODE;
   const tierHint = placement ? PLACEMENT_TIER_HINT[tier] : TIER_HINT[tier];
@@ -131,6 +133,8 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
         ]
       : []),
     `  - Sounding like a generic horoscope rather than these examples.`,
+    `  - Adjacent-voice recognizability: flag phrasing that matches the CC/SD/AC construction families in voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out. Shared astrological knowledge and terminology are never flagged: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
+    ...require("./owner-corpus-warmth-policy.js").judgePolicyLines(options).map((rule) => `  - ${rule}`),
     `  - Vague shrink/shrinking shorthand for self-reduction. If that behavior appears, identify the precise family and score generic shorthand no higher than 2:`,
     ...SELF_REDUCTION_FAMILIES.map(([key, meaning]) => `      ${key} = ${meaning}.`),
     `    These are not synonyms. Do not collapse them into one generic diagnosis.`,
@@ -180,6 +184,7 @@ async function judgeCard(card, opts = {}) {
   const result = await runJudgeSamples({
     content: card,
     prompt,
+    promptVersion: SKY_PROMPT_VERSION,
     rubric: JSON.stringify({ voiceDescription: sky.voiceDescription, mode: opts.mode || "collective-aspect-card", tier: opts.tier || "" }),
     rubricVersion: "sky-aspect-voice-v1",
     samples: opts.samples,
@@ -199,6 +204,7 @@ module.exports = {
   judgeCard,
   parseVerdict,
   PLACEMENT_TIER_OF,
+  SKY_PROMPT_VERSION,
   TIER_OF
 };
 
