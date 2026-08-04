@@ -1849,7 +1849,8 @@ function weekGridRange(anchor: Date, timeZone: string) {
     weekday: "short"
   }).format(localMidnight);
   const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
-  const gridStart = zonedDateTimeToUtc(timeZone, localParts.year, localParts.month, localParts.day - Math.max(0, weekdayIndex));
+  const daysSinceMonday = weekdayIndex === 0 ? 6 : Math.max(0, weekdayIndex - 1);
+  const gridStart = zonedDateTimeToUtc(timeZone, localParts.year, localParts.month, localParts.day - daysSinceMonday);
   const gridEnd = new Date(gridStart.getTime() + 7 * 86_400_000);
 
   return { gridStart, gridEnd };
