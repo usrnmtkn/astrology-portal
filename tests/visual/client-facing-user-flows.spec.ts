@@ -1485,16 +1485,14 @@ test.describe("client-facing user flow case studies", () => {
 
     const weeklyView = page.locator(".lunar-weekly-view");
     const weeklyOverview = weeklyView.locator(".lunar-weekly-hero");
-    await expect(weeklyOverview).toHaveAttribute("data-weekly-source", "weekly-moon");
-    await expect(weeklyOverview.locator("h2")).toHaveText(
-      "Moon in Aries sets the emotional tone"
-    );
+    await expect(weeklyOverview).toHaveAttribute("data-weekly-source", "generated-fallback");
+    await expect(weeklyOverview.locator("h2")).not.toHaveText("Moon in Aries sets the emotional tone");
     await expect(weeklyOverview).toHaveAttribute(
       "data-weekly-moon-key",
       "authored/calendar-weekly-moon/aries"
     );
     await expect(weeklyOverview.locator(".lunar-weekly-hero__body p")).toHaveCount(1);
-    await expect(weeklyOverview.locator(".lunar-weekly-hero__body p").first()).toContainText(
+    await expect(weeklyOverview.locator(".lunar-weekly-hero__body")).not.toContainText(
       "tired of waiting for permission that's never coming"
     );
     await expect(weeklyOverview.locator(".lunar-weekly-hero__body")).not.toContainText(
@@ -1502,12 +1500,13 @@ test.describe("client-facing user flow case studies", () => {
     );
     await expect(weeklyOverview).not.toContainText("A plan may finally get an answer");
     await expect(weeklyOverview).not.toContainText("The waning Moon carries things out");
-    await expect(weeklyOverview.locator(".lunar-weekly-hero__shifts > p")).toHaveText("Also this week");
+    await expect(weeklyOverview.locator(".lunar-weekly-hero__shifts > p")).toHaveText("Key shifts");
     const weeklyShiftTitles = await weeklyOverview.locator(".lunar-weekly-hero__shifts li").allTextContents();
     expect(weeklyShiftTitles).toEqual(expect.arrayContaining([
       "Last Quarter Moon in Taurus",
       "Venus enters Libra",
-      "Sun trine Saturn"
+      "Sun trine Saturn",
+      "Mercury enters Leo"
     ]));
     expect(new Set(weeklyShiftTitles).size).toBe(weeklyShiftTitles.length);
     const weeklyEvents = weeklyView.locator(".lunar-weekly-event");
@@ -1523,6 +1522,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(weeklyEvents.getByRole("heading", { name: "Sun trine Saturn" })).toBeVisible();
     await expect(weeklyEvents.getByRole("heading", { name: "Mercury enters Leo" })).toBeVisible();
 
+    await expect(page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__facts span").first()).toHaveText("Waning Gibbous");
+    await expect(page.locator("#lunar-weekly-2026-08-05 .lunar-weekly-day__facts span").first()).toHaveText("Waning Gibbous");
+    await expect(page.locator("#lunar-weekly-2026-08-06 .lunar-weekly-day__facts span").first()).toHaveText("Waning Crescent");
+
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(weeklyOverview).toBeVisible();
     expect(
@@ -1530,6 +1533,13 @@ test.describe("client-facing user flow case studies", () => {
       "Weekly overview must not introduce mobile horizontal overflow."
     ).toBe(true);
     await captureResponsiveSurface(page, "mobile", "calendar-weekly-overview");
+
+    await page.getByRole("tab", { name: "Month" }).click();
+    const monthVoidLabels = await page.locator(".lunar-calendar-body.is-month .event-void .lunar-calendar-event-pill__label").allTextContents();
+    expect(monthVoidLabels.every((label) => label === "Void")).toBe(true);
+
+    await page.getByRole("tab", { name: "Day" }).click();
+    await expect.poll(() => new URL(page.url()).hash).toContain("view=day");
 
     await assertNoClientErrors();
   });

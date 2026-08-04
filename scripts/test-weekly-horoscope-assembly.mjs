@@ -345,15 +345,15 @@ try {
   );
   assert.equal(
     weekly.calendarWeeklyNarrativeBody({
-      overview: "An authored overview that must not displace the Monday Moon opening.",
+      overview: "An authored overview must not be displaced by the repeated Monday Moon paragraph.",
       source: "authored",
       mondayMoonTone: mondayAriesTone,
-      narrativeShifts: crowdedNarrativeShifts,
+      narrativeShifts: [],
       eventDescriptions: supportingDescriptions,
       dayGuidance: new Map()
     }),
-    mondayAriesTone?.body,
-    "The weekly write-up must use Monday's Moon sign without duplicating day-event prose in the hero."
+    "An authored overview must not be displaced by the repeated Monday Moon paragraph.",
+    "The weekly write-up must preserve the authored synthesis instead of repeating Monday's day copy."
   );
 
   const timezoneShiftedEvents = currentWeekEvents.map((event, index) => ({
