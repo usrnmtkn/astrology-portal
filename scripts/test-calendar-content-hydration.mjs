@@ -275,8 +275,13 @@ assert.match(calendarSource, /lunarDayGeneratedContentKeys\(selectedDay, editori
 assert.match(calendarSource, /contentStatus === "loading"/u);
 assert.match(
   calendarSource,
-  /fallback-hook\/sky-event\/ingress\/\$\{planetPart\}\/\$\{signPart\}[\s\S]*?fallback-hook\/sky-event\/ingress/u,
-  "Calendar ingress copy must prefer an approved planet-and-sign-specific row before the generic frame."
+  /const frame = fallbackV3HookBody\(`fallback-hook\/sky-event\/ingress\/\$\{planetPart\}\/\$\{signPart\}`\);/u,
+  "Calendar ingress copy must require an approved planet-and-sign-specific row."
+);
+assert.doesNotMatch(
+  calendarSource,
+  /\|\| fallbackV3HookBody\("fallback-hook\/sky-event\/ingress"\)/u,
+  "Calendar must not reactivate the rejected generic ingress wording."
 );
 assert.equal(
   venusLibraIngress?.body_you,
@@ -300,7 +305,7 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /<p>Moon in \{day\.moonSign\}<\/p>/u,
+  /<h3>Moon in \{day\.moonSign\}<\/h3>/u,
   "Weekly Moon guidance must label the sign driving the interpretation."
 );
 assert.ok(
@@ -365,7 +370,7 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /selectedDayTransits\.map[\s\S]*?calendarEventDescription\([\s\S]*?onOpenTransit\?\.\(event, description\)/u,
+  /selectedDayTransits\.map[\s\S]*?calendarEventEditorialContent\([\s\S]*?const description = editorial\.eventCopy \?\? "";[\s\S]*?data-content-key=\{editorial\.contentKey\}[\s\S]*?onOpenTransit\?\.\(event, description\)/u,
   "Selected-day ingress, station, and aspect buttons must carry their approved rendered copy into detail."
 );
 assert.match(

@@ -11,6 +11,11 @@ const sourcePath = path.join(
   "apps/web/src/content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json"
 );
 const rows = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
+const reviewCandidatePath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/calendar-weekly-overview-2026-08-03-owner-review-candidate.json"
+);
+const reviewCandidate = JSON.parse(fs.readFileSync(reviewCandidatePath, "utf8"));
 const vite = await createServer({
   configFile: false,
   root: path.join(repoRoot, "apps/web"),
@@ -35,9 +40,18 @@ try {
   assert.equal(weekly.weeklyContentImportCounts.total, rows.length);
   assert.equal(rows.filter((row) => row.surface === "weekly-station").length, 18);
   assert.equal(rows.filter((row) => row.surface === "weekly-opener").length, 6);
-  assert.equal(rows.filter((row) => row.surface === "weekly-overview").length, 1);
+  assert.equal(rows.filter((row) => row.surface === "weekly-overview").length, 0);
   assert.ok(rows.every((row) => ["approved", "reviewed"].includes(row.review_status)));
   assert.ok(rows.every((row) => !/SOURCE_GAP/u.test(`${row.headline}\n${row.body}`)));
+  assert.equal(reviewCandidate.reviewStatus, "needs_review");
+  assert.equal(reviewCandidate.ownerApproved, false);
+  assert.equal(reviewCandidate.promotionAuthorized, false);
+  assert.equal(reviewCandidate.canonical, false);
+  assert.equal(reviewCandidate.serving, false);
+  assert.ok(
+    !rows.some((row) => row.contentKey === reviewCandidate.contentKey),
+    "Owner-review candidates must remain outside the reader-serving source rows."
+  );
   const weeklyCopyRows = rows.filter((row) => row.weeklyOverview);
   const prohibitedWeeklyLanguage = /the harvest|the universe is inviting you|plant seeds|dreams take root|step into the light|walk through the portal|manifestation|energetic upgrade|a fresh chapter is calling|what is meant for you|the energy asks you|this activation|alignment|this placement becomes|the planet carries the thread|keep shrinking|edit yourself|on paper|shared trust|full write-up coming soon|\bperformance\b|\bthings\b|—/iu;
   assert.ok(weeklyCopyRows.every((row) => row.headline === row.weeklyHeadline));
@@ -170,13 +184,18 @@ try {
     id: "last-quarter-test",
     title: "Last Quarter Moon in Taurus",
     sign: "Taurus",
-    primary: false
+    primary: true
   };
   assert.equal(weekly.calendarWeekTypeFor([lunationEvent]), "lunation");
   assert.equal(
     weekly.calendarWeekTypeFor([quarterMoonEvent, stationEvent]),
     "station",
     "Quarter Moon events must not replace a more useful weekly station forecast."
+  );
+  assert.ok(
+    weekly.calendarWeeklyEventRank(stationEvent).finalScore
+      > weekly.calendarWeeklyEventRank(quarterMoonEvent).finalScore,
+    "A station must rank above an exact lunar quarter."
   );
 
   const currentWeekEvents = [
@@ -224,14 +243,39 @@ try {
       aspect: "trine"
     }
   ];
+  assert.ok(
+    weekly.calendarWeeklyEventRank(currentWeekEvents[0]).finalScore
+      > weekly.calendarWeeklyEventRank(currentWeekEvents[3]).finalScore,
+    "A station must outrank a supporting exact aspect before chronological display ordering."
+  );
+  const exactOverviewRow = {
+    contentKey: "authored/week-overview/test-fixture",
+    surface: "weekly-overview",
+    content_role: "full_copy",
+    headline: "Last Quarter Moon in Taurus",
+    body: "A complete owner-approved weekly overview fixture.",
+    weeklyHeadline: "Last Quarter Moon in Taurus",
+    weeklyOverview: "A complete owner-approved weekly overview fixture.",
+    weekStart: "2026-08-03",
+    weekEnd: "2026-08-09",
+    mainShifts: [
+      "Last Quarter Moon in Taurus",
+      "Venus enters Libra",
+      "Sun trine Saturn"
+    ],
+    mainEvent: "Last Quarter Moon in Taurus",
+    review_status: "approved",
+    approved_via: "owner approved test fixture"
+  };
   const authoredCalendarOverview = weekly.resolveCalendarWeeklyOverview({
-    weekStart: "2026-08-02",
-    weekEnd: "2026-08-08",
+    weekStart: "2026-08-03",
+    weekEnd: "2026-08-09",
     events: [...currentWeekEvents].reverse(),
-    rows
+    rows: [...rows, exactOverviewRow]
   });
   assert.equal(authoredCalendarOverview?.source, "authored");
-  assert.equal(authoredCalendarOverview?.contentKey, "authored/week-overview/2026-08-02");
+  assert.equal(authoredCalendarOverview?.contentSource, "owner_approved");
+  assert.equal(authoredCalendarOverview?.contentKey, "authored/week-overview/test-fixture");
   assert.equal(
     authoredCalendarOverview?.weeklyHeadline,
     "Last Quarter Moon in Taurus"
@@ -240,14 +284,99 @@ try {
   assert.deepEqual(
     authoredCalendarOverview?.mainShifts.map((event) => event.title),
     [
-      "Chiron stations retrograde",
       "Last Quarter Moon in Taurus",
       "Venus enters Libra",
       "Sun trine Saturn"
     ],
-    "Main shifts must use calculated event titles in chronological order."
+    "Main shifts must exclude the preceding Sunday and keep in-range events chronological."
   );
   assert.equal(authoredCalendarOverview?.mainEvent?.title, "Last Quarter Moon in Taurus");
+  assert.deepEqual(authoredCalendarOverview?.dateRange, {
+    start: "2026-08-03",
+    end: "2026-08-09"
+  });
+  assert.deepEqual(
+    authoredCalendarOverview?.keyShiftIds,
+    authoredCalendarOverview?.mainShifts.map((event) => event.id)
+  );
+  assert.equal(
+    weekly.calendarCopySimilarity(
+      "The deadline works only because one person is expected to stay late.",
+      "The deadline works only because one person is expected to stay late."
+    ),
+    1
+  );
+  assert.equal(
+    weekly.calendarAdjacentCopyIsDistinct(
+      "Your mind may feel busier because you are trying to think your way out of what needs to be felt.",
+      "Your mind might be racing because you are trying to think your way out of what you need to feel."
+    ),
+    false,
+    "Adjacent Moon cards must reject the repeated thinking-to-avoid-feeling diagnosis."
+  );
+  assert.equal(
+    weekly.calendarAdjacentCopyIsDistinct(
+      "A deadline becomes visible. Good for review work. You're allowed to ask for time.",
+      "The cost becomes visible. Good for planning. You're allowed to change the scope."
+    ),
+    false,
+    "Adjacent Moon cards must reject identical list and permission-line closing formulas."
+  );
+  assert.equal(
+    weekly.calendarAdjacentCopyIsDistinct(
+      "Impatience is information. Check which answer is actually missing.",
+      "The practical cost becomes clearer once the budget is written down."
+    ),
+    true
+  );
+  const duplicateOverviewRejected = weekly.resolveCalendarWeeklyOverview({
+    weekStart: "2026-08-03",
+    weekEnd: "2026-08-09",
+    events: currentWeekEvents,
+    dailyCopy: ["A complete owner-approved weekly overview fixture."],
+    rows: [...rows, exactOverviewRow]
+  });
+  assert.notEqual(
+    duplicateOverviewRejected?.contentKey,
+    exactOverviewRow.contentKey,
+    "A weekly overview that substantially duplicates a daily card must fail closed to the reviewed fallback."
+  );
+
+  const rankedLimit = weekly.calendarWeeklyMainShifts([
+    ...currentWeekEvents,
+    {
+      ...currentWeekEvents[3],
+      id: "mercury-mars-2026-08-08",
+      title: "Mercury sextile Mars",
+      startsAt: "2026-08-08T12:00:00.000Z",
+      dateKey: "2026-08-08",
+      planets: ["Mercury", "Mars"],
+      aspect: "sextile"
+    },
+    {
+      ...currentWeekEvents[3],
+      id: "venus-jupiter-2026-08-09",
+      title: "Venus sextile Jupiter",
+      startsAt: "2026-08-09T12:00:00.000Z",
+      dateKey: "2026-08-09",
+      planets: ["Venus", "Jupiter"],
+      aspect: "sextile"
+    },
+    {
+      ...currentWeekEvents[3],
+      id: "moon-mercury-2026-08-09",
+      title: "Moon trine Mercury",
+      startsAt: "2026-08-09T18:00:00.000Z",
+      dateKey: "2026-08-09",
+      planets: ["Moon", "Mercury"],
+      aspect: "trine"
+    }
+  ]);
+  assert.equal(rankedLimit.length, 6, "Key shifts use the governed six-item layout maximum.");
+  assert.ok(
+    rankedLimit.every((event) => event.title !== "Moon trine Mercury"),
+    "Ordinary Moon aspects must not displace more important weekly events."
+  );
   const authoredNarrativeShifts = weekly.calendarWeeklyNarrativeShifts(
     authoredCalendarOverview?.mainShifts ?? [],
     authoredCalendarOverview?.mainEvent
@@ -255,9 +384,9 @@ try {
   assert.deepEqual(
     authoredNarrativeShifts.map((event) => event.title),
     [
-      "Chiron stations retrograde",
       "Last Quarter Moon in Taurus",
-      "Venus enters Libra"
+      "Venus enters Libra",
+      "Sun trine Saturn"
     ],
     "The weekly narrative keeps an opening, turning point, and later shift in chronological order."
   );
@@ -266,7 +395,7 @@ try {
       authoredNarrativeShifts,
       authoredCalendarOverview?.weeklyHeadline ?? ""
     ),
-    "Chiron retrograde, Last Quarter Moon in Taurus, and Venus in Libra"
+    "Last Quarter Moon in Taurus, Venus in Libra, and Sun trine Saturn"
   );
   assert.deepEqual(
     weekly.calendarWeeklySupportingShifts(
@@ -277,9 +406,7 @@ try {
         authoredCalendarOverview?.weeklyHeadline ?? ""
       )
     ).map((event) => event.title),
-    [
-      "Sun trine Saturn"
-    ],
+    [],
     "Events interpreted in the weekly narrative are not repeated in the supporting list."
   );
 
@@ -361,14 +488,14 @@ try {
     dateKey: index === 0 ? "2026-08-01" : event.dateKey
   }));
   const timezoneStableOverview = weekly.resolveCalendarWeeklyOverview({
-    weekStart: "2026-08-02",
-    weekEnd: "2026-08-08",
+    weekStart: "2026-08-03",
+    weekEnd: "2026-08-09",
     events: timezoneShiftedEvents,
-    rows
+    rows: [...rows, exactOverviewRow]
   });
   assert.equal(
     timezoneStableOverview?.contentKey,
-    "authored/week-overview/2026-08-02",
+    "authored/week-overview/test-fixture",
     "A location-derived dateKey change must not rewrite engine event names or bypass valid authored copy."
   );
 
@@ -379,15 +506,12 @@ try {
     rows
   });
   assert.equal(crossMonthFallback?.source, "generated-fallback");
+  assert.equal(crossMonthFallback?.contentSource, "owner_authored");
   assert.equal(crossMonthFallback?.contentKey, "authored/week-opener/station");
   assert.match(crossMonthFallback?.weeklyHeadline ?? "", /Mercury stations retrograde in Leo/u);
   assert.doesNotMatch(crossMonthFallback?.weeklyHeadline ?? "", /plan|schedule/iu);
-  assert.match(crossMonthFallback?.weeklyOverview ?? "", /^Mercury stations retrograde in Leo/u);
-  assert.doesNotMatch(
-    `${crossMonthFallback?.weeklyHeadline}\n${crossMonthFallback?.weeklyOverview}`,
-    /A planet changes direction/iu,
-    "Generated station fallbacks must name the calculated station."
-  );
+  assert.match(crossMonthFallback?.weeklyOverview ?? "", /A planet changes direction/iu);
+  assert.equal(crossMonthFallback?.provenance.reviewStatus, "approved");
   assert.deepEqual(crossMonthFallback?.mainShifts.map((event) => event.title), [
     "Mercury stations retrograde"
   ]);
@@ -418,10 +542,10 @@ try {
     /getLunarCalendarMonth/u,
     "Weekly assembly must not calculate the 42-day visual calendar."
   );
-  assert.doesNotMatch(
+  assert.match(
     weeklySource,
     /includeTransitWindows/u,
-    "Weekly snapshots must not search unused sign and retrograde transit windows."
+    "Weekly snapshots must request governed station timing windows for house-specific station copy."
   );
   assert.match(
     weeklySource,
@@ -572,6 +696,49 @@ try {
     readerText,
     /\b(?:Saturn(?: Rx)? in Pisces|Uranus in Taurus|Jupiter in Cancer)\b/u,
     "Retired sky positions must never leak into the Jul 29 per-rising card."
+  );
+
+  const quarterMoonWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-quarter-moon-fixture",
+    natalSky,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-08-03T16:00:00Z")
+  });
+  assert.equal(quarterMoonWeek.weekStart, "2026-08-03");
+  assert.equal(quarterMoonWeek.weekEnd, "2026-08-09");
+  assert.notEqual(
+    quarterMoonWeek.weekType,
+    "lunation",
+    "A quarter Moon must not classify the personal write-up as a New/Full Moon week."
+  );
+  assert.equal(
+    quarterMoonWeek.macro,
+    undefined,
+    "A quarter Moon must not select a Full Moon macro article."
+  );
+  assert.doesNotMatch(
+    [
+      quarterMoonWeek.horoscope.headline,
+      quarterMoonWeek.horoscope.driverLabel,
+      quarterMoonWeek.horoscope.body
+    ].join("\n"),
+    /Taurus Full Moon|Full Moon in Taurus/iu,
+    "The Aug 3-9 write-up must not relabel the Last Quarter Moon in Taurus as a Full Moon."
+  );
+  assert.match(
+    quarterMoonWeek.horoscope.headline,
+    /Weekly Moon: Aries/u,
+    "The Monday-Sunday fixture must not pull the preceding Sunday's Chiron station into the week."
+  );
+  assert.doesNotMatch(
+    [
+      quarterMoonWeek.horoscope.headline,
+      quarterMoonWeek.horoscope.driverLabel,
+      quarterMoonWeek.horoscope.body
+    ].join("\n"),
+    /Chiron stations retrograde/u,
+    "A station outside the local Monday-Sunday boundary must stay outside the weekly reading."
   );
 
   const mondaySky = await ephemeris.getAstrodienstSky(
