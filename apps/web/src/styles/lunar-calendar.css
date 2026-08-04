@@ -1302,7 +1302,6 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .lunar-moon-disc {
-  --moon-shadow-edge: color-mix(in srgb, var(--lunar-moon-dark) 78%, var(--lunar-moon-dark-edge));
   position: relative;
   display: inline-block;
   width: 36px;

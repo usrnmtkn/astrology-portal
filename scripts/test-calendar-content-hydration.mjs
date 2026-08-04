@@ -210,6 +210,7 @@ const appSource = read("apps/web/src/App.tsx");
 const routeSource = read("apps/web/src/routes/CalendarRoute.tsx");
 const calendarSource = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const calendarCss = read("apps/web/src/styles/lunar-calendar.css");
+const themeCss = read("apps/web/src/styles/theme.css");
 const bundledSkyCore = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"));
 const venusLibraIngress = bundledSkyCore.hookRows.find(
   (row) => row.contentKey === "fallback-hook/sky-event/ingress/venus/libra"
@@ -357,6 +358,16 @@ assert.match(
   calendarCss,
   /\.lunar-weekly-day \{[\s\S]*?scroll-margin-top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 88px\);/u,
   "Jump-to-day scrolling must clear both the global navigation and sticky week selector."
+);
+assert.match(
+  themeCss,
+  /--lunar-moon-shadow-bg:[\s\S]*?color-mix\(in srgb, var\(--lunar-moon-dark\) 78%, var\(--lunar-moon-dark-edge\)\);/u,
+  "The Moon phase shadow token must resolve independently so waxing and waning masks remain visible."
+);
+assert.doesNotMatch(
+  themeCss,
+  /--lunar-moon-shadow-bg:[\s\S]*?var\(--moon-shadow-edge\)/u,
+  "A root Moon token must not depend on a component-local custom property."
 );
 assert.match(
   calendarCss,

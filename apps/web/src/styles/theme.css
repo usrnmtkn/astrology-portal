@@ -186,7 +186,7 @@
     radial-gradient(circle at 48% 54%, var(--color-moon-phase-light), #b79c57 74%);
   --lunar-moon-shadow-bg:
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04), transparent 44%),
-    var(--moon-shadow-edge);
+    color-mix(in srgb, var(--lunar-moon-dark) 78%, var(--lunar-moon-dark-edge));
   --lunar-moon-overlay-bg:
     radial-gradient(circle at 36% 38%, rgba(72, 57, 26, 0.16), transparent 8%),
     radial-gradient(circle at 58% 58%, rgba(72, 57, 26, 0.12), transparent 10%),
