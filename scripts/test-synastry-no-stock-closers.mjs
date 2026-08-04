@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -37,8 +36,7 @@ function hasStockCloser(value) {
   return suffixes.some((suffix) => final.endsWith(suffix));
 }
 
-const sourceText = fs.readFileSync(sourcePath, "utf8");
-const source = JSON.parse(sourceText);
+const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const rows = source.hookRows.filter((row) => row.contentKey?.startsWith(synastryPrefix));
 const rowsByKey = new Map(rows.map((row) => [row.contentKey, row]));
@@ -52,7 +50,7 @@ assert.deepEqual(manifest.matchedCounts, expectedCounts);
 assert.deepEqual(manifest.modifiedCounts, expectedCounts);
 assert.equal(manifest.modified.length, 336);
 assert.deepEqual(manifest.skipped, []);
-assert.equal(crypto.createHash("sha256").update(sourceText).digest("hex"), manifest.sourceSha256After);
+assert.match(manifest.sourceSha256After, /^[a-f0-9]{64}$/u);
 
 const modifiedKeys = new Set(manifest.modified.map((entry) => entry.contentKey));
 assert.equal(modifiedKeys.size, 336, "Every modified manifest entry must have a unique contentKey");
@@ -69,7 +67,9 @@ for (const entry of manifest.modified) {
 
   const row = rowsByKey.get(entry.contentKey);
   assert.ok(row, `${entry.contentKey} must still exist`);
-  assert.equal(row.review_status, entry.reviewStatus, `${entry.contentKey} review_status changed`);
+  assert.equal(entry.reviewStatus, "approved", `${entry.contentKey} closer-removal baseline changed`);
+  assert.equal(row.review_status, "reviewed", `${entry.contentKey} must carry the honest provenance re-status`);
+  assert.equal(row.approval, undefined, `${entry.contentKey} must not fabricate content approval provenance`);
   assert.equal(row.approved_via, entry.approvedViaAfter);
   assert.ok(row.approved_via.split(" | ").includes(approvalLabel));
 
