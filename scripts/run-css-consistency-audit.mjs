@@ -5,7 +5,10 @@ import path from "node:path";
 import process from "node:process";
 
 const root = process.cwd();
-const cssRoot = path.join(root, "apps/web/src");
+const cssRoots = [
+  path.join(root, "apps/web/src"),
+  path.join(root, "apps/admin/src")
+];
 const reportDir = path.join(root, "test-results/css-audit");
 const reportPath = path.join(reportDir, "latest.md");
 
@@ -80,6 +83,7 @@ const validEyebrowValues = {
 };
 
 const spacingDeclarationPattern = /\b(?:margin|margin-(?:top|right|bottom|left|inline|block)|padding|padding-(?:top|right|bottom|left|inline|block))\s*:\s*([^;]+)/g;
+const gapDeclarationPattern = /(?:^|[;{])\s*(?:gap|row-gap|column-gap)\s*:\s*([^;]+)/gm;
 const fontSizeDeclarationPattern = /\bfont-size\s*:\s*([^;]+)/g;
 const fontWeightDeclarationPattern = /\bfont-weight\s*:\s*([^;]+)/g;
 const lineHeightDeclarationPattern = /\bline-height\s*:\s*([^;]+)/g;
@@ -267,7 +271,7 @@ function topFilesFor(declarationFindings, limit = 12) {
     .slice(0, limit);
 }
 
-const files = await collectCssFiles(cssRoot);
+const files = (await Promise.all(cssRoots.map(collectCssFiles))).flat();
 files.sort((first, second) => {
   const firstName = path.basename(first);
   const secondName = path.basename(second);
@@ -335,6 +339,7 @@ for (const filePath of files) {
   }
 
   spacingFindings.push(...collectDeclarationFindings({ pattern: spacingDeclarationPattern, source, relative }));
+  spacingFindings.push(...collectDeclarationFindings({ pattern: gapDeclarationPattern, source, relative }));
   fontSizeFindings.push(...collectDeclarationFindings({ pattern: fontSizeDeclarationPattern, source, relative }));
   fontWeightFindings.push(...collectFontWeightFindings({ source, relative }));
   lineHeightFindings.push(...collectLineHeightFindings({ source, relative }));
@@ -483,41 +488,41 @@ lines.push(
   "",
   ...topContainerFiles.map((entry) => `- ${entry.file}: ${entry.count} untokenized container boundaries`),
   "",
-  "## First 40 Hardcoded Spacing Findings",
+  "## Hardcoded Spacing Findings",
   "",
-  ...spacingFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...spacingFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Hardcoded Font Size Findings",
+  "## Hardcoded Font Size Findings",
   "",
-  ...fontSizeFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...fontSizeFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Hardcoded Font Weight Findings",
+  "## Hardcoded Font Weight Findings",
   "",
-  ...fontWeightFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...fontWeightFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Hardcoded Line Height Findings",
+  "## Hardcoded Line Height Findings",
   "",
-  ...lineHeightFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...lineHeightFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Hardcoded Radius Findings",
+  "## Hardcoded Radius Findings",
   "",
-  ...radiusFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...radiusFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Hardcoded Shadow Findings",
+  "## Hardcoded Shadow Findings",
   "",
-  ...shadowFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...shadowFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Hardcoded Tracking Findings",
+  "## Hardcoded Tracking Findings",
   "",
-  ...trackingFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...trackingFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Raw Component Surface Findings",
+  "## Raw Component Surface Findings",
   "",
-  ...surfaceFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
+  ...surfaceFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.declaration}\``),
   "",
-  "## First 40 Untokenized Container Findings",
+  "## Untokenized Container Findings",
   "",
-  ...containerFindings.slice(0, 40).map((finding) => `- ${finding.file}:${finding.line} \`${finding.selector}\` → \`${finding.declaration}\``),
+  ...containerFindings.map((finding) => `- ${finding.file}:${finding.line} \`${finding.selector}\` → \`${finding.declaration}\``),
   "",
   "## Recommended Fix Order",
   "",
@@ -545,3 +550,19 @@ Hardcoded non-token letter-spacing declarations: ${trackingFindings.length}
 Raw component surface declarations: ${surfaceFindings.length}
 Untokenized container boundaries: ${containerFindings.length}
 Report: ${reportPath}`);
+
+const blockingFindingCount = findings.length
+  + spacingFindings.length
+  + fontSizeFindings.length
+  + fontWeightFindings.length
+  + lineHeightFindings.length
+  + radiusFindings.length
+  + shadowFindings.length
+  + trackingFindings.length
+  + surfaceFindings.length
+  + containerFindings.length;
+
+if (blockingFindingCount > 0) {
+  console.error(`CSS consistency audit failed with ${blockingFindingCount} blocking finding(s).`);
+  process.exitCode = 1;
+}

@@ -20,9 +20,23 @@ Repeated content cards use `--card-bg`, `--card-border`, `--card-radius`, and `-
 
 Avoid adding one-off `box-shadow` values in feature CSS. Add or reuse a semantic shadow token in `theme.css` first.
 
+## Enforcement
+
+`npm run qa:css-audit` is a blocking quality gate for the reader and admin apps. It verifies that:
+
+- every referenced custom property resolves or has an explicit fallback;
+- component CSS and TypeScript contain no raw color literals outside the designated token sources;
+- spacing (including `gap`, `row-gap`, and `column-gap`), type sizes and weights, line heights, radii, shadows, tracking, surfaces, and container boundaries use tokens;
+- the shared eyebrow contract remains consistent; and
+- light and dark text tokens meet the configured contrast threshold.
+
+Reader primitives belong in `apps/web/src/styles/theme.css`; admin color primitives belong in `apps/admin/src/admin-tokens.css`. Component styles should consume semantic or shared primitive tokens rather than introducing local literals.
+
 ## Spacing And Cards
 
 Use the shared spacing primitives before local values:
+
+The `--gap-*` scale covers layout gaps, including the few relative `em` values needed for inline typographic alignment. Do not add raw numeric gap declarations in component styles.
 
 | Token / Use | Value |
 | --- | ---: |

@@ -87,7 +87,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: var(--gap-14);
   margin: 0 0 clamp(28px, 3vw, 38px);
   color: var(--muted);
   font-family: var(--font-body);
@@ -106,7 +106,7 @@
 .article-eyebrow__glyphs {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: var(--gap-9);
   color: var(--ink);
   font-family: var(--font-glyph);
   font-size: var(--type-body-size);
@@ -181,7 +181,7 @@
   font-size: clamp(1.35rem, 2.5vw, 1.8rem);
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-tight);
-  line-height: 1.2;
+  line-height: var(--leading-card-title);
   text-wrap: balance;
 }
 
@@ -231,8 +231,8 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .article-lens-hint {
-  border-color: color-mix(in srgb, var(--line) 72%, white 8%);
-  background: color-mix(in srgb, var(--card-bg) 88%, white 5%);
+  border-color: color-mix(in srgb, var(--line) 72%, var(--color-white) 8%);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--color-white) 5%);
 }
 
 .article-section p,
@@ -257,7 +257,7 @@
   display: grid;
   gap: var(--sp-2);
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: var(--space-5);
   color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--type-body-size);
@@ -325,7 +325,7 @@
 }
 
 :is(.theme-dark, [data-theme="dark"]) .sky-detail-intro-section {
-  background: color-mix(in srgb, var(--card-bg) 84%, white 4%);
+  background: color-mix(in srgb, var(--card-bg) 84%, var(--color-white) 4%);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 54%, transparent);
 }
 
@@ -533,12 +533,12 @@
 
   .article-eyebrow {
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--gap-10);
     margin-bottom: var(--space-6);
   }
 
   .article-tldr {
-    gap: 18px;
+    gap: var(--gap-18);
     margin-top: var(--space-6);
   }
 
@@ -627,19 +627,19 @@
 
 .sky-detail-drilldown-body {
   display: grid;
-  gap: 16px;
+  gap: var(--gap-16);
   margin-top: var(--space-4);
 }
 
 .sky-detail-drilldown-body dl {
   display: grid;
-  gap: 12px;
+  gap: var(--gap-12);
   margin: 0;
 }
 
 .sky-detail-drilldown-body dl > div {
   display: grid;
-  gap: 4px;
+  gap: var(--gap-4);
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius-sm);
   padding: calc(var(--space-3) + var(--space-1) / 2);
@@ -656,7 +656,7 @@
 
 .sky-detail-drilldown-body dd {
   display: grid;
-  gap: 4px;
+  gap: var(--gap-4);
   margin: 0;
   color: var(--card-body-color);
   font-family: var(--font-body);
@@ -676,11 +676,11 @@
   display: grid;
   max-height: none;
   overflow: visible;
-  gap: 16px;
+  gap: var(--gap-16);
 }
 
 .ro-screen {
-  gap: 12px;
+  gap: var(--gap-12);
 }
 
 .ro-group {
@@ -711,7 +711,7 @@
 
 .ro-sum {
   display: grid;
-  gap: 14px;
+  gap: var(--gap-14);
   padding: var(--space-5) calc(var(--space-5) + var(--space-1) / 2);
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
@@ -723,7 +723,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--gap-16);
 }
 
 .ro-sum-n {
@@ -784,7 +784,7 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: var(--gap-14);
   width: 100%;
   padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
   border: 1px solid var(--card-border);
@@ -797,7 +797,7 @@
 
 .ro-more-copy {
   display: grid;
-  gap: 4px;
+  gap: var(--gap-4);
   min-width: 0;
 }
 
@@ -853,7 +853,7 @@
 .ro-screen .sky-pl-title {
   flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--sp-1) 14px;
+  gap: var(--sp-1) var(--gap-14);
   font-family: var(--font-display);
   font-size: var(--retrograde-row-title-size);
   font-weight: var(--weight-regular);
@@ -929,14 +929,14 @@
 .retro-main {
   display: grid;
   min-width: 0;
-  gap: 12px;
+  gap: var(--gap-12);
 }
 
 .retro-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--gap-24);
 }
 
 .retro-top strong {
@@ -1057,7 +1057,7 @@
 
 .placement-section .planet-placement-row__meta {
   flex-wrap: wrap;
-  gap: var(--sp-1) 10px;
+  gap: var(--sp-1) var(--gap-10);
 }
 
 .placement-section .planet-placement-row__description {
@@ -1199,11 +1199,11 @@
 }
 
 .sky-loading-card__main {
-  gap: 12px;
+  gap: var(--gap-12);
 }
 
 .sky-loading-card__body {
-  gap: 12px;
+  gap: var(--gap-12);
   margin-top: var(--space-2);
 }
 
@@ -1297,7 +1297,7 @@
 .sky-today-ledger__head p {
   display: grid;
   justify-items: end;
-  gap: 4px;
+  gap: var(--gap-4);
   margin: 0;
   color: var(--muted);
   font-family: var(--font-body);
@@ -1316,7 +1316,7 @@
 .sky-today-ledger__row {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: var(--gap-13);
   padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-5);
 }
 
@@ -1364,7 +1364,7 @@
   display: grid;
   flex: 1 1 auto;
   min-width: 0;
-  gap: 3px;
+  gap: var(--gap-3);
   color: var(--ink);
   font-family: var(--font-body);
   line-height: var(--leading-title);
@@ -1414,7 +1414,7 @@
 .sky-today-ledger__foot {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: var(--gap-13);
   width: 100%;
   border-right: 0;
   border-bottom: 0;

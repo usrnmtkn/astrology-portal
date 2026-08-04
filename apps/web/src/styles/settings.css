@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--gap-20);
 }
 
 .settings-header h1,
@@ -58,7 +58,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
+  gap: var(--gap-20);
   padding: var(--row-padding-y) var(--row-padding-x);
   border-bottom: 1px solid var(--card-border);
   background: var(--card-bg);
@@ -130,7 +130,7 @@ button.settings-signout-row {
   grid-auto-columns: minmax(0, auto);
   align-items: center;
   justify-content: end;
-  gap: 10px;
+  gap: var(--gap-10);
   min-width: 0;
 }
 
@@ -182,7 +182,7 @@ button.settings-signout-row {
 .settings-row-copy {
   display: grid;
   min-width: 0;
-  gap: 5px;
+  gap: var(--gap-5);
 }
 
 .settings-row-title {
@@ -216,7 +216,7 @@ button.settings-signout-row {
 
 .settings-blocked-copy {
   display: grid;
-  gap: 3px;
+  gap: var(--gap-3);
   min-width: 0;
 }
 
@@ -359,7 +359,7 @@ button.settings-signout-row {
 .account-delete-confirm-button {
   border: 1px solid var(--danger);
   background: var(--danger);
-  color: #fff;
+  color: var(--solid-contrast);
 }
 
 .account-delete-confirm-button:disabled {

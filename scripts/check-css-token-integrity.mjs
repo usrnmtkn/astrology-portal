@@ -5,7 +5,8 @@ import path from "node:path";
 import process from "node:process";
 
 const repoRoot = process.cwd();
-const sourceRoot = path.join(repoRoot, "apps/web/src");
+const webSourceRoot = path.join(repoRoot, "apps/web/src");
+const sourceRoots = [webSourceRoot, path.join(repoRoot, "apps/admin/src")];
 const sourceExtensions = new Set([".css", ".js", ".jsx", ".ts", ".tsx"]);
 
 async function collectSourceFiles(directory) {
@@ -90,6 +91,23 @@ function customPropertyUsages(source, file) {
   return usages;
 }
 
+function hardcodedColorUsages(source, file) {
+  if (file.endsWith("/styles/theme.css") || file.endsWith("/admin-tokens.css")) return [];
+
+  const usages = [];
+  const colorPattern = /#[\da-f]{3,8}\b|(?:rgb|hsl)a?\(|okl(?:ch|ab)\(/giu;
+
+  for (const match of source.matchAll(colorPattern)) {
+    usages.push({
+      file,
+      line: lineNumber(source, match.index),
+      value: match[0]
+    });
+  }
+
+  return usages;
+}
+
 function blockContents(source, selector) {
   const selectorIndex = source.indexOf(selector);
   const openingIndex = source.indexOf("{", selectorIndex);
@@ -152,7 +170,7 @@ function contrastRatio(firstHex, secondHex) {
 }
 
 async function textContrastFindings() {
-  const themeSource = await readFile(path.join(sourceRoot, "styles/theme.css"), "utf8");
+  const themeSource = await readFile(path.join(webSourceRoot, "styles/theme.css"), "utf8");
   const lightTokens = tokenValues(blockContents(themeSource, ":root"));
   const darkTokens = new Map([
     ...lightTokens,
@@ -179,12 +197,35 @@ async function textContrastFindings() {
     }
   }
 
+  const adminTokenSource = await readFile(path.join(repoRoot, "apps/admin/src/admin-tokens.css"), "utf8");
+  const adminSource = await readFile(path.join(repoRoot, "apps/admin/src/admin.css"), "utf8");
+  const adminTokens = new Map([
+    ...tokenValues(blockContents(adminTokenSource, ":root")),
+    ...tokenValues(blockContents(adminSource, ".admin-dashboard"))
+  ]);
+  const adminSurface = resolveHexColor("--admin-bg", adminTokens);
+
+  for (const token of ["--admin-ink", "--admin-muted"]) {
+    const foreground = resolveHexColor(token, adminTokens);
+
+    if (!foreground || !adminSurface) {
+      findings.push(`admin ${token}: color could not be resolved`);
+      continue;
+    }
+
+    const ratio = contrastRatio(foreground, adminSurface);
+    if (ratio < 4.5) {
+      findings.push(`admin ${token}: ${ratio.toFixed(2)}:1 is below 4.5:1`);
+    }
+  }
+
   return findings;
 }
 
-const files = await collectSourceFiles(sourceRoot);
+const files = (await Promise.all(sourceRoots.map(collectSourceFiles))).flat();
 const definitions = new Set();
 const usages = [];
+const hardcodedColors = [];
 
 for (const file of files.sort()) {
   const source = await readFile(file, "utf8");
@@ -194,6 +235,7 @@ for (const file of files.sort()) {
   }
 
   usages.push(...customPropertyUsages(source, path.relative(repoRoot, file)));
+  hardcodedColors.push(...hardcodedColorUsages(source, path.relative(repoRoot, file)));
 }
 
 const unresolved = usages.filter((usage) => (
@@ -210,6 +252,7 @@ console.log(`Custom properties defined: ${definitions.size}`);
 console.log(`Custom property references: ${usages.length}`);
 console.log(`Optional fallback hooks: ${optionalHooks.size}`);
 console.log(`Unresolved references without fallbacks: ${unresolved.length}`);
+console.log(`Hardcoded colors outside designated token files: ${hardcodedColors.length}`);
 console.log(`Text contrast failures: ${contrastFindings.length}`);
 
 if (unresolved.length > 0) {
@@ -229,6 +272,14 @@ if (contrastFindings.length > 0) {
   }
 }
 
-if (unresolved.length > 0 || contrastFindings.length > 0) process.exit(1);
+if (hardcodedColors.length > 0) {
+  console.error("\nHardcoded colors outside designated token files:");
+
+  for (const usage of hardcodedColors) {
+    console.error(`- ${usage.file}:${usage.line} ${usage.value}`);
+  }
+}
+
+if (unresolved.length > 0 || hardcodedColors.length > 0 || contrastFindings.length > 0) process.exit(1);
 
 console.log("CSS token integrity passed.");

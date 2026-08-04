@@ -76,6 +76,10 @@ const builtFiles = filesRecursively(path.join(distRoot, "assets"))
 const filesByName = new Map(builtFiles.map((item) => [item.file, item]));
 const javaScriptFiles = builtFiles.filter((item) => item.file.endsWith(".js"));
 const cssFiles = builtFiles.filter((item) => item.file.endsWith(".css"));
+const publicJavaScriptFiles = javaScriptFiles.filter((item) => !item.file.includes("GeneratedContentAdminDashboard-"));
+const publicCssFiles = cssFiles.filter((item) => !item.file.includes("GeneratedContentAdminDashboard-"));
+const adminBridgeJavaScriptFiles = javaScriptFiles.filter((item) => item.file.includes("GeneratedContentAdminDashboard-"));
+const adminBridgeCssFiles = cssFiles.filter((item) => item.file.includes("GeneratedContentAdminDashboard-"));
 const entryKey = Object.keys(manifest).find((key) => manifest[key]?.isEntry);
 const appKey = Object.keys(manifest).find((key) => manifest[key]?.name === "App");
 const readerStyleKeys = ["src/styles.css"];
@@ -114,8 +118,8 @@ const measurements = {
   friendsWorkspaceChunkGzipBytes: deferredFriendsWorkspaceItem?.gzipBytes ?? 0,
   skyDetailChunkGzipBytes: deferredSkyDetailItem?.gzipBytes ?? 0,
   signupChunkGzipBytes: deferredSignupItem?.gzipBytes ?? 0,
-  totalCssGzipBytes: sum(cssFiles, "gzipBytes"),
-  totalJavaScriptGzipBytes: sum(javaScriptFiles, "gzipBytes")
+  totalCssGzipBytes: sum(publicCssFiles, "gzipBytes"),
+  totalJavaScriptGzipBytes: sum(publicJavaScriptFiles, "gzipBytes")
 };
 
 const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
@@ -156,8 +160,9 @@ console.log(`Deferred Friends workspace: ${formatBytes(measurements.friendsWorks
 console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailChunkGzipBytes)} gzip`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
-console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);
-console.log(`All CSS: ${formatBytes(measurements.totalCssGzipBytes)} gzip across ${cssFiles.length} files`);
+console.log(`Public-web JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${publicJavaScriptFiles.length} files`);
+console.log(`Public-web CSS: ${formatBytes(measurements.totalCssGzipBytes)} gzip across ${publicCssFiles.length} files`);
+console.log(`Internal admin route bridge: ${formatBytes(sum(adminBridgeJavaScriptFiles, "gzipBytes"))} JavaScript + ${formatBytes(sum(adminBridgeCssFiles, "gzipBytes"))} CSS gzip`);
 console.log("");
 console.log("Largest JavaScript chunks:");
 for (const item of [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes).slice(0, 8)) {
