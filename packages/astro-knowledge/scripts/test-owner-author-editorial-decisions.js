@@ -210,6 +210,12 @@ function main() {
   assert(new Set(packet.ownerPassages.map((entry) => entry.sourceArticleId)).size >= 3);
   assert(packet.ownerPassages.every((entry) => entry.authorityClass === "owner_authored_final"));
   assert(packet.ownerPassages.every((entry) => !/\b(?:people|you|your|yours|yourself|yourselves|leak|leaks|leaked|leaking)\b/iu.test(entry.text)));
+
+  const legacyGlobalBans = JSON.parse(fs.readFileSync(path.join(packageRoot, "voice", "banned-words.json"), "utf8")).bannedWords;
+  assert(!legacyGlobalBans.some((entry) => /^(?:leak|leaks|leaked|leaking)$/iu.test(typeof entry === "string" ? entry : entry.term)), "CF-018 must not retroactively invalidate historical data through the legacy global validator");
+  const cf018 = result.compiled.artifacts.linter.rules.find((entry) => entry.id === "CF-018");
+  assert(cf018, "CF-018 must remain active in the generated editorial linter policy");
+  assert.deepStrictEqual(cf018.mechanical.terms, ["leak", "leaks", "leaked", "leaking"]);
   assert(packet.ownerPassages.some((entry) => entry.affinity === "same_sign" && entry.sourcePath.includes("libra-season-autumn-equinox")));
   assert(packet.ownerPassages.some((entry) => entry.affinity === "same_planet"));
   assert.strictEqual(packet.formatExemplars.length, 4);
