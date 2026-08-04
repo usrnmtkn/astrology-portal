@@ -1,0 +1,19 @@
+{
+  "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1-exact-approval",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "sky-placement",
+  "planet": "mercury",
+  "sign": "pisces",
+  "articleBeat": "full_article",
+  "ownerStatement": "With the three owner-directed line edits applied, I explicitly approve the exact wording of sky-placement-pilot-mercury-pisces-owner-line-edit-v1, sky-placement-pilot-mars-libra-owner-line-edit-v1, and sky-placement-pilot-uranus-gemini-owner-line-edit-v1 as owner-approved fallback articles for their placement pages. Serving and wiring remain separate.",
+  "before": "The lint-clean Mercury in Pisces owner-revised candidate before the final two owner-directed prose polishes.",
+  "beforeIsRejected": false,
+  "after": "Opening: Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.\n\nTension: The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.\n\nDevelopment: Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.\n\nClose: Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.\n\nTry this:\n- We can reread one confusing message and copy the exact sentence that is shaping our interpretation.\n- We can send “Still deciding” instead of another maybe that could be read as yes or no.",
+  "whatChanged": "Applied the two final owner-directed Mercury prose polishes, retained the approved scene, and recorded exact fallback-article approval without serving or wiring authority.",
+  "ownerReason": "The mixed-signals sequence holds and the final changes remove the remaining machine fingerprints.",
+  "failureTags": [],
+  "approvalScope": "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/sky-placement-writer-pilot-mercury-pisces-v1/owner-line-edited-candidate.json"
+  ]
+}

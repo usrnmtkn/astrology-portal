@@ -1,0 +1,31 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-writer-batch-1-corpus-warmth-revisions-v4-exact-approval",
+    "surface": "sky-placement-batch",
+    "articleBeat": "seven-full-continuous-fallback-articles",
+    "before": "The seven V4 warmth-revision candidates before the final Mars in Scorpio cut, Saturn in Aries cut, and optional Mercury in Virgo cadence cut.",
+    "beforeIsRejected": false,
+    "after": "Exact approved seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.json#articles (SHA-256 cdce0dc7b3bcfab0b1abecfa926f0c26c29e0104955b37f65f18626b14a333a0).",
+    "whatChanged": "Deleted the repeated trust sentence from Mars in Scorpio, ended Saturn in Aries at the owner's original 'It makes us human.' punch, and removed the near-identical 'ever would' cadence from the Mercury in Virgo close. No model or judge calls were made.",
+    "ownerReason": "The six corpus foundation lines landed; the final cuts remove repeated or diluted conclusions while preserving the exact approved batch.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.json",
+      "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.md",
+      "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4-lint.json"
+    ],
+    "provenance": "exact_wording_approval: With the two required owner-directed edits and the optional Mercury in Virgo cadence edit applied, I explicitly approve all seven V4 articles as owner-approved fallback articles for their placement pages, exact wording. Serving and wiring remain separate. The group-chat and benchmark warnings are waived as previously ruled.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "owner_approved_fallback_articles_for_placement_pages_serving_and_wiring_separate"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

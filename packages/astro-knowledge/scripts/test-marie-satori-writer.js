@@ -13,11 +13,11 @@ const { assertPacketQuotablesPassOutputBans, buildPacket, factStatusAllowsWritin
 const { assertRoutingMatch } = require("./sky-placement-writer-runtime.js");
 const { auditRecords } = require("./audit-sky-placement-writer-fixtures.js");
 const { audit } = require(path.join(skillRoot, "scripts", "audit-authorship.js"));
-const { approvalLevel, validatePayload } = require(path.join(skillRoot, "scripts", "record-owner-feedback.js"));
+const { approvalLevel, proposalFor, validatePayload } = require(path.join(skillRoot, "scripts", "record-owner-feedback.js"));
 const { lintArticle } = require(path.join(packageRoot, "scripts", "lint-placement-voice.js"));
 const { buildJudgePrompt } = require(path.join(packageRoot, "scripts", "judge-placement-voice.js"));
 const { buildReadinessReport } = require(path.join(packageRoot, "scripts", "audit-sky-placement-fallback-readiness.js"));
-const { candidateRow, deterministicChecks, judgeShape, parseArticle } = require(path.join(packageRoot, "scripts", "run-sky-placement-writer-sample.js"));
+const { candidateRow, deterministicChecks, judgeShape, lintShape, parseArticle } = require(path.join(packageRoot, "scripts", "run-sky-placement-writer-sample.js"));
 
 function main() {
   const index = buildIndex();
@@ -31,6 +31,16 @@ function main() {
   const calibrationV3 = index.entries.filter((entry) => entry.sourceId.startsWith("sky-placement-uranus-cancer-collective-owner-approval-candidate-v3:"));
   assert(calibrationV3.length >= 5);
   assert(calibrationV3.every((entry) => entry.authorityClass === "exact_owner_approved" && entry.ownerApproved && !entry.useAsPositiveVoiceEvidence));
+  for (const id of ["mercury-pisces", "mars-libra", "uranus-gemini"]) {
+    const recordId = `contrastive:sky-placement-pilot-${id}-owner-line-edit-v1-exact-approval`;
+    assert(!index.entries.some((entry) => entry.sourceId === `${recordId}:before`));
+    const approvedFallback = index.entries.find((entry) => entry.sourceId === `${recordId}:after`);
+    assert(approvedFallback);
+    assert.strictEqual(approvedFallback.authorityClass, "exact_owner_approved");
+    assert.strictEqual(approvedFallback.ownerApproved, true);
+    assert.strictEqual(approvedFallback.useAsPositiveVoiceEvidence, false);
+    assert.strictEqual(approvedFallback.useAsContextualEvidence, false);
+  }
 
   const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
   const requiredTags = [
@@ -96,6 +106,7 @@ function main() {
   assert.strictEqual(packet.structuralSlots.fallbackOutputShapeUnchanged, true);
   const cycleFacts = require(path.join(packageRoot, "data", "modifiers", "planet-cycle-facts.json"));
   assert.strictEqual(packet.structuralSlots.active.some((entry) => entry.id === "cycle-line"), factStatusAllowsWriting(cycleFacts.status));
+  assert.match(packet.structuralSlots.active.find((entry) => entry.id === "cycle-line").rule, /Write 'all twelve signs'; the word 'zodiac' is banned/u);
   assert(packet.structuralSlots.inactive.some((entry) => entry.id === "prior-sign-handoff"));
   assert(packet.structuralSlots.inactive.some((entry) => entry.id === "concurrent-events"));
   assert(!/PRIOR-SIGN-HANDOFF\n/u.test(renderModelInput(packet)));
@@ -104,6 +115,41 @@ function main() {
   assert(packet.formatExemplars.every((entry) => entry.authorityClass === "exact_owner_approved"));
   assert(packet.formatExemplars.every((entry) => entry.approvalScope === "voice_format_generation_evidence_only"));
   assert.strictEqual(packet.formatExemplarStatus, "owner_approved_voice_format_evidence");
+  assert.strictEqual(packet.ownerReferenceArticles.length, 1);
+  assert.strictEqual(packet.ownerReferenceArticles[0].id, "sky-placement-jupiter-libra-owner-merged-candidate-v1");
+  assert.strictEqual(packet.ownerReferenceArticles[0].authorityClass, "exact_owner_approved");
+  assert.strictEqual(packet.ownerReferenceArticles[0].approvalScope, "owner_reference_fallback_and_generation_evidence_for_sky_placement");
+  assert.match(packet.ownerReferenceArticles[0].article.tension, /being agreeable starts doing the work that honesty should be doing/u);
+  assert.match(renderModelInput(packet), /OWNER-APPROVED PLACEMENT REFERENCE/u);
+  assert.strictEqual(packet.ownerSelectedBenchmarks.length, 1);
+  assert.strictEqual(packet.ownerSelectedBenchmarks[0].id, "sky-placement-mars-aries-owner-selected-generation-benchmark-v1");
+  assert.strictEqual(packet.ownerSelectedBenchmarks[0].authorship, "assistant_generated_owner_selected");
+  assert.match(packet.ownerSelectedBenchmarks[0].benchmarkText, /waiting starts to feel worse than whatever happens next/u);
+  assert.match(renderModelInput(packet), /OWNER-SELECTED WRITING BENCHMARK/u);
+  assert.strictEqual(packet.ownerCorpusWarmthEvidence.id, "warmth-foundation-jupiter-libra-v1");
+  assert.strictEqual(packet.ownerCorpusWarmthEvidence.harvest_mode, "matched");
+  assert.strictEqual(packet.ownerCorpusWarmthEvidence.authorityClass, "owner_corpus_derived_foundation");
+  assert.strictEqual(packet.ownerCorpusWarmthEvidence.maxWarmthBeats, 1);
+  assert.deepStrictEqual(packet.ownerCorpusWarmthEvidence.sourceIds, ["owner-article:weekly-horoscopes-sept-7-14-2020:p032"]);
+  assert.match(renderModelInput(packet), /OWNER-CORPUS WARMTH HARVEST/u);
+  assert.match(renderModelInput(packet), /Keeping the peace can cost us our voice/u);
+  const noWarmthPacket = buildPacket({
+    planet: "mercury",
+    sign: "aries",
+    requestedBeat: "full_article",
+    emphasisBeat: "turn",
+    task: "Write one complete Current Sky article for Mercury in Aries."
+  });
+  assert.strictEqual(noWarmthPacket.ownerCorpusWarmthEvidence.harvest_mode, "none_found");
+  assert.strictEqual(noWarmthPacket.ownerCorpusWarmthEvidence.maxWarmthBeats, 0);
+  assert.deepStrictEqual(noWarmthPacket.ownerCorpusWarmthEvidence.sourceIds, []);
+  assert.strictEqual(noWarmthPacket.ownerCorpusWarmthEvidence.editorial_flags[0].blocking, false);
+  assert.match(renderModelInput(noWarmthPacket), /Missing warmth is acceptable|plain register is correct|Keep the register plain/iu);
+  assert.match(buildJudgePrompt({ hook: "Mercury in Aries names the answer.", lived: "The reply comes quickly.", turn: "The cost is a rushed decision." }, {
+    planet: "mercury",
+    sign: "aries",
+    deterministicResults: { ownerCorpusWarmthEvidence: noWarmthPacket.ownerCorpusWarmthEvidence }
+  }), /harvest_mode=none_found[\s\S]*Do not require or penalize the absence/iu);
   assert(packet.voiceDevices.selected.length <= 2);
   assert.strictEqual(packet.voiceDevices.maxPerArticle, 2);
   assert.strictEqual(packet.movesExemplar.status, "owner_approved_voice_format_evidence");
@@ -116,6 +162,7 @@ function main() {
   assert.deepStrictEqual(packet.surfaceRequirements.engineOwnedSlots, [
     "headline",
     "fact_line",
+    "cycle_fact_line",
     "aspect_insert",
     "entryDate",
     "exitDate",
@@ -127,26 +174,46 @@ function main() {
   ]);
   assert.match(packet.surfaceRequirements.slotRequirements.opening, /ordinary evidence/);
   assert.match(packet.surfaceRequirements.slotRequirements.tension, /central tension/);
-  assert.match(packet.surfaceRequirements.slotRequirements.development, /same tension/);
-  assert.match(packet.surfaceRequirements.slotRequirements.close, /realistic choice/);
+  assert.match(packet.surfaceRequirements.slotRequirements.development, /transit's pressure/);
+  assert.match(packet.surfaceRequirements.slotRequirements.close, /lands inside the consequence/);
   assert.match(packet.surfaceRequirements.slotRequirements.try_this, /Two actions/);
   assert.strictEqual(packet.verifiedAstrology.validation.complete, true);
   assert.strictEqual(packet.verifiedAstrology.validation.failures.length, 0);
   assert(packet.verifiedAstrology.supportedDomains.includes("fairness"));
+  assert(packet.verifiedAstrology.supportedDomains.includes("connections"));
+  assert(packet.verifiedAstrology.supportedDomains.includes("friendships"));
+  assert(packet.verifiedAstrology.supportedDomains.includes("collaborations"));
+  assert(packet.verifiedAstrology.supportedDomains.includes("alliances"));
+  assert(packet.verifiedAstrology.supportedDomains.includes("agreements"));
+  assert.match(packet.verifiedAstrology.collectiveGift, /Romantic partnership is one expression[^.]*not its default subject/u);
+  assert.match(packet.verifiedAstrology.scenarioPolicy, /Do not default to a romantic couple/u);
   assert(packet.verifiedAstrology.unsupportedDomainWarnings.some((warning) => /career/u.test(warning)));
   assert.match(packet.verifiedAstrology.sourceRegisterBoundary, /Never reproduce their person/u);
   assert(packet.verifiedAstrology.sourcePassages.every((entry) => /Do not reproduce second-person/u.test(entry.personBoundary)));
-  assert.match(packet.verifiedAstrology.scenarioPolicy, /scene may be invented; the astrology may not/i);
+  assert.match(packet.verifiedAstrology.scenarioPolicy, /no single invented scenario may carry the whole card/i);
+  assert.match(packet.verifiedAstrology.scenarioPolicy, /moments may be invented; the astrology may not/i);
   assert.strictEqual(packet.routing.laneId, "writer:sky-placement");
   assert.strictEqual(packet.routing.requestedModel, "gpt-5.6-sol");
   assert.strictEqual(packet.routing.requestedReasoningEffort, "xhigh");
   assert.doesNotMatch(JSON.stringify(packet), /contrastiveEdits|negativeExamples|failureTags|currentCandidate|centralContradiction|candidateLanguageRanking/);
   assert.match(packet.writerPrompt, /attached owner-authored Marie Satori passages/);
   assert.match(packet.writerPrompt, /selected by placement affinity/);
-  assert.match(packet.writerPrompt, /Create one recognizable lived sequence from the verified astrology/);
+  assert.match(packet.writerPrompt, /Keep the transit as the subject/);
+  assert.match(packet.writerPrompt, /one invented scenario must not carry the whole card/);
   assert.match(packet.writerPrompt, /verified astrology establishes the placement's meaning and limits/);
   assert.match(packet.writerPrompt, /Name the pressure, what someone does, and what changes because of it/);
   assert.match(packet.writerPrompt, /continuous article/);
+  assert.match(packet.writerPrompt, /first sentence of the opening must stand alone as a clear, sendable recognition line/u);
+  assert.match(packet.writerPrompt, /Name both the planet and the sign in the opening/u);
+  assert.match(packet.writerPrompt, /cycle fact line uses "all twelve signs"/u);
+  assert.match(packet.writerPrompt, /word "zodiac" remains banned/u);
+  assert.match(packet.writerPrompt, /Do not repeat planet-cycle length or sign-stay facts in the article body/u);
+  assert.match(packet.writerPrompt, /Do not use coaching scaffolds/u);
+  assert.match(packet.writerPrompt, /read first thing in the morning/u);
+  assert.match(packet.writerPrompt, /one tired read/u);
+  assert.match(packet.writerPrompt, /Do not make every opening start the same way/u);
+  assert.match(packet.writerPrompt, /Do not default to beginning a sentence with "From \{\{entryDate\}\},"/u);
+  assert.match(packet.writerPrompt, /at most one article may use a try_this action about holding back/u);
   assert.match(packet.writerPrompt, /opening, tension, development, close, try_this/);
   assert.match(packet.writerPrompt, /Stop after the final action/);
   assert.match(packet.writerPrompt, /Use collective language/);
@@ -156,8 +223,8 @@ function main() {
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-006"));
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "ED-015"));
   assert(packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-018"));
-  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v9:natal-source-guard-domain-filter-v1");
-  assert.strictEqual(packet.packetVersion, "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1");
+  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1");
+  assert.strictEqual(packet.packetVersion, "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found");
   assert.match(packet.writerPrompt, /Some verified astrology source rows use natal or second-person register/u);
   assert.deepStrictEqual(
     assertPacketQuotablesPassOutputBans({
@@ -186,36 +253,61 @@ function main() {
   assert.match(renderModelInput(packet), /APPROVED OWNER VOCABULARY \(optional menu, never a quota\)/);
   assert.match(renderModelInput(packet), /Use only what fits naturally\. Do not force, stack, or repeat them\./);
   const renderedPacket = renderModelInput(packet);
-  if (factStatusAllowsWriting(cycleFacts.status)) assert.match(renderedPacket, /CYCLE-LINE[\s\S]*?planet-cycle-facts/u);
+  if (factStatusAllowsWriting(cycleFacts.status)) {
+    assert.match(renderedPacket, /CYCLE-LINE[\s\S]*?planet-cycle-facts/u);
+    assert.match(renderedPacket, /engine renders this block; do not add a new output key or restate it elsewhere/u);
+  }
   else assert.doesNotMatch(renderedPacket, /CYCLE-LINE[\s\S]*?planet-cycle-facts/u);
   assert.doesNotMatch(renderModelInput(packet), /exact owner approval for generation evidence is still pending|Pending owner input/);
   const routing = assertRoutingMatch({ packet, actualModel: "gpt-5.6-sol", actualReasoningEffort: "xhigh", actualLaneId: "writer:sky-placement" });
   assert.strictEqual(routing.routingMatchStatus, "matched");
   assert.strictEqual(routing.retrievedOwnerSourceIds.length, packet.ownerPassages.length);
+  assert.deepStrictEqual(routing.warmthOwnerSourceIds, packet.ownerCorpusWarmthEvidence.sourceIds);
   assert.throws(() => assertRoutingMatch({ packet, actualModel: "gpt-5.6-terra", actualReasoningEffort: "xhigh", actualLaneId: "writer:sky-placement" }), /model/);
   assert.throws(() => assertRoutingMatch({ packet, actualModel: "gpt-5.6-sol", actualReasoningEffort: "low", actualLaneId: "writer:sky-placement" }), /reasoningEffort/);
   assert.throws(() => assertRoutingMatch({ packet, actualModel: "gpt-5.6-sol", actualReasoningEffort: "xhigh", actualLaneId: "generation:default" }), /laneId/);
 
+  const reviewedFactRows = [
+    ...["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"].map((sign) => `mercury-${sign}`),
+    ...["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"].map((sign) => `mars-${sign}`),
+    "jupiter-leo", "saturn-aries", "uranus-gemini", "neptune-aries", "pluto-aquarius",
+    "chiron-aries", "north-node-aquarius", "south-node-leo"
+  ].map((id) => require(path.join(packageRoot, "data", "placements", "sign", `${id}.json`)));
+  assert(reviewedFactRows.every((entry) => entry.status === "REVIEWED"));
+  assert.match(reviewedFactRows.find((entry) => entry.id === "saturn-aries").body, /Saturn is in fall/u);
+  assert.strictEqual(reviewedFactRows.find((entry) => entry.id === "mercury-leo").tldr, "Mercury in Leo: the mind is expressive, warm, and built for confident delivery.");
+  assert.match(reviewedFactRows.find((entry) => entry.id === "mercury-libra").challenge, /approval-seeking/u);
+  assert.doesNotMatch(reviewedFactRows.find((entry) => entry.id === "mercury-libra").challenge, /people-pleasing/u);
+  assert.match(reviewedFactRows.find((entry) => entry.id === "mars-leo").gift, /stamina when the pressure is on/u);
+  assert.doesNotMatch(reviewedFactRows.find((entry) => entry.id === "mars-pisces").challenge, /leak/iu);
+  assert.match(reviewedFactRows.find((entry) => entry.id === "jupiter-leo").gift, /included in the win/u);
+  assert.match(reviewedFactRows.find((entry) => entry.id === "neptune-aries").tldr, /imagination and idealism attach to action/u);
+  assert.match(reviewedFactRows.find((entry) => entry.id === "pluto-aquarius").tldr, /power transforms through networks/u);
+
   const readiness = buildReadinessReport();
   assert.strictEqual(readiness.totals.placements, 168);
-  assert.strictEqual(readiness.totals.writerReady, 12);
+  assert.strictEqual(readiness.totals.writerReady, 36);
   assert.deepStrictEqual(readiness.writer.ready, [
+    "mercury-aries", "mercury-gemini", "mercury-cancer", "mercury-leo",
+    "mercury-virgo", "mercury-libra", "mercury-sagittarius", "mercury-capricorn",
+    "mercury-aquarius", "mercury-pisces",
+    "mars-aries", "mars-gemini", "mars-cancer", "mars-leo", "mars-virgo",
+    "mars-libra", "mars-scorpio", "mars-sagittarius", "mars-capricorn",
+    "mars-aquarius", "mars-pisces",
     "jupiter-aries", "jupiter-taurus", "jupiter-gemini", "jupiter-cancer",
     "jupiter-leo", "jupiter-virgo", "jupiter-libra", "jupiter-scorpio",
-    "jupiter-sagittarius", "jupiter-capricorn", "jupiter-aquarius", "jupiter-pisces"
+    "jupiter-sagittarius", "jupiter-capricorn", "jupiter-aquarius", "jupiter-pisces",
+    "saturn-aries", "uranus-gemini", "neptune-aries"
   ]);
-  assert.strictEqual(readiness.totals.runtimeRenderReady, 24);
+  assert.deepStrictEqual(readiness.writer.blockedByReason.other, [
+    "mercury-taurus", "mercury-scorpio", "mars-taurus", "pluto-aquarius"
+  ]);
+  assert.strictEqual(readiness.totals.runtimeRenderReady, 60);
   assert.strictEqual(readiness.totals.continuousRowsReady, 1);
-  assert.strictEqual(readiness.totals.retiredPairCoreAvailable, 167);
-  assert.strictEqual(readiness.totals.retiredPairFullFiveAvailable, 166);
-  assert.deepStrictEqual(
-    readiness.runtime.quarantinedRows.map((entry) => entry.contentKey).sort(),
-    [
-      "fallback-hook/sky-placement-moves/venus/virgo",
-      "fallback-hook/sky-placement-tagline/moon/scorpio",
-      "fallback-hook/sky-placement-turn/moon/scorpio"
-    ]
-  );
+  assert.strictEqual(readiness.totals.standaloneHookRowsReady, 36);
+  assert.strictEqual(readiness.totals.retiredPairCoreAvailable, 168);
+  assert.strictEqual(readiness.totals.retiredPairFullFiveAvailable, 168);
+  assert.deepStrictEqual(readiness.runtime.quarantinedRows, []);
 
   const continuousCandidate = {
     opening: "Jupiter moves into Libra on {{entryDate}}, and a shared decision can no longer stay vague.",
@@ -226,6 +318,7 @@ function main() {
   };
   assert.deepStrictEqual(parseArticle(JSON.stringify(continuousCandidate)), continuousCandidate);
   assert.deepStrictEqual(Object.keys(judgeShape(continuousCandidate)), ["hook", "lived", "turn", "moves"]);
+  assert.deepStrictEqual(Object.keys(lintShape(continuousCandidate)), ["hook", "lived", "turn", "close", "moves"]);
   const continuousChecks = deterministicChecks(continuousCandidate, { planet: "jupiter", sign: "libra" });
   assert.strictEqual(continuousChecks.engineSlots.passed, true);
   const continuousRow = candidateRow(continuousCandidate, { planet: "jupiter", sign: "libra", runId: "test-run" });
@@ -277,6 +370,15 @@ function main() {
   assert.throws(() => validatePayload({ ...directional, feedbackKind: "governed_content_promotion_approval" }, { confirmExact: false }), /cannot promote/);
   assert.strictEqual(approvalLevel("rejection"), "owner_rejected");
   assert.strictEqual(approvalLevel("exact_wording_approval"), "exact_owner_approved");
+  const scopedApproval = proposalFor({
+    ...directional,
+    feedbackKind: "exact_wording_approval",
+    ownerStatement: "I explicitly approve this exact fallback wording.",
+    approvalScope: "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate",
+    beforeIsRejected: false
+  });
+  assert.strictEqual(scopedApproval.beforeIsRejected, false);
+  assert.strictEqual(scopedApproval.exactApprovalScope, "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate");
 
   const v7 = require(path.join("..", "review", "sky-placement-voice-pass-v7-writer-candidates.json"));
   const attestations = require(path.join("..", "review", "sky-placement-voice-pass-v7-authorship-attestations.json"));
@@ -294,23 +396,6 @@ function main() {
       article: candidate.article
     }, attestations.attestations[candidate.candidateId]);
     assert.strictEqual(report.gate, "rewrite_required", "August 3 owner feedback invalidates every V7 candidate");
-  }
-
-  const v8 = require(path.join("..", "review", "sky-placement-voice-pass-v8-source-derived-candidates.json"));
-  assert.strictEqual(v8.candidates.length, 3);
-  for (const candidate of v8.candidates) {
-    assert.strictEqual(candidate.status, "needs_review");
-    assert.strictEqual(candidate.ownerApproved, false);
-    assert.strictEqual(candidate.promotionAuthorized, false);
-    assert.strictEqual(candidate.canonical, false);
-    const report = audit({
-      sourceId: candidate.candidateId,
-      planet: candidate.planet,
-      sign: candidate.sign,
-      article: candidate.article
-    });
-    assert.strictEqual(report.gate, "rewrite_required", "preserved V8 candidates remain unchanged but are not grandfathered into the active rule set");
-    assert(report.deterministicLint.findings.some((finding) => finding.decisionId === "CF-006"));
   }
 
   const peopleOpener = lintArticle({
@@ -339,11 +424,14 @@ function main() {
   for (const term of ["fair counteroffer", "thoughtful compromise", "tilt", "both sides get a real say"]) {
     assert(reviewedEditorialShorthand.findings.some((finding) => finding.severity === "fail" && new RegExp(term, "i").test(finding.match || "")));
   }
-  const rejectedJupiterLibra = require(path.join("..", "review", "sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions", "writer-response.json")).article;
-  const rejectedJupiterLibraLint = lintArticle({ ...rejectedJupiterLibra, planet: "jupiter", sign: "libra" });
-  assert(rejectedJupiterLibraLint.findings.some((finding) => finding.decisionId === "ED-022" && finding.source === "sign-conditional-meme-scene"));
-  assert(rejectedJupiterLibraLint.findings.some((finding) => finding.decisionId === "ED-022" && finding.source === "transit-scale"));
-  assert(rejectedJupiterLibraLint.findings.some((finding) => finding.decisionId === "ED-023" && finding.slot === "moves"));
+  const libraInvitationScheduling = lintArticle({
+    planet: "jupiter", sign: "libra", tagline: "Name the choice",
+    hook: "Jupiter in Libra changes which connections can hold an honest answer.",
+    lived: "By the third invitation of the week, the answer is still yes. When a date does not work, we call it fine and rearrange everything else around it.",
+    turn: "The connection becomes another obligation. The honest answer arrives too late.",
+    moves: ["Answer the invitation.", "Keep the answer."]
+  });
+  assert(libraInvitationScheduling.findings.some((finding) => finding.decisionId === "ED-022" && finding.source === "sign-conditional-meme-scene"));
   const virgoMeme = lintArticle({
     planet: "mercury", sign: "virgo", tagline: "The details become visible",
     hook: "A color-coded spreadsheet takes over the week. Mercury in Virgo changes how the work is sorted.",
@@ -435,7 +523,7 @@ function main() {
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
-  assert.strictEqual(fixtureAudit.sourceRecordCount, 17);
+  assert.strictEqual(fixtureAudit.sourceRecordCount, 27);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
   console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);
