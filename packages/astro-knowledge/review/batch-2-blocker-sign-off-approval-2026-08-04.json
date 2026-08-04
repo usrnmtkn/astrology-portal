@@ -7,7 +7,7 @@
   "decisions": {
     "A": {
       "approvalStatus": "approved",
-      "applicationStatus": "partially_applied_pending_pluto_rewrite_review",
+      "applicationStatus": "applied",
       "applied": [
         "mercury-scorpio delve into -> dig into",
         "mars-taurus journey sentence replacement",
@@ -15,10 +15,12 @@
       ],
       "pending": {
         "id": "pluto-aquarius-engine-rewrite",
-        "status": "needs_owner_review_before_application",
+        "status": "exact_owner_approved_and_applied",
         "before": "Pluto has an elliptical orbit. Rendering must use the engine-computed range for the current sign rather than treating the average as the current residency.",
         "proposedAfter": "Pluto has an elliptical orbit, so its time in each sign varies widely. The current sign range must come from the calculation rather than the average residency.",
-        "fixed": false
+        "ownerStatement": "I approve the Pluto in Aquarius cycle-note rewrite exactly as proposed.",
+        "approvedAt": "2026-08-04T18:31:32Z",
+        "fixed": true
       }
     },
     "B": {
