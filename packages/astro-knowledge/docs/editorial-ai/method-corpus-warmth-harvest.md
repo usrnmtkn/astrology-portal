@@ -60,9 +60,9 @@ The method applies anywhere reader copy needs the owner's temperature. Per surfa
   cazimi: clarity inside the muddle; Venus Rx: old terms vs the present pull) to the owner's
   retrograde and transit articles instead of picking passages generically.
 - **Lunations:** near one-to-one mapping; the owner corpus is mostly lunation writing.
-- **Scale rule:** the beat must fit the card. Full articles hold a warmth sentence; a two-sentence
-  preview does not - there the harvest informs word choice, or the beat is the final sentence, never
-  an addition that tips the card into fortune-cookie register.
+- **Scale rule:** the beat must fit the card. Full articles may hold one supplied warmth sentence. A
+  short preview uses `harvest_mode: vocabulary_only`: supplied foundations may guide word choice but
+  do not add a warmth sentence.
 
 ## The corpus is never a quota (OV-042, global)
 

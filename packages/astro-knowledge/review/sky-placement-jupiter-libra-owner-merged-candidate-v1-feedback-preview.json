@@ -1,0 +1,30 @@
+{
+  "mode": "dry-run",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-jupiter-libra-owner-merged-candidate-v1",
+    "surface": "sky-placement",
+    "planet": "jupiter",
+    "sign": "libra",
+    "articleBeat": "full_article",
+    "before": "[No previously approved owner-reference fallback article for Jupiter in Libra.]",
+    "after": "Opening: After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Libra is the sign of balance, connection, and how we get along with each other. Together they make this a year where growth comes through who we meet and what becomes possible together: a friend's introduction leads to a creative collaboration, and the finished work reaches an audience neither person could have found alone. Jupiter spends about a year in each sign and takes about 12 years to visit all twelve.\n\nTension: Jupiter makes things bigger, and a few months in, the biggest thing is the list of what we have agreed to. Refusing feels rude, so we keep saying yes: another meeting, more of the work, another \"it's fine\" that is not true. Every extra request, correction, and follow-up starts going to the person who keeps saying yes. When a real choice comes up, we wait to hear what everyone else wants before saying what we want, and the decision goes to whoever speaks first. Somewhere along the way, being agreeable starts doing the work that honesty should be doing. The resentment stays quiet, because every one of these plans is something we technically agreed to.\n\nDevelopment: Jupiter last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and whatever was learned about fairness then gets its next round now. Just because nobody has complained does not mean an arrangement is fair. This year it helps to say what changed early: that Saturday does not work, that the effort stopped being even, that one voice keeps making the decisions. Some connections will get closer once that is said plainly. Others end when the person benefiting from the old agreement is asked to do more.\n\nClose: Before {{exitDate}}, we can quit one recurring commitment we have been keeping only because saying no feels rude.\n\nTry this:\n- We can answer one pending invitation with a clear yes or no instead of another maybe.\n- We can say which day works for us before asking what everyone else prefers.\n- We can stop sending reminders for a responsibility that belongs to someone else.",
+    "whatChanged": "The owner approved the complete merged continuous fallback article as an owner reference and authorized it as generation evidence for the Sky Placement surface.",
+    "ownerReason": "Exact owner approval and generation-evidence authorization supplied on 2026-08-04.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-jupiter-libra-owner-merged-candidate-v1.json"
+    ],
+    "provenance": "exact_wording_approval: I explicitly approve sky-placement-jupiter-libra-owner-merged-candidate-v1 exactly as written, as the owner-reference fallback article and generation evidence for the placement surface.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "owner_reference_fallback_and_generation_evidence_for_sky_placement"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

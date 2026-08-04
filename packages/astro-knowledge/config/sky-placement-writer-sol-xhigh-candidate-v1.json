@@ -1,0 +1,11 @@
+{
+  "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "xhigh",
+  "promptVersion": "sky-placement-writer-v4:compiled-owner-decisions",
+  "rubricVersion": "not-applicable-writing-only",
+  "evaluationSetVersion": "sky-placement-writer-heldout-pending-v2",
+  "policyVersion": "editorial-writer-policy-v1",
+  "notes": "Unpromoted Sky Placement writing and rewriting candidate. No active writer release, live-call authority, generation evidence, content promotion, or approval authority is implied."
+}

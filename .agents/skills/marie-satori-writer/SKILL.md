@@ -13,7 +13,7 @@ Produce authored candidate wording from governed evidence. Treat writing, judgin
 - Never infer exact approval from “better,” “good,” “great,” a preferred line, or a judge score.
 - Never use unapproved AI candidates as positive voice evidence.
 - Never use Uranus-in-Cancer v3 as writer/generation evidence; its exact approval is calibration-only.
-- Never use CC, SD, or AC phrasing, cadence, metaphors, dates, or doctrine as Marie Satori voice evidence.
+- Never use CC, SD, or AC prose, dates, or doctrine as Marie Satori voice evidence. Chani-adjacent warmth, tenderness, permission, emotional intelligence, or moderate lyrical cadence is not a failure by itself; documented adjacent-voice constructions and unsupported thematic drift remain out.
 - Keep computed dates, degrees, motion, houses, and other moving facts outside prose. Use the checked-in astrology boundary only.
 - Require explicit authorization before any billed generation or judge call.
 - Do not promote content, alter the editorial model registry, or synchronize external content from this skill.
@@ -33,67 +33,55 @@ Identify the surface, planet, sign, article beat, editorial goal, known failure 
 
 Do not draft when the fact boundary is missing or ambiguous.
 
-### 2. Compile the evidence packet
+### 2. Compile the minimal first-call packet
 
-Run `scripts/compile-writing-packet.js` with the target and current candidate. Use its JSON and Markdown outputs as the complete writing context.
+Run `scripts/compile-writing-packet.js` with the exact task. Use its JSON and Markdown outputs as the complete first-call writing context.
 
 Require the packet to contain:
 
-- the surface contract and astrology boundary;
-- three to five positive owner-authored excerpts;
-- two to four relevant contrastive owner edits;
-- one or two relevant failures;
-- the current candidate and governance state;
-- a selection reason and provenance for every excerpt.
+- verified astrology;
+- surface requirements;
+- the exact writing task;
+- four to six exact owner-authored passages selected by same-sign, same-planet, then adjacent affinity;
+- the concise governed writer prompt.
 
-Reject a packet if an `ai_candidate_unreviewed`, `owner_rejected`, `historical_only`, or `third_party_source` record appears as positive evidence.
+For a beat-only rewrite, the passages must come from at least three articles, contain at least three paragraph structures, and include at least two passages matching the requested beat. Reject a packet if anything other than `owner_authored_final` appears in initial writer retrieval.
 
 For any aspect surface, also run `packages/astro-knowledge/scripts/build-aspect-writing-packet.js` before drafting. When the harvest finds a qualifying match, the packet records `harvest_mode: matched` and contains one to three OWNER FOUNDATION LINES selected through `packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md`. Current Sky receives minimally collectivized lines with originals retained in provenance. Natal, transit-to-natal, and synastry aspect surfaces retain the owner's second person. A missing human-moment beat fails closed. A corpus miss records `harvest_mode: none_found` and proceeds without a warmth beat.
 
 For a full aspect card, adapt at most one foundation line into one warmth sentence after the shadow or cost, as the final or penultimate sentence. For TLDR lines and short previews, require `harvest_mode: vocabulary_only` and do not add a warmth beat. When a foundation line is used, record `warmthSource` and label the candidate `owner-corpus-derived`; this evidence metadata never changes approval status.
 
-### 3. Find one article spine
+For a complete five-slot article, use `requestedBeat: full_article` and a separate `emphasisBeat`. Select six diverse owner-authored passages for sentence register and paragraph movement: at least three source articles, at least three paragraph structures, no more than two passages from one article, and at least two passages matching the emphasis beat. Do not require an owner article about the exact placement, a prewritten owner scenario, or two complete Current Sky examples.
 
-Before writing, state privately:
+The astrology library supplies the meaning boundary. The verified astrology block must establish planet function, sign expression, combined meaning, timing, supported domains, unsupported-domain warnings, and source passages. The writer may create original lived moments by combining the governed planet and sign meanings. The transit remains the subject; no single invented scenario may carry the whole card. The moments may be invented; the astrology may not.
 
-- the central lived pressure;
-- the behavior that proves it;
-- the choice made under pressure;
-- the consequence;
-- the contradiction the turn reveals.
+For every reader-copy surface, run the local owner-corpus warmth harvest in `packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md`. Name the emotional core, search the owner corpus and VB-005 phrase inventory, and use at most one qualifying feeling or permission line. Prefer pronoun-free evidence, reject ban collisions, and record the exact owner source ID and path. When no qualifying line exists, compile with `harvest_mode: none_found`, attach a non-blocking editorial flag, and do not invent permission or reassurance. Frequent words and phrases are evidence of register, not quotas. Missing warmth evidence never blocks a packet.
 
-Build one sequence. Do not line up representative examples from several life domains.
+Retrieve owner-authored passages that support Marie's recurring attention to technology, power, gatekeeping, being underestimated or pushed down, access, recognition, work, money, status, control, exclusion, invisible labor, limiting roles, and who sets the terms. Use those concerns only where they overlap the governed astrology. Do not force work, money, technology, or power into a placement that does not support them.
 
-### 4. Draft and rewrite as the writer
+Do not treat collective astrology as an automatic instruction to write about campaigns, denied services, public complaints, organizing, policy reform, advocacy, social movements, collective healing, community care, or systemic harm. These subjects require direct support from both the astrology boundary and eligible owner material. Collective may instead describe a platform controlling access, technology changing work or communication, a hierarchy losing power, recognition moving around a gatekeeper, a group refusing a limiting role, or outdated authority losing control.
 
-Follow [writer-contract.md](references/writer-contract.md). Draft the complete article privately, even when the reported defect is one sentence. Preserve genuinely strong lines and facts, but do not preserve weak architecture merely because the judge named only one line.
+Do not include current or previous AI candidates, assistant rewrites, contrastive rejected text, negative examples, failure tags, source-selection explanations, ranking, judge reports, calibration results, central-contradiction metadata, or governance reports. The original text being revised may appear only as the explicit task input.
 
-Write three private hook options. Reject definitions, slogans, atmosphere, abstract summaries, and polished shorthand. Choose the hook with the clearest lived pressure.
+### 3. Route the unpromoted writer candidate fail closed
 
-Perform a sentence-by-sentence rewrite before showing the candidate. Replace every sentence that:
+The initial writer lane is `writer:sky-placement`, model `gpt-5.6-sol`, reasoning effort `xhigh`, and remains an unpromoted candidate. Reject a run if requested and actual lane, model, or reasoning effort differ. Record the prompt version, packet version, and six retrieved owner-source IDs on every accepted artifact.
 
-- summarizes instead of showing;
-- makes an abstraction act like a person;
-- needs interpretation to become concrete;
-- could move to another placement;
-- inventories categories;
-- repeats an established beat;
-- explains what the scene already proves;
-- turns a move into administration;
-- adds a second conclusion;
-- sounds like a competent content writer imitating Marie.
+### 4. Write once from the minimal packet
 
-### 5. Run deterministic gates
+Follow [writer-contract.md](references/writer-contract.md), but do not inject its analysis into the first writing call. Send only the compiled model input and request one complete final candidate. Do not request options, analysis, a source map, or style explanation.
 
-Run the existing Sky Placement linter and `scripts/audit-authorship.js`.
+Permanent distinction: “Chani-adjacent cadence is acceptable. Advocacy-default subject matter is not. Marie Satori voice is defined by the owner's writing, especially her attention to technology, power, gatekeeping, recognition, work, money, exclusion, and being pushed down.” Chani can influence the softness of the delivery; Marie determines what the article notices.
 
-The authorship audit intentionally returns `authorship_review_required` until semantic checks cover every sentence and every article-level question. Complete that review in the current task, rewrite failures, and rerun. A warning-only handoff is not a completed writing pass.
+### 5. Run audits after drafting
 
-Do not weaken a linter or authorship rule to pass a candidate.
+Only after the draft returns, run deterministic astrology, Current Sky pronoun, and surface checks. Record the findings without passing them back into the writer call.
+
+For a controlled writer sample, return the Sol draft unchanged even when a check finds a problem. Do not automatically rewrite it, weaken a rule to pass it, or redesign retrieval because of one sentence.
 
 ### 6. Use Terra only at the end
 
-After facts, retrieval, drafting, line editing, lint, and authorship audit pass, use the active Terra-low Sky Placement judge once only when the owner has explicitly authorized the billed call.
+After the deterministic checks, use the active Terra-low Sky Placement judge once only when the owner has explicitly authorized the billed call.
 
 Treat score 3 as acceptability evidence, not proof of the strongest possible writing. Do not rewrite a strong article merely because Terra names a minor weakest line. Do not let Terra generate replacement prose.
 
@@ -102,11 +90,8 @@ Treat score 3 as acceptability evidence, not proof of the strongest possible wri
 Return:
 
 - complete article wording;
-- central sequence;
-- substantive change list;
-- positive and contrastive evidence used;
-- intentionally preserved lines and why;
-- lint and authorship results;
+- routing artifact metadata;
+- deterministic astrology, pronoun, and surface results;
 - Terra result only when authorized;
 - unchanged governance fields.
 

@@ -58,9 +58,9 @@
       "additionalProperties": false,
       "required": ["role", "surface", "active", "candidate", "rollback", "history"],
       "properties": {
-        "role": { "enum": ["generation", "judge"] },
+        "role": { "enum": ["generation", "judge", "writer"] },
         "surface": { "type": "string", "minLength": 1 },
-        "active": { "$ref": "#/$defs/release" },
+        "active": { "anyOf": [{ "$ref": "#/$defs/release" }, { "type": "null" }] },
         "candidate": { "anyOf": [{ "$ref": "#/$defs/release" }, { "type": "null" }] },
         "rollback": { "anyOf": [{ "$ref": "#/$defs/release" }, { "type": "null" }] },
         "history": { "type": "array", "items": { "$ref": "#/$defs/history" } }

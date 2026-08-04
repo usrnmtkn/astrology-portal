@@ -30,7 +30,11 @@ const topperGolds = examples.filter((entry) => (
 ));
 
 assert.equal(aspectGolds.length, 17);
-assert.equal(placementGolds.length, 5);
+assert.equal(placementGolds.length, 4);
+assert.ok(
+  !placementGolds.some((entry) => entry.sourceId === "sky-moon-in-scorpio"),
+  "The owner-rejected Moon in Scorpio candidate must not re-enter canonical placement evidence."
+);
 assert.equal(topperGolds.length, 2);
 
 for (const exemplar of aspectGolds) {
@@ -373,7 +377,7 @@ assert.equal(judged.judge.score, 3);
 assert.equal(judged.gate, "human-review");
 assert.equal(judged.judge.recommendation, "approve");
 
-  console.log("Sky-placement engine contract passed: 17 aspect golds, 5 placement golds, 2 topper golds, 168 source-backed placements.");
+  console.log("Sky-placement engine contract passed: 17 aspect golds, 4 placement golds, 2 topper golds, 168 source-backed placements.");
 }
 
 main().catch((error) => {

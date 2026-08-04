@@ -1,0 +1,22 @@
+{
+  "id": "sky-placement-historical-moon-scorpio-turn-owner-rejection",
+  "feedbackKind": "rejection",
+  "surface": "sky-placement",
+  "planet": "moon",
+  "sign": "scorpio",
+  "articleBeat": "turn",
+  "before": "Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest.",
+  "ownerStatement": "I don't write like this either: Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest. I don't use the word leaks, AI uses the word leaks",
+  "ownerReason": "The line is not owner voice. The word leaks is an AI tell, and the metaphor substitutes for naming the observable behavior.",
+  "whatChanged": "Propose recording the exact line as owner-rejected positive voice evidence and enforcing the existing no-leak word-family rule across Marie Satori editorial copy.",
+  "failureTags": [
+    "polished_but_flat",
+    "requires_interpretation",
+    "abstract_consequence"
+  ],
+  "sourcePaths": [
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-placement-historical-second-person.json",
+    "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars.json",
+    "packages/astro-knowledge/voice/tldr-astro/style-guide.md"
+  ]
+}

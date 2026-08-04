@@ -3090,16 +3090,14 @@ function formatEditorialDate(date: Date, includeYear = false) {
 }
 
 function formatPlacementTransitEndpoint(
-  position: Pick<PlanetPosition, "planet" | "transitTimeZone">,
+  position: Pick<PlanetPosition, "transitTimeZone">,
   date: Date,
   includeYear = false
 ) {
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
-    timeZone: isLunarNodePoint(position.planet)
-      ? position.transitTimeZone || "UTC"
-      : "UTC",
+    timeZone: position.transitTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
     ...(includeYear ? { year: "numeric" } : {})
   }).format(date);
 }
@@ -4758,6 +4756,19 @@ function skyPlacementWritingSection(
       articleKey: articleOptions?.articleKey ?? null,
       entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
       exitDate: formatPlacementTransitEndpoint(position, transitEndpoints.end, true),
+      priorSign: position.priorTransitSign ? normalizeContentIdPart(position.priorTransitSign) : null,
+      priorSignEntryDate: position.priorTransitStart
+        ? formatPlacementTransitEndpoint(position, new Date(position.priorTransitStart), true)
+        : null,
+      priorSignExitDate: position.priorTransitEnd
+        ? formatPlacementTransitEndpoint(position, new Date(position.priorTransitEnd), true)
+        : null,
+      previousResidencyEntryDate: position.previousSignResidencyStart
+        ? formatPlacementTransitEndpoint(position, new Date(position.previousSignResidencyStart), true)
+        : null,
+      previousResidencyExitDate: position.previousSignResidencyEnd
+        ? formatPlacementTransitEndpoint(position, new Date(position.previousSignResidencyEnd), true)
+        : null,
       hasPriorIngress: articleOptions?.hasPriorIngress ?? false,
       risingHouseMap: Object.fromEntries(zodiacSigns.map((risingSign) => [
         normalizeContentIdPart(risingSign),
