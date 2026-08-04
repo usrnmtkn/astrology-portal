@@ -16,10 +16,24 @@ const summaryOutputPath = path.join(packageRoot, "bundled-manifest-summary-v3.js
 const skyCoreOutputPath = path.join(packageRoot, "bundled-sky-core-rows-v3.json");
 const deferredCoreOutputPath = path.join(packageRoot, "bundled-deferred-core-rows-v3.json");
 const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards-v3.json");
+const skyPlacementOwnerApprovedReaderOutputPath = path.join(
+  packageRoot,
+  "bundled-sky-placement-owner-approved-reader-v1.json"
+);
 const checkOnly = process.argv.includes("--check");
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(packageRoot, relativePath), "utf8"));
+}
+
+function skyPlacementOwnerApprovedReaderRows() {
+  const source = readJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+
+  return {
+    schemaVersion: 1,
+    generatedFrom: "source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+    rows: source.rows.map(({ body_you: _legacyBody, note: _note, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row)
+  };
 }
 
 function isReaderEligible(row, allowBlank = false) {
@@ -63,6 +77,7 @@ function fullReaderBundle() {
   const skyAspectRows = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlanetRows = readJson("source-rows/sky-planet-frames-v1.json");
   const skyPlacementRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+  const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
   const skySignRows = readJson("source-rows/sky-sign-copy-sun-v1.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templates = readJson("templates/fallback-templates-v3.json");
@@ -85,7 +100,8 @@ function fullReaderBundle() {
         ...skyAspectRows.hookRows,
         ...skyPlanetRows.rows,
         ...skyPlacementRows.rows,
-        ...skySignRows.rows
+        ...skySignRows.rows,
+        ...skyPlacementOwnerApprovedRows.rows
       ]),
       vocabularyRows: latestReaderEligible([
         ...sourceRows.vocabularyRows,
@@ -130,6 +146,7 @@ const serializedSummary = `${JSON.stringify(summary, null, 2)}\n`;
 const serializedSkyCore = `${JSON.stringify(skyCoreRows, null, 2)}\n`;
 const serializedDeferredCore = `${JSON.stringify(deferredCoreRows, null, 2)}\n`;
 const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
+const serializedSkyPlacementOwnerApprovedReader = `${JSON.stringify(skyPlacementOwnerApprovedReaderRows(), null, 2)}\n`;
 
 if (checkOnly) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
@@ -137,6 +154,9 @@ if (checkOnly) {
   const existingSkyCore = fs.existsSync(skyCoreOutputPath) ? fs.readFileSync(skyCoreOutputPath, "utf8") : "";
   const existingDeferredCore = fs.existsSync(deferredCoreOutputPath) ? fs.readFileSync(deferredCoreOutputPath, "utf8") : "";
   const existingSkyAuthored = fs.existsSync(skyAuthoredOutputPath) ? fs.readFileSync(skyAuthoredOutputPath, "utf8") : "";
+  const existingSkyPlacementOwnerApprovedReader = fs.existsSync(skyPlacementOwnerApprovedReaderOutputPath)
+    ? fs.readFileSync(skyPlacementOwnerApprovedReaderOutputPath, "utf8")
+    : "";
 
   if (
     existing !== serialized
@@ -144,6 +164,7 @@ if (checkOnly) {
     || existingSkyCore !== serializedSkyCore
     || existingDeferredCore !== serializedDeferredCore
     || existingSkyAuthored !== serializedSkyAuthored
+    || existingSkyPlacementOwnerApprovedReader !== serializedSkyPlacementOwnerApprovedReader
   ) {
     console.error("Bundled fallback manifest is stale. Run npm run build:fallback-manifest.");
     process.exit(1);
@@ -156,9 +177,11 @@ if (checkOnly) {
   fs.writeFileSync(skyCoreOutputPath, serializedSkyCore);
   fs.writeFileSync(deferredCoreOutputPath, serializedDeferredCore);
   fs.writeFileSync(skyAuthoredOutputPath, serializedSkyAuthored);
+  fs.writeFileSync(skyPlacementOwnerApprovedReaderOutputPath, serializedSkyPlacementOwnerApprovedReader);
   console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${manifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
   console.log(`Wrote ${path.relative(repoRoot, deferredCoreOutputPath)} (${deferredCoreRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, skyAuthoredOutputPath)} (${skyAuthoredCards.authoredCards.length} authored cards).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyPlacementOwnerApprovedReaderOutputPath)} (11 metadata-free reader rows).`);
 }
