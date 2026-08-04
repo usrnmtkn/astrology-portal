@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/timing-event-writer-packet-v2.schema.json",
+  "title": "Timing event writer packet V2",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "packetType",
+    "event",
+    "emotionalCore",
+    "harvest_mode",
+    "ownerFoundationLines",
+    "provenance",
+    "cardMetadataContract",
+    "scale"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "packetType": { "const": "current-sky-timing-event" },
+    "harvest_mode": { "enum": ["foundation_line", "vocabulary_only"] },
+    "ownerFoundationLines": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceArticleId", "sourceEntryId", "sourcePath", "originalLine", "usedForm", "adaptation", "vb005Matches", "matchedTerms"],
+        "properties": {
+          "sourceArticleId": { "type": "string", "minLength": 1 },
+          "sourceEntryId": { "type": "string", "minLength": 1 },
+          "sourcePath": { "type": "string", "minLength": 1 },
+          "originalLine": { "type": "string", "minLength": 1 },
+          "usedForm": { "type": "string", "minLength": 1 },
+          "adaptation": { "enum": ["verbatim_collective", "minimal_collectivization"] },
+          "vb005Matches": { "type": "array", "items": { "type": "string" } },
+          "matchedTerms": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["evidenceClass", "meaningSourceId", "warmthCandidates"],
+      "properties": {
+        "evidenceClass": { "const": "owner-corpus-derived" },
+        "meaningSourceId": { "type": "string", "minLength": 1 },
+        "warmthCandidates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["sourceArticleId", "originalLine", "usedForm"]
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "harvest_mode": { "const": "vocabulary_only" } } },
+      "then": {
+        "properties": {
+          "ownerFoundationLines": { "maxItems": 0 },
+          "scale": {
+            "type": "object",
+            "properties": { "addedWarmthBeats": { "const": 0 } },
+            "required": ["addedWarmthBeats"]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "harvest_mode": { "const": "foundation_line" } } },
+      "then": {
+        "properties": {
+          "ownerFoundationLines": { "minItems": 1, "maxItems": 3 },
+          "scale": {
+            "type": "object",
+            "properties": { "maxWarmthBeats": { "const": 1 } },
+            "required": ["maxWarmthBeats"]
+          }
+        }
+      }
+    }
+  ]
+}
