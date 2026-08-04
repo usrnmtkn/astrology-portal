@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "square",
   "plainTranslation": "Their moods, needs, and habits of comfort press against how freely you present yourself and enter situations.",
+  "humanMoment": "{{holder2}} may start watching {{holder1}}'s mood and changing how they act to prevent tension before anything has even happened.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,

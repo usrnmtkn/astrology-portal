@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "trine",
   "plainTranslation": "Their standards, caution, and sense of responsibility work smoothly with how freely you present yourself and enter situations.",
+  "humanMoment": "{{holder1}} is consistent and takes {{holder2}} seriously, which helps {{holder2}} feel comfortable enough to be themselves without proving anything first.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,
