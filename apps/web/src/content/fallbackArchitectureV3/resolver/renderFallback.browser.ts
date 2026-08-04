@@ -27,12 +27,20 @@ export interface VocabRow {
   body: string;
   review_status: string;
 }
+export interface ApprovalReference {
+  approvalLevel: "exact_owner_approved" | "owner_signoff_untraced";
+  recordPath?: string;
+  payloadSha256?: string;
+  approvedAt: string;
+}
 export interface HookRow {
   contentKey: string;
   content_role: string;
   body_you: string;
   body_they: string;
   review_status: string;
+  approved_via?: string;
+  approval?: ApprovalReference;
   render_policy?: string;
   fact_line?: string;
   aspect_insert?: string;
