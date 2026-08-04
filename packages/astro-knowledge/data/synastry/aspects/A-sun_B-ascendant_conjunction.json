@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "conjunction",
   "plainTranslation": "Their sense of identity, confidence, and direction sit right on top of how freely you present yourself and enter situations.",
+  "humanMoment": "{{holder1}} makes {{holder2}} feel seen and more certain about what they want, but {{holder2}} may start relying on {{holder1}}'s confidence instead of making their own decisions.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,

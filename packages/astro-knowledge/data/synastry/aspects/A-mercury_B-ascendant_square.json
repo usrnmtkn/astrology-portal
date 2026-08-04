@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "square",
   "plainTranslation": "Their questions, explanations, and way of talking press against how freely you present yourself and enter situations.",
+  "humanMoment": "{{holder1}}'s questions and comments can make {{holder2}} feel picked apart, so {{holder2}} starts explaining or defending themselves instead of acting naturally.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,
