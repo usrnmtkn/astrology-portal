@@ -168,9 +168,10 @@ Path:
 | `source-rows/sky-planet-frames-v1.json` | Owner-approved three-beat planet frames: 14 direct and 9 shadow-to-shadow retrograde replacements |
 | `source-rows/sky-sign-copy-sun-v1.json` | Owner-approved revised continuous Sun-in-Leo fallback unit plus thirteen superseded historical rows; the other V2 units remain outside the reader package until approval |
 | `authored-inputs/sky-placement-continuous-v2-pending.json` | Review-gated import manifest for the remaining Sun, Mercury, Venus, Mars, slow-mover, Chiron, and node units; also records the superseded legacy module families |
+| `authored-inputs/sky-placement-serving-manifest-v1.json` | Distribution ledger; every staged-to-serving batch transition requires an owner approval statement for the exact serving key diff |
 | `contracts/SKY-PLACEMENT-CONTINUOUS-V2.schema.json` | Required continuous-unit slots and active-aspect insert contract |
 | `packages/astro-knowledge/voice/tldr-astro/fallback-canonical-template.md` | Verbatim owner-approved canonical planet-in-sign fallback specification |
-| `scripts/import-sky-placement-continuous-v2.mjs` | Validates staged review files without writing by default; requires both `--approve` and an explicit `--out` path before it emits importable rows |
+| `scripts/import-sky-placement-continuous-v2.mjs` | Validates staged review files without writing by default; requires `--approve`, `--batch`, and an explicit `--out` path before it emits editorially approved rows, which remain staged |
 | `source-rows/station-cards-week-openers-v1.json` | Weekly openers and station units |
 | `templates/fallback-templates-v3.json` | Slot-bearing fallback templates |
 | `resolver/renderFallback.*` | Natal, empty-house, aspect, and profection assembly |
@@ -278,10 +279,13 @@ the missing key. It must not synthesize replacement prose.
 
 ## 8. Runtime package installation
 
-The web runtime has two package sources:
+The web runtime has two package sources and two independently validated
+partitions:
 
-1. A local snapshot assembled in
-   `apps/web/src/content/fallbackArchitectureV3Runtime.ts`.
+1. A local core snapshot assembled in
+   `apps/web/src/content/fallbackArchitectureV3Runtime.ts`, plus a Sky Placement
+   partition dynamically imported only for placement and retrograde detail
+   routes.
 2. An asynchronously loaded, approved dashboard mirror from
    `generated_interpretations`.
 
@@ -294,8 +298,10 @@ sequenceDiagram
   participant Resolver
 
   App->>Runtime: import
-  Snapshot->>Runtime: rows + templates + authored cards
+  Snapshot->>Runtime: core rows + templates + authored cards
   Runtime->>Resolver: create reader-eligible renderers
+  App->>Runtime: placement route requests on-demand partition
+  Runtime-->>App: long-form placement rows or approved standalone floor
   App->>Dashboard: load approved V3 bundle
   Dashboard-->>App: current-package approved rows or null
   App->>Runtime: install approved row overrides
@@ -305,10 +311,15 @@ sequenceDiagram
 Important consequences:
 
 - The app can render from the local package before network hydration finishes.
+- The eager core retains reviewed standalone placement hooks. If the route
+  chunk or dashboard request fails, that exact approved wording remains the
+  only prose fallback; otherwise the resolver returns `SOURCE_GAP`.
 - Missing dashboard rows remain supplied by the current local snapshot.
 - Only approved package review states survive dashboard loading.
-- Dashboard rows must carry the import batch for the installed package version.
-  A mixed or older batch is rejected in full.
+- Core and Sky Placement dashboard rows use separate providers, manifests, and
+  caches. Each partition must match the installed package version and its exact
+  partition hashes; mixed, incomplete, older, or newer mirrors are rejected in
+  full.
 - Local browser cache is versioned by both the installed package version and
   the dashboard's latest update time. Older cache schemas fail closed to the
   local snapshot.
@@ -512,8 +523,16 @@ The browser artifact exports both resolver factories and `PACKAGE_VERSION`:
 Rebuild it from `resolver/index.browser.ts`. Never patch it by hand.
 
 The runtime imports the built resolver plus source JSON to construct the local
-snapshot. This is intentional: the built artifact owns executable selection
-logic, while source rows remain inspectable and materializable.
+core snapshot. The Sky Placement article rows are generated into a separate
+dynamic chunk. This keeps executable selection logic package-owned and source
+rows inspectable without putting long-form placement prose in the App boot
+graph.
+
+Release budgets are fail-closed: App boot must remain at or below 420 kB gzip,
+reader boot at or below 465 kB gzip, and the Sky Placement partition at or
+below 150 kB gzip. Because the partition is absent from the static boot graph,
+a staged or serving batch may add at most 2 kB gzip to boot; the expected delta
+is zero.
 
 The package version must change when serving behavior or package content
 changes. Version assertions prevent a source change from shipping with a stale
