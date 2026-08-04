@@ -2685,7 +2685,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-event-pill.event-void {
-    max-width: 38px;
+    max-width: 48px;
     padding: 0 var(--lunar-space-4);
     font-size: var(--lunar-type-tiny);
   }
