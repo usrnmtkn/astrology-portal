@@ -1,0 +1,88 @@
+{
+  "id": "batch-2-seven-preflight-2026-08-04",
+  "recordedAt": "2026-08-04T18:25:10Z",
+  "updatedAt": "2026-08-04T18:31:32Z",
+  "mode": "packet_compile_only",
+  "billedCallsMade": 0,
+  "writerLane": {
+    "laneId": "writer:sky-placement",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "registryState": "candidate",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1"
+  },
+  "engineFacts": {
+    "calculationSource": "app-engine",
+    "dateRenderingTimeZone": "America/New_York",
+    "referenceDate": "2026-08-04T16:00:00.000Z",
+    "serving": false
+  },
+  "selfLintPolicy": "sky-placement.outputBans.fail+warn",
+  "placements": [
+    {
+      "id": "mercury-aries",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 26 },
+      "warmthHarvestMode": "none_found",
+      "warmthFlagBlocking": false
+    },
+    {
+      "id": "mercury-taurus",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvestMode": "none_found",
+      "warmthFlagBlocking": false,
+      "waiverApplied": "mercury-taurus-idiomatic-settle-into-2026-08-04"
+    },
+    {
+      "id": "mercury-cancer",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvestMode": "none_found",
+      "warmthFlagBlocking": false
+    },
+    {
+      "id": "mercury-leo",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvestMode": "none_found",
+      "warmthFlagBlocking": false
+    },
+    {
+      "id": "mercury-libra",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvestMode": "none_found",
+      "warmthFlagBlocking": false
+    },
+    {
+      "id": "mercury-scorpio",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 26 },
+      "warmthHarvestMode": "none_found",
+      "warmthFlagBlocking": false
+    },
+    {
+      "id": "mercury-sagittarius",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 26 },
+      "warmthHarvestMode": "none_found",
+      "warmthFlagBlocking": false
+    }
+  ],
+  "batchReady": true,
+  "authorization": "No writer calls are authorized by this record. Owner authorization is still required before billed calls.",
+  "repositoryWidePending": [],
+  "plutoResolution": {
+    "id": "pluto-aquarius",
+    "status": "exact_owner_approved_and_applied",
+    "approvedAt": "2026-08-04T18:31:32Z"
+  }
+}

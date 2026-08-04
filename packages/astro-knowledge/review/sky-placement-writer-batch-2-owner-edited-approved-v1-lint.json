@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sky-placement-writer-batch-2-owner-edited-approved-v1",
+  "lintedAt": "2026-08-04T19:39:24Z",
+  "articleCount": 7,
+  "batchPassed": true,
+  "hardFailures": 0,
+  "warnings": 0,
+  "results": [
+    {
+      "id": "sky-placement-batch-2-mercury-aries-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-2-mercury-taurus-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-2-mercury-cancer-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-2-mercury-leo-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-2-mercury-libra-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close",
+        "hook is long (77 words); the hook is the sendable line, not a paragraph"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-2-mercury-scorpio-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-2-mercury-sagittarius-owner-approved-v1",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    }
+  ]
+}

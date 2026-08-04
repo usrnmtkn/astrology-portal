@@ -72,8 +72,8 @@ const entryShapes = {
   planetary: {
     schemaFile: "planetary.schema.json",
     required: ["id", "planet", "title", "overview", "cycle", "signs", "source", "voiceNeutral", "status"],
-    types: { id: "string", planet: "string", title: "string", overview: "string", cycle: "string", signs: "array", source: "object" },
-    optional: []
+    types: { id: "string", planet: "string", title: "string", overview: "string", cycle: "string", signs: "array", source: "object", provenance: "array:string" },
+    optional: ["provenance"]
   },
   point: {
     schemaFile: "point.schema.json",
