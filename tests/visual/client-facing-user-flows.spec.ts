@@ -117,7 +117,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     FixedDate.parse = RealDate.parse;
     window.Date = FixedDate as DateConstructor;
 
-    if (!window.localStorage.getItem("tldrastro:qaFlowSeeded")) {
+    const shouldSeedClientState = !window.localStorage.getItem("tldrastro:qaFlowSeeded");
+
+    if (shouldSeedClientState) {
       window.localStorage.clear();
       window.localStorage.setItem("tldrastro:qaFlowSeeded", "true");
       window.localStorage.setItem("tldrastro:theme", options.theme ?? "light");
@@ -126,7 +128,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
     }
 
-    if (!options.profile) {
+    if (!options.profile || !shouldSeedClientState) {
       return;
     }
 
