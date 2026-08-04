@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mars",
+  "sign": "aquarius",
+  "timeZone": "America/New_York",
+  "transitStart": "January 3, 2028",
+  "transitEnd": "February 10, 2028",
+  "transitStartIso": "2028-01-03T16:01:38.999Z",
+  "transitEndIso": "2028-02-10T16:31:48.999Z",
+  "priorSign": "capricorn",
+  "priorSignEntryDate": "November 25, 2027",
+  "priorSignExitDate": "January 3, 2028",
+  "previousResidency": {
+    "sign": "aquarius",
+    "entryDate": "January 23, 2026",
+    "exitDate": "March 2, 2026",
+    "entryDateIso": "2026-01-23T09:16:45.999Z",
+    "exitDateIso": "2026-03-02T14:15:50.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mars-sextile-neptune-2028-01-08t19:06:55.999z",
+      "body": "mars-sextile-neptune",
+      "bodies": [
+        "mars",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "January 8, 2028",
+      "dateIso": "2028-01-08T19:06:55.999Z",
+      "rank": 1,
+      "meaning": "Drive meets imagination. Energy steered by vision and a persuasive, magnetic pull. The sextile makes this a natural strength: Charismatic motivation; action aligned with imagination. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-sextile-neptune.json"
+    },
+    {
+      "id": "aspect-mars-trine-uranus-2028-01-11t18:47:12.999z",
+      "body": "mars-trine-uranus",
+      "bodies": [
+        "mars",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "January 11, 2028",
+      "dateIso": "2028-01-11T18:47:12.999Z",
+      "rank": 2,
+      "meaning": "Action meets disruption. Impulsive, risk-taking, rebellious energy, with impatience and a pull toward technology. The trine makes this a natural strength: Quick, original action and inventive problem-solving. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-trine-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mars-sextile-neptune.json",
+      "packages/astro-knowledge/data/transits/mars-trine-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

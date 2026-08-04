@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/nodes/aquarius-leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "The North Node in Aquarius and the South Node in Leo move attention from the name on the work to what a group can make together. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the North Node enters Aquarius and the South Node enters Leo on {{entryDate}}, and shared purpose starts carrying more weight than personal recognition. A group keeps the best idea even when it came from the least visible contributor. A creative part still matters after the group changes it.",
+      "tension": "The South Node in Leo knows how to catch attention and give an idea a memorable face. That skill can make shared work easier to notice. The cost appears when every project also has to confirm who is special. We pull a group effort toward the contributor with the biggest audience, defend our part after a better version appears, or lose interest when credit spreads around. The North Node in Aquarius keeps pointing to the shared result, while the need for applause keeps asking for center stage.",
+      "development": "The Nodes last occupied the Aquarius-Leo axis from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. An idea becomes more useful when its originator lets someone else improve it. A group gets further when credit reflects actual contributions instead of settling on the familiar name. The unfamiliar part is staying invested as attention spreads out. Another voice may become the public face, and the first spark no longer owns the outcome. Creative expression remains real without applause. If we keep demanding proof that our part mattered, the group spends its energy protecting status instead of developing the idea.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, shared projects lose useful ideas whenever every change has to preserve one name at the center.",
+      "try_this": [
+        "We can bring one idea to a shared project and accept one change that makes it more useful, even if the final version looks less like ours.",
+        "We can name the contributor whose work improved a group result, especially when someone else is getting the attention."
+      ],
+      "aspect_units": [],
+      "body_you": "The North Node in Aquarius and the South Node in Leo move attention from the name on the work to what a group can make together. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the North Node enters Aquarius and the South Node enters Leo on {{entryDate}}, and shared purpose starts carrying more weight than personal recognition. A group keeps the best idea even when it came from the least visible contributor. A creative part still matters after the group changes it.\n\nThe South Node in Leo knows how to catch attention and give an idea a memorable face. That skill can make shared work easier to notice. The cost appears when every project also has to confirm who is special. We pull a group effort toward the contributor with the biggest audience, defend our part after a better version appears, or lose interest when credit spreads around. The North Node in Aquarius keeps pointing to the shared result, while the need for applause keeps asking for center stage.\n\nThe Nodes last occupied the Aquarius-Leo axis from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. An idea becomes more useful when its originator lets someone else improve it. A group gets further when credit reflects actual contributions instead of settling on the familiar name. The unfamiliar part is staying invested as attention spreads out. Another voice may become the public face, and the first spark no longer owns the outcome. Creative expression remains real without applause. If we keep demanding proof that our part mattered, the group spends its energy protecting status instead of developing the idea.\n\nBefore {{exitDate}}, shared projects lose useful ideas whenever every change has to preserve one name at the center.",
+      "body_they": "The North Node in Aquarius and the South Node in Leo move attention from the name on the work to what a group can make together. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the North Node enters Aquarius and the South Node enters Leo on {{entryDate}}, and shared purpose starts carrying more weight than personal recognition. A group keeps the best idea even when it came from the least visible contributor. A creative part still matters after the group changes it.\n\nThe South Node in Leo knows how to catch attention and give an idea a memorable face. That skill can make shared work easier to notice. The cost appears when every project also has to confirm who is special. We pull a group effort toward the contributor with the biggest audience, defend our part after a better version appears, or lose interest when credit spreads around. The North Node in Aquarius keeps pointing to the shared result, while the need for applause keeps asking for center stage.\n\nThe Nodes last occupied the Aquarius-Leo axis from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. An idea becomes more useful when its originator lets someone else improve it. A group gets further when credit reflects actual contributions instead of settling on the familiar name. The unfamiliar part is staying invested as attention spreads out. Another voice may become the public face, and the first spark no longer owns the outcome. Creative expression remains real without applause. If we keep demanding proof that our part mattered, the group spends its energy protecting status instead of developing the idea.\n\nBefore {{exitDate}}, shared projects lose useful ideas whenever every change has to preserve one name at the center.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "nodes-aquarius-leo"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

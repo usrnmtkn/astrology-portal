@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_01d61ccca6495c4c006a7253d12d3881a18ca66d79c65eade2",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8254,
+    "input_tokens_details": {
+      "cache_write_tokens": 8251,
+      "cached_tokens": 0
+    },
+    "output_tokens": 3224,
+    "output_tokens_details": {
+      "reasoning_tokens": 2838
+    },
+    "total_tokens": 11478
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Pluto enters Aquarius on {{entryDate}}, and the pressure shifts toward networks, groups, and technology. A group chat starts running on rules no one remembers choosing. An app decides which posts get seen. A shared tool opens access for some and quietly shuts others out. Pluto in Aquarius makes power visible through the systems we use together.\",\"tension\":\"These systems can connect a group quickly and help it adapt when old methods stop working. Then speed starts replacing consent. The rules change because a few members have the passwords, dissent is treated as disloyalty, and the platform's default becomes the group's decision. Coordination improves, but no one can say who actually has authority. The group looks more open, while power settles with the few members who can change the settings.\",\"development\":\"Pluto previously moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Its return presses the question further. New tools arrive faster than shared habits can catch up, and a network can call itself open while making disagreement costly. We see it when a volunteer is pushed out for asking who made a rule, when an automated choice is trusted because it looks neutral, or when a new forum replaces one gatekeeper with another. Better technology alone does not change this. The old power survives in habits that hide control inside membership, convenience, or the claim that everyone agrees.\",\"close\":\"By {{exitDate}}, a network that treats agreement as proof of truth can reproduce the same control it was built to replace.\",\"try_this\":[\"We can check the administrator list on one shared account and remove one outdated name.\",\"We can turn off one recommendation feed for a week and choose each article, song, or video directly.\"]}"
+}

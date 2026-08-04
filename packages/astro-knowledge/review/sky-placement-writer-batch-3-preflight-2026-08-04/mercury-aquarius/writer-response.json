@@ -1,0 +1,65 @@
+{
+  "responseId": "resp_014e3da820df3d7a006a72456e088481a2a49df5cce113e8c4",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found",
+  "retrievedOwnerSourceIds": [
+    "owner-article:aquarius-season-2025:p052:window-3-3",
+    "owner-article:aquarius-full-moon-2025:p001:window-2-4",
+    "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+    "owner-article:mercury-in-virgo-2025:p006:window-2-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:mercury-aquarius",
+    "planet": "mercury",
+    "sign": "aquarius",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8166,
+    "input_tokens_details": {
+      "cache_write_tokens": 8163,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5034,
+    "output_tokens_details": {
+      "reasoning_tokens": 4660
+    },
+    "total_tokens": 13200
+  },
+  "article": {
+    "opening": "Mercury in Aquarius makes the odd idea sound more useful than the familiar answer. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Aquarius on {{entryDate}}, and our attention shifts toward patterns, future possibilities, and unusual solutions. A question opens a new route through a stuck conversation. Notes that seemed unrelated form a clear pattern. A strange suggestion becomes the first answer that fits.",
+    "tension": "The speed of that insight creates distance when everyone else is still catching up. We skip the explanation, point out the flaw, and move straight to a solution that feels obvious to us. If someone hesitates, we may argue harder or take the opposite side just to keep the thinking alive. The idea gets more interesting, but the exchange gets colder. What began as a useful break from convention ends with the person hearing it feeling treated like part of the problem.",
+    "development": "Mercury last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now a group discussion can start chasing the most original take instead of the useful one. A writer can keep refining the theory while missing the sentence that would make it clear. We can spot the system behind a recurring problem and still lose trust by treating every objection as outdated. When every answer has to sound original, useful questions go unsaid. Decisions then rest on a clever pattern that nobody had enough time to examine.",
+    "close": "Before {{exitDate}}, the strongest idea may still go nowhere once questioning it feels like admitting we cannot keep up.",
+    "try_this": [
+      "We can explain one original idea in three plain sentences and add one concrete example.",
+      "We can test one unconventional solution on a small recurring problem and write down what changed."
+    ]
+  }
+}
