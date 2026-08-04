@@ -325,7 +325,7 @@ function main() {
 
   const readiness = buildReadinessReport();
   assert.strictEqual(readiness.totals.placements, 168);
-  assert.strictEqual(readiness.totals.writerReady, 42);
+  assert.strictEqual(readiness.totals.writerReady, 43);
   assert.deepStrictEqual(readiness.writer.ready, [
     "mercury-aries", "mercury-taurus", "mercury-gemini", "mercury-cancer", "mercury-leo",
     "mercury-virgo", "mercury-libra", "mercury-scorpio", "mercury-sagittarius", "mercury-capricorn",
@@ -336,10 +336,10 @@ function main() {
     "jupiter-aries", "jupiter-taurus", "jupiter-gemini", "jupiter-cancer",
     "jupiter-leo", "jupiter-virgo", "jupiter-libra", "jupiter-scorpio",
     "jupiter-sagittarius", "jupiter-capricorn", "jupiter-aquarius", "jupiter-pisces",
-    "saturn-aries", "uranus-gemini", "neptune-aries",
+    "saturn-aries", "uranus-gemini", "neptune-aries", "pluto-aquarius",
     "chiron-aries", "north-node-aquarius", "south-node-leo"
   ]);
-  assert.deepStrictEqual(readiness.writer.blockedByReason.other, ["pluto-aquarius"]);
+  assert.strictEqual(readiness.writer.blockedByReason.other, undefined);
   assert.strictEqual(readiness.totals.runtimeRenderReady, 60);
   assert.strictEqual(readiness.totals.continuousRowsReady, 1);
   assert.strictEqual(readiness.totals.standaloneHookRowsReady, 36);
