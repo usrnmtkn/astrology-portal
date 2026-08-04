@@ -400,6 +400,65 @@ function signTransitWindowFor(
   };
 }
 
+function previousSameSignResidencyFor(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  currentStart: Date
+) {
+  const searchYears = planet === "Jupiter" ? 14 : 32;
+  const minimumGapYears = planet === "Jupiter" ? 6 : 1;
+  const stepDays = transitSearchStepDays(planet);
+  const maxIterations = Math.ceil((searchYears * 365.25) / stepDays);
+  let sample = addDays(currentStart, -minimumGapYears * 365.25);
+
+  for (let index = 0; index < maxIterations; index += 1) {
+    if (exactPlanetSign(swe, planetId, sample) === sign) {
+      const previousWindow = signTransitWindowFor(swe, planet, planetId, sample, sign);
+      if (
+        previousWindow.transitStart
+        && previousWindow.transitEnd
+        && new Date(previousWindow.transitEnd) < currentStart
+      ) {
+        return previousWindow;
+      }
+    }
+    sample = addDays(sample, -stepDays);
+  }
+
+  return null;
+}
+
+function skyPlacementStructuralTransitFacts(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  transitWindow: { transitStart?: string; transitEnd?: string }
+) {
+  // Jupiter in Libra is the only currently approved serving row that quotes
+  // prior-sign and prior-cycle dates. Calculate those dates from the ephemeris
+  // only when that planet's transit window is requested.
+  if (planet !== "Jupiter" || !transitWindow.transitStart || !transitWindow.transitEnd) {
+    return {};
+  }
+
+  const currentStart = new Date(transitWindow.transitStart);
+  const priorReference = new Date(currentStart.getTime() - 5 * 60_000);
+  const priorTransitSign = exactPlanetSign(swe, planetId, priorReference);
+  const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorTransitSign);
+  const previousResidency = previousSameSignResidencyFor(swe, planet, planetId, sign, currentStart);
+
+  return {
+    priorTransitSign,
+    priorTransitStart: priorWindow.transitStart ?? null,
+    priorTransitEnd: priorWindow.transitEnd ?? null,
+    previousSignResidencyStart: previousResidency?.transitStart ?? null,
+    previousSignResidencyEnd: previousResidency?.transitEnd ?? null
+  };
+}
+
 function moonSunPhaseAngle(swe: SwissEphInstance, date: Date) {
   return normalizeDegrees(
     exactPlanetLongitude(swe, swe.SE_MOON, date) - exactPlanetLongitude(swe, swe.SE_SUN, date)
@@ -2178,6 +2237,9 @@ export async function getAstrodienstSky(
     const transitWindow = options.includeTransitWindows
       ? signTransitWindowFor(swe, planet, planetIds[index], date, sign)
       : {};
+    const structuralTransitFacts = options.includeTransitWindows
+      ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow)
+      : {};
     const retrogradeWindow = options.includeTransitWindows
       ? retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
       : {};
@@ -2197,6 +2259,7 @@ export async function getAstrodienstSky(
       theme: themeForPoint(planet),
       transitTimeZone: options.includeTransitWindows ? location.timeZone ?? "UTC" : undefined,
       ...transitWindow,
+      ...structuralTransitFacts,
       ...retrogradeWindow
     };
   });

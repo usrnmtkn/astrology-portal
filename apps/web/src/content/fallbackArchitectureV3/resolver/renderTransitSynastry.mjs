@@ -1116,7 +1116,18 @@ function continuousSkyPlacementDateContext(entryDate, exitDate) {
   return { entry, exit, factLine };
 }
 
-function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDate, exitDate }) {
+function renderContinuousSkyPlacement(signCopy, {
+  planet,
+  sign,
+  events,
+  entryDate,
+  exitDate,
+  priorSign,
+  priorSignEntryDate,
+  priorSignExitDate,
+  previousResidencyEntryDate,
+  previousResidencyExitDate
+}) {
   if (!entryDate || !exitDate) {
     throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
   }
@@ -1126,7 +1137,16 @@ function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDat
   }
 
   const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
-  const ctx = { entryDate: dates.entry.body, exitDate: dates.exit.body, signTitle: title(sign) };
+  const ctx = {
+    entryDate: dates.entry.body,
+    exitDate: dates.exit.body,
+    signTitle: title(sign),
+    priorSign: priorSign ? title(priorSign) : null,
+    priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
+    priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
+    previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
+    previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+  };
   const factLine = dates.factLine;
   const collective = [signCopy.opening, signCopy.tension, signCopy.development]
     .map((part) => fillKeep(part, ctx));
@@ -1191,7 +1211,11 @@ function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDat
     throw new SourceGapError(`SOURCE_GAP: retired Sun identity hook ${planet}/${sign}`);
   }
   for (const transitDate of [dates.entry.body, dates.exit.body]) {
-    if (renderedText.split(transitDate).length - 1 > 2) {
+    const priorSignExit = priorSignExitDate
+      ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body
+      : null;
+    const allowedUses = transitDate === dates.entry.body && priorSignExit === transitDate ? 3 : 2;
+    if (renderedText.split(transitDate).length - 1 > allowedUses) {
       throw new SourceGapError(`SOURCE_GAP: repeated sky placement date ${planet}/${sign}`);
     }
   }
@@ -1224,6 +1248,11 @@ export function renderSkyPlacement({
   articleKey,
   entryDate,
   exitDate,
+  priorSign,
+  priorSignEntryDate,
+  priorSignExitDate,
+  previousResidencyEntryDate,
+  previousResidencyExitDate,
   hasPriorIngress = false,
   historyEligible,
   historyEntryDate,
@@ -1359,7 +1388,12 @@ export function renderSkyPlacement({
       sign,
       events,
       entryDate,
-      exitDate
+      exitDate,
+      priorSign,
+      priorSignEntryDate,
+      priorSignExitDate,
+      previousResidencyEntryDate,
+      previousResidencyExitDate
     });
   }
 
