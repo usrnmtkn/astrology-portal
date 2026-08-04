@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_09aaade6b817bf73006a722eff86b081a1866d21601e8e09fd",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-terra",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "low",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1194,
+    "input_tokens_details": {
+      "cache_write_tokens": 1191,
+      "cached_tokens": 0
+    },
+    "output_tokens": 384,
+    "output_tokens_details": {
+      "reasoning_tokens": 86
+    },
+    "total_tokens": 1578
+  },
+  "outputText": "{\"score\":2,\"verdict\":\"borderline\",\"weakestField\":\"body_you / body_they, third sentence\",\"weakest\":\"The claim that shared optimism can lead them to move past genuine hesitation or discomfort is not supported by the source boundary.\",\"why\":\"Direction, reciprocity, and the central acceptance loop are clear: the Jupiter holder assumes the best and encourages, while the Ascendant holder feels accepted and can show up more naturally. However, the final sentence adds an unsupported negative pattern of overlooking discomfort. It is a specific, removable source-drift issue in both variants.\",\"failedChecks\":[\"Source fidelity: the final sentence invents a cost not supplied by the Jupiter-to-Ascendant soft source.\"],\"strengths\":[\"Fixed Jupiter-to-Ascendant direction is maintained in both variants.\",\"The two-person response loop is plain and natural after placeholder resolution.\",\"Core language stays literal, concise, and within the themes of encouragement, goodwill, acceptance, and natural self-presentation.\",\"No prohibited exclusions, advice, legacy leakage, or invented foundation warmth appear.\"],\"sourceFidelity\":\"Mostly faithful through the first two sentences; the final sentence exceeds the compact source boundary by asserting that optimism causes genuine discomfort or hesitation to be passed over.\",\"foundationTrace\":\"No foundation lines were supplied and harvest mode is none_found. The draft does not add a reader-directed warmth turn, reassurance, permission, or benediction.\"}",
+  "error": null
+}

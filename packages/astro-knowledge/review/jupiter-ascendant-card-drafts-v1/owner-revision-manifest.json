@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "reviewSet": "jupiter-ascendant-card-drafts-v1",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_or_judge_calls",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/owner-feedback-source.md",
+  "originalSolArtifactsPreserved": true,
+  "additionalBilledCalls": 0,
+  "deterministicChecks": "pass",
+  "targets": [
+    {
+      "target": "conjunction",
+      "candidatePath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/conjunction/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/conjunction/owner-revision-deterministic-checks.json",
+      "approvalRecordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/conjunction/exact-approval.json",
+      "payloadSha256": "7dbc558118a3d1c6ed6f8bd23d20a0c01b303055bed2d3b0b72c267c54a7a61e"
+    },
+    {
+      "target": "hard",
+      "candidatePath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/owner-revision-deterministic-checks.json",
+      "approvalRecordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/exact-approval.json",
+      "payloadSha256": "44082c453864d55b346130f68bf99355e8cc0d4eaed92aba1f17f40a8a181b88"
+    },
+    {
+      "target": "soft",
+      "candidatePath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/soft/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/soft/owner-revision-deterministic-checks.json",
+      "approvalRecordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/soft/exact-approval.json",
+      "payloadSha256": "d8257ad5c355c29c50d8b35eb85d4f29d9697cf4556551479d971412ff309273"
+    }
+  ],
+  "approvalRecordStatus": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "servingStatus": "shipping_pr_authorized"
+}

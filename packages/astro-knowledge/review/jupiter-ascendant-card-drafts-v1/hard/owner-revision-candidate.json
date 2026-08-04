@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "jupiter-ascendant-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_approval_unchanged_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "approvalRecordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/exact-approval.json",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "44082c453864d55b346130f68bf99355e8cc0d4eaed92aba1f17f40a8a181b88",
+  "payload": {
+    "body_you": "Your encouragement can help {{holder2}} enter a new situation feeling more open and capable. If you keep talking up what they can handle, though, they may agree to more or present themselves as more certain than they feel. When they hesitate or pull back, you may respond with even more encouragement, which can leave them feeling pushed instead of supported. There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.",
+    "body_they": "{{holder1}}'s encouragement can help you enter a new situation feeling more open and capable. If {{holder1}} keeps talking up what you can handle, though, you may agree to more or present yourself as more certain than you feel. When you hesitate or pull back, {{holder1}} may respond with even more encouragement, which can leave you feeling pushed instead of supported. There is room for you to notice where you are manufacturing confidence versus actually feeling it.",
+    "warmthSource": {
+      "sourceArticleId": "this-weeks-astrology-august-24th-31st",
+      "originalLine": "Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.",
+      "usedForm": {
+        "body_you": "There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.",
+        "body_they": "There is room for you to notice where you are manufacturing confidence versus actually feeling it."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "ownerDecision": {
+    "operation": "approve_exact_draft_without_revision",
+    "foundationLineDisposition": "retained"
+  }
+}

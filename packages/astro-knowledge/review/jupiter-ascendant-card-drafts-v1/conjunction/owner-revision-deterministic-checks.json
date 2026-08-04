@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "deletionOnlyRevision": true,
+  "deletedFinalSentenceMatchesOwnerInstruction": true,
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "emDash": "pass",
+  "legacyLeakage": "pass",
+  "warmthSource": "null_as_owner_directed",
+  "evidenceLabels": "empty_as_owner_directed",
+  "matchedPacketException": "explicit_owner_decision_not_judge_rule_violation",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "7dbc558118a3d1c6ed6f8bd23d20a0c01b303055bed2d3b0b72c267c54a7a61e"
+}
