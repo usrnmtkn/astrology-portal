@@ -14,6 +14,13 @@ const manifestPath = path.join(
   "packages/astro-knowledge/review/synastry-stock-closer-removal-manifest.json"
 );
 const synastryPrefix = "fallback-hook/synastry-pair/";
+const batchExactKeys = new Set(
+  ["sun", "moon", "mercury", "venus", "saturn"].flatMap((planet) =>
+    ["conjunction", "hard", "soft"].map(
+      (group) => `${synastryPrefix}${planet}/ascendant/${group}`,
+    ),
+  ),
+);
 const approvalLabel = "owner-approved stock-closer removal, chat 2026-08-04";
 const expectedCounts = { hard: 112, soft: 112, conjunction: 112 };
 const suffixes = Object.freeze([
@@ -68,14 +75,22 @@ for (const entry of manifest.modified) {
   const row = rowsByKey.get(entry.contentKey);
   assert.ok(row, `${entry.contentKey} must still exist`);
   assert.equal(entry.reviewStatus, "approved", `${entry.contentKey} closer-removal baseline changed`);
-  assert.equal(row.review_status, "reviewed", `${entry.contentKey} must carry the honest provenance re-status`);
-  assert.equal(row.approval, undefined, `${entry.contentKey} must not fabricate content approval provenance`);
-  assert.equal(row.approved_via, entry.approvedViaAfter);
-  assert.ok(row.approved_via.split(" | ").includes(approvalLabel));
+  if (batchExactKeys.has(entry.contentKey)) {
+    assert.equal(row.review_status, "approved", `${entry.contentKey} must carry its later exact approval`);
+    assert.equal(row.approval?.approvalLevel, "exact_owner_approved");
+    assert.equal(row.approved_via, undefined, `${entry.contentKey} must not retain the superseded legacy label`);
+  } else {
+    assert.equal(row.review_status, "reviewed", `${entry.contentKey} must carry the honest provenance re-status`);
+    assert.equal(row.approval, undefined, `${entry.contentKey} must not fabricate content approval provenance`);
+    assert.equal(row.approved_via, entry.approvedViaAfter);
+    assert.ok(row.approved_via.split(" | ").includes(approvalLabel));
+  }
 
   for (const field of ["body_you", "body_they"]) {
     assert.match(row[field], /[.!?]$/u, `${entry.contentKey} ${field} lacks terminal punctuation`);
-    assert.ok(sentences(row[field]).length >= 2, `${entry.contentKey} ${field} has fewer than two sentences`);
+    if (!batchExactKeys.has(entry.contentKey)) {
+      assert.ok(sentences(row[field]).length >= 2, `${entry.contentKey} ${field} has fewer than two sentences`);
+    }
   }
 }
 

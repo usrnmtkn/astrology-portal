@@ -4,7 +4,7 @@
   "status": "exact_owner_approved",
   "ownerApproved": true,
   "promotionAuthorized": false,
-  "servingChanged": false,
+  "servingChanged": true,
   "governedDataChanged": true,
   "writerCalls": 15,
   "judgeCalls": 15,
