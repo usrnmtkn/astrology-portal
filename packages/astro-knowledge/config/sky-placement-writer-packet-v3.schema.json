@@ -6,7 +6,7 @@
   "required": ["schemaVersion", "packetVersion", "positiveEvidencePoolId", "formatExemplars", "formatExemplarStatus", "ownerReferenceArticles", "ownerSelectedBenchmarks", "ownerCorpusWarmthEvidence", "routing", "verifiedAstrology", "surfaceRequirements", "voiceDevices", "movesExemplar", "task", "ownerPassages", "preferredVocabulary", "structuralSlots", "writerPrompt"],
   "properties": {
     "schemaVersion": { "const": 2 },
-    "packetVersion": { "const": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found" },
+    "packetVersion": { "const": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1" },
     "positiveEvidencePoolId": { "const": "sky-placement-owner-affinity-v1" },
     "formatExemplars": {
       "type": "array",
@@ -91,7 +91,7 @@
         "registryState": { "const": "candidate" },
         "requestedModel": { "const": "gpt-5.6-sol" },
         "requestedReasoningEffort": { "const": "xhigh" },
-        "promptVersion": { "const": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1" }
+        "promptVersion": { "const": "sky-placement-writer-v15:cross-batch-move-variety-v1" }
       }
     },
     "verifiedAstrology": { "type": "object" },

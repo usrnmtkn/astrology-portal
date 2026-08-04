@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "runId": "mars-virgo",
+  "recordedAt": "2026-08-04T20:14:30.584Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "mars",
+    "sign": "virgo"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found",
+    "retrievedOwnerSourceIds": [
+      "owner-article:virgo-season-2025:p014:window-2-2",
+      "owner-article:venus-in-virgo-2025:p012:window-3-2",
+      "owner-article:mars-direct-in-cancer:p057:window-3-2",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close",
+        "hook is long (73 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Mars in Virgo makes every loose screw, skipped step, and unfinished repair harder to ignore. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Virgo on {{entryDate}}, and action shifts toward precision, repair, and practical results. The crooked shelf gets leveled. The repeated mistake gets traced to its source. A vague intention becomes a sequence we can actually follow. This transit wants effort to produce a visible improvement, not just more motion.",
+    "tension": "That sharp eye rarely stops with the first useful correction. We redo work that already functions, interrupt someone's method to point out a cleaner one, and spend an hour on a flaw that changes almost nothing. Anxiety rises because there is always another detail available to manage. Criticism follows, first as a way to improve the result and then as a running account of everything still wrong. The priority waits while our energy is burned on control.",
+    "development": "Mars last moved through Virgo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Similar pressure may return through the habits it leaves behind: checking again after the answer is clear, taking over a small task because explaining it seems inefficient, or treating fatigue as evidence that the routine needs one more adjustment. Each correction offers a quick sense of relief. Together they create more work, and the larger problem stays intact. The method becomes so exact that nobody else can easily join in. Help arrives and gets corrected. A finished result is reopened for one minor change. What began as practical action becomes an exhausting effort to prevent any mistake at all.",
+    "close": "Before {{exitDate}}, the smallest flaws can be corrected while the priority that started all this is still waiting.",
+    "try_this": [
+      "We can fix one broken or unreliable item and stop as soon as it works.",
+      "We can give one necessary cleanup 30 minutes, then leave the cosmetic flaws alone."
+    ]
+  }
+}

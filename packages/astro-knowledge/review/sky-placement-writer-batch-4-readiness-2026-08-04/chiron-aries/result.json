@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "runId": "chiron-aries",
+  "recordedAt": "2026-08-04T21:07:22.335Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "chiron",
+    "sign": "aries"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:chiron-retrograde-in-aries:p009:window-2-3",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:full-moon-in-aries:p008:window-2-3",
+      "owner-article:mercury-retrograde-in-leo:p024:window-4-4",
+      "owner-article:aquarius-season-2025:p012:window-3-3"
+    ],
+    "warmthOwnerSourceIds": [
+      "owner-article:chiron-retrograde-in-aries:p009",
+      "owner-article:pisces-season-2025:p054"
+    ],
+    "harvestMode": "matched"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "shape",
+          "term": "stacked-ending",
+          "match": "5 short closing sentences",
+          "reason": "land one truth with bite, not a pile of aphorisms"
+        }
+      ],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Chiron returns to Aries on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, bringing the pressure back to wanting, beginning, and taking up space. A hand rises, then drops. A clear preference becomes \"either is fine.\" In another moment, the freeze is covered by an answer sharper than the question.",
+    "tension": "Chiron in Aries exposes the tender spot around wanting, beginning, and existing without apology. Acting before confidence arrives can interrupt the old response that made silence feel safer. But when every hesitation feels shameful, movement becomes a test of worth. We force an answer, treat a pause as rejection, or push past a limit just to prove nobody can stop us. What began as courage leaves no space for uncertainty, and the original fear still decides the pace.",
+    "development": "Chiron last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and this return puts the same pressure back into ordinary moments. Someone volunteers to go first, then spends the rest of the day replaying how it looked. At a family table, a sibling stops laughing along with the old joke about being too much. Elsewhere, a simple no holds through the silence that follows. The wound around identity remains. What changes is how we carry it. A want is spoken without becoming a demand. A refusal stands without turning into a fight.",
+    "close": "Before {{exitDate}}, swallowing a want to avoid discomfort leaves the decision to someone else, while delivering it as a threat makes others defend themselves instead of hearing what was wanted.",
+    "try_this": [
+      "We can go first in one low-stakes moment where we usually wait for a cue.",
+      "We can ask for one wrong order to be corrected in a calm sentence.",
+      "We can repeat one clear no in the same tone when someone pushes again."
+    ]
+  }
+}

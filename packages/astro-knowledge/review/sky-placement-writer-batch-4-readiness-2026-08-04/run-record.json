@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-batch-4-sol-xhigh-2026-08-04",
+  "recordedAt": "2026-08-04T21:07:22.335Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidates_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "servingAuthorized": false,
+  "calls": {
+    "writer": 7,
+    "judge": 0,
+    "total": 7
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1"
+  },
+  "harvestAudit": {
+    "matched": ["chiron-aries", "nodes-aquarius-leo"],
+    "none_found_nonblocking": ["mars-sagittarius", "mars-aquarius", "mars-pisces", "neptune-aries", "pluto-aquarius"]
+  },
+  "units": [
+    {
+      "id": "mars-sagittarius",
+      "responseId": "resp_06962f663f01f8ae006a7253cf372481a198cba00f8754a760",
+      "result": "mars-sagittarius/result.json",
+      "deterministicLint": { "passed": true, "fails": 0, "warns": 0 },
+      "usage": { "inputTokens": 8085, "outputTokens": 5259, "reasoningTokens": 4873 }
+    },
+    {
+      "id": "mars-aquarius",
+      "responseId": "resp_0061f92c286d1fdf006a7253d2bf5481a0bdab68117631c14a",
+      "result": "mars-aquarius/result.json",
+      "deterministicLint": { "passed": true, "fails": 0, "warns": 0 },
+      "usage": { "inputTokens": 8194, "outputTokens": 4277, "reasoningTokens": 3889 }
+    },
+    {
+      "id": "mars-pisces",
+      "responseId": "resp_0fc4bcc6a1db012f006a7253d0c424819d86830a5ff7b8dfe4",
+      "result": "mars-pisces/result.json",
+      "deterministicLint": { "passed": true, "fails": 0, "warns": 0 },
+      "usage": { "inputTokens": 7999, "outputTokens": 2973, "reasoningTokens": 2588 }
+    },
+    {
+      "id": "neptune-aries",
+      "responseId": "resp_02a57c0a4c7f0d70006a7253d1164881a0a6ec1d022196f8ad",
+      "result": "neptune-aries/result.json",
+      "deterministicLint": { "passed": true, "fails": 0, "warns": 0 },
+      "usage": { "inputTokens": 7998, "outputTokens": 7257, "reasoningTokens": 6905 }
+    },
+    {
+      "id": "pluto-aquarius",
+      "responseId": "resp_01d61ccca6495c4c006a7253d12d3881a18ca66d79c65eade2",
+      "result": "pluto-aquarius/result.json",
+      "deterministicLint": { "passed": true, "fails": 0, "warns": 2 },
+      "usage": { "inputTokens": 8254, "outputTokens": 3224, "reasoningTokens": 2838 }
+    },
+    {
+      "id": "chiron-aries",
+      "responseId": "resp_0c9cc8f6ec59b5b2006a7253d1872881a1b73b5fad8d5945ba",
+      "result": "chiron-aries/result.json",
+      "deterministicLint": { "passed": true, "fails": 0, "warns": 1 },
+      "usage": { "inputTokens": 7982, "outputTokens": 9467, "reasoningTokens": 9068 }
+    },
+    {
+      "id": "nodes-aquarius-leo",
+      "responseId": "resp_041094130da152ac006a7253d1b8e881a19db25ba90439fff8",
+      "result": "nodes-aquarius-leo/result.json",
+      "deterministicLint": { "passed": true, "fails": 0, "warns": 1 },
+      "usage": { "inputTokens": 8447, "outputTokens": 5668, "reasoningTokens": 5251 }
+    }
+  ],
+  "usageTotals": {
+    "inputTokens": 56959,
+    "outputTokens": 38125,
+    "reasoningTokens": 35412
+  },
+  "batchRepetitionLint": {
+    "passed": true,
+    "groupChatOccurrences": 1,
+    "maxGroupChatOccurrences": 1,
+    "findings": []
+  },
+  "terraReview": null,
+  "automaticRevision": false
+}

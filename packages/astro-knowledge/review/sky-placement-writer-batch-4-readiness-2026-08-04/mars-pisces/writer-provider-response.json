@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0fc4bcc6a1db012f006a7253d0c424819d86830a5ff7b8dfe4",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 7999,
+    "input_tokens_details": {
+      "cache_write_tokens": 7996,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2973,
+    "output_tokens_details": {
+      "reasoning_tokens": 2588
+    },
+    "total_tokens": 10972
+  },
+  "outputText": "{\"opening\":\"Mars enters Pisces on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and action starts following feeling rather than a fixed route. We help before anyone asks. We follow an idea before we can explain it. A task that nobody claimed gets done because someone senses what is needed and quietly begins.\",\"tension\":\"That sensitivity can keep action moving, but it can also hide the point where willingness ends. We take on the extra piece without naming a limit, soften an answer until no one knows what was decided, and avoid the conversation that might disappoint someone. The work still gets done for a while. Then energy scatters across too many needs, the original aim gets harder to find, and anger comes out as a canceled plan, a sharp aside, or silence after another automatic yes.\",\"development\":\"Mars last moved through Pisces from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This pass brings the same pressure back into view: compassion without a boundary keeps creating obligations that nobody clearly chose. We may start with one useful act, notice three more needs, and spend the day responding to whatever feels most urgent. A creative impulse can dissolve under constant interruption. A real disagreement can stay unnamed while its heat moves into unrelated moments. By the time the limit is obvious, the original desire has been buried under favors, guesses, and repairs.\",\"close\":\"By {{exitDate}}, repeated unplanned favors can leave the original desire untouched and the anger aimed at whoever asks next.\",\"try_this\":[\"We can choose one request this week and say exactly which part we can take on.\",\"We can give one creative impulse thirty uninterrupted minutes and make a rough first version.\",\"We can name one irritation in a plain sentence before doing another favor around it.\"]}"
+}

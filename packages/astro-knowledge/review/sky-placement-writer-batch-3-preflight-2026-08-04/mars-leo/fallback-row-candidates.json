@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Mars enters Leo on {{entryDate}} with a bolder, more visible style of action after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}. We volunteer to lead. We show the unfinished work. We start the hard part while the courage is there. Energy rises when the action feels creative, purposeful, and worth claiming.",
+      "tension": "Visibility also raises the stakes. Pride can keep effort alive, but a quiet response may start to feel like rejection. We make a bigger show of the effort, claim more credit, or turn the first objection into a fight. The work starts serving the need to prove we matter. Being seen takes over from doing something worth respecting.",
+      "development": "Mars last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure around pride and recognition returns in different moments. A creative risk gathers momentum because someone is willing to stand behind it. A stalled task becomes interesting once it has a clear point and a visible finish. Then an ordinary correction feels like an insult. A disagreement becomes a contest over who gets credit. Attention goes to the reaction instead of the result. The original aim gets harder to recognize, and a strong piece of work gets harder to finish once praise matters more than the work itself.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, the push to be recognized can leave the work unfinished while the argument over credit becomes what we remember.",
+      "try_this": [
+        "We can finish one small creative task before asking someone what they think.",
+        "We can name one contribution from someone else before describing our own.",
+        "We can play one song and dance through the whole track without stopping."
+      ],
+      "aspect_units": [],
+      "body_you": "Mars enters Leo on {{entryDate}} with a bolder, more visible style of action after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}. We volunteer to lead. We show the unfinished work. We start the hard part while the courage is there. Energy rises when the action feels creative, purposeful, and worth claiming.\n\nVisibility also raises the stakes. Pride can keep effort alive, but a quiet response may start to feel like rejection. We make a bigger show of the effort, claim more credit, or turn the first objection into a fight. The work starts serving the need to prove we matter. Being seen takes over from doing something worth respecting.\n\nMars last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure around pride and recognition returns in different moments. A creative risk gathers momentum because someone is willing to stand behind it. A stalled task becomes interesting once it has a clear point and a visible finish. Then an ordinary correction feels like an insult. A disagreement becomes a contest over who gets credit. Attention goes to the reaction instead of the result. The original aim gets harder to recognize, and a strong piece of work gets harder to finish once praise matters more than the work itself.\n\nBefore {{exitDate}}, the push to be recognized can leave the work unfinished while the argument over credit becomes what we remember.",
+      "body_they": "Mars enters Leo on {{entryDate}} with a bolder, more visible style of action after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}. We volunteer to lead. We show the unfinished work. We start the hard part while the courage is there. Energy rises when the action feels creative, purposeful, and worth claiming.\n\nVisibility also raises the stakes. Pride can keep effort alive, but a quiet response may start to feel like rejection. We make a bigger show of the effort, claim more credit, or turn the first objection into a fight. The work starts serving the need to prove we matter. Being seen takes over from doing something worth respecting.\n\nMars last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure around pride and recognition returns in different moments. A creative risk gathers momentum because someone is willing to stand behind it. A stalled task becomes interesting once it has a clear point and a visible finish. Then an ordinary correction feels like an insult. A disagreement becomes a contest over who gets credit. Attention goes to the reaction instead of the result. The original aim gets harder to recognize, and a strong piece of work gets harder to finish once praise matters more than the work itself.\n\nBefore {{exitDate}}, the push to be recognized can leave the work unfinished while the argument over credit becomes what we remember.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "mars-leo"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}
