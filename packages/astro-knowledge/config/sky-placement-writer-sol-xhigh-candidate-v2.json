@@ -1,0 +1,14 @@
+{
+  "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "xhigh",
+  "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found",
+  "runtimeContract": "sky-placement-continuous-v2",
+  "rubricVersion": "not-applicable-writing-only",
+  "evaluationSetVersion": "sky-placement-writer-heldout-pending-v2",
+  "policyVersion": "editorial-writer-policy-v1",
+  "promotionAuthorized": false,
+  "notes": "Unpromoted continuous Sky Placement fallback writer. Output is always needs_review and render-ineligible until exact owner approval and separate import authorization."
+}

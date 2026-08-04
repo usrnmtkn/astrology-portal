@@ -19,6 +19,10 @@
     "collective_second_person": "Current Sky copy uses prohibited second person.",
     "generic_new_age": "Generic reassurance, blessing, or spiritualized filler replaces behavioral specificity.",
     "swappable_astrology": "The wording could move to another planet or sign with minimal change.",
-    "overbalanced_structure": "The prose is symmetrically composed or coverage-driven at the expense of natural observation."
+    "overbalanced_structure": "The prose is symmetrically composed or coverage-driven at the expense of natural observation.",
+    "generic_collective_opener": "A sentence begins with generic 'People ...' instead of naming the actual group, event, or behavior.",
+    "harsh_register": "The wording uses a clinical or severe term when the exact event or a less harsh ordinary word would be more accurate.",
+    "dated_communication_object": "A communication scene uses letter or formal or technical delivery language where ordinary message or response wording would sound natural; physical mail remains valid when the scene depends on it.",
+    "generic_tagline": "The tagline summarizes a virtue or slogan instead of naming the article's pressure, decision, or contradiction."
   }
 }
