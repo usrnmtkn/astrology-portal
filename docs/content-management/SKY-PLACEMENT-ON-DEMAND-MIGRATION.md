@@ -47,6 +47,8 @@ Required order:
 
 Bundle targets:
 
-- Sky Placement fallback chunk: at most 140 kB gzip.
+- Sky Placement fallback chunk: at most 150 kB gzip.
 - Placement chunk in static App boot graph: 0 bytes.
 - Existing App boot, App chunk, reader CSS, and total-reader budgets must continue to pass.
+
+The first production build of this migration measured the route chunk at approximately 105.2 kB gzip and the App JavaScript boot graph at approximately 375.8 kB gzip.

@@ -36,8 +36,47 @@ const skyPlacementOwnerApprovedFallbacks = readPackageJson("source-rows/sky-plac
 const skyPlacementOwnerApprovedReaderFallbacks = readPackageJson("bundled-sky-placement-owner-approved-reader-v1.json");
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
+const skyPlacementServingManifest = readPackageJson("authored-inputs/sky-placement-serving-manifest-v1.json");
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
+
+const servingReleaseByKey = new Map(skyPlacementServingManifest.releases.flatMap((release) => (
+  release.approved_keys.map((contentKey) => [contentKey, release])
+)));
+const servingReleaseByBatch = new Map(skyPlacementServingManifest.releases.map((release) => (
+  [String(release.release_batch), release]
+)));
+
+function isReaderEligible(row, allowBlank = false) {
+  const reviewStatus = String(row.review_status ?? "").trim().toLowerCase();
+  const contentKey = String(row.contentKey ?? "");
+  const requiresServingRelease = row.render_policy === "sky-placement-continuous-v2"
+    || contentKey.startsWith("fallback-hook/sky-sign-copy/");
+  const release = servingReleaseByKey.get(contentKey)
+    ?? servingReleaseByBatch.get(String(row.release_batch ?? "").trim());
+  const distributionEligible = !requiresServingRelease
+    || (
+      release?.distribution_state === "serving"
+      && release.approved_keys.includes(contentKey)
+    );
+
+  return (
+    ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
+    || (allowBlank && !reviewStatus)
+  ) && distributionEligible;
+}
+
+function latestReaderEligible(rows, allowBlank = false) {
+  const candidates = new Map();
+  for (const row of rows) {
+    const keyed = candidates.get(row.contentKey) ?? [];
+    keyed.push(row);
+    candidates.set(row.contentKey, keyed);
+  }
+  return [...candidates.values()]
+    .map((keyed) => [...keyed].reverse().find((row) => isReaderEligible(row, allowBlank)))
+    .filter(Boolean);
+}
 
 assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 11);
 assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 11);
@@ -625,18 +664,18 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
-  "Dashboard cache payloads must be rejected when the bundled content hash changes."
+  /envelope\?\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\.runtimeCapability[\s\S]*envelope\?\.bundledContentHash !== bundledPartition\.contentHash/u,
+  "Dashboard cache payloads must be rejected when the runtime capability or partition hash changes."
 );
 assert.match(
   generatedContentSource,
-  /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
-  "Dashboard packages must be complete, same-or-newer, and hash-verified before installation."
+  /manifest\.contentHash !== bundledManifest\.contentHash[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
+  "Dashboard partitions must exactly match the bundled partition and mirror metadata before installation."
 );
 assert.match(
   generatedContentSource,
@@ -697,16 +736,16 @@ try {
   const materializedByKey = new Map(materialized.rows.map((row) => [row.content_key, row]));
   const localManifest = createPackageManifest({
     transitLib: {
-      authoredCards: [
+      authoredCards: latestReaderEligible([
         ...transitRows.authoredCards,
         ...lunationBlendRows.authoredCards,
         ...skyArticleRows.authoredCards,
         ...weeklyRows,
         ...timingEventRows.authoredCards
-      ]
+      ])
     },
     rowsFile: {
-      hookRows: [
+      hookRows: latestReaderEligible([
         ...sourceRows.hookRows,
         ...lunationBlendRows.hookRows,
         ...bondLanguagePass2.rows,
@@ -715,18 +754,18 @@ try {
         ...skyPlanetFrames.rows,
         ...skySignCopySun.rows,
         ...skyPlacementOwnerApprovedReaderFallbacks.rows
-      ],
-      vocabularyRows: [
+      ]),
+      vocabularyRows: latestReaderEligible([
         ...sourceRows.vocabularyRows,
         ...placementInterimRows.vocabularyRows,
         ...skyArticleRows.vocabularyRows
-      ]
+      ])
     },
     templatesFile: {
-      templates: [
+      templates: latestReaderEligible([
         ...templates.templates,
         ...placementInterimRows.templates
-      ]
+      ], true)
     }
   }, PACKAGE_VERSION);
 
@@ -776,8 +815,10 @@ try {
 
   for (const row of skyPlacementOwnerApprovedFallbacks.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
-    assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for staged owner review.`);
     assert.equal(materializedRow.body, row.body_you);
+    assert.equal(materializedRow.status, "DRAFT");
+    assert.equal(materializedRow.facts.readerServing, false);
     assert.equal(materializedRow.source_snapshot.review_status, "approved");
     assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
   }
