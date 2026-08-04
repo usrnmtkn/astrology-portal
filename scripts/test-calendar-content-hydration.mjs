@@ -99,6 +99,39 @@ const directEvent = {
   direction: "direct",
   phase: "station-direct"
 };
+const mercuryStationEvent = {
+  id: "mercury-stations-retrograde-pisces",
+  type: "station",
+  title: "Mercury stations retrograde in Pisces",
+  startsAt: "2027-02-09T12:00:00.000Z",
+  dateKey: "2027-02-09",
+  planet: "Mercury",
+  sign: "Pisces",
+  direction: "retrograde",
+  phase: "station-retrograde"
+};
+const venusPassageEvent = {
+  id: "venus-retrograde-passage-scorpio",
+  type: "station",
+  title: "Venus retrograde in Scorpio",
+  startsAt: "2026-10-10T12:00:00.000Z",
+  dateKey: "2026-10-10",
+  planet: "Venus",
+  sign: "Scorpio",
+  direction: "retrograde",
+  phase: "retrograde-passage"
+};
+const chironStationEvent = {
+  id: "chiron-stations-retrograde-taurus",
+  type: "station",
+  title: "Chiron stations retrograde in Taurus",
+  startsAt: "2027-07-26T12:00:00.000Z",
+  dateKey: "2027-07-26",
+  planet: "Chiron",
+  sign: "Taurus",
+  direction: "retrograde",
+  phase: "station-retrograde"
+};
 
 const aspectKeys = calendarEventGeneratedContentKeys(aspectEvent);
 assert.equal(aspectKeys.length, 2, "Calendar aspects must request evergreen and dated approved-card keys.");
@@ -118,6 +151,19 @@ const directKeys = calendarEventGeneratedContentKeys(directEvent);
 assert.ok(
   directKeys.includes("sky.station.uranus.gemini.direct"),
   "Direct stations must request the sign-and-motion-specific row."
+);
+
+assert.ok(
+  calendarEventGeneratedContentKeys(mercuryStationEvent).includes("sky.station.mercury.pisces.retrograde"),
+  "Mercury station cards must request their owner-approved exact row."
+);
+assert.ok(
+  calendarEventGeneratedContentKeys(venusPassageEvent).includes("sky.retrograde.venus.scorpio.retrograde_passage"),
+  "Venus retrograde passages must request their owner-approved exact row."
+);
+assert.ok(
+  calendarEventGeneratedContentKeys(chironStationEvent).includes("sky.station.chiron.taurus.retrograde"),
+  "Chiron station cards must request their owner-approved exact row."
 );
 
 assert.ok(
