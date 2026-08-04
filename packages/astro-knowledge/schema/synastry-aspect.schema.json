@@ -12,6 +12,7 @@
     "planetB": { "type": "string" },
     "aspect": { "type": "string" },
     "plainTranslation": { "type": "string" },
+    "humanMoment": { "type": "string" },
     "summaryShort": { "type": "string" },
     "summaryDeep": { "type": "string" },
     "tension": { "type": "string" },
