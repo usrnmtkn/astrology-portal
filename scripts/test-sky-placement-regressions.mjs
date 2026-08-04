@@ -515,7 +515,7 @@ assert.deepEqual(
   "Browser and Node continuous Sun fallback assembly must remain byte-identical."
 );
 
-assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 11);
+assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 18);
 const ownerFallbackDateFacts = {
   entryDate: "August 24, 2028",
   exitDate: "September 24, 2029",
@@ -543,9 +543,7 @@ for (const row of skyPlacementOwnerApprovedFallbacksV1.rows) {
   const facts = {
     planet,
     sign,
-    entryDate: ownerFallbackDateFacts.entryDate,
-    exitDate: ownerFallbackDateFacts.exitDate,
-    ...(planet === "jupiter" && sign === "libra" ? ownerFallbackDateFacts : {})
+    ...ownerFallbackDateFacts
   };
   const rendered = renderer.renderSkyPlacement(facts);
 
