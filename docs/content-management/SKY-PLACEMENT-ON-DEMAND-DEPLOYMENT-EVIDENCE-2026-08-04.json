@@ -1,0 +1,162 @@
+{
+  "schema": "tldrastro-sky-placement-on-demand-deployment-evidence-v1",
+  "recorded_at": "2026-08-04T18:47:38Z",
+  "release": {
+    "package_version": "v3-2026-08-04b",
+    "runtime_capability": "sky-placement-on-demand-v1",
+    "integration_commit": "c079cceedc9dc6682c405a55ed65772cf6263d75",
+    "migration_pr": "https://github.com/usrnmtkn/astrology-portal/pull/55",
+    "clean_landing_pr": "https://github.com/usrnmtkn/astrology-portal/pull/59",
+    "friend_assertion_commit": "dd957bd8",
+    "friend_assertion_scope": "scripts/test-fallback-refresh-wiring.mjs only"
+  },
+  "package_identity": {
+    "content_hash": "a670af55bcfd1d097212f2cf29c7ed65",
+    "key_manifest_hash": "80f7daae62a136422cae274cb2ffa4be",
+    "key_count": 7199,
+    "partitions": {
+      "core": {
+        "content_hash": "03a02fa8bf13bcdc5e8f31a2c814bc18",
+        "key_manifest_hash": "9f3ab6027ade6dfe4d3605201c4ed1b2",
+        "key_count": 6314
+      },
+      "sky_placement": {
+        "content_hash": "2e4553f20a620e0ea7527eb804a9b4a2",
+        "key_manifest_hash": "8c2cb8c7057645cb342878fd538fa577",
+        "key_count": 885
+      }
+    }
+  },
+  "pre_deploy_gates": {
+    "result": "pass",
+    "commands": [
+      "npm run build:knowledge",
+      "npm test",
+      "npm run test:performance-contracts",
+      "npm run qa:bundle"
+    ],
+    "bundle_metrics_gzip": {
+      "app_boot_kb": 370.7,
+      "reader_boot_kb": 414.3,
+      "app_chunk_kb": 141.9,
+      "sky_placement_on_demand_chunk_kb": 111.3,
+      "static_sky_placement_bytes": 0,
+      "total_javascript_mb": 2.6
+    },
+    "ci": [
+      {
+        "name": "Visual smoke",
+        "run_id": 30939269094,
+        "url": "https://github.com/usrnmtkn/astrology-portal/actions/runs/30939269094",
+        "result": "success"
+      },
+      {
+        "name": "Aspect patterns",
+        "run_id": 30939265897,
+        "url": "https://github.com/usrnmtkn/astrology-portal/actions/runs/30939265897",
+        "result": "success"
+      },
+      {
+        "name": "Ephemeris",
+        "run_id": 30939265630,
+        "url": "https://github.com/usrnmtkn/astrology-portal/actions/runs/30939265630",
+        "result": "success"
+      }
+    ]
+  },
+  "deployment": {
+    "provider": "Vercel",
+    "deployment_id": "dpl_7tWV32cfc3Skki4PWgUFgpABiwLn",
+    "target": "production",
+    "status": "Ready",
+    "created_at": "2026-08-04T18:42:09Z",
+    "deployment_url": "https://tldrastro-82p6b0ipt-usrnmtkns-projects.vercel.app",
+    "canonical_url": "https://tldrastro.vercel.app",
+    "secondary_alias": "https://astrology-portal.vercel.app",
+    "commit_status": {
+      "context": "Vercel",
+      "state": "success",
+      "url": "https://vercel.com/usrnmtkns-projects/tldrastro/7tWV32cfc3Skki4PWgUFgpABiwLn"
+    },
+    "canonical_http_status": 200
+  },
+  "production_verification": {
+    "verified_at": "2026-08-04T18:47:38Z",
+    "rollout_order": [
+      {
+        "step": 1,
+        "check": "deployment readiness and deployed commit status",
+        "result": "pass"
+      },
+      {
+        "step": 2,
+        "check": "Sky boot boundary",
+        "result": "pass",
+        "evidence": "The Sky route boot tags did not include fallback-content-sky-placement."
+      },
+      {
+        "step": 3,
+        "check": "approved detail route on-demand load",
+        "result": "pass",
+        "route": "/#sky/placement/jupiter",
+        "evidence": {
+          "loading_state_observed": true,
+          "deferred_asset": "/assets/fallback-content-sky-placement-BUffxnOr.js",
+          "heading": "Jupiter in Leo",
+          "local_time_slot": "June 30, 2026 to July 26, 2027",
+          "owner_approved_opening_present": true,
+          "unresolved_template_slots": 0
+        }
+      },
+      {
+        "step": 4,
+        "check": "dashboard package validation and cache invalidation",
+        "result": "pass",
+        "evidence": {
+          "dashboard_package_rejections": 1,
+          "warning": "Fallback architecture V3 dashboard package failed version, completeness, or hash validation; bundled package remains active.",
+          "fallback_architecture_local_storage_keys": [],
+          "runtime_error_count": 0,
+          "approved_route_remained_available_after_reload": true
+        }
+      },
+      {
+        "step": 5,
+        "check": "reader-safety behavior for unavailable sign copy",
+        "result": "pass",
+        "route": "/#sky/placement/mercury",
+        "evidence": "Unavailable Mercury-in-Cancer sign copy remained omitted; only available Gifts and Lessons aspect sections rendered."
+      },
+      {
+        "step": 6,
+        "check": "loading, error, retry, and offline-safe floor contract",
+        "result": "pass_with_no_production_fault_injection",
+        "evidence": {
+          "loading_state_observed_in_production": true,
+          "production_network_fault_injection_performed": false,
+          "reason": "Production traffic was not deliberately faulted.",
+          "verified_contracts": [
+            "A failed local and dashboard partition load retains the approved standalone floor.",
+            "The error state states that approved available copy remains below and exposes Retry.",
+            "Concurrent route requests share one deferred partition load.",
+            "The standalone and hydrated results contain no unresolved engine slots."
+          ]
+        }
+      }
+    ],
+    "console": {
+      "runtime_errors": 0,
+      "dashboard_fail_closed_warnings": 1,
+      "expected_source_gap_warnings": 88
+    }
+  },
+  "batch_2": {
+    "release_id": "sky-placement-batch-2",
+    "distribution_state": "staged",
+    "transition": "none",
+    "migration_gate_status": "blocked",
+    "approved_keys": [],
+    "serving_transition_authorized": false,
+    "next_gate": "A separate owner-approved serving diff must name the exact batch-2 keys and record this deployment evidence in the serving manifest before any batch-2 key may serve."
+  }
+}
