@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0ee329d5262c1142006a722ec55ee481a2b7c2cadf048cf303",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 792,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1023,
+    "output_tokens_details": {
+      "reasoning_tokens": 854
+    },
+    "total_tokens": 1815
+  },
+  "outputText": "{\"body_you\":\"You tend to assume the best of how {{holder2}} presents themselves and encourage them when they seem unsure. Feeling accepted by you makes it easier for {{holder2}} to enter situations naturally without overthinking how they come across. That easy optimism can also lead both of you to move past moments when {{holder2}} is genuinely hesitant or uncomfortable.\",\"body_they\":\"{{holder1}} tends to assume the best of how you present yourself and encourage you when you seem unsure. Feeling accepted by {{holder1}} makes it easier for you to enter situations naturally without overthinking how you come across. That easy optimism can also lead both of you to move past moments when you are genuinely hesitant or uncomfortable.\",\"warmthSource\":null,\"labels\":[]}",
+  "error": null
+}
