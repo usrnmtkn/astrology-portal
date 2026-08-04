@@ -289,7 +289,8 @@ const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
 const serializedSkyPlacement = `${JSON.stringify(skyPlacementRows, null, 2)}\n`;
 const serializedCoreManifest = `${JSON.stringify(coreManifest, null, 2)}\n`;
 const serializedSkyPlacementManifest = `${JSON.stringify(skyPlacementManifest, null, 2)}\n`;
-const serializedSkyPlacementOwnerApprovedReader = `${JSON.stringify(skyPlacementOwnerApprovedReaderRows(), null, 2)}\n`;
+const skyPlacementOwnerApprovedReader = skyPlacementOwnerApprovedReaderRows();
+const serializedSkyPlacementOwnerApprovedReader = `${JSON.stringify(skyPlacementOwnerApprovedReader, null, 2)}\n`;
 
 if (checkOnly) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
@@ -338,5 +339,5 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementOutputPath)} (${skyPlacementRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, coreManifestOutputPath)} (${coreManifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementManifestOutputPath)} (${skyPlacementManifest.keyCount} keys).`);
-  console.log(`Wrote ${path.relative(repoRoot, skyPlacementOwnerApprovedReaderOutputPath)} (11 metadata-free reader rows).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyPlacementOwnerApprovedReaderOutputPath)} (${skyPlacementOwnerApprovedReader.rows.length} metadata-free reader rows).`);
 }
