@@ -1,0 +1,19 @@
+{
+  "id": "sky-placement-writer-batch-1-corpus-warmth-revisions-v4-exact-approval",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "sky-placement-batch",
+  "articleBeat": "seven-full-continuous-fallback-articles",
+  "ownerStatement": "With the two required owner-directed edits and the optional Mercury in Virgo cadence edit applied, I explicitly approve all seven V4 articles as owner-approved fallback articles for their placement pages, exact wording. Serving and wiring remain separate. The group-chat and benchmark warnings are waived as previously ruled.",
+  "before": "The seven V4 warmth-revision candidates before the final Mars in Scorpio cut, Saturn in Aries cut, and optional Mercury in Virgo cadence cut.",
+  "beforeIsRejected": false,
+  "after": "Exact approved seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.json#articles (SHA-256 cdce0dc7b3bcfab0b1abecfa926f0c26c29e0104955b37f65f18626b14a333a0).",
+  "whatChanged": "Deleted the repeated trust sentence from Mars in Scorpio, ended Saturn in Aries at the owner's original 'It makes us human.' punch, and removed the near-identical 'ever would' cadence from the Mercury in Virgo close. No model or judge calls were made.",
+  "ownerReason": "The six corpus foundation lines landed; the final cuts remove repeated or diluted conclusions while preserving the exact approved batch.",
+  "failureTags": [],
+  "approvalScope": "owner_approved_fallback_articles_for_placement_pages_serving_and_wiring_separate",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.json",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4.md",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-1-corpus-warmth-revisions-v4-lint.json"
+  ]
+}

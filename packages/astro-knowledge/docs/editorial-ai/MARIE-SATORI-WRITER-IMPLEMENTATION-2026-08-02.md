@@ -49,15 +49,15 @@ packages/astro-knowledge/
 
 ## Governed corpus
 
-The generated index contains 3,807 excerpts. Current counts:
+The generated index contains 3,834 excerpts after the August 3 source-derived revision. Current counts:
 
 | Authority class | Excerpts | Positive voice evidence |
 | --- | ---: | --- |
 | `owner_authored_final` | 3,390 | yes |
 | `exact_owner_approved` | 8 | only when provenance permits; calibration-only v3 is excluded |
-| `ai_candidate_unreviewed` | 168 | no |
+| `ai_candidate_unreviewed` | 189 | no |
 | `historical_only` | 49 | no |
-| `owner_rejected` | 14 | no; negative evidence |
+| `owner_rejected` | 20 | no; negative evidence |
 | `positive_direction_not_approved` | 4 | no; contextual only |
 | `owner_revised_candidate` | 2 | no; contextual only |
 | `third_party_source` | 172 | no |
@@ -97,7 +97,9 @@ Ranking prioritizes surface, writing defect or goal, article beat, planet, sign,
 
 The authorship tool combines deterministic checks with an explicit semantic attestation. A clean linter is insufficient. Missing sentence-by-sentence review returns `authorship_review_required`; a known hard failure returns `rewrite_required`; only complete passing review returns `authorship_pass`.
 
-The V7 attestations belong to the Codex editorial writer. They do not represent owner approval or Terra judgment.
+The V7 attestations belong to the Codex editorial writer. They do not represent owner approval or Terra judgment. August 3 owner feedback superseded those attestations after identifying rejected taglines, a generic `People ...` opener, harsh `harm` wording, dated letters, and an institutional case-study structure.
+
+The August 3 communication-register decision defaults reader copy to `message` or `response`, with `reply` and `what they were told` as ordinary alternatives. Email, screenshot, notice, or a physical letter is used only when the delivery method matters. Technical substitutions such as `portal notification`, `electronic correspondence`, and `automated communication` fail the placement linter. The four owner-supplied letter-to-message revisions are stored as `owner_revised_candidate` contrastive evidence and do not approve or restore the V7 Uranus article.
 
 ## Feedback ingestion
 
@@ -107,11 +109,11 @@ The feedback command accepts rejection, directional approval, preferred-version,
 
 `sky-placement-writer-evaluation-v1.json` defines a blinded A/B/C owner-preference experiment. It measures editing burden and owner preference separately from judge score. Paid comparisons remain unauthorized. The current owner corpus has already been exposed to the workflow, so a clean same-surface holdout requires future owner work frozen before prompt exposure.
 
-## V7 review candidates
+## V7 and V8 review candidates
 
 The new local writer pass covers only Saturn in Capricorn, Neptune in Libra, and Uranus in Pisces. Mars in Capricorn, Venus in Aries, and calibration-only Uranus in Cancer are untouched.
 
-V7 is a review bundle only. Every candidate remains `needs_review`, `ownerApproved: false`, `promotionAuthorized: false`, and `canonical: false`.
+V7 is preserved as rejected/superseded evidence. V8 uses new candidate IDs, rewrites all three taglines, and reconstructs Uranus in Pisces from five owner-authored paragraph structures. Every V8 candidate remains `needs_review`, `ownerApproved: false`, `promotionAuthorized: false`, and `canonical: false`.
 
 ## Commands
 

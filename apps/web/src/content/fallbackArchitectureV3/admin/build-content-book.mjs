@@ -7,6 +7,7 @@ const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-
 const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
 const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-aspect-phrasebook-v1.json"), "utf8"));
 const skyPlacementVoicePassV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-placement-inventories-voice-pass-v1.json"), "utf8"));
+const skyPlacementOwnerApprovedFallbacksV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-placement-owner-approved-fallbacks-v1.json"), "utf8"));
 const skyPlanetFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-planet-frames-v1.json"), "utf8"));
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -26,7 +27,7 @@ const SECTIONS = [
   ["Synastry + compatibility", k => k.startsWith("fallback-hook/synastry-") || k.startsWith("fallback-hook/planet-mode/") || k.startsWith("fallback-hook/planet-grates/") || k.startsWith("fallback-hook/compat-") || k.startsWith("fallback-hook/element-pattern/")],
   ["Connection transits (bonds)", k => k.startsWith("fallback-hook/bond-") || k.startsWith("fallback-vocab/bond-")],
   ["Sky page: reviewed aspect phrasebook", k => k.startsWith("fallback-hook/sky-aspect-")],
-  ["Sky page: placements + articles", k => k.startsWith("fallback-hook/sky-placement") || k.startsWith("fallback-hook/sky-element-close/") || /^fallback-vocab\/(planet-blessing|sign-blessing|sign-does|sign-style|sign-need|sign-adverb)\//.test(k)],
+  ["Sky page: placements + articles", k => k.startsWith("fallback-hook/sky-placement") || k.startsWith("fallback-hook/sky-sign-copy/") || k.startsWith("fallback-hook/sky-element-close/") || /^fallback-vocab\/(planet-blessing|sign-blessing|sign-does|sign-style|sign-need|sign-adverb)\//.test(k)],
   ["Sky page: seasons, lunations, eclipses", k => /^fallback-hook\/sky-(season|lunation|axis|fullmoon|newmoon|eclipse|sign-trap|event|horoscope)/.test(k)],
   ["Calendar: phases, void, markers", k => k.startsWith("fallback-hook/moon-") || k.startsWith("fallback-hook/season-marker/")],
   ["Friends Circle feed", k => k.startsWith("fallback-hook/circle-")],
@@ -69,6 +70,7 @@ for (const r of skyArticleV1.hookRows) place({ key: r.contentKey, you: r.body_yo
 for (const r of skyAspectPhrasebookV1.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["review_status"]) });
 for (const r of skyPlanetFramesV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of skyPlacementVoicePassV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of skyPlacementOwnerApprovedFallbacksV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of skySignCopySunV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of rows.vocabularyRows) { if (r.content_role === "vocabulary") place({ key: r.contentKey, you: r.body, they: null, extra: [] }); }
 for (const c of lib.authoredCards) place({ key: c.contentKey, you: c.body, they: null, extra: named(c, ["headline", "keywords", "mantra", "intention", "ritual", "axis", "completion", "focus", "strategy"]) });

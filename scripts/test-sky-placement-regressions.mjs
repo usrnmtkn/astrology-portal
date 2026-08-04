@@ -8,6 +8,7 @@ import fallbackTemplates from "../apps/web/src/content/fallbackArchitectureV3/te
 import transitSynastryRows from "../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json" with { type: "json" };
 import skyArticleV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-article-v1.json" with { type: "json" };
 import skySignCopySunV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json" with { type: "json" };
+import skyPlacementOwnerApprovedFallbacksV1 from "../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-owner-approved-reader-v1.json" with { type: "json" };
 import contentRoleContract from "../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json" with { type: "json" };
 import {
   createTransitSynastryRenderer,
@@ -45,7 +46,11 @@ const renderer = createTransitSynastryRenderer(
   fallbackTemplates,
   {
     ...fallbackSourceRows,
-    hookRows: [...fallbackSourceRows.hookRows, ...skySignCopySunV1.rows],
+    hookRows: [
+      ...fallbackSourceRows.hookRows,
+      ...skySignCopySunV1.rows,
+      ...skyPlacementOwnerApprovedFallbacksV1.rows
+    ],
     vocabularyRows: [...fallbackSourceRows.vocabularyRows, ...skyArticleV1.vocabularyRows]
   }
 );
@@ -251,7 +256,7 @@ for (const planet of retrogradePlacementPlanets) {
   for (const sign of zodiacSigns) {
     assert.throws(
       () => renderer.renderSkyPlacement({ planet, sign, isRetrograde: true }),
-      /SOURCE_GAP: continuous sky placement sign copy/u,
+      /SOURCE_GAP: continuous sky placement (?:sign copy|dates)/u,
       `${planet} retrograde in ${sign} must not revive the retired module stack.`
     );
   }
@@ -508,6 +513,63 @@ assert.deepEqual(
     templateKey: sunLeoReference.templateKey
   },
   "Browser and Node continuous Sun fallback assembly must remain byte-identical."
+);
+
+assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 11);
+const ownerFallbackDateFacts = {
+  entryDate: "August 24, 2028",
+  exitDate: "September 24, 2029",
+  priorSign: "virgo",
+  priorSignEntryDate: "July 26, 2027",
+  priorSignExitDate: "August 24, 2028",
+  previousResidencyEntryDate: "September 9, 2016",
+  previousResidencyExitDate: "October 10, 2017"
+};
+const fillOwnerFallback = (value, facts) => value.replace(/\{\{([\w.]+)\}\}/gu, (_, key) => {
+  const renderedDates = {
+    entryDate: "August 24",
+    exitDate: "September 24",
+    priorSign: "Virgo",
+    priorSignEntryDate: "July 26",
+    priorSignExitDate: "August 24",
+    previousResidencyEntryDate: "September 9",
+    previousResidencyExitDate: "October 10"
+  };
+  return renderedDates[key] ?? facts[key] ?? `{{${key}}}`;
+});
+
+for (const row of skyPlacementOwnerApprovedFallbacksV1.rows) {
+  const [, , planet, sign] = row.contentKey.split("/");
+  const facts = {
+    planet,
+    sign,
+    entryDate: ownerFallbackDateFacts.entryDate,
+    exitDate: ownerFallbackDateFacts.exitDate,
+    ...(planet === "jupiter" && sign === "libra" ? ownerFallbackDateFacts : {})
+  };
+  const rendered = renderer.renderSkyPlacement(facts);
+
+  assert.equal(rendered.contentKey, row.contentKey);
+  assert.equal(rendered.templateKey, "sky-placement-continuous-v2");
+  assert.deepEqual(rendered.parts.slice(1, 4), [
+    fillOwnerFallback(row.opening, facts),
+    fillOwnerFallback(row.tension, facts),
+    fillOwnerFallback(row.development, facts)
+  ]);
+  assert.equal(rendered.parts.at(-1), fillOwnerFallback(row.close, facts));
+  assert.deepEqual(rendered.moves, row.try_this.map((move) => fillOwnerFallback(move, facts)));
+  assert.doesNotMatch(rendered.body, /\{\{/u);
+}
+
+assert.throws(
+  () => renderer.renderSkyPlacement({
+    planet: "jupiter",
+    sign: "scorpio",
+    entryDate: "October 25, 2029",
+    exitDate: "November 15, 2030"
+  }),
+  /SOURCE_GAP: continuous sky placement sign copy jupiter\/scorpio/u,
+  "An unapproved placement must remain unavailable."
 );
 
 console.log(JSON.stringify({

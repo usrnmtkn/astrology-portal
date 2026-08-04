@@ -118,11 +118,12 @@ async function main() {
   assert.ok(prompt.includes("Never assign 1 solely for a licensed transit-first opening"));
   assert.ok(prompt.includes(spec.scores["1"]));
   assert.ok(prompt.includes("OWNER-VERBATIM PROVENANCE: No exemption is asserted."));
+  assert.match(buildJudgePrompt(cleanArticle, { planet: "jupiter", harvest_mode: "none_found" }), /Do not require or penalize the absence of a permission, reassurance, benediction, or turn-toward-the-reader line/iu);
   const ownerPrompt = buildJudgePrompt(cleanArticle, { planet: "jupiter", ownerVerbatim: true });
   assert.ok(ownerPrompt.includes("Apply the spec's exemption only to recognizability"));
   assert.ok(ownerPrompt.includes("judge every other voice check normally"));
   assert.ok(ownerPrompt.includes("Verdict consistency is mandatory"));
-  assert.strictEqual(ARTICLE_PROMPT_VERSION, "sky-article-longform-v6:prompt-v1");
+  assert.strictEqual(ARTICLE_PROMPT_VERSION, "sky-article-longform-v6:prompt-v2-warmth-harvest");
   assert.ok(ownerPrompt.includes("direct-lived-register check is not a test"));
   assert.ok(ownerPrompt.includes("Do not impose the generated fast-mover template's slot order"));
   assert.ok(ownerPrompt.includes("Command runs are a licensed source of family resemblance"));

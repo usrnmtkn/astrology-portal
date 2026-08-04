@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "promptVersion": "sky-placement-writer-v4:compiled-owner-decisions",
+  "basePrompt": "You are writing one original TLDR Astro Current Sky article.\n\nRead the six attached owner-authored Marie Satori passages before writing. They establish sentence register and paragraph movement. The verified astrology establishes the placement's meaning and limits.\n\nCreate one recognizable lived sequence from the verified astrology. Use ordinary current language. Name the pressure, what someone does, and what changes because of it. The scene may be invented; the astrology may not.\n\nPreserve the supplied surface contract, facts, output fields, and applicable hard constraints. Do not copy or analyze the owner passages. Do not return options, commentary, a source map, or a style explanation.\n\nReturn only strict JSON with exactly these keys: tagline, hook, lived, turn, moves. Tagline must be one clear full sentence. The moves value must be an array of two or three one-sentence strings. Stop after the final move.",
+  "currentSkyAppendix": "Use collective language. Do not use people, you, your, yours, yourself, or yourselves. Use we, someone, a named group, or the actual subject."
+}

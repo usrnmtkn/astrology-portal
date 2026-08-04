@@ -1,0 +1,21 @@
+{
+  "id": "sky-placement-historical-venus-virgo-moves-owner-rejection",
+  "feedbackKind": "rejection",
+  "surface": "sky-placement",
+  "planet": "venus",
+  "sign": "virgo",
+  "articleBeat": "moves",
+  "before": "Do one useful thing for someone without correcting how they receive it. Before buying, name the daily problem the purchase will actually solve. Ask what support would help instead of deciding for the other person.",
+  "ownerStatement": "I don't write like this: Do one useful thing for someone without correcting how they receive it. Before buying, name the daily problem the purchase will actually solve. Ask what support would help instead of deciding for the other person.",
+  "ownerReason": "The passage does not reflect the owner's writing. A historical fixture label is not sufficient proof that wording is reliable positive voice evidence.",
+  "whatChanged": "Propose recording the exact passage as owner-rejected positive voice evidence. The entire six-passage pool derived from the same historical fixture is blocked pending independent verification from published owner writing.",
+  "failureTags": [
+    "administrative_move",
+    "polished_but_flat",
+    "generic_coverage_sentence"
+  ],
+  "sourcePaths": [
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-placement-historical-second-person.json",
+    "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars.json"
+  ]
+}
