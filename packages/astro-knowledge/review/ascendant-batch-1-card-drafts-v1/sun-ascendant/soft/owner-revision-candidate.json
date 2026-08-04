@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-ascendant-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "8eb7ffc64ca8adef7c4362d880d2c491ebce07c3317512af66cd78d6271a1776",
+  "payload": {
+    "body_you": "When you are clear about who you are and what you want, {{holder2}} feels more comfortable being themselves while meeting people or entering a new situation. As they relax and respond more naturally, it becomes easier for you to keep expressing yourself clearly.",
+    "body_they": "When {{holder1}} is clear about who they are and what they want, you feel more comfortable being yourself while meeting people or entering a new situation. As you relax and respond more naturally, it becomes easier for {{holder1}} to keep expressing themselves clearly.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_two_sentences_both_variants",
+    "deletedText": [
+      "Because this happens with so little effort, neither of you may mention it, and the help can be taken for granted.",
+      "With {{holder2}} responding naturally, you notice where you're manufacturing confidence versus actually feeling it.",
+      "With you responding naturally, {{holder1}} notices where they're manufacturing confidence versus actually feeling it."
+    ],
+    "foundationLineDisposition": "owner_rejected_for_soft_aspect_contexts",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "89963afdfaa06d1fd1598b9baec8943cc3c994544c8b78a9ea03fde425f0672f",
+    "writerProviderResponseSha256": "de7db40183d29d812e12ae1c313ef77c9b953020df97b3b4f13da8d9355bfb7e"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/soft/exact-approval.json"
+}

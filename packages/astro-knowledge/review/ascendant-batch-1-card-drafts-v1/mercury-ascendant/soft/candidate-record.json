@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "mercury-ascendant-soft-v1",
+  "target": {
+    "factorA": "mercury",
+    "factorB": "ascendant",
+    "aspectGroup": "soft",
+    "governedEntryId": "A-mercury_B-ascendant_trine"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/mercury/ascendant/soft",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "Your questions and explanations make it easier for {{holder2}} to speak up and join in. When they say what they mean, your replies show that you followed them without making them explain every part of themselves. Keeping the exchange clear takes little effort from either of you.",
+    "body_they": "{{holder1}}'s questions and explanations make it easier for you to speak up and join in. When you say what you mean, their replies show that they followed you without making you explain every part of yourself. Keeping the exchange clear takes little effort from either of you.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-ascendant_trine.json"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": null,
+  "evidenceLabels": [],
+  "harvestMode": "none_found",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0b16e231f92523e5006a72615e2b088192bf84708347031184",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_0bcfc6088b0e1f0e006a72624e7708819d9a4df9c04e35f82b",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "body_you",
+    "weakest": "“Speak up and join in” is a slightly broader rendering than the supplied human moment, but it remains supported by the Ascendant holder’s presentation and entry into situations.",
+    "why": "The Mercury holder’s questions, explanations, and replies clearly act on the Ascendant holder, producing a plain mutual loop: one person says what they mean, and the other demonstrates understanding without requiring exhaustive explanation. The low-effort close is supported by the source’s easy, low-demand quality. Both reader variants preserve the same direction and read naturally.",
+    "failedChecks": [],
+    "strengths": [
+      "Fixed Mercury-to-Ascendant direction is maintained in both variants.",
+      "The interaction is concrete, ordinary, and literal rather than astrological or abstract.",
+      "The response loop is explicit: expression is met with clear understanding.",
+      "The final sentence communicates ease and low relational cost without adding advice or a second conclusion.",
+      "No invented warmth, events, outcomes, scenarios, or excluded claims appear."
+    ],
+    "sourceFidelity": "High. The draft closely and naturally renders the governed source boundary and approved human-moment input, including ease of expression, being understood, and little effort.",
+    "foundationTrace": "No owner foundation lines were supplied and harvest mode is none_found. The draft appropriately relies on the governed source boundary and approved human-moment input without inventing a warmth beat."
+  }
+}

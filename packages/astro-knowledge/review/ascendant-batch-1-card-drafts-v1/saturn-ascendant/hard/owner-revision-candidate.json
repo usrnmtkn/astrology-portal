@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "saturn-ascendant-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/saturn-ascendant/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_with_required_ascii_normalization",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "ec80e308338f8bbf6b57d53febd63d0839968d98211e4d64f85518f76fbb9986",
+  "payload": {
+    "body_you": "You may point out problems in how {{holder2}} comes across or tell them to be more careful. They can start rehearsing what to say and checking their behavior before ordinary interactions. When they expect you to notice something wrong, it becomes harder for them to act naturally.",
+    "body_they": "{{holder1}} may point out problems in how you come across or tell you to be more careful. You can start rehearsing what to say and checking your behavior before ordinary interactions. When you expect {{holder1}} to notice something wrong, it becomes harder to act naturally.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "foundationLineDisposition": "none_found_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "540b2854ab3e3ec0f7e94d40f15a3d258a46ffc71297c268b21c4e1706f8f2e7",
+    "writerProviderResponseSha256": "d1370b82c73a7cf5bcac9d40d63c990186fa76f152ab932fecd430cd968fd4b9"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/saturn-ascendant/hard/exact-approval.json"
+}

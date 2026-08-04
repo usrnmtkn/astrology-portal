@@ -1,0 +1,51 @@
+{
+  "target": "venus-ascendant-soft",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "none_found",
+    "reason": "none_found correctly carries no invented warmth provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "You respond warmly to the way Bird naturally comes across. That makes Bird more relaxed around you and less likely to monitor how they are presenting themselves. The ease can go mostly unnoticed because neither of you has to work hard to create it.",
+    "readerIsAscendantHolder": "Bird responds warmly to the way you naturally come across. That makes you more relaxed around Bird and less likely to monitor how you are presenting yourself. The ease can go mostly unnoticed because neither of you has to work hard to create it."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}
