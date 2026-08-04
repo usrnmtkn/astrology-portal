@@ -66,6 +66,40 @@ try {
   assert.notEqual(gatedStation.body, rows[0].body, "Needs-review station copy must stay out of reader view.");
   assert.equal(approvedStation.body, rows[0].body, "Approval must switch station copy without a code change.");
 
+  const personalizedChironStation = weekly.resolveWeeklyStationCopy({
+    ...stationEvent,
+    id: "station-chiron-retrograde-test",
+    title: "Chiron stations retrograde",
+    planet: "Chiron",
+    sign: "Taurus"
+  }, rows, "Gemini", {
+    planet: "Chiron",
+    glyph: "⚷",
+    sign: "Taurus",
+    signGlyph: "♉",
+    degree: 0,
+    house: 12,
+    motion: "retrograde",
+    transitStart: "2026-06-19T08:00:00.000Z",
+    transitEnd: "2026-09-17T12:00:00.000Z"
+  }, "America/New_York");
+  assert.equal(
+    personalizedChironStation.headline,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.equal(
+    personalizedChironStation.driverLabel,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.match(
+    personalizedChironStation.body,
+    /Chiron in your 12th house brings quiet grief, old anxieties, and unspoken losses back to the surface/u
+  );
+  assert.equal(
+    personalizedChironStation.timing,
+    "June 19, 2026 – September 17, 2026"
+  );
+
   const lunationEvent = {
     id: "new-moon-test",
     type: "lunation",
@@ -93,8 +127,10 @@ try {
     path.join(repoRoot, "apps/web/src/services/weeklyHoroscope.ts"),
     "utf8"
   );
-  assert.match(youPage, /\{ value: "daily", label: "Daily" \}/u);
-  assert.match(youPage, /\{ value: "weekly", label: "Weekly" \}/u);
+  assert.doesNotMatch(youPage, /id="you-timing-view"/u);
+  assert.doesNotMatch(youPage, /ariaLabel="Transit timing"/u);
+  assert.match(youPage, /weekly-horoscope--embedded/u);
+  assert.match(youPage, /aria-label="This week&#39;s transits"|aria-label="This week's transits"/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.sections\.map/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
@@ -105,7 +141,10 @@ try {
   assert.match(youPage, />Aspect</u);
   assert.match(youPage, />Your horoscope</u);
   assert.match(youPage, /Based on \{weeklyHoroscopeAssembly\.horoscope\.driverLabel\}/u);
+  assert.match(youPage, />Current house pass</u);
+  assert.match(youPage, /weeklyHoroscopeAssembly\.horoscope\.timing/u);
   assert.match(app, /buildWeeklyHoroscope\(\{/u);
+  assert.doesNotMatch(app, /weeklyHoroscopeRequested/u);
   assert.match(weeklySource, /getLunarCalendarRangeEvents/u);
   assert.match(weeklySource, /weeklyEphemerisCache/u);
   assert.doesNotMatch(
@@ -267,6 +306,50 @@ try {
     readerText,
     /\b(?:Saturn(?: Rx)? in Pisces|Uranus in Taurus|Jupiter in Cancer)\b/u,
     "Retired sky positions must never leak into the Jul 29 per-rising card."
+  );
+
+  const quarterMoonWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-quarter-moon-fixture",
+    natalSky,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-08-03T16:00:00Z")
+  });
+  assert.equal(quarterMoonWeek.weekStart, "2026-08-03");
+  assert.equal(quarterMoonWeek.weekEnd, "2026-08-09");
+  assert.notEqual(
+    quarterMoonWeek.weekType,
+    "lunation",
+    "A quarter Moon must not classify the personal write-up as a New/Full Moon week."
+  );
+  assert.equal(
+    quarterMoonWeek.macro,
+    undefined,
+    "A quarter Moon must not select a Full Moon macro article."
+  );
+  assert.doesNotMatch(
+    [
+      quarterMoonWeek.horoscope.headline,
+      quarterMoonWeek.horoscope.driverLabel,
+      quarterMoonWeek.horoscope.body
+    ].join("\n"),
+    /Taurus Full Moon|Full Moon in Taurus/iu,
+    "The Aug 3-9 write-up must not relabel the Last Quarter Moon in Taurus as a Full Moon."
+  );
+  assert.match(
+    quarterMoonWeek.horoscope.headline,
+    /Chiron stations retrograde in your 12th house/u,
+    "The station headline must name the house calculated from the event sign and rising sign."
+  );
+  assert.match(
+    quarterMoonWeek.horoscope.body,
+    /Chiron in your 12th house brings quiet grief/u,
+    "The station write-up must include the approved personalized transit-house layer."
+  );
+  assert.match(
+    quarterMoonWeek.horoscope.timing ?? "",
+    /^[A-Z][a-z]+ \d{1,2}, 2026 – [A-Z][a-z]+ \d{1,2}, 2026$/u,
+    "The station write-up must expose its current computed house-pass window."
   );
 
   const mondaySky = await ephemeris.getAstrodienstSky(
