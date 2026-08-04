@@ -48,6 +48,14 @@ const harvestedTargets = targets.map((target) => ({
 }));
 assert.strictEqual(harvestedTargets.filter((target) => target.warmthHarvest.status === "ready").length, 198);
 assert.strictEqual(harvestedTargets.filter((target) => target.warmthHarvest.flags.some((flag) => flag.id === "missing-human-moment-beat")).length, 42);
+const readyFullCardModeCounts = harvestedTargets
+  .filter((target) => target.warmthHarvest.status === "ready")
+  .reduce((counts, target) => {
+    counts[target.warmthHarvest.harvest_mode] += 1;
+    return counts;
+  }, { matched: 0, none_found: 0 });
+assert.deepStrictEqual(readyFullCardModeCounts, { matched: 198, none_found: 0 });
+assert.strictEqual(readyFullCardModeCounts.matched + readyFullCardModeCounts.none_found, 198);
 
 for (const target of harvestedTargets.filter((candidate) => candidate.warmthHarvest.status === "ready")) {
   const briefPrompt = plainBriefPrompt(target);
@@ -113,4 +121,4 @@ assert.strictEqual(parseVerdict("not json").score, 1);
 assert.strictEqual(weakControls().length, 8);
 assert.deepStrictEqual(parseArgs(["--plan", "--batch=lilith", "--limit=4"]).batch, "lilith");
 
-console.log("Sky exact-aspect pipeline: 225 owner source entries, 214 reader-eligible calibration entries, 198 harvested targets, 42 fail-closed missing cores, Sol lanes, prompts, lint, and weak controls passed.");
+console.log("Sky exact-aspect pipeline: 225 owner source entries, 214 reader-eligible calibration entries, 198 ready full-card targets (198 matched, 0 none_found), 42 fail-closed missing cores, Sol lanes, prompts, lint, and weak controls passed.");
