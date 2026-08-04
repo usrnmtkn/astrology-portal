@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1",
+  "surface": "sky-placement",
+  "planet": "mercury",
+  "sign": "pisces",
+  "sourceRunId": "sky-placement-writer-pilot-mercury-pisces-v1",
+  "revisionMethod": "owner_directed_line_edit_no_model_call",
+  "additionalCalls": 0,
+  "article": {
+    "opening": "Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.",
+    "tension": "The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.",
+    "development": "Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.",
+    "close": "Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.",
+    "try_this": [
+      "We can reread one confusing message and copy the exact sentence that is shaping our interpretation.",
+      "We can send “Still deciding” instead of another maybe that could be read as yes or no."
+    ]
+  },
+  "substantiveChanges": [
+    "Replaced 'circle the zodiac' with 'move through all twelve signs'.",
+    "Replaced an abstract question transition with the direct action of asking the question.",
+    "Replaced 'name the impression separately' with 'say what we think we heard'."
+  ],
+  "authorityClass": "exact_owner_approved",
+  "approvalScope": "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate",
+  "reviewStatus": "approved",
+  "editorialStatus": "current_sky_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "renderEligible": false,
+  "approvalNote": "Exact owner approval applies to this stored wording as a fallback article for Mercury in Pisces. Serving, wiring, generation evidence, canonical status, and promotion remain unauthorized."
+}
