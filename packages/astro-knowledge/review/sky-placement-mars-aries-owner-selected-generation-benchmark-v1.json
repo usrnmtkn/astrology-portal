@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "sky-placement-mars-aries-owner-selected-generation-benchmark-v1",
+  "surface": "sky-placement-continuous-v2",
+  "planet": "mars",
+  "sign": "aries",
+  "authorityClass": "exact_owner_approved",
+  "authorship": "assistant_generated_owner_selected",
+  "ownerAuthored": false,
+  "ownerSelected": true,
+  "ownerApproved": true,
+  "approvalScope": "generation_evidence_and_surface_benchmark_only",
+  "generationEvidenceAuthorized": true,
+  "productionApproved": false,
+  "renderEligible": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "provenance": {
+    "sourceThreadId": "6a711efa-0ec0-83ea-af3e-1cdde39828d1",
+    "sourceMessageId": "65dddb23-ec34-4938-bf4f-acb52144d2ea",
+    "note": "The wording was generated in a separate ChatGPT review and then selected by the owner as the generation benchmark. It is not labeled owner-authored because the source record shows assistant authorship."
+  },
+  "ownerDirection": "Record the Mars in Aries rewrite as generation evidence and the benchmark for this surface.",
+  "benchmarkText": "Mars enters Aries on {{entryDate}}, and waiting starts to feel worse than whatever happens next. The call gets made. The answer gets demanded. The part everyone has been circling finally has a name.\n\nThe problem is that relief can look a lot like certainty. Once the pressure breaks, every delay feels personal and every objection feels like something to defeat. We answer before we know what was actually said. We fix the first problem we can reach, even when it is not the one causing the damage.\n\nMars in Aries is good at beginning. It is less interested in cleaning up what happened because nobody stopped long enough to decide what they were trying to change. Before {{exitDate}}, notice which fight is moving the situation forward and which one is only giving the anger somewhere to go.",
+  "benchmarkRules": [
+    "The transit is the subject.",
+    "Lived moments illustrate the transit without becoming the whole card.",
+    "Pressure moves into consequence without a coaching scaffold.",
+    "The ending leaves the reader inside the consequence instead of assigning a task.",
+    "Cycle facts remain outside article prose."
+  ]
+}

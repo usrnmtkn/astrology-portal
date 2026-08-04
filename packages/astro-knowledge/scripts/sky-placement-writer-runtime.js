@@ -25,6 +25,7 @@ function assertRoutingMatch({ packet, actualModel, actualReasoningEffort, actual
     promptVersion: packet.routing.promptVersion,
     packetVersion: packet.packetVersion,
     retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
+    warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
     routingMatchStatus: "matched"
   };
 }

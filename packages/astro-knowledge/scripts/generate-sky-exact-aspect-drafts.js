@@ -15,6 +15,7 @@ const {
 const { judgeExactAspect } = require("./judge-sky-exact-aspect.js");
 const { judgeNaturalEnglish, NEGATIVE_CONTROLS } = require("./judge-sky-natural-english.js");
 const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
+const { policy: ownerWarmthPolicy } = require("./owner-corpus-warmth-policy.js");
 const {
   OWNER_STYLE_MODELS,
   VENUS_SQUARE_LILITH_MODEL,
@@ -81,12 +82,15 @@ function plainBriefPrompt(target) {
 }
 
 function writerPrompt(target, feedback = "", { avoidScenes = [], brief = null } = {}) {
+  const harvestMode = target.ownerCorpusWarmthEvidence?.harvest_mode || target.harvest_mode || "none_found";
+  const harvestRule = ownerWarmthPolicy.modes[harvestMode] || ownerWarmthPolicy.modes.not_supplied;
   return [
     `Write one evergreen exact-aspect Current Sky source entry for ${target.title}.`,
     `This must read like the owner-authored Venus square Mars card below: lived first, collective, modern, rhythmic, and specific.`,
     `This is reusable collective-sky copy. It is not a natal reading, synastry, a placement card, or a sign-specific live card. Signs will be supplied by a higher-priority live layer, so do not invent them.`,
     `Use only the pair knowledge and exact aspect mechanic below. Do not invent astrological doctrine.`,
     `The result is a needs_review draft and cannot publish without owner approval.`,
+    `OWNER-CORPUS WARMTH HARVEST: harvest_mode=${harvestMode}. ${harvestRule.writerRule}`,
     ``,
     `PAIR KNOWLEDGE:`,
     target.sourceText,
@@ -196,6 +200,7 @@ function feedbackFor(lint, judge, naturalness) {
 }
 
 async function generateOne(target, options, releases, avoidScenes = []) {
+  const harvestMode = target.ownerCorpusWarmthEvidence?.harvest_mode || target.harvest_mode || "none_found";
   let draft;
   let lint;
   let judge;
@@ -214,7 +219,7 @@ async function generateOne(target, options, releases, avoidScenes = []) {
       );
       draft = normalizeDraft(target, extractJson(raw));
       lint = lintExactEntry(draft);
-      judge = await judgeExactAspect(draft, { pairSource: target.sourceText, samples: 1 });
+      judge = await judgeExactAspect(draft, { pairSource: target.sourceText, samples: 1, harvest_mode: harvestMode });
       naturalness = await judgeNaturalEnglish(draft, { samples: 1 });
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
@@ -251,6 +256,16 @@ async function generateOne(target, options, releases, avoidScenes = []) {
 function makeRecord(target, draft, lint, judge, naturalness, brief, attempts, releases) {
   const evidenceProblem = Boolean(naturalness?.contractViolation || naturalness?.disagreement);
   const passed = lint.fails === 0 && judge.score === 3 && naturalness?.score === 3 && !evidenceProblem;
+  const harvestMode = target.ownerCorpusWarmthEvidence?.harvest_mode || target.harvest_mode || "none_found";
+  const editorialFlags = target.ownerCorpusWarmthEvidence?.editorial_flags
+    || (harvestMode === "none_found"
+      ? [{
+          id: "owner-corpus-warmth-none-found",
+          severity: "info",
+          blocking: false,
+          reason: ownerWarmthPolicy.modes.none_found.editorialFlag
+        }]
+      : []);
   return {
     schemaVersion: 1,
     status: "needs_review",
@@ -271,6 +286,11 @@ function makeRecord(target, draft, lint, judge, naturalness, brief, attempts, re
     lint,
     judge,
     naturalnessJudge: naturalness,
+    ownerCorpusWarmth: {
+      harvest_mode: harvestMode,
+      sourceIds: target.ownerCorpusWarmthEvidence?.sourceIds || [],
+      editorial_flags: editorialFlags
+    },
     reviewGate: passed ? "owner-review" : evidenceProblem ? "human-review-evidence" : "editorial-repair"
   };
 }
