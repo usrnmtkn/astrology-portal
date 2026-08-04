@@ -1,0 +1,99 @@
+{
+  "responseId": "resp_041094130da152ac006a7253d1b8e881a19db25ba90439fff8",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:aquarius-season-2025:p052:window-3-3",
+    "owner-article:aquarius-full-moon-2025:p001:window-2-4",
+    "owner-article:monthly-overview-june-2025:p001:window-2-2",
+    "owner-article:first-new-moon-of-2025-aquarius-new-moon:p008:window-2-4",
+    "owner-article:mercury-retrograde-in-leo:p024:window-4-4",
+    "owner-article:leo-season-2025:p092:window-1-3"
+  ],
+  "warmthOwnerSourceIds": [
+    "owner-article:this-weeks-astrology-august-24th-31st:p015",
+    "owner-article:leo-new-moon-2025:p012",
+    "owner-article:leo-full-moon-2025:p061"
+  ],
+  "ownerCorpusWarmthEvidence": {
+    "id": "warmth-foundation-nodes-aquarius-leo-v1",
+    "planet": "nodes",
+    "sign": "aquarius-leo",
+    "emotionalCore": "release the need for applause",
+    "searchTerms": [
+      "applause",
+      "spotlight",
+      "seen",
+      "performing",
+      "recognition",
+      "creative expression",
+      "worth"
+    ],
+    "vb005Matches": [
+      "external validation",
+      "center stage",
+      "need to prove"
+    ],
+    "primary": {
+      "foundationText": "Creative expression does not require applause to exist.",
+      "sourceId": "owner-article:this-weeks-astrology-august-24th-31st:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/this-weeks-astrology-august-24th-31st.md",
+      "sourceExcerpt": "creative expression that doesn't require applause to exist.",
+      "adaptation": "minimal_collectivization"
+    },
+    "alternates": [
+      {
+        "foundationText": "Built around what is real and what lights us up, not what earns applause.",
+        "sourceId": "owner-article:leo-new-moon-2025:p012",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-new-moon-2025.md",
+        "sourceExcerpt": "building around what’s real, what lights you up, not what earns you applause",
+        "adaptation": "minimal_collectivization"
+      },
+      {
+        "foundationText": "Who we are when the applause fades.",
+        "sourceId": "owner-article:leo-full-moon-2025:p061",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-full-moon-2025.md",
+        "sourceExcerpt": "Who are you, when the applause fades",
+        "adaptation": "minimal_collectivization"
+      }
+    ],
+    "harvest_mode": "matched",
+    "authorityClass": "owner_corpus_derived_foundation",
+    "maxWarmthBeats": 1,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [
+      "owner-article:this-weeks-astrology-august-24th-31st:p015",
+      "owner-article:leo-new-moon-2025:p012",
+      "owner-article:leo-full-moon-2025:p061"
+    ],
+    "editorial_flags": []
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8447,
+    "input_tokens_details": {
+      "cache_write_tokens": 8444,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5668,
+    "output_tokens_details": {
+      "reasoning_tokens": 5251
+    },
+    "total_tokens": 14115
+  },
+  "article": {
+    "opening": "The North Node in Aquarius and the South Node in Leo move attention from the name on the work to what a group can make together. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the North Node enters Aquarius and the South Node enters Leo on {{entryDate}}, and shared purpose starts carrying more weight than personal recognition. A group keeps the best idea even when it came from the least visible contributor. A creative part still matters after the group changes it.",
+    "tension": "The South Node in Leo knows how to catch attention and give an idea a memorable face. That skill can make shared work easier to notice. The cost appears when every project also has to confirm who is special. We pull a group effort toward the contributor with the biggest audience, defend our part after a better version appears, or lose interest when credit spreads around. The North Node in Aquarius keeps pointing to the shared result, while the need for applause keeps asking for center stage.",
+    "development": "The Nodes last occupied the Aquarius-Leo axis from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. An idea becomes more useful when its originator lets someone else improve it. A group gets further when credit reflects actual contributions instead of settling on the familiar name. The unfamiliar part is staying invested as attention spreads out. Another voice may become the public face, and the first spark no longer owns the outcome. Creative expression remains real without applause. If we keep demanding proof that our part mattered, the group spends its energy protecting status instead of developing the idea.",
+    "close": "Before {{exitDate}}, shared projects lose useful ideas whenever every change has to preserve one name at the center.",
+    "try_this": [
+      "We can bring one idea to a shared project and accept one change that makes it more useful, even if the final version looks less like ours.",
+      "We can name the contributor whose work improved a group result, especially when someone else is getting the attention."
+    ]
+  }
+}

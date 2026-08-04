@@ -24,8 +24,8 @@ function longitude(swe, planetId, date) {
   return normalizeDegrees(swe.calc_ut(jd, planetId, swe.SEFLG_SWIEPH)[0]);
 }
 
-function sign(swe, planetId, date) {
-  return signs[Math.floor(longitude(swe, planetId, date) / 30)];
+function sign(swe, planetId, date, longitudeOffset = 0) {
+  return signs[Math.floor(normalizeDegrees(longitude(swe, planetId, date) + longitudeOffset) / 30)];
 }
 
 function separation(swe, firstId, secondId, date) {
@@ -56,7 +56,10 @@ try {
   const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
   const cases = [
     { planet: "jupiter", sign: "libra", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_JUPITER },
-    { planet: "saturn", sign: "aries", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_SATURN }
+    { planet: "saturn", sign: "aries", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_SATURN },
+    { planet: "chiron", sign: "aries", date: new Date("2026-08-03T12:00:00Z"), planetId: 15, structuralPoint: true },
+    { planet: "north-node", sign: "aquarius", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_TRUE_NODE, structuralPoint: true },
+    { planet: "south-node", sign: "leo", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_TRUE_NODE, longitudeOffset: 180, structuralPoint: true }
   ];
   const ids = {
     Sun: swe.SE_SUN,
@@ -80,16 +83,17 @@ try {
     });
     const start = new Date(facts.transitStart);
     const end = new Date(facts.transitEnd);
-    assert.equal(sign(swe, testCase.planetId, new Date(start.getTime() + HOUR_MS)), facts.sign);
-    assert.notEqual(sign(swe, testCase.planetId, new Date(start.getTime() - HOUR_MS)), facts.sign);
-    assert.equal(sign(swe, testCase.planetId, new Date(end.getTime() - HOUR_MS)), facts.sign);
-    assert.notEqual(sign(swe, testCase.planetId, new Date(end.getTime() + HOUR_MS)), facts.sign);
-    assert.equal(facts.priorSign, sign(swe, testCase.planetId, new Date(start.getTime() - HOUR_MS)));
+    assert.equal(sign(swe, testCase.planetId, new Date(start.getTime() + HOUR_MS), testCase.longitudeOffset), facts.sign);
+    assert.notEqual(sign(swe, testCase.planetId, new Date(start.getTime() - HOUR_MS), testCase.longitudeOffset), facts.sign);
+    assert.equal(sign(swe, testCase.planetId, new Date(end.getTime() - HOUR_MS), testCase.longitudeOffset), facts.sign);
+    assert.notEqual(sign(swe, testCase.planetId, new Date(end.getTime() + HOUR_MS), testCase.longitudeOffset), facts.sign);
+    assert.equal(facts.priorSign, sign(swe, testCase.planetId, new Date(start.getTime() - HOUR_MS), testCase.longitudeOffset));
     assert.ok(new Date(facts.priorSignEntryDate) < new Date(facts.priorSignExitDate));
     assert.ok(facts.previousResidency, `${facts.planet} needs a previous same-sign residency`);
     assert.ok(new Date(facts.previousResidency.exitDate) < start);
     assert.equal(facts.previousResidency.sign, facts.sign);
-    assert.ok(facts.rankedEventsDuringTransit.length >= 2, `${facts.planet} transit needs ranked exact aspects`);
+    if (testCase.structuralPoint) assert.deepEqual(facts.rankedEventsDuringTransit, []);
+    else assert.ok(facts.rankedEventsDuringTransit.length >= 2, `${facts.planet} transit needs ranked exact aspects`);
     assert.deepEqual(
       [...facts.rankedEventsDuringTransit].sort((first, second) => first.rank - second.rank || first.occursAt.localeCompare(second.occursAt)),
       facts.rankedEventsDuringTransit,
@@ -128,7 +132,7 @@ try {
     "Reader placement dates must use the calculated user's time zone instead of a fixed zone"
   );
 
-  console.log("Sky Placement engine facts passed: two ephemeris windows, prior-sign handoffs, previous residencies, ranked exact aspects, and local-time rendering.");
+  console.log("Sky Placement engine facts passed: five ephemeris windows including Chiron and both Nodes, prior-sign handoffs, previous residencies, ranked exact aspects where supported, and local-time rendering.");
 } finally {
   await vite.close();
 }

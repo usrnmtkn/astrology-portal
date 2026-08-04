@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mercury",
+  "sign": "aquarius",
+  "timeZone": "America/New_York",
+  "transitStart": "January 13, 2027",
+  "transitEnd": "January 31, 2027",
+  "transitStartIso": "2027-01-13T06:05:51.999Z",
+  "transitEndIso": "2027-02-01T01:25:39.999Z",
+  "priorSign": "capricorn",
+  "priorSignEntryDate": "December 25, 2026",
+  "priorSignExitDate": "January 13, 2027",
+  "previousResidency": {
+    "sign": "aquarius",
+    "entryDate": "January 27, 2025",
+    "exitDate": "February 14, 2025",
+    "entryDateIso": "2025-01-28T02:52:41.999Z",
+    "exitDateIso": "2025-02-14T12:06:23.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mercury-sextile-neptune-2027-01-14t09:28:51.999z",
+      "body": "mercury-sextile-neptune",
+      "bodies": [
+        "mercury",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "January 14, 2027",
+      "dateIso": "2027-01-14T09:28:51.999Z",
+      "rank": 1,
+      "meaning": "Mind meets imagination. Strong imagination and intuitive, associative thinking. The sextile makes this a natural strength: Inspired ideation and a feel for the unspoken. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mercury-sextile-neptune.json"
+    },
+    {
+      "id": "aspect-mercury-trine-uranus-2027-01-14t10:02:03.999z",
+      "body": "mercury-trine-uranus",
+      "bodies": [
+        "mercury",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "January 14, 2027",
+      "dateIso": "2027-01-14T10:02:03.999Z",
+      "rank": 2,
+      "meaning": "The mind meets disruption and originality. Fast, unconventional, leap-of-insight thinking that resists linear order. The trine makes this a natural strength: Brilliant, inventive insight and quick grasp of new systems and technology. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mercury-trine-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mercury-sextile-neptune.json",
+      "packages/astro-knowledge/data/transits/mercury-trine-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

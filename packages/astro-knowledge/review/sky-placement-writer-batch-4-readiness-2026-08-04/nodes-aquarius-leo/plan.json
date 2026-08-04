@@ -1,0 +1,184 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "nodes",
+  "sign": "aquarius-leo",
+  "outDir": "/private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/nodes-aquarius-leo",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:aquarius-season-2025:p052:window-3-3",
+    "owner-article:aquarius-full-moon-2025:p001:window-2-4",
+    "owner-article:monthly-overview-june-2025:p001:window-2-2",
+    "owner-article:first-new-moon-of-2025-aquarius-new-moon:p008:window-2-4",
+    "owner-article:mercury-retrograde-in-leo:p024:window-4-4",
+    "owner-article:leo-season-2025:p092:window-1-3"
+  ],
+  "warmthOwnerSourceIds": [
+    "owner-article:this-weeks-astrology-august-24th-31st:p015",
+    "owner-article:leo-new-moon-2025:p012",
+    "owner-article:leo-full-moon-2025:p061"
+  ],
+  "ownerCorpusWarmthEvidence": {
+    "id": "warmth-foundation-nodes-aquarius-leo-v1",
+    "planet": "nodes",
+    "sign": "aquarius-leo",
+    "emotionalCore": "release the need for applause",
+    "searchTerms": [
+      "applause",
+      "spotlight",
+      "seen",
+      "performing",
+      "recognition",
+      "creative expression",
+      "worth"
+    ],
+    "vb005Matches": [
+      "external validation",
+      "center stage",
+      "need to prove"
+    ],
+    "primary": {
+      "foundationText": "Creative expression does not require applause to exist.",
+      "sourceId": "owner-article:this-weeks-astrology-august-24th-31st:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/this-weeks-astrology-august-24th-31st.md",
+      "sourceExcerpt": "creative expression that doesn't require applause to exist.",
+      "adaptation": "minimal_collectivization"
+    },
+    "alternates": [
+      {
+        "foundationText": "Built around what is real and what lights us up, not what earns applause.",
+        "sourceId": "owner-article:leo-new-moon-2025:p012",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-new-moon-2025.md",
+        "sourceExcerpt": "building around what’s real, what lights you up, not what earns you applause",
+        "adaptation": "minimal_collectivization"
+      },
+      {
+        "foundationText": "Who we are when the applause fades.",
+        "sourceId": "owner-article:leo-full-moon-2025:p061",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-full-moon-2025.md",
+        "sourceExcerpt": "Who are you, when the applause fades",
+        "adaptation": "minimal_collectivization"
+      }
+    ],
+    "harvest_mode": "matched",
+    "authorityClass": "owner_corpus_derived_foundation",
+    "maxWarmthBeats": 1,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [
+      "owner-article:this-weeks-astrology-august-24th-31st:p015",
+      "owner-article:leo-new-moon-2025:p012",
+      "owner-article:leo-full-moon-2025:p061"
+    ],
+    "editorial_flags": []
+  },
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/north-node-aquarius.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With the North Node in Aquarius, development moves away from the personal spotlight and toward community, collaboration, and ideas bigger than one name. The unfamiliar direction is the growth direction."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/south-node-leo.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With the South Node in Leo, the talent for visibility and self-expression is already developed. The release is the need for applause to make anything feel real."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/lunar-nodes.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "The North Node marks the direction of growth: unfamiliar territory that development keeps pointing toward, where effort feels awkward at first and pays off anyway. The South Node marks the familiar ground already mastered, where real talent lives and where the work is release rather than more practice. Tradition calls them the Dragon's Head and the Dragon's Tail. They are calculated points, not bodies, always exactly opposite each other, so every step toward the North Node is also a letting-go at the South. Taking in the new is a deliberate choice; falling back on the old happens by itself. The nodes complete their cycle in about eighteen and a half years, spending about eighteen months in each sign pair and moving backward through the signs. Nodal returns near ages eighteen, thirty-seven, and fifty-five mark turning points in the growth story. With the North Node in Aquarius, development moves away from the personal spotlight and toward community, collaboration, and ideas bigger than one name. The talent for visibility and self-expression is already developed. The release is the need for applause to make anything feel real."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "pisces-virgo",
+          "priorSignEntryDate": "January 11, 2025",
+          "priorSignExitDate": "July 26, 2026",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "renderOwner": "engine",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 18.6 years moving backward through all twelve signs",
+          "typicalSignStay": "about 18 months per sign pair",
+          "variabilityNote": "The North and South Nodes move as an opposing sign pair."
+        }
+      },
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": [
+          "previousResidencyEntryDate",
+          "previousResidencyExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "renderOwner": "writer",
+        "facts": {
+          "sign": "aquarius-leo",
+          "entryDate": "December 18, 2007",
+          "exitDate": "August 21, 2009",
+          "renderTokens": {
+            "entryDate": "{{previousResidencyEntryDate}}",
+            "exitDate": "{{previousResidencyExitDate}}"
+          }
+        }
+      }
+    ],
+    "inactive": [
+      {
+        "id": "concurrent-events",
+        "reason": "eventsDuringTransit was empty"
+      }
+    ]
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet nodes --sign aquarius-leo --engine-facts /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/nodes-aquarius-leo/engine-facts.json --out /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/nodes-aquarius-leo"
+}

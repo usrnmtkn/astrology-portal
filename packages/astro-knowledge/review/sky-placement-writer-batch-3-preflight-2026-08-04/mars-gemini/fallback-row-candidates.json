@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Gemini on {{entryDate}}, and the next move comes through a quick question or a change of plan. A stuck exchange gets a new angle. An unfamiliar skill becomes worth learning. Better information changes what happens next.",
+      "tension": "That flexibility helps until every possibility feels equally urgent. We follow three ideas, start two tasks, and change direction before either is finished. A disagreement that could clarify the issue becomes a contest for the quickest answer. The sharper the comeback, the farther the conversation moves from what needed to be decided. Energy stays high, but it is split among arguments, new starts, and loose ends.",
+      "development": "Mars last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The pressure is familiar: motion can start to stand in for progress. We research another option because choosing one would close the others. We explain the plan again instead of taking the step that would test it. We keep a dispute alive because each new point feels easier to answer than the question that started it. Attention moves to the newest idea before the last one has been tested. The conversation gets hotter as every new point demands an answer.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, the work can remain unfinished while the argument keeps going after its point has been lost.",
+      "try_this": [
+        "We can close every extra tab and spend thirty minutes solving one concrete problem.",
+        "We can ask, \"What are we actually trying to decide?\" when a conversation turns into a contest."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Gemini on {{entryDate}}, and the next move comes through a quick question or a change of plan. A stuck exchange gets a new angle. An unfamiliar skill becomes worth learning. Better information changes what happens next.\n\nThat flexibility helps until every possibility feels equally urgent. We follow three ideas, start two tasks, and change direction before either is finished. A disagreement that could clarify the issue becomes a contest for the quickest answer. The sharper the comeback, the farther the conversation moves from what needed to be decided. Energy stays high, but it is split among arguments, new starts, and loose ends.\n\nMars last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The pressure is familiar: motion can start to stand in for progress. We research another option because choosing one would close the others. We explain the plan again instead of taking the step that would test it. We keep a dispute alive because each new point feels easier to answer than the question that started it. Attention moves to the newest idea before the last one has been tested. The conversation gets hotter as every new point demands an answer.\n\nBefore {{exitDate}}, the work can remain unfinished while the argument keeps going after its point has been lost.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Gemini on {{entryDate}}, and the next move comes through a quick question or a change of plan. A stuck exchange gets a new angle. An unfamiliar skill becomes worth learning. Better information changes what happens next.\n\nThat flexibility helps until every possibility feels equally urgent. We follow three ideas, start two tasks, and change direction before either is finished. A disagreement that could clarify the issue becomes a contest for the quickest answer. The sharper the comeback, the farther the conversation moves from what needed to be decided. Energy stays high, but it is split among arguments, new starts, and loose ends.\n\nMars last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The pressure is familiar: motion can start to stand in for progress. We research another option because choosing one would close the others. We explain the plan again instead of taking the step that would test it. We keep a dispute alive because each new point feels easier to answer than the question that started it. Attention moves to the newest idea before the last one has been tested. The conversation gets hotter as every new point demands an answer.\n\nBefore {{exitDate}}, the work can remain unfinished while the argument keeps going after its point has been lost.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "mars-gemini"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}
