@@ -1,0 +1,51 @@
+{
+  "target": "moon-ascendant-hard",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "matched",
+    "reason": "Used foundation line has complete exact provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "Your moods and need for comfort can make Bird cautious about how they act around you. They may watch your reactions and change how they enter a situation to prevent tension before anything has even happened, which leaves them less free to be themselves. The pressure on Bird to be what you expect is real, but so is their capacity to choose themselves.",
+    "readerIsAscendantHolder": "Bird's moods and need for comfort can make you cautious about how you act around them. You may watch their reactions and change how you enter a situation to prevent tension before anything has even happened, which leaves you less free to be yourself. The pressure to be what they expect is real, but so is your capacity to choose yourself."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

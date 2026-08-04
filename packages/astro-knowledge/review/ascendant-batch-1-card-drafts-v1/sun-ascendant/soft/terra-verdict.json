@@ -1,0 +1,20 @@
+{
+  "score": 2,
+  "verdict": "borderline",
+  "weakestField": "body_you / body_they, third sentence",
+  "weakest": "“the help can be taken for granted” adds a relational consequence not stated in the governed source boundary.",
+  "why": "The direction is clear and consistent: the Sun holder’s self-definition helps the Ascendant holder feel more at ease presenting themselves, and the reciprocal response loop is plain. The soft quality is also recognizable through the low-effort, unspoken ease. However, the claim that this help may be taken for granted is a specific consequence beyond the supplied boundary’s language about ease and quiet steadiness. It is a small, repairable source-fidelity drift rather than a structural failure.",
+  "failedChecks": [
+    "Supported-claim boundary: “the help can be taken for granted” is not directly supported by the governed source or approved human-moment input."
+  ],
+  "strengths": [
+    "Both variants preserve the fixed Sun-to-Ascendant direction.",
+    "The central human moment closely follows the approved input.",
+    "The reciprocal loop is ordinary, literal, and easy to follow.",
+    "The low-effort framing reflects the soft-aspect source boundary.",
+    "The final confidence sentence has exact owner-foundation provenance and appears after the cost without adding another conclusion.",
+    "Deterministic checks pass."
+  ],
+  "sourceFidelity": "Mostly faithful. The identity/clarity-to-comfortable-self-presentation interaction, effortless quality, and confidence wording remain grounded in supplied material. The “taken for granted” consequence is the lone unsupported extension.",
+  "foundationTrace": "The final sentence in each variant is a near-verbatim contextual adaptation of the matched foundation line: “notice where you’re manufacturing confidence versus actually feeling it.”"
+}

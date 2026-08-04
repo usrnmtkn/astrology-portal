@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "venus-ascendant-soft-v1",
+  "target": {
+    "factorA": "venus",
+    "factorB": "ascendant",
+    "aspectGroup": "soft",
+    "governedEntryId": "A-venus_B-ascendant_trine"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/venus/ascendant/soft",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You respond warmly to the way {{holder2}} naturally comes across. That makes {{holder2}} more relaxed around you and less likely to monitor how they are presenting themselves. The ease can go mostly unnoticed because neither of you has to work hard to create it.",
+    "body_they": "{{holder1}} responds warmly to the way you naturally come across. That makes you more relaxed around {{holder1}} and less likely to monitor how you are presenting yourself. The ease can go mostly unnoticed because neither of you has to work hard to create it.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-venus_B-ascendant_trine.json"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": null,
+  "evidenceLabels": [],
+  "harvestMode": "none_found",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0138dc268367e18e006a726199c604819eb0aa9c15bc03fc15",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_0a0b4fada4fa9dea006a72625fd4c881a397c40d35338f15a9",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "body_you",
+    "weakest": "“Less likely to monitor how they are presenting themselves” adds a specific self-conscious behavior that is not directly supported by the supplied human moment or governed boundary.",
+    "why": "The direction and core loop are clear: the Venus holder responds warmly to the Ascendant holder’s natural presentation, and the Ascendant holder relaxes in response. However, the monitoring claim narrows that relaxation into an invented internal habit. Removing or broadening that detail would keep the card fully within the source boundary.",
+    "failedChecks": [
+      "Unsupported specificity: “less likely to monitor how they are presenting themselves.”"
+    ],
+    "strengths": [
+      "Both reader variants preserve the same directed interaction and resolve naturally.",
+      "The card clearly conveys easy affection meeting natural self-presentation.",
+      "The final sentence appropriately conveys low effort and ease without adding advice, outcomes, or astrology mechanics.",
+      "No excluded claims, scenarios, stock closer, or invented warmth provenance appears."
+    ],
+    "sourceFidelity": "Mostly faithful. Warm response, relaxation, and unnoticed ease are supported by the supplied boundary; the self-monitoring detail is a repairable unsupported elaboration.",
+    "foundationTrace": "No owner foundation lines were supplied, and harvest mode is none_found. The draft correctly uses no warmthSource or foundation-derived turn."
+  }
+}

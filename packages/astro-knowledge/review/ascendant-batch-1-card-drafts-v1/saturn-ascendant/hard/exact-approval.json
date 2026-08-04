@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "saturn-ascendant-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/saturn/ascendant/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "ec80e308338f8bbf6b57d53febd63d0839968d98211e4d64f85518f76fbb9986",
+  "payload": {
+    "body_you": "You may point out problems in how {{holder2}} comes across or tell them to be more careful. They can start rehearsing what to say and checking their behavior before ordinary interactions. When they expect you to notice something wrong, it becomes harder for them to act naturally.",
+    "body_they": "{{holder1}} may point out problems in how you come across or tell you to be more careful. You can start rehearsing what to say and checking your behavior before ordinary interactions. When you expect {{holder1}} to notice something wrong, it becomes harder to act naturally.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/saturn-ascendant/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

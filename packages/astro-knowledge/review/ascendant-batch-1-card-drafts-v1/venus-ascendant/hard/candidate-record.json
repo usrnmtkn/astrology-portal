@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "venus-ascendant-hard-v1",
+  "target": {
+    "factorA": "venus",
+    "factorB": "ascendant",
+    "aspectGroup": "hard",
+    "governedEntryId": "A-venus_B-ascendant_square"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/venus/ascendant/hard",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You may show approval when {{holder2}} presents themselves in a way you like and become cool or critical when they do not. {{holder2}} can start second-guessing and editing how they act around you, leaving them less natural and more guarded. That guardedness can make you press your preferences more clearly, so the tension repeats.",
+    "body_they": "{{holder1}} may show approval when you present yourself in a way they like and become cool or critical when you do not. You can start second-guessing and editing how you act around {{holder1}}, leaving you less natural and more guarded. Your guardedness can make {{holder1}} press their preferences more clearly, so the tension repeats.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-venus_B-ascendant_square.json"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": null,
+  "evidenceLabels": [],
+  "harvestMode": "none_found",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_020577bbd4874fe6006a72618e3018819fb3d5f7d4cc7f08ca",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_060a8590cb9d6d46006a72625abf4c819c94e81407d8af568d",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "body_you",
+    "weakest": "“That guardedness can make you press your preferences more clearly” is the most interpretive causal step, though it remains a plain and plausible expression of the supplied recurring pressure.",
+    "why": "The draft keeps the fixed direction intact: the Venus holder’s approval, criticism, and preferences act on the Ascendant holder’s self-presentation. It then gives a clear two-person loop in which self-editing and guardedness reinforce the pressure. Both variants preserve the same meaning, resolve naturally, stay literal, and stop once the behavioral cost and repetition are clear.",
+    "failedChecks": [],
+    "strengths": [
+      "Clear Venus-holder-to-Ascendant-holder direction in both reader variants.",
+      "Recognizable hard dynamic through conditional approval, criticism, self-editing, and guardedness.",
+      "Plain, ordinary language with no astrology mechanics, invented scene, outcome, advice, or excluded claim.",
+      "The repeated tension is expressed as a concrete interpersonal loop rather than a generic conclusion.",
+      "Correctly remains plain and unsoftened for a none_found packet."
+    ],
+    "sourceFidelity": "High. The wording develops the approved human moment—{{holder1}}’s likes, dislikes, and standards making {{holder2}} question their style and natural behavior—without importing outside doctrine or adding unsupported events.",
+    "foundationTrace": "No owner foundation lines were supplied, and harvest mode is none_found. The card appropriately uses no warmth source or foundation-derived turn."
+  }
+}

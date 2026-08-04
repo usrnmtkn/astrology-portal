@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0fd7c88d34f0e7e5006a7261a5c1188191ba6c65940b3aa23a",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 930,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1814,
+    "output_tokens_details": {
+      "reasoning_tokens": 1552
+    },
+    "total_tokens": 2744
+  },
+  "outputText": "{\"body_you\":\"You may point out {{holder2}}'s tone, reactions, or way of entering a situation when these do not meet your standards. They may start monitoring themselves and holding back parts of their personality to avoid your criticism. Your standards can help {{holder2}} take themselves seriously when they are not so high that {{holder2}} feels like a failure.\",\"body_they\":\"{{holder1}} may point out your tone, reactions, or way of entering a situation when these do not meet their standards. You may start monitoring yourself and holding back parts of your personality to avoid their criticism. Their standards can help you take yourself seriously when they are not so high that you feel like a failure.\",\"warmthSource\":{\"sourceArticleId\":\"new-moon-solar-eclipse-in-virgo\",\"originalLine\":\"Question those impossibly high standards that leave you feeling like a failure.\",\"usedForm\":{\"body_you\":\"Your standards can help {{holder2}} take themselves seriously when they are not so high that {{holder2}} feels like a failure.\",\"body_they\":\"Their standards can help you take yourself seriously when they are not so high that you feel like a failure.\"}},\"labels\":[\"owner-corpus-derived\"]}",
+  "error": null
+}

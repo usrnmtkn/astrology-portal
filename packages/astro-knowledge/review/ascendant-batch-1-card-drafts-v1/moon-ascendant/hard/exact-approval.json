@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-ascendant-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/ascendant/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "bfbc1453900c1e1c39e83b9cf369084f50e99cddd0015f63af1258ecf5868dd7",
+  "payload": {
+    "body_you": "Your moods and need for comfort can make {{holder2}} cautious about how they act around you. They may watch your reactions and change how they enter a situation to prevent tension before anything has even happened, which leaves them less free to be themselves. The pressure on {{holder2}} to be what you expect is real, but so is their capacity to choose themselves.",
+    "body_they": "{{holder1}}'s moods and need for comfort can make you cautious about how you act around them. You may watch their reactions and change how you enter a situation to prevent tension before anything has even happened, which leaves you less free to be yourself. The pressure to be what they expect is real, but so is your capacity to choose yourself.",
+    "warmthSource": {
+      "sourceArticleId": "leo-new-moon-2025",
+      "originalLine": "The pressure to be what others expect is real, but so is your capacity to choose yourself.",
+      "usedForm": {
+        "body_you": "The pressure on {{holder2}} to be what you expect is real, but so is their capacity to choose themselves.",
+        "body_they": "The pressure to be what they expect is real, but so is your capacity to choose yourself."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

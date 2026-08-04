@@ -1,0 +1,19 @@
+{
+  "id": "ascendant-batch-1-owner-revisions-v1-exact-approval",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "synastry-aspect",
+  "articleBeat": "sun-moon-mercury-venus-saturn-ascendant-conjunction-hard-soft-resolver-cards",
+  "before": "The original fifteen Sol payloads stored under packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/<pair>/<target>/draft.json.",
+  "beforeIsRejected": false,
+  "after": "The exact approved payloads and hashes stored in packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/OWNER-REVISION-SUMMARY.md and the fifteen owner-revision-candidate.json records.",
+  "whatChanged": "Applied the owner's specified deletions, inserted the exact owner-authored Mercury hard ending, normalized reader payload punctuation to ASCII, and retained the nine approved-as-drafted payloads. No additional model or judge calls were made.",
+  "ownerReason": "The owner reviewed all fifteen candidates in one pass and explicitly approved the final hash-bound payloads as exact wording.",
+  "failureTags": [],
+  "ownerStatement": "I explicitly approve the fifteen hashed payloads in OWNER-REVISION-SUMMARY.md as exact wording: sun/conjunction 3311f61b851f147f4726e9406f175687c3cd94f73c161e595d41e022102151af; sun/hard 6d34067efce400fd9d22ea6000e338a2f94c9fd108ac5dcf5b15eee16cd885d0; sun/soft 8eb7ffc64ca8adef7c4362d880d2c491ebce07c3317512af66cd78d6271a1776; moon/conjunction 1d2ccbb6caac197155f9c401b1466bc876ae413c67da411165969af263ad20c9; moon/hard bfbc1453900c1e1c39e83b9cf369084f50e99cddd0015f63af1258ecf5868dd7; moon/soft 610cfe115306dbb08984cf12df6c3f594257f19d3f5d1bb7294783ab7c458eb8; mercury/conjunction 64fab3d1533eb0e92b6d635fdaef4462a0f47b85800742741e8f798f380256fa; mercury/hard d4f3a1cbdc4bb25759f69df3740ed3b0ff5c145651c564ede0c9b200b49db47c; mercury/soft 9d7118ea446306c664c49281deefb3a30766ada0853f740caa167f6da57dc55c; venus/conjunction a4acdf5be0d288ecf6b114e4f8102758f320f1214ea09e4bdd9ea84d46f46475; venus/hard f54f9519772a9ecfee46a636c883234028fd2392ac10f25ab3f2f8d026f49ffb; venus/soft fd00adb62ad8dcb67c529b70826682ba4f2f65db97263a4f422c94d499c8122d; saturn/conjunction 5c3d02018685697ce1d6fbf6474197e9926e341a62c1dde8120cf35e93339036; saturn/hard ec80e308338f8bbf6b57d53febd63d0839968d98211e4d64f85518f76fbb9986; saturn/soft f7be4e2ece5bc2d5c89246a98e002e50a41bab19b79d7e8fcf6be5bd9399206f. This is exact owner approval of wording only. Create the exact-approval records and prepare the authorized shipping change, but stop at the draft PR for merge authorization.",
+  "approvalScope": "exact_ascendant_batch_1_fifteen_payloads_wording_shipping_via_draft_pr_merge_authorization_required",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+    "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/OWNER-REVISION-SUMMARY.md",
+    "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-revision-manifest.json"
+  ]
+}

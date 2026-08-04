@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_03101d4edf823c3c006a72623bee44819e8e029d57b36658d4",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-terra",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "low",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1828,
+    "input_tokens_details": {
+      "cache_write_tokens": 1825,
+      "cached_tokens": 0
+    },
+    "output_tokens": 741,
+    "output_tokens_details": {
+      "reasoning_tokens": 345
+    },
+    "total_tokens": 2569
+  },
+  "outputText": "{\"score\":3,\"verdict\":\"in-voice\",\"weakestField\":\"warmthSource\",\"weakest\":\"The final foundation-derived sentence is valid and well-provenanced, but it is less specific to the Mercury-to-Ascendant interaction than the preceding behavior and cost.\",\"why\":\"The fixed direction is clear in both variants: {{holder1}} notices and comments on {{holder2}}'s presentation and approach, {{holder2}} adjusts in response, and the resulting loop can lead to second-guessing. The language remains ordinary, literal, and bounded to questions, explanations, presentation, closeness, and the pressure of repeated comments. The card ends after a single, provenance-backed warmth turn rather than adding another conclusion.\",\"failedChecks\":[],\"strengths\":[\"Both reader variants preserve the same actor, recipient, response, and cost after placeholder resolution.\",\"The interaction is recognizable as close and constant without explaining astrology mechanics.\",\"The draft makes the two-person feedback loop plain rather than treating either person in isolation.\",\"The shadow is specific and source-supported: repeated questions or comments can affect how the Ascendant holder sees and presents themselves.\",\"The final warmth sentence uses an approved owner foundation line with exact recorded provenance.\"],\"sourceFidelity\":\"High. The draft stays within the governed boundary by centering {{holder1}}'s questions and explanations on {{holder2}}'s self-presentation and entry into situations, then grounding the cost in {{holder2}} adjusting and second-guessing how they come across. No excluded outcomes, invented scenes, advice, or outside doctrine appear.\",\"foundationTrace\":\"The final sentence in each variant is a near-verbatim adaptation of the supplied libra-new-moon line: “Give yourself permission to have feelings about other people's situations without being responsible for fixing them.” Its subject is directionally adapted to the reader role, and the warmthSource record provides complete exact provenance.\"}",
+  "error": null
+}

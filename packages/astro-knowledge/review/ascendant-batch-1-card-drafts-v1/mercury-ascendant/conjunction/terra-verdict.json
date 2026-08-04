@@ -1,0 +1,17 @@
+{
+  "score": 3,
+  "verdict": "in-voice",
+  "weakestField": "warmthSource",
+  "weakest": "The final foundation-derived sentence is valid and well-provenanced, but it is less specific to the Mercury-to-Ascendant interaction than the preceding behavior and cost.",
+  "why": "The fixed direction is clear in both variants: {{holder1}} notices and comments on {{holder2}}'s presentation and approach, {{holder2}} adjusts in response, and the resulting loop can lead to second-guessing. The language remains ordinary, literal, and bounded to questions, explanations, presentation, closeness, and the pressure of repeated comments. The card ends after a single, provenance-backed warmth turn rather than adding another conclusion.",
+  "failedChecks": [],
+  "strengths": [
+    "Both reader variants preserve the same actor, recipient, response, and cost after placeholder resolution.",
+    "The interaction is recognizable as close and constant without explaining astrology mechanics.",
+    "The draft makes the two-person feedback loop plain rather than treating either person in isolation.",
+    "The shadow is specific and source-supported: repeated questions or comments can affect how the Ascendant holder sees and presents themselves.",
+    "The final warmth sentence uses an approved owner foundation line with exact recorded provenance."
+  ],
+  "sourceFidelity": "High. The draft stays within the governed boundary by centering {{holder1}}'s questions and explanations on {{holder2}}'s self-presentation and entry into situations, then grounding the cost in {{holder2}} adjusting and second-guessing how they come across. No excluded outcomes, invented scenes, advice, or outside doctrine appear.",
+  "foundationTrace": "The final sentence in each variant is a near-verbatim adaptation of the supplied libra-new-moon line: “Give yourself permission to have feelings about other people's situations without being responsible for fixing them.” Its subject is directionally adapted to the reader role, and the warmthSource record provides complete exact provenance."
+}

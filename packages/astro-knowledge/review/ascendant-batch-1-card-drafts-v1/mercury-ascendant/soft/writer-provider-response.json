@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0b16e231f92523e5006a72615e2b088192bf84708347031184",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 828,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1006,
+    "output_tokens_details": {
+      "reasoning_tokens": 866
+    },
+    "total_tokens": 1834
+  },
+  "outputText": "{\"body_you\":\"Your questions and explanations make it easier for {{holder2}} to speak up and join in. When they say what they mean, your replies show that you followed them without making them explain every part of themselves. Keeping the exchange clear takes little effort from either of you.\",\"body_they\":\"{{holder1}}'s questions and explanations make it easier for you to speak up and join in. When you say what you mean, their replies show that they followed you without making you explain every part of yourself. Keeping the exchange clear takes little effort from either of you.\",\"warmthSource\":null,\"labels\":[]}",
+  "error": null
+}
