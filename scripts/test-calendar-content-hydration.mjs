@@ -10,6 +10,7 @@ import SwissEph from "swisseph-wasm";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-content-hydration.bundle.mjs");
 const lunarBundleFile = path.join(os.tmpdir(), "tldrastro-calendar-lunar-content-hydration.bundle.mjs");
+const seasonBundleFile = path.join(os.tmpdir(), "tldrastro-calendar-season-content-hydration.bundle.mjs");
 const ephemerisBundleDir = path.join(repoRoot, "node_modules/.cache/tldrastro");
 const ephemerisBundleFile = path.join(ephemerisBundleDir, "calendar-ingress-ephemeris.bundle.mjs");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
@@ -40,6 +41,18 @@ await build({
 });
 
 const { lunarDayGeneratedContentKeys } = await import(`${pathToFileURL(lunarBundleFile).href}?t=${Date.now()}`);
+
+await build({
+  bundle: true,
+  define: { "import.meta.env": "{}" },
+  entryPoints: [path.join(repoRoot, "apps/web/src/features/calendar/seasonWindow.ts")],
+  format: "esm",
+  logLevel: "silent",
+  outfile: seasonBundleFile,
+  platform: "node"
+});
+
+const { sunIngressSeasonSign } = await import(`${pathToFileURL(seasonBundleFile).href}?t=${Date.now()}`);
 
 const aspectEvent = {
   id: "venus-square-mars",
@@ -131,6 +144,12 @@ const ingressCalendar = await getLunarCalendarMonth({
   longitude: -70.7626,
   timeZone: "America/New_York"
 }, new Date("2026-07-15T12:00:00.000Z"), { detail: "full" });
+const augustCalendar = await getLunarCalendarMonth({
+  label: "Portsmouth, NH",
+  latitude: 43.0718,
+  longitude: -70.7626,
+  timeZone: "America/New_York"
+}, new Date("2026-08-15T12:00:00.000Z"), { detail: "full" });
 const directEphemeris = new SwissEph();
 await directEphemeris.initSwissEph();
 
@@ -170,6 +189,26 @@ for (const expected of [
     `${expected.title} longitude must match direct Swiss Ephemeris.`
   );
 }
+
+const virgoIngress = augustCalendar.events.find((candidate) => candidate.title === "Sun enters Virgo");
+assert.ok(virgoIngress, "The August 2026 Calendar must include the computed Sun ingress into Virgo.");
+assert.equal(virgoIngress.dateKey, "2026-08-22", "Virgo season must begin on the computed local-date Sun ingress.");
+const directVirgoIngress = directIngressFacts(virgoIngress, directEphemeris.SE_SUN);
+assert.equal(virgoIngress.direction, directVirgoIngress.direction, "The Sun ingress motion must match direct Swiss Ephemeris.");
+assert.ok(
+  Math.abs(virgoIngress.longitude - directVirgoIngress.longitude) < 0.0001,
+  "The Sun ingress longitude must match direct Swiss Ephemeris."
+);
+assert.equal(
+  sunIngressSeasonSign("2026-08-04", augustCalendar.events),
+  "Leo",
+  "August 4, 2026 must remain in Leo season."
+);
+assert.equal(
+  sunIngressSeasonSign("2026-08-25", augustCalendar.events),
+  "Virgo",
+  "August 25, 2026 must resolve to Virgo season after the Sun ingress."
+);
 
 fs.rmSync(ephemerisBundleFile, { force: true });
 
@@ -348,6 +387,16 @@ assert.match(
   calendarSource,
   /const showGuidance = Boolean\(guidance\?\.body\)/u,
   "Weekly guidance must remain visible when the day also has an event description."
+);
+assert.doesNotMatch(
+  calendarSource,
+  /calendarAdjacentCopyIsDistinct\(candidate\.body, previousGuidanceBody\)/u,
+  "Approved Moon-sign variants must not disappear merely because they share an editorial sentence pattern."
+);
+assert.match(
+  calendarSource,
+  /return `\$\{dateLabel\} · \$\{seasonSign\} season/u,
+  "The selected-day card must identify the date whose zodiac season it is showing."
 );
 assert.match(
   calendarCss,

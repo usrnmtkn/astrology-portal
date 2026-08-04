@@ -16,7 +16,6 @@ import {
   type LiveGeneratedContent
 } from "../../services/generatedContent";
 import {
-  calendarAdjacentCopyIsDistinct,
   type CalendarEditorialContent
 } from "../../services/weeklyHoroscope";
 import {
@@ -1476,8 +1475,13 @@ function isSeasonStart(day: LunarCalendarDay) {
 
 function seasonEyebrowForDay(day: LunarCalendarDay, timeZone: string, events?: LunarCalendarEvent[]) {
   const seasonSign = sunIngressSeasonSign(day.dateKey, events ?? []);
+  const dateLabel = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    month: "short",
+    day: "numeric"
+  }).format(new Date(day.date));
 
-  return `${seasonSign} season${isSeasonStart(day) ? " begins" : ""}`;
+  return `${dateLabel} · ${seasonSign} season${isSeasonStart(day) ? " begins" : ""}`;
 }
 
 function titleForDay(day: LunarCalendarDay) {
@@ -1936,7 +1940,6 @@ export function LunarCalendar({
     let usedMoonGuidanceKeys = new Set<string>();
     let hasVisibleMoonGuidanceInSign = false;
     const usedGuidanceBodies = new Set<string>();
-    let previousGuidanceBody = "";
     const significantEventsByDate = new Map(calendar.days.map((day) => [
       day.dateKey,
       weeklyWriteupEvents(day)
@@ -2003,7 +2006,6 @@ export function LunarCalendar({
             if (
               !usedMoonGuidanceKeys.has(candidate.contentKey)
               && !usedGuidanceBodies.has(candidate.body)
-              && calendarAdjacentCopyIsDistinct(candidate.body, previousGuidanceBody)
             ) {
               return {
                 headline: candidate.headline,
@@ -2032,7 +2034,6 @@ export function LunarCalendar({
           if (
             body
             && !usedGuidanceBodies.has(body)
-            && calendarAdjacentCopyIsDistinct(body, previousGuidanceBody)
           ) {
             return {
               headline: candidate.headline,
@@ -2078,7 +2079,6 @@ export function LunarCalendar({
 
       if (guidance) {
         usedGuidanceBodies.add(guidance.body);
-        previousGuidanceBody = guidance.body;
 
         if (guidance.source === "moon") {
           usedMoonGuidanceKeys.add(guidance.contentKey);
