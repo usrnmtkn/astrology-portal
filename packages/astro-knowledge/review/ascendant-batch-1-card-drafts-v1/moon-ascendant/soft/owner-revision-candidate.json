@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-ascendant-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_with_required_ascii_normalization",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "610cfe115306dbb08984cf12df6c3f594257f19d3f5d1bb7294783ab7c458eb8",
+  "payload": {
+    "body_you": "When {{holder2}} enters a situation and shows their natural personality, your emotional reactions tend to help them stay relaxed instead of making them adjust around you. Your feelings, needs, and comfort habits fit easily with how they express themselves, so they do not have to hide what they feel or carefully manage your response. Neither of you usually has to work hard to keep this part of the relationship comfortable.",
+    "body_they": "When you enter a situation and show your natural personality, {{holder1}}'s emotional reactions tend to help you stay relaxed instead of making you adjust around them. Their feelings, needs, and comfort habits fit easily with how you express yourself, so you do not have to hide what you feel or carefully manage their response. Neither of you usually has to work hard to keep this part of the relationship comfortable.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "foundationLineDisposition": "none_found_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "4ac99f4ea6724064c9fa52390263d91ece1bcd153663c6ca5f2108635cdf6fdb",
+    "writerProviderResponseSha256": "93c188db2dfac6e9399b64f023c9554f2e166150d9f54737fca61ffcc9854ce6"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/soft/exact-approval.json"
+}

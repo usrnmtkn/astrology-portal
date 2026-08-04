@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "saturn-ascendant-conjunction-v1",
+  "target": {
+    "factorA": "saturn",
+    "factorB": "ascendant",
+    "aspectGroup": "conjunction",
+    "governedEntryId": "A-saturn_B-ascendant_conjunction"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/saturn/ascendant/conjunction",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You may point out {{holder2}}'s tone, reactions, or way of entering a situation when these do not meet your standards. They may start monitoring themselves and holding back parts of their personality to avoid your criticism. Your standards can help {{holder2}} take themselves seriously when they are not so high that {{holder2}} feels like a failure.",
+    "body_they": "{{holder1}} may point out your tone, reactions, or way of entering a situation when these do not meet their standards. You may start monitoring yourself and holding back parts of your personality to avoid their criticism. Their standards can help you take yourself seriously when they are not so high that you feel like a failure.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-ascendant_conjunction.json",
+      "new-moon-solar-eclipse-in-virgo"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "new-moon-solar-eclipse-in-virgo",
+    "originalLine": "Question those impossibly high standards that leave you feeling like a failure.",
+    "usedForm": {
+      "body_you": "Your standards can help {{holder2}} take themselves seriously when they are not so high that {{holder2}} feels like a failure.",
+      "body_they": "Their standards can help you take yourself seriously when they are not so high that you feel like a failure."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0fd7c88d34f0e7e5006a7261a5c1188191ba6c65940b3aa23a",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_0661a5dc02deab37006a726264e368819dab4e087a06ba2282",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "body_you/body_they opening sentence",
+    "weakest": "The references to tone and reactions are slightly more specific than the governed wording, though they remain a natural, literal expression of becoming more aware of how one presents and enters situations.",
+    "why": "The fixed direction is clear in both variants: the Saturn holder applies standards and may criticize, while the Ascendant holder monitors their presentation and withholds parts of themselves. The behavior and interpersonal cost are plain, recognizable, and contained. The final warmth sentence is a single source-supported turn after the cost, not a separate conclusion.",
+    "failedChecks": [],
+    "strengths": [
+      "Both reader variants preserve the same holder-to-Ascendant-holder dynamic after placeholder resolution.",
+      "The draft stays within standards, self-consciousness, seriousness, criticism, and self-restraint supplied by the governed boundary and approved human moment.",
+      "The presentation and entry language makes the conjunction surface recognizable without astrology explanation.",
+      "The prose is direct and literal, with no excluded claims, invented scene, advice, or stock closing.",
+      "The warmth sentence is supported by an exact supplied owner foundation line and appears only once after the shadow."
+    ],
+    "sourceFidelity": "High. The draft develops the supplied standard-to-self-monitoring loop without importing outside doctrine or unsupported outcomes. The conditional concern about standards making someone feel like a failure closely follows the governed foundation wording.",
+    "foundationTrace": "The final sentence in each variant traces directly to new-moon-solar-eclipse-in-virgo: “Question those impossibly high standards that leave you feeling like a failure.” Its used form preserves the high-standards/failure relationship while applying it to the directed two-person interaction."
+  }
+}
