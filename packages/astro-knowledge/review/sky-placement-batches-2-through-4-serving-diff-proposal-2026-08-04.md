@@ -1,8 +1,8 @@
 # Sky Placement batches 2–4 serving proposal
 
-Status: **awaiting explicit owner serving approval**
+Status: **explicit owner serving approval recorded; serving diff applied locally**
 
-No serving source row, manifest release, generated package, approval state, or production deployment has changed.
+The exact 12 source rows and batch-3/batch-4 manifest releases are now applied locally. Generated package integrity files are rebuilt separately; production deployment remains unchanged.
 
 ## Exact scope
 
@@ -52,7 +52,7 @@ No serving source row, manifest release, generated package, approval state, or p
 - Proposed 12 source rows: `f1375704c0a20568599a285530601618690e78ab58a1f2401dcb06f47016d030`
 - Combined 19-key list: `574901c913b3ce5e72946f1caec7b7d2fbabdaf36bf65d9c44110fea673dafe1`
 
-## Required approval
+## Recorded approval
 
 > I explicitly approve the exact 12-key batches 3 and 4 staged_to_serving diff, producing the combined 19-key batches 2 through 4 serving set, recorded in sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json.
 
