@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "branch": "codex/jupiter-ascendant-card-drafts",
+  "baseCommit": "c079ccee",
+  "packageVersion": "v3-2026-08-04c",
+  "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "approvedAt": "2026-08-04",
+    "targets": {
+      "conjunction": "7dbc558118a3d1c6ed6f8bd23d20a0c01b303055bed2d3b0b72c267c54a7a61e",
+      "hard": "44082c453864d55b346130f68bf99355e8cc0d4eaed92aba1f17f40a8a181b88",
+      "soft": "d8257ad5c355c29c50d8b35eb85d4f29d9697cf4556551479d971412ff309273"
+    }
+  },
+  "scope": {
+    "sourceRowsChanged": 3,
+    "unrelatedSourceRowsChanged": 0,
+    "originalSolArtifactsPreserved": true,
+    "additionalBilledCalls": 0,
+    "fullSynastryProvenanceRestatusIncluded": false,
+    "dashboardSynchronizationIncluded": false,
+    "productionDeploymentIncluded": false
+  },
+  "tests": {
+    "ownerRevisionDeterministicChecks": "pass",
+    "exactApprovalPayloadHashes": "pass",
+    "jupiterAscendantResolverAndGeneratedMirrorContract": "pass",
+    "fallbackManifestCheck": "pass",
+    "fallbackPackageCacheContract": "pass",
+    "fallbackRefreshWiring": "pass",
+    "readerFacingContentContract": "pass",
+    "fullContentSuite": "pass",
+    "typecheck": "pass",
+    "webBuild": "pass",
+    "performanceContracts": "pass",
+    "gitDiffCheck": "pass"
+  }
+}
