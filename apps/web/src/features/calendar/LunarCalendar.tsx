@@ -2804,9 +2804,6 @@ export function LunarCalendar({
       {viewMode === "weekly" && (
         <div className="lunar-weekly-view">
           <section className="lunar-weekly-days" aria-label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
-            <div className="lunar-weekly-days__heading">
-              <p>Day by day</p>
-            </div>
             <nav className="lunar-weekly-jump" aria-label="Jump to a day">
               {weeklyDayWriteups.map(({ day, events }) => (
                 <button
@@ -2824,9 +2821,7 @@ export function LunarCalendar({
             <ol>
               {weeklyDayWriteups.map(({ day, events, guidance, phase, role, showGuidance }) => {
                 const voidWindow = formatVoidCourseDetailWindow(day, zone);
-                const visibleEvents = weeklyLeadEvent?.event.type === "lunation"
-                  ? events.filter(({ event }) => event.id !== weeklyLeadEvent.event.id)
-                  : events;
+                const visibleEvents = events;
                 const isToday = day.dateKey === currentDateKey;
 
                 return (
