@@ -51,6 +51,21 @@ For every surface:
 3. SOURCE_GAP / surface emergency copy
 ```
 
+For continuous Sky Placements, an eligible `sky-placement-continuous-v2`
+article remains the preferred fallback unit. While that complete article is
+unavailable, an eligible, complete `fallback-hook/sky-placement-sign/{planet}/{sign}`
+row may render by itself as the placement introduction. This is a standalone
+approved hook, not permission to revive the retired modular hook/lived/turn
+stack. If neither unit is eligible, the resolver returns `SOURCE_GAP`.
+
+The long-form continuous and modular Sky Placement rows are a separate
+on-demand package partition. The reviewed standalone hooks remain in the eager
+Sky core as the offline and chunk-error safety floor. A continuous row must be
+both editorially eligible and `serving` in
+`authored-inputs/sky-placement-serving-manifest-v1.json`. Moving any batch from
+`staged` to `serving` requires an owner approval statement covering the exact
+key diff; editorial approval alone never changes distribution.
+
 Slot resolution order within step 2 (narrowest first, per SOURCE-TIER-CONTRACT):
 
 ```
