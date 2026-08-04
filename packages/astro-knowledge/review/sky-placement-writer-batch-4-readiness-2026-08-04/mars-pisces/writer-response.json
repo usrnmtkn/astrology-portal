@@ -1,0 +1,66 @@
+{
+  "responseId": "resp_0fc4bcc6a1db012f006a7253d0c424819d86830a5ff7b8dfe4",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:pisces-season-2025:p043:window-2-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:mars-direct-in-cancer:p057:window-3-2",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:venus-retrograde-2025:p073:window-4-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:mars-pisces",
+    "planet": "mars",
+    "sign": "pisces",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 7999,
+    "input_tokens_details": {
+      "cache_write_tokens": 7996,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2973,
+    "output_tokens_details": {
+      "reasoning_tokens": 2588
+    },
+    "total_tokens": 10972
+  },
+  "article": {
+    "opening": "Mars enters Pisces on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and action starts following feeling rather than a fixed route. We help before anyone asks. We follow an idea before we can explain it. A task that nobody claimed gets done because someone senses what is needed and quietly begins.",
+    "tension": "That sensitivity can keep action moving, but it can also hide the point where willingness ends. We take on the extra piece without naming a limit, soften an answer until no one knows what was decided, and avoid the conversation that might disappoint someone. The work still gets done for a while. Then energy scatters across too many needs, the original aim gets harder to find, and anger comes out as a canceled plan, a sharp aside, or silence after another automatic yes.",
+    "development": "Mars last moved through Pisces from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This pass brings the same pressure back into view: compassion without a boundary keeps creating obligations that nobody clearly chose. We may start with one useful act, notice three more needs, and spend the day responding to whatever feels most urgent. A creative impulse can dissolve under constant interruption. A real disagreement can stay unnamed while its heat moves into unrelated moments. By the time the limit is obvious, the original desire has been buried under favors, guesses, and repairs.",
+    "close": "By {{exitDate}}, repeated unplanned favors can leave the original desire untouched and the anger aimed at whoever asks next.",
+    "try_this": [
+      "We can choose one request this week and say exactly which part we can take on.",
+      "We can give one creative impulse thirty uninterrupted minutes and make a rough first version.",
+      "We can name one irritation in a plain sentence before doing another favor around it."
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "chiron",
+  "sign": "aries",
+  "timeZone": "America/New_York",
+  "transitStart": "September 17, 2026",
+  "transitEnd": "April 14, 2027",
+  "transitStartIso": "2026-09-18T01:52:08.999Z",
+  "transitEndIso": "2027-04-14T14:57:19.999Z",
+  "priorSign": "taurus",
+  "priorSignEntryDate": "June 19, 2026",
+  "priorSignExitDate": "September 17, 2026",
+  "previousResidency": {
+    "sign": "aries",
+    "entryDate": "February 18, 2019",
+    "exitDate": "June 19, 2026",
+    "entryDateIso": "2019-02-18T09:08:48.999Z",
+    "exitDateIso": "2026-06-19T21:19:04.999Z"
+  },
+  "eventsDuringTransit": [],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": []
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

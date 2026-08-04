@@ -7,6 +7,19 @@
   "body": "With Neptune in Aries, the collective dream turns toward initiative: what it means to start, to lead, and to fight for something believed in. Inspiration runs strong and the boundaries around action can blur.",
   "gift": "Inspired courage, visionary leadership, and ideals strong enough to start something real.",
   "challenge": "Crusades without plans, glamorized anger, and confusing the urge to act with a reason to act.",
+  "supportedDomains": [
+    "ideals",
+    "imagination",
+    "inspiration",
+    "belief",
+    "courage",
+    "new beginnings",
+    "uncertainty around action"
+  ],
+  "unsupportedDomainWarnings": [
+    "do not make career, money, technology, politics, war, or health the main domain."
+  ],
+  "scenarioPolicy": "generational scale; scenes come from belief and inspired action blurring, not from one person's week.",
   "note": "Composed (planet x sign, dignity-aware); refine from authored material.",
   "voiceNeutral": true,
   "status": "REVIEWED"

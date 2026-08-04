@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sky-placement-writer-batch-4-owner-edited-approved-v1",
+  "lintedAt": "2026-08-04T21:20:00Z",
+  "articleCount": 7,
+  "batchPassed": true,
+  "hardFailures": 0,
+  "rawWarnings": 4,
+  "effectiveWarnings": 1,
+  "batchRepetition": {
+    "passed": true,
+    "maxOccurrences": 1,
+    "occurrenceCount": 1,
+    "occurrences": [
+      {
+        "index": 4,
+        "id": "sky-placement-batch-4-pluto-aquarius-owner-approved-v1",
+        "match": "group chat"
+      }
+    ],
+    "findings": []
+  },
+  "results": [
+    {
+      "id": "sky-placement-batch-4-mars-sagittarius-owner-approved-v1",
+      "score": 3,
+      "effectiveScore": 3,
+      "fails": 0,
+      "rawWarnings": 0,
+      "effectiveWarnings": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close",
+        "closer is long; end on a shorter line with bite"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-4-mars-aquarius-owner-approved-v1",
+      "score": 3,
+      "effectiveScore": 3,
+      "fails": 0,
+      "rawWarnings": 0,
+      "effectiveWarnings": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close",
+        "closer is long; end on a shorter line with bite"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-4-mars-pisces-owner-approved-v1",
+      "score": 3,
+      "effectiveScore": 3,
+      "fails": 0,
+      "rawWarnings": 0,
+      "effectiveWarnings": 0,
+      "findings": [],
+      "notes": [
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-4-neptune-aries-owner-approved-v1",
+      "score": 3,
+      "effectiveScore": 3,
+      "fails": 0,
+      "rawWarnings": 0,
+      "effectiveWarnings": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close",
+        "closer is long; end on a shorter line with bite"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-4-pluto-aquarius-owner-approved-v1",
+      "score": 2,
+      "effectiveScore": 3,
+      "fails": 0,
+      "rawWarnings": 2,
+      "effectiveWarnings": 0,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "group chat",
+          "match": "group chat",
+          "reason": "Allowed when the scene is literally a group conversation; flag for reviewer attention, and allow at most one occurrence across a batch",
+          "waived": true,
+          "waiverReason": "literal group conversation; one occurrence in the batch"
+        },
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "\\bsettl(e|es|ing)\\b(?! for)",
+          "match": "settles",
+          "reason": "'settle' as advice/state is on the old-surface watch list; idiomatic 'settle for' and literal resolve-uses such as settle the confusion or settle the issue are fine",
+          "waived": true,
+          "waiverReason": "idiomatic 'settles with' use"
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-4-chiron-aries-owner-approved-v1",
+      "score": 2,
+      "effectiveScore": 2,
+      "fails": 0,
+      "rawWarnings": 1,
+      "effectiveWarnings": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "shape",
+          "term": "stacked-ending",
+          "match": "5 short closing sentences",
+          "reason": "land one truth with bite, not a pile of aphorisms",
+          "waived": false
+        }
+      ],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    },
+    {
+      "id": "sky-placement-batch-4-nodes-aquarius-leo-owner-approved-v1",
+      "score": 2,
+      "effectiveScore": 3,
+      "fails": 0,
+      "rawWarnings": 1,
+      "effectiveWarnings": 0,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "\\bsettl(e|es|ing)\\b(?! for)",
+          "match": "settling",
+          "reason": "'settle' as advice/state is on the old-surface watch list; idiomatic 'settle for' and literal resolve-uses such as settle the confusion or settle the issue are fine",
+          "waived": true,
+          "waiverReason": "idiomatic 'settling on' use"
+        }
+      ],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close",
+        "hook is long (82 words); the hook is the sendable line, not a paragraph"
+      ],
+      "astrologyPassed": true,
+      "engineSlotsPassed": true,
+      "pronounsPassed": true,
+      "cycleFactsInProsePassed": true,
+      "overallPassed": true
+    }
+  ]
+}

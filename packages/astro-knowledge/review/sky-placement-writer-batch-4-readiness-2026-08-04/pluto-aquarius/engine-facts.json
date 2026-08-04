@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "pluto",
+  "sign": "aquarius",
+  "timeZone": "America/New_York",
+  "transitStart": "November 19, 2024",
+  "transitEnd": "March 8, 2043",
+  "transitStartIso": "2024-11-19T20:39:41.999Z",
+  "transitEndIso": "2043-03-09T01:02:32.999Z",
+  "priorSign": "capricorn",
+  "priorSignEntryDate": "September 1, 2024",
+  "priorSignExitDate": "November 19, 2024",
+  "previousResidency": {
+    "sign": "aquarius",
+    "entryDate": "March 23, 2023",
+    "exitDate": "June 11, 2023",
+    "entryDateIso": "2023-03-23T12:23:22.999Z",
+    "exitDateIso": "2023-06-11T09:35:09.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-neptune-sextile-pluto-2026-07-25t05:26:37.999z",
+      "body": "pluto-sextile-neptune",
+      "bodies": [
+        "neptune",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "July 25, 2026",
+      "dateIso": "2026-07-25T05:26:37.999Z",
+      "rank": 1,
+      "meaning": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. The sextile makes this a natural strength: Heightened collective vision. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json"
+    },
+    {
+      "id": "aspect-uranus-trine-pluto-2026-07-18t04:43:21.999z",
+      "body": "pluto-trine-uranus",
+      "bodies": [
+        "uranus",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "July 18, 2026",
+      "dateIso": "2026-07-18T04:43:21.999Z",
+      "rank": 14,
+      "meaning": "Disruption meets power. Upheaval and radical transformation, often tied to social change; quick adaptation to new technology. The trine makes this a natural strength: Fast, effective adaptation to change. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/uranus-trine-pluto.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json",
+      "packages/astro-knowledge/data/transits/uranus-trine-pluto.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

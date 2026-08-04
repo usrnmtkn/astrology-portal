@@ -1,0 +1,89 @@
+{
+  "responseId": "resp_0c9cc8f6ec59b5b2006a7253d1872881a1b73b5fad8d5945ba",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:chiron-retrograde-in-aries:p009:window-2-3",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:full-moon-in-aries:p008:window-2-3",
+    "owner-article:mercury-retrograde-in-leo:p024:window-4-4",
+    "owner-article:aquarius-season-2025:p012:window-3-3"
+  ],
+  "warmthOwnerSourceIds": [
+    "owner-article:chiron-retrograde-in-aries:p009",
+    "owner-article:pisces-season-2025:p054"
+  ],
+  "ownerCorpusWarmthEvidence": {
+    "id": "warmth-foundation-chiron-aries-v1",
+    "planet": "chiron",
+    "sign": "aries",
+    "emotionalCore": "the wound feels like identity",
+    "searchTerms": [
+      "wound",
+      "healing",
+      "identity",
+      "survival",
+      "reclaiming power",
+      "carrying it differently"
+    ],
+    "vb005Matches": [
+      "old wounds",
+      "need to prove"
+    ],
+    "primary": {
+      "foundationText": "Chiron does not promise that the wound disappears. It shows us how to carry it differently.",
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceExcerpt": "Chiron doesn’t promise that the wound disappears. It shows us how to carry it differently, so that healing is not about forgetting, but about reclaiming power from what once defined us.",
+      "adaptation": "minimal_shortening_and_apostrophe_normalization"
+    },
+    "alternates": [
+      {
+        "foundationText": "The wound does not define us, but the way we carry it does.",
+        "sourceId": "owner-article:pisces-season-2025:p054",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/pisces-season-2025.md",
+        "sourceExcerpt": "The wound does not define you, but the way you carry it does.",
+        "adaptation": "minimal_collectivization"
+      }
+    ],
+    "harvest_mode": "matched",
+    "authorityClass": "owner_corpus_derived_foundation",
+    "maxWarmthBeats": 1,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [
+      "owner-article:chiron-retrograde-in-aries:p009",
+      "owner-article:pisces-season-2025:p054"
+    ],
+    "editorial_flags": []
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 7982,
+    "input_tokens_details": {
+      "cache_write_tokens": 7979,
+      "cached_tokens": 0
+    },
+    "output_tokens": 9467,
+    "output_tokens_details": {
+      "reasoning_tokens": 9068
+    },
+    "total_tokens": 17449
+  },
+  "article": {
+    "opening": "Chiron returns to Aries on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, bringing the pressure back to wanting, beginning, and taking up space. A hand rises, then drops. A clear preference becomes \"either is fine.\" In another moment, the freeze is covered by an answer sharper than the question.",
+    "tension": "Chiron in Aries exposes the tender spot around wanting, beginning, and existing without apology. Acting before confidence arrives can interrupt the old response that made silence feel safer. But when every hesitation feels shameful, movement becomes a test of worth. We force an answer, treat a pause as rejection, or push past a limit just to prove nobody can stop us. What began as courage leaves no space for uncertainty, and the original fear still decides the pace.",
+    "development": "Chiron last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and this return puts the same pressure back into ordinary moments. Someone volunteers to go first, then spends the rest of the day replaying how it looked. At a family table, a sibling stops laughing along with the old joke about being too much. Elsewhere, a simple no holds through the silence that follows. The wound around identity remains. What changes is how we carry it. A want is spoken without becoming a demand. A refusal stands without turning into a fight.",
+    "close": "Before {{exitDate}}, swallowing a want to avoid discomfort leaves the decision to someone else, while delivering it as a threat makes others defend themselves instead of hearing what was wanted.",
+    "try_this": [
+      "We can go first in one low-stakes moment where we usually wait for a cue.",
+      "We can ask for one wrong order to be corrected in a calm sentence.",
+      "We can repeat one clear no in the same tone when someone pushes again."
+    ]
+  }
+}

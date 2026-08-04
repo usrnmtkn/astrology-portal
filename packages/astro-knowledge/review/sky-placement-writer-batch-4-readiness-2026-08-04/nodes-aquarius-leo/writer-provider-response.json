@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_041094130da152ac006a7253d1b8e881a19db25ba90439fff8",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8447,
+    "input_tokens_details": {
+      "cache_write_tokens": 8444,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5668,
+    "output_tokens_details": {
+      "reasoning_tokens": 5251
+    },
+    "total_tokens": 14115
+  },
+  "outputText": "{\"opening\":\"The North Node in Aquarius and the South Node in Leo move attention from the name on the work to what a group can make together. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the North Node enters Aquarius and the South Node enters Leo on {{entryDate}}, and shared purpose starts carrying more weight than personal recognition. A group keeps the best idea even when it came from the least visible contributor. A creative part still matters after the group changes it.\",\"tension\":\"The South Node in Leo knows how to catch attention and give an idea a memorable face. That skill can make shared work easier to notice. The cost appears when every project also has to confirm who is special. We pull a group effort toward the contributor with the biggest audience, defend our part after a better version appears, or lose interest when credit spreads around. The North Node in Aquarius keeps pointing to the shared result, while the need for applause keeps asking for center stage.\",\"development\":\"The Nodes last occupied the Aquarius-Leo axis from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. An idea becomes more useful when its originator lets someone else improve it. A group gets further when credit reflects actual contributions instead of settling on the familiar name. The unfamiliar part is staying invested as attention spreads out. Another voice may become the public face, and the first spark no longer owns the outcome. Creative expression remains real without applause. If we keep demanding proof that our part mattered, the group spends its energy protecting status instead of developing the idea.\",\"close\":\"Before {{exitDate}}, shared projects lose useful ideas whenever every change has to preserve one name at the center.\",\"try_this\":[\"We can bring one idea to a shared project and accept one change that makes it more useful, even if the final version looks less like ours.\",\"We can name the contributor whose work improved a group result, especially when someone else is getting the attention.\"]}"
+}

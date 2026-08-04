@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "runId": "neptune-aries",
+  "recordedAt": "2026-08-04T21:06:38.144Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "neptune",
+    "sign": "aries"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:monthly-overview-june-2025:p001:window-2-2",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "owner-article:full-moon-in-aries:p008:window-2-3",
+      "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e115:window-2-2",
+      "owner-article:pisces-total-lunar-eclipse:p030:window-2-2"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 8 sentences; spec says 2-5 with one close",
+        "closer is long; end on a shorter line with bite"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Neptune enters Aries on {{entryDate}}, and inspiration begins to feel incomplete until someone acts on it. An idea gets a first attempt. We speak a belief that had stayed private. We start making something before the whole vision is clear. This transit can restore movement where longing had no direction.",
+    "tension": "That momentum has a cost when intensity is mistaken for truth. A strong feeling becomes its own permission. A new beginning feels too important to question. We commit because action brings relief, then treat doubt as weakness and resistance as proof that the path matters. The plan remains thin while the promise grows larger.",
+    "development": "Neptune in Aries can make a beginning feel destined before it has met ordinary limits. We see the way inspiration sets its own deadline, the way anger becomes proof that action is needed, and the way bravery becomes a refusal to change course. A creative project runs on vision while the next step stays vague. Friends adopt a bold idea because confidence sounds like clarity. A belief demands sacrifice without explaining what the sacrifice serves. Enthusiasm can carry each beginning for a while. Then responsibility becomes unclear. Someone else finishes what was started, friends stop trusting the idea, or we keep defending the original impulse because admitting confusion feels like losing courage.",
+    "close": "By {{exitDate}}, a beginning built only on intensity can leave us defending a promise we can no longer explain.",
+    "try_this": [
+      "We can spend one hour making a rough version of the idea that feels most urgent.",
+      "We can ask a trusted friend which part of one exciting plan still sounds unclear."
+    ]
+  }
+}
