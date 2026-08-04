@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "venus-ascendant-conjunction-v1",
+  "target": {
+    "factorA": "venus",
+    "factorB": "ascendant",
+    "aspectGroup": "conjunction",
+    "governedEntryId": "A-venus_B-ascendant_conjunction"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/venus/ascendant/conjunction",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "Your affection makes {{holder2}} feel liked and accepted when they show up as themselves, and they quickly notice what seems to please you. Because your response matters so much, they may start changing their manner or appearance to keep your approval, until presenting themselves freely feels harder. Your affection can also help them feel valued without tying their worth to external validation.",
+    "body_they": "{{holder1}}'s affection makes you feel liked and accepted when you show up as yourself, and you quickly notice what seems to please them. Because their response matters so much, you may start changing your manner or appearance to keep their approval, until presenting yourself freely feels harder. Their affection can also help you feel valued without tying your worth to external validation.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-venus_B-ascendant_conjunction.json",
+      "total-lunar-eclipse-in-virgo"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "total-lunar-eclipse-in-virgo",
+    "originalLine": "If your financial situation feels unstable, if your sense of worth has been tied to external validation, if the structures that once made you feel safe now feel like constraints, this is where the illusion falls apart.",
+    "usedForm": {
+      "body_you": "Your affection can also help them feel valued without tying their worth to external validation.",
+      "body_they": "Their affection can also help you feel valued without tying your worth to external validation."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_026937673cd976ef006a726171ee5c81a1b8760f30db3e72a8",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_0044bfdb61559541006a726253dff0819ca65dfe85b261b485",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "warmthSource",
+    "weakest": "The final warmth sentence turns the supplied foundation language about worth tied to external validation into an unsupported reassurance that the Venus holder's affection can help the Ascendant holder feel valued without it.",
+    "why": "The direction and central loop are clear: the Venus holder's affection makes the Ascendant holder feel accepted, and the Ascendant holder begins monitoring and adjusting their presentation to preserve that approval. The final sentence is a repairable source-fidelity problem because it adds a causal, reassuring benefit not established by the governed boundary or the owner foundation line.",
+    "failedChecks": [
+      "The owner-foundation turn is not a faithful supported use of the supplied line: it reframes 'sense of worth has been tied to external validation' as a claim that this person's affection can undo that tie.",
+      "The final warmth sentence functions as an invented reassurance after the cost, rather than stopping once the behavior and cost are clear."
+    ],
+    "strengths": [
+      "Fixed direction is maintained in both reader variants.",
+      "The two-person response loop is plain and recognizable.",
+      "The draft stays literal, natural after placeholder resolution, and free of excluded claims or advice.",
+      "The second sentence clearly names the cost to free self-presentation."
+    ],
+    "sourceFidelity": "Mostly faithful through the first two sentences, which remain within the supplied affection, acceptance, approval-seeking, and constrained self-presentation boundary. The final sentence overextends the external-validation foundation into a specific healing effect.",
+    "foundationTrace": "The phrase 'without tying their worth to external validation' traces lexically to the supplied line about a 'sense of worth' being 'tied to external validation.' However, the draft's claim that affection can help someone feel valued without that tie is not present in, or directly warranted by, the foundation line."
+  }
+}

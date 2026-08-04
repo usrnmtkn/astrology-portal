@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "d375336b28da278a475cf8f591665609f69edd98",
+  "reviewStatus": "needs_review",
+  "allArtifactsPresent": true,
+  "targetCount": 15,
+  "deterministicPassCount": 15,
+  "modeCounts": {
+    "matched": 9,
+    "none_found": 6
+  },
+  "terraScoreCounts": {
+    "2": 6,
+    "3": 9
+  },
+  "billedCalls": {
+    "writer": 15,
+    "judge": 15,
+    "total": 30,
+    "attempts": 31,
+    "incompleteWriterAttempts": 1
+  },
+  "gates": {
+    "schemaValidation": "passed",
+    "aspectWarmthHarvest": "passed",
+    "skyExactAspectPipeline": "passed: 240 targets, 198 ready matched, 42 fail-closed, 225 owner source entries",
+    "currentSkyAspectSuite": "passed, including cron entrypoint",
+    "readerFacingContentContract": "passed",
+    "allCandidateDeterministicChecks": "passed: 15 of 15",
+    "credentialScan": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "scope": {
+    "artifactFiles": 141,
+    "reviewDirectoryOnly": true,
+    "governedEntriesChanged": false,
+    "servingRowsChanged": false,
+    "dashboardSynchronized": false
+  },
+  "servingRowCountObserved": 483,
+  "servingChanged": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false
+}

@@ -1,0 +1,19 @@
+{
+  "score": 2,
+  "verdict": "borderline",
+  "weakestField": "warmthSource",
+  "weakest": "The final warmth sentence changes the owner line’s cause from a planetary shift to relationship friction, creating a new causal claim that is not supported by the governed source boundary.",
+  "why": "The central interaction is clear and correctly directed: the Sun holder sets the tone, the Ascendant holder clarifies or pushes back, and both repeat a recognizable pressure loop. However, the final sentence adds that this specific friction can push the Ascendant holder into action. Although it closely uses supplied owner wording, the substitution of “this friction” for “this planetary shift” makes the relationship dynamic responsible for an outcome the source material does not establish.",
+  "failedChecks": [
+    "Source-boundary fidelity: the warmth line attributes movement into action to the synastry friction rather than retaining the supplied line’s original causal frame."
+  ],
+  "strengths": [
+    "Correct fixed direction in both reader variants.",
+    "The two-person response loop is plain, concrete, and recognizable.",
+    "The behavior and costs stay ordinary and literal: crowding out, pushing back, pressing a point, and feeling challenged.",
+    "Both variants preserve the same meaning after placeholder resolution.",
+    "All deterministic checks passed, including shape, direction, exclusions, advice, and provenance metadata."
+  ],
+  "sourceFidelity": "Partial. The core three sentences are well supported by the approved human moment and governed boundary. The final sentence has legitimate lexical grounding in the supplied owner foundation line, but its changed causal subject introduces unsupported relational causation.",
+  "foundationTrace": "The final sentence traces near-verbatim to first-new-moon-of-2025-aquarius-new-moon: “If you’ve felt stuck or hesitant to make bold moves, this planetary shift will push you into action.” The draft preserves the condition and action language but replaces “this planetary shift” with “this friction,” which is the repair needed."
+}

@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "packetType": "aspect-writing-packet",
+  "status": "ready",
+  "generationAllowed": true,
+  "target": {
+    "id": "A-saturn_B-ascendant_conjunction",
+    "surface": "synastry-aspect",
+    "format": "full-card",
+    "humanMoment": "{{holder1}}'s standards make {{holder2}} more aware of how they act, but {{holder2}} may start holding parts of themselves back to avoid criticism."
+  },
+  "method": {
+    "id": "corpus-warmth-harvest",
+    "sourcePath": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "required": true
+  },
+  "warmthHarvest": {
+    "schemaVersion": 1,
+    "status": "ready",
+    "generationAllowed": true,
+    "surface": "synastry-aspect",
+    "voice": "second_person",
+    "harvest_mode": "matched",
+    "humanMoment": "{{holder1}}'s standards make {{holder2}} more aware of how they act, but {{holder2}} may start holding parts of themselves back to avoid criticism.",
+    "searchTerms": [
+      "inadequacy",
+      "inadequate",
+      "standard",
+      "standards",
+      "verdict",
+      "judged",
+      "judgment",
+      "failure",
+      "failed"
+    ],
+    "ownerFoundationLines": [
+      {
+        "sourceArticleId": "new-moon-solar-eclipse-in-virgo",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/new-moon-solar-eclipse-in-virgo.md",
+        "originalLine": "Question those impossibly high standards that leave you feeling like a failure.",
+        "suppliedLine": "Question those impossibly high standards that leave you feeling like a failure.",
+        "selectionReasons": [
+          "2 emotional-core terms",
+          "second person retained for natal surface"
+        ]
+      },
+      {
+        "sourceArticleId": "full-moon-in-aries",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-aries.md",
+        "originalLine": "Pay attention to the difference between being genuinely helpful and being helpful because you're afraid of being seen as selfish or inadequate.",
+        "suppliedLine": "Pay attention to the difference between being genuinely helpful and being helpful because you're afraid of being seen as selfish or inadequate.",
+        "selectionReasons": [
+          "1 emotional-core term",
+          "second person retained for natal surface"
+        ]
+      },
+      {
+        "sourceArticleId": "full-moon-in-taurus",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+        "originalLine": "Consider whether there are resources available that you've been rejecting because accepting help feels like failure.",
+        "suppliedLine": "Consider whether there are resources available that you've been rejecting because accepting help feels like failure.",
+        "selectionReasons": [
+          "1 emotional-core term",
+          "second person retained for natal surface"
+        ]
+      }
+    ],
+    "flags": [],
+    "insertInstruction": "Adapt one of these into the card where it lands naturally, keeping its meaning and register. Verbatim is preferred when it fits. Use at most one.",
+    "placementInstruction": "Use one warmth sentence after the shadow or cost is named. It must be the final sentence or the sentence before it. Do not add a second conclusion."
+  },
+  "promptBlock": "OWNER FOUNDATION LINES:\n[1] (new-moon-solar-eclipse-in-virgo) Question those impossibly high standards that leave you feeling like a failure.\n[2] (full-moon-in-aries) Pay attention to the difference between being genuinely helpful and being helpful because you're afraid of being seen as selfish or inadequate.\n[3] (full-moon-in-taurus) Consider whether there are resources available that you've been rejecting because accepting help feels like failure.\n\nAdapt one of these into the card where it lands naturally, keeping its meaning and register. Verbatim is preferred when it fits. Use at most one.\nUse one warmth sentence after the shadow or cost is named. It must be the final sentence or the sentence before it. Do not add a second conclusion.",
+  "scaleRule": {
+    "harvest_mode": "matched",
+    "insertWarmthBeat": true,
+    "maximumWarmthSentences": 1,
+    "placement": "after the shadow or cost; final or penultimate sentence",
+    "stackedEndingRuleUnchanged": true
+  },
+  "pronounPolicy": "Second person is allowed; supply owner lines verbatim with pronouns intact.",
+  "candidateRecordContract": {
+    "whenFoundationLineIsUsed": {
+      "requiredLabel": "owner-corpus-derived",
+      "warmthSource": {
+        "sourceArticleId": "required",
+        "originalLine": "required",
+        "usedForm": "required"
+      }
+    },
+    "approvalEffect": "none",
+    "reviewGatesUnchanged": true
+  },
+  "judgeAddition": "The card's turn toward the reader must trace to the supplied owner foundation lines when present. An invented permission or reassurance line in place of the supplied material scores 2; a card with no turn toward the reader at all, when foundation lines were supplied, scores 2. Verbatim or near-verbatim use of a supplied owner line is never penalized as copying - it is the owner's own writing.",
+  "flags": []
+}

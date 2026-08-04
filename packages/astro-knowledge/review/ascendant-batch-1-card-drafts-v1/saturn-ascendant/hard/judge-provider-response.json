@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_01c8f8f1cc3b18f6006a72626cd1d881a39833a5f821bc5775",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-terra",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "low",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1229,
+    "input_tokens_details": {
+      "cache_write_tokens": 1226,
+      "cached_tokens": 0
+    },
+    "output_tokens": 373,
+    "output_tokens_details": {
+      "reasoning_tokens": 83
+    },
+    "total_tokens": 1602
+  },
+  "outputText": "{\"score\":3,\"verdict\":\"in-voice\",\"weakestField\":\"body_you\",\"weakest\":\"“Point out problems” is slightly more explicit than the source’s broader “caution or criticism,” but it remains a natural supported expression of criticism.\",\"why\":\"The Saturn holder’s corrective or critical behavior is directed at the Ascendant holder’s presentation, and the response loop is clear: the Ascendant holder anticipates being judged, rehearses, self-monitors, and has less room to act naturally. Both variants preserve that same interaction in plain, literal language and stop once the behavioral cost is clear.\",\"failedChecks\":[],\"strengths\":[\"Fixed direction is accurate in both reader variants.\",\"The draft stays within caution, criticism, feeling watched, over-preparing, and constrained self-presentation.\",\"The hard dynamic is recognizable without astrology explanation or invented circumstances.\",\"No advice, reassurance beat, warmth imitation, outcome claim, or excluded material is introduced.\",\"Placeholder-resolved variants read naturally and retain equivalent meaning.\"],\"sourceFidelity\":\"High. The card develops only the supplied boundary: criticism or caution affecting free self-presentation, producing preparation, self-monitoring, and difficulty acting naturally.\",\"foundationTrace\":\"No owner foundation lines were supplied, and harvest mode is none_found. The draft appropriately relies on the governed source boundary and approved human-moment input without adding warmth provenance.\"}",
+  "error": null
+}

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-ascendant-conjunction-v1",
+  "target": {
+    "factorA": "moon",
+    "factorB": "ascendant",
+    "aspectGroup": "conjunction",
+    "governedEntryId": "A-moon_B-ascendant_conjunction"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/moon/ascendant/conjunction",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You notice {{holder2}}'s mood almost immediately, and your own mood and need for comfort affect how freely they act around you. When they want to be understood, your quick response can feel comforting, and they may relax into being themselves. When they want privacy, the same attention can feel exposing, and they may hold back as soon as they sense your reaction. When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.",
+    "body_they": "{{holder1}} notices your mood almost immediately, and their own mood and need for comfort affect how freely you act around them. When you want to be understood, their quick response can feel comforting, and you may relax into being yourself. When you want privacy, the same attention can feel exposing, and you may hold back as soon as you sense their reaction. When the ground beneath {{holder1}} feels unstable, it’s natural for them to want to hold tightly to what they know.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-moon_B-ascendant_conjunction.json",
+      "aquarius-season-2025"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "aquarius-season-2025",
+    "originalLine": "When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.",
+    "usedForm": {
+      "body_you": "When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.",
+      "body_they": "When the ground beneath {{holder1}} feels unstable, it’s natural for them to want to hold tightly to what they know."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_02ae972ec0bf1465006a7260d6de7081a185ccc609951a0c82",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_0a774e92ae8e9bfd006a726224d0948192819351b0224affb4",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "warmthSource",
+    "weakest": "The final foundation sentence is somewhat less tightly connected to the immediately preceding privacy dynamic, though it remains a permitted, source-traced warmth turn and does not add a second conclusion.",
+    "why": "The Moon holder consistently notices and responds to the Ascendant holder’s mood, while the Moon holder’s own comfort needs affect how freely the Ascendant holder presents themselves. The comforting-versus-exposing loop is clear, concrete, and recognizably close-contact behavior without importing astrology mechanics or making unsupported promises. Both reader variants preserve the same roles and read naturally.",
+    "failedChecks": [],
+    "strengths": [
+      "Fixed Moon-to-Ascendant direction is maintained in both bodies.",
+      "The two-person response loop is explicit: quick understanding can comfort, while the same attention can expose and restrict self-presentation.",
+      "Claims stay within the supplied mood, comfort, privacy, presentation, and closeness boundary.",
+      "Prose is literal, readable, and free of excluded claims, advice, invented scenes, and stock resolution.",
+      "The owner foundation wording has exact provenance and appears only once after the cost dynamic."
+    ],
+    "sourceFidelity": "High. The central interaction closely follows the governed source and approved human moment, with the presentation effect framed as how freely the Ascendant holder acts around the Moon holder.",
+    "foundationTrace": "The closing warmth sentence uses the supplied Aquarius Season 2025 line verbatim in body_you and a role-resolved near-verbatim form in body_they. It is correctly recorded in warmthSource with complete exact provenance."
+  }
+}

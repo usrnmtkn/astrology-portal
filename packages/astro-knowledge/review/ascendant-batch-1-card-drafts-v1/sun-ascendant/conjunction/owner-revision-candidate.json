@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_with_required_ascii_normalization",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "3311f61b851f147f4726e9406f175687c3cd94f73c161e595d41e022102151af",
+  "payload": {
+    "body_you": "You tend to notice {{holder2}} when they enter a situation, and your response to how they present themselves can make them feel seen enough to speak more directly about what they want. Because your confidence carries so much weight with them, they may start checking your reaction before making their own decision. Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+    "body_they": "{{holder1}} tends to notice you when you enter a situation, and their response to how you present yourself can make you feel seen enough to speak more directly about what you want. Because their confidence carries so much weight with you, you may start checking their reaction before making your own decision. Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself.",
+    "warmthSource": {
+      "sourceArticleId": "full-moon-in-taurus",
+      "originalLine": "Your body knows the difference between joy and productive joy, you can feel it in how you hold yourself when creating for approval versus creating for pleasure.",
+      "usedForm": {
+        "body_you": "Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+        "body_they": "Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "foundationLineDisposition": "retained",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "3818034735ec07c00733524f65ea4e6451001649a1b575aa63e671479992f861",
+    "writerProviderResponseSha256": "391114711ee5ae2c2b5d17520d1b9137b89638148849861859d18813ba31cd4c"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/conjunction/exact-approval.json"
+}

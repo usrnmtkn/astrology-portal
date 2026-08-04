@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "venus-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "a4acdf5be0d288ecf6b114e4f8102758f320f1214ea09e4bdd9ea84d46f46475",
+  "payload": {
+    "body_you": "Your affection makes {{holder2}} feel liked and accepted when they show up as themselves, and they quickly notice what seems to please you. Because your response matters so much, they may start changing their manner or appearance to keep your approval, until presenting themselves freely feels harder.",
+    "body_they": "{{holder1}}'s affection makes you feel liked and accepted when you show up as yourself, and you quickly notice what seems to please them. Because their response matters so much, you may start changing your manner or appearance to keep their approval, until presenting yourself freely feels harder.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "Your affection can also help them feel valued without tying their worth to external validation.",
+      "Their affection can also help you feel valued without tying your worth to external validation."
+    ],
+    "foundationLineDisposition": "removed_with_deleted_sentence",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "eb045e2ac1819874c6cda0faf01815301b3e47db0e3fb7a53c9f04b87eb1a41b",
+    "writerProviderResponseSha256": "2e30284fe1e4186e17a7b877f00c99d39754a385623c3426b2a0588533fd69e4"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/conjunction/exact-approval.json"
+}

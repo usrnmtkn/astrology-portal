@@ -1,0 +1,17 @@
+{
+  "score": 3,
+  "verdict": "in-voice",
+  "weakestField": "warmthSource",
+  "weakest": "The final foundation sentence is somewhat less tightly connected to the immediately preceding privacy dynamic, though it remains a permitted, source-traced warmth turn and does not add a second conclusion.",
+  "why": "The Moon holder consistently notices and responds to the Ascendant holder’s mood, while the Moon holder’s own comfort needs affect how freely the Ascendant holder presents themselves. The comforting-versus-exposing loop is clear, concrete, and recognizably close-contact behavior without importing astrology mechanics or making unsupported promises. Both reader variants preserve the same roles and read naturally.",
+  "failedChecks": [],
+  "strengths": [
+    "Fixed Moon-to-Ascendant direction is maintained in both bodies.",
+    "The two-person response loop is explicit: quick understanding can comfort, while the same attention can expose and restrict self-presentation.",
+    "Claims stay within the supplied mood, comfort, privacy, presentation, and closeness boundary.",
+    "Prose is literal, readable, and free of excluded claims, advice, invented scenes, and stock resolution.",
+    "The owner foundation wording has exact provenance and appears only once after the cost dynamic."
+  ],
+  "sourceFidelity": "High. The central interaction closely follows the governed source and approved human moment, with the presentation effect framed as how freely the Ascendant holder acts around the Moon holder.",
+  "foundationTrace": "The closing warmth sentence uses the supplied Aquarius Season 2025 line verbatim in body_you and a role-resolved near-verbatim form in body_they. It is correctly recorded in warmthSource with complete exact provenance."
+}

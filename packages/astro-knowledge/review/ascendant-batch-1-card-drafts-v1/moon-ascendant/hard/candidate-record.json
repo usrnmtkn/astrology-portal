@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-ascendant-hard-v1",
+  "target": {
+    "factorA": "moon",
+    "factorB": "ascendant",
+    "aspectGroup": "hard",
+    "governedEntryId": "A-moon_B-ascendant_square"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/moon/ascendant/hard",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "Your moods and need for comfort can make {{holder2}} cautious about how they act around you. They may watch your reactions and change how they enter a situation to prevent tension before anything has even happened, which leaves them less free to be themselves. The pressure on {{holder2}} to be what you expect is real, but so is their capacity to choose themselves.",
+    "body_they": "{{holder1}}'s moods and need for comfort can make you cautious about how you act around them. You may watch their reactions and change how you enter a situation to prevent tension before anything has even happened, which leaves you less free to be yourself. The pressure to be what they expect is real, but so is your capacity to choose yourself.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-moon_B-ascendant_square.json",
+      "leo-new-moon-2025"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "leo-new-moon-2025",
+    "originalLine": "The pressure to be what others expect is real, but so is your capacity to choose yourself.",
+    "usedForm": {
+      "body_you": "The pressure on {{holder2}} to be what you expect is real, but so is their capacity to choose themselves.",
+      "body_they": "The pressure to be what they expect is real, but so is your capacity to choose yourself."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0049a8b3d4fa50a0006a7261034e3c8191b59cf801fe35b6a1",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_0d145fad2ef39931006a72623045f481a3be80676ca105cf40",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "body_you",
+    "weakest": "The opening slightly generalizes the source pressure into caution, but the following sentence makes the approved specific behavior and cost clear.",
+    "why": "The Moon holder’s moods and comfort needs act on the Ascendant holder’s presentation and entry into situations in the fixed direction. Both variants clearly show the response loop: the Ascendant holder monitors the Moon holder’s reactions, adjusts before tension occurs, and loses freedom of self-presentation. The final warmth turn is a single, provenance-backed sentence after the cost and does not add a second conclusion.",
+    "failedChecks": [],
+    "strengths": [
+      "Direction is consistent in both reader variants.",
+      "The approved human moment is used directly and naturally.",
+      "The interaction is literal, recognizable, and free of invented scenarios or outcomes.",
+      "The cost is clear without astrology mechanics or advice.",
+      "The one warmth sentence closely traces to the supplied owner foundation line and remains within the allowed placement."
+    ],
+    "sourceFidelity": "High. The draft stays within the governed boundary of Moon-holder moods and comfort needs constraining the Ascendant holder’s self-presentation and entry into situations. The cautious monitoring behavior is explicitly supported by the approved human-moment input.",
+    "foundationTrace": "The closing sentence in both variants is a near-verbatim, role-adjusted use of the supplied leo-new-moon-2025 line: “The pressure to be what others expect is real, but so is your capacity to choose yourself.”"
+  }
+}

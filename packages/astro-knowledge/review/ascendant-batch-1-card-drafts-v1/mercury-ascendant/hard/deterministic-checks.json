@@ -1,0 +1,51 @@
+{
+  "target": "mercury-ascendant-hard",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "none_found",
+    "reason": "none_found correctly carries no invented warmth provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "Your questions and comments can make Bird feel picked apart for how they come across. They may start explaining or defending themselves instead of acting naturally. When this keeps happening, they can become guarded about how they present themselves around you.",
+    "readerIsAscendantHolder": "Bird's questions and comments can make you feel picked apart for how you come across. You may start explaining or defending yourself instead of acting naturally. When this keeps happening, you can become guarded about how you present yourself around Bird."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

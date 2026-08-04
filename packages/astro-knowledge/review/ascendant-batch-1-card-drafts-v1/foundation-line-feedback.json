@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "recordedAt": "2026-08-04",
+  "feedback": [
+    {
+      "id": "manufacturing-confidence-soft-context-rejection",
+      "sourceArticleId": "this-weeks-astrology-august-24th-31st",
+      "originalLine": "Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.",
+      "disposition": "owner_rejected_for_soft_aspect_contexts",
+      "appliesToAspectGroups": [
+        "soft"
+      ],
+      "knownShippedUses": [
+        {
+          "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/hard",
+          "disposition": "shipped_owner_approved_hard_context"
+        }
+      ]
+    }
+  ],
+  "futureHarvestRequirement": {
+    "id": "flag-foundation-line-reuse-across-shipped-cards",
+    "severity": "editorial",
+    "blocking": false,
+    "reason": "Foundation-line reuse across shipped cards must be flagged for owner review before a new candidate uses the line.",
+    "implementationStatus": "owner_feedback_recorded; harvest-engine wiring is outside this hash-preparation step"
+  },
+  "governedVoiceIndexChanged": false,
+  "harvestEngineChanged": false
+}

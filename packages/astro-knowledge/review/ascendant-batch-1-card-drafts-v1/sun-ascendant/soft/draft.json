@@ -1,0 +1,15 @@
+{
+  "body_you": "When you are clear about who you are and what you want, {{holder2}} feels more comfortable being themselves while meeting people or entering a new situation. As they relax and respond more naturally, it becomes easier for you to keep expressing yourself clearly. Because this happens with so little effort, neither of you may mention it, and the help can be taken for granted. With {{holder2}} responding naturally, you notice where you're manufacturing confidence versus actually feeling it.",
+  "body_they": "When {{holder1}} is clear about who they are and what they want, you feel more comfortable being yourself while meeting people or entering a new situation. As you relax and respond more naturally, it becomes easier for {{holder1}} to keep expressing themselves clearly. Because this happens with so little effort, neither of you may mention it, and the help can be taken for granted. With you responding naturally, {{holder1}} notices where they're manufacturing confidence versus actually feeling it.",
+  "warmthSource": {
+    "sourceArticleId": "this-weeks-astrology-august-24th-31st",
+    "originalLine": "Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.",
+    "usedForm": {
+      "body_you": "With {{holder2}} responding naturally, you notice where you're manufacturing confidence versus actually feeling it.",
+      "body_they": "With you responding naturally, {{holder1}} notices where they're manufacturing confidence versus actually feeling it."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

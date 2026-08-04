@@ -1,0 +1,15 @@
+{
+  "body_you": "Your affection makes {{holder2}} feel liked and accepted when they show up as themselves, and they quickly notice what seems to please you. Because your response matters so much, they may start changing their manner or appearance to keep your approval, until presenting themselves freely feels harder. Your affection can also help them feel valued without tying their worth to external validation.",
+  "body_they": "{{holder1}}'s affection makes you feel liked and accepted when you show up as yourself, and you quickly notice what seems to please them. Because their response matters so much, you may start changing your manner or appearance to keep their approval, until presenting yourself freely feels harder. Their affection can also help you feel valued without tying your worth to external validation.",
+  "warmthSource": {
+    "sourceArticleId": "total-lunar-eclipse-in-virgo",
+    "originalLine": "If your financial situation feels unstable, if your sense of worth has been tied to external validation, if the structures that once made you feel safe now feel like constraints, this is where the illusion falls apart.",
+    "usedForm": {
+      "body_you": "Your affection can also help them feel valued without tying their worth to external validation.",
+      "body_they": "Their affection can also help you feel valued without tying your worth to external validation."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

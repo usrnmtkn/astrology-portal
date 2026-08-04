@@ -1,0 +1,51 @@
+{
+  "target": "mercury-ascendant-conjunction",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 4,
+    "body_they": 4
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "matched",
+    "reason": "Used foundation line has complete exact provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "You quickly notice how Bird introduces themselves, starts conversations, or approaches a situation, and you tend to ask questions or explain what you see. Bird may immediately adjust their tone or behavior in response, which gives you more to react to. That close back-and-forth can be lively, but repeated questions or comments can make them second-guess how they come across. You can have feelings about how Bird handles a situation without being responsible for fixing it.",
+    "readerIsAscendantHolder": "Bird quickly notices how you introduce yourself, start conversations, or approach a situation, and they tend to ask questions or explain what they see. You may immediately adjust your tone or behavior in response, which gives Bird more to react to. That close back-and-forth can be lively, but repeated questions or comments can make you second-guess how you come across. Bird can have feelings about how you handle a situation without being responsible for fixing it."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}
