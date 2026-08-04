@@ -93,6 +93,11 @@ export interface SkyPlacementFacts {
   articleKey?: string | null;
   entryDate?: string | null;
   exitDate?: string | null;
+  priorSign?: string | null;
+  priorSignEntryDate?: string | null;
+  priorSignExitDate?: string | null;
+  previousResidencyEntryDate?: string | null;
+  previousResidencyExitDate?: string | null;
   hasPriorIngress?: boolean;
   historyEligible?: boolean;
   historyEntryDate?: string | null;
@@ -1239,7 +1244,18 @@ export function createTransitSynastryRenderer(
 
   function renderContinuousSkyPlacement(
     signCopy: HookRow,
-    { planet, sign, events, entryDate, exitDate }: SkyPlacementFacts
+    {
+      planet,
+      sign,
+      events,
+      entryDate,
+      exitDate,
+      priorSign,
+      priorSignEntryDate,
+      priorSignExitDate,
+      previousResidencyEntryDate,
+      previousResidencyExitDate
+    }: SkyPlacementFacts
   ): TransitRenderResult {
     if (!entryDate || !exitDate) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
@@ -1250,7 +1266,16 @@ export function createTransitSynastryRenderer(
     }
 
     const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
-    const ctx = { entryDate: dates.entry.body, exitDate: dates.exit.body, signTitle: title(sign) };
+    const ctx = {
+      entryDate: dates.entry.body,
+      exitDate: dates.exit.body,
+      signTitle: title(sign),
+      priorSign: priorSign ? title(priorSign) : null,
+      priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
+      priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
+      previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
+      previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+    };
     const factLine = dates.factLine;
     const collective = [signCopy.opening, signCopy.tension, signCopy.development]
       .map((part) => fillKeep(part as string, ctx));
@@ -1316,7 +1341,11 @@ export function createTransitSynastryRenderer(
       throw new SourceGapError(`SOURCE_GAP: retired Sun identity hook ${planet}/${sign}`);
     }
     for (const transitDate of [dates.entry.body, dates.exit.body]) {
-      if (renderedText.split(transitDate).length - 1 > 2) {
+      const priorSignExit = priorSignExitDate
+        ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body
+        : null;
+      const allowedUses = transitDate === dates.entry.body && priorSignExit === transitDate ? 3 : 2;
+      if (renderedText.split(transitDate).length - 1 > allowedUses) {
         throw new SourceGapError(`SOURCE_GAP: repeated sky placement date ${planet}/${sign}`);
       }
     }
@@ -1349,6 +1378,11 @@ export function createTransitSynastryRenderer(
     articleKey,
     entryDate,
     exitDate,
+    priorSign,
+    priorSignEntryDate,
+    priorSignExitDate,
+    previousResidencyEntryDate,
+    previousResidencyExitDate,
     hasPriorIngress = false,
     historyEligible,
     historyEntryDate,
@@ -1485,7 +1519,12 @@ export function createTransitSynastryRenderer(
         sign,
         events,
         entryDate,
-        exitDate
+        exitDate,
+        priorSign,
+        priorSignEntryDate,
+        priorSignExitDate,
+        previousResidencyEntryDate,
+        previousResidencyExitDate
       });
     }
 
