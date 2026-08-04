@@ -16,16 +16,110 @@ const summaryOutputPath = path.join(packageRoot, "bundled-manifest-summary-v3.js
 const skyCoreOutputPath = path.join(packageRoot, "bundled-sky-core-rows-v3.json");
 const deferredCoreOutputPath = path.join(packageRoot, "bundled-deferred-core-rows-v3.json");
 const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards-v3.json");
+const skyPlacementOutputPath = path.join(packageRoot, "bundled-sky-placement-rows-v3.json");
+const coreManifestOutputPath = path.join(packageRoot, "bundled-core-manifest-v3.json");
+const skyPlacementManifestOutputPath = path.join(packageRoot, "bundled-sky-placement-manifest-v3.json");
 const checkOnly = process.argv.includes("--check");
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(packageRoot, relativePath), "utf8"));
 }
 
+function readSkySignCopySources() {
+  return fs.readdirSync(path.join(packageRoot, "source-rows"))
+    .filter((fileName) => /^sky-sign-copy-.*\.json$/u.test(fileName))
+    .sort()
+    .map((fileName) => readJson(`source-rows/${fileName}`));
+}
+
+const skyPlacementServingManifest = readJson("authored-inputs/sky-placement-serving-manifest-v1.json");
+const skyPlacementReleaseByKey = new Map();
+const skyPlacementReleaseByBatch = new Map();
+
+if (skyPlacementServingManifest.runtime_capability !== "sky-placement-on-demand-v1") {
+  throw new Error("Sky Placement serving manifest must require the sky-placement-on-demand-v1 runtime capability.");
+}
+
+for (const release of skyPlacementServingManifest.releases ?? []) {
+  const approvedKeys = Array.isArray(release.approved_keys) ? release.approved_keys : [];
+  const approval = release.owner_approval;
+
+  if (release.distribution_state === "serving") {
+    if (
+      !approval
+      || typeof approval.statement !== "string"
+      || !approval.statement.trim()
+      || typeof approval.approved_at !== "string"
+      || !approval.approved_at.trim()
+      || typeof approval.source !== "string"
+      || !approval.source.trim()
+      || !Array.isArray(approval.approved_keys)
+      || JSON.stringify(approval.approved_keys) !== JSON.stringify(approvedKeys)
+    ) {
+      throw new Error(`Serving release ${release.release_id ?? "unknown"} is missing its exact owner-approved serving diff.`);
+    }
+
+    if (Number(release.release_batch) >= 2) {
+      const migrationGate = release.migration_gate;
+
+      if (
+        release.transition !== "staged_to_serving"
+        || release.required_runtime_capability !== skyPlacementServingManifest.runtime_capability
+        || migrationGate?.status !== "verified"
+        || typeof migrationGate.deployed_package_version !== "string"
+        || !migrationGate.deployed_package_version.trim()
+        || typeof migrationGate.verified_at !== "string"
+        || !migrationGate.verified_at.trim()
+        || typeof migrationGate.source !== "string"
+        || !migrationGate.source.trim()
+      ) {
+        throw new Error(`Serving release ${release.release_id ?? "unknown"} is blocked until the on-demand runtime deployment is verified.`);
+      }
+    }
+  }
+
+  const releaseBatch = String(release.release_batch ?? "").trim();
+  if (!releaseBatch || skyPlacementReleaseByBatch.has(releaseBatch)) {
+    throw new Error(`Sky Placement serving manifest has a missing or duplicate release_batch: ${releaseBatch || "unknown"}.`);
+  }
+  skyPlacementReleaseByBatch.set(releaseBatch, release);
+
+  for (const contentKey of approvedKeys) {
+    if (skyPlacementReleaseByKey.has(contentKey)) {
+      throw new Error(`Sky Placement serving manifest repeats ${contentKey}.`);
+    }
+    skyPlacementReleaseByKey.set(contentKey, release);
+  }
+}
+
+function isContinuousSkyPlacementRow(row) {
+  return row?.render_policy === "sky-placement-continuous-v2"
+    || String(row?.contentKey ?? "").startsWith("fallback-hook/sky-sign-copy/");
+}
+
+function isSkyPlacementDeferredHook(row) {
+  const contentKey = String(row?.contentKey ?? "");
+  return contentKey.startsWith("fallback-hook/sky-sign-copy/")
+    || (
+      contentKey.startsWith("fallback-hook/sky-placement-")
+      && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
+    );
+}
+
+function isDistributionEligible(row) {
+  if (!isContinuousSkyPlacementRow(row)) return true;
+  const release = skyPlacementReleaseByKey.get(row.contentKey)
+    ?? skyPlacementReleaseByBatch.get(String(row.release_batch ?? "").trim());
+  return release?.distribution_state === "serving"
+    && release.approved_keys?.includes(row.contentKey);
+}
+
 function isReaderEligible(row, allowBlank = false) {
   const status = String(row.review_status ?? "").trim().toLowerCase();
-  return ["approved", "approved_reuse", "reviewed"].includes(status)
-    || (allowBlank && !status);
+  return (
+    ["approved", "approved_reuse", "reviewed"].includes(status)
+    || (allowBlank && !status)
+  ) && isDistributionEligible(row);
 }
 
 function latestReaderEligible(rows, allowBlank = false) {
@@ -63,7 +157,7 @@ function fullReaderBundle() {
   const skyAspectRows = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlanetRows = readJson("source-rows/sky-planet-frames-v1.json");
   const skyPlacementRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
-  const skySignRows = readJson("source-rows/sky-sign-copy-sun-v1.json");
+  const skySignRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templates = readJson("templates/fallback-templates-v3.json");
@@ -87,7 +181,7 @@ function fullReaderBundle() {
         ...skyAspectRows.hookRows,
         ...skyPlanetRows.rows,
         ...skyPlacementRows.rows,
-        ...skySignRows.rows
+        ...skySignRows
       ]),
       vocabularyRows: latestReaderEligible([
         ...sourceRows.vocabularyRows,
@@ -107,8 +201,11 @@ function fullReaderBundle() {
 const manifest = createPackageManifest(fullReaderBundle(), PACKAGE_VERSION);
 const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
 const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
+const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
+const skySignCopyRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
 const skyCoreRows = {
-  hookRows: sourceRows.hookRows.filter(isSkyCoreHook),
+  hookRows: sourceRows.hookRows.filter((row) => isSkyCoreHook(row) && !isSkyPlacementDeferredHook(row)),
   // Several reader modules construct shared vocabulary constants at module
   // evaluation time. Keep this relatively small bank eager until those
   // constants become route-local.
@@ -121,17 +218,59 @@ const deferredCoreRows = {
 const skyAuthoredCards = {
   authoredCards: transitRows.authoredCards.filter((row) => row.contentKey.startsWith("authored/sky-"))
 };
+const skyPlacementRows = {
+  hookRows: latestReaderEligible([
+    ...sourceRows.hookRows.filter(isSkyPlacementDeferredHook),
+    ...(skyPlanetFrameRows.rows ?? []),
+    ...(skyPlacementVoicePassRows.rows ?? []),
+    ...skySignCopyRows
+  ]),
+  vocabularyRows: []
+};
+const skyPlacementKeySet = new Set(skyPlacementRows.hookRows.map((row) => row.contentKey));
+const completeReaderBundle = fullReaderBundle();
+const coreReaderBundle = {
+  transitLib: completeReaderBundle.transitLib,
+  templatesFile: completeReaderBundle.templatesFile,
+  rowsFile: {
+    hookRows: completeReaderBundle.rowsFile.hookRows.filter((row) => !skyPlacementKeySet.has(row.contentKey)),
+    vocabularyRows: completeReaderBundle.rowsFile.vocabularyRows
+  }
+};
+const skyPlacementReaderBundle = {
+  transitLib: { authoredCards: [] },
+  templatesFile: { templates: [] },
+  rowsFile: skyPlacementRows
+};
+const coreManifest = createPackageManifest(coreReaderBundle, PACKAGE_VERSION);
+const skyPlacementManifest = createPackageManifest(skyPlacementReaderBundle, PACKAGE_VERSION);
 const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
 const summary = {
   packageVersion: manifest.packageVersion,
   contentHash: manifest.contentHash,
   keyManifestHash: manifest.keyManifestHash,
-  keyCount: manifest.keyCount
+  keyCount: manifest.keyCount,
+  runtimeCapability: skyPlacementServingManifest.runtime_capability,
+  partitions: {
+    core: {
+      contentHash: coreManifest.contentHash,
+      keyManifestHash: coreManifest.keyManifestHash,
+      keyCount: coreManifest.keyCount
+    },
+    skyPlacement: {
+      contentHash: skyPlacementManifest.contentHash,
+      keyManifestHash: skyPlacementManifest.keyManifestHash,
+      keyCount: skyPlacementManifest.keyCount
+    }
+  }
 };
 const serializedSummary = `${JSON.stringify(summary, null, 2)}\n`;
 const serializedSkyCore = `${JSON.stringify(skyCoreRows, null, 2)}\n`;
 const serializedDeferredCore = `${JSON.stringify(deferredCoreRows, null, 2)}\n`;
 const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
+const serializedSkyPlacement = `${JSON.stringify(skyPlacementRows, null, 2)}\n`;
+const serializedCoreManifest = `${JSON.stringify(coreManifest, null, 2)}\n`;
+const serializedSkyPlacementManifest = `${JSON.stringify(skyPlacementManifest, null, 2)}\n`;
 
 if (checkOnly) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
@@ -139,6 +278,9 @@ if (checkOnly) {
   const existingSkyCore = fs.existsSync(skyCoreOutputPath) ? fs.readFileSync(skyCoreOutputPath, "utf8") : "";
   const existingDeferredCore = fs.existsSync(deferredCoreOutputPath) ? fs.readFileSync(deferredCoreOutputPath, "utf8") : "";
   const existingSkyAuthored = fs.existsSync(skyAuthoredOutputPath) ? fs.readFileSync(skyAuthoredOutputPath, "utf8") : "";
+  const existingSkyPlacement = fs.existsSync(skyPlacementOutputPath) ? fs.readFileSync(skyPlacementOutputPath, "utf8") : "";
+  const existingCoreManifest = fs.existsSync(coreManifestOutputPath) ? fs.readFileSync(coreManifestOutputPath, "utf8") : "";
+  const existingSkyPlacementManifest = fs.existsSync(skyPlacementManifestOutputPath) ? fs.readFileSync(skyPlacementManifestOutputPath, "utf8") : "";
 
   if (
     existing !== serialized
@@ -146,6 +288,9 @@ if (checkOnly) {
     || existingSkyCore !== serializedSkyCore
     || existingDeferredCore !== serializedDeferredCore
     || existingSkyAuthored !== serializedSkyAuthored
+    || existingSkyPlacement !== serializedSkyPlacement
+    || existingCoreManifest !== serializedCoreManifest
+    || existingSkyPlacementManifest !== serializedSkyPlacementManifest
   ) {
     console.error("Bundled fallback manifest is stale. Run npm run build:fallback-manifest.");
     process.exit(1);
@@ -158,9 +303,15 @@ if (checkOnly) {
   fs.writeFileSync(skyCoreOutputPath, serializedSkyCore);
   fs.writeFileSync(deferredCoreOutputPath, serializedDeferredCore);
   fs.writeFileSync(skyAuthoredOutputPath, serializedSkyAuthored);
+  fs.writeFileSync(skyPlacementOutputPath, serializedSkyPlacement);
+  fs.writeFileSync(coreManifestOutputPath, serializedCoreManifest);
+  fs.writeFileSync(skyPlacementManifestOutputPath, serializedSkyPlacementManifest);
   console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${manifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
   console.log(`Wrote ${path.relative(repoRoot, deferredCoreOutputPath)} (${deferredCoreRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, skyAuthoredOutputPath)} (${skyAuthoredCards.authoredCards.length} authored cards).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyPlacementOutputPath)} (${skyPlacementRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, coreManifestOutputPath)} (${coreManifest.keyCount} keys).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyPlacementManifestOutputPath)} (${skyPlacementManifest.keyCount} keys).`);
 }
