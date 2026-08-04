@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 
-const { calendarLocalDateKey, calendarPhaseLabelForDay } = await import(
+const { calendarLocalDateKey, calendarMoonContinuationText, calendarPhaseLabelForDay } = await import(
   "../apps/web/src/features/calendar/calendarPhaseLabel.ts"
 );
 
@@ -62,5 +62,29 @@ assert.equal(calendarPhaseLabelForDay(monthBoundary[3], monthBoundary), "Waning 
 const boundaryInstant = "2026-08-06T04:30:00.000Z";
 assert.equal(calendarLocalDateKey(boundaryInstant, "America/New_York"), "2026-08-06");
 assert.equal(calendarLocalDateKey(boundaryInstant, "America/Los_Angeles"), "2026-08-05");
+
+assert.equal(
+  calendarMoonContinuationText({
+    date: "2026-08-04T16:00:00.000Z",
+    timeZone: "America/New_York",
+    moonSign: "Aries",
+    phase: "Waning Gibbous",
+    previousMoonSign: "Aries"
+  }),
+  "The Moon remains in Aries on Tuesday, continuing the waning gibbous phase.",
+  "Repeated-sign days must receive a factual continuation rather than an empty card."
+);
+
+assert.equal(
+  calendarMoonContinuationText({
+    date: "2026-08-05T16:00:00.000Z",
+    timeZone: "America/New_York",
+    moonSign: "Taurus",
+    phase: "Waning Gibbous",
+    previousMoonSign: "Aries"
+  }),
+  "",
+  "A continuation must not cross a Moon-sign boundary."
+);
 
 console.log("Calendar phase labels passed: exact quarters, principal lunations, month boundary, and timezone boundary.");

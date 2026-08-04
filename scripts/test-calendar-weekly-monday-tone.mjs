@@ -93,23 +93,28 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /const weeklyForecastHeadline = weeklyForecast\?\.weeklyHeadline/u,
-  "The weekly hero must use its weekly editorial headline rather than promoting Monday's Moon label."
+  /const weeklyForecastHeadline = weeklyMondayMoonTone\?\.headline/u,
+  "The weekly hero must begin with Monday's governed emotional tone."
 );
 assert.match(
   calendarSource,
   /const weeklySupportingShifts = weeklyMainShifts;/u,
   "Key shifts must use the ranked, governed weekly selection."
 );
-assert.doesNotMatch(
+assert.match(
   calendarSource,
-  /mondayMoonTone: weeklyMondayMoonTone/u,
-  "The weekly hero must not repeat Monday's Moon paragraph."
+  /const weeklyNarrativeSections = \[[\s\S]*?weeklyMondayMoonTone\.body[\s\S]*?weeklyNarrativeEvents\.flatMap/u,
+  "The weekly hero must combine Monday's approved tone with chronological approved event excerpts."
 );
 assert.match(
   calendarSource,
-  /const weeklyForecastBody = weeklyForecast\?\.weeklyOverview \?\? "";/u,
-  "The weekly hero must not assemble its body from duplicated day or event cards."
+  /const weeklyForecastBody = weeklyNarrativeSections\.length === 0[\s\S]*?weeklyForecast\?\.weeklyOverview/u,
+  "The generic weekly fallback must render only when governed narrative sections are unavailable."
+);
+assert.match(
+  calendarSource,
+  /generated\/calendar-moon-continuation\/\$\{day\.dateKey\}/u,
+  "A repeated-sign day must render a factual continuation instead of an empty card."
 );
 assert.match(
   serviceSource,
