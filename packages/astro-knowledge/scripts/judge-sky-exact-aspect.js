@@ -11,8 +11,8 @@ const {
 } = require("./sky-exact-aspect-corpus.js");
 const { OWNER_STYLE_MODELS } = require("./sky-exact-aspect-style.js");
 
-const RUBRIC_VERSION = "sky-exact-aspect-voice-v5-owner-style";
-const PROMPT_VERSION = `${RUBRIC_VERSION}:prompt-v5`;
+const RUBRIC_VERSION = "sky-exact-aspect-voice-v6-owner-warmth";
+const PROMPT_VERSION = `${RUBRIC_VERSION}:prompt-v6`;
 
 function sourceId(entry) {
   return entry.id || `sky.${entry.planetA}.${entry.aspect}.${entry.planetB}`;
@@ -26,9 +26,13 @@ function goldExamples(entry, count = 3) {
   return [...sameAspect.slice(offset), ...sameAspect.slice(0, offset)].slice(0, count);
 }
 
-function buildJudgePrompt(entry, { pairSource = "" } = {}) {
+function buildJudgePrompt(entry, { pairSource = "", foundationLines = [] } = {}) {
   const body = bodyFor(entry);
   const localLint = lintExactEntry(entry);
+  const suppliedFoundationLines = (foundationLines || []).map((line) => ({
+    sourceArticleId: line.sourceArticleId,
+    line: line.suppliedLine || line.originalLine
+  }));
   return [
     `You are the strict editorial judge for TLDR Astro evergreen exact-aspect Current Sky source copy.`,
     `This is not a natal reading, synastry, a sign-specific live card, or a long-form Sky article.`,
@@ -46,6 +50,8 @@ function buildJudgePrompt(entry, { pairSource = "" } = {}) {
     ``,
     `DRAFT:`,
     body,
+    `SUPPLIED OWNER FOUNDATION LINES:`,
+    suppliedFoundationLines.length ? JSON.stringify(suppliedFoundationLines, null, 2) : "None supplied.",
     `LOCAL CONTRACT FINDINGS:`,
     JSON.stringify(localLint.findings),
     ``,
@@ -59,6 +65,9 @@ function buildJudgePrompt(entry, { pairSource = "" } = {}) {
     `- The aspect's distinctive behavior is felt in what happens. It does not say "the ${entry.aspect}," explain mechanics, or read like an astrology lesson.`,
     `- We/our/us enters naturally. The second paragraph does not open with the flat bridge "We feel the pattern/conflict/pull/mismatch."`,
     `- The ending makes one clean turn. It may be one sentence or a truth-and-catch pair, but it does not imitate "The X is real. The Y is not," add a generic maxim, or end conditionally.`,
+    ...(suppliedFoundationLines.length
+      ? [`- The card's turn toward the reader must trace to the supplied owner foundation lines when present. An invented permission or reassurance line in place of the supplied material scores 2; a card with no turn toward the reader at all, when foundation lines were supplied, scores 2. Verbatim or near-verbatim use of a supplied owner line is never penalized as copying - it is the owner's own writing.`]
+      : []),
     `- It is quotable and immediately clear. The memorable line comes from a precise observation, not a manufactured catchphrase. At least one line is unmistakably specific to this pair; swapping the planet names would break the piece.`,
     `- The entry is direct, natural, and specific. It does not read like generic horoscope copy, a strategy brief, or a template with nouns swapped.`,
     `- It stays collective or third-person and evergreen: no second person, signs, dates, degrees, houses, natal framing, or relationship compatibility framing.`,

@@ -90,6 +90,8 @@
     "calibrate:article-judge:live": "node scripts/test-article-judge-calibration.js --authorize-live",
     "model-registry:validate": "node scripts/manage-editorial-model-registry.js validate",
     "model-registry:status": "node scripts/manage-editorial-model-registry.js status",
+    "packet:aspect": "node scripts/build-aspect-writing-packet.js",
+    "test:aspect-warmth-harvest": "node scripts/test-aspect-corpus-warmth-harvest.js",
     "test:sky-exact-aspect-pipeline": "node scripts/test-sky-exact-aspect-pipeline.js",
     "plan:sky-exact-aspect-calibration": "node scripts/calibrate-sky-exact-aspect-judge.js --plan",
     "calibrate:sky-exact-aspect:live": "node scripts/calibrate-sky-exact-aspect-judge.js --authorize-live",

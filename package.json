@@ -29,6 +29,7 @@
     "qa:admin-flows": "playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts",
     "qa:editorial-copy": "node scripts/run-editorial-writing-qa.mjs",
     "qa:article-voice": "npm run test:article-voice-routing -w @tldr/astro-knowledge",
+    "test:aspect-warmth-harvest": "npm run test:aspect-warmth-harvest -w @tldr/astro-knowledge",
     "qa:css-audit": "node scripts/run-css-consistency-audit.mjs",
     "qa:bundle": "node scripts/check-web-bundle-budgets.mjs",
     "qa:form-typography": "node scripts/run-form-typography-audit.mjs",
