@@ -22,6 +22,7 @@
     "test:content:live": "node scripts/test-authored-sky-placement-coverage.mjs",
     "qa:client-report": "node scripts/run-client-facing-qa-report.mjs",
     "qa:content-wiring": "node scripts/test-reader-facing-content-contract.mjs",
+    "qa:calendar-weekly-monday-tone": "node scripts/test-calendar-weekly-monday-tone.mjs",
     "qa:client-flows": "playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --grep-invert \"content fallback copy|directional copy\"",
     "qa:content-copy": "playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts -g \"content fallback copy|directional copy|content hydration\"",
     "qa:fallback-cache-self-heal": "playwright test -c playwright.config.ts tests/visual/fallback-cache-self-heal.spec.ts",
