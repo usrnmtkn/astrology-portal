@@ -1,6 +1,7 @@
 {
   "id": "batch-2-seven-preflight-2026-08-04",
   "recordedAt": "2026-08-04T18:25:10Z",
+  "updatedAt": "2026-08-04T18:31:32Z",
   "mode": "packet_compile_only",
   "billedCallsMade": 0,
   "writerLane": {
@@ -78,11 +79,10 @@
   ],
   "batchReady": true,
   "authorization": "No writer calls are authorized by this record. Owner authorization is still required before billed calls.",
-  "repositoryWidePending": [
-    {
-      "id": "pluto-aquarius",
-      "reason": "Approved Decision A requires owner review of the proposed cycle-note rewrite before it may be applied.",
-      "affectsThisBatch": false
-    }
-  ]
+  "repositoryWidePending": [],
+  "plutoResolution": {
+    "id": "pluto-aquarius",
+    "status": "exact_owner_approved_and_applied",
+    "approvedAt": "2026-08-04T18:31:32Z"
+  }
 }
