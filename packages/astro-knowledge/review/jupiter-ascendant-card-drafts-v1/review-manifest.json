@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "reviewSet": "jupiter-ascendant-card-drafts-v1",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "servingChanged": false,
+  "governedDataChanged": false,
+  "writerCalls": 3,
+  "judgeCalls": 3,
+  "billedCalls": 6,
+  "unbilledAttempts": 1,
+  "targets": [
+    {
+      "target": "conjunction",
+      "candidateRecord": "conjunction/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "needs_review"
+    },
+    {
+      "target": "hard",
+      "candidateRecord": "hard/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "needs_review"
+    },
+    {
+      "target": "soft",
+      "candidateRecord": "soft/candidate-record.json",
+      "harvestMode": "none_found",
+      "deterministicPassed": true,
+      "terraScore": 2,
+      "terraVerdict": "borderline",
+      "status": "needs_review"
+    }
+  ]
+}
