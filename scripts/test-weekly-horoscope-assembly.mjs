@@ -17,6 +17,11 @@ const reviewCandidatePath = path.join(
   "packages/astro-knowledge/review/calendar-weekly-overview-2026-08-03-owner-review-candidate.json"
 );
 const reviewCandidate = JSON.parse(fs.readFileSync(reviewCandidatePath, "utf8"));
+const pendingReviewCandidatePath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/calendar-weekly-overview-2026-08-10-owner-review-candidate.json"
+);
+const pendingReviewCandidate = JSON.parse(fs.readFileSync(pendingReviewCandidatePath, "utf8"));
 const vite = await createServer({
   configFile: false,
   root: path.join(repoRoot, "apps/web"),
@@ -52,6 +57,20 @@ try {
   assert.ok(
     rows.some((row) => row.contentKey === reviewCandidate.contentKey),
     "Exact-copy owner approval must promote the weekly overview into reader-serving source rows."
+  );
+  assert.equal(pendingReviewCandidate.reviewStatus, "needs_review");
+  assert.equal(pendingReviewCandidate.ownerApproved, false);
+  assert.equal(pendingReviewCandidate.promotionAuthorized, false);
+  assert.equal(pendingReviewCandidate.canonical, false);
+  assert.equal(pendingReviewCandidate.serving, false);
+  assert.ok(
+    rows.every((row) => row.contentKey !== pendingReviewCandidate.contentKey),
+    "A review-only weekly overview candidate must not enter reader-serving source rows."
+  );
+  assert.ok(
+    pendingReviewCandidate.body.trim().split(/\s+/u).length >= 130
+      && pendingReviewCandidate.body.trim().split(/\s+/u).length <= 220,
+    "A review-only weekly overview candidate should meet the same compact editorial length as serving copy."
   );
   const weeklyCopyRows = rows.filter((row) => row.weeklyOverview);
   const prohibitedWeeklyLanguage = /the harvest|the universe is inviting you|plant seeds|dreams take root|step into the light|walk through the portal|manifestation|energetic upgrade|a fresh chapter is calling|what is meant for you|the energy asks you|this activation|alignment|this placement becomes|the planet carries the thread|keep shrinking|edit yourself|on paper|shared trust|full write-up coming soon|\bperformance\b|\bthings\b|—/iu;
