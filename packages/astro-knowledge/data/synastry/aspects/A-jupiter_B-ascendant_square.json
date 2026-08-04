@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "square",
   "plainTranslation": "Their confidence, encouragement, and appetite for possibility press against how freely you present yourself and enter situations.",
+  "humanMoment": "What begins as encouragement from {{holder1}} can leave {{holder2}} feeling pushed to promise more, take on more, or act more certain than they really are.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,
