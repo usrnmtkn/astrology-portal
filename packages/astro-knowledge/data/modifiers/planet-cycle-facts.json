@@ -1,0 +1,80 @@
+{
+  "id": "planet-cycle-facts",
+  "appliesTo": ["sky-placement"],
+  "summary": "Approximate zodiac circuits and sign residencies for fact-gated Sky Placement cycle lines.",
+  "body": "The writer may use only the listed circuit and residency language. Moving dates and current-sign ranges remain engine-owned.",
+  "role": "fact-boundary",
+  "category": "planet-cycle",
+  "schema": "per planet: zodiacCircuit, typicalSignStay, variabilityNote",
+  "appUsage": ["sky-placement-cycle-line", "sky-placement-duration-trace"],
+  "voiceNeutral": true,
+  "status": "REVIEWED",
+  "note": "Owner reviewed against the Swiss Ephemeris verification report on 2026-08-03. Moving dates and current-sign ranges remain engine-owned.",
+  "planets": {
+    "sun": {
+      "zodiacCircuit": "about 1 year",
+      "typicalSignStay": "about 1 month per sign",
+      "variabilityNote": null
+    },
+    "moon": {
+      "zodiacCircuit": "about 27 days",
+      "typicalSignStay": "about 2.5 days per sign",
+      "variabilityNote": "Reference only. Moon ingress copy remains permanently excluded."
+    },
+    "mercury": {
+      "zodiacCircuit": "about 1 year because Mercury stays near the Sun",
+      "typicalSignStay": "roughly 2 weeks to 2 months per sign",
+      "variabilityNote": "A retrograde in the sign can extend the residency."
+    },
+    "venus": {
+      "zodiacCircuit": "about 1 year",
+      "typicalSignStay": "roughly 3 weeks to 4 months per sign",
+      "variabilityNote": "A retrograde in the sign can extend the residency."
+    },
+    "mars": {
+      "zodiacCircuit": "about 2 years",
+      "typicalSignStay": "roughly 6 to 7 weeks per sign",
+      "variabilityNote": "A retrograde can extend one sign residency to about 7 months."
+    },
+    "jupiter": {
+      "zodiacCircuit": "about 12 years",
+      "typicalSignStay": "about 1 year per sign",
+      "variabilityNote": null
+    },
+    "saturn": {
+      "zodiacCircuit": "about 29 years",
+      "typicalSignStay": "roughly 2.5 to 3 years per sign",
+      "variabilityNote": null
+    },
+    "uranus": {
+      "zodiacCircuit": "about 84 years",
+      "typicalSignStay": "about 7 years per sign",
+      "variabilityNote": null
+    },
+    "neptune": {
+      "zodiacCircuit": "about 165 years",
+      "typicalSignStay": "about 14 years per sign",
+      "variabilityNote": null
+    },
+    "pluto": {
+      "zodiacCircuit": "about 248 years",
+      "typicalSignStay": "roughly 12 to 31 years per sign",
+      "variabilityNote": "Pluto has an elliptical orbit. Rendering must use the engine-computed range for the current sign rather than treating the average as the current residency."
+    },
+    "chiron": {
+      "zodiacCircuit": "about 50 years",
+      "typicalSignStay": "roughly 4 to 9 years per sign",
+      "variabilityNote": "Chiron has an elliptical orbit, so sign residency varies."
+    },
+    "north-node": {
+      "zodiacCircuit": "about 18.6 years moving backward through all twelve signs",
+      "typicalSignStay": "about 18 months per sign pair",
+      "variabilityNote": "The North and South Nodes move as an opposing sign pair."
+    },
+    "south-node": {
+      "zodiacCircuit": "about 18.6 years moving backward through all twelve signs",
+      "typicalSignStay": "about 18 months per sign pair",
+      "variabilityNote": "The North and South Nodes move as an opposing sign pair."
+    }
+  }
+}

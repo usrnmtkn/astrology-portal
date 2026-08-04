@@ -9,7 +9,7 @@
   "person": "collective-current-sky",
   "secondPersonAllowed": false,
   "firstPersonPluralAllowed": true,
-  "personNote": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'people' when people collectively are the actual subject, 'someone', or a concrete shared scene. Never use 'you', 'your', 'yours', 'yourself', or 'yourselves'. Second person belongs to transit-to-natal copy. Historical owner-approved second-person originals are preserved in fixtures/sky-placement-historical-second-person.json and are excluded from active generation and judge calibration.",
+  "personNote": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'someone', a named group, or a concrete shared scene. Do not use the generic noun 'people'; name the actual subject. Never use 'you', 'your', 'yours', 'yourself', or 'yourselves'. Second person belongs to transit-to-natal copy. Historical owner-approved originals are preserved verbatim for provenance even when they predate current surface rules; they are not permission for newly generated copy to repeat retired language.",
 
   "exemplarStatePolicy": {
     "historical_owner_approved": "Original owner-approved copy preserved verbatim for provenance. Never supplied to the active Current Sky judge as positive evidence.",
@@ -23,11 +23,121 @@
   },
 
   "articleStructure": {
-    "note": "Owner-provided structural models (2026-07-27): CHANI's 'Horoscopes for the Sun in Leo' and 'Your guide to Jupiter in Leo'. STRUCTURE is borrowed, never their copy. The page renders top to bottom as: (1) TAGLINE - a 2-5 word imperative under the title ('the sendable sticky note'); (2) WHEN - the computed date range from ephemeris, never generated; (3) QUOTE - the first sentence of the hook, promoted by the reader into its own bold callout and removed from the body; (4) MEANING - the rest of the hook explains what the planet governs and how the sign changes its method, pace, or priorities; (5) LIVED - the body with pace and useful expression; (6) TURN - the observable distortion or confrontation; (7) MOVES - 2-3 concrete ways to work with the transit, each one specific sentence (CHANI's 'ways to work with' list, cut from 7 to the best 2-3); (8) COMPUTED EVENTS - dated aspects/lunations during the transit render in their own blocks BELOW the article, from ephemeris only. CHANI's 'last time this happened' history section is EXCLUDED: it requires sourced historical claims we do not have, and the falsifiability rule forbids generating them.",
+    "note": "Owner-provided structural models (2026-07-27): CHANI's 'Horoscopes for the Sun in Leo' and 'Your guide to Jupiter in Leo'. STRUCTURE is borrowed, never their copy. The page renders top to bottom as: (1) TAGLINE - one clear full sentence under the title; (2) WHEN - the computed date range from ephemeris, never generated; (3) PRIOR-SIGN HANDOFF when engine facts exist; (4) QUOTE - the first sentence of the hook, promoted by the reader into its own bold callout and removed from the body; (5) MEANING, including the CYCLE LINE when reviewed cycle facts exist; (6) LIVED - the body with pace and useful expression; (7) TURN - the observable distortion or confrontation; (8) CONCURRENT EVENTS when ranked engine events exist; (9) MOVES - 2-3 concrete ways to work with the transit, each one specific sentence; (10) COMPUTED EVENTS - dated aspects/lunations during the transit render from ephemeris. CHANI's cultural 'last time this happened' history section is EXCLUDED: only an engine-supplied prior residency date range may appear, because cultural or historical characterization would require sources we do not have.",
     "generatedSlots": ["tagline", "hook", "lived", "turn", "moves"],
-    "computedSlots": ["date range", "current aspects", "lunations/eclipses during transit"],
-    "taglineRules": "2-5 words, imperative or sharp claim, no terminal period, no planet/sign name needed. In OUR voice, not CHANI's: plain everyday words, bite over sparkle.",
+    "computedSlots": ["date range", "prior-sign handoff facts", "cycle facts", "concurrent events", "current aspects", "lunations/eclipses during transit"],
+    "factGatedSlots": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": ["priorSign", "priorSignEntryDate", "priorSignExitDate"],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "houseExample": "After a year of growing through what feels like home, Jupiter leaves Cancer and starts growing through the other person."
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": ["planetCycleFact"],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "houseExample": "Jupiter takes about twelve years to visit all twelve signs, so each sign gets roughly one year of this attention."
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": ["eventsDuringTransit"],
+        "maxOccurrences": 1,
+        "maxEvents": 2,
+        "continuousFallbackTarget": "aspect_insert",
+        "houseExample": "A month into the transit, the South Node follows into the same sign, and the year of expansion picks up an undertow: what grows here also gets tested here."
+      }
+    ],
+    "taglineRules": "One clear full sentence readers understand on first read, normally 6-18 words. Strong is welcome; cryptic compression is not. Use plain everyday words.",
     "movesRules": "2-3 items. Each is one sentence, a specific doable action tied to THIS placement (CHANI model: 'emcee an open mic', not 'embrace the energy'). No generic coaching verbs (embrace, trust, align, manifest). A move that would work for any placement fails the swap test."
+  },
+
+  "timingDevices": {
+    "rule": "Timing devices are fact-gated and render at most once. Date ranges may come only from the engine. They do not authorize cultural or historical claims. A qualitative, non-numeric subperiod such as 'a few months in,' 'early in the transit,' or 'by midyear' may trace to a reviewed residency fact only when it cannot exceed that residency. Numeric or date-like subperiods such as 'four months in,' 'in March,' or 'by the 15th' require an explicit engine fact or render token.",
+    "devices": [
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": ["previousResidencyEntryDate", "previousResidencyExitDate"],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "houseExample": "Jupiter was last in Leo from July 2014 to August 2015."
+      }
+    ]
+  },
+
+  "formatExemplarPolicy": {
+    "requiredAuthority": "exact owner approval for generation evidence",
+    "source": "voice/tldr-astro/marie-satori-writer/sky-placement-format-exemplars-v4.json",
+    "eligible": [
+      "sky-placement-format-v4-mars-capricorn",
+      "sky-placement-format-v4-saturn-capricorn",
+      "sky-placement-format-v4-neptune-libra",
+      "sky-placement-format-v4-venus-aries"
+    ],
+    "pendingCandidates": [],
+    "status": "owner_approved_voice_format_evidence",
+    "approvalScope": "voice-format evidence only; not factual approval, production approval, canonical copy, or serving promotion",
+    "rule": "Supply only exact owner-approved cards listed in eligible. Their five slots guide register and beat movement; they are not the continuous fallback structure."
+  },
+
+  "voiceDevices": {
+    "maxPerArticle": 2,
+    "rule": "Permissions, not requirements. Use zero, one, or two only when the device fits the placement and keeps natural English.",
+    "devices": [
+      {
+        "id": "archetype-collision",
+        "rule": "The opening may show the meeting of two archetypes in one balanced sentence.",
+        "example": "The sign that multiplies meets the planet that refines. Gemini speaks in options; Saturn speaks in absolutes."
+      },
+      {
+        "id": "shadow-parallel-run",
+        "rule": "The turn may use two or three parallel 'the way X becomes Y' clauses, never more.",
+        "example": "The way perfectionism becomes protection against criticism, the way busy-ness becomes a hedge against feeling, the way fixing others becomes an escape from our own healing."
+      },
+      {
+        "id": "paired-questions",
+        "rule": "The lived section or turn may close on one pair of parallel questions.",
+        "example": "Where have we exhausted ourselves defending something no longer worth the fight? Where have we built walls that now trap us rather than protect us?"
+      },
+      {
+        "id": "pattern-naming",
+        "rule": "The article may coin a short, plain-words name for the psychological pattern it describes.",
+        "example": "the usefulness addiction."
+      }
+    ]
+  },
+
+  "memeScenePolicy": {
+    "rule": "A scene that any astrology account would attach to this sign fails. Derive the scene from this placement's combined meaning at this transit's scale. Apply this check to the central opening, tension, and development sequence. Isolated practical moves are exempt unless the central scene itself is the prohibited scene.",
+    "scaleRule": "A year-long or slower transit cannot be illustrated only by one evening's logistics.",
+    "signConditional": {
+      "libra": ["restaurant indecision", "dinner-plan compromise", "invitation scheduling used as the transit's central stakes"],
+      "virgo": ["color-coded spreadsheet"],
+      "aries": ["gym", "impulsive haircut"],
+      "cancer": ["bubble bath", "canceled plans"],
+      "taurus": ["retail-therapy splurge"],
+      "gemini": ["double-booked calendar"]
+    }
+  },
+
+  "movesExemplar": {
+    "id": "sky-placement-format-v4-saturn-capricorn:moves",
+    "source": "voice/tldr-astro/marie-satori-writer/sky-placement-format-exemplars-v4.json",
+    "status": "owner_approved_voice_format_evidence",
+    "ownerApproved": true,
+    "generationEvidenceAuthorized": true,
+    "items": [
+      "We can choose one long-term goal and give it a weekly appointment with a defined stopping point.",
+      "We can write down one responsibility carried alone, then ask a specific person to take a defined part of it.",
+      "We can leave work at the promised time once this week, even with more still left to do."
+    ],
+    "rule": "Use this exact list as a register and movement exemplar for practical actions. Do not treat it as production copy for another placement."
   },
 
   "shape": {
@@ -44,7 +154,7 @@
         "n": 2,
         "slot": "sky-placement-lived/{planet}/{sign}",
         "beat": "lived expression",
-        "does": "What the planet-sign combination does in ordinary life. 2-4 sentences. Include the transit's pace (days, weeks, years, decades) somewhere in the article, usually here. Concrete evidence INVENTED FRESH for this placement - the kind of thing a reader would recognize from their own week. Build movement from pressure to choice to consequence. Do not line up three representative examples from work, family, relationships, or public life as if completing a coverage checklist; concrete nouns do not rescue a flat inventory. One charged sequence beats three interchangeable scenarios. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output; they leaked into every card of the first batch.) Explain the planet through behavior, never through a keyword list.",
+        "does": "What the planet-sign combination does in ordinary life. 2-4 sentences. The engine renders the cycle facts outside the prose; mention duration here only when it adds meaning. Concrete evidence must be invented fresh for this placement. Keep the transit as the subject and use lived moments as evidence. Do not let one invented scenario carry the whole card, and do not line up examples as a coverage checklist. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output.) Explain the planet through behavior, never through a keyword list.",
         "example": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem."
       },
       {
@@ -59,8 +169,8 @@
       {
         "slot": "sky-placement-tagline/{planet}/{sign}",
         "beat": "tagline",
-        "does": "2-5 word imperative or sharp claim rendered under the article title. No terminal period. Structural model: CHANI's handwritten tagline; voice is OURS.",
-        "shapeExamples": ["Get seen on purpose", "Feelings become a to-do list", "Say the tender thing"],
+        "does": "One clear full sentence rendered under the article title, normally 6-18 words. It must make sense on first read rather than compressing the article into a cryptic slogan.",
+        "shapeExamples": ["The disagreement starts before the cancellation."],
         "shapeExamplesNote": "Shape illustrations only, NOT owner-approved copy. Do not ship without review."
       },
       {
@@ -74,7 +184,7 @@
   },
 
   "pace": {
-    "note": "Approximate sign-transit duration per planet, phrased the way the exemplars phrase it. The article must land the pace somewhere (usually the lived beat); the linter checks article-wide and only advises.",
+    "note": "Approximate sign-transit duration per planet. The engine renders the reviewed cycle fact line under the date range. Article prose mentions duration only when it carries additional meaning; the writer is not required to repeat pace.",
     "labels": {
       "moon": "about two and a half days",
       "sun": "about a month",
@@ -111,6 +221,17 @@
 
   "loreBoundary": "Sign lore, rulership, modality, elements-as-labels, symbols, and season history belong in an optional 'About [Sign]' block rendered separately, NEVER in the article body. The element may be felt in imagery (heat for Leo, depth for Scorpio) but never named as mechanics.",
 
+  "excludedStructures": {
+    "natalFacing": "Jupiter returns, natal houses, birth-chart personalization, and other transit-to-natal material do not belong in Current Sky placement copy. At most, include a one-line pointer to the app feature when the product supplies it.",
+    "memeSpeak": ["entering the chat", "main character era", "main character energy", "glow-up"],
+    "culturalHistory": {
+      "rule": "Previous-residency copy may state an engine-supplied date range only. Celebrity references, pop-culture examples, political examples, and claims about what an era was like are excluded.",
+      "knownCelebrityNamesForMechanicalCheck": ["Taylor Swift", "Beyonce Knowles", "Beyoncé Knowles", "Kim Kardashian", "Elon Musk", "Donald Trump", "Barack Obama"],
+      "mechanicalCoverage": "The linter uses case-insensitive regex for the exact registered names above only; it does not infer shortened names, surnames, mononyms, stage names, or nicknames.",
+      "judgeCoverage": "Terra judges celebrity references not covered by the registered-name regex, including recognizable short forms, surnames, mononyms, stage names, and nicknames."
+    }
+  },
+
   "severityRules": {
     "firstReadNaturalEnglish": {
       "rule": "If a central sentence does not make literal sense in natural English, the article cannot receive a score of 2 or 3 unless the failure is isolated and the remaining article is strongly grounded.",
@@ -130,8 +251,8 @@
       ]
     },
     "allowedCollectiveLanguage": {
-      "allowed": ["people", "someone", "we"],
-      "rule": "Do not flag these words merely because they are collective nouns or pronouns. Flag them only when they conceal a behavior that should be named more specifically."
+      "allowed": ["someone", "we", "named groups", "concrete subjects"],
+      "rule": "Do not flag someone or we merely because they are collective language. Current Sky does not use the generic noun people; name the group, person, message, decision, or behavior."
     },
     "stackedEnding": {
       "rule": "When the turn has already named the behavior and cost, any following slogan, metaphor, reassurance, or second conclusion should be marked for deletion.",
@@ -142,13 +263,7 @@
     }
   },
 
-  "conditionalBans": [
-    {
-      "term": "steady",
-      "requiresBefore": ["stable", "strong", "solid"],
-      "reason": "'steady' is only allowed when 'stable', 'strong', or 'solid' appears before it; otherwise use calm, solid, grounded, or sure."
-    }
-  ],
+  "conditionalBans": [],
 
   "outputBans": {
     "fail": [
@@ -182,30 +297,72 @@
       {"term": "overfilled calendar", "reason": "spec illustration; invent fresh evidence"},
       {"term": "you catch yourself", "reason": "crutch hook opener (14/35 first-batch drafts); vary the hook form"},
       {"term": "you find yourself", "reason": "crutch hook opener; vary the hook form"},
-      {"term": "group chat", "reason": "overused modern object (also removed from the aspect phrase bank)"},
       {"term": "embrace the", "reason": "generic coaching verb; name the actual action"},
-      {"term": "\\bperform(ance|ing|s|ed)?\\b", "reason": "owner voice rule for this surface; name the exact behavior instead of framing it as performance"},
-      {"term": "\\bmanifest(s|ing|ation)?\\b", "reason": "manifestation register banned on this surface"}
+      {"term": "\\bmanifest(s|ing|ation)?\\b", "reason": "manifestation register banned on this surface"},
+      {"term": "\\bpeople\\b", "reason": "owner rule for Current Sky; name the group, person, message, decision, or behavior"},
+      {"term": "\\btilt(?:s|ed|ing)?\\b", "reason": "owner avoid word; name the change or the action that caused it"},
+      {"term": "\\bfair counteroffer\\b", "reason": "negotiation language imposed on an ordinary choice; name what someone offered or changed"},
+      {"term": "\\bthoughtful compromise\\b", "reason": "evaluative label; name what each person agreed to do"},
+      {"term": "\\bboth sides(?: (?:get|gets|have|has|had))? (?:a )?real say\\b", "reason": "institutional summary; name who spoke, chose, or changed the plan"},
+      {"term": "\\b(?:loudest|smartest|quietest|most [a-z]+) (?:person|voice|one) in the room\\b", "reason": "stock room-as-audience phrase; name who takes over and what everyone else does"},
+      {"term": "\\b(?:compare|compares|comparing|compared) (?:three )?(?:rejection )?letters\\b", "reason": "dated communication scene; default to message or response unless physical mail matters"},
+      {"term": "\\b(?:portal notification|electronic correspondence|automated communication)\\b", "reason": "technical substitute for ordinary communication; use message, reply, response, or what they were told"}
+      ,{"term": "\\b(?:entering|enters|entered) the chat\\b", "reason": "meme-speak is excluded from Sky Placement copy"}
+      ,{"term": "\\bmain character(?: era| energy)?\\b", "reason": "meme-speak is excluded from Sky Placement copy"}
+      ,{"term": "\\bglow[- ]?up\\b", "reason": "meme-speak is excluded from Sky Placement copy"}
+      ,{"term": "\\b(?:natal chart|birth chart|Jupiter return|Saturn return|your houses?|your placements?)\\b", "reason": "natal-facing material belongs to transit-to-natal; Sky Placement may contain only a one-line app-feature pointer"}
+      ,{"term": "\\bthe practical choice is\\b", "reason": "coaching scaffold; state the transit, behavior, and consequence directly"}
+      ,{"term": "\\bthe correction is not\\b", "reason": "coaching scaffold; state what changes without announcing a lesson"}
+      ,{"term": "\\bthe next choice is whether\\b", "reason": "coaching scaffold; do not turn development into a decision worksheet"}
     ],
     "warn": [
-      {"term": "\\bsettl(e|es|ing)\\b(?! for)", "reason": "'settle' as advice/state is on the old-surface watch list; idiomatic 'settle for' is fine"},
+      {"term": "group chat", "reason": "Allowed when the scene is literally a group conversation; flag for reviewer attention, and allow at most one occurrence across a batch"},
+      {"term": "\\bsettl(e|es|ing)\\b(?! for)", "reason": "'settle' as advice/state is on the old-surface watch list; idiomatic 'settle for' and literal resolve-uses such as settle the confusion or settle the issue are fine"},
       {"term": "\\bnot [a-z]+ but\\b", "reason": "the not-X-but-Y reframe formula"},
       {"term": "\\breveals?\\b", "reason": "old-surface watch word; prefer shows, exposes"},
       {"term": "the situation", "reason": "vague; name it"},
       {"term": "stakeholders|rollout|deliverable", "reason": "corporate register; only for genuinely structural placements (2nd/8th-house style money-and-power material)"},
       {"term": "journey", "reason": "coaching register"},
-      {"term": "invit(es|ation|ing) (you|us)", "reason": "horoscope filler ('invites you to')"}
+      {"term": "invit(es|ation|ing) (you|us)", "reason": "horoscope filler ('invites you to')"},
+      {"term": "\\bletters?\\b", "reason": "default to message or response unless the scene specifically depends on physical mail"},
+      {"term": "\\bcorrespondence\\b", "reason": "formal delivery language; default to message, reply, response, or what they were told unless the formality matters"}
     ]
   },
+
+  "batchRepetitionPolicy": {
+    "groupChat": {
+      "term": "group chat",
+      "maxOccurrencesPerBatch": 1,
+      "severityWhenExceeded": "fail",
+      "reason": "Group chat is allowed for a literal group conversation, but repeating it across a batch turns it into a generated scene fingerprint."
+    }
+  },
+
+  "judgeScoredChecks": [
+    {
+      "id": "OV-038",
+      "name": "read-aloud rule",
+      "rule": "Read every sentence aloud. Score down wording that sounds compressed, overly composed, or unnatural when spoken."
+    },
+    {
+      "id": "OV-040",
+      "name": "morning-reader test",
+      "rule": "Assume the reader has just woken up. Early sentences should be short, each opening sentence should carry one idea, and nothing should require a second read to parse."
+    }
+  ],
 
   "humanJudgment": [
     "The seven calibration placements must remain distinct when read without their headings. If two could swap bodies without sounding wrong, the writing is not specific enough. This is the judge's swap test.",
     "No compulsory coverage checklist: if a sentence exists only to satisfy coverage, cut it.",
-    "Scene, not inventory: a lived paragraph needs pressure, movement, and consequence. Three parallel examples from different life categories read like generated coverage even when every noun is concrete. One charged sequence is better than a representative list.",
-    "Do not flag 'people', 'someone', or 'we' merely because they are collective language. Flag them only when they conceal a behavior that should be named more specifically.",
+    "The transit is the subject: lived moments prove the placement, but one invented scenario must not carry the whole card. Related moments may reveal the same pressure without becoming a representative coverage list.",
+    "Do not flag 'someone' or 'we' merely because they are collective language. Current Sky does not use the generic noun 'people'. Name the group, message, decision, or behavior instead.",
+    "Everyday-language register: ordinary scenes use ordinary words. A dinner plan is not a counteroffer, both sides, meaningful influence, or a thoughtful compromise. Name what someone says, chooses, changes, refuses, or goes along with. Do not use 'tilt' as a dressed-up substitute for a change that can be stated directly.",
+    "Use ordinary current wording for communication. Default to message or response; reply and what they were told are also natural. Name an email, screenshot, notice, or physical letter only when the delivery method matters. Do not replace letter with portal notification, electronic correspondence, or automated communication.",
     "First-read natural-English rule: read every sentence literally. An abstract noun may not perform an unnatural human action, and a metaphor may not require decoding. Conventional astrology language such as 'Mars governs action' is allowed. A central opaque sentence plus a generalized lived section is score 1; an isolated failure surrounded by strongly grounded writing may reach score 2, never 3.",
     "Observation before polish: hooks begin with recognizable pressure, behavior, or a decision before explaining the placement. A slogan that merely sounds sharp is not a lived premise.",
-    "Turns name the actual cost and stop there. Once the behavior and cost have landed, mark any following slogan, metaphor, reassurance, or second conclusion for deletion. This usually lowers an otherwise strong article to score 2 and does not require a full rewrite.",
+    "Turns name the actual cost and stop there. Once the behavior and cost have landed, mark any following slogan, metaphor, reassurance, second conclusion, or task-management assignment for deletion. The ending should leave the reader inside the consequence.",
+    "Reject coaching scaffolds such as 'the practical choice is,' 'the correction is not,' and 'the next choice is whether.' The development must state the transit, behavior, and consequence directly.",
+    "Cycle facts belong to the engine-rendered fact line directly under the date range. Do not reward writer prose for repeating the circuit or sign-stay numbers. Duration may appear in prose only when it carries additional meaning.",
     "Do not infer employment or career from a sign alone. Taurus concerns money, resources, possessions, food, housing, the body, physical comfort, values, and self-worth; work language requires support from the planet, house, aspect, or supplied source.",
     "Preserve strong owner-written lines. Do not replace a clear sentence merely to make it sound more polished.",
     "One close with bite. A directive is allowed when specific; motivational recap never.",
@@ -345,6 +502,9 @@
       "reviewStatus": "needs_review",
       "ownerApproved": false,
       "promotionAuthorized": false,
+      "ownerFeedbackStatus": "rejected",
+      "ownerFeedbackDate": "2026-08-03",
+      "generationEvidenceAuthorized": false,
       "planet": "moon",
       "sign": "scorpio",
       "tier": "luminary",

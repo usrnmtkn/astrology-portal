@@ -8,6 +8,7 @@ import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.js
 import skyAspectPhrasebookV1 from "./fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json";
 import skyPlacementVoicePassV1 from "./fallbackArchitectureV3/source-rows/sky-placement-inventories-voice-pass-v1.json";
 import skyPlanetFramesV1 from "./fallbackArchitectureV3/source-rows/sky-planet-frames-v1.json";
+import skyPlacementOwnerApprovedFallbacksV1 from "./fallbackArchitectureV3/bundled-sky-placement-owner-approved-reader-v1.json";
 import skySignCopySunV1 from "./fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json";
 import timingEventReaderCopyV2 from "./fallbackArchitectureV3/source-rows/timing-event-reader-copy-v2.json";
 import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
@@ -35,6 +36,8 @@ export type HookRow = {
   content_role?: string | null;
   title?: string | null;
   body?: string | null;
+  // Legacy package field name. Current Sky continuous rows are collective;
+  // the renderer reads their structured fields and performs no pronoun rewrite.
   body_you?: string | null;
   body_they?: string | null;
   body_sky?: string | null;
@@ -288,6 +291,34 @@ function assertSkySignCopySunV1Import(
 
 assertSkySignCopySunV1Import(skySignCopySunV1);
 
+function assertSkyPlacementOwnerApprovedFallbacksV1Import(
+  source: typeof skyPlacementOwnerApprovedFallbacksV1
+) {
+  const rows = source.rows;
+  const keys = new Set(rows.map((row) => row.contentKey));
+  const secondPerson = /\b(?:you|your|yours|yourself|yourselves)\b/iu;
+
+  if (
+    rows.length !== 11
+    || keys.size !== 11
+    || rows.some((row) => row.review_status !== "approved")
+    || rows.some((row) => row.render_policy !== "sky-placement-continuous-v2")
+    || rows.some((row) => !row.contentKey.startsWith("fallback-hook/sky-sign-copy/"))
+    || rows.some((row) => ["note", "source_keys", "approved_via"].some((field) => field in row))
+    || rows.some((row) => secondPerson.test([
+      row.opening,
+      row.tension,
+      row.development,
+      row.close,
+      ...(row.try_this ?? [])
+    ].join("\n")))
+  ) {
+    throw new Error("Sky Placement owner-approved fallbacks must contain 11 collective, metadata-free approved continuous units.");
+  }
+}
+
+assertSkyPlacementOwnerApprovedFallbacksV1Import(skyPlacementOwnerApprovedFallbacksV1);
+
 function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhrasebookV1) {
   const rows = phrasebook.hookRows;
   const expectedFamilies = new Map([
@@ -358,7 +389,8 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
       ...(skyAspectPhrasebookV1.hookRows as HookRow[]),
       ...(skyPlanetFramesV1.rows as HookRow[]),
       ...(skyPlacementVoicePassV1.rows as HookRow[]),
-      ...(skySignCopySunV1.rows as HookRow[])
+      ...(skySignCopySunV1.rows as HookRow[]),
+      ...(skyPlacementOwnerApprovedFallbacksV1.rows as HookRow[])
     ],
     vocabularyRows: [
       ...((bundledSkyCoreRowsV3 as RowsFile).vocabularyRows ?? []),

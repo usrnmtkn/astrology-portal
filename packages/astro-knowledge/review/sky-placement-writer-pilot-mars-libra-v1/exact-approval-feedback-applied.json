@@ -1,0 +1,30 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-pilot-mars-libra-owner-line-edit-v1-exact-approval",
+    "surface": "sky-placement",
+    "planet": "mars",
+    "sign": "libra",
+    "articleBeat": "full_article",
+    "before": "The lint-clean Mars in Libra owner-revised candidate before the final owner-directed prose polish.",
+    "after": "Opening: When Mars enters Libra on {{entryDate}}, the song we have been shaping with a collaborator has several endings and no final version. One ending hits harder; another fits the rest of the song better, and we keep revising so neither preference is overruled. The care is useful: a choice made with attention to another response can become sharper than a solo decision. Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to move through all twelve signs. A retrograde can extend one sign stay to about 7 months.\n\nTension: Before the next rehearsal, we send another edit, ask for another reaction, and soften the strongest moment before anyone can object. Neither of us says which ending we actually want. No argument happens, but the song stays unfinished, and each of us starts resenting the other for a delay both of us are creating. The same social awareness that protects the partnership now keeps either side from taking a clear position.\n\nDevelopment: At the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.\n\nClose: Before {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.\n\nTry this:\n- We can replace one automatic “either is fine” with the option we actually prefer.\n- We can send one reply we have been softening, using a clear sentence without adding an apology.\n- We can make one visual or musical choice this week without collecting extra opinions.",
+    "whatChanged": "Applied the final owner-directed Mars prose polish, retained the song-with-several-endings scene, and recorded exact fallback-article approval without serving or wiring authority.",
+    "ownerReason": "The scene is detriment-true and the final change removes the remaining unnatural word order.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-pilot-mars-libra-v1/owner-line-edited-candidate.json"
+    ],
+    "provenance": "exact_wording_approval: With the three owner-directed line edits applied, I explicitly approve the exact wording of sky-placement-pilot-mercury-pisces-owner-line-edit-v1, sky-placement-pilot-mars-libra-owner-line-edit-v1, and sky-placement-pilot-uranus-gemini-owner-line-edit-v1 as owner-approved fallback articles for their placement pages. Serving and wiring remain separate.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

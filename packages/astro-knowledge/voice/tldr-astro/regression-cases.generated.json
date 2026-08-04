@@ -1,0 +1,657 @@
+{
+  "schemaVersion": 1,
+  "artifact": "regression-cases",
+  "generatedBy": "scripts/compile-marie-satori-editorial-decisions.js",
+  "decisionSource": "voice/tldr-astro/marie-satori-editorial-decisions.yaml",
+  "decisionSourceId": "marie-satori-editorial-decisions-v1",
+  "decisionSourceSha256": "8dfe6d6459f705689ee4267f2ae01b1262bff54bf5ffa0d822683bea0a2a7717",
+  "cases": [
+    {
+      "id": "natural-english-abstract-personification",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "The banished want refuses to stay reasonable.",
+      "expected": "reject",
+      "decisionId": "ED-001",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "pressure-choice-consequence-sequence",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "A family changes. A workplace changes. Relationships change.",
+      "expected": "reject",
+      "decisionId": "ED-002",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "current-sky-second-person",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "You already know what changed.",
+      "expected": "fail",
+      "decisionId": "ED-003",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "no-em-dash",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The plan changes—someone finally says no.",
+      "expected": "fail",
+      "decisionId": "ED-004",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "sky-placement-no-generic-people",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "People agree because saying no feels uncomfortable.",
+      "expected": "fail",
+      "decisionId": "CF-001",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "single-specific-person-allowed",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The person who remembers every birthday keeps the spare key.",
+      "expected": "pass",
+      "decisionId": "CF-013",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "repeated-generic-one-person-review",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "One person decides, and one person fixes it while one person explains it.",
+      "expected": "fail",
+      "decisionId": "CF-013",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "on-paper-idiom-allowed",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The plan looks good on paper.",
+      "expected": "pass",
+      "decisionId": "CF-014",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "on-paper-administrative-rejected",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Put the emergency plan on paper.",
+      "expected": "fail",
+      "decisionId": "CF-014",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "literal-room-allowed",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "A guest room turns into an office.",
+      "expected": "pass",
+      "decisionId": "CF-004",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "stock-room-hierarchy-rejected",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The loudest person in the room becomes the plan.",
+      "expected": "fail",
+      "decisionId": "CF-004",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "harm-literal-versus-dressed-up",
+      "surface": "sky-placement",
+      "kind": "judge-pair",
+      "pass_text": "The fall caused physical harm.",
+      "fail_text": "Once the harm becomes visible, the plan changes.",
+      "expected": "literal_pass_figurative_fail",
+      "decisionId": "CF-005",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "steady-observable-allowed",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The work takes steady effort.",
+      "expected": "pass",
+      "decisionId": "CF-015",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "steady-vague-energy-rejected",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Steady energy fills the week.",
+      "expected": "fail",
+      "decisionId": "CF-015",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "performance-literal-allowed",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The actor prepares for the performance.",
+      "expected": "pass",
+      "decisionId": "CF-002",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "performance-figurative-rejected",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Life is not a performance review.",
+      "expected": "fail",
+      "decisionId": "CF-002",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "tilt-figurative-fails",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "A dinner plan starts to tilt when no one says no.",
+      "expected": "fail",
+      "decisionId": "CF-003",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "tilt-literal-passes",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The table tilts toward the window.",
+      "expected": "pass",
+      "decisionId": "CF-003",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "tagline-compressed-slogan",
+      "surface": "sky-placement",
+      "kind": "tagline",
+      "text": "Stop calling silence peace",
+      "expected": "fail",
+      "decisionId": "CF-006",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "tagline-clear-sentence",
+      "surface": "sky-placement",
+      "kind": "tagline",
+      "text": "The disagreement starts before the cancellation.",
+      "expected": "pass",
+      "decisionId": "CF-006",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "stacked-conclusion",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "No one trusts the next yes. That is the lesson. That is the future.",
+      "expected": "reject",
+      "decisionId": "ED-005",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "compressed-slogan-ending",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "We may win the old fight and still lose the next chapter.",
+      "expected": "reject",
+      "decisionId": "ED-005",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "institutional-advocacy-default",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "The pattern becomes evidence and turns into a public complaint.",
+      "expected": "reject",
+      "decisionId": "ED-006",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "therapy-workbook-register",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Reopen one agreement and regulate the nervous system activation.",
+      "expected": "fail",
+      "decisionId": "ED-006",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "corporate-operations-advice",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Document the task, identify stakeholders, and record what fails.",
+      "expected": "fail",
+      "decisionId": "ED-006",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "dated-communication-language",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Three families compare letters and electronic correspondence.",
+      "expected": "fail",
+      "decisionId": "ED-007",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "literal-physical-letter",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "A handwritten letter arrives in the mail.",
+      "expected": "pass",
+      "decisionId": "ED-007",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "cc-sd-recognizability-consideration",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "Welcome to another powerful week.",
+      "expected": "flag_unless_owner_verbatim",
+      "decisionId": "ED-013",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "chani-warmth-allowed",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "Someone can change the plan without apologizing for having a preference.",
+      "expected": "allow",
+      "decisionId": "CF-016",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "adjacent-site-construction-rejected",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Welcome to another powerful week. You got this.",
+      "expected": "fail",
+      "decisionId": "CF-016",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "advocacy-default-domain-drift",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "The transit creates a campaign, public complaint, and policy reform without source support.",
+      "expected": "reject",
+      "decisionId": "CF-007",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "taurus-unsupported-work-domain",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "Taurus makes this placement about career even though no source mentions work.",
+      "expected": "reject",
+      "decisionId": "ED-008",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "writer-packet-six-owner-passages",
+      "surface": "sky-placement",
+      "kind": "packet",
+      "expected": "six-owner-authored-passages",
+      "decisionId": "CF-008",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "writer-packet-excludes-system-analysis",
+      "surface": "sky-placement",
+      "kind": "packet",
+      "expected": "no-negative-or-governance-material",
+      "decisionId": "CF-009",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "current-sky-operation-matched-retrieval",
+      "surface": "sky-placement",
+      "kind": "packet",
+      "expected": "six-surface-compatible-operation-matched-passages",
+      "decisionId": "ED-014",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "generic-planet-sign-tagline",
+      "surface": "sky-placement",
+      "kind": "tagline",
+      "text": "Jupiter in Libra helps us grow through fair, honest partnership.",
+      "expected": "fail",
+      "decisionId": "ED-015",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "gift-to-problem-keyword-flip",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The gift becomes the problem when diplomacy turns into avoidance.",
+      "expected": "fail",
+      "decisionId": "ED-016",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "facilitated-compromise-register",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "Compare preferences, name one must-have and one flexible detail, then propose a compromise each side can support.",
+      "expected": "off-voice-unless-literal-facilitation",
+      "decisionId": "ED-017",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "social-scene-needs-stakes",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "expected": "meaningful-pressure-and-consequence",
+      "decisionId": "ED-018",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "generic-fairness-conclusion",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Fairness requires each side to be heard before the choice is made.",
+      "expected": "fail",
+      "decisionId": "ED-019",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "jupiter-libra-v3-full-draft-reject",
+      "surface": "sky-placement",
+      "kind": "judge-full-draft",
+      "fixture": "review/sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions/writer-response.json",
+      "expected": "off-voice",
+      "required_findings": [
+        "swappable-tagline",
+        "textbook-explanation",
+        "formal-negotiation",
+        "workshop-prompts",
+        "manufactured-compromise",
+        "gift-shadow-inversion",
+        "generic-conclusion",
+        "insufficient-stakes"
+      ],
+      "decisionId": "ED-020",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "controlled-v3-six-passage-set-ineligible",
+      "surface": "sky-placement",
+      "kind": "packet-set",
+      "fixture": "review/sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions/packet.json",
+      "expected": "ineligible-for-current-sky-first-call",
+      "decisionId": "ED-021",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "libra-dinner-plan-meme",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "sign": "libra",
+      "text": "The dinner plan finally moves when everyone stops saying anything is fine.",
+      "expected": "fail",
+      "decisionId": "ED-022",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "libra-invitation-scheduling-meme",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "sign": "libra",
+      "text": "By the third invitation of the week, the answer is still yes. When a date does not work, we call it fine and rearrange everything else around it.",
+      "expected": "fail",
+      "decisionId": "ED-022",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "libra-isolated-scheduling-moves-allowed",
+      "surface": "sky-placement",
+      "kind": "moves-linter",
+      "sign": "libra",
+      "centralScene": "A creative collaboration grows until the agreement stops being even.",
+      "moves": [
+        "Answer one pending invitation with a clear yes or no.",
+        "Say which day works before asking what everyone else prefers."
+      ],
+      "expected": "pass",
+      "decisionId": "ED-022",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "virgo-color-coded-spreadsheet-meme",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "sign": "virgo",
+      "text": "The color-coded spreadsheet keeps every detail in place.",
+      "expected": "fail",
+      "decisionId": "ED-022",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "slow-transit-evening-scale",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "planet": "jupiter",
+      "text": "One dinner plan illustrates the whole year.",
+      "expected": "score-1",
+      "decisionId": "ED-022",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "moves-facilitation-register",
+      "surface": "sky-placement",
+      "kind": "moves-linter",
+      "text": "Name one must-have and one flexible detail, then set a decision time.",
+      "expected": "fail",
+      "decisionId": "ED-023",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "generic-product-copy-owner-register",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "expected": "reject-and-cite-three-lines",
+      "decisionId": "ED-024",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "affinity-owner-passage-retrieval",
+      "surface": "sky-placement",
+      "kind": "packet",
+      "planet": "jupiter",
+      "sign": "libra",
+      "expected": "libra-season-and-jupiter-source-present-fixed-set-absent",
+      "decisionId": "ED-025",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "qualitative-subperiod-reviewed-residency",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "planet": "jupiter",
+      "text": "A few months in, the list of agreements gets longer.",
+      "expected": "pass",
+      "decisionId": "ED-026",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "qualitative-subperiod-residency-cap",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "planet": "mercury",
+      "text": "A few months in, the list of agreements gets longer.",
+      "expected": "fail-when-subperiod-can-exceed-residency",
+      "decisionId": "ED-026",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "numeric-subperiod-engine-required",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "planet": "jupiter",
+      "text": "Four months in, the list of agreements gets longer.",
+      "expected": "fail-without-engine-fact",
+      "decisionId": "ED-026",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "date-like-subperiod-engine-required",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "planet": "jupiter",
+      "text": "By the 15th, the list of agreements gets longer.",
+      "expected": "fail-without-engine-fact",
+      "decisionId": "ED-026",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "morning-reader-one-tired-read",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "The opening combines several ideas in one sentence and has to be reread before its subject becomes clear.",
+      "expected": "score-down-for-second-read",
+      "decisionId": "ED-027",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "no-leak-ai-tell",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "Hold it in and it leaks out sideways.",
+      "expected": "fail",
+      "decisionId": "CF-018",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "controlled-v3-owner-rejected",
+      "surface": "governance",
+      "kind": "approval-scope",
+      "expected": "negative-evaluation-only",
+      "decisionId": "OW-002",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "fixed-editorial-routing",
+      "surface": "sky-placement",
+      "kind": "routing",
+      "expected": "sol-then-lint-then-terra",
+      "decisionId": "CF-012",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "judge-cannot-approve",
+      "surface": "sky-placement",
+      "kind": "governance",
+      "expected": "owner-only-approval",
+      "decisionId": "ED-009",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "no-generated-moving-facts",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The transit peaks on August 12, 2026 at 3:00 PT.",
+      "expected": "fail",
+      "decisionId": "ED-010",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "cazimi-primary-figure",
+      "surface": "fact-bank",
+      "kind": "claim",
+      "text": "cazimi within 1 degree",
+      "expected": "flag",
+      "decisionId": "ED-011",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "barbault-unverified-block",
+      "surface": "fact-bank",
+      "kind": "source-status",
+      "expected": "blocked",
+      "decisionId": "ED-012",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "v3-calibration-only",
+      "surface": "governance",
+      "kind": "approval-scope",
+      "expected": "judge-calibration-only",
+      "decisionId": "OW-001",
+      "decisionStatus": "approved",
+      "active": true
+    }
+  ],
+  "activeCaseCount": 63,
+  "unresolvedCaseCount": 0
+}

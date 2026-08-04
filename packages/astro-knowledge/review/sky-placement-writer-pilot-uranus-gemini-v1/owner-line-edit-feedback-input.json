@@ -1,0 +1,17 @@
+{
+  "id": "sky-placement-pilot-uranus-gemini-owner-line-edit-v1",
+  "feedbackKind": "preferred_version",
+  "surface": "sky-placement",
+  "planet": "uranus",
+  "sign": "gemini",
+  "articleBeat": "full_article",
+  "ownerStatement": "Apply the owner-directed line edits: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, name Gemini in the opening, reduce the close to one action, re-lint, and hold for owner voice review.",
+  "before": "Uranus takes about 84 years to circle the zodiac and stays about 7 years in each sign. Before {{exitDate}}, we can choose one new way of communicating that deserves to last and let one distracting format go.",
+  "after": "Uranus in Gemini takes about 84 years to move through all twelve signs and stays about 7 years in each sign. Before {{exitDate}}, we can let one distracting format go.",
+  "whatChanged": "Removed the recurring Sol 'circle the zodiac' attractor, explicitly named Gemini in the opening, and reduced the close from two choices to one. The scene and all other wording remain unchanged.",
+  "ownerReason": "The class-teaching-itself scene is strong; the failures are mechanical and should be corrected without regenerating the draft.",
+  "failureTags": ["banned-zodiac-wording", "missing-sign-name", "two-action-close"],
+  "sourcePaths": [
+    "packages/astro-knowledge/review/sky-placement-writer-pilot-uranus-gemini-v1/result.json"
+  ]
+}

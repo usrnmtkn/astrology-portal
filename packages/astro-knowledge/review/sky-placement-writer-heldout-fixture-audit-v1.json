@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "auditId": "sky-placement-writer-heldout-fixture-audit-v1",
+  "sourceRecordCount": 17,
+  "targetFixtureCount": 20,
+  "validFixtureCount": 6,
+  "exactShortfall": 14,
+  "billedEvaluationsRun": false,
+  "fixtures": [
+    {
+      "id": "sky-placement-saturn-capricorn-name-lost-time",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": false,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "owner provenance is directional or insufficiently explicit"
+      ]
+    },
+    {
+      "id": "sky-placement-neptune-libra-show-agreement-before-cancellation",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": false,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "owner provenance is directional or insufficiently explicit"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-pisces-private-denial-to-public-evidence",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": false,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "owner provenance is directional or insufficiently explicit"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-show-role-before-astrology",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": false,
+      "enoughContext": true,
+      "calibrationRestricted": true,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "owner provenance is directional or insufficiently explicit",
+        "calibration-only evidence is ineligible for writer evaluation"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-specific-room-change",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": true,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": true,
+      "reasons": []
+    },
+    {
+      "id": "sky-placement-uranus-cancer-name-relational-cost",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": true,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": true,
+      "reasons": []
+    },
+    {
+      "id": "sky-placement-uranus-cancer-demand-not-carry",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": true,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": true,
+      "reasons": []
+    },
+    {
+      "id": "sky-placement-communication-rejection-letter-to-message",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": true,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": true,
+      "reasons": []
+    },
+    {
+      "id": "sky-placement-communication-compare-letters-to-messages",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": true,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": true,
+      "reasons": []
+    },
+    {
+      "id": "sky-placement-communication-letters-pile-up-to-messages-return",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": false,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "fragments do not provide enough context for held-out evaluation"
+      ]
+    },
+    {
+      "id": "sky-placement-communication-side-by-side-to-compare-messages",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": false,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "fragments do not provide enough context for held-out evaluation"
+      ]
+    },
+    {
+      "id": "sky-placement-neptune-libra-cancellation-shows-disagreement",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": true,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": true,
+      "reasons": []
+    },
+    {
+      "id": "sky-placement-writer-jupiter-libra-controlled-v3-owner-review",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": false,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "fragments do not provide enough context for held-out evaluation"
+      ]
+    },
+    {
+      "id": "timing-event-v2-mercury-pisces-station-retrograde-owner-approved",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "timing-event-v2-venus-scorpio-retrograde-passage-owner-approved",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "timing-event-v2-chiron-taurus-station-retrograde-owner-approved",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "timing-event-v2-jupiter-leo-ingress-owner-approved",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": true,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner"
+      ]
+    }
+  ]
+}
