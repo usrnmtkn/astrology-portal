@@ -127,8 +127,10 @@ try {
     path.join(repoRoot, "apps/web/src/services/weeklyHoroscope.ts"),
     "utf8"
   );
-  assert.match(youPage, /\{ value: "daily", label: "Daily" \}/u);
-  assert.match(youPage, /\{ value: "weekly", label: "Weekly" \}/u);
+  assert.doesNotMatch(youPage, /id="you-timing-view"/u);
+  assert.doesNotMatch(youPage, /ariaLabel="Transit timing"/u);
+  assert.match(youPage, /weekly-horoscope--embedded/u);
+  assert.match(youPage, /aria-label="This week&#39;s transits"|aria-label="This week's transits"/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.sections\.map/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
@@ -142,6 +144,7 @@ try {
   assert.match(youPage, />Current house pass</u);
   assert.match(youPage, /weeklyHoroscopeAssembly\.horoscope\.timing/u);
   assert.match(app, /buildWeeklyHoroscope\(\{/u);
+  assert.doesNotMatch(app, /weeklyHoroscopeRequested/u);
   assert.match(weeklySource, /getLunarCalendarRangeEvents/u);
   assert.match(weeklySource, /weeklyEphemerisCache/u);
   assert.doesNotMatch(

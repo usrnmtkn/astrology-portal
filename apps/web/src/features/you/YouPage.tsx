@@ -108,7 +108,6 @@ export type YouPageProps = {
   natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
-  onRequestWeeklyHoroscope?: () => void;
   onCloseTransitArticle?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   planetRows: ReactNode[];
@@ -184,11 +183,9 @@ function natalAspectPatternDetailArticle({
 
 function YouEmptyState({
   onCreateChart,
-  onRequestWeeklyHoroscope,
   setupStepsLeft
 }: {
   onCreateChart: () => void;
-  onRequestWeeklyHoroscope?: () => void;
   setupStepsLeft: number;
 }) {
   return (
@@ -470,7 +467,6 @@ function YouUpdatesTab({
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   onCreateChart,
-  onRequestWeeklyHoroscope,
   standaloneTransitRows = []
 }: {
   aspectRows: ReactNode[];
@@ -481,122 +477,80 @@ function YouUpdatesTab({
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternTimingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
   onCreateChart: () => void;
-  onRequestWeeklyHoroscope?: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
 }) {
-  const [timingView, setTimingView] = useState<"daily" | "weekly">("daily");
-  const changeTimingView = (value: "daily" | "weekly") => {
-    setTimingView(value);
-    if (value === "weekly") onRequestWeeklyHoroscope?.();
-  };
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
   const dailyWriteup = dailyUpdateSummary?.writeup?.filter((section) => section.body.length > 0) ?? [];
-
-  if (timingView === "weekly") {
-    return (
-      <div className="subpane updates-section weekly-horoscope" id="sub-transits">
-        <SegmentedControl
-          id="you-timing-view"
-          value={timingView}
-          options={[
-            { value: "daily", label: "Daily" },
-            { value: "weekly", label: "Weekly" }
-          ]}
-          onChange={changeTimingView}
-          ariaLabel="Transit timing"
-          className="app-tabs profile-tabs you-timing-tabs"
-        />
-        {!hasSavedCurrentCity ? (
-          <section className="you-empty-card" aria-label="Current city needed">
-            <span>Weekly</span>
-            <h3>Add your current city.</h3>
-            <p>We need your current city to publish your week in local time.</p>
-            <button type="button" onClick={onCreateChart}>Add current city →</button>
-          </section>
-        ) : weeklyHoroscopeAssembly?.status === "error" ? (
-          <section className="you-empty-card" aria-label="Weekly horoscope unavailable">
-            <span>Weekly</span>
-            <h3>Your week is not available yet.</h3>
-            <p>We could not calculate this week. Try again in a moment.</p>
-          </section>
-        ) : !weeklyHoroscopeAssembly || weeklyHoroscopeAssembly.status === "loading" ? (
-          <section className="weekly-horoscope__loading" aria-label="Loading weekly horoscope">
-            <span className="summary-skeleton" aria-hidden="true"><span /><span /></span>
-          </section>
-        ) : (
-          <>
-            <header className="weekly-horoscope__header">
-              <div>
-                <span className="eyebrow section-label">Your week</span>
-                <h2>
-                  {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekStart}T12:00:00Z`))}
-                  {" – "}
-                  {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekEnd}T12:00:00Z`))}
-                </h2>
-              </div>
-              <span className="weekly-horoscope__chip ui-pill ui-pill--neutral">{weeklyHoroscopeAssembly.chip}</span>
-            </header>
-            {weeklyHoroscopeAssembly.macro ? (
-              <article className="weekly-horoscope__macro daily-horoscope-summary">
-                <span className="eyebrow section-label">The macro view</span>
-                <h3>{weeklyHoroscopeAssembly.macro.headline}</h3>
-                {weeklyHoroscopeAssembly.macro.body
-                  .split(/\n{2,}/)
-                  .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-              </article>
-            ) : null}
-            <article className="weekly-horoscope__reading daily-horoscope-summary">
-              <span className="eyebrow section-label">Your horoscope</span>
-              <h3>{weeklyHoroscopeAssembly.horoscope.headline}</h3>
-              <p className="weekly-horoscope__driver">
-                Based on {weeklyHoroscopeAssembly.horoscope.driverLabel}
-              </p>
-              {weeklyHoroscopeAssembly.horoscope.timing ? (
-                <p className="weekly-horoscope__timing">
-                  <span>Current house pass</span>
-                  {weeklyHoroscopeAssembly.horoscope.timing}
-                </p>
-              ) : null}
-              {weeklyHoroscopeAssembly.horoscope.body
-                .split(/\n{2,}/)
-                .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            </article>
-            {weeklyHoroscopeAssembly.aspects.map((aspect) => (
-              <article
-                className="weekly-horoscope__aspect daily-horoscope-summary"
-                key={aspect.sourceUnits.join(":")}
-              >
-                <span className="eyebrow section-label">Aspect</span>
-                <h3>{aspect.headline}</h3>
-                <p className="weekly-horoscope__driver">
-                  Based on {aspect.driverLabel}
-                </p>
-                {aspect.body
-                  .split(/\n{2,}/)
-                  .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-              </article>
-            ))}
-          </>
-        )}
-      </div>
-    );
-  }
+  const weeklyTransitSection = !hasSavedCurrentCity ? null : weeklyHoroscopeAssembly?.status === "error" ? (
+    <section className="you-empty-card" aria-label="Weekly transits unavailable">
+      <span>This week</span>
+      <h3>Your weekly transits are not available yet.</h3>
+      <p>We could not calculate this week. Try again in a moment.</p>
+    </section>
+  ) : !weeklyHoroscopeAssembly || weeklyHoroscopeAssembly.status === "loading" ? (
+    <section className="weekly-horoscope__loading" aria-label="Loading weekly transits">
+      <span className="summary-skeleton" aria-hidden="true"><span /><span /></span>
+    </section>
+  ) : (
+    <section className="weekly-horoscope weekly-horoscope--embedded" aria-label="This week's transits">
+      <header className="weekly-horoscope__header">
+        <div>
+          <span className="eyebrow section-label">This week</span>
+          <h2>
+            {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekStart}T12:00:00Z`))}
+            {" – "}
+            {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekEnd}T12:00:00Z`))}
+          </h2>
+        </div>
+        <span className="weekly-horoscope__chip ui-pill ui-pill--neutral">{weeklyHoroscopeAssembly.chip}</span>
+      </header>
+      {weeklyHoroscopeAssembly.macro ? (
+        <article className="weekly-horoscope__macro daily-horoscope-summary">
+          <span className="eyebrow section-label">The macro view</span>
+          <h3>{weeklyHoroscopeAssembly.macro.headline}</h3>
+          {weeklyHoroscopeAssembly.macro.body
+            .split(/\n{2,}/)
+            .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </article>
+      ) : null}
+      <article className="weekly-horoscope__reading daily-horoscope-summary">
+        <span className="eyebrow section-label">Your horoscope</span>
+        <h3>{weeklyHoroscopeAssembly.horoscope.headline}</h3>
+        <p className="weekly-horoscope__driver">
+          Based on {weeklyHoroscopeAssembly.horoscope.driverLabel}
+        </p>
+        {weeklyHoroscopeAssembly.horoscope.timing ? (
+          <p className="weekly-horoscope__timing">
+            <span>Current house pass</span>
+            {weeklyHoroscopeAssembly.horoscope.timing}
+          </p>
+        ) : null}
+        {weeklyHoroscopeAssembly.horoscope.body
+          .split(/\n{2,}/)
+          .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+      </article>
+      {weeklyHoroscopeAssembly.aspects.map((aspect) => (
+        <article
+          className="weekly-horoscope__aspect daily-horoscope-summary"
+          key={aspect.sourceUnits.join(":")}
+        >
+          <span className="eyebrow section-label">Aspect</span>
+          <h3>{aspect.headline}</h3>
+          <p className="weekly-horoscope__driver">
+            Based on {aspect.driverLabel}
+          </p>
+          {aspect.body
+            .split(/\n{2,}/)
+            .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </article>
+      ))}
+    </section>
+  );
 
   return (
     <div className="subpane updates-section" id="sub-transits">
-      <SegmentedControl
-        id="you-timing-view"
-        value={timingView}
-        options={[
-          { value: "daily", label: "Daily" },
-          { value: "weekly", label: "Weekly" }
-        ]}
-        onChange={changeTimingView}
-        ariaLabel="Transit timing"
-        className="app-tabs profile-tabs you-timing-tabs"
-      />
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
@@ -643,6 +597,7 @@ function YouUpdatesTab({
           {section.body.split(/\n{2,}/).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </section>
       ))}
+      {weeklyTransitSection}
       {hasSavedCurrentCity && natalAspectPatternItems && (
         <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
       )}
@@ -1086,7 +1041,6 @@ export function YouPage({
   houseSignLabelStyle,
   updateTransitAspectLines,
   onCreateChart,
-  onRequestWeeklyHoroscope,
   onCloseTransitArticle,
   personalTimingSummary,
   planetRows,
@@ -1230,7 +1184,6 @@ export function YouPage({
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
               onCreateChart={onCreateChart}
-              onRequestWeeklyHoroscope={onRequestWeeklyHoroscope}
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}
             />
