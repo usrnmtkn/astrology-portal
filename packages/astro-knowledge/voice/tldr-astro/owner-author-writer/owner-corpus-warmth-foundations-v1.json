@@ -178,6 +178,61 @@
       ]
     },
     {
+      "id": "warmth-foundation-chiron-aries-v1",
+      "planet": "chiron",
+      "sign": "aries",
+      "emotionalCore": "the wound feels like identity",
+      "searchTerms": ["wound", "healing", "identity", "survival", "reclaiming power", "carrying it differently"],
+      "vb005Matches": ["old wounds", "need to prove"],
+      "primary": {
+        "foundationText": "Chiron does not promise that the wound disappears. It shows us how to carry it differently.",
+        "sourceId": "owner-article:chiron-retrograde-in-aries:p009",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+        "sourceExcerpt": "Chiron doesn’t promise that the wound disappears. It shows us how to carry it differently, so that healing is not about forgetting, but about reclaiming power from what once defined us.",
+        "adaptation": "minimal_shortening_and_apostrophe_normalization"
+      },
+      "alternates": [
+        {
+          "foundationText": "The wound does not define us, but the way we carry it does.",
+          "sourceId": "owner-article:pisces-season-2025:p054",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/pisces-season-2025.md",
+          "sourceExcerpt": "The wound does not define you, but the way you carry it does.",
+          "adaptation": "minimal_collectivization"
+        }
+      ]
+    },
+    {
+      "id": "warmth-foundation-nodes-aquarius-leo-v1",
+      "planet": "nodes",
+      "sign": "aquarius-leo",
+      "emotionalCore": "release the need for applause",
+      "searchTerms": ["applause", "spotlight", "seen", "performing", "recognition", "creative expression", "worth"],
+      "vb005Matches": ["external validation", "center stage", "need to prove"],
+      "primary": {
+        "foundationText": "Creative expression does not require applause to exist.",
+        "sourceId": "owner-article:this-weeks-astrology-august-24th-31st:p015",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/this-weeks-astrology-august-24th-31st.md",
+        "sourceExcerpt": "creative expression that doesn't require applause to exist.",
+        "adaptation": "minimal_collectivization"
+      },
+      "alternates": [
+        {
+          "foundationText": "Built around what is real and what lights us up, not what earns applause.",
+          "sourceId": "owner-article:leo-new-moon-2025:p012",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-new-moon-2025.md",
+          "sourceExcerpt": "building around what’s real, what lights you up, not what earns you applause",
+          "adaptation": "minimal_collectivization"
+        },
+        {
+          "foundationText": "Who we are when the applause fades.",
+          "sourceId": "owner-article:leo-full-moon-2025:p061",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-full-moon-2025.md",
+          "sourceExcerpt": "Who are you, when the applause fades",
+          "adaptation": "minimal_collectivization"
+        }
+      ]
+    },
+    {
       "id": "warmth-foundation-jupiter-libra-v1",
       "planet": "jupiter",
       "sign": "libra",

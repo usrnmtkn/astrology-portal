@@ -107,8 +107,14 @@ function lintShape(article) {
 function deterministicChecks(article, { planet, sign, factContext = {} }) {
   const full = [article.opening, article.tension, article.development, article.close, ...article.try_this].join("\n");
   const lint = lintArticle({ ...lintShape(article), planet, sign, factContext });
-  const planetPattern = new RegExp(`\\b${titleToken(planet).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}\\b`, "iu");
-  const signPattern = new RegExp(`\\b${titleToken(sign).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}\\b`, "iu");
+  const axisMode = planet === "nodes" && sign.includes("-");
+  const [northSign, southSign] = axisMode ? sign.split("-") : [null, null];
+  const planetPattern = axisMode
+    ? /\bNorth Node\b[\s\S]*\bSouth Node\b|\bSouth Node\b[\s\S]*\bNorth Node\b/iu
+    : new RegExp(`\\b${titleToken(planet).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}\\b`, "iu");
+  const signPattern = axisMode
+    ? new RegExp(`\\b${titleToken(northSign)}\\b[\\s\\S]*\\b${titleToken(southSign)}\\b|\\b${titleToken(southSign)}\\b[\\s\\S]*\\b${titleToken(northSign)}\\b`, "iu")
+    : new RegExp(`\\b${titleToken(sign).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}\\b`, "iu");
   const astrology = {
     passed: planetPattern.test(full) && signPattern.test(full),
     planetNamed: planetPattern.test(full),

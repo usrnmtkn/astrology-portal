@@ -290,8 +290,8 @@ function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
   return swe.calc_ut(jd, planetId, flags)[3];
 }
 
-function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date) {
-  return signForLongitude(exactPlanetLongitude(swe, planetId, date)).sign;
+function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date, longitudeOffset = 0) {
+  return signForLongitude(exactPlanetLongitude(swe, planetId, date) + longitudeOffset).sign;
 }
 
 function planetSunOrb(swe: SwissEphInstance, planetId: number, date: Date) {
@@ -347,7 +347,8 @@ function refineSignBoundary(
   planetId: number,
   currentSign: string,
   sameSignDate: Date,
-  differentSignDate: Date
+  differentSignDate: Date,
+  longitudeOffset = 0
 ) {
   let same = sameSignDate;
   let different = differentSignDate;
@@ -355,7 +356,7 @@ function refineSignBoundary(
   for (let index = 0; index < 50; index += 1) {
     const midpoint = new Date((same.getTime() + different.getTime()) / 2);
 
-    if (exactPlanetSign(swe, planetId, midpoint) === currentSign) {
+    if (exactPlanetSign(swe, planetId, midpoint, longitudeOffset) === currentSign) {
       same = midpoint;
     } else {
       different = midpoint;
@@ -370,27 +371,28 @@ function signTransitWindowFor(
   planet: string,
   planetId: number,
   date: Date,
-  currentSign: string
+  currentSign: string,
+  longitudeOffset = 0
 ) {
   const stepDays = transitSearchStepDays(planet);
   const maxIterations = Math.ceil((365.25 * 32) / stepDays);
   let previousDifferent = addDays(date, -stepDays);
   let nextDifferent = addDays(date, stepDays);
 
-  for (let index = 0; index < maxIterations && exactPlanetSign(swe, planetId, previousDifferent) === currentSign; index += 1) {
+  for (let index = 0; index < maxIterations && exactPlanetSign(swe, planetId, previousDifferent, longitudeOffset) === currentSign; index += 1) {
     previousDifferent = addDays(previousDifferent, -stepDays);
   }
 
-  for (let index = 0; index < maxIterations && exactPlanetSign(swe, planetId, nextDifferent) === currentSign; index += 1) {
+  for (let index = 0; index < maxIterations && exactPlanetSign(swe, planetId, nextDifferent, longitudeOffset) === currentSign; index += 1) {
     nextDifferent = addDays(nextDifferent, stepDays);
   }
 
-  if (exactPlanetSign(swe, planetId, previousDifferent) === currentSign || exactPlanetSign(swe, planetId, nextDifferent) === currentSign) {
+  if (exactPlanetSign(swe, planetId, previousDifferent, longitudeOffset) === currentSign || exactPlanetSign(swe, planetId, nextDifferent, longitudeOffset) === currentSign) {
     return {};
   }
 
-  const transitStart = refineSignBoundary(swe, planetId, currentSign, date, previousDifferent);
-  const transitEnd = refineSignBoundary(swe, planetId, currentSign, date, nextDifferent);
+  const transitStart = refineSignBoundary(swe, planetId, currentSign, date, previousDifferent, longitudeOffset);
+  const transitEnd = refineSignBoundary(swe, planetId, currentSign, date, nextDifferent, longitudeOffset);
   const remainingDays = (transitEnd.getTime() - date.getTime()) / 86_400_000;
 
   return {
@@ -405,17 +407,21 @@ function previousSameSignResidencyFor(
   planet: string,
   planetId: number,
   sign: string,
-  currentStart: Date
+  currentStart: Date,
+  longitudeOffset = 0
 ) {
-  const searchYears = planet === "Jupiter" ? 14 : 32;
+  const searchYears = planet === "Jupiter" ? 14
+    : planet === "Chiron" ? 60
+      : ["North Node", "South Node"].includes(planet) ? 22
+        : 32;
   const minimumGapYears = planet === "Jupiter" ? 6 : 1;
   const stepDays = transitSearchStepDays(planet);
   const maxIterations = Math.ceil((searchYears * 365.25) / stepDays);
   let sample = addDays(currentStart, -minimumGapYears * 365.25);
 
   for (let index = 0; index < maxIterations; index += 1) {
-    if (exactPlanetSign(swe, planetId, sample) === sign) {
-      const previousWindow = signTransitWindowFor(swe, planet, planetId, sample, sign);
+    if (exactPlanetSign(swe, planetId, sample, longitudeOffset) === sign) {
+      const previousWindow = signTransitWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
       if (
         previousWindow.transitStart
         && previousWindow.transitEnd
@@ -2223,11 +2229,14 @@ function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
     ["saturn", "Saturn", swe.SE_SATURN],
     ["uranus", "Uranus", swe.SE_URANUS],
     ["neptune", "Neptune", swe.SE_NEPTUNE],
-    ["pluto", "Pluto", swe.SE_PLUTO]
+    ["pluto", "Pluto", swe.SE_PLUTO],
+    ["chiron", "Chiron", SE_CHIRON],
+    ["north-node", "North Node", swe.SE_TRUE_NODE],
+    ["south-node", "South Node", swe.SE_TRUE_NODE]
   ] as const;
   const match = supported.find(([slug]) => slug === key);
   if (!match) throw new Error(`Unsupported Sky Placement planet '${requestedPlanet}'.`);
-  return { planet: match[1], planetId: match[2] };
+  return { planet: match[1], planetId: match[2], longitudeOffset: match[0] === "south-node" ? 180 : 0 };
 }
 
 function placementSign(requestedSign: string) {
@@ -2242,6 +2251,8 @@ function placementSearchYears(planet: string) {
   if (planet === "Saturn") return 32;
   if (planet === "Uranus") return 90;
   if (planet === "Neptune") return 170;
+  if (planet === "Chiron") return 60;
+  if (["North Node", "South Node"].includes(planet)) return 22;
   return 260;
 }
 
@@ -2250,14 +2261,15 @@ function findNextPlacementSample(
   planet: string,
   planetId: number,
   sign: string,
-  referenceDate: Date
+  referenceDate: Date,
+  longitudeOffset = 0
 ) {
-  if (exactPlanetSign(swe, planetId, referenceDate) === sign) return referenceDate;
+  if (exactPlanetSign(swe, planetId, referenceDate, longitudeOffset) === sign) return referenceDate;
   const stepDays = transitSearchStepDays(planet);
   const maxIterations = Math.ceil((placementSearchYears(planet) * 365.25) / stepDays);
   let sample = addDays(referenceDate, stepDays);
   for (let index = 0; index < maxIterations; index += 1) {
-    if (exactPlanetSign(swe, planetId, sample) === sign) return sample;
+    if (exactPlanetSign(swe, planetId, sample, longitudeOffset) === sign) return sample;
     sample = addDays(sample, stepDays);
   }
   throw new Error(`Could not locate the next ${planet} in ${sign} transit from ${referenceDate.toISOString()}.`);
@@ -2310,26 +2322,25 @@ export async function getSkyPlacementTransitFacts({
   if (Number.isNaN(referenceDate.getTime())) throw new Error("Sky Placement referenceDate must be valid.");
   new Intl.DateTimeFormat("en-US", { timeZone }).format(referenceDate);
   const swe = await getSwissEph();
-  const { planet, planetId } = placementPlanet(swe, requestedPlanet);
+  const { planet, planetId, longitudeOffset } = placementPlanet(swe, requestedPlanet);
   const sign = placementSign(requestedSign);
-  const sample = findNextPlacementSample(swe, planet, planetId, sign, referenceDate);
-  const window = signTransitWindowFor(swe, planet, planetId, sample, sign);
+  const sample = findNextPlacementSample(swe, planet, planetId, sign, referenceDate, longitudeOffset);
+  const window = signTransitWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
   if (!window.transitStart || !window.transitEnd) {
     throw new Error(`Could not resolve the ${planet} in ${sign} transit boundaries.`);
   }
   const transitStart = new Date(window.transitStart);
   const transitEnd = new Date(window.transitEnd);
   const priorReference = new Date(transitStart.getTime() - 5 * 60_000);
-  const priorSign = exactPlanetSign(swe, planetId, priorReference);
-  const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorSign);
+  const priorSign = exactPlanetSign(swe, planetId, priorReference, longitudeOffset);
+  const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorSign, longitudeOffset);
   if (!priorWindow.transitStart || !priorWindow.transitEnd) {
     throw new Error(`Could not resolve the prior ${planet} in ${priorSign} transit boundaries.`);
   }
-  const previous = previousSameSignResidencyFor(swe, planet, planetId, sign, transitStart);
-  const rankedEventsDuringTransit = rankPlacementEvents(
-    findSkyAspects(swe, transitStart, transitEnd, timeZone),
-    planet
-  );
+  const previous = previousSameSignResidencyFor(swe, planet, planetId, sign, transitStart, longitudeOffset);
+  const rankedEventsDuringTransit = ["Chiron", "North Node", "South Node"].includes(planet)
+    ? []
+    : rankPlacementEvents(findSkyAspects(swe, transitStart, transitEnd, timeZone), planet);
 
   return {
     planet,

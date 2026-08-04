@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mars",
+  "sign": "virgo",
+  "timeZone": "America/New_York",
+  "transitStart": "November 25, 2026",
+  "transitEnd": "February 21, 2027",
+  "transitStartIso": "2026-11-25T23:37:05.999Z",
+  "transitEndIso": "2027-02-21T14:13:29.999Z",
+  "priorSign": "leo",
+  "priorSignEntryDate": "September 27, 2026",
+  "priorSignExitDate": "November 25, 2026",
+  "previousResidency": {
+    "sign": "virgo",
+    "entryDate": "June 17, 2025",
+    "exitDate": "August 6, 2025",
+    "entryDateIso": "2025-06-17T08:35:31.999Z",
+    "exitDateIso": "2025-08-06T23:23:21.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mars-square-uranus-2026-12-04t19:28:16.999z",
+      "body": "mars-square-uranus",
+      "bodies": [
+        "mars",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "December 4, 2026",
+      "dateIso": "2026-12-04T19:28:16.999Z",
+      "rank": 1,
+      "meaning": "Action meets disruption. Impulsive, risk-taking, rebellious energy, with impatience and a pull toward technology. Psychologically the square is inner tension to integrate: Accident-proneness, a temper that goes off like a shot, and unpredictable tactics that either win big or backfire fast. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-square-uranus.json"
+    },
+    {
+      "id": "aspect-venus-square-mars-2027-01-16t21:37:39.999z",
+      "body": "mars-square-venus",
+      "bodies": [
+        "venus",
+        "mars"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "January 16, 2027",
+      "dateIso": "2027-01-16T21:37:39.999Z",
+      "rank": 3,
+      "meaning": "Attraction meets drive. Desire, and the channeling of energy into pleasure, art, or pursuit. The conjunction can either fuse charm and drive or have the two cancel out. Psychologically the square is inner tension to integrate: Bad timing in romance, indecision, and friction between wanting and acting. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-mars.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mars-square-uranus.json",
+      "packages/astro-knowledge/data/transits/venus-square-mars.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

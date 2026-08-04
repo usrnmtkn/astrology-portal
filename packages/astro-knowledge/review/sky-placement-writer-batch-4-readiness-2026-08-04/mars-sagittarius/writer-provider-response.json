@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_06962f663f01f8ae006a7253cf372481a198cba00f8754a760",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8085,
+    "input_tokens_details": {
+      "cache_write_tokens": 8082,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5259,
+    "output_tokens_details": {
+      "reasoning_tokens": 4873
+    },
+    "total_tokens": 13344
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Sagittarius on {{entryDate}}, and the unfamiliar option gets harder to ignore. We volunteer for what we have never tried. The question we kept avoiding gets asked. A plan that looked too uncertain starts to feel worth the risk.\",\"tension\":\"That confidence can outrun the facts. Mars in Sagittarius moves quickly when a choice fits a strong belief, so a hunch can start sounding like proof. We commit before the demands are clear. We tell the truth so bluntly that its useful part becomes hard to hear. When an objection appears, we treat it as fear to overcome instead of information that could change the choice.\",\"development\":\"Mars last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This pass brings the same pressure to separate a meaningful risk from motion for its own sake. An exciting opening becomes a promise before we check what it requires. A candid answer clears confusion, then one extra sentence starts a new conflict. A shared belief gives a group enough courage to begin, but certainty makes it harder to notice when the original facts no longer hold. The next horizon can look more important than the consequences already forming. When the missing facts become clear, the bold move may have created a promise that cannot be kept or a conflict that did not need to start.\",\"close\":\"Before {{exitDate}}, certainty that arrived too early can leave us defending a choice that no longer matches what is true.\",\"try_this\":[\"We can check the original source behind one claim that instantly feels true.\",\"We can spend one hour on an unfamiliar activity before buying gear or making a longer commitment.\",\"We can ask one direct question in a conversation and let the answer finish before adding our opinion.\"]}"
+}

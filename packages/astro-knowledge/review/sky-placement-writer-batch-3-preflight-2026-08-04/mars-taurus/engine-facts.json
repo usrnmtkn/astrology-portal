@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mars",
+  "sign": "taurus",
+  "timeZone": "America/New_York",
+  "transitStart": "April 27, 2028",
+  "transitEnd": "June 7, 2028",
+  "transitStartIso": "2028-04-27T22:21:20.999Z",
+  "transitEndIso": "2028-06-07T18:20:18.999Z",
+  "priorSign": "aries",
+  "priorSignEntryDate": "March 19, 2028",
+  "priorSignExitDate": "April 27, 2028",
+  "previousResidency": {
+    "sign": "taurus",
+    "entryDate": "May 18, 2026",
+    "exitDate": "June 28, 2026",
+    "entryDateIso": "2026-05-18T22:25:28.999Z",
+    "exitDateIso": "2026-06-28T19:29:14.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mars-square-pluto-2028-05-09t17:43:51.999z",
+      "body": "mars-square-pluto",
+      "bodies": [
+        "mars",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "May 9, 2028",
+      "dateIso": "2028-05-09T17:43:51.999Z",
+      "rank": 1,
+      "meaning": "Drive meets power. Relentless force and a 'win at any cost' edge, with real capacity to eliminate or transform. Psychologically the square is inner tension to integrate: Volcanic temper and a tendency to destroy work before it's finished. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-square-pluto.json"
+    },
+    {
+      "id": "aspect-mars-trine-jupiter-2028-05-21t16:28:02.999z",
+      "body": "mars-trine-jupiter",
+      "bodies": [
+        "mars",
+        "jupiter"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "May 21, 2028",
+      "dateIso": "2028-05-21T16:28:02.999Z",
+      "rank": 2,
+      "meaning": "Energy meets expansion. Strong drive, confidence, and enthusiasm, sometimes to the point of recklessness. The trine makes this a natural strength: High energy directed toward real accomplishment. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-trine-jupiter.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mars-square-pluto.json",
+      "packages/astro-knowledge/data/transits/mars-trine-jupiter.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}
