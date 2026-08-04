@@ -783,14 +783,12 @@ function weeklyNarrativeBodyForEvent(
 export function calendarWeeklyNarrativeBody({
   overview,
   source,
-  mondayMoonTone,
   narrativeShifts,
   eventDescriptions,
   dayGuidance
 }: {
   overview: string;
   source: CalendarWeeklyOverview["source"];
-  mondayMoonTone?: CalendarWeeklyMoonTone;
   narrativeShifts: LunarCalendarEvent[];
   eventDescriptions: ReadonlyMap<string, string>;
   dayGuidance: ReadonlyMap<string, string>;
@@ -806,11 +804,6 @@ export function calendarWeeklyNarrativeBody({
     normalizedBodies.add(normalizedBody);
     return true;
   };
-
-  if (mondayMoonTone) {
-    addParagraph(mondayMoonTone.body);
-    return paragraphs.join("\n\n");
-  }
 
   for (const event of narrativeShifts) {
     const isGeneratedPrincipalLunation = source === "generated-fallback"
@@ -876,7 +869,7 @@ export function resolveCalendarWeeklyOverview({
         ))
       : undefined;
     return {
-      weeklyHeadline: calendarWeeklyEventTitle(mainEvent ?? mainShifts[0]) || authored.weeklyHeadline!,
+      weeklyHeadline: authored.weeklyHeadline!,
       weeklyOverview: authored.weeklyOverview!,
       mainShifts,
       mainEvent,
