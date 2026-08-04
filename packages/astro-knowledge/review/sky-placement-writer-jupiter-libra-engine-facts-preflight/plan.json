@@ -1,0 +1,145 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "jupiter",
+  "sign": "libra",
+  "outDir": "/Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-engine-facts-preflight",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+    "owner-article:libra-new-moon:p004:window-4-4",
+    "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e016:window-1-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p012:window-2-2",
+    "owner-article:cancer-full-moon-horoscopes-january-2025:p009:window-2-4"
+  ],
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/jupiter-libra.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Jupiter in Libra: you grow through relationship, fairness, and beauty. Luck comes via partnership and diplomacy. Watch: indecision and over-accommodating."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/jupiter.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Jupiter describes growth, wisdom, opportunity, belief, generosity, risk, confidence, and the instinct to expand beyond what is already known. It shows where someone seeks meaning, trusts possibility, and learns through experience. Jupiter takes about twelve years to move through the zodiac and spends about one year in each sign. Its sign describes the style of growth; its house shows where opportunity, perspective, and excess can become visible. If Jupiter is in Libra, you’re blessed with a keen sense of balance and diplomacy. Opportunities might abound in partnerships and social settings, and you’re likely to excel in situations that require compromise, negotiation, or artistic sense."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "virgo",
+          "priorSignEntryDate": "July 26, 2027",
+          "priorSignExitDate": "August 24, 2028",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "In the meaning beat, use one or two sentences teaching the planet's rhythm. Every number must come from planet-cycle-facts.json. Do not write this slot for the Moon.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 12 years",
+          "typicalSignStay": "about 1 year per sign",
+          "variabilityNote": null
+        }
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": [
+          "eventsDuringTransit"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "aspect_insert",
+        "renderOwner": "engine",
+        "maxEvents": 2,
+        "facts": {
+          "eventsDuringTransit": [
+            {
+              "id": "aspect-jupiter-trine-pluto-2028-09-24t07:45:25.999z",
+              "date": "September 24, 2028",
+              "body": "jupiter-trine-pluto",
+              "eventType": "aspect",
+              "meaning": "Expansion meets power. Large-scale ambition, intense conviction, and a drive to overhaul inherited beliefs. The trine makes this a natural strength: Transformative ambition pursued with focus. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/jupiter-trine-pluto.json"
+            },
+            {
+              "id": "aspect-jupiter-opposition-neptune-2028-09-28t19:15:57.999z",
+              "date": "September 28, 2028",
+              "body": "jupiter-opposition-neptune",
+              "eventType": "aspect",
+              "meaning": "Growth and imagination reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation.",
+              "meaningSource": "packages/astro-knowledge/data/transits/jupiter-opposition-neptune.json"
+            }
+          ]
+        }
+      },
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": [
+          "previousResidencyEntryDate",
+          "previousResidencyExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "renderOwner": "writer",
+        "facts": {
+          "sign": "libra",
+          "entryDate": "September 9, 2016",
+          "exitDate": "October 10, 2017",
+          "renderTokens": {
+            "entryDate": "{{previousResidencyEntryDate}}",
+            "exitDate": "{{previousResidencyExitDate}}"
+          }
+        }
+      }
+    ],
+    "inactive": []
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet jupiter --sign libra --engine-facts /Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-engine-facts-preflight/engine-facts.json --out /Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-engine-facts-preflight"
+}

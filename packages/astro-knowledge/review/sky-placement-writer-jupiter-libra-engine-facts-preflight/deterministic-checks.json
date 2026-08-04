@@ -1,0 +1,38 @@
+{
+  "astrology": {
+    "passed": true,
+    "planetNamed": true,
+    "signNamed": true,
+    "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+  },
+  "engineSlots": {
+    "passed": true,
+    "entryDateInOpening": true,
+    "exitDateInClose": true
+  },
+  "pronouns": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "surfaceLint": {
+    "score": 1,
+    "fails": 1,
+    "warns": 0,
+    "findings": [
+      {
+        "severity": "fail",
+        "source": "sky-placement",
+        "term": "\\bzodiac\\b",
+        "match": "zodiac",
+        "reason": "encyclopedia register"
+      }
+    ],
+    "notes": [
+      "lived is 5 sentences; spec says 2-4",
+      "turn is 6 sentences; spec says 2-5 with one close",
+      "hook is long (97 words); the hook is the sendable line, not a paragraph",
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  "overallPassed": false
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-04T02:34:22Z",
+  "candidateRunId": "sky-placement-writer-jupiter-libra-engine-facts-preflight",
+  "reason": "Re-lint the preserved candidate after replacing planetary source timing language with 'all twelve signs'.",
+  "sourceTimingRewordApplied": true,
+  "candidateTextChanged": false,
+  "result": {
+    "score": 1,
+    "fails": 1,
+    "warns": 0,
+    "overallPassed": false,
+    "findings": [
+      {
+        "severity": "fail",
+        "source": "sky-placement",
+        "term": "\\bzodiac\\b",
+        "match": "zodiac",
+        "reason": "encyclopedia register"
+      }
+    ]
+  },
+  "note": "The failure remains because the historical Sol output is preserved unchanged. The source reword prevents future packets from supplying the banned phrase; it does not silently revise an existing candidate."
+}

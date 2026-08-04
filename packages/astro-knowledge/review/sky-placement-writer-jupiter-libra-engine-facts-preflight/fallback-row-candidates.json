@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/jupiter/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After Jupiter's stay in {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter arrives in Libra on {{entryDate}}, and growth turns toward what becomes possible with someone else. A relationship that has been taken month by month starts asking for a firmer commitment. One partner wants more shared time and a place in the other's social circle; after several honest talks, the couple agrees to more time together and a deeper commitment. Jupiter takes about 12 years to complete the zodiac and stays about 1 year per sign, giving this way of growing time to shape more than one conversation.",
+      "tension": "The pressure appears when a clear no begins to feel ungenerous. The partner with less available time says every evening is workable, joins every gathering, and agrees to answer messages faster than can be sustained. Those yeses bring immediate closeness, so the pattern repeats. A few months later, plans are cancelled, replies are avoided, and warmth has become resentment. The partner who heard yes has no reason to know that the agreement only worked because the other kept hiding a no.",
+      "development": "Jupiter last occupied Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. During the current stay, the practical test comes before the next promise: can we stay open to a partner's needs without agreeing to more than we mean? We can say how much time we can honestly share, choose the gatherings we want to attend, and admit that we will not always answer messages right away. If disappointment follows, we can let it be part of the conversation instead of changing the answer to restore comfort. The relationship may grow more slowly, but both partners will know which promises can be trusted.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can take back one promise made only to prevent disappointment and replace it with the commitment we are actually prepared to keep.",
+      "try_this": [
+        "We can answer one request from a partner with a clear yes or no instead of saying anything is fine.",
+        "We can let one disagreement stand overnight without sending another message to soften what we said."
+      ],
+      "aspect_units": [],
+      "body_you": "After Jupiter's stay in {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter arrives in Libra on {{entryDate}}, and growth turns toward what becomes possible with someone else. A relationship that has been taken month by month starts asking for a firmer commitment. One partner wants more shared time and a place in the other's social circle; after several honest talks, the couple agrees to more time together and a deeper commitment. Jupiter takes about 12 years to complete the zodiac and stays about 1 year per sign, giving this way of growing time to shape more than one conversation.\n\nThe pressure appears when a clear no begins to feel ungenerous. The partner with less available time says every evening is workable, joins every gathering, and agrees to answer messages faster than can be sustained. Those yeses bring immediate closeness, so the pattern repeats. A few months later, plans are cancelled, replies are avoided, and warmth has become resentment. The partner who heard yes has no reason to know that the agreement only worked because the other kept hiding a no.\n\nJupiter last occupied Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. During the current stay, the practical test comes before the next promise: can we stay open to a partner's needs without agreeing to more than we mean? We can say how much time we can honestly share, choose the gatherings we want to attend, and admit that we will not always answer messages right away. If disappointment follows, we can let it be part of the conversation instead of changing the answer to restore comfort. The relationship may grow more slowly, but both partners will know which promises can be trusted.\n\nBefore {{exitDate}}, we can take back one promise made only to prevent disappointment and replace it with the commitment we are actually prepared to keep.",
+      "body_they": "After Jupiter's stay in {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter arrives in Libra on {{entryDate}}, and growth turns toward what becomes possible with someone else. A relationship that has been taken month by month starts asking for a firmer commitment. One partner wants more shared time and a place in the other's social circle; after several honest talks, the couple agrees to more time together and a deeper commitment. Jupiter takes about 12 years to complete the zodiac and stays about 1 year per sign, giving this way of growing time to shape more than one conversation.\n\nThe pressure appears when a clear no begins to feel ungenerous. The partner with less available time says every evening is workable, joins every gathering, and agrees to answer messages faster than can be sustained. Those yeses bring immediate closeness, so the pattern repeats. A few months later, plans are cancelled, replies are avoided, and warmth has become resentment. The partner who heard yes has no reason to know that the agreement only worked because the other kept hiding a no.\n\nJupiter last occupied Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. During the current stay, the practical test comes before the next promise: can we stay open to a partner's needs without agreeing to more than we mean? We can say how much time we can honestly share, choose the gatherings we want to attend, and admit that we will not always answer messages right away. If disappointment follows, we can let it be part of the conversation instead of changing the answer to restore comfort. The relationship may grow more slowly, but both partners will know which promises can be trusted.\n\nBefore {{exitDate}}, we can take back one promise made only to prevent disappointment and replace it with the commitment we are actually prepared to keep.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-jupiter-libra-engine-facts-preflight"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

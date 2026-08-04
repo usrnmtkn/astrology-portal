@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "jupiter",
+  "sign": "libra",
+  "timeZone": "America/New_York",
+  "transitStart": "August 24, 2028",
+  "transitEnd": "September 24, 2029",
+  "transitStartIso": "2028-08-24T05:08:28.999Z",
+  "transitEndIso": "2029-09-24T06:24:06.999Z",
+  "priorSign": "virgo",
+  "priorSignEntryDate": "July 26, 2027",
+  "priorSignExitDate": "August 24, 2028",
+  "previousResidency": {
+    "sign": "libra",
+    "entryDate": "September 9, 2016",
+    "exitDate": "October 10, 2017",
+    "entryDateIso": "2016-09-09T11:18:10.999Z",
+    "exitDateIso": "2017-10-10T13:20:25.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-jupiter-trine-pluto-2028-09-24t07:45:25.999z",
+      "body": "jupiter-trine-pluto",
+      "bodies": [
+        "jupiter",
+        "pluto"
+      ],
+      "eventType": "aspect",
+      "aspect": "trine",
+      "date": "September 24, 2028",
+      "dateIso": "2028-09-24T07:45:25.999Z",
+      "rank": 3,
+      "meaning": "Expansion meets power. Large-scale ambition, intense conviction, and a drive to overhaul inherited beliefs. The trine makes this a natural strength: Transformative ambition pursued with focus. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/jupiter-trine-pluto.json"
+    },
+    {
+      "id": "aspect-jupiter-opposition-neptune-2028-09-28t19:15:57.999z",
+      "body": "jupiter-opposition-neptune",
+      "bodies": [
+        "jupiter",
+        "neptune"
+      ],
+      "eventType": "aspect",
+      "aspect": "opposition",
+      "date": "September 28, 2028",
+      "dateIso": "2028-09-28T19:15:57.999Z",
+      "rank": 11,
+      "meaning": "Growth and imagination reach full awareness and face each other: culmination, objectivity, fulfillment or confrontation.",
+      "meaningSource": "packages/astro-knowledge/data/transits/jupiter-opposition-neptune.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "Swiss Ephemeris",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-03T12:00:00.000Z",
+    "locatedTransitReferenceDate": "2028-08-24T12:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/jupiter-trine-pluto.json",
+      "packages/astro-knowledge/data/transits/jupiter-opposition-neptune.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}
