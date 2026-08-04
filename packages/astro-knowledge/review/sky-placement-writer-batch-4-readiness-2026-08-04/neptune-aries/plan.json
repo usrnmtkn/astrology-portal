@@ -1,0 +1,154 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "neptune",
+  "sign": "aries",
+  "outDir": "/private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/neptune-aries",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:monthly-overview-june-2025:p001:window-2-2",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-article:full-moon-in-aries:p008:window-2-3",
+    "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e115:window-2-2",
+    "owner-article:pisces-total-lunar-eclipse:p030:window-2-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:neptune-aries",
+    "planet": "neptune",
+    "sign": "aries",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/neptune-aries.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With Neptune in Aries, the collective dream turns toward initiative: what it means to start, to lead, and to fight for something believed in. Inspiration runs strong and the boundaries around action can blur."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/neptune.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Neptune describes imagination, longing, compassion, spiritual sensitivity, idealization, confusion, surrender, and the places where boundaries become harder to define. It shows where someone may dream, dissolve, avoid, or become more receptive to what cannot be measured cleanly. Neptune takes about 165 years to move through all twelve signs and spends many years in each sign. Its house transits are long seasons that blur old definitions and ask for discernment, imagination, and clearer boundaries. Indicates a generation with a desire for spiritual independence and self-expression, often exploring individuality through mystical or artistic pursuits."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "pisces",
+          "priorSignEntryDate": "October 22, 2025",
+          "priorSignExitDate": "January 26, 2026",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "renderOwner": "engine",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 165 years",
+          "typicalSignStay": "about 14 years per sign",
+          "variabilityNote": null
+        }
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": [
+          "eventsDuringTransit"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "aspect_insert",
+        "renderOwner": "engine",
+        "maxEvents": 2,
+        "facts": {
+          "eventsDuringTransit": [
+            {
+              "id": "aspect-neptune-sextile-pluto-2026-07-25t05:26:37.999z",
+              "date": "July 25, 2026",
+              "body": "neptune-sextile-pluto",
+              "eventType": "exact-aspect",
+              "meaning": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. The sextile makes this a natural strength: Heightened collective vision. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json"
+            },
+            {
+              "id": "aspect-uranus-sextile-neptune-2026-07-15t20:35:48.999z",
+              "date": "July 15, 2026",
+              "body": "neptune-sextile-uranus",
+              "eventType": "exact-aspect",
+              "meaning": "Disruption meets imagination. A generational signature: radical ideals and visionary change. The sextile makes this a natural strength: Visionary ideals expressed in livable ways. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/uranus-sextile-neptune.json"
+            }
+          ]
+        }
+      }
+    ],
+    "inactive": [
+      {
+        "id": "cycle-location",
+        "reason": "previous residency entry and exit dates were not both supplied"
+      }
+    ]
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet neptune --sign aries --engine-facts /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/neptune-aries/engine-facts.json --out /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/neptune-aries"
+}

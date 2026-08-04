@@ -1,0 +1,65 @@
+{
+  "responseId": "resp_0cde8bf3f62b6d50006a7247f2d78c81a1920d419dddcfc5eb",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found",
+  "retrievedOwnerSourceIds": [
+    "owner-article:virgo-season-2025:p014:window-2-2",
+    "owner-article:venus-in-virgo-2025:p012:window-3-2",
+    "owner-article:mars-direct-in-cancer:p057:window-3-2",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:mars-virgo",
+    "planet": "mars",
+    "sign": "virgo",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8132,
+    "input_tokens_details": {
+      "cache_write_tokens": 8129,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2591,
+    "output_tokens_details": {
+      "reasoning_tokens": 2186
+    },
+    "total_tokens": 10723
+  },
+  "article": {
+    "opening": "Mars in Virgo makes every loose screw, skipped step, and unfinished repair harder to ignore. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Virgo on {{entryDate}}, and action shifts toward precision, repair, and practical results. The crooked shelf gets leveled. The repeated mistake gets traced to its source. A vague intention becomes a sequence we can actually follow. This transit wants effort to produce a visible improvement, not just more motion.",
+    "tension": "That sharp eye rarely stops with the first useful correction. We redo work that already functions, interrupt someone's method to point out a cleaner one, and spend an hour on a flaw that changes almost nothing. Anxiety rises because there is always another detail available to manage. Criticism follows, first as a way to improve the result and then as a running account of everything still wrong. The priority waits while our energy is burned on control.",
+    "development": "Mars last moved through Virgo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Similar pressure may return through the habits it leaves behind: checking again after the answer is clear, taking over a small task because explaining it seems inefficient, or treating fatigue as evidence that the routine needs one more adjustment. Each correction offers a quick sense of relief. Together they create more work, and the larger problem stays intact. The method becomes so exact that nobody else can easily join in. Help arrives and gets corrected. A finished result is reopened for one minor change. What began as practical action becomes an exhausting effort to prevent any mistake at all.",
+    "close": "Before {{exitDate}}, the smallest flaws can be corrected while the priority that started all this is still waiting.",
+    "try_this": [
+      "We can fix one broken or unreliable item and stop as soon as it works.",
+      "We can give one necessary cleanup 30 minutes, then leave the cosmetic flaws alone."
+    ]
+  }
+}

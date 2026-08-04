@@ -1,0 +1,66 @@
+{
+  "responseId": "resp_0e72a69f94dd4956006a724778e72c81a18a97749d1feb3238",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found",
+  "retrievedOwnerSourceIds": [
+    "owner-article:leo-season-2025:p092:window-1-3",
+    "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+    "owner-article:mars-direct-in-cancer:p057:window-3-2",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:mars-leo",
+    "planet": "mars",
+    "sign": "leo",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8109,
+    "input_tokens_details": {
+      "cache_write_tokens": 8106,
+      "cached_tokens": 0
+    },
+    "output_tokens": 6562,
+    "output_tokens_details": {
+      "reasoning_tokens": 6203
+    },
+    "total_tokens": 14671
+  },
+  "article": {
+    "opening": "Mars enters Leo on {{entryDate}} with a bolder, more visible style of action after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}. We volunteer to lead. We show the unfinished work. We start the hard part while the courage is there. Energy rises when the action feels creative, purposeful, and worth claiming.",
+    "tension": "Visibility also raises the stakes. Pride can keep effort alive, but a quiet response may start to feel like rejection. We make a bigger show of the effort, claim more credit, or turn the first objection into a fight. The work starts serving the need to prove we matter. Being seen takes over from doing something worth respecting.",
+    "development": "Mars last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure around pride and recognition returns in different moments. A creative risk gathers momentum because someone is willing to stand behind it. A stalled task becomes interesting once it has a clear point and a visible finish. Then an ordinary correction feels like an insult. A disagreement becomes a contest over who gets credit. Attention goes to the reaction instead of the result. The original aim gets harder to recognize, and a strong piece of work gets harder to finish once praise matters more than the work itself.",
+    "close": "Before {{exitDate}}, the push to be recognized can leave the work unfinished while the argument over credit becomes what we remember.",
+    "try_this": [
+      "We can finish one small creative task before asking someone what they think.",
+      "We can name one contribution from someone else before describing our own.",
+      "We can play one song and dance through the whole track without stopping."
+    ]
+  }
+}

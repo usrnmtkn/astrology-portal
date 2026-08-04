@@ -1,0 +1,105 @@
+{
+  "id": "sky-placement-writer-batch-4-sol-xhigh-run-2026-08-04",
+  "status": "completed_held_for_owner_review",
+  "calls": {
+    "writer": 7,
+    "judge": 0,
+    "total": 7
+  },
+  "routing": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "routingMatchStatus": "matched_for_all_seven"
+  },
+  "governance": {
+    "status": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "canonical": false,
+    "renderEligible": false,
+    "terraCallsMade": 0
+  },
+  "usage": {
+    "inputTokens": 56959,
+    "cacheWriteTokens": 56938,
+    "outputTokens": 38125,
+    "reasoningTokens": 35412,
+    "totalTokens": 95084
+  },
+  "units": [
+    {
+      "id": "mars-sagittarius",
+      "harvest_mode": "none_found",
+      "deterministicOverallPassed": true,
+      "lint": { "score": 3, "fails": 0, "warns": 0 },
+      "result": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/mars-sagittarius/result.json"
+    },
+    {
+      "id": "mars-aquarius",
+      "harvest_mode": "none_found",
+      "deterministicOverallPassed": true,
+      "lint": { "score": 3, "fails": 0, "warns": 0 },
+      "result": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/mars-aquarius/result.json"
+    },
+    {
+      "id": "mars-pisces",
+      "harvest_mode": "none_found",
+      "deterministicOverallPassed": true,
+      "lint": { "score": 3, "fails": 0, "warns": 0 },
+      "result": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/mars-pisces/result.json"
+    },
+    {
+      "id": "neptune-aries",
+      "harvest_mode": "none_found",
+      "deterministicOverallPassed": true,
+      "lint": { "score": 3, "fails": 0, "warns": 0 },
+      "result": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/neptune-aries/result.json"
+    },
+    {
+      "id": "pluto-aquarius",
+      "harvest_mode": "none_found",
+      "deterministicOverallPassed": true,
+      "lint": {
+        "score": 2,
+        "fails": 0,
+        "warns": 2,
+        "findings": ["group chat", "settles"]
+      },
+      "result": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/pluto-aquarius/result.json"
+    },
+    {
+      "id": "chiron-aries",
+      "harvest_mode": "matched",
+      "warmthSourceIds": [
+        "owner-article:chiron-retrograde-in-aries:p009",
+        "owner-article:pisces-season-2025:p054"
+      ],
+      "deterministicOverallPassed": true,
+      "lint": {
+        "score": 2,
+        "fails": 0,
+        "warns": 1,
+        "findings": ["stacked-ending"]
+      },
+      "result": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/chiron-aries/result.json"
+    },
+    {
+      "id": "nodes-aquarius-leo",
+      "harvest_mode": "matched",
+      "warmthSourceIds": [
+        "owner-article:this-weeks-astrology-august-24th-31st:p015",
+        "owner-article:leo-new-moon-2025:p012",
+        "owner-article:leo-full-moon-2025:p061"
+      ],
+      "deterministicOverallPassed": true,
+      "lint": {
+        "score": 2,
+        "fails": 0,
+        "warns": 1,
+        "findings": ["settling"]
+      },
+      "result": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/nodes-aquarius-leo/result.json"
+    }
+  ]
+}

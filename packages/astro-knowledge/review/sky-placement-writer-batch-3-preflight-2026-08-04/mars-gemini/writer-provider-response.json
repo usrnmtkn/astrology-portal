@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0b1098cb4fb1cb18006a72464e8da0819d86d806278265b49b",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8026,
+    "input_tokens_details": {
+      "cache_write_tokens": 8023,
+      "cached_tokens": 0
+    },
+    "output_tokens": 10512,
+    "output_tokens_details": {
+      "reasoning_tokens": 10170
+    },
+    "total_tokens": 18538
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Gemini on {{entryDate}}, and the next move comes through a quick question or a change of plan. A stuck exchange gets a new angle. An unfamiliar skill becomes worth learning. Better information changes what happens next.\",\"tension\":\"That flexibility helps until every possibility feels equally urgent. We follow three ideas, start two tasks, and change direction before either is finished. A disagreement that could clarify the issue becomes a contest for the quickest answer. The sharper the comeback, the farther the conversation moves from what needed to be decided. Energy stays high, but it is split among arguments, new starts, and loose ends.\",\"development\":\"Mars last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The pressure is familiar: motion can start to stand in for progress. We research another option because choosing one would close the others. We explain the plan again instead of taking the step that would test it. We keep a dispute alive because each new point feels easier to answer than the question that started it. Attention moves to the newest idea before the last one has been tested. The conversation gets hotter as every new point demands an answer.\",\"close\":\"Before {{exitDate}}, the work can remain unfinished while the argument keeps going after its point has been lost.\",\"try_this\":[\"We can close every extra tab and spend thirty minutes solving one concrete problem.\",\"We can ask, \\\"What are we actually trying to decide?\\\" when a conversation turns into a contest.\"]}"
+}

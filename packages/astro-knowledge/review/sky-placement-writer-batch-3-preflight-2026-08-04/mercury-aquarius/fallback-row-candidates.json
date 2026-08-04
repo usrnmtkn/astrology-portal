@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Mercury in Aquarius makes the odd idea sound more useful than the familiar answer. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Aquarius on {{entryDate}}, and our attention shifts toward patterns, future possibilities, and unusual solutions. A question opens a new route through a stuck conversation. Notes that seemed unrelated form a clear pattern. A strange suggestion becomes the first answer that fits.",
+      "tension": "The speed of that insight creates distance when everyone else is still catching up. We skip the explanation, point out the flaw, and move straight to a solution that feels obvious to us. If someone hesitates, we may argue harder or take the opposite side just to keep the thinking alive. The idea gets more interesting, but the exchange gets colder. What began as a useful break from convention ends with the person hearing it feeling treated like part of the problem.",
+      "development": "Mercury last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now a group discussion can start chasing the most original take instead of the useful one. A writer can keep refining the theory while missing the sentence that would make it clear. We can spot the system behind a recurring problem and still lose trust by treating every objection as outdated. When every answer has to sound original, useful questions go unsaid. Decisions then rest on a clever pattern that nobody had enough time to examine.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, the strongest idea may still go nowhere once questioning it feels like admitting we cannot keep up.",
+      "try_this": [
+        "We can explain one original idea in three plain sentences and add one concrete example.",
+        "We can test one unconventional solution on a small recurring problem and write down what changed."
+      ],
+      "aspect_units": [],
+      "body_you": "Mercury in Aquarius makes the odd idea sound more useful than the familiar answer. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Aquarius on {{entryDate}}, and our attention shifts toward patterns, future possibilities, and unusual solutions. A question opens a new route through a stuck conversation. Notes that seemed unrelated form a clear pattern. A strange suggestion becomes the first answer that fits.\n\nThe speed of that insight creates distance when everyone else is still catching up. We skip the explanation, point out the flaw, and move straight to a solution that feels obvious to us. If someone hesitates, we may argue harder or take the opposite side just to keep the thinking alive. The idea gets more interesting, but the exchange gets colder. What began as a useful break from convention ends with the person hearing it feeling treated like part of the problem.\n\nMercury last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now a group discussion can start chasing the most original take instead of the useful one. A writer can keep refining the theory while missing the sentence that would make it clear. We can spot the system behind a recurring problem and still lose trust by treating every objection as outdated. When every answer has to sound original, useful questions go unsaid. Decisions then rest on a clever pattern that nobody had enough time to examine.\n\nBefore {{exitDate}}, the strongest idea may still go nowhere once questioning it feels like admitting we cannot keep up.",
+      "body_they": "Mercury in Aquarius makes the odd idea sound more useful than the familiar answer. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Aquarius on {{entryDate}}, and our attention shifts toward patterns, future possibilities, and unusual solutions. A question opens a new route through a stuck conversation. Notes that seemed unrelated form a clear pattern. A strange suggestion becomes the first answer that fits.\n\nThe speed of that insight creates distance when everyone else is still catching up. We skip the explanation, point out the flaw, and move straight to a solution that feels obvious to us. If someone hesitates, we may argue harder or take the opposite side just to keep the thinking alive. The idea gets more interesting, but the exchange gets colder. What began as a useful break from convention ends with the person hearing it feeling treated like part of the problem.\n\nMercury last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now a group discussion can start chasing the most original take instead of the useful one. A writer can keep refining the theory while missing the sentence that would make it clear. We can spot the system behind a recurring problem and still lose trust by treating every objection as outdated. When every answer has to sound original, useful questions go unsaid. Decisions then rest on a clever pattern that nobody had enough time to examine.\n\nBefore {{exitDate}}, the strongest idea may still go nowhere once questioning it feels like admitting we cannot keep up.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "mercury-aquarius"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

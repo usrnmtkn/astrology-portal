@@ -1,0 +1,129 @@
+{
+  "id": "sky-placement-writer-batch-4-readiness-2026-08-04",
+  "recordedAt": "2026-08-04T21:04:34Z",
+  "mode": "deterministic_full_packet_preflight_with_authorized_writer_run",
+  "billedCallsMade": 7,
+  "referenceDate": "2026-08-04T16:00:00.000Z",
+  "dateRenderingTimeZone": "America/New_York",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "summary": {
+    "requestedUnits": 7,
+    "fullPacketsCompiled": 7,
+    "engineFactPlansReady": 7,
+    "packetSelfLintsPassed": 7,
+    "blockedUnits": 0,
+    "blockingWarmthFlags": 0,
+    "matchedWarmthHarvests": 2,
+    "noneFoundWarmthHarvests": 5,
+    "billedCallsMade": 7
+  },
+  "units": [
+    {
+      "id": "mars-sagittarius",
+      "status": "ready_for_owner_authorized_writer_call",
+      "evidencePacket": "pass",
+      "engineFacts": "pass",
+      "packetSelfLint": { "passed": true, "quotablesScanned": 21 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"]
+    },
+    {
+      "id": "mars-aquarius",
+      "status": "ready_for_owner_authorized_writer_call",
+      "evidencePacket": "pass",
+      "engineFacts": "pass",
+      "packetSelfLint": { "passed": true, "quotablesScanned": 21 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"]
+    },
+    {
+      "id": "mars-pisces",
+      "status": "ready_for_owner_authorized_writer_call",
+      "evidencePacket": "pass",
+      "engineFacts": "pass",
+      "packetSelfLint": { "passed": true, "quotablesScanned": 21 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"]
+    },
+    {
+      "id": "neptune-aries",
+      "status": "ready_for_owner_authorized_writer_call",
+      "evidencePacket": "pass",
+      "engineFacts": "pass",
+      "packetSelfLint": { "passed": true, "quotablesScanned": 17 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events"],
+      "inactiveStructuralSlots": [
+        { "id": "cycle-location", "reason": "No earlier complete Aries residency was available; this optional slot is omitted." }
+      ]
+    },
+    {
+      "id": "pluto-aquarius",
+      "status": "ready_for_owner_authorized_writer_call",
+      "evidencePacket": "pass",
+      "engineFacts": "pass",
+      "packetSelfLint": { "passed": true, "quotablesScanned": 21 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"]
+    },
+    {
+      "id": "chiron-aries",
+      "status": "ready_for_owner_authorized_writer_call",
+      "evidencePacket": "pass",
+      "engineFacts": "pass",
+      "packetSelfLint": { "passed": true, "quotablesScanned": 18 },
+      "warmthHarvest": {
+        "harvest_mode": "matched",
+        "blocking": false,
+        "foundationId": "warmth-foundation-chiron-aries-v1",
+        "primarySourceId": "owner-article:chiron-retrograde-in-aries:p009"
+      },
+      "factBank": "packages/astro-knowledge/data/planetary/chiron.json",
+      "factBankStatus": "REVIEWED",
+      "runtimeEligible": false,
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "cycle-location"],
+      "inactiveStructuralSlots": [
+        { "id": "concurrent-events", "reason": "The current aspect engine does not rank Chiron events; this optional slot is omitted." }
+      ]
+    },
+    {
+      "id": "nodes-aquarius-leo",
+      "status": "ready_for_owner_authorized_writer_call",
+      "evidencePacket": "pass as one combined axis packet",
+      "engineFacts": "pass as one combined axis fact plan",
+      "packetSelfLint": { "passed": true, "quotablesScanned": 19 },
+      "warmthHarvest": {
+        "harvest_mode": "matched",
+        "blocking": false,
+        "foundationId": "warmth-foundation-nodes-aquarius-leo-v1",
+        "primarySourceId": "owner-article:this-weeks-astrology-august-24th-31st:p015",
+        "reusesJupiterLeoPrimarySource": true
+      },
+      "factBank": "packages/astro-knowledge/data/planetary/lunar-nodes.json",
+      "factBankStatus": "REVIEWED",
+      "runtimeEligible": false,
+      "axisPair": {
+        "axisId": "nodes-aquarius-leo",
+        "pairLink": "north-node-aquarius<->south-node-leo",
+        "reciprocal": true,
+        "fallbackContentKey": "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+      },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "cycle-location"],
+      "inactiveStructuralSlots": [
+        { "id": "concurrent-events", "reason": "The current aspect engine does not rank node events; this optional slot is omitted." }
+      ]
+    }
+  ],
+  "placementMetadata": {
+    "scope": ["neptune-aries", "pluto-aquarius", "chiron-aries", "north-node-aquarius", "south-node-leo"],
+    "supportedDomains": "present exactly as supplied",
+    "unsupportedDomainWarnings": "present exactly as supplied",
+    "scenarioPolicy": "present exactly as supplied",
+    "nodeAxisPairLink": "present and reciprocal",
+    "remainingPacketGaps": [],
+    "runtimeNote": "Chiron and both node placement rows remain runtimeEligible false. Serving requires its own later review."
+  },
+  "harvestAudit": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/harvest-audit.json",
+  "writerCallReport": "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/writer-call-report.json",
+  "authorization": "The owner authorized seven Sol-xhigh writer-only calls after the corrected harvest. All seven completed. No Terra calls were made."
+}

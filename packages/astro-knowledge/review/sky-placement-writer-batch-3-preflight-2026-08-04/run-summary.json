@@ -1,0 +1,89 @@
+{
+  "id": "sky-placement-writer-batch-3-sol-run-2026-08-04",
+  "recordedAt": "2026-08-04T20:14:30.584Z",
+  "authorization": "Owner authorized seven billed Sol-xhigh writer calls for batch 3, deterministic lint only, no Terra, with all candidates held for owner review.",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerOnly": true
+  },
+  "calls": {
+    "writer": 7,
+    "judge": 0,
+    "total": 7
+  },
+  "usage": {
+    "input_tokens": 56734,
+    "output_tokens": 39760,
+    "total_tokens": 96494
+  },
+  "governance": {
+    "status": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "canonical": false,
+    "renderEligible": false
+  },
+  "results": [
+    {
+      "id": "mercury-capricorn",
+      "responseId": "resp_0cad29ea46dd7701006a724513d66481a3b1321dc16e7ac968",
+      "resultPath": "mercury-capricorn/result.json",
+      "lint": { "score": 3, "fails": 0, "warns": 0, "overallPassed": true }
+    },
+    {
+      "id": "mercury-aquarius",
+      "responseId": "resp_014e3da820df3d7a006a72456e088481a2a49df5cce113e8c4",
+      "resultPath": "mercury-aquarius/result.json",
+      "lint": { "score": 3, "fails": 0, "warns": 0, "overallPassed": true }
+    },
+    {
+      "id": "mars-taurus",
+      "responseId": "resp_0412f963db2959fc006a7245d9eeb08191a01b56d1d98094f0",
+      "resultPath": "mars-taurus/result.json",
+      "lint": { "score": 3, "fails": 0, "warns": 0, "overallPassed": true }
+    },
+    {
+      "id": "mars-gemini",
+      "responseId": "resp_0b1098cb4fb1cb18006a72464e8da0819d86d806278265b49b",
+      "resultPath": "mars-gemini/result.json",
+      "lint": {
+        "score": 2,
+        "fails": 0,
+        "warns": 1,
+        "overallPassed": true,
+        "findings": ["try_this action exceeds the short-move shape preference"]
+      }
+    },
+    {
+      "id": "mars-cancer",
+      "responseId": "resp_092dfc9a2b0894af006a72471001d8819eba85cafdea1bb4e6",
+      "resultPath": "mars-cancer/result.json",
+      "lint": {
+        "score": 2,
+        "fails": 0,
+        "warns": 1,
+        "overallPassed": true,
+        "findings": ["old-surface watch word: reveal"]
+      }
+    },
+    {
+      "id": "mars-leo",
+      "responseId": "resp_0e72a69f94dd4956006a724778e72c81a18a97749d1feb3238",
+      "resultPath": "mars-leo/result.json",
+      "lint": { "score": 3, "fails": 0, "warns": 0, "overallPassed": true }
+    },
+    {
+      "id": "mars-virgo",
+      "responseId": "resp_0cde8bf3f62b6d50006a7247f2d78c81a1920d419dddcfc5eb",
+      "resultPath": "mars-virgo/result.json",
+      "lint": { "score": 3, "fails": 0, "warns": 0, "overallPassed": true }
+    }
+  ],
+  "terra": {
+    "authorized": false,
+    "callsMade": 0,
+    "artifactsPresent": false
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "id": "sky-placement-writer-batch-3-preflight-2026-08-04",
+  "recordedAt": "2026-08-04T19:55:33Z",
+  "mode": "full_packet_compile_only",
+  "billedCallsMade": 0,
+  "referenceDate": "2026-08-04T16:00:00.000Z",
+  "dateRenderingTimeZone": "America/New_York",
+  "writerLane": {
+    "laneId": "writer:sky-placement",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "registryState": "candidate",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1"
+  },
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found",
+  "selfLintPolicy": "sky-placement.outputBans.fail+warn",
+  "artifactContract": [
+    "engine-facts.json",
+    "packet.json",
+    "model-input.md",
+    "plan.json"
+  ],
+  "placements": [
+    {
+      "id": "mercury-capricorn",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false, "sourceIds": [] },
+      "factValidation": { "complete": true, "failures": [] },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"],
+      "inactiveStructuralSlots": [],
+      "transitWindow": { "start": "December 25, 2026", "end": "January 13, 2027" },
+      "rankedEventMeanings": ["mercury-square-neptune", "mercury-square-saturn"]
+    },
+    {
+      "id": "mercury-aquarius",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false, "sourceIds": [] },
+      "factValidation": { "complete": true, "failures": [] },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"],
+      "inactiveStructuralSlots": [],
+      "transitWindow": { "start": "January 13, 2027", "end": "January 31, 2027" },
+      "rankedEventMeanings": ["mercury-sextile-neptune", "mercury-trine-uranus"]
+    },
+    {
+      "id": "mars-taurus",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false, "sourceIds": [] },
+      "factValidation": { "complete": true, "failures": [] },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"],
+      "inactiveStructuralSlots": [],
+      "transitWindow": { "start": "April 27, 2028", "end": "June 7, 2028" },
+      "rankedEventMeanings": ["mars-square-pluto", "mars-trine-jupiter"]
+    },
+    {
+      "id": "mars-gemini",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false, "sourceIds": [] },
+      "factValidation": { "complete": true, "failures": [] },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"],
+      "inactiveStructuralSlots": [],
+      "transitWindow": { "start": "June 28, 2026", "end": "August 11, 2026" },
+      "rankedEventMeanings": ["mars-trine-pluto", "mars-sextile-neptune"]
+    },
+    {
+      "id": "mars-cancer",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false, "sourceIds": [] },
+      "factValidation": { "complete": true, "failures": [] },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"],
+      "inactiveStructuralSlots": [],
+      "transitWindow": { "start": "August 11, 2026", "end": "September 27, 2026" },
+      "rankedEventMeanings": ["mars-square-neptune", "mars-square-saturn"]
+    },
+    {
+      "id": "mars-leo",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false, "sourceIds": [] },
+      "factValidation": { "complete": true, "failures": [] },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"],
+      "inactiveStructuralSlots": [],
+      "transitWindow": { "start": "September 27, 2026", "end": "November 25, 2026" },
+      "rankedEventMeanings": ["mars-trine-neptune", "mars-sextile-uranus"]
+    },
+    {
+      "id": "mars-virgo",
+      "status": "ready_for_owner_authorized_writer_call",
+      "ownerPassageCount": 6,
+      "packetSelfLint": { "passed": true, "quotablesScanned": 25 },
+      "warmthHarvest": { "harvest_mode": "none_found", "blocking": false, "sourceIds": [] },
+      "factValidation": { "complete": true, "failures": [] },
+      "activeStructuralSlots": ["prior-sign-handoff", "cycle-line", "concurrent-events", "cycle-location"],
+      "inactiveStructuralSlots": [],
+      "transitWindow": { "start": "November 25, 2026", "end": "February 21, 2027" },
+      "rankedEventMeanings": ["mars-square-uranus", "mars-square-venus"]
+    }
+  ],
+  "totals": {
+    "placements": 7,
+    "fullPacketsCompiled": 7,
+    "selfLintPassed": 7,
+    "readyForOwnerAuthorizedWriterCall": 7,
+    "blockingWarmthFlags": 0,
+    "billedCallsMade": 0
+  },
+  "batchReady": true,
+  "authorization": "No writer or judge calls are authorized by this record. Explicit owner authorization is still required before any billed call."
+}

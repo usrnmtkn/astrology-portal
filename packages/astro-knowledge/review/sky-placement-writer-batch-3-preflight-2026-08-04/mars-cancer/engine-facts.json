@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mars",
+  "sign": "cancer",
+  "timeZone": "America/New_York",
+  "transitStart": "August 11, 2026",
+  "transitEnd": "September 27, 2026",
+  "transitStartIso": "2026-08-11T08:30:30.999Z",
+  "transitEndIso": "2026-09-28T02:48:52.999Z",
+  "priorSign": "gemini",
+  "priorSignEntryDate": "June 28, 2026",
+  "priorSignExitDate": "August 11, 2026",
+  "previousResidency": {
+    "sign": "cancer",
+    "entryDate": "January 6, 2025",
+    "exitDate": "April 18, 2025",
+    "entryDateIso": "2025-01-06T10:44:06.999Z",
+    "exitDateIso": "2025-04-18T04:20:49.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mars-square-neptune-2026-08-17t09:52:37.999z",
+      "body": "mars-square-neptune",
+      "bodies": [
+        "mars",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "August 17, 2026",
+      "dateIso": "2026-08-17T09:52:37.999Z",
+      "rank": 1,
+      "meaning": "Drive meets imagination. Energy steered by vision and a persuasive, magnetic pull. Psychologically the square is inner tension to integrate: Misdirected effort: setting off one way and ending up another, with energy quietly draining away. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-square-neptune.json"
+    },
+    {
+      "id": "aspect-mars-square-saturn-2026-09-01t09:58:39.999z",
+      "body": "mars-square-saturn",
+      "bodies": [
+        "mars",
+        "saturn"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "September 1, 2026",
+      "dateIso": "2026-09-01T09:58:39.999Z",
+      "rank": 2,
+      "meaning": "Drive meets limit. Disciplined endurance and the ability to pace yourself and keep going long after others quit. Psychologically the square is inner tension to integrate: Gas and brake at once: jerky, stop-start progress, frustration, and a need to avoid burning bridges in case of retreat. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-square-saturn.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mars-square-neptune.json",
+      "packages/astro-knowledge/data/transits/mars-square-saturn.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

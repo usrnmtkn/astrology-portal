@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/neptune/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Neptune enters Aries on {{entryDate}}, and inspiration begins to feel incomplete until someone acts on it. An idea gets a first attempt. We speak a belief that had stayed private. We start making something before the whole vision is clear. This transit can restore movement where longing had no direction.",
+      "tension": "That momentum has a cost when intensity is mistaken for truth. A strong feeling becomes its own permission. A new beginning feels too important to question. We commit because action brings relief, then treat doubt as weakness and resistance as proof that the path matters. The plan remains thin while the promise grows larger.",
+      "development": "Neptune in Aries can make a beginning feel destined before it has met ordinary limits. We see the way inspiration sets its own deadline, the way anger becomes proof that action is needed, and the way bravery becomes a refusal to change course. A creative project runs on vision while the next step stays vague. Friends adopt a bold idea because confidence sounds like clarity. A belief demands sacrifice without explaining what the sacrifice serves. Enthusiasm can carry each beginning for a while. Then responsibility becomes unclear. Someone else finishes what was started, friends stop trusting the idea, or we keep defending the original impulse because admitting confusion feels like losing courage.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "By {{exitDate}}, a beginning built only on intensity can leave us defending a promise we can no longer explain.",
+      "try_this": [
+        "We can spend one hour making a rough version of the idea that feels most urgent.",
+        "We can ask a trusted friend which part of one exciting plan still sounds unclear."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Neptune enters Aries on {{entryDate}}, and inspiration begins to feel incomplete until someone acts on it. An idea gets a first attempt. We speak a belief that had stayed private. We start making something before the whole vision is clear. This transit can restore movement where longing had no direction.\n\nThat momentum has a cost when intensity is mistaken for truth. A strong feeling becomes its own permission. A new beginning feels too important to question. We commit because action brings relief, then treat doubt as weakness and resistance as proof that the path matters. The plan remains thin while the promise grows larger.\n\nNeptune in Aries can make a beginning feel destined before it has met ordinary limits. We see the way inspiration sets its own deadline, the way anger becomes proof that action is needed, and the way bravery becomes a refusal to change course. A creative project runs on vision while the next step stays vague. Friends adopt a bold idea because confidence sounds like clarity. A belief demands sacrifice without explaining what the sacrifice serves. Enthusiasm can carry each beginning for a while. Then responsibility becomes unclear. Someone else finishes what was started, friends stop trusting the idea, or we keep defending the original impulse because admitting confusion feels like losing courage.\n\nBy {{exitDate}}, a beginning built only on intensity can leave us defending a promise we can no longer explain.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Neptune enters Aries on {{entryDate}}, and inspiration begins to feel incomplete until someone acts on it. An idea gets a first attempt. We speak a belief that had stayed private. We start making something before the whole vision is clear. This transit can restore movement where longing had no direction.\n\nThat momentum has a cost when intensity is mistaken for truth. A strong feeling becomes its own permission. A new beginning feels too important to question. We commit because action brings relief, then treat doubt as weakness and resistance as proof that the path matters. The plan remains thin while the promise grows larger.\n\nNeptune in Aries can make a beginning feel destined before it has met ordinary limits. We see the way inspiration sets its own deadline, the way anger becomes proof that action is needed, and the way bravery becomes a refusal to change course. A creative project runs on vision while the next step stays vague. Friends adopt a bold idea because confidence sounds like clarity. A belief demands sacrifice without explaining what the sacrifice serves. Enthusiasm can carry each beginning for a while. Then responsibility becomes unclear. Someone else finishes what was started, friends stop trusting the idea, or we keep defending the original impulse because admitting confusion feels like losing courage.\n\nBy {{exitDate}}, a beginning built only on intensity can leave us defending a promise we can no longer explain.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "neptune-aries"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

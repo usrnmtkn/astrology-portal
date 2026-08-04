@@ -9,7 +9,7 @@ const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
 const skillRoot = path.join(repoRoot, ".agents", "skills", "marie-satori-writer");
 const { buildIndex } = require(path.join(skillRoot, "scripts", "build-voice-index.js"));
-const { assertPacketQuotablesPassOutputBans, buildPacket, factStatusAllowsWriting, passageSupportsTargetDomain, passageUsesUnsupportedDomain, renderModelInput } = require(path.join(skillRoot, "scripts", "compile-writing-packet.js"));
+const { assertPacketQuotablesPassOutputBans, buildPacket, factStatusAllowsWriting, passageSupportsTargetDomain, passageUsesIncompatibleCurrentSkyEvidence, passageUsesUnsupportedDomain, renderModelInput } = require(path.join(skillRoot, "scripts", "compile-writing-packet.js"));
 const { assertRoutingMatch } = require("./sky-placement-writer-runtime.js");
 const { auditRecords } = require("./audit-sky-placement-writer-fixtures.js");
 const { audit } = require(path.join(skillRoot, "scripts", "audit-authorship.js"));
@@ -21,6 +21,8 @@ const { candidateRow, deterministicChecks, judgeShape, lintShape, parseArticle }
 
 function main() {
   const index = buildIndex();
+  const ownerFeedbackAudit = fs.readFileSync(path.join(packageRoot, "voice", "tldr-astro", "marie-satori-owner-feedback-audit.md"), "utf8");
+  assert.match(ownerFeedbackAudit, /OV-043[\s\S]*cross-batch action-template variety/u);
   assert(index.entries.length > 3000, "the owner corpus must be indexed at paragraph level");
   assert(index.summary.positiveVoiceEvidenceCount > 2500);
   assert(index.entries.filter((entry) => entry.useAsPositiveVoiceEvidence).every((entry) =>
@@ -66,6 +68,79 @@ function main() {
   const batch2Taurus = batch2Approved.articles.find((entry) => entry.sign === "taurus").article;
   assert.strictEqual(batch2Taurus.close, "Before {{exitDate}}, the facts may have changed while the old answer still sounds certain.");
   assert.strictEqual(batch2Taurus.try_this[0], "We can ask what has changed since we last looked at one thing we consider settled.");
+
+  const batch4Approved = require(path.join("..", "review", "sky-placement-writer-batch-4-owner-edited-approved-v1.json"));
+  const batch4Lint = require(path.join("..", "review", "sky-placement-writer-batch-4-owner-edited-approved-v1-lint.json"));
+  assert.strictEqual(batch4Approved.articles.length, 7);
+  assert.strictEqual(batch4Approved.ownerApproved, true);
+  assert.strictEqual(batch4Approved.servingAuthorized, false);
+  assert.strictEqual(batch4Approved.generationEvidence, false);
+  assert(batch4Approved.articles.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.reviewStatus === "approved"
+    && entry.ownerApproved === true
+    && entry.renderEligible === false
+    && entry.generationEvidence === false
+    && entry.promotionAuthorized === false
+    && entry.canonical === false
+  )));
+  assert(batch4Approved.articles.filter((entry) => ["chiron", "nodes"].includes(entry.planet)).every((entry) => (
+    entry.runtimeEligible === false
+    && entry.servingStatus === "held_pending_runtime_eligibility_serving_review"
+  )));
+  assert(batch4Approved.articles.every((entry) => deterministicChecks(entry.article, {
+    planet: entry.planet,
+    sign: entry.sign
+  }).overallPassed));
+  const batch4MarsAquarius = batch4Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "aquarius").article;
+  assert.match(batch4MarsAquarius.tension, /make the change without asking the person it affects/u);
+  assert.strictEqual(batch4MarsAquarius.try_this[2], "We can test an unfamiliar tool on one small recurring problem.");
+  const batch4MarsSagittarius = batch4Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "sagittarius").article;
+  assert.strictEqual(batch4MarsSagittarius.try_this[0], "We can write down what the bold plan requires before saying yes to it.");
+  assert.strictEqual(batch4MarsSagittarius.try_this[1], "We can try the unfamiliar activity once before buying gear or making a bigger commitment.");
+  const batch4Chiron = batch4Approved.articles.find((entry) => entry.planet === "chiron").article;
+  assert.strictEqual(batch4Chiron.close, "Before {{exitDate}}, a swallowed want leaves the decision to someone else.");
+  assert.strictEqual(batch4Lint.batchPassed, true);
+  assert.strictEqual(batch4Lint.hardFailures, 0);
+  assert.strictEqual(batch4Lint.effectiveWarnings, 1);
+  assert.strictEqual(batch4Lint.results.find((entry) => entry.id.includes("pluto-aquarius")).effectiveScore, 3);
+  assert.strictEqual(batch4Lint.results.find((entry) => entry.id.includes("nodes-aquarius-leo")).effectiveScore, 3);
+  assert.strictEqual(batch4Lint.results.find((entry) => entry.id.includes("chiron-aries")).effectiveScore, 2);
+
+  const batch3Approved = require(path.join("..", "review", "sky-placement-writer-batch-3-owner-edited-approved-v1.json"));
+  const batch3Lint = require(path.join("..", "review", "sky-placement-writer-batch-3-owner-edited-approved-v1-lint.json"));
+  assert.strictEqual(batch3Approved.articles.length, 7);
+  assert.strictEqual(batch3Approved.ownerApproved, true);
+  assert.strictEqual(batch3Approved.servingAuthorized, false);
+  assert.strictEqual(batch3Approved.generationEvidence, false);
+  assert(batch3Approved.articles.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.reviewStatus === "approved"
+    && entry.ownerApproved === true
+    && entry.renderEligible === false
+    && entry.generationEvidence === false
+    && entry.promotionAuthorized === false
+    && entry.canonical === false
+  )));
+  assert(batch3Approved.articles.every((entry) => deterministicChecks(entry.article, {
+    planet: entry.planet,
+    sign: entry.sign
+  }).overallPassed));
+  const batch3MarsCancer = batch3Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "cancer").article;
+  assert.match(batch3MarsCancer.development, /naming the hurt would show how much it mattered/u);
+  assert.doesNotMatch(batch3MarsCancer.development, /naming the hurt would reveal how much it mattered/u);
+  const batch3MercuryAquarius = batch3Approved.articles.find((entry) => entry.planet === "mercury" && entry.sign === "aquarius").article;
+  assert.deepStrictEqual(batch3MercuryAquarius.try_this, [
+    "We can lead with the example instead of the theory in one explanation this week.",
+    "We can try the unusual fix on something low-stakes and write down what changed."
+  ]);
+  const batch3MarsGemini = batch3Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "gemini").article;
+  assert.strictEqual(batch3MarsGemini.try_this[0], "We can close the extra tabs and solve one concrete problem before opening anything new.");
+  const batch3MarsVirgo = batch3Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "virgo").article;
+  assert.strictEqual(batch3MarsVirgo.try_this[1], "We can do one necessary cleanup and leave the cosmetic flaws alone.");
+  assert.strictEqual(batch3Lint.batchPassed, true);
+  assert.strictEqual(batch3Lint.hardFailures, 0);
+  assert.strictEqual(batch3Lint.warnings, 1);
 
   const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
   const requiredTags = [
@@ -248,8 +323,10 @@ function main() {
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-006"));
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "ED-015"));
   assert(packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-018"));
-  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1");
-  assert.strictEqual(packet.packetVersion, "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found");
+  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v15:cross-batch-move-variety-v1");
+  assert.match(packet.writerPrompt, /Across recent batches, do not repeat action templates/u);
+  assert.match(packet.writerPrompt, /checking an original source or assigning a one-hour block/u);
+  assert.strictEqual(packet.packetVersion, "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1");
   assert.match(packet.writerPrompt, /Some verified astrology source rows use natal or second-person register/u);
   assert.deepStrictEqual(
     assertPacketQuotablesPassOutputBans({
@@ -311,6 +388,46 @@ function main() {
     emphasisBeat: "turn",
     task: "Compile the approved South Node in Leo fact boundary."
   }).verifiedAstrology.signExpression, /need for applause/u);
+  const chironPacket = buildPacket({
+    planet: "chiron",
+    sign: "aries",
+    requestedBeat: "full_article",
+    emphasisBeat: "turn",
+    task: "Compile the approved Chiron in Aries fact boundary."
+  });
+  assert.strictEqual(chironPacket.ownerCorpusWarmthEvidence.harvest_mode, "matched");
+  assert.strictEqual(chironPacket.ownerCorpusWarmthEvidence.id, "warmth-foundation-chiron-aries-v1");
+  assert.match(chironPacket.ownerCorpusWarmthEvidence.primary.foundationText, /wound disappears/u);
+  assert.strictEqual(passageUsesIncompatibleCurrentSkyEvidence({ text: "Healing changes how the wound is carried." }, { planet: "chiron", sign: "aries" }), false);
+  assert.strictEqual(passageUsesIncompatibleCurrentSkyEvidence({ text: "Healing changes how the wound is carried." }, { planet: "mars", sign: "aries" }), true);
+  assert.strictEqual(passageUsesIncompatibleCurrentSkyEvidence({ text: "Every conversation becomes a battlefield." }, { planet: "chiron", sign: "aries" }), true);
+  const nodeAxisPacket = buildPacket({
+    planet: "nodes",
+    sign: "aquarius-leo",
+    requestedBeat: "full_article",
+    emphasisBeat: "turn",
+    task: "Compile one combined Nodes in Aquarius/Leo Current Sky unit."
+  });
+  assert.strictEqual(nodeAxisPacket.verifiedAstrology.axisMode, "combined-node-axis");
+  assert.strictEqual(nodeAxisPacket.verifiedAstrology.axisPair.axisId, "nodes-aquarius-leo");
+  assert.strictEqual(nodeAxisPacket.verifiedAstrology.axisPair.pairLink, "north-node-aquarius<->south-node-leo");
+  assert.strictEqual(nodeAxisPacket.verifiedAstrology.axisPair.reciprocal, true);
+  assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.harvest_mode, "matched");
+  assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.id, "warmth-foundation-nodes-aquarius-leo-v1");
+  assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.primary.sourceId, "owner-article:this-weeks-astrology-august-24th-31st:p015");
+  assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.primary.sourceId, require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "owner-corpus-warmth-foundations-v1.json")).records.find((entry) => entry.id === "warmth-foundation-jupiter-leo-v1").primary.sourceId);
+  assert.strictEqual(nodeAxisPacket.surfaceRequirements.axisMode.fallbackContentKey, "fallback-hook/sky-sign-copy/nodes/aquarius-leo");
+  assert.match(renderModelInput(nodeAxisPacket), /COMBINED NODE-AXIS MODE/u);
+  assert.match(renderModelInput(nodeAxisPacket), /Do not split the result into two articles/u);
+  const nodeAxisChecks = deterministicChecks({
+    opening: "The North Node in Aquarius and South Node in Leo enter on {{entryDate}}.",
+    tension: "A shared idea keeps moving after attention shifts away from one name.",
+    development: "The group keeps the useful change and releases the need for applause.",
+    close: "Before {{exitDate}}, the work no longer needs one name at the center.",
+    try_this: ["We can credit one contribution that improved a shared result.", "We can let one useful edit remain."]
+  }, { planet: "nodes", sign: "aquarius-leo" });
+  assert.strictEqual(nodeAxisChecks.astrology.planetNamed, true);
+  assert.strictEqual(nodeAxisChecks.astrology.signNamed, true);
   assert.doesNotMatch(renderModelInput(packet), /evidence shortfall|owner article about the exact placement|prewritten owner scenario/i);
   assert.match(renderModelInput(packet), /establish register and beat movement only/);
   assert.match(renderModelInput(packet), /not the continuous fallback structure/);
@@ -347,6 +464,31 @@ function main() {
   assert.match(reviewedFactRows.find((entry) => entry.id === "jupiter-leo").gift, /included in the win/u);
   assert.match(reviewedFactRows.find((entry) => entry.id === "neptune-aries").tldr, /imagination and idealism attach to action/u);
   assert.match(reviewedFactRows.find((entry) => entry.id === "pluto-aquarius").tldr, /power transforms through networks/u);
+  const neptuneAries = reviewedFactRows.find((entry) => entry.id === "neptune-aries");
+  const plutoAquarius = reviewedFactRows.find((entry) => entry.id === "pluto-aquarius");
+  const chironAries = reviewedFactRows.find((entry) => entry.id === "chiron-aries");
+  const northNodeAquarius = reviewedFactRows.find((entry) => entry.id === "north-node-aquarius");
+  const southNodeLeo = reviewedFactRows.find((entry) => entry.id === "south-node-leo");
+  assert.deepStrictEqual(neptuneAries.supportedDomains, ["ideals", "imagination", "inspiration", "belief", "courage", "new beginnings", "uncertainty around action"]);
+  assert.deepStrictEqual(plutoAquarius.supportedDomains, ["power", "systems", "groups and networks", "technology's effect on both", "generational change"]);
+  assert.deepStrictEqual(chironAries.supportedDomains, ["identity", "assertion", "self-worth", "taking up space", "courage", "healing and repair (wound language is literal here and licensed)"]);
+  assert.deepStrictEqual(northNodeAquarius.supportedDomains, ["growth direction and release", "personal spotlight versus community", "attention and applause", "shared projects", "collaboration"]);
+  assert.deepStrictEqual(northNodeAquarius.supportedDomains, southNodeLeo.supportedDomains);
+  assert.deepStrictEqual(neptuneAries.unsupportedDomainWarnings, ["do not make career, money, technology, politics, war, or health the main domain."]);
+  assert.strictEqual(neptuneAries.scenarioPolicy, "generational scale; scenes come from belief and inspired action blurring, not from one person's week.");
+  assert.deepStrictEqual(plutoAquarius.unsupportedDomainWarnings, ["do not make personal money, career, or romance the main domain; no named political events."]);
+  assert.strictEqual(plutoAquarius.scenarioPolicy, "era scale; the group and the person inside it.");
+  assert.deepStrictEqual(chironAries.unsupportedDomainWarnings, ["no medical claims; career and money are not the main domain."]);
+  assert.strictEqual(chironAries.scenarioPolicy, "generational wound carried in one recognizable person-scale moment.");
+  assert.deepStrictEqual(northNodeAquarius.unsupportedDomainWarnings, ["no career specifics, no money as main domain, no event prediction."]);
+  assert.strictEqual(northNodeAquarius.scenarioPolicy, "the axis is one story — every scene shows the pull toward one end and the release at the other.");
+  assert.deepStrictEqual(northNodeAquarius.unsupportedDomainWarnings, southNodeLeo.unsupportedDomainWarnings);
+  assert.strictEqual(northNodeAquarius.scenarioPolicy, southNodeLeo.scenarioPolicy);
+  assert.strictEqual(northNodeAquarius.axisPair.pairedPlacementId, southNodeLeo.id);
+  assert.strictEqual(southNodeLeo.axisPair.pairedPlacementId, northNodeAquarius.id);
+  assert.strictEqual(chironAries.runtimeEligible, false);
+  assert.strictEqual(northNodeAquarius.runtimeEligible, false);
+  assert.strictEqual(southNodeLeo.runtimeEligible, false);
 
   const readiness = buildReadinessReport();
   assert.strictEqual(readiness.totals.placements, 168);
@@ -586,7 +728,7 @@ function main() {
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
-  assert.strictEqual(fixtureAudit.sourceRecordCount, 28);
+  assert.strictEqual(fixtureAudit.sourceRecordCount, 30);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
   console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);
