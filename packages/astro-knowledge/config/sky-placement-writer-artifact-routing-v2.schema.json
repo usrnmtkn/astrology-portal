@@ -9,8 +9,8 @@
     "requestedReasoningEffort": { "const": "xhigh" },
     "actualReasoningEffort": { "const": "xhigh" },
     "laneId": { "const": "writer:sky-placement" },
-    "promptVersion": { "const": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1" },
-    "packetVersion": { "const": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found" },
+    "promptVersion": { "const": "sky-placement-writer-v15:cross-batch-move-variety-v1" },
+    "packetVersion": { "const": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1" },
     "retrievedOwnerSourceIds": { "type": "array", "minItems": 4, "maxItems": 6, "items": { "type": "string" } },
     "warmthOwnerSourceIds": { "type": "array", "items": { "type": "string" } },
     "routingMatchStatus": { "const": "matched" }

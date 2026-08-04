@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Capricorn on {{entryDate}}, and loose ideas start forming a plan. A vague concern becomes a direct question. Notes get sorted into steps. A conversation that has gone in circles finally ends with a decision someone can use.",
+      "tension": "The pressure begins when every thought has to prove its usefulness. Uncertainty starts to sound like failure. We choose words so carefully that nothing warm survives the edit. A cautious estimate gets repeated as a fixed outcome, and a useful plan becomes hard to change even after new information arrives. The silence may look responsible, but it leaves everyone else making decisions around what was never said.",
+      "development": "Mercury last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pattern can return anywhere facts need interpretation. An unfinished answer is treated as a bad answer. A practical concern becomes a reason to expect the worst. A plan is defended because changing it would admit that the first version was incomplete. Capricorn keeps Mercury focused on consequences and usable plans, but the mind can keep working the same conclusion long after the evidence has changed. By the time the missing words are finally spoken, their precision may no longer help. The other side has already filled in the silence.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "By {{exitDate}}, a precise explanation can arrive too late to change the decision made in its absence.",
+      "try_this": [
+        "We can ask one direct follow-up question where a missing fact is holding up a decision.",
+        "We can check one grim assumption against the facts before treating it as settled.",
+        "We can give one firm answer with the reason included instead of leaving the tone to carry it."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Capricorn on {{entryDate}}, and loose ideas start forming a plan. A vague concern becomes a direct question. Notes get sorted into steps. A conversation that has gone in circles finally ends with a decision someone can use.\n\nThe pressure begins when every thought has to prove its usefulness. Uncertainty starts to sound like failure. We choose words so carefully that nothing warm survives the edit. A cautious estimate gets repeated as a fixed outcome, and a useful plan becomes hard to change even after new information arrives. The silence may look responsible, but it leaves everyone else making decisions around what was never said.\n\nMercury last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pattern can return anywhere facts need interpretation. An unfinished answer is treated as a bad answer. A practical concern becomes a reason to expect the worst. A plan is defended because changing it would admit that the first version was incomplete. Capricorn keeps Mercury focused on consequences and usable plans, but the mind can keep working the same conclusion long after the evidence has changed. By the time the missing words are finally spoken, their precision may no longer help. The other side has already filled in the silence.\n\nBy {{exitDate}}, a precise explanation can arrive too late to change the decision made in its absence.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Capricorn on {{entryDate}}, and loose ideas start forming a plan. A vague concern becomes a direct question. Notes get sorted into steps. A conversation that has gone in circles finally ends with a decision someone can use.\n\nThe pressure begins when every thought has to prove its usefulness. Uncertainty starts to sound like failure. We choose words so carefully that nothing warm survives the edit. A cautious estimate gets repeated as a fixed outcome, and a useful plan becomes hard to change even after new information arrives. The silence may look responsible, but it leaves everyone else making decisions around what was never said.\n\nMercury last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pattern can return anywhere facts need interpretation. An unfinished answer is treated as a bad answer. A practical concern becomes a reason to expect the worst. A plan is defended because changing it would admit that the first version was incomplete. Capricorn keeps Mercury focused on consequences and usable plans, but the mind can keep working the same conclusion long after the evidence has changed. By the time the missing words are finally spoken, their precision may no longer help. The other side has already filled in the silence.\n\nBy {{exitDate}}, a precise explanation can arrive too late to change the decision made in its absence.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "mercury-capricorn"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

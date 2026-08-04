@@ -1,0 +1,21 @@
+{
+  "id": "sky-placement-writer-batch-4-owner-edited-approved-v1-exact-approval",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "sky-placement-batch",
+  "articleBeat": "seven-full-continuous-fallback-articles",
+  "ownerStatement": "Re-lint all seven; with these changes I explicitly approve all seven batch-4 drafts as owner-approved fallback articles for their placement pages. Chiron and Nodes rows stay runtimeEligible: false pending their own serving review.",
+  "before": "The seven unchanged batch-4 Sol outputs before five owner-directed line edits.",
+  "beforeIsRejected": false,
+  "after": "Exact approved seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-4-owner-edited-approved-v1.json#articles (SHA-256 981d59629d5fb83c42db63c8705a138c8774c11edfcb42f7b87905766fabb509).",
+  "whatChanged": "Applied five exact owner-directed line edits, recorded three narrow idiomatic lint waivers, and changed no other article wording. No model or judge calls were made in the approval pass.",
+  "ownerReason": "The edits remove repeated action templates, make the Aquarius sentence more natural, and let the Chiron close stop at the consequence.",
+  "failureTags": [],
+  "approvalScope": "owner_approved_fallback_articles_for_placement_pages_serving_separate",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/sky-placement-writer-batch-4-owner-edited-approved-v1.json",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-4-owner-edited-approved-v1.md",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-4-owner-edited-approved-v1-lint.json",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/OWNER-REVIEW.md",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/run-record.json"
+  ]
+}

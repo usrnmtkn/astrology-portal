@@ -1,0 +1,169 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "pluto",
+  "sign": "aquarius",
+  "outDir": "/private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/pluto-aquarius",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:aquarius-season-2025:p052:window-3-3",
+    "owner-article:aquarius-full-moon-2025:p001:window-2-4",
+    "owner-article:gemini-season-2025:p018:window-2-3",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-article:first-new-moon-of-2025-aquarius-new-moon:p005:window-1-3",
+    "owner-article:mercury-retrograde-in-leo:p037:window-7-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:pluto-aquarius",
+    "planet": "pluto",
+    "sign": "aquarius",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/pluto-aquarius.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With Pluto in Aquarius, deep change works on systems: who holds power, how groups organize, and what technology does to both. The transformation is generational rather than personal."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/pluto.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Pluto describes deep change, power, control, fear, survival, compulsion, hidden material, and the process of confronting what can no longer stay buried. It shows where life asks for honesty, release, and transformation at the root. Pluto moves very slowly, spending many years in each sign. Its house transits mark long chapters of pressure, excavation, ending, renewal, and the gradual transformation of a life area. Represents a generation with transformative experiences in the realms of innovation, technology, and societal change. This placement can bring transformations in areas related to progress, revolution, and collective consciousness."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "capricorn",
+          "priorSignEntryDate": "September 1, 2024",
+          "priorSignExitDate": "November 19, 2024",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "renderOwner": "engine",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 248 years",
+          "typicalSignStay": "roughly 12 to 31 years per sign",
+          "variabilityNote": "Pluto has an elliptical orbit, so its time in each sign varies widely. The current sign range must come from the calculation rather than the average residency."
+        }
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": [
+          "eventsDuringTransit"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "aspect_insert",
+        "renderOwner": "engine",
+        "maxEvents": 2,
+        "facts": {
+          "eventsDuringTransit": [
+            {
+              "id": "aspect-neptune-sextile-pluto-2026-07-25t05:26:37.999z",
+              "date": "July 25, 2026",
+              "body": "pluto-sextile-neptune",
+              "eventType": "exact-aspect",
+              "meaning": "Imagination meets power. A deep generational signature: intensified collective imagination and transformation. The sextile makes this a natural strength: Heightened collective vision. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json"
+            },
+            {
+              "id": "aspect-uranus-trine-pluto-2026-07-18t04:43:21.999z",
+              "date": "July 18, 2026",
+              "body": "pluto-trine-uranus",
+              "eventType": "exact-aspect",
+              "meaning": "Disruption meets power. Upheaval and radical transformation, often tied to social change; quick adaptation to new technology. The trine makes this a natural strength: Fast, effective adaptation to change. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/uranus-trine-pluto.json"
+            }
+          ]
+        }
+      },
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": [
+          "previousResidencyEntryDate",
+          "previousResidencyExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "renderOwner": "writer",
+        "facts": {
+          "sign": "aquarius",
+          "entryDate": "March 23, 2023",
+          "exitDate": "June 11, 2023",
+          "renderTokens": {
+            "entryDate": "{{previousResidencyEntryDate}}",
+            "exitDate": "{{previousResidencyExitDate}}"
+          }
+        }
+      }
+    ],
+    "inactive": []
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet pluto --sign aquarius --engine-facts /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/pluto-aquarius/engine-facts.json --out /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-4-readiness-2026-08-04/pluto-aquarius"
+}

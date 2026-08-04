@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mercury",
+  "sign": "capricorn",
+  "timeZone": "America/New_York",
+  "transitStart": "December 25, 2026",
+  "transitEnd": "January 13, 2027",
+  "transitStartIso": "2026-12-25T18:22:29.999Z",
+  "transitEndIso": "2027-01-13T06:05:51.999Z",
+  "priorSign": "sagittarius",
+  "priorSignEntryDate": "December 6, 2026",
+  "priorSignExitDate": "December 25, 2026",
+  "previousResidency": {
+    "sign": "capricorn",
+    "entryDate": "January 8, 2025",
+    "exitDate": "January 27, 2025",
+    "entryDateIso": "2025-01-08T10:29:57.999Z",
+    "exitDateIso": "2025-01-28T02:52:41.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mercury-square-neptune-2026-12-26t19:46:48.999z",
+      "body": "mercury-square-neptune",
+      "bodies": [
+        "mercury",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "December 26, 2026",
+      "dateIso": "2026-12-26T19:46:48.999Z",
+      "rank": 1,
+      "meaning": "Mind meets imagination. Strong imagination and intuitive, associative thinking. Psychologically the square is inner tension to integrate: Slippery memory and blurred facts; what's real and what's imagined get confused. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mercury-square-neptune.json"
+    },
+    {
+      "id": "aspect-mercury-square-saturn-2026-12-30t23:54:36.999z",
+      "body": "mercury-square-saturn",
+      "bodies": [
+        "mercury",
+        "saturn"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "December 30, 2026",
+      "dateIso": "2026-12-30T23:54:36.999Z",
+      "rank": 2,
+      "meaning": "Mind meets discipline. Serious, deep, careful thinking; apparent slowness that is caution, not lack of intelligence. Psychologically the square is inner tension to integrate: Brooding and mental heaviness; the remedy is keeping the mind on useful work. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mercury-square-saturn.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mercury-square-neptune.json",
+      "packages/astro-knowledge/data/transits/mercury-square-saturn.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

@@ -23,6 +23,18 @@
       "items": { "type": "string" }
     },
     "scenarioPolicy": { "type": "string" },
+    "axisPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["axisId", "role", "pairedPlacementId", "pairedPlanet", "pairedSign"],
+      "properties": {
+        "axisId": { "type": "string" },
+        "role": { "enum": ["growth-direction", "release"] },
+        "pairedPlacementId": { "type": "string" },
+        "pairedPlanet": { "enum": ["north-node", "south-node"] },
+        "pairedSign": { "type": "string" }
+      }
+    },
     "runtimeEligible": { "type": "boolean" },
     "note": { "type": "string" },
     "source": {

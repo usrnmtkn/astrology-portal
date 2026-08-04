@@ -7,6 +7,24 @@
   "body": "With the North Node in Aquarius, development moves away from the personal spotlight and toward community, collaboration, and ideas bigger than one name. The unfamiliar direction is the growth direction.",
   "gift": "Collective vision, collaboration, and progress that outlives its author.",
   "challenge": "The pull back toward center stage, approval, and being the exception.",
+  "supportedDomains": [
+    "growth direction and release",
+    "personal spotlight versus community",
+    "attention and applause",
+    "shared projects",
+    "collaboration"
+  ],
+  "unsupportedDomainWarnings": [
+    "no career specifics, no money as main domain, no event prediction."
+  ],
+  "scenarioPolicy": "the axis is one story — every scene shows the pull toward one end and the release at the other.",
+  "axisPair": {
+    "axisId": "nodes-aquarius-leo",
+    "role": "growth-direction",
+    "pairedPlacementId": "south-node-leo",
+    "pairedPlanet": "south-node",
+    "pairedSign": "leo"
+  },
   "note": "Owner-approved fact boundary from the 2026-08-04 missing-hook sign-off sheet.",
   "runtimeEligible": false,
   "voiceNeutral": true,

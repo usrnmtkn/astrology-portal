@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "mars",
+  "sign": "pisces",
+  "timeZone": "America/New_York",
+  "transitStart": "February 10, 2028",
+  "transitEnd": "March 19, 2028",
+  "transitStartIso": "2028-02-10T16:31:48.999Z",
+  "transitEndIso": "2028-03-19T19:35:52.999Z",
+  "priorSign": "aquarius",
+  "priorSignEntryDate": "January 3, 2028",
+  "priorSignExitDate": "February 10, 2028",
+  "previousResidency": {
+    "sign": "pisces",
+    "entryDate": "March 2, 2026",
+    "exitDate": "April 9, 2026",
+    "entryDateIso": "2026-03-02T14:15:50.999Z",
+    "exitDateIso": "2026-04-09T19:36:09.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-mars-square-uranus-2028-02-18t04:55:17.999z",
+      "body": "mars-square-uranus",
+      "bodies": [
+        "mars",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "February 17, 2028",
+      "dateIso": "2028-02-18T04:55:17.999Z",
+      "rank": 1,
+      "meaning": "Action meets disruption. Impulsive, risk-taking, rebellious energy, with impatience and a pull toward technology. Psychologically the square is inner tension to integrate: Accident-proneness, a temper that goes off like a shot, and unpredictable tactics that either win big or backfire fast. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/mars-square-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-04T16:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-04T16:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/mars-square-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

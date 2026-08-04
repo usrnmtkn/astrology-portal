@@ -1,0 +1,169 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 1,
+    "total": 2
+  },
+  "planet": "mercury",
+  "sign": "aquarius",
+  "outDir": "/private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-3-preflight-2026-08-04/mercury-aquarius",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:aquarius-season-2025:p052:window-3-3",
+    "owner-article:aquarius-full-moon-2025:p001:window-2-4",
+    "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+    "owner-article:mercury-in-virgo-2025:p006:window-2-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:mercury-aquarius",
+    "planet": "mercury",
+    "sign": "aquarius",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/mercury-aquarius.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With Mercury in Aquarius, thought moves toward patterns, future possibilities, and unconventional solutions. You communicate best when ideas have room to be original."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/mercury.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Mercury describes the mind in motion: thought, language, questions, interpretation, learning, writing, conversation, and the way information becomes useful. It shows how someone notices patterns, names what is happening, and makes decisions from what they observe. Mercury moves through all twelve signs in roughly a year, with retrograde periods that slow down communication, review, and decision-making. Its sign describes the style of thinking; its house shows where the mind stays busy. With Mercury in Aquarius, your thinking is innovative, idealistic, and somewhat unconventional. You enjoy intellectual exchanges about progressive ideas. You have the ability to communicate your unique ideas effectively."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "capricorn",
+          "priorSignEntryDate": "December 25, 2026",
+          "priorSignExitDate": "January 13, 2027",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "renderOwner": "engine",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 1 year because Mercury stays near the Sun",
+          "typicalSignStay": "roughly 2 weeks to 2 months per sign",
+          "variabilityNote": "A retrograde in the sign can extend the residency."
+        }
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": [
+          "eventsDuringTransit"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "aspect_insert",
+        "renderOwner": "engine",
+        "maxEvents": 2,
+        "facts": {
+          "eventsDuringTransit": [
+            {
+              "id": "aspect-mercury-sextile-neptune-2027-01-14t09:28:51.999z",
+              "date": "January 14, 2027",
+              "body": "mercury-sextile-neptune",
+              "eventType": "exact-aspect",
+              "meaning": "Mind meets imagination. Strong imagination and intuitive, associative thinking. The sextile makes this a natural strength: Inspired ideation and a feel for the unspoken. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/mercury-sextile-neptune.json"
+            },
+            {
+              "id": "aspect-mercury-trine-uranus-2027-01-14t10:02:03.999z",
+              "date": "January 14, 2027",
+              "body": "mercury-trine-uranus",
+              "eventType": "exact-aspect",
+              "meaning": "The mind meets disruption and originality. Fast, unconventional, leap-of-insight thinking that resists linear order. The trine makes this a natural strength: Brilliant, inventive insight and quick grasp of new systems and technology. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/mercury-trine-uranus.json"
+            }
+          ]
+        }
+      },
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": [
+          "previousResidencyEntryDate",
+          "previousResidencyExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "renderOwner": "writer",
+        "facts": {
+          "sign": "aquarius",
+          "entryDate": "January 27, 2025",
+          "exitDate": "February 14, 2025",
+          "renderTokens": {
+            "entryDate": "{{previousResidencyEntryDate}}",
+            "exitDate": "{{previousResidencyExitDate}}"
+          }
+        }
+      }
+    ],
+    "inactive": []
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --planet mercury --sign aquarius --engine-facts /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-3-preflight-2026-08-04/mercury-aquarius/engine-facts.json --out /private/tmp/tldrastro-sky-writeups/packages/astro-knowledge/review/sky-placement-writer-batch-3-preflight-2026-08-04/mercury-aquarius"
+}

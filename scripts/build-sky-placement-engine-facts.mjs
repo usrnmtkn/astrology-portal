@@ -34,6 +34,21 @@ function slug(value) {
   return String(value).trim().toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "");
 }
 
+const oppositeSigns = {
+  aries: "libra",
+  taurus: "scorpio",
+  gemini: "sagittarius",
+  cancer: "capricorn",
+  leo: "aquarius",
+  virgo: "pisces",
+  libra: "aries",
+  scorpio: "taurus",
+  sagittarius: "gemini",
+  capricorn: "cancer",
+  aquarius: "leo",
+  pisces: "virgo"
+};
+
 function localDate(value, timeZone) {
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -73,12 +88,26 @@ async function main() {
 
   try {
     const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
+    const combinedNodeAxis = cli.planet === "nodes";
+    const [northSign, southSign, extraAxisSign] = combinedNodeAxis ? cli.sign.split("-") : [];
+    if (combinedNodeAxis && (!northSign || !southSign || extraAxisSign || oppositeSigns[northSign] !== southSign)) {
+      throw new Error("Combined Nodes engine facts require --planet nodes --sign <north-sign>-<opposite-south-sign>.");
+    }
     const raw = await ephemeris.getSkyPlacementTransitFacts({
-      planet: cli.planet,
-      sign: cli.sign,
+      planet: combinedNodeAxis ? "north-node" : cli.planet,
+      sign: combinedNodeAxis ? northSign : cli.sign,
       referenceDate: cli.referenceDate,
       timeZone: cli.timeZone
     });
+    const pairedRaw = combinedNodeAxis ? await ephemeris.getSkyPlacementTransitFacts({
+      planet: "south-node",
+      sign: southSign,
+      referenceDate: cli.referenceDate,
+      timeZone: cli.timeZone
+    }) : null;
+    if (pairedRaw && (raw.transitStart !== pairedRaw.transitStart || raw.transitEnd !== pairedRaw.transitEnd)) {
+      throw new Error(`Combined Nodes engine facts disagree on the ${northSign}/${southSign} transit window.`);
+    }
     const seenEventFamilies = new Set();
     const eventsDuringTransit = raw.rankedEventsDuringTransit
       .map((event) => {
@@ -105,18 +134,27 @@ async function main() {
     const facts = {
       schemaVersion: 1,
       factOwner: "app-engine",
-      planet: slug(raw.planet),
-      sign: slug(raw.sign),
+      planet: combinedNodeAxis ? "nodes" : slug(raw.planet),
+      sign: combinedNodeAxis ? `${northSign}-${southSign}` : slug(raw.sign),
+      ...(combinedNodeAxis ? {
+        axisPair: {
+          axisId: `nodes-${northSign}-${southSign}`,
+          pairLink: `north-node-${northSign}<->south-node-${southSign}`,
+          reciprocal: true,
+          northNode: { planet: "north-node", sign: northSign },
+          southNode: { planet: "south-node", sign: southSign }
+        }
+      } : {}),
       timeZone: raw.timeZone,
       transitStart: localDate(raw.transitStart, cli.timeZone),
       transitEnd: localDate(raw.transitEnd, cli.timeZone),
       transitStartIso: raw.transitStart,
       transitEndIso: raw.transitEnd,
-      priorSign: slug(raw.priorSign),
+      priorSign: combinedNodeAxis ? `${slug(raw.priorSign)}-${slug(pairedRaw.priorSign)}` : slug(raw.priorSign),
       priorSignEntryDate: localDate(raw.priorSignEntryDate, cli.timeZone),
       priorSignExitDate: localDate(raw.priorSignExitDate, cli.timeZone),
       previousResidency: raw.previousResidency ? {
-        sign: slug(raw.previousResidency.sign),
+        sign: combinedNodeAxis ? `${northSign}-${southSign}` : slug(raw.previousResidency.sign),
         entryDate: localDate(raw.previousResidency.entryDate, cli.timeZone),
         exitDate: localDate(raw.previousResidency.exitDate, cli.timeZone),
         entryDateIso: raw.previousResidency.entryDate,
