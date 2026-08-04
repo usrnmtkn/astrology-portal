@@ -3,10 +3,28 @@
   "kind": "sign",
   "planet": "jupiter",
   "key": "libra",
-  "tldr": "Jupiter in Libra: you grow through relationship, fairness, and beauty",
-  "body": "Jupiter in Libra: you grow through relationship, fairness, and beauty. Luck comes via partnership and diplomacy. Watch: indecision and over-accommodating.",
-  "gift": "At work this reads as growth and expansion carried out with relational.",
+  "tldr": "Jupiter in Libra expands through connection, fairness, beauty, and shared perspective",
+  "body": "Jupiter in Libra expands through connections, fairness, beauty, diplomacy, and shared perspective. Friendships, collaborations, alliances, agreements, social ties, and romantic relationships can all carry the transit. Watch: indecision and over-accommodating.",
+  "gift": "Growth becomes visible through connections that widen perspective, access, or opportunity.",
   "challenge": "indecision and over-accommodating.",
+  "collectiveGift": "Growth and opportunity develop through connections of many kinds, including friendships, collaborations, alliances, agreements, social ties, and romantic relationships. Romantic partnership is one expression of the placement, not its default subject.",
+  "supportedDomains": [
+    "connections",
+    "friendships",
+    "collaborations",
+    "alliances",
+    "agreements",
+    "social settings",
+    "romantic relationships",
+    "fairness",
+    "diplomacy",
+    "artistic judgment",
+    "beauty"
+  ],
+  "unsupportedDomainWarnings": [
+    "Do not make career, work, money, credit, spending, technology, politics, war, travel, higher education, law, houses, or natal interpretation the article's main domain without another verified source."
+  ],
+  "scenarioPolicy": "Choose one recognizable connection and follow one sequence. Do not default to a romantic couple. A friendship, collaboration, alliance, agreement, social tie, or romantic relationship is valid only when that specific connection best expresses the pressure in the article.",
   "note": "Merged with approved project planet-through-sign material; source file was not copied into the repository.",
   "voiceNeutral": true,
   "status": "REVIEWED"

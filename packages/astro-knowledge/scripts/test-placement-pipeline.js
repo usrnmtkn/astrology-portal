@@ -32,14 +32,14 @@ const bannedConstructions = require(path.join("..", "voice", "banned-constructio
 const pointSignColors = require(path.join("..", "voice", "tldr-astro", "sign-colors-v2-points.json"));
 
 const good = {
-  tagline: "Play the long game",
+  tagline: "The argument changes when someone finally asks the direct question.",
   moves: [
     "Pick the one problem worth this much focus and put the grudge work into that instead.",
     "Ask the direct question before gathering one more piece of evidence."
   ],
   hook: "The argument rehearsed in the shower finally has somewhere to go. Mars in Scorpio does not raise its voice; it waits.",
   lived: "For about six or seven weeks, effort goes underground: the quiet fix nobody announces, the grudge worked like a project, the text drafted four times and sent once. We stop pushing in the open and start playing the long game.",
-  turn: "The trap is strategy curdling into surveillance, testing people instead of asking them. Held heat does not disappear; it compounds until somebody pays the interest. Aim it at the problem and the problem finally moves. Aim it at people and it always comes back around."
+  turn: "The trap is strategy curdling into surveillance, testing someone instead of asking them. Held heat does not disappear; it compounds until somebody pays the interest. Aim it at the problem and the problem finally moves. Aim it at someone and it always comes back around."
 };
 
 async function main() {
@@ -62,10 +62,17 @@ async function main() {
       turn: e.turn,
       moves: e.moves,
       planet: e.planet,
-      sign: e.sign
+      sign: e.sign,
+      allowLegacyGenericPeople: true,
+      allowLegacyTagline: true
     });
-    assert.strictEqual(r.score, 3, `${e.sourceId} candidate should lint 3, got ${r.score}: ${JSON.stringify(r.findings)}`);
-    assert.strictEqual(r.fails + r.warns, 0, `${e.sourceId} candidate should have no findings`);
+    if (e.ownerFeedbackStatus === "rejected") {
+      assert.strictEqual(r.score, 1, `${e.sourceId} must remain rejected under the active owner rule.`);
+      assert(r.findings.some((finding) => finding.decisionId === "CF-018"));
+    } else {
+      assert.strictEqual(r.score, 3, `${e.sourceId} preserved pre-rule candidate should lint 3 under its explicit legacy exception, got ${r.score}: ${JSON.stringify(r.findings)}`);
+      assert.strictEqual(r.fails + r.warns, 0, `${e.sourceId} preserved pre-rule candidate should have no other findings`);
+    }
   }
   assert.strictEqual(historicalPlacementFixtures.editorialStatus, "historical_owner_approved");
   assert.strictEqual(historicalPlacementFixtures.currentSkyCalibrationEligible, false);
@@ -79,8 +86,8 @@ async function main() {
   assert.strictEqual(approvedCalibrationV3.canonical, false);
   assert.strictEqual(approvedCalibrationV3.calibrationEligible, true);
   assert.strictEqual(approvedCalibrationV3.generationEvidenceAuthorized, false);
-  assert.strictEqual(lintArticle({ ...approvedCalibrationV3 }).score, 3);
-  console.log(`OK  ${spec.exemplars.length} collective adaptations lint 3 but remain needs_review; historical originals are inactive`);
+  assert.strictEqual(lintArticle({ ...approvedCalibrationV3, allowLegacyTagline: true, allowLegacyRepeatedGenericPerson: true }).score, 3);
+  console.log(`OK  preserved collective adaptations retain provenance while explicit owner rejection remains enforceable`);
 
   // 2. clean injected draft -> clean result + three hook rows
   const cleanRun = await generateArticle(
@@ -114,9 +121,11 @@ async function main() {
   assert.strictEqual(legacyRun.rows.length, 3);
   console.log("OK  legacy three-slot article still supported");
 
-  // 2c. extended-slot linting: bad tagline/moves fail
-  const badTagline = lintArticle({ ...good, tagline: "A very long tagline that keeps going and going", planet: "mars" });
-  assert.ok(badTagline.findings.some((f) => f.term === "tagline-length"), "overlong tagline must fail");
+  // 2c. extended-slot linting: compressed taglines and bad moves fail
+  const badTagline = lintArticle({ ...good, tagline: "Stop calling silence peace", planet: "mars" });
+  assert.ok(badTagline.findings.some((f) => f.decisionId === "CF-006"), "compressed slogan tagline must fail");
+  const clearTagline = lintArticle({ ...good, tagline: "The disagreement starts before the cancellation.", planet: "mars" });
+  assert.ok(!clearTagline.findings.some((f) => f.decisionId === "CF-006"), "clear full-sentence tagline must pass");
   const badMoves = lintArticle({ ...good, moves: ["Only one move."], planet: "mars" });
   assert.ok(badMoves.findings.some((f) => f.term === "moves-count"), "single move must fail");
   const genericMoves = lintArticle({ ...good, moves: ["Trust the process and see.", "Embrace the change fully."], planet: "mars" });
@@ -183,15 +192,35 @@ async function main() {
       `reviewed first-read failure must fail mechanically: ${phrase}`
     );
   }
-  const allowedCollective = lintArticle({
+  const genericPeopleOpener = lintArticle({
     ...good,
     lived: "People push hard for the answer, and someone finally names the cost. We stop when the result no longer justifies the effort.",
     planet: "mars",
     sign: "scorpio"
   });
   assert.ok(
-    !allowedCollective.findings.some((finding) => /people|someone|\bwe\b/i.test(finding.term || "")),
-    "allowed collective language must not be a mechanical violation"
+    genericPeopleOpener.findings.some((finding) => finding.severity === "fail" && /People/.test(finding.match || "")),
+    "Current Sky must reject the generic noun people"
+  );
+  const genericPeopleMidSentence = lintArticle({
+    ...good,
+    lived: "A team pushes for the answer, and the result changes what people accept. We stop when the effort no longer leads anywhere.",
+    planet: "mars",
+    sign: "scorpio"
+  });
+  assert.ok(
+    genericPeopleMidSentence.findings.some((finding) => finding.severity === "fail" && /^people$/i.test(finding.match || "")),
+    "Current Sky must reject people anywhere in generated copy"
+  );
+  const allowedCollective = lintArticle({
+    ...good,
+    lived: "A team pushes hard for the answer, and someone finally names the cost. We stop when the result no longer justifies the effort.",
+    planet: "mars",
+    sign: "scorpio"
+  });
+  assert.ok(
+    !allowedCollective.findings.some((finding) => /someone|\bwe\b/i.test(finding.term || "")),
+    "specific collective subjects, someone, and we must remain allowed"
   );
   const performanceSky = lintArticle({
     ...good,
@@ -200,7 +229,7 @@ async function main() {
     sign: "scorpio"
   });
   assert.ok(
-    performanceSky.findings.some((finding) => finding.severity === "fail" && /perform/.test(finding.term)),
+    performanceSky.findings.some((finding) => finding.severity === "fail" && finding.decisionId === "CF-002"),
     "placement copy must reject performance framing"
   );
   console.log("OK  tagline, hook-quote, meaning-paragraph, and moves rules enforced");
@@ -262,7 +291,9 @@ async function main() {
     assert.match(prompt, /No sentence from PLANET \+ SIGN MEANING LAYER may appear verbatim/);
     assert.match(prompt, /SCENE, NOT INVENTORY/);
     assert.match(prompt, /Build pressure -> choice -> consequence/);
-    assert.match(prompt, /ALLOWED COLLECTIVE LANGUAGE/);
+    assert.match(prompt, /CURRENT SKY SUBJECTS/);
+    assert.match(prompt, /EVERYDAY LANGUAGE/);
+    assert.doesNotMatch(prompt, /Owner words prominent on planet-article:[^\n]*\bpeople\b/);
     assert.match(prompt, /CURRENT SKY IS COLLECTIVE/);
     assert.match(prompt, /FIRST-READ NATURAL ENGLISH RULE/);
     assert.match(prompt, /OBSERVATION BEFORE POLISH/);
@@ -299,20 +330,18 @@ async function main() {
     "approved point/sign colors must reach the authoring prompt without the legacy Right now wrapper"
   );
   for (const tier of Object.keys(spec.planetTierRegister.hints)) {
-    const jp = buildJudgePrompt(good, { tier, planet: "mars", sign: "scorpio" });
-    assert.ok(jp.includes("CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD"), `judge prompt must label owner-approved gold explicitly for tier ${tier}`);
+    const jp = buildJudgePrompt(good, { tier, planet: "mars", sign: "scorpio", deterministicResults: { score: 3, fails: 0 } });
+    assert.ok(jp.includes("LIMITED OWNER-APPROVED CALIBRATION EVIDENCE"), `judge prompt must label limited owner-approved evidence explicitly for tier ${tier}`);
     assert.ok(jp.includes("The person who remembers every birthday, keeps the spare key"), `judge prompt must carry exact approved v3 calibration evidence for tier ${tier}`);
     assert.ok(!jp.includes("Nobody claps for the thing we never show them"), `judge prompt must exclude collective adaptation candidates for tier ${tier}`);
-    assert.ok(jp.includes("voice/banned-constructions.json"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
-    assert.ok(jp.includes("FLAT INVENTORY"), `judge prompt must reject administrative example inventories for tier ${tier}`);
-    assert.ok(jp.includes("ALLOWED COLLECTIVE LANGUAGE"), `judge prompt must protect valid collective language for tier ${tier}`);
-    assert.ok(jp.includes("CURRENT SKY IS COLLECTIVE"), `judge prompt must enforce collective Current Sky for tier ${tier}`);
-    assert.ok(jp.includes("FIRST-READ NATURAL ENGLISH RULE"), `judge prompt must run a first-read natural-English review for tier ${tier}`);
-    assert.ok(jp.includes("OBSERVATION BEFORE POLISH"), `judge prompt must reject slogan-first hooks for tier ${tier}`);
-    assert.ok(jp.includes("STACKED ENDING RULE"), `judge prompt must reject dramatic or doubled turns for tier ${tier}`);
-    assert.ok(jp.includes("Score 3 does not require flawless prose"), `judge prompt must preserve proportional score-3 tolerance for tier ${tier}`);
-    assert.ok(jp.includes("OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE"), `judge prompt must label positive feedback without converting it to owner approval for tier ${tier}`);
-    assert.ok(jp.includes("owner-review-uranus-cancer-lived-2026-08-02"), `judge prompt must carry directional lived-beat feedback for tier ${tier}`);
+    assert.ok(jp.includes("[ED-013]") && jp.includes("CC/SD constructions"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
+    assert.ok(jp.includes("[ED-001]") && jp.includes("ordinary, current language"), `judge prompt must enforce everyday language for tier ${tier}`);
+    assert.ok(jp.includes("[ED-003]") && jp.includes("never uses you"), `judge prompt must enforce collective Current Sky for tier ${tier}`);
+    assert.ok(jp.includes("[ED-005]") && jp.includes("second conclusion"), `judge prompt must reject stacked endings for tier ${tier}`);
+    assert.ok(jp.includes("Does every central sentence sound natural and literal on first read?"), `judge prompt must run a first-read natural-English review for tier ${tier}`);
+    assert.ok(jp.includes("A minor broad sentence may survive"), `judge prompt must preserve proportional score-3 tolerance for tier ${tier}`);
+    assert.ok(jp.includes("DETERMINISTIC CHECK RESULTS") && jp.includes('"fails": 0'), `judge prompt must receive deterministic results for tier ${tier}`);
+    assert.ok(!jp.includes("OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE"), `judge prompt must exclude directional evidence for tier ${tier}`);
   }
   assert.strictEqual(TIER_OF["north-node"], "social");
   console.log("OK  generation + judge prompts build for every sourced planet and every tier");

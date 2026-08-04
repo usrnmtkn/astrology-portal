@@ -1,0 +1,17 @@
+{
+  "id": "sky-placement-pilot-mercury-pisces-owner-line-edit-v1",
+  "feedbackKind": "preferred_version",
+  "surface": "sky-placement",
+  "planet": "mercury",
+  "sign": "pisces",
+  "articleBeat": "full_article",
+  "ownerStatement": "Apply the owner-directed line edit: replace the invented 'circle the zodiac' phrase with 'all twelve signs' wording, re-lint, and hold for owner voice review.",
+  "before": "Mercury circles the zodiac in about 1 year because it stays near the Sun.",
+  "after": "Mercury moves through all twelve signs in about 1 year because it stays near the Sun.",
+  "whatChanged": "Replaced the recurring Sol 'circle the zodiac' attractor with the owner-directed ordinary cycle wording. The rest of the draft remains unchanged.",
+  "ownerReason": "The scene and sequence are strong; the failure is mechanical and should be corrected without regenerating the draft.",
+  "failureTags": ["banned-zodiac-wording"],
+  "sourcePaths": [
+    "packages/astro-knowledge/review/sky-placement-writer-pilot-mercury-pisces-v1/result.json"
+  ]
+}
