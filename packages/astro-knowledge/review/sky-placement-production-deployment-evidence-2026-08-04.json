@@ -1,0 +1,23 @@
+{
+  "id": "sky-placement-production-deployment-evidence-2026-08-04",
+  "deployed_package_version": "v3-2026-08-04b",
+  "verified_at": "2026-08-04T18:17:03Z",
+  "source": {
+    "provider": "Vercel",
+    "deployment_id": "dpl_GxWYk5B8bKdxEices36VEmf1G2mA",
+    "target": "production",
+    "ready_state": "READY",
+    "git_ref": "main",
+    "git_commit": "23021c2ffc9260554d9a126ab74d45a0a5916795",
+    "aliases": [
+      "https://tldrastro.vercel.app",
+      "https://astrology-portal.vercel.app",
+      "https://tldrastro-git-main-usrnmtkns-projects.vercel.app"
+    ]
+  },
+  "verification": {
+    "vercelStatusCheck": "success",
+    "productionHealthEndpoint": "ok",
+    "productionHealthTimeZone": "America/New_York"
+  }
+}

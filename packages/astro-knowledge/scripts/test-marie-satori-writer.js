@@ -42,6 +42,31 @@ function main() {
     assert.strictEqual(approvedFallback.useAsContextualEvidence, false);
   }
 
+  const batch2Approved = require(path.join("..", "review", "sky-placement-writer-batch-2-owner-edited-approved-v1.json"));
+  assert.strictEqual(batch2Approved.articles.length, 7);
+  assert.strictEqual(batch2Approved.ownerApproved, true);
+  assert.strictEqual(batch2Approved.servingAuthorized, false);
+  assert.strictEqual(batch2Approved.servingStatus, "staged_pending_batch_2_serving_diff");
+  assert.strictEqual(batch2Approved.generationEvidence, false);
+  assert(batch2Approved.articles.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.reviewStatus === "approved"
+    && entry.ownerApproved === true
+    && entry.renderEligible === false
+    && entry.servingStatus === "staged_pending_batch_2_serving_diff"
+    && entry.generationEvidence === false
+    && entry.promotionAuthorized === false
+    && entry.canonical === false
+  )));
+  assert(batch2Approved.articles.every((entry) => deterministicChecks(entry.article, {
+    planet: entry.planet,
+    sign: entry.sign
+  }).surfaceLint.score === 3));
+  assert(!/\b(?:leverage|reveals?)\b/iu.test(JSON.stringify(batch2Approved.articles.map((entry) => entry.article))));
+  const batch2Taurus = batch2Approved.articles.find((entry) => entry.sign === "taurus").article;
+  assert.strictEqual(batch2Taurus.close, "Before {{exitDate}}, the facts may have changed while the old answer still sounds certain.");
+  assert.strictEqual(batch2Taurus.try_this[0], "We can ask what has changed since we last looked at one thing we consider settled.");
+
   const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
   const requiredTags = [
     "polished_but_flat", "abstract_hook", "abstract_consequence", "requires_interpretation",
@@ -247,6 +272,45 @@ function main() {
       outputBans: { fail: [{ term: "this energy", reason: "name the behavior" }], warn: [] }
     }
   }), /surface\.articleStructure\.factGatedSlots\.0\.houseExample matched fail outputBan/u);
+  const mercuryTaurusPacket = buildPacket({
+    planet: "mercury",
+    sign: "taurus",
+    requestedBeat: "full_article",
+    emphasisBeat: "turn",
+    task: "Compile the approved Mercury in Taurus fact boundary."
+  });
+  assert.match(mercuryTaurusPacket.verifiedAstrology.combinedMeaning, /settle into something useful and real/u);
+  assert.strictEqual(
+    assertPacketQuotablesPassOutputBans({
+      verifiedAstrology: mercuryTaurusPacket.verifiedAstrology,
+      structuralSlots: mercuryTaurusPacket.structuralSlots,
+      surface: require(path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json"))
+    }).passed,
+    true,
+    "the exact owner-approved Mercury in Taurus settle-into fact sentence must pass packet-source self-lint"
+  );
+  const chironPlanetary = require(path.join(packageRoot, "data", "planetary", "chiron.json"));
+  const lunarNodesPlanetary = require(path.join(packageRoot, "data", "planetary", "lunar-nodes.json"));
+  assert.strictEqual(chironPlanetary.status, "REVIEWED");
+  assert.strictEqual(chironPlanetary.signs.length, 12);
+  assert(chironPlanetary.provenance.length >= 9);
+  assert.strictEqual(lunarNodesPlanetary.status, "REVIEWED");
+  assert.strictEqual(lunarNodesPlanetary.signs.length, 24);
+  assert(lunarNodesPlanetary.provenance.length >= 10);
+  assert.match(buildPacket({
+    planet: "north-node",
+    sign: "aquarius",
+    requestedBeat: "full_article",
+    emphasisBeat: "turn",
+    task: "Compile the approved North Node in Aquarius fact boundary."
+  }).verifiedAstrology.signExpression, /North Node in Aquarius/u);
+  assert.match(buildPacket({
+    planet: "south-node",
+    sign: "leo",
+    requestedBeat: "full_article",
+    emphasisBeat: "turn",
+    task: "Compile the approved South Node in Leo fact boundary."
+  }).verifiedAstrology.signExpression, /need for applause/u);
   assert.doesNotMatch(renderModelInput(packet), /evidence shortfall|owner article about the exact placement|prewritten owner scenario/i);
   assert.match(renderModelInput(packet), /establish register and beat movement only/);
   assert.match(renderModelInput(packet), /not the continuous fallback structure/);
@@ -286,22 +350,21 @@ function main() {
 
   const readiness = buildReadinessReport();
   assert.strictEqual(readiness.totals.placements, 168);
-  assert.strictEqual(readiness.totals.writerReady, 36);
+  assert.strictEqual(readiness.totals.writerReady, 43);
   assert.deepStrictEqual(readiness.writer.ready, [
-    "mercury-aries", "mercury-gemini", "mercury-cancer", "mercury-leo",
-    "mercury-virgo", "mercury-libra", "mercury-sagittarius", "mercury-capricorn",
+    "mercury-aries", "mercury-taurus", "mercury-gemini", "mercury-cancer", "mercury-leo",
+    "mercury-virgo", "mercury-libra", "mercury-scorpio", "mercury-sagittarius", "mercury-capricorn",
     "mercury-aquarius", "mercury-pisces",
-    "mars-aries", "mars-gemini", "mars-cancer", "mars-leo", "mars-virgo",
+    "mars-aries", "mars-taurus", "mars-gemini", "mars-cancer", "mars-leo", "mars-virgo",
     "mars-libra", "mars-scorpio", "mars-sagittarius", "mars-capricorn",
     "mars-aquarius", "mars-pisces",
     "jupiter-aries", "jupiter-taurus", "jupiter-gemini", "jupiter-cancer",
     "jupiter-leo", "jupiter-virgo", "jupiter-libra", "jupiter-scorpio",
     "jupiter-sagittarius", "jupiter-capricorn", "jupiter-aquarius", "jupiter-pisces",
-    "saturn-aries", "uranus-gemini", "neptune-aries"
+    "saturn-aries", "uranus-gemini", "neptune-aries", "pluto-aquarius",
+    "chiron-aries", "north-node-aquarius", "south-node-leo"
   ]);
-  assert.deepStrictEqual(readiness.writer.blockedByReason.other, [
-    "mercury-taurus", "mercury-scorpio", "mars-taurus", "pluto-aquarius"
-  ]);
+  assert.strictEqual(readiness.writer.blockedByReason.other, undefined);
   assert.strictEqual(readiness.totals.runtimeRenderReady, 60);
   assert.strictEqual(readiness.totals.continuousRowsReady, 1);
   assert.strictEqual(readiness.totals.standaloneHookRowsReady, 36);
@@ -523,7 +586,7 @@ function main() {
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
-  assert.strictEqual(fixtureAudit.sourceRecordCount, 27);
+  assert.strictEqual(fixtureAudit.sourceRecordCount, 28);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
   console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);

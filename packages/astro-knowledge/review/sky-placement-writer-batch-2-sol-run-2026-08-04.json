@@ -1,0 +1,302 @@
+{
+  "id": "sky-placement-writer-batch-2-sol-run-2026-08-04",
+  "recordedAt": "2026-08-04T18:44:00Z",
+  "authorization": {
+    "ownerStatement": "Authorize seven billed Sol-xhigh writer calls for batch 2: Mercury in Aries, Taurus, Cancer, Leo, Libra, Scorpio, and Sagittarius. Lint only, no Terra, hold all seven for my review.",
+    "scope": "Seven writer calls only; deterministic lint after each call; no Terra, revisions, approval, promotion, or serving."
+  },
+  "route": {
+    "laneId": "writer:sky-placement",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh"
+  },
+  "calls": {
+    "authorized": {
+      "writer": 7,
+      "judge": 0,
+      "total": 7
+    },
+    "completed": {
+      "writer": 7,
+      "judge": 0,
+      "total": 7
+    },
+    "retries": 0
+  },
+  "usage": {
+    "input_tokens": 56732,
+    "output_tokens": 30604,
+    "total_tokens": 87336
+  },
+  "reviewSheet": "packages/astro-knowledge/review/sky-placement-writer-batch-2-sol-raw-2026-08-04.md",
+  "results": [
+    {
+      "placement": "mercury-aries",
+      "responseId": "resp_0d618a52cae21e1c006a7230459c84819d81607092f0dac4c8",
+      "providerStatus": "completed",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8122,
+        "input_tokens_details": {
+          "cache_write_tokens": 8119,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3377,
+        "output_tokens_details": {
+          "reasoning_tokens": 3011
+        },
+        "total_tokens": 11499
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "overallPassed": true
+      },
+      "governance": {
+        "status": "needs_review",
+        "editorialStatus": "writer_candidate_unreviewed",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "generationEvidence": false,
+        "terraReview": null
+      }
+    },
+    {
+      "placement": "mercury-taurus",
+      "responseId": "resp_030c0ee78c6fe48a006a72308f1f1c819e933928f7b4002dae",
+      "providerStatus": "completed",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8081,
+        "input_tokens_details": {
+          "cache_write_tokens": 8078,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4107,
+        "output_tokens_details": {
+          "reasoning_tokens": 3751
+        },
+        "total_tokens": 12188
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "overallPassed": true
+      },
+      "governance": {
+        "status": "needs_review",
+        "editorialStatus": "writer_candidate_unreviewed",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "generationEvidence": false,
+        "terraReview": null
+      }
+    },
+    {
+      "placement": "mercury-cancer",
+      "responseId": "resp_0d3a40f781ae29f4006a7230e09f48819cbc0662074c81c3a2",
+      "providerStatus": "completed",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8109,
+        "input_tokens_details": {
+          "cache_write_tokens": 8106,
+          "cached_tokens": 0
+        },
+        "output_tokens": 7637,
+        "output_tokens_details": {
+          "reasoning_tokens": 7250
+        },
+        "total_tokens": 15746
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "overallPassed": true
+      },
+      "governance": {
+        "status": "needs_review",
+        "editorialStatus": "writer_candidate_unreviewed",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "generationEvidence": false,
+        "terraReview": null
+      }
+    },
+    {
+      "placement": "mercury-leo",
+      "responseId": "resp_06c9a9eade697b01006a7231738b4c819e82cd286c310acd8f",
+      "providerStatus": "completed",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8119,
+        "input_tokens_details": {
+          "cache_write_tokens": 8116,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4754,
+        "output_tokens_details": {
+          "reasoning_tokens": 4375
+        },
+        "total_tokens": 12873
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "overallPassed": true
+      },
+      "governance": {
+        "status": "needs_review",
+        "editorialStatus": "writer_candidate_unreviewed",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "generationEvidence": false,
+        "terraReview": null
+      }
+    },
+    {
+      "placement": "mercury-libra",
+      "responseId": "resp_07549a91e93f05a9006a7231e6fd4881a2921f7c257190397f",
+      "providerStatus": "completed",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8096,
+        "input_tokens_details": {
+          "cache_write_tokens": 8093,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4737,
+        "output_tokens_details": {
+          "reasoning_tokens": 4340
+        },
+        "total_tokens": 12833
+      },
+      "lint": {
+        "score": 2,
+        "fails": 0,
+        "warns": 1,
+        "findings": [
+          {
+            "severity": "warn",
+            "source": "sky-placement",
+            "term": "\\breveals?\\b",
+            "match": "reveals",
+            "reason": "old-surface watch word; prefer shows, exposes"
+          }
+        ],
+        "overallPassed": true
+      },
+      "governance": {
+        "status": "needs_review",
+        "editorialStatus": "writer_candidate_unreviewed",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "generationEvidence": false,
+        "terraReview": null
+      }
+    },
+    {
+      "placement": "mercury-scorpio",
+      "responseId": "resp_0dd2d123aeee47d5006a723249cf9c819db0c64d96305fbaee",
+      "providerStatus": "completed",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8094,
+        "input_tokens_details": {
+          "cache_write_tokens": 8091,
+          "cached_tokens": 0
+        },
+        "output_tokens": 2533,
+        "output_tokens_details": {
+          "reasoning_tokens": 2148
+        },
+        "total_tokens": 10627
+      },
+      "lint": {
+        "score": 1,
+        "fails": 1,
+        "warns": 1,
+        "findings": [
+          {
+            "severity": "fail",
+            "source": "sky-placement",
+            "term": "leverage",
+            "match": "leverage",
+            "reason": "owner ban; use hold, pull, advantage"
+          },
+          {
+            "severity": "warn",
+            "source": "sky-placement",
+            "term": "\\breveals?\\b",
+            "match": "reveal",
+            "reason": "old-surface watch word; prefer shows, exposes"
+          }
+        ],
+        "overallPassed": false
+      },
+      "governance": {
+        "status": "needs_review",
+        "editorialStatus": "writer_candidate_unreviewed",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "generationEvidence": false,
+        "terraReview": null
+      }
+    },
+    {
+      "placement": "mercury-sagittarius",
+      "responseId": "resp_0a779dd175ac4117006a723281a28081a3a0ba6d77a0049dd1",
+      "providerStatus": "completed",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8111,
+        "input_tokens_details": {
+          "cache_write_tokens": 8108,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3459,
+        "output_tokens_details": {
+          "reasoning_tokens": 3106
+        },
+        "total_tokens": 11570
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "overallPassed": true
+      },
+      "governance": {
+        "status": "needs_review",
+        "editorialStatus": "writer_candidate_unreviewed",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "generationEvidence": false,
+        "terraReview": null
+      }
+    }
+  ]
+}

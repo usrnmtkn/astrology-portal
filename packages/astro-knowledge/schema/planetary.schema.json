@@ -34,6 +34,10 @@
         }
       }
     },
+    "provenance": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
     "voiceNeutral": { "const": true },
     "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
   }

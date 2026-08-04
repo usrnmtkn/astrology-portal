@@ -1,0 +1,33 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-writer-batch-2-owner-edited-approved-v1-exact-approval",
+    "surface": "sky-placement-batch",
+    "articleBeat": "seven-full-continuous-fallback-articles",
+    "before": "The seven raw Sol batch-2 candidates before the three approved lint substitutions and two Mercury in Taurus owner-directed edits.",
+    "beforeIsRejected": false,
+    "after": "Exact approved seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-2-owner-edited-approved-v1.json#articles (SHA-256 1bd9b0be3876d458d5d23a325365b2d2272d2dfd090181294e7911522e3d6e9c).",
+    "whatChanged": "Replaced leverage with gain an advantage, replaced the two reveal/reveals uses with say more and shows what was missing, replaced Mercury in Taurus's first action, and shortened its close at the owner-selected sentence. No model or judge calls were made.",
+    "ownerReason": "The five exact line edits resolve the flagged wording and make the Mercury in Taurus action and close more natural without changing any other draft wording.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-batch-2-owner-edited-approved-v1.json",
+      "packages/astro-knowledge/review/sky-placement-writer-batch-2-owner-edited-approved-v1.md",
+      "packages/astro-knowledge/review/sky-placement-writer-batch-2-owner-edited-approved-v1-lint.json",
+      "packages/astro-knowledge/review/sky-placement-writer-batch-2-sol-raw-2026-08-04.md",
+      "packages/astro-knowledge/review/sky-placement-writer-batch-2-sol-run-2026-08-04.json"
+    ],
+    "provenance": "exact_wording_approval: With those changes I explicitly approve all seven batch-2 drafts as owner-approved fallback articles for their placement pages. Serving remains separate and staged pending the batch-2 serving diff.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "owner_approved_fallback_articles_for_placement_pages_serving_separate"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}
