@@ -28,6 +28,10 @@ function auditBundle(value) {
   let ownerEdited = 0;
   let voicePassDrafts = 0;
   const allowLegacySecondPerson = Number.parseInt(String(value.version || "0"), 10) < 4;
+  const allowLegacyGenericPeople = Number.parseInt(String(value.version || "0"), 10) < 8;
+  const allowLegacyTagline = Number.parseInt(String(value.version || "0"), 10) < 10;
+  const allowLegacyRepeatedGenericPerson = Number.parseInt(String(value.version || "0"), 10) < 11;
+  const allowLegacyPerformanceFraming = Number.parseInt(String(value.version || "0"), 10) < 12;
   for (const candidate of value.candidates) {
     const key = `${candidate.planet}/${candidate.sign}`;
     if (seen.has(key)) fail(`duplicate candidate ${key}`);
@@ -62,7 +66,11 @@ function auditBundle(value) {
       ...candidate.article,
       planet: candidate.planet,
       sign: candidate.sign,
-      allowLegacySecondPerson
+      allowLegacySecondPerson,
+      allowLegacyGenericPeople,
+      allowLegacyTagline,
+      allowLegacyRepeatedGenericPerson,
+      allowLegacyPerformanceFraming
     });
     if (lint.score !== 3 || lint.fails !== 0 || lint.warns !== 0) {
       fail(`${key} does not lint 3: ${JSON.stringify(lint.findings)}`);
