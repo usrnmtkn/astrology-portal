@@ -57,7 +57,13 @@ function buildAspectWritingPacket({ surface, format = "full-card", entry }) {
     },
     warmthHarvest,
     promptBlock: foundationPromptBlock(warmthHarvest),
-    scaleRule: warmthHarvest.harvest_mode === "none_found"
+    scaleRule: !warmthHarvest.generationAllowed
+      ? {
+          harvest_mode: null,
+          insertWarmthBeat: false,
+          rule: "Packet blocked; no scale rule applies."
+        }
+      : warmthHarvest.harvest_mode === "none_found"
       ? {
           harvest_mode: "none_found",
           insertWarmthBeat: false,

@@ -77,6 +77,11 @@ assert.deepStrictEqual(missingPacket.flags, [{
   reason: "Aspect entry has no human-moment beat. This is editorial data completeness; flag for editorial work. Do not request new owner prose."
 }]);
 assert.deepStrictEqual(missingPacket.warmthHarvest.ownerFoundationLines, []);
+assert.deepStrictEqual(missingPacket.scaleRule, {
+  harvest_mode: null,
+  insertWarmthBeat: false,
+  rule: "Packet blocked; no scale rule applies."
+});
 
 const noFoundationPacket = buildAspectWritingPacket({
   surface: "sky-exact-aspect",
