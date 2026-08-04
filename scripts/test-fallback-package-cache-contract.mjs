@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-04a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-04b");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -36,18 +36,18 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4"/u,
   "Browser cache envelopes must use the hash-aware schema."
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
-  "A bundled-content hash change must invalidate browser cache."
+  /envelope\?\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\.runtimeCapability[\s\S]*envelope\?\.bundledContentHash !== bundledPartition\.contentHash/u,
+  "A runtime capability or partition-content hash change must invalidate browser cache."
 );
 assert.match(
   generatedContentSource,
-  /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
-  "Database packages must be complete, same-or-newer, and hash verified."
+  /manifest\.contentHash !== bundledManifest\.contentHash[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
+  "Database partitions must exactly match both their bundled manifest and mirror metadata."
 );
 assert.match(
   generatedContentSource,
@@ -99,16 +99,29 @@ const placementRows = readJson(`${packageDir}/source-rows/placement-interim-fixe
 const skyArticleRows = readJson(`${packageDir}/source-rows/sky-article-v1.json`);
 const skyAspectPhrasebook = readJson(`${packageDir}/source-rows/sky-aspect-phrasebook-v1.json`);
 const skyPlacementVoicePass = readJson(`${packageDir}/source-rows/sky-placement-inventories-voice-pass-v1.json`);
-const skyPlacementOwnerApprovedFallbacks = readJson(`${packageDir}/bundled-sky-placement-owner-approved-reader-v1.json`);
 const skyPlanetFrames = readJson(`${packageDir}/source-rows/sky-planet-frames-v1.json`);
-const skySignCopySun = readJson(`${packageDir}/source-rows/sky-sign-copy-sun-v1.json`);
+const servingManifest = readJson(`${packageDir}/authored-inputs/sky-placement-serving-manifest-v1.json`);
+const servingReleaseByKey = new Map(servingManifest.releases.flatMap((release) => (
+  release.approved_keys.map((key) => [key, release])
+)));
+const skySignCopyRows = fs.readdirSync(path.join(repoRoot, packageDir, "source-rows"))
+  .filter((fileName) => /^sky-sign-copy-.*\.json$/u.test(fileName))
+  .sort()
+  .flatMap((fileName) => readJson(`${packageDir}/source-rows/${fileName}`).rows ?? []);
 const timingEventRows = readJson(`${packageDir}/source-rows/timing-event-reader-copy-v2.json`);
 const weeklyRows = readJson(`${packageDir}/source-rows/station-cards-week-openers-v1.json`);
 const templates = readJson(`${packageDir}/templates/fallback-templates-v3.json`);
-const eligible = (row, allowBlank = false) => (
-  ["approved", "approved_reuse", "reviewed"].includes(String(row.review_status ?? "").toLowerCase())
-  || (allowBlank && !row.review_status)
-);
+const eligible = (row, allowBlank = false) => {
+  const editoriallyEligible = ["approved", "approved_reuse", "reviewed"]
+    .includes(String(row.review_status ?? "").toLowerCase()) || (allowBlank && !row.review_status);
+  const requiresServingRelease = row.render_policy === "sky-placement-continuous-v2"
+    || String(row.contentKey ?? "").startsWith("fallback-hook/sky-sign-copy/");
+
+  return editoriallyEligible && (
+    !requiresServingRelease
+    || servingReleaseByKey.get(row.contentKey)?.distribution_state === "serving"
+  );
+};
 const latestEligible = (rows, allowBlank = false) => {
   const candidates = new Map();
   for (const row of rows) {
@@ -139,8 +152,7 @@ const expectedManifest = createPackageManifest({
       ...skyAspectPhrasebook.hookRows,
       ...skyPlanetFrames.rows,
       ...skyPlacementVoicePass.rows,
-      ...skySignCopySun.rows,
-      ...skyPlacementOwnerApprovedFallbacks.rows
+      ...skySignCopyRows
     ]),
     vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,
@@ -154,11 +166,78 @@ const expectedManifest = createPackageManifest({
 }, PACKAGE_VERSION);
 const bundledManifest = readJson(`${packageDir}/bundled-manifest-v3.json`);
 const bundledManifestSummary = readJson(`${packageDir}/bundled-manifest-summary-v3.json`);
+const isSkyPlacementPartitionRow = (row) => (
+  String(row.contentKey ?? "").startsWith("fallback-hook/sky-sign-copy/")
+  || (
+    String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-")
+    && !String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-sign/")
+  )
+);
+const skyPlacementRows = latestEligible([
+  ...sourceRows.hookRows.filter(isSkyPlacementPartitionRow),
+  ...skyPlanetFrames.rows,
+  ...skyPlacementVoicePass.rows,
+  ...skySignCopyRows
+]);
+const skyPlacementKeys = new Set(skyPlacementRows.map((row) => row.contentKey));
+const expectedCoreManifest = createPackageManifest({
+  ...{
+    transitLib: expectedManifest.keys ? {
+      authoredCards: latestEligible([
+        ...transitRows.authoredCards,
+        ...lunationRows.authoredCards,
+        ...skyArticleRows.authoredCards,
+        ...weeklyRows,
+        ...timingEventRows.authoredCards
+      ])
+    } : { authoredCards: [] }
+  },
+  rowsFile: {
+    hookRows: latestEligible([
+      ...sourceRows.hookRows,
+      ...lunationRows.hookRows,
+      ...bondLanguagePass2.rows,
+      ...skyArticleRows.hookRows,
+      ...skyAspectPhrasebook.hookRows,
+      ...skyPlanetFrames.rows,
+      ...skyPlacementVoicePass.rows,
+      ...skySignCopyRows
+    ]).filter((row) => !skyPlacementKeys.has(row.contentKey)),
+    vocabularyRows: latestEligible([
+      ...sourceRows.vocabularyRows,
+      ...placementRows.vocabularyRows,
+      ...skyArticleRows.vocabularyRows
+    ])
+  },
+  templatesFile: {
+    templates: latestEligible([...templates.templates, ...placementRows.templates], true)
+  }
+}, PACKAGE_VERSION);
+const expectedSkyPlacementManifest = createPackageManifest({
+  transitLib: { authoredCards: [] },
+  rowsFile: { hookRows: skyPlacementRows, vocabularyRows: [] },
+  templatesFile: { templates: [] }
+}, PACKAGE_VERSION);
+const bundledCoreManifest = readJson(`${packageDir}/bundled-core-manifest-v3.json`);
+const bundledSkyPlacementManifest = readJson(`${packageDir}/bundled-sky-placement-manifest-v3.json`);
 const expectedManifestSummary = {
   packageVersion: expectedManifest.packageVersion,
   contentHash: expectedManifest.contentHash,
   keyManifestHash: expectedManifest.keyManifestHash,
-  keyCount: expectedManifest.keyCount
+  keyCount: expectedManifest.keyCount,
+  runtimeCapability: "sky-placement-on-demand-v1",
+  partitions: {
+    core: {
+      contentHash: expectedCoreManifest.contentHash,
+      keyManifestHash: expectedCoreManifest.keyManifestHash,
+      keyCount: expectedCoreManifest.keyCount
+    },
+    skyPlacement: {
+      contentHash: expectedSkyPlacementManifest.contentHash,
+      keyManifestHash: expectedSkyPlacementManifest.keyManifestHash,
+      keyCount: expectedSkyPlacementManifest.keyCount
+    }
+  }
 };
 
 assert.deepEqual(
@@ -170,6 +249,12 @@ assert.deepEqual(
   bundledManifestSummary,
   expectedManifestSummary,
   "Bundled fallback manifest summary is stale. Run npm run build:fallback-manifest after changing source rows or templates."
+);
+assert.deepEqual(bundledCoreManifest, expectedCoreManifest, "Bundled core partition manifest is stale.");
+assert.deepEqual(
+  bundledSkyPlacementManifest,
+  expectedSkyPlacementManifest,
+  "Bundled Sky Placement partition manifest is stale."
 );
 
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-fallback-package-contract-"));
@@ -187,10 +272,38 @@ try {
     expectedManifest,
     "Materialized mirror metadata must exactly match the bundled reader package."
   );
+  assert.deepEqual(
+    materialized.packagePartitionManifests,
+    { core: expectedCoreManifest, "sky-placement": expectedSkyPlacementManifest },
+    "Dashboard mirror partition metadata must exactly match both reader partitions."
+  );
+  assert.ok(
+    materialized.rows.some((row) => row.provider === "tldrastro-fallback-architecture-v3-sky-placement"),
+    "Sky Placement dashboard rows must use the on-demand partition provider."
+  );
   assert.equal(
     materialized.rows.length,
     new Set(materialized.rows.map((row) => row.content_key)).size,
     "Materialization must emit one row per content key."
+  );
+  const placementProviderRows = materialized.rows.filter((row) => (
+    row.provider === "tldrastro-fallback-architecture-v3-sky-placement"
+  ));
+  const continuousServingRows = placementProviderRows.filter((row) => (
+    row.source_snapshot?.distributionState === "serving"
+  ));
+  assert.deepEqual(
+    continuousServingRows
+      .filter((row) => row.content_key.startsWith("fallback-hook/sky-sign-copy/"))
+      .map((row) => row.content_key),
+    ["fallback-hook/sky-sign-copy/sun/leo"],
+    "The dashboard partition must expose only the exact owner-approved continuous serving diff."
+  );
+  assert.ok(
+    placementProviderRows
+      .filter((row) => row.source_snapshot?.releaseBatch === "2")
+      .every((row) => row.source_snapshot?.distributionState === "staged" && row.lane === "reference"),
+    "Batch-2 dashboard rows must remain staged in the reference lane."
   );
 } finally {
   fs.rmSync(tempDir, { recursive: true, force: true });

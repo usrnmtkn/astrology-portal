@@ -62,7 +62,9 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import {
   installFallbackArchitectureV3Bundle,
+  installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
+  loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
@@ -177,6 +179,7 @@ import {
   generatedContentParagraphs,
   generatedContentPreviewModeChangeEvent,
   loadFallbackArchitectureV3DashboardBundle,
+  loadFallbackArchitectureV3SkyPlacementDashboardBundle,
   loadLiveGeneratedContentForKeys,
   loadLiveGeneratedContentForSurfaces,
   readGeneratedContentPreviewMode,
@@ -4804,6 +4807,7 @@ function skyPlacementWritingSection(
     || rendered.contentKey?.startsWith("authored/")
     || rendered.contentKey?.startsWith("sky-article/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-hook/")
+    || rendered.contentKey?.startsWith("fallback-hook/sky-placement-sign/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-sign-copy/")
   ) ? "authored" : "fallback";
   const keyDateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -10425,6 +10429,8 @@ export function App() {
   const [friendNatalContentRequested, setFriendNatalContentRequested] = useState(false);
   const [friendRelationshipContentRequested, setFriendRelationshipContentRequested] = useState(false);
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
+  const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
   const [, setNatalCardTaglineVersion] = useState(0);
@@ -10823,6 +10829,53 @@ export function App() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!skyDetailRoutePath || !/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)) {
+      setSkyPlacementFallbackStatus("idle");
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setSkyPlacementFallbackStatus("loading");
+    let available = false;
+    const markAvailable = () => {
+      if (!cancelled) {
+        available = true;
+        setFallbackArchitectureV3Version((version) => version + 1);
+        setSkyPlacementFallbackStatus("ready");
+      }
+    };
+    const localLoad = loadSkyPlacementFallbackArchitectureV3Bundle()
+      .then(() => {
+        markAvailable();
+        return true;
+      });
+    const dashboardLoad = loadFallbackArchitectureV3SkyPlacementDashboardBundle()
+      .then((dashboardBundle) => {
+        if (!dashboardBundle || cancelled) return false;
+        installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
+        markAvailable();
+        return true;
+      });
+
+    Promise.allSettled([localLoad, dashboardLoad]).then((results) => {
+      if (cancelled || available) return;
+
+      console.warn("Sky Placement fallback articles failed to load; the approved standalone floor remains active.", {
+        localError: results[0].status === "rejected" ? results[0].reason : null,
+        dashboardError: results[1].status === "rejected" ? results[1].reason : null
+      });
+      setSkyPlacementFallbackStatus("error");
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [skyDetailRoutePath, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
     function handlePortalUrlChange() {
@@ -12901,9 +12954,23 @@ export function App() {
       )}
 
       {selectedSkyDetail ? (
-        <Suspense fallback={<FeatureLoadingFallback />}>
-          <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
-        </Suspense>
+        <>
+          {skyPlacementFallbackStatus === "loading" ? (
+            <div className="feature-loading-fallback" role="status">Loading the full placement reading…</div>
+          ) : (
+            <>
+              {skyPlacementFallbackStatus === "error" ? (
+                <div className="feature-loading-fallback" role="status">
+                  <span>The full placement reading could not load. Approved available copy remains below.</span>
+                  <button type="button" onClick={() => setSkyPlacementFallbackRetryKey((key) => key + 1)}>Retry</button>
+                </div>
+              ) : null}
+              <Suspense fallback={<FeatureLoadingFallback />}>
+                <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
+              </Suspense>
+            </>
+          )}
+        </>
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
