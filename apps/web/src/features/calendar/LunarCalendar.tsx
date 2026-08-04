@@ -4,6 +4,7 @@ import type { CSSProperties, KeyboardEvent } from "react";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import {
   getLunarCalendarMonth,
+  getLunarCalendarRangeEvents,
   getLunarCalendarWeek,
   type LunarCalendarDay,
   type LunarCalendarEvent,
@@ -1323,13 +1324,28 @@ function isWaxingPhase(phase: string) {
   return phase.includes("Waxing") || phase.includes("First Quarter") || phase.includes("New Moon");
 }
 
+function moonDiscClass(phase: string, illumination: number) {
+  const normalizedPhase = phase.toLowerCase();
+  const visible = Math.max(0, Math.min(100, illumination));
+
+  if (normalizedPhase.includes("new moon") || visible <= 1) return "is-new";
+  if (normalizedPhase.includes("full moon") || visible >= 99) return "is-full";
+
+  const direction = isWaxingPhase(phase) ? "is-waxing" : "is-waning";
+  const shape = visible < 49.5
+    ? "is-crescent"
+    : visible > 50.5
+      ? "is-gibbous"
+      : "is-quarter";
+
+  return `${direction} ${shape}`;
+}
+
 function moonDiscStyle(day: LunarCalendarDay) {
   const visible = Math.max(0, Math.min(100, day.illumination));
-  const dark = 100 - visible;
 
   return {
-    "--moon-visible": `${visible}%`,
-    "--moon-dark": `${dark}%`
+    "--moon-phase-scale": Math.abs(visible - 50) / 50
   } as CSSProperties;
 }
 
@@ -1717,68 +1733,35 @@ export function LunarCalendar({
   }, [calendar, location, selectedCalendar, selectedDateKey, viewMode, visibleMonth, visibleWeekDateKey]);
 
   useEffect(() => {
-    if (!enableLunarArcContent || viewMode !== "week" || !selectedDateKey) {
+    if (!enableLunarArcContent || !selectedDateKey) {
       setSeasonEvents([]);
       return;
     }
 
     let cancelled = false;
 
-    // Day view is intentionally backed by a seven-day calendar for its fast
-    // first paint. Load a month-wide event range separately so the season
-    // panel can still name the New and Full Moon beyond that week. Most month
-    // grids already cover both; when one falls over a grid boundary, fetch
-    // only the uncovered boundary month.
-    loadCalendarData(location, "month", monthStartFromDateKey(selectedDateKey), "full")
-      .then(async (selectedMonthCalendar) => {
-        const season = sunIngressSeasonWindow(selectedDateKey, selectedMonthCalendar.events);
-        const seasonEventsInSelectedMonth = selectedMonthCalendar.events.filter((event) => (
-          event.dateKey >= season.start && event.dateKey < season.end
-        ));
-        const hasNewMoon = seasonEventsInSelectedMonth.some((event) => (
-          event.type === "lunation" && event.title.startsWith("New Moon")
-        ));
-        const hasFullMoon = seasonEventsInSelectedMonth.some((event) => (
-          event.type === "lunation" && event.title.startsWith("Full Moon")
-        ));
-        const calendars = [selectedMonthCalendar];
+    const localEvents = [
+      ...(calendar?.events ?? []),
+      ...(selectedCalendar?.events ?? [])
+    ];
+    const season = sunIngressSeasonWindow(selectedDateKey, localEvents);
 
-        if (!hasNewMoon || !hasFullMoon) {
-          const coverageStart = selectedMonthCalendar.days[0]?.dateKey ?? selectedDateKey;
-          const coverageEnd = selectedMonthCalendar.days.at(-1)?.dateKey ?? selectedDateKey;
-          const seasonEndDate = dateFromDateKey(season.end);
-
-          seasonEndDate.setDate(seasonEndDate.getDate() - 1);
-          const seasonLastDateKey = dateKeyFromDate(seasonEndDate);
-          const boundaryAnchors = new Map<string, Date>();
-
-          if (coverageStart > season.start) {
-            const anchor = monthStartFromDateKey(season.start);
-
-            boundaryAnchors.set(dateKeyFromDate(anchor), anchor);
-          }
-
-          if (coverageEnd < seasonLastDateKey) {
-            const anchor = monthStartFromDateKey(seasonLastDateKey);
-
-            boundaryAnchors.set(dateKeyFromDate(anchor), anchor);
-          }
-
-          calendars.push(...await Promise.all(
-            [...boundaryAnchors.values()].map((anchor) => (
-              loadCalendarData(location, "month", anchor, "full")
-            ))
-          ));
-        }
-
+    // The day and week surfaces intentionally load a seven-day calendar for a
+    // fast first paint. Fetch only the season's lunation/station feed so the
+    // season chip can still name its New and Full Moon without calculating an
+    // additional 42-day visual calendar.
+    getLunarCalendarRangeEvents(
+      location,
+      dateFromDateKey(season.start),
+      dateFromDateKey(season.end)
+    )
+      .then((events) => {
         if (!cancelled) {
-          const eventsById = new Map<string, LunarCalendarEvent>();
-
-          for (const event of calendars.flatMap((seasonCalendar) => seasonCalendar.events)) {
-            eventsById.set(event.id, event);
-          }
-
-          setSeasonEvents([...eventsById.values()]);
+          setSeasonEvents(events.filter((event) => (
+            event.type === "lunation"
+            && event.dateKey >= season.start
+            && event.dateKey < season.end
+          )));
         }
       })
       .catch((error) => {
@@ -1792,7 +1775,7 @@ export function LunarCalendar({
     return () => {
       cancelled = true;
     };
-  }, [location, selectedDateKey, viewMode]);
+  }, [calendar, location, selectedCalendar, selectedDateKey]);
 
   useEffect(() => {
     if (!locationPickerOpen) {
@@ -2721,7 +2704,7 @@ export function LunarCalendar({
                 >
                   <span className="lunar-week-day__weekday">{formatWeekday(day, zone)}</span>
                   <span className="lunar-week-day__date">{formatDayNumber(day, zone)}</span>
-                  <span className={`lunar-moon-disc ${isWaxingPhase(dayPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
+                  <span className={`lunar-moon-disc ${moonDiscClass(dayPhase, day.illumination)}`} style={moonDiscStyle(day)} aria-hidden="true" />
                   <span className={`lunar-week-day__sign lunar-moon-sign-glyph ${elementClassForSign(day.moonSign)}`}>
                     {day.moonSignGlyph}
                   </span>
@@ -2829,7 +2812,7 @@ export function LunarCalendar({
                           </div>
                         </div>
                         <span
-                          className={`lunar-moon-disc ${isWaxingPhase(phase) ? "is-waxing" : "is-waning"}`}
+                          className={`lunar-moon-disc ${moonDiscClass(phase, day.illumination)}`}
                           style={moonDiscStyle(day)}
                           aria-hidden="true"
                         />
@@ -2940,7 +2923,7 @@ export function LunarCalendar({
                       <span className="lunar-calendar-day__number">{formatDayNumber(day, zone)}</span>
                     </span>
                     <span className="lunar-calendar-day__lunar">
-                      <span className={`lunar-moon-disc ${isWaxingPhase(dayPhase) ? "is-waxing" : "is-waning"}`} style={moonDiscStyle(day)} aria-hidden="true" />
+                      <span className={`lunar-moon-disc ${moonDiscClass(dayPhase, day.illumination)}`} style={moonDiscStyle(day)} aria-hidden="true" />
                       <span className={`lunar-calendar-day__moon lunar-moon-sign-glyph ${elementClassForSign(day.moonSign)}`}>
                         {day.moonSignGlyph}
                       </span>
