@@ -94,9 +94,19 @@ function judgeShape(article) {
   };
 }
 
+function lintShape(article) {
+  return {
+    hook: article.opening,
+    lived: article.tension,
+    turn: article.development,
+    close: article.close,
+    moves: article.try_this
+  };
+}
+
 function deterministicChecks(article, { planet, sign, factContext = {} }) {
   const full = [article.opening, article.tension, article.development, article.close, ...article.try_this].join("\n");
-  const lint = lintArticle({ ...judgeShape(article), planet, sign, factContext });
+  const lint = lintArticle({ ...lintShape(article), planet, sign, factContext });
   const planetPattern = new RegExp(`\\b${titleToken(planet).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}\\b`, "iu");
   const signPattern = new RegExp(`\\b${titleToken(sign).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}\\b`, "iu");
   const astrology = {
@@ -106,6 +116,7 @@ function deterministicChecks(article, { planet, sign, factContext = {} }) {
     note: "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
   };
   const pronounFinding = lint.findings.find((finding) => finding.source === "current-sky-person");
+  const cycleFactMatch = full.match(/\b(?:move|moves|moving|takes?|spends?)\b[^.!?]{0,100}\b(?:all twelve signs|per sign|in each sign)\b/iu);
   return {
     astrology,
     engineSlots: {
@@ -117,11 +128,17 @@ function deterministicChecks(article, { planet, sign, factContext = {} }) {
       passed: !pronounFinding,
       prohibitedMatch: pronounFinding?.match || null
     },
+    cycleFactsInProse: {
+      passed: !cycleFactMatch,
+      prohibitedMatch: cycleFactMatch?.[0] || null,
+      note: "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
     surfaceLint: lint,
     overallPassed: astrology.passed
       && article.opening.includes("{{entryDate}}")
       && article.close.includes("{{exitDate}}")
       && !pronounFinding
+      && !cycleFactMatch
       && lint.fails === 0
   };
 }
@@ -170,7 +187,7 @@ async function main() {
   activeOutDir = outDir;
   fs.mkdirSync(outDir, { recursive: true });
 
-  const task = `Write one complete continuous Current Sky fallback article for ${titleToken(planet)} in ${titleToken(sign)}. Create one recognizable lived sequence from the verified astrology. Return only opening, tension, development, close, and try_this.`;
+  const task = `Write one complete continuous Current Sky fallback article for ${titleToken(planet)} in ${titleToken(sign)}. Keep the transit as the subject and use lived moments as evidence without letting one invented scenario carry the card. Return only opening, tension, development, close, and try_this.`;
   const packet = buildPacket({ planet, sign, requestedBeat: "full_article", emphasisBeat: "turn", task, engineFacts });
   const modelInput = renderModelInput(packet);
   writeJson(path.join(outDir, "packet.json"), packet);
@@ -186,6 +203,8 @@ async function main() {
       routing: packet.routing,
       positiveEvidencePoolId: packet.positiveEvidencePoolId,
       retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
+      warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
+      ownerCorpusWarmthEvidence: packet.ownerCorpusWarmthEvidence,
       factSources: packet.verifiedAstrology.sourcePassages,
       structuralSlots: packet.structuralSlots,
       nextCommand: `node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live${cli.writerOnly ? " --writer-only" : ""} --planet ${planet} --sign ${sign}${cli.engineFactsPath ? ` --engine-facts ${cli.engineFactsPath}` : ""} --out ${outDir}`
@@ -278,6 +297,8 @@ async function main() {
     promptVersion: packet.routing.promptVersion,
     packetVersion: packet.packetVersion,
     retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
+    warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
+    ownerCorpusWarmthEvidence: packet.ownerCorpusWarmthEvidence,
     routingMatchStatus: "matched",
     usage: payload.usage || null,
     article
@@ -309,6 +330,7 @@ async function main() {
       promotionAuthorized: false,
       canonical: false,
       generationEvidence: false,
+      editorialFlags: packet.ownerCorpusWarmthEvidence.editorial_flags,
       calls: { writer: 1, judge: 0, total: 1 },
       target: { planet, sign },
       writerRouting: {
@@ -317,7 +339,9 @@ async function main() {
         laneId: release.laneId,
         promptVersion: packet.routing.promptVersion,
         packetVersion: packet.packetVersion,
-        retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId)
+        retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
+        warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
+        harvestMode: packet.ownerCorpusWarmthEvidence.harvest_mode
       },
       judgeRouting: null,
       deterministicChecks: checks,
@@ -345,7 +369,9 @@ async function main() {
     deterministicResults: {
       ...checks,
       surfaceContractId: packet.surfaceRequirements.contractId,
-      retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId)
+      retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
+      warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
+      ownerCorpusWarmthEvidence: packet.ownerCorpusWarmthEvidence
     }
   });
   writeJson(path.join(outDir, "terra-review.json"), terraReview);
@@ -360,6 +386,7 @@ async function main() {
     promotionAuthorized: false,
     canonical: false,
     generationEvidence: false,
+    editorialFlags: packet.ownerCorpusWarmthEvidence.editorial_flags,
     calls: { writer: 1, judge: 1, total: 2 },
     target: { planet, sign },
     writerRouting: {
@@ -368,7 +395,9 @@ async function main() {
       laneId: release.laneId,
       promptVersion: packet.routing.promptVersion,
       packetVersion: packet.packetVersion,
-      retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId)
+      retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
+      warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
+      harvestMode: packet.ownerCorpusWarmthEvidence.harvest_mode
     },
     judgeRouting: {
       model: terraReview.audit.model,
@@ -399,4 +428,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { candidateRow, deterministicChecks, judgeShape, parseArticle, parseCli };
+module.exports = { candidateRow, deterministicChecks, judgeShape, lintShape, parseArticle, parseCli };

@@ -39,6 +39,21 @@ function toRegex(term) {
   return new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
 }
 
+const SETTLE_RESOLVE_OBJECT = /\b(?:confusion|issue|question|matter|dispute|argument|conflict|account|debt|case|claim|terms?)\b/iu;
+
+function firstNonResolveSettleMatch(text, pattern) {
+  const value = String(text);
+  for (const match of value.matchAll(new RegExp(pattern, "gi"))) {
+    const before = value.slice(Math.max(0, match.index - 72), match.index);
+    const after = value.slice(match.index + match[0].length, match.index + match[0].length + 48);
+    const object = after.match(/^\s+(?:the\s+|this\s+|that\s+|an?\s+|one\s+)?([^.,;!?]{1,32})/u)?.[1] || "";
+    if (SETTLE_RESOLVE_OBJECT.test(object)) continue;
+    if (new RegExp(`${SETTLE_RESOLVE_OBJECT.source}[^.!?]{0,36}\\bto\\s*$`, "iu").test(before)) continue;
+    return match;
+  }
+  return null;
+}
+
 const SLOTS = ["hook", "lived", "turn"];
 const FACT_GATED_SLOTS = ["priorSignHandoff", "cycleLine", "concurrentEvents", "cycleLocation"];
 // CHANI-modeled extended slots (2026-07-27). Optional: the 7 approved trios
@@ -51,7 +66,10 @@ const SIGN_MEME_SCENES = {
     /\bdinner[- ]plan\b/iu,
     /\b(?:restaurant|dinner)\b.{0,100}\b(?:anything|either) is fine\b/isu,
     /\b(?:friends?|group|everyone|nobody|no one)\b.{0,120}\b(?:choose|choosing|pick|picking|decide|deciding)\b.{0,60}\b(?:restaurant|dinner)\b/isu,
-    /\b(?:restaurant|dinner)\b.{0,80}\b(?:choose|choosing|pick|picking|decide|deciding|compromise)\b/isu
+    /\b(?:restaurant|dinner)\b.{0,80}\b(?:choose|choosing|pick|picking|decide|deciding|compromise)\b/isu,
+    /\binvitations?\b.{0,180}\b(?:calendar|dates?|days?|weeks?|weekends?|plans?|schedul(?:e|es|ed|ing)|arrang(?:e|es|ed|ing)|rearrang(?:e|es|ed|ing))\b/isu,
+    /\b(?:calendar|dates?|days?|weeks?|weekends?|plans?|schedul(?:e|es|ed|ing)|arrang(?:e|es|ed|ing)|rearrang(?:e|es|ed|ing))\b.{0,180}\binvitations?\b/isu,
+    /\b(?:dates?|days?|weeks?|weekends?|plans?|schedule)\b.{0,120}\b(?:anything|either|everything|it) (?:is|works?|seems?) fine\b/isu
   ],
   virgo: [/\bcolor[- ]coded spreadsheet\b/iu, /\bspreadsheet\b.{0,40}\bcolor[- ]cod(?:e|ed|ing)\b/isu],
   aries: [/\bgym\b/iu, /\bimpulsive haircut\b/iu, /\b(?:cut|cuts|cutting) (?:their|his|her) hair on impulse\b/iu],
@@ -77,6 +95,8 @@ const DURATION_PATTERN = /\b(?:(?:about|roughly|around|approximately|up to|for)\
 const MONTH_YEAR_PATTERN = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(?:18|19|20|21)\d{2}\b/gu;
 const MONTH_PATTERN = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b/gu;
 const YEAR_PATTERN = /\b(?:18|19|20|21)\d{2}\b/gu;
+const QUALITATIVE_TRANSIT_SUBPERIOD_PATTERN = /\b(?:early in (?:the |this )?(?:transit|residency|cycle)|late in (?:the |this )?(?:transit|residency|cycle)|midway through (?:the |this )?(?:transit|residency|cycle)|by mid-?year)\b/giu;
+const DATE_LIKE_ORDINAL_PATTERN = /\b(?:by|on|before|after)\s+the\s+\d{1,2}(?:st|nd|rd|th)\b/giu;
 const EVENT_TERMS = new Map([
   ["sun", /\bSun\b/gu], ["moon", /\bMoon\b/gu], ["mercury", /\bMercury\b/gu], ["venus", /\bVenus\b/gu],
   ["mars", /\bMars\b/gu], ["jupiter", /\bJupiter\b/gu], ["saturn", /\bSaturn\b/gu], ["uranus", /\bUranus\b/gu],
@@ -153,6 +173,38 @@ function durationTracesToCycle(claim, planet) {
   return fields.flatMap(factDurationRanges).some((entry) => targetDays.min >= entry.min && targetDays.max <= entry.max);
 }
 
+function reviewedResidencyRanges(planet) {
+  if (!["REVIEWED", "LIVE", "APPROVED"].includes(String(planetCycleFacts.status || "").toUpperCase())) return [];
+  const fact = planetCycleFacts.planets?.[planet];
+  if (!fact?.typicalSignStay) return [];
+  return factDurationRanges(fact.typicalSignStay);
+}
+
+function qualitativeSubperiodCapDays(claim) {
+  const normalized = String(claim || "").toLowerCase().trim();
+  const duration = durationSignature(normalized);
+  if (duration?.vagueFew) {
+    const factor = { day: 1, week: 7, month: 30.4375, year: 365.25, decade: 3652.5 }[duration.unit];
+    return factor ? factor * 3 : null;
+  }
+  if (/\bby mid-?year\b/iu.test(normalized)) return 365.25 / 2;
+  if (/\b(?:early in|late in|midway through)\b/iu.test(normalized)) return 0;
+  return null;
+}
+
+function qualitativeSubperiodTracesToResidency(claim, planet) {
+  const capDays = qualitativeSubperiodCapDays(claim);
+  if (capDays == null) return false;
+  return reviewedResidencyRanges(planet).some((range) => capDays <= range.min);
+}
+
+function isPositionalSubperiod(text, index, claim) {
+  const before = text.slice(Math.max(0, index - 24), index);
+  const after = text.slice(index + claim.length, index + claim.length + 48);
+  return /\b(?:after|within|by)\s*$/iu.test(before)
+    || /^\s+(?:in|into)(?=\s*[,.;:!?]|\s+(?:the |this )?(?:transit|residency|cycle)\b)/iu.test(after);
+}
+
 function suppliedFactContains(claim, factContext) {
   const normalizedClaim = String(claim).toLowerCase().replace(/\s+/gu, " ").trim();
   return flattenFactStrings(factContext).some((value) => String(value).toLowerCase().replace(/\s+/gu, " ").includes(normalizedClaim));
@@ -174,6 +226,11 @@ function addTemporalTraceFindings({ full, planet, factContext, findings }) {
     if (suppliedFactContains(claim, factContext)) continue;
     findings.push({ severity: "fail", source: "fact-trace", term: "untraced-date", match: claim, reason: "Every month or year must trace to a supplied engine fact or a render token." });
   }
+  for (const match of withoutTokens.matchAll(DATE_LIKE_ORDINAL_PATTERN)) {
+    const claim = match[0];
+    if (suppliedFactContains(claim, factContext)) continue;
+    findings.push({ severity: "fail", source: "fact-trace", term: "untraced-date-like-subperiod", match: claim, reason: "Numeric or date-like subperiods require an explicit engine fact or render token." });
+  }
   for (const match of withoutTokens.matchAll(MONTH_PATTERN)) {
     const claim = match[0];
     if (dateMonths.has(claim.toLowerCase()) || suppliedFactContains(claim, factContext)) continue;
@@ -184,12 +241,24 @@ function addTemporalTraceFindings({ full, planet, factContext, findings }) {
     if (dateYears.has(claim) || suppliedFactContains(claim, factContext)) continue;
     findings.push({ severity: "fail", source: "fact-trace", term: "untraced-year", match: claim, reason: "Every year must trace to a supplied engine fact or a render token." });
   }
+  for (const match of withoutTokens.matchAll(QUALITATIVE_TRANSIT_SUBPERIOD_PATTERN)) {
+    const claim = match[0];
+    if (qualitativeSubperiodTracesToResidency(claim, planet) || suppliedFactContains(claim, factContext)) continue;
+    findings.push({ severity: "fail", source: "fact-trace", term: "untraced-subperiod", match: claim, reason: "A qualitative transit subperiod must fit inside a reviewed residency fact." });
+  }
   for (const match of withoutTokens.matchAll(DURATION_PATTERN)) {
     const claim = match[0];
     const sentence = sentenceAround(withoutTokens, match.index || 0);
     const isAstrologicalDuration = /\b(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|North Node|South Node|planet|transit|cycle|zodiac|sign|residency|retrograde|ingress)\b/iu.test(sentence)
       || /^\s*(?:for|over|during)\b/iu.test(sentence);
     if (!isAstrologicalDuration) continue;
+    if (isPositionalSubperiod(withoutTokens, match.index || 0, claim)) {
+      const duration = durationSignature(claim);
+      if (duration?.vagueFew && qualitativeSubperiodTracesToResidency(claim, planet)) continue;
+      if (suppliedFactContains(claim, factContext)) continue;
+      findings.push({ severity: "fail", source: "fact-trace", term: "untraced-subperiod", match: claim, reason: "Numeric or date-like subperiods require an explicit engine fact; qualitative subperiods must fit inside a reviewed residency." });
+      continue;
+    }
     if (durationTracesToCycle(claim, planet) || suppliedFactContains(claim, factContext)) continue;
     findings.push({ severity: "fail", source: "fact-trace", term: "untraced-duration", match: claim, reason: "Every duration must trace to planet-cycle-facts.json or a supplied engine fact." });
   }
@@ -300,14 +369,17 @@ function lintArticle(article) {
   const slots = {};
   for (const slot of SLOTS) slots[slot] = String(article?.[slot] ?? "").trim();
   const tagline = article?.tagline != null ? String(article.tagline).trim() : null;
+  const close = article?.close != null ? String(article.close).trim() : null;
   const moves = Array.isArray(article?.moves) ? article.moves.map((m) => String(m).trim()).filter(Boolean) : null;
   const factGated = Object.fromEntries(FACT_GATED_SLOTS.map((slot) => [slot, String(article?.[slot] ?? "").trim()]));
   const full = [
     ...SLOTS.map((s) => slots[s]),
+    close ?? "",
     tagline ?? "",
     ...(moves ?? []),
     ...FACT_GATED_SLOTS.map((slot) => factGated[slot])
   ].filter(Boolean).join("\n\n");
+  const centralScene = SLOTS.map((slot) => slots[slot]).filter(Boolean).join("\n\n");
   const planet = article?.planet ? String(article.planet).toLowerCase() : null;
   const sign = article?.sign ? String(article.sign).toLowerCase() : null;
 
@@ -391,10 +463,11 @@ function lintArticle(article) {
   });
 
   // OV-039: named sign memes are deterministic only when the matching sign is
-  // supplied. Novel sign cliches and broader transit-scale judgment remain in
-  // Terra's lane.
+  // supplied. ED-022 governs the central hook/lived/turn sequence, not isolated
+  // practical moves. Novel sign cliches and broader transit-scale judgment
+  // remain in Terra's lane.
   for (const pattern of SIGN_MEME_SCENES[sign] || []) {
-    const match = full.match(pattern);
+    const match = centralScene.match(pattern);
     if (!match) continue;
     findings.push({
       severity: "fail",
@@ -407,7 +480,7 @@ function lintArticle(article) {
     break;
   }
   if (planet && SLOW_TRANSIT_PLANETS.has(planet)) {
-    const match = full.match(SINGLE_EVENING_LOGISTICS);
+    const match = centralScene.match(SINGLE_EVENING_LOGISTICS);
     if (match) findings.push({
       severity: "fail",
       source: "transit-scale",
@@ -462,7 +535,10 @@ function lintArticle(article) {
     if (m) findings.push({ severity: "fail", source: "sky-placement", term: b.term, match: m[0], reason: b.reason });
   }
   for (const b of spec.outputBans.warn) {
-    const m = full.match(toRegex(b.term));
+    let m = full.match(toRegex(b.term));
+    if (m && b.term === "\\bsettl(e|es|ing)\\b(?! for)") {
+      m = firstNonResolveSettleMatch(full, b.term);
+    }
     if (m && b.term === "\\bletters?\\b") {
       const context = full.slice(Math.max(0, m.index - 24), Math.min(full.length, m.index + m[0].length + 32));
       if (/\b(?:paper|physical|mailed|handwritten) letters?\b|\bletters?\s+(?:arriv(?:e|es|ed)|(?:come|comes|came))\s+(?:by|in) (?:the )?(?:mail|post)\b/i.test(context)) continue;
@@ -531,11 +607,8 @@ function lintArticle(article) {
   if (hookWords > 70) notes.push(`hook is long (${hookWords} words); the hook is the sendable line, not a paragraph`);
   if (lastLine.split(/\s+/).filter(Boolean).length > 22) notes.push("closer is long; end on a shorter line with bite");
 
-  // pace mention, article-wide (advisory: exemplars carry it in hook OR lived)
-  if (planet && spec.pace.labels[planet]) {
-    const paceProbe = /\b(day|days|week|weeks|month|months|year|years|decade|decades|era|generation)\b/i;
-    if (!paceProbe.test(full)) notes.push(`no pace signal found; the article should land the ${planet} pace (${spec.pace.labels[planet]}) somewhere, usually in lived`);
-  }
+  // Cycle pace is engine-owned and renders under the date range. Prose may carry
+  // duration when it adds meaning, but absence is no longer an article warning.
 
   // stacked ending: 3+ short sentences piled at the close of the turn
   let closeRun = 0;
@@ -555,7 +628,46 @@ function lintArticle(article) {
   return { score, fails, warns, findings, notes };
 }
 
-module.exports = { FACT_GATED_SLOTS, lintArticle, SLOTS, EXTENDED_SLOTS };
+function articleTextForBatch(entry) {
+  const article = entry?.article || entry || {};
+  return [
+    article.opening,
+    article.hook,
+    article.tension,
+    article.lived,
+    article.development,
+    article.turn,
+    article.close,
+    ...(article.try_this || article.moves || [])
+  ].filter(Boolean).join("\n");
+}
+
+function lintBatchRepetition(entries) {
+  const policy = spec.batchRepetitionPolicy?.groupChat;
+  const occurrences = (entries || []).flatMap((entry, index) => [...articleTextForBatch(entry).matchAll(/\bgroup chat\b/giu)].map((match) => ({
+    index,
+    id: entry?.id || entry?.runId || (entry?.target?.planet && entry?.target?.sign ? `${entry.target.planet}-${entry.target.sign}` : `article-${index + 1}`),
+    match: match[0]
+  })));
+  const max = Number(policy?.maxOccurrencesPerBatch ?? 1);
+  const findings = occurrences.length > max ? [{
+    severity: policy?.severityWhenExceeded || "fail",
+    source: "batch-repetition",
+    term: policy?.term || "group chat",
+    match: `${occurrences.length} occurrences across ${new Set(occurrences.map((entry) => entry.index)).size} articles`,
+    reason: policy?.reason || "At most one group chat occurrence is allowed per batch.",
+    occurrences
+  }] : [];
+  return {
+    passed: findings.length === 0,
+    maxOccurrences: max,
+    occurrenceCount: occurrences.length,
+    occurrences,
+    findings
+  };
+}
+
+module.exports = { FACT_GATED_SLOTS, lintArticle, lintBatchRepetition, SLOTS, EXTENDED_SLOTS };
 
 if (require.main === module) {
   const arg = process.argv.slice(2).join(" ");

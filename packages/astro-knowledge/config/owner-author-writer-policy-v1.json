@@ -17,7 +17,7 @@
   "outputContract": {
     "id": "sky-placement-continuous-v2",
     "writerFields": ["opening", "tension", "development", "close", "try_this"],
-    "engineFields": ["headline", "fact_line", "aspect_insert", "entryDate", "exitDate", "priorSign", "priorSignEntryDate", "priorSignExitDate", "previousResidencyEntryDate", "previousResidencyExitDate"],
+    "engineFields": ["headline", "fact_line", "cycle_fact_line", "aspect_insert", "entryDate", "exitDate", "priorSign", "priorSignEntryDate", "priorSignExitDate", "previousResidencyEntryDate", "previousResidencyExitDate"],
     "reviewStatus": "needs_review",
     "renderEligible": false
   },
