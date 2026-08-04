@@ -81,35 +81,10 @@ assert.match(
   /renderWeeklyMoon\(\{[\s\S]*?sign: normalizedSign,[\s\S]*?variant/u,
   "The Monday Moon resolver must use the approved weekly Moon renderer."
 );
-assert.match(
-  calendarSource,
-  /weeklyDayWriteups\.find\(\(\{ day \}\) => \([\s\S]*?getUTCDay\(\) === 1/u,
-  "The Calendar must locate Monday rather than using the first visible Sunday."
-);
-assert.match(
-  calendarSource,
-  /mondayDateKey: weeklyMonday\.day\.dateKey,[\s\S]*?moonSign: weeklyMonday\.day\.moonSign/u,
-  "The Calendar must send Monday's calculated Moon sign to the resolver."
-);
-assert.match(
-  calendarSource,
-  /weeklyForecast\?\.source === "authored"[\s\S]*?calendarWeeklyNarrativeHeadline\(/u,
-  "The weekly hero must preserve exact authored headlines while assembling a consistent factual fallback headline."
-);
-assert.match(
-  calendarSource,
-  /weeklyForecast\?\.source === "authored"[\s\S]*?calendarWeeklySupportingShifts\(/u,
-  "Fallback weeks must not repeat narrative events in the supporting Key shifts list."
-);
 assert.doesNotMatch(
   calendarSource,
-  /weeklyNarrativeSections|calendarWeeklyExcerpt/u,
-  "The weekly hero must not repackage clipped daily cards as a weekly forecast."
-);
-assert.match(
-  calendarSource,
-  /calendarWeeklyNarrativeBody\(\{[\s\S]*?eventDescriptions: weeklyEventDescriptions,[\s\S]*?dayGuidance: weeklyDayGuidance/u,
-  "Fallback weeks must assemble multiple governed editorial units instead of exposing a one-event or boilerplate opener."
+  /className="lunar-weekly-hero"|Weekly forecast|resolveCalendarWeeklyOverview/u,
+  "Week view must not render a summary card that repeats the day-by-day content."
 );
 assert.match(
   calendarSource,
@@ -123,8 +98,8 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /aria-label="Key shifts"[\s\S]*?<p>Key shifts<\/p>/u,
-  "The selective metadata row must be labeled Key shifts."
+  /<section className="lunar-weekly-days" aria-label=\{`Day-by-day astrology for \$\{weeklyRangeLabel\}`\}>/u,
+  "Week view must lead directly with the day navigation and daily astrology."
 );
 assert.match(
   calendarSource,
@@ -140,11 +115,6 @@ assert.match(
   phaseLabelSource,
   /if \(day\.illumination >= 50\)[\s\S]*?Waning Gibbous[\s\S]*?Waning Crescent/u,
   "Daily phase labels must distinguish broad waning phases from the exact quarter event."
-);
-assert.match(
-  calendarSource,
-  /data-weekly-moon-key=\{weeklyMondayMoonTone\?\.contentKey\}/u,
-  "The weekly hero must expose the exact owner source key for QA."
 );
 assert.match(
   calendarSource,
@@ -177,8 +147,8 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /const selectedPackageWeeklyMoon = selectedWeekWriteup[\s\S]*?\? selectedWeekWriteup\.guidance[\s\S]*?: selectedDay/u,
-  "Day and Month must honor the same daily Moon source gap resolved by Weekly."
+  /const selectedPackageWeeklyMoon = selectedDay[\s\S]*?renderWeeklyMoon\(\{[\s\S]*?sign: slugContentPart\(selectedDay\.moonSign\)/u,
+  "Day view must continue resolving the approved Moon-in-sign guidance after the duplicate weekly summary is removed."
 );
 assert.match(
   resolverSource,
@@ -206,4 +176,4 @@ assert.doesNotMatch(
   "The owner-review candidate must not pull the preceding Sunday station into the Monday-Sunday week."
 );
 
-console.log("Calendar weekly synthesis contract passed (Monday-Sunday chronology, phase precision, exact-copy owner approval). ");
+console.log("Calendar Week view contract passed (no duplicate summary card, Monday-Sunday chronology, phase precision). ");
