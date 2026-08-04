@@ -1,0 +1,15 @@
+{
+  "body_you": "You tend to notice {{holder2}} when they enter a situation, and your response to how they present themselves can make them feel seen enough to speak more directly about what they want. Because your confidence carries so much weight with them, they may start checking your reaction before making their own decision. Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+  "body_they": "{{holder1}} tends to notice you when you enter a situation, and their response to how you present yourself can make you feel seen enough to speak more directly about what you want. Because their confidence carries so much weight with you, you may start checking their reaction before making your own decision. Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself.",
+  "warmthSource": {
+    "sourceArticleId": "full-moon-in-taurus",
+    "originalLine": "Your body knows the difference between joy and productive joy, you can feel it in how you hold yourself when creating for approval versus creating for pleasure.",
+    "usedForm": {
+      "body_you": "Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+      "body_they": "Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

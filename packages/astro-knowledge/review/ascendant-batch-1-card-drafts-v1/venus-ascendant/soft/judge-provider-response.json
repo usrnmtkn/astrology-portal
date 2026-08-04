@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0a0b4fada4fa9dea006a72625fd4c881a397c40d35338f15a9",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-terra",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "low",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1242,
+    "input_tokens_details": {
+      "cache_write_tokens": 1239,
+      "cached_tokens": 0
+    },
+    "output_tokens": 377,
+    "output_tokens_details": {
+      "reasoning_tokens": 99
+    },
+    "total_tokens": 1619
+  },
+  "outputText": "{\"score\":2,\"verdict\":\"borderline\",\"weakestField\":\"body_you\",\"weakest\":\"“Less likely to monitor how they are presenting themselves” adds a specific self-conscious behavior that is not directly supported by the supplied human moment or governed boundary.\",\"why\":\"The direction and core loop are clear: the Venus holder responds warmly to the Ascendant holder’s natural presentation, and the Ascendant holder relaxes in response. However, the monitoring claim narrows that relaxation into an invented internal habit. Removing or broadening that detail would keep the card fully within the source boundary.\",\"failedChecks\":[\"Unsupported specificity: “less likely to monitor how they are presenting themselves.”\"],\"strengths\":[\"Both reader variants preserve the same directed interaction and resolve naturally.\",\"The card clearly conveys easy affection meeting natural self-presentation.\",\"The final sentence appropriately conveys low effort and ease without adding advice, outcomes, or astrology mechanics.\",\"No excluded claims, scenarios, stock closer, or invented warmth provenance appears.\"],\"sourceFidelity\":\"Mostly faithful. Warm response, relaxation, and unnoticed ease are supported by the supplied boundary; the self-monitoring detail is a repairable unsupported elaboration.\",\"foundationTrace\":\"No owner foundation lines were supplied, and harvest mode is none_found. The draft correctly uses no warmthSource or foundation-derived turn.\"}",
+  "error": null
+}

@@ -1,0 +1,19 @@
+{
+  "score": 2,
+  "verdict": "borderline",
+  "weakestField": "warmthSource",
+  "weakest": "The final warmth sentence turns the supplied foundation language about worth tied to external validation into an unsupported reassurance that the Venus holder's affection can help the Ascendant holder feel valued without it.",
+  "why": "The direction and central loop are clear: the Venus holder's affection makes the Ascendant holder feel accepted, and the Ascendant holder begins monitoring and adjusting their presentation to preserve that approval. The final sentence is a repairable source-fidelity problem because it adds a causal, reassuring benefit not established by the governed boundary or the owner foundation line.",
+  "failedChecks": [
+    "The owner-foundation turn is not a faithful supported use of the supplied line: it reframes 'sense of worth has been tied to external validation' as a claim that this person's affection can undo that tie.",
+    "The final warmth sentence functions as an invented reassurance after the cost, rather than stopping once the behavior and cost are clear."
+  ],
+  "strengths": [
+    "Fixed direction is maintained in both reader variants.",
+    "The two-person response loop is plain and recognizable.",
+    "The draft stays literal, natural after placeholder resolution, and free of excluded claims or advice.",
+    "The second sentence clearly names the cost to free self-presentation."
+  ],
+  "sourceFidelity": "Mostly faithful through the first two sentences, which remain within the supplied affection, acceptance, approval-seeking, and constrained self-presentation boundary. The final sentence overextends the external-validation foundation into a specific healing effect.",
+  "foundationTrace": "The phrase 'without tying their worth to external validation' traces lexically to the supplied line about a 'sense of worth' being 'tied to external validation.' However, the draft's claim that affection can help someone feel valued without that tie is not present in, or directly warranted by, the foundation line."
+}

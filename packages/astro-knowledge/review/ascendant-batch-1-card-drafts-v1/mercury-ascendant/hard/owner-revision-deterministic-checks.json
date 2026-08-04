@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "sourceProviderResponsePreserved": true,
+  "exactlyMatchesAsciiNormalizedOriginalSolDraft": false,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "status": "pass",
+    "body_you": 4,
+    "body_they": 4
+  },
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "asciiPunctuation": "pass",
+  "emOrEnDash": "pass",
+  "stockCloser": "pass",
+  "warmthSource": "none_found",
+  "warmthSourcePassed": true,
+  "evidenceLabels": [],
+  "ownerDecisionOperation": "replace_final_sentence_with_two_owner_authored_sentences",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d4f3a1cbdc4bb25759f69df3740ed3b0ff5c145651c564ede0c9b200b49db47c",
+  "ownerExactApproval": "pass",
+  "ownerApprovedPayloadSha256": "d4f3a1cbdc4bb25759f69df3740ed3b0ff5c145651c564ede0c9b200b49db47c",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/mercury-ascendant/hard/exact-approval.json"
+}

@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_05969f338199901f006a7261cbdd48819dbece14c24754ebd2",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 807,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 985,
+    "output_tokens_details": {
+      "reasoning_tokens": 844
+    },
+    "total_tokens": 1792
+  },
+  "outputText": "{\"body_you\":\"You may point out problems in how {{holder2}} comes across or tell them to be more careful. They can start rehearsing what to say and checking their behavior before ordinary interactions. When they expect you to notice something wrong, it becomes harder for them to act naturally.\",\"body_they\":\"{{holder1}} may point out problems in how you come across or tell you to be more careful. You can start rehearsing what to say and checking your behavior before ordinary interactions. When you expect {{holder1}} to notice something wrong, it becomes harder to act naturally.\",\"warmthSource\":null,\"labels\":[]}",
+  "error": null
+}

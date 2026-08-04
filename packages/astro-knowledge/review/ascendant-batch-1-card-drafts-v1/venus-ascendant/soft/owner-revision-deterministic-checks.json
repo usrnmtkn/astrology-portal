@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "sourceProviderResponsePreserved": true,
+  "exactlyMatchesAsciiNormalizedOriginalSolDraft": false,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "status": "pass",
+    "body_you": 3,
+    "body_they": 3
+  },
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "asciiPunctuation": "pass",
+  "emOrEnDash": "pass",
+  "stockCloser": "pass",
+  "warmthSource": "none_found",
+  "warmthSourcePassed": true,
+  "evidenceLabels": [],
+  "ownerDecisionOperation": "delete_clause_both_variants",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "fd00adb62ad8dcb67c529b70826682ba4f2f65db97263a4f422c94d499c8122d",
+  "ownerExactApproval": "pass",
+  "ownerApprovedPayloadSha256": "fd00adb62ad8dcb67c529b70826682ba4f2f65db97263a4f422c94d499c8122d",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/soft/exact-approval.json"
+}

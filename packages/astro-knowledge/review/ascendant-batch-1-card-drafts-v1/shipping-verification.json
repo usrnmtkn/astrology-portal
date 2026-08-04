@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "branch": "codex/ascendant-batch-1-card-drafts",
+  "baseCommit": "c9fe522c102ab74b63c594cc10a89a7e97823125",
+  "packageVersion": "v3-2026-08-04f",
+  "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "approvedAt": "2026-08-04",
+    "targetCount": 15,
+    "approvalRecordCount": 15,
+    "payloadHashesVerified": true
+  },
+  "scope": {
+    "sourceRowsChanged": 15,
+    "unrelatedSourceRowsChanged": 0,
+    "originalSolArtifactsPreserved": true,
+    "additionalBilledCalls": 0,
+    "foundationLineFeedbackApplied": true,
+    "dashboardSynchronizationIncluded": false,
+    "productionDeploymentIncluded": false,
+    "mergeAuthorized": false
+  },
+  "tests": {
+    "ownerRevisionDeterministicChecks": "pass_15_of_15",
+    "exactApprovalPayloadHashes": "pass_15_of_15",
+    "ascendantBatchResolverAndGeneratedMirrorContract": "pass_15_cards_60_node_browser_direction_checks",
+    "synastryApprovalProvenance": "pass_483_rows_147_approved_336_reviewed_24_exact_123_untraced",
+    "stockCloserHistoricalContract": "pass_336_deletions_preserved",
+    "fallbackManifestCheck": "pass_7206_keys",
+    "fallbackPackageCacheContract": "pass",
+    "fallbackRefreshWiring": "pass",
+    "readerFacingContentContract": "pass",
+    "fullContentSuite": "pass",
+    "typecheck": "pass",
+    "webBuild": "pass",
+    "gitDiffCheck": "pass"
+  },
+  "pullRequestStatus": "draft_pending",
+  "servingStatus": "candidate_branch_only_merge_authorization_required"
+}

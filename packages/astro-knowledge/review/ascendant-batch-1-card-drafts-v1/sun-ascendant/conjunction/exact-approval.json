@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-ascendant-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/ascendant/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "3311f61b851f147f4726e9406f175687c3cd94f73c161e595d41e022102151af",
+  "payload": {
+    "body_you": "You tend to notice {{holder2}} when they enter a situation, and your response to how they present themselves can make them feel seen enough to speak more directly about what they want. Because your confidence carries so much weight with them, they may start checking your reaction before making their own decision. Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+    "body_they": "{{holder1}} tends to notice you when you enter a situation, and their response to how you present yourself can make you feel seen enough to speak more directly about what you want. Because their confidence carries so much weight with you, you may start checking their reaction before making your own decision. Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself.",
+    "warmthSource": {
+      "sourceArticleId": "full-moon-in-taurus",
+      "originalLine": "Your body knows the difference between joy and productive joy, you can feel it in how you hold yourself when creating for approval versus creating for pleasure.",
+      "usedForm": {
+        "body_you": "Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+        "body_they": "Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

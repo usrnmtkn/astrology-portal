@@ -1,0 +1,17 @@
+{
+  "score": 3,
+  "verdict": "in-voice",
+  "weakestField": "body_you",
+  "weakest": "The first sentence is slightly more elaborate than necessary, but it remains a plain, supported rendering of the Moon holder's emotional response easing the Ascendant holder's self-presentation.",
+  "why": "Both variants keep the fixed direction clear: the Moon holder's feelings, needs, and comfort habits affect the Ascendant holder's way of entering situations and showing themselves. The response loop is recognizable and stays within the supplied boundary: the Ascendant holder can relax, express feelings without managing the Moon holder's reaction, and neither person has to strain to keep this area comfortable. The prose is literal, parallel across reader variants, and contains no invented warmth turn or second conclusion.",
+  "failedChecks": [],
+  "strengths": [
+    "Clear Moon-holder-to-Ascendant-holder action in both reader variants.",
+    "Supported soft dynamic is concrete: relaxed self-expression without adjustment or response-management.",
+    "Both bodies preserve the same meaning after placeholder resolution.",
+    "Plain, ordinary register with no metaphor, advice, invented scenario, or excluded claim.",
+    "Appropriately omits a warmth beat for none_found harvest mode."
+  ],
+  "sourceFidelity": "High. The draft closely and validly expands the governed translation and approved human moment without importing outside doctrine or unsupported outcomes.",
+  "foundationTrace": "No owner foundation lines were supplied, and harvest mode is none_found. Judgment relies only on the governed source boundary and approved human-moment input."
+}

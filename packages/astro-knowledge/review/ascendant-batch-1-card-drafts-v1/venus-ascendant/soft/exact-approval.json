@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-ascendant-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/ascendant/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "fd00adb62ad8dcb67c529b70826682ba4f2f65db97263a4f422c94d499c8122d",
+  "payload": {
+    "body_you": "You respond warmly to the way {{holder2}} naturally comes across. That makes {{holder2}} more relaxed around you. The ease can go mostly unnoticed because neither of you has to work hard to create it.",
+    "body_they": "{{holder1}} responds warmly to the way you naturally come across. That makes you more relaxed around {{holder1}}. The ease can go mostly unnoticed because neither of you has to work hard to create it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
