@@ -18,6 +18,13 @@ const fs = require("fs");
 const path = require("path");
 const { lintCard } = require("./lint-sky-voice.js");
 const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
+const {
+  annotateCandidateWithWarmth,
+  buildAspectWarmthHarvest,
+  foundationPromptBlock,
+  lintAspectWarmthUsage,
+  warmthFlagIds
+} = require("./aspect-corpus-warmth-harvest.js");
 
 const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
@@ -359,6 +366,29 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources 
   };
 }
 
+function humanMomentFromAspectSources(normalized) {
+  const exactHumanMoment = String(
+    normalized.exactAspect?.humanMoment
+    ?? normalized.exactAspect?.human_moment
+    ?? normalized.exactAspect?.readerCopy?.humanMoment
+    ?? normalized.exactAspect?.readerCopy?.summary
+    ?? ""
+  ).trim();
+  if (exactHumanMoment) return exactHumanMoment;
+  const stagedMatch = String(normalized.pair?.sourceText || "").match(/\bLooks like:\s*([\s\S]*?)(?=\s+Check:|$)/iu);
+  return String(stagedMatch?.[1] || normalized.pair?.humanMoment || normalized.pair?.human_moment || "").trim();
+}
+
+function aspectWarmthHarvest(normalized, format = "full-card") {
+  return buildAspectWarmthHarvest({
+    id: `sky.${normalized.a}.${normalized.aspect}.${normalized.b}`,
+    humanMoment: humanMomentFromAspectSources(normalized)
+  }, {
+    surface: "sky-aspect",
+    format
+  });
+}
+
 // pick a couple of approved exemplars to teach the shape (few-shot).
 // Prefer canonical 8-beat "we" cards over the earlier 2-paragraph ones.
 function fewShot(n = 2) {
@@ -632,6 +662,14 @@ function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowRev
     { a, b, aspect, signA, signB },
     { allowReviewSources }
   );
+  const warmthHarvest = aspectWarmthHarvest(normalized);
+  if (!warmthHarvest.generationAllowed) {
+    throw new SourceGapError(
+      "aspect-warmth-editorial-required",
+      `${normalized.a}-${normalized.aspect}-${normalized.b} requires editorial work before aspect generation (${warmthFlagIds(warmthHarvest.flags)}).`,
+      { ...normalized, warmthFlags: warmthHarvest.flags }
+    );
+  }
   const { pair } = normalized;
   const exact = normalized.exactAspect;
   const field = ASPECT_FIELD[normalized.aspect];
@@ -665,6 +703,8 @@ function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowRev
     `  gift face (harmonious): ${meaning.harmonious ?? ""}`,
     `  shadow face (hard): ${meaning.hard ?? ""}`,
     ``,
+    foundationPromptBlock(warmthHarvest),
+    ``,
     `SHAPE — hit all 8 beats across two short paragraphs:`,
     ...spec.shape.beats.map((x) => `  ${x.n}. ${x.beat}: ${x.does}  [source: ${x.source}]`),
     ``,
@@ -689,6 +729,9 @@ function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowRev
     `  - Avoid "viral", and avoid motivational-poster lines ("adapt or get left behind", "power without purpose is chaos", "leaves ash"). Be specific and grounded instead.`,
     `  - Vary the verb for each planet; do not lean on "demands" every time.`,
     `  - Show both faces, but as one flowing observation, not a labeled list.`,
+    ...(warmthHarvest.harvest_mode === "matched"
+      ? [`  - The warmth beat is exactly one sentence after the shadow or cost is named, as the final or penultimate sentence. Never add a second warmth beat or a second conclusion.`]
+      : [`  - No owner warmth line was found. Do not invent a permission, reassurance, benediction, or turn-toward-the-reader sentence.`]),
     ``,
     `IN-VOICE EXEMPLARS (match this register, do not copy):`,
     ...fewShot().map((b, i) => `  [${i + 1}] ${b}`),
@@ -892,11 +935,12 @@ function cleanCardText(value) {
     .trim();
 }
 
-function buildRepairPrompt(text, reason) {
+function buildRepairPrompt(text, reason, { warmthHarvest = null } = {}) {
   return [
     `A careful editor flagged this card: ${JSON.stringify(String(reason ?? "").trim())}.`,
     `Fix ONLY what the note describes. End on one concrete truth and the catch that turns on it - no second aphorism, no advice.`,
     `Change nothing else: do not reword the rest, do not add length. Return only the corrected card.`,
+    ...(warmthHarvest?.generationAllowed ? [``, foundationPromptBlock(warmthHarvest)] : []),
     ``,
     `CARD`,
     text
@@ -979,8 +1023,8 @@ async function generateJudge(prompt, options = {}) {
   return generateWithConfig(prompt, judgeConfigForOptions(options), options);
 }
 
-async function repairCard(text, reason, { generateFn = generate } = {}) {
-  return cleanCardText(await generateFn(buildRepairPrompt(text, reason), { temperature: 0.1 }));
+async function repairCard(text, reason, { generateFn = generate, warmthHarvest = null } = {}) {
+  return cleanCardText(await generateFn(buildRepairPrompt(text, reason, { warmthHarvest }), { temperature: 0.1 }));
 }
 
 async function repairPlacementTopper(text, reason, { generateFn = generate } = {}) {
@@ -1002,6 +1046,7 @@ async function runCardPipeline({
   judgeMode,
   judgeTier,
   lintMode,
+  warmthHarvest = null,
   judgeTextFor = (text) => text
 }, {
   maxRetries = 3,
@@ -1032,7 +1077,17 @@ async function runCardPipeline({
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const text = cleanCardText(await generateFn(prompt));
-    const lint = lintCard(text, { mode: lintMode });
+    const cardLint = lintCard(text, { mode: lintMode });
+    const warmthLint = warmthHarvest ? lintAspectWarmthUsage(text, warmthHarvest) : null;
+    const lint = warmthLint
+      ? {
+          ...cardLint,
+          score: cardLint.fails + warmthLint.fails ? 1 : 3,
+          fails: cardLint.fails + warmthLint.fails,
+          findings: [...cardLint.findings, ...warmthLint.findings],
+          warmth: warmthLint
+        }
+      : cardLint;
     lastAttempt = { text, lint };
     if (lint.score === 3 && lint.fails === 0) {
       const config = generateFn === generate ? generationConfig() : null;
@@ -1049,6 +1104,15 @@ async function runCardPipeline({
         lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
         facts: { ...facts }
       };
+      if (warmthHarvest) {
+        const annotated = annotateCandidateWithWarmth({ text }, warmthHarvest);
+        result.warmthHarvest = warmthHarvest;
+        result.harvest_mode = warmthHarvest.harvest_mode;
+        if (annotated.warmthSource) {
+          result.warmthSource = annotated.warmthSource;
+          result.evidenceClass = "owner-corpus-derived";
+        }
+      }
       // Second gate: the LLM judge. Opt-in so the caller controls the extra
       // model call. Attaches { judge, gate } for the cron to persist and route.
       // lazy require avoids a circular dependency (judge reuses generate()).
@@ -1057,6 +1121,7 @@ async function runCardPipeline({
         result.judge = await judgeCard(judgeTextFor(text), {
           mode: judgeMode,
           tier: judgeTier,
+          foundationLines: warmthHarvest?.ownerFoundationLines || [],
           judgeFn
         });
         result.gate = result.judge.gate; // human-review | regenerate (model verdicts are advisory)
@@ -1072,9 +1137,19 @@ async function runCardPipeline({
             const repairedText = cleanCardText(
               repairFn
                 ? await repairFn(text, reason)
-                : await repairCard(text, reason, { generateFn })
+                : await repairCard(text, reason, { generateFn, warmthHarvest })
             );
-            const repairedLint = lintCard(repairedText, { mode: lintMode });
+            const repairedCardLint = lintCard(repairedText, { mode: lintMode });
+            const repairedWarmthLint = warmthHarvest ? lintAspectWarmthUsage(repairedText, warmthHarvest) : null;
+            const repairedLint = repairedWarmthLint
+              ? {
+                  ...repairedCardLint,
+                  score: repairedCardLint.fails + repairedWarmthLint.fails ? 1 : 3,
+                  fails: repairedCardLint.fails + repairedWarmthLint.fails,
+                  findings: [...repairedCardLint.findings, ...repairedWarmthLint.findings],
+                  warmth: repairedWarmthLint
+                }
+              : repairedCardLint;
 
             if (repairedLint.score !== 3 || repairedLint.fails !== 0) {
               repair.result = "lint-failed";
@@ -1082,6 +1157,7 @@ async function runCardPipeline({
               const repairedJudge = await judgeCard(judgeTextFor(repairedText), {
                 mode: judgeMode,
                 tier: judgeTier,
+                foundationLines: warmthHarvest?.ownerFoundationLines || [],
                 judgeFn
               });
               repair.repairedScore = repairedJudge.score;
@@ -1094,6 +1170,15 @@ async function runCardPipeline({
                 result.lint = repairedLint;
                 result.judge = repairedJudge;
                 result.gate = repairedJudge.gate;
+                if (warmthHarvest) {
+                  const annotatedRepair = annotateCandidateWithWarmth({ text: repairedText }, warmthHarvest);
+                  delete result.warmthSource;
+                  delete result.evidenceClass;
+                  if (annotatedRepair.warmthSource) {
+                    result.warmthSource = annotatedRepair.warmthSource;
+                    result.evidenceClass = "owner-corpus-derived";
+                  }
+                }
                 repair.kept = "repaired";
               }
             }
@@ -1128,6 +1213,7 @@ async function runCardPipeline({
     lintRetryAvoidTerms: lintRetryAvoidTerms.map((terms) => [...terms]),
     text: lastAttempt?.text ?? "",
     lint: lastAttempt?.lint ?? null,
+    ...(warmthHarvest ? { warmthHarvest, harvest_mode: warmthHarvest.harvest_mode } : {}),
     facts: { ...facts }
   };
 }
@@ -1151,6 +1237,23 @@ async function generateCard(args, options = {}) {
     : ["mercury", "venus", "mars"].includes(normalized.a)
       ? "personal"
       : "outer";
+  const warmthHarvest = aspectWarmthHarvest(normalized);
+  if (!warmthHarvest.generationAllowed) {
+    return {
+      status: "skipped",
+      reason: "aspect-warmth-editorial-required",
+      note: `Aspect warmth harvest failed closed (${warmthFlagIds(warmthHarvest.flags)}).`,
+      flags: warmthHarvest.flags,
+      facts: {
+        a: normalized.a,
+        b: normalized.b,
+        aspect: normalized.aspect,
+        signA: normalized.signA,
+        signB: normalized.signB,
+        pairKey: normalized.pairKey
+      }
+    };
+  }
 
   return runCardPipeline({
     buildPromptFor: (avoidTerms) => buildPrompt(normalized, {
@@ -1170,7 +1273,8 @@ async function generateCard(args, options = {}) {
     },
     judgeMode: "collective-aspect-card",
     judgeTier: aspectTier,
-    lintMode: "collective-aspect-card"
+    lintMode: "collective-aspect-card",
+    warmthHarvest
   }, options);
 }
 
@@ -1285,6 +1389,7 @@ module.exports = {
   ASPECT_FIELD,
   PLACEMENT_TIER_OF,
   SourceGapError,
+  aspectWarmthHarvest,
   buildPlacementPrompt,
   buildPlacementTopperPrompt,
   buildRepairPrompt,
@@ -1297,6 +1402,7 @@ module.exports = {
   generatePlacementCard,
   generatePlacementTopper,
   generationConfig,
+  humanMomentFromAspectSources,
   judgeConfig,
   judgeConfigForOptions,
   normalizeCardArgs,

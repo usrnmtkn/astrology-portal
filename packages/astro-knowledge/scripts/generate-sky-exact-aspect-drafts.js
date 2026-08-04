@@ -28,6 +28,13 @@ const {
   missingTargets,
   readerEligibleOwnerCorpus
 } = require("./sky-exact-aspect-corpus.js");
+const {
+  annotateCandidateWithWarmth,
+  buildAspectWarmthHarvest,
+  foundationPromptBlock,
+  lintAspectWarmthUsage,
+  warmthFlagIds
+} = require("./aspect-corpus-warmth-harvest.js");
 
 const SURFACE = "sky-exact-aspect";
 const GENERATION_LANE = `generation:${SURFACE}`;
@@ -81,6 +88,10 @@ function plainBriefPrompt(target) {
 }
 
 function writerPrompt(target, feedback = "", { avoidScenes = [], brief = null } = {}) {
+  const warmthHarvest = target.warmthHarvest || buildAspectWarmthHarvest(target, { surface: SURFACE, format: "full-card" });
+  if (!warmthHarvest.generationAllowed) {
+    throw new Error(`${target.id}: aspect warmth harvest failed closed (${warmthFlagIds(warmthHarvest.flags)}).`);
+  }
   return [
     `Write one evergreen exact-aspect Current Sky source entry for ${target.title}.`,
     `This must read like the owner-authored Venus square Mars card below: lived first, collective, modern, rhythmic, and specific.`,
@@ -96,6 +107,8 @@ function writerPrompt(target, feedback = "", { avoidScenes = [], brief = null } 
     ``,
     `LITERAL MEANING BRIEF. Preserve these facts and relationships. Improve the prose without replacing the meaning with a slogan:`,
     JSON.stringify(brief || {}, null, 2),
+    ``,
+    foundationPromptBlock(warmthHarvest),
     ``,
     `Return strict JSON with exactly these keys:`,
     `{`,
@@ -121,6 +134,9 @@ function writerPrompt(target, feedback = "", { avoidScenes = [], brief = null } 
       ? [`- QUINCUNX GEOMETRY: Center the awkward aftermath, repeated practical revisions, and negotiation that never resolves cleanly. Do not frame it as a direct opposition, explosive square, or single dramatic break.`]
       : []),
     `- End on one clean turn. It may be one sentence or a truth-and-catch pair. Do not imitate "The X is real. The Y is not," add a generic maxim before the close, or end with an If sentence.`,
+    ...(warmthHarvest.harvest_mode === "matched"
+      ? [`- The warmth beat is exactly one sentence after the shadow or cost is named, as the final or penultimate sentence. Never add a second warmth beat or a second conclusion.`]
+      : [`- No owner warmth line was found. Do not invent a permission, reassurance, benediction, or turn-toward-the-reader sentence.`]),
     `- Clarity comes before cleverness. Every sentence must make literal sense on the first read. Metaphor is optional; never force two metaphors into one line or make an abstraction perform an action that is hard to picture.`,
     `- REJECT THIS KIND OF LINE: "An old want comes back with better timing and nowhere left to hide." It is grammatical but unclear: timing cannot solve hiding, and the personified want has no concrete action. State what people want, expect, say, choose, or receive instead.`,
     `- Make it quotable and make it immediately clear. A quotable line comes from a precise observation, not strained cleverness. Do not force every ending into an aphorism.`,
@@ -196,6 +212,9 @@ function feedbackFor(lint, judge, naturalness) {
 }
 
 async function generateOne(target, options, releases, avoidScenes = []) {
+  if (!target.warmthHarvest?.generationAllowed) {
+    throw new Error(`${target.id}: aspect warmth harvest must pass before any generation call.`);
+  }
   let draft;
   let lint;
   let judge;
@@ -213,8 +232,19 @@ async function generateOne(target, options, releases, avoidScenes = []) {
         SURFACE
       );
       draft = normalizeDraft(target, extractJson(raw));
-      lint = lintExactEntry(draft);
-      judge = await judgeExactAspect(draft, { pairSource: target.sourceText, samples: 1 });
+      const exactLint = lintExactEntry(draft);
+      const warmthLint = lintAspectWarmthUsage(draft.body, target.warmthHarvest);
+      lint = {
+        score: exactLint.fails + warmthLint.fails ? 1 : 3,
+        fails: exactLint.fails + warmthLint.fails,
+        findings: [...exactLint.findings, ...warmthLint.findings],
+        warmth: warmthLint
+      };
+      judge = await judgeExactAspect(draft, {
+        pairSource: target.sourceText,
+        samples: 1,
+        foundationLines: target.warmthHarvest.ownerFoundationLines
+      });
       naturalness = await judgeNaturalEnglish(draft, { samples: 1 });
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
@@ -251,6 +281,7 @@ async function generateOne(target, options, releases, avoidScenes = []) {
 function makeRecord(target, draft, lint, judge, naturalness, brief, attempts, releases) {
   const evidenceProblem = Boolean(naturalness?.contractViolation || naturalness?.disagreement);
   const passed = lint.fails === 0 && judge.score === 3 && naturalness?.score === 3 && !evidenceProblem;
+  const annotatedDraft = annotateCandidateWithWarmth(draft, target.warmthHarvest);
   return {
     schemaVersion: 1,
     status: "needs_review",
@@ -267,7 +298,13 @@ function makeRecord(target, draft, lint, judge, naturalness, brief, attempts, re
     judgeModel: releases.judge,
     attempts,
     meaningBrief: brief || null,
-    draft,
+    warmthHarvest: target.warmthHarvest,
+    harvest_mode: target.warmthHarvest.harvest_mode,
+    ...(annotatedDraft.warmthSource ? {
+      warmthSource: annotatedDraft.warmthSource,
+      evidenceClass: "owner-corpus-derived"
+    } : {}),
+    draft: annotatedDraft,
     lint,
     judge,
     naturalnessJudge: naturalness,
@@ -390,13 +427,20 @@ async function run(options) {
   const registry = readRegistry();
   const generationRelease = resolveCandidateRelease({ role: "generation", surface: SURFACE, releaseId: registry.lanes[GENERATION_LANE].candidate.releaseId, registry });
   const judgeRelease = resolveCandidateRelease({ role: "judge", surface: SURFACE, releaseId: registry.lanes[JUDGE_LANE].candidate.releaseId, registry });
-  const targets = selectTargets(options);
+  const selectedTargets = selectTargets(options);
+  const targets = selectedTargets.map((target) => ({
+    ...target,
+    warmthHarvest: buildAspectWarmthHarvest(target, { surface: SURFACE, format: "full-card" })
+  }));
+  const editorialRequired = targets.filter((target) => !target.warmthHarvest.generationAllowed);
   const plan = {
     surface: SURFACE,
     generationRelease: generationRelease.releaseId,
     judgeRelease: judgeRelease.releaseId,
     model: generationRelease.model,
     targets: targets.length,
+    harvestReady: targets.length - editorialRequired.length,
+    editorialRequired: editorialRequired.map((target) => ({ id: target.id, flags: target.warmthHarvest.flags })),
     minimumLiveCalls: targets.length * 4,
     maximumLiveCallsWithRepairs: targets.length * (1 + (3 * (options.repairs + 1))),
     output: options.out,
@@ -404,6 +448,9 @@ async function run(options) {
   };
   if (options.plan) return plan;
   if (!options.authorizeLive) throw new Error("Use --plan or explicitly pass --authorize-live.");
+  if (editorialRequired.length) {
+    throw new Error(`Aspect warmth harvest failed closed for ${editorialRequired.length} target(s): ${editorialRequired.map((target) => `${target.id} (${warmthFlagIds(target.warmthHarvest.flags)})`).join("; ")}`);
+  }
   fs.mkdirSync(options.out, { recursive: true });
   const restore = configureCandidates(generationRelease, judgeRelease);
   const releases = {

@@ -89,7 +89,7 @@ function goldStandard(tier, n = 2, mode = "collective-aspect-card") {
 
 // The rubric the judge scores against. Concrete failure modes come from real
 // weak drafts, so the judge knows exactly what to catch.
-function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } = {}) {
+function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card", foundationLines = [] } = {}) {
   const placement = mode === PLACEMENT_MODE || mode === PLACEMENT_WITH_TOPPER_MODE;
   const placementWithTopper = mode === PLACEMENT_WITH_TOPPER_MODE;
   const tierHint = placement ? PLACEMENT_TIER_HINT[tier] : TIER_HINT[tier];
@@ -99,6 +99,10 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
         "Collective in the body; impersonal second person may appear only in the final truth-and-catch pair"
       )
     : sky.voiceDescription;
+  const suppliedFoundationLines = (foundationLines || []).map((line) => ({
+    sourceArticleId: line.sourceArticleId,
+    line: line.suppliedLine || line.originalLine
+  }));
 
   return [
     `You are the editor of a modern astrology app. You are strict. Most drafts are "borderline" until proven otherwise.`,
@@ -130,6 +134,11 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
             : `  - Treating the evergreen base like a live transit announcement or adding a current-sky topper.`
         ]
       : []),
+    ...(!placement && suppliedFoundationLines.length
+      ? [
+          `  - The card's turn toward the reader must trace to the supplied owner foundation lines when present. An invented permission or reassurance line in place of the supplied material scores 2; a card with no turn toward the reader at all, when foundation lines were supplied, scores 2. Verbatim or near-verbatim use of a supplied owner line is never penalized as copying - it is the owner's own writing.`
+        ]
+      : []),
     `  - Sounding like a generic horoscope rather than these examples.`,
     `  - Vague shrink/shrinking shorthand for self-reduction. If that behavior appears, identify the precise family and score generic shorthand no higher than 2:`,
     ...SELF_REDUCTION_FAMILIES.map(([key, meaning]) => `      ${key} = ${meaning}.`),
@@ -140,6 +149,9 @@ function buildJudgePrompt(card, { tier = "", mode = "collective-aspect-card" } =
     ``,
     `CARD TO SCORE:`,
     card,
+    ...(!placement && suppliedFoundationLines.length
+      ? [``, `SUPPLIED OWNER FOUNDATION LINES:`, JSON.stringify(suppliedFoundationLines, null, 2)]
+      : []),
     ``,
     `Return ONLY strict JSON: {"score": 1|2|3, "verdict": "in-voice"|"borderline"|"off-voice", "weakest": "the single weakest sentence, quoted", "why": "one short reason"}`,
   ].filter(Boolean).join("\n");
@@ -180,8 +192,13 @@ async function judgeCard(card, opts = {}) {
   const result = await runJudgeSamples({
     content: card,
     prompt,
-    rubric: JSON.stringify({ voiceDescription: sky.voiceDescription, mode: opts.mode || "collective-aspect-card", tier: opts.tier || "" }),
-    rubricVersion: "sky-aspect-voice-v1",
+    rubric: JSON.stringify({
+      voiceDescription: sky.voiceDescription,
+      mode: opts.mode || "collective-aspect-card",
+      tier: opts.tier || "",
+      foundationLines: (opts.foundationLines || []).map((line) => ({ sourceArticleId: line.sourceArticleId, line: line.suppliedLine || line.originalLine }))
+    }),
+    rubricVersion: "sky-aspect-voice-v2-owner-warmth",
     samples: opts.samples,
     temperature: JUDGE_TEMPERATURE,
     judgeFn: opts.judgeFn,
