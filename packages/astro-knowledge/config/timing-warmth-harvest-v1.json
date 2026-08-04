@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "timing-warmth-harvest-v1",
+  "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+  "evidenceClass": "owner-corpus-derived",
+  "maxFoundationLines": 3,
+  "fullCardInstruction": "Adapt one into the card where it lands naturally, keeping its meaning and register. Verbatim is preferred when it fits. Use at most one.",
+  "sourceFamilies": {
+    "mercury-retrograde": [
+      "diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "adjacent-formats/2025-mercury-retrogrades.md"
+    ],
+    "venus-retrograde": [
+      "adjacent-formats/relationship-year-libra-2025-to-venus-rx-2026.md"
+    ],
+    "retrograde-station": [
+      "calibration-candidates/chiron-retrograde-in-aries.md",
+      "diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "diagnostic-same-surface/venus-retrograde-2025.md"
+    ],
+    "direct-station": [
+      "calibration-candidates/mars-direct-in-cancer.md",
+      "TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER.md"
+    ],
+    "cazimi": [
+      "reference-surfaces/2025-overview.md"
+    ],
+    "season-ingress": [
+      "season"
+    ],
+    "lunation": [
+      "new-moon",
+      "full-moon",
+      "eclipse"
+    ]
+  },
+  "phaseSearchTerms": {
+    "pre-shadow": ["preview", "begin", "return", "notice", "again"],
+    "station-retrograde": ["pause", "stop", "review", "rethink", "slow", "rest"],
+    "retrograde-passage": ["return", "review", "revisit", "unfinished", "complete", "past"],
+    "cazimi": ["clarity", "clear", "understand", "realize", "decision", "truth"],
+    "sun-opposition": ["visible", "truth", "clear", "confront", "understand"],
+    "station-direct": ["forward", "integrate", "resolve", "resolution", "retrace", "return", "move", "clarity", "clear", "settle"],
+    "post-shadow": ["integrate", "complete", "finish", "forward", "settle"],
+    "ingress": ["season", "begin", "enter", "shift", "arrival"],
+    "new-moon": ["begin", "start", "seed", "intention", "new"],
+    "full-moon": ["reveal", "release", "visible", "truth", "complete"]
+  }
+}
