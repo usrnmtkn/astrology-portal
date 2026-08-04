@@ -777,7 +777,10 @@ export function calendarWeeklyNarrativeShifts(
   }
 
   if (selected.size < 3) add(mainEvent);
-  if (selected.size < 3) add(aspects[0]);
+  for (const aspect of aspects) {
+    if (selected.size >= 3) break;
+    add(aspect);
+  }
 
   return mainShifts.filter((event) => selected.has(event.id));
 }
@@ -807,21 +810,9 @@ export function calendarWeeklyNarrativeHeadline(
 function weeklyNarrativeBodyForEvent(
   event: LunarCalendarEvent,
   eventDescriptions: ReadonlyMap<string, string>,
-  dayGuidance: ReadonlyMap<string, string>
+  _dayGuidance: ReadonlyMap<string, string>
 ) {
-  const eventBody = eventDescriptions.get(event.id)?.trim() ?? "";
-  const guidanceBody = dayGuidance.get(event.dateKey)?.trim() ?? "";
-  const eventWordCount = eventBody ? eventBody.split(/\s+/u).length : 0;
-
-  if (
-    event.type === "lunation"
-    || eventWordCount < 24
-    || eventWordCount > 120
-  ) {
-    return guidanceBody || eventBody;
-  }
-
-  return eventBody || guidanceBody;
+  return eventDescriptions.get(event.id)?.trim() ?? "";
 }
 
 function normalizedCopyBigrams(value: string) {
