@@ -99,6 +99,7 @@ const placementRows = readJson(`${packageDir}/source-rows/placement-interim-fixe
 const skyArticleRows = readJson(`${packageDir}/source-rows/sky-article-v1.json`);
 const skyAspectPhrasebook = readJson(`${packageDir}/source-rows/sky-aspect-phrasebook-v1.json`);
 const skyPlacementVoicePass = readJson(`${packageDir}/source-rows/sky-placement-inventories-voice-pass-v1.json`);
+const skyPlacementOwnerApprovedFallbacks = readJson(`${packageDir}/bundled-sky-placement-owner-approved-reader-v1.json`);
 const skyPlanetFrames = readJson(`${packageDir}/source-rows/sky-planet-frames-v1.json`);
 const skySignCopySun = readJson(`${packageDir}/source-rows/sky-sign-copy-sun-v1.json`);
 const timingEventRows = readJson(`${packageDir}/source-rows/timing-event-reader-copy-v2.json`);
@@ -138,7 +139,8 @@ const expectedManifest = createPackageManifest({
       ...skyAspectPhrasebook.hookRows,
       ...skyPlanetFrames.rows,
       ...skyPlacementVoicePass.rows,
-      ...skySignCopySun.rows
+      ...skySignCopySun.rows,
+      ...skyPlacementOwnerApprovedFallbacks.rows
     ]),
     vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,

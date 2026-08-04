@@ -400,6 +400,66 @@ function signTransitWindowFor(
   };
 }
 
+function previousSameSignResidencyFor(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  currentStart: Date
+) {
+  const searchYears = planet === "Jupiter" ? 14 : 32;
+  const minimumGapYears = planet === "Jupiter" ? 6 : 1;
+  const stepDays = transitSearchStepDays(planet);
+  const maxIterations = Math.ceil((searchYears * 365.25) / stepDays);
+  let sample = addDays(currentStart, -minimumGapYears * 365.25);
+
+  for (let index = 0; index < maxIterations; index += 1) {
+    if (exactPlanetSign(swe, planetId, sample) === sign) {
+      const previousWindow = signTransitWindowFor(swe, planet, planetId, sample, sign);
+      if (
+        previousWindow.transitStart
+        && previousWindow.transitEnd
+        && new Date(previousWindow.transitEnd) < currentStart
+      ) {
+        return previousWindow;
+      }
+    }
+    sample = addDays(sample, -stepDays);
+  }
+
+  return null;
+}
+
+function skyPlacementStructuralTransitFacts(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  transitWindow: { transitStart?: string; transitEnd?: string }
+) {
+  // Jupiter in Libra quotes both prior-sign and prior-cycle dates. The node
+  // axis also needs its prior-sign handoff for the reader's engine fact line.
+  if (!["Jupiter", "North Node"].includes(planet) || !transitWindow.transitStart || !transitWindow.transitEnd) {
+    return {};
+  }
+
+  const currentStart = new Date(transitWindow.transitStart);
+  const priorReference = new Date(currentStart.getTime() - 5 * 60_000);
+  const priorTransitSign = exactPlanetSign(swe, planetId, priorReference);
+  const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorTransitSign);
+  const previousResidency = planet === "Jupiter"
+    ? previousSameSignResidencyFor(swe, planet, planetId, sign, currentStart)
+    : null;
+
+  return {
+    priorTransitSign,
+    priorTransitStart: priorWindow.transitStart ?? null,
+    priorTransitEnd: priorWindow.transitEnd ?? null,
+    previousSignResidencyStart: previousResidency?.transitStart ?? null,
+    previousSignResidencyEnd: previousResidency?.transitEnd ?? null
+  };
+}
+
 function moonSunPhaseAngle(swe: SwissEphInstance, date: Date) {
   return normalizeDegrees(
     exactPlanetLongitude(swe, swe.SE_MOON, date) - exactPlanetLongitude(swe, swe.SE_SUN, date)
@@ -1737,7 +1797,7 @@ function findSkyAspects(
           const currentDate = new Date(time);
           const currentDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, currentDate, degrees);
 
-          if (Math.abs(currentDistance) < 0.03 || previousDistance === 0 || previousDistance * currentDistance < 0) {
+          if (previousDistance === 0 || previousDistance * currentDistance < 0) {
             const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate);
             const dateKey = localDateKey(occursAt, timeZone);
             const title = `${firstPlanet} ${aspect} ${secondPlanet}`;
@@ -2122,6 +2182,174 @@ export const defaultLocation: LocationInput = {
   timeZone: "America/New_York"
 };
 
+export type SkyPlacementTransitFacts = {
+  planet: string;
+  sign: string;
+  referenceDate: string;
+  timeZone: string;
+  transitStart: string;
+  transitEnd: string;
+  priorSign: string;
+  priorSignEntryDate: string;
+  priorSignExitDate: string;
+  previousResidency: {
+    sign: string;
+    entryDate: string;
+    exitDate: string;
+  } | null;
+  rankedEventsDuringTransit: Array<{
+    id: string;
+    eventType: "exact-aspect";
+    planet: string;
+    otherPlanet: string;
+    planets: [string, string];
+    aspect: string;
+    occursAt: string;
+    dateKey: string;
+    rank: number;
+  }>;
+  calculationSource: string;
+  zodiac: "tropical" | "sidereal";
+};
+
+function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
+  const key = requestedPlanet.trim().toLowerCase();
+  const supported = [
+    ["sun", "Sun", swe.SE_SUN],
+    ["mercury", "Mercury", swe.SE_MERCURY],
+    ["venus", "Venus", swe.SE_VENUS],
+    ["mars", "Mars", swe.SE_MARS],
+    ["jupiter", "Jupiter", swe.SE_JUPITER],
+    ["saturn", "Saturn", swe.SE_SATURN],
+    ["uranus", "Uranus", swe.SE_URANUS],
+    ["neptune", "Neptune", swe.SE_NEPTUNE],
+    ["pluto", "Pluto", swe.SE_PLUTO]
+  ] as const;
+  const match = supported.find(([slug]) => slug === key);
+  if (!match) throw new Error(`Unsupported Sky Placement planet '${requestedPlanet}'.`);
+  return { planet: match[1], planetId: match[2] };
+}
+
+function placementSign(requestedSign: string) {
+  const match = signs.find(([name]) => name.toLowerCase() === requestedSign.trim().toLowerCase());
+  if (!match) throw new Error(`Unsupported Sky Placement sign '${requestedSign}'.`);
+  return match[0];
+}
+
+function placementSearchYears(planet: string) {
+  if (["Sun", "Mercury", "Venus", "Mars"].includes(planet)) return 3;
+  if (planet === "Jupiter") return 15;
+  if (planet === "Saturn") return 32;
+  if (planet === "Uranus") return 90;
+  if (planet === "Neptune") return 170;
+  return 260;
+}
+
+function findNextPlacementSample(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  referenceDate: Date
+) {
+  if (exactPlanetSign(swe, planetId, referenceDate) === sign) return referenceDate;
+  const stepDays = transitSearchStepDays(planet);
+  const maxIterations = Math.ceil((placementSearchYears(planet) * 365.25) / stepDays);
+  let sample = addDays(referenceDate, stepDays);
+  for (let index = 0; index < maxIterations; index += 1) {
+    if (exactPlanetSign(swe, planetId, sample) === sign) return sample;
+    sample = addDays(sample, stepDays);
+  }
+  throw new Error(`Could not locate the next ${planet} in ${sign} transit from ${referenceDate.toISOString()}.`);
+}
+
+function rankPlacementEvents(events: LunarCalendarEvent[], planet: string) {
+  const bodyPriority = ["Pluto", "Neptune", "Uranus", "Saturn", "Jupiter", "Mars", "Venus", "Mercury", "Sun"];
+  const aspectPriority = ["conjunction", "opposition", "square", "trine", "sextile"];
+  return events
+    .filter((event) => event.type === "aspect" && event.primary && event.planets?.includes(planet))
+    .map((event) => {
+      const pair = event.planets as [string, string];
+      const otherPlanet = pair[0] === planet ? pair[1] : pair[0];
+      return {
+        event,
+        otherPlanet,
+        bodyRank: bodyPriority.indexOf(otherPlanet),
+        aspectRank: aspectPriority.indexOf(event.aspect || "")
+      };
+    })
+    .sort((left, right) => (
+      (left.bodyRank < 0 ? bodyPriority.length : left.bodyRank) - (right.bodyRank < 0 ? bodyPriority.length : right.bodyRank)
+      || (left.aspectRank < 0 ? aspectPriority.length : left.aspectRank) - (right.aspectRank < 0 ? aspectPriority.length : right.aspectRank)
+      || left.event.startsAt.localeCompare(right.event.startsAt)
+    ))
+    .map(({ event, otherPlanet }, index) => ({
+      id: event.id,
+      eventType: "exact-aspect" as const,
+      planet,
+      otherPlanet,
+      planets: event.planets as [string, string],
+      aspect: event.aspect || "",
+      occursAt: event.startsAt,
+      dateKey: event.dateKey,
+      rank: index + 1
+    }));
+}
+
+export async function getSkyPlacementTransitFacts({
+  planet: requestedPlanet,
+  sign: requestedSign,
+  referenceDate = new Date(),
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+}: {
+  planet: string;
+  sign: string;
+  referenceDate?: Date;
+  timeZone?: string;
+}): Promise<SkyPlacementTransitFacts> {
+  if (Number.isNaN(referenceDate.getTime())) throw new Error("Sky Placement referenceDate must be valid.");
+  new Intl.DateTimeFormat("en-US", { timeZone }).format(referenceDate);
+  const swe = await getSwissEph();
+  const { planet, planetId } = placementPlanet(swe, requestedPlanet);
+  const sign = placementSign(requestedSign);
+  const sample = findNextPlacementSample(swe, planet, planetId, sign, referenceDate);
+  const window = signTransitWindowFor(swe, planet, planetId, sample, sign);
+  if (!window.transitStart || !window.transitEnd) {
+    throw new Error(`Could not resolve the ${planet} in ${sign} transit boundaries.`);
+  }
+  const transitStart = new Date(window.transitStart);
+  const transitEnd = new Date(window.transitEnd);
+  const priorReference = new Date(transitStart.getTime() - 5 * 60_000);
+  const priorSign = exactPlanetSign(swe, planetId, priorReference);
+  const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorSign);
+  if (!priorWindow.transitStart || !priorWindow.transitEnd) {
+    throw new Error(`Could not resolve the prior ${planet} in ${priorSign} transit boundaries.`);
+  }
+  const previous = previousSameSignResidencyFor(swe, planet, planetId, sign, transitStart);
+  const rankedEventsDuringTransit = rankPlacementEvents(
+    findSkyAspects(swe, transitStart, transitEnd, timeZone),
+    planet
+  );
+
+  return {
+    planet,
+    sign,
+    referenceDate: referenceDate.toISOString(),
+    timeZone,
+    transitStart: window.transitStart,
+    transitEnd: window.transitEnd,
+    priorSign,
+    priorSignEntryDate: priorWindow.transitStart,
+    priorSignExitDate: priorWindow.transitEnd,
+    previousResidency: previous?.transitStart && previous.transitEnd
+      ? { sign, entryDate: previous.transitStart, exitDate: previous.transitEnd }
+      : null,
+    rankedEventsDuringTransit,
+    calculationSource: ASTROLOGY_CALCULATION_PROVENANCE.source,
+    zodiac: ASTROLOGY_CALCULATION_PROVENANCE.zodiac
+  };
+}
+
 export async function getAstrodienstSky(
   location: LocationInput = defaultLocation,
   date: Date = new Date(),
@@ -2179,6 +2407,9 @@ export async function getAstrodienstSky(
     const transitWindow = options.includeTransitWindows
       ? signTransitWindowFor(swe, planet, planetIds[index], date, sign)
       : {};
+    const structuralTransitFacts = options.includeTransitWindows
+      ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow)
+      : {};
     const retrogradeWindow = options.includeTransitWindows
       ? retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
       : {};
@@ -2198,6 +2429,7 @@ export async function getAstrodienstSky(
       theme: themeForPoint(planet),
       transitTimeZone: options.includeTransitWindows ? location.timeZone ?? "UTC" : undefined,
       ...transitWindow,
+      ...structuralTransitFacts,
       ...retrogradeWindow
     };
   });

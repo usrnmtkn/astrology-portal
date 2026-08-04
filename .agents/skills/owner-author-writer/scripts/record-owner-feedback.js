@@ -69,6 +69,7 @@ function proposalFor(payload) {
     ...(payload.sign ? { sign: payload.sign } : {}),
     articleBeat: payload.articleBeat,
     before: payload.before || "[no prior wording supplied]",
+    beforeIsRejected: payload.beforeIsRejected !== false,
     after: payload.after || "[rejected without replacement]",
     whatChanged: payload.whatChanged || "Owner feedback recorded; transformation description pending human review.",
     ownerReason: payload.ownerReason || payload.ownerStatement,
@@ -103,7 +104,7 @@ function main() {
     if (dataset.records.some((record) => record.id === proposal.id)) throw new Error(`Feedback record '${proposal.id}' already exists.`);
     const stored = { ...proposal };
     delete stored.feedbackKind;
-    delete stored.exactApprovalScope;
+    if (stored.exactApprovalScope === "not_exact_approval") delete stored.exactApprovalScope;
     dataset.records.push(stored);
     fs.writeFileSync(datasetPath, `${JSON.stringify(dataset, null, 2)}\n`);
   }
