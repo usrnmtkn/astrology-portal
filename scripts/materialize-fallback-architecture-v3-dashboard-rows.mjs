@@ -13,7 +13,11 @@ const defaultOutPath = path.join(repoRoot, "scripts/generated/fallback-architect
 const importBatchId = `fallback-architecture-${PACKAGE_VERSION}`;
 const placementSentencePositiveTest = "passed-jul29-criteria";
 let packageManifest;
+let packagePartitionManifests;
 let continuousFallbackImportManifest;
+let skyPlacementServingManifest;
+let skyPlacementReleaseByKey;
+let skyPlacementReleaseByBatch;
 
 const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
@@ -62,6 +66,89 @@ function loadLocalWebEnv() {
 
 function readJson(fileName) {
   return JSON.parse(fs.readFileSync(path.join(packageDir, fileName), "utf8"));
+}
+
+function readSkySignCopySources() {
+  return fs.readdirSync(path.join(packageDir, "source-rows"))
+    .filter((fileName) => /^sky-sign-copy-.*\.json$/u.test(fileName))
+    .sort()
+    .map((fileName) => readJson(`source-rows/${fileName}`));
+}
+
+function isContinuousSkyPlacementRecord(record, contentKey) {
+  return record.render_policy === "sky-placement-continuous-v2"
+    || contentKey.startsWith("fallback-hook/sky-sign-copy/");
+}
+
+function isSkyPlacementPartitionKey(contentKey) {
+  return contentKey.startsWith("fallback-hook/sky-sign-copy/")
+    || (
+      contentKey.startsWith("fallback-hook/sky-placement-")
+      && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
+    );
+}
+
+function loadSkyPlacementServingManifest() {
+  const manifest = readJson("authored-inputs/sky-placement-serving-manifest-v1.json");
+  const releaseByKey = new Map();
+  const releaseByBatch = new Map();
+
+  if (manifest.runtime_capability !== "sky-placement-on-demand-v1") {
+    throw new Error("Sky Placement serving manifest must require the sky-placement-on-demand-v1 runtime capability.");
+  }
+
+  for (const release of manifest.releases ?? []) {
+    const approvedKeys = Array.isArray(release.approved_keys) ? release.approved_keys : [];
+    const approval = release.owner_approval;
+
+    if (release.distribution_state === "serving") {
+      if (
+        !approval
+        || typeof approval.statement !== "string"
+        || !approval.statement.trim()
+        || typeof approval.approved_at !== "string"
+        || !approval.approved_at.trim()
+        || typeof approval.source !== "string"
+        || !approval.source.trim()
+        || JSON.stringify(approval.approved_keys) !== JSON.stringify(approvedKeys)
+      ) {
+        throw new Error(`Serving release ${release.release_id ?? "unknown"} lacks an explicit owner-approved serving diff.`);
+      }
+
+      if (Number(release.release_batch) >= 2) {
+        const migrationGate = release.migration_gate;
+
+        if (
+          release.transition !== "staged_to_serving"
+          || release.required_runtime_capability !== manifest.runtime_capability
+          || migrationGate?.status !== "verified"
+          || typeof migrationGate.deployed_package_version !== "string"
+          || !migrationGate.deployed_package_version.trim()
+          || typeof migrationGate.verified_at !== "string"
+          || !migrationGate.verified_at.trim()
+          || typeof migrationGate.source !== "string"
+          || !migrationGate.source.trim()
+        ) {
+          throw new Error(`Serving release ${release.release_id ?? "unknown"} is blocked until the on-demand runtime deployment is verified.`);
+        }
+      }
+    }
+
+    const releaseBatch = String(release.release_batch ?? "").trim();
+    if (!releaseBatch || releaseByBatch.has(releaseBatch)) {
+      throw new Error(`Sky Placement serving manifest has a missing or duplicate release_batch: ${releaseBatch || "unknown"}.`);
+    }
+    releaseByBatch.set(releaseBatch, release);
+
+    for (const contentKey of approvedKeys) {
+      if (releaseByKey.has(contentKey)) {
+        throw new Error(`Sky Placement serving manifest repeats ${contentKey}.`);
+      }
+      releaseByKey.set(contentKey, release);
+    }
+  }
+
+  return { manifest, releaseByKey, releaseByBatch };
 }
 
 function requireEnv(name) {
@@ -230,7 +317,21 @@ function mapPackageRecord(record, bucket) {
   const reviewStatus = contentRole === "template" && !sourceReviewStatus
     ? "approved_reuse"
     : sourceReviewStatus;
-  const serving = statusForReview(contentRole, reviewStatus, contentKey);
+  const requiresServingManifest = isContinuousSkyPlacementRecord(record, contentKey)
+    && reviewStatus !== "superseded";
+  const distributionRelease = requiresServingManifest
+    ? skyPlacementReleaseByKey.get(contentKey)
+      ?? skyPlacementReleaseByBatch.get(String(record.release_batch ?? "").trim())
+    : null;
+  const distributionApproved = distributionRelease?.distribution_state === "serving"
+    && distributionRelease.approved_keys?.includes(contentKey);
+  const serving = requiresServingManifest && !distributionRelease
+    ? { status: "DRAFT", lane: "reference", reviewState: "serving-manifest-required" }
+    : !distributionApproved && requiresServingManifest
+      ? { status: "DRAFT", lane: "reference", reviewState: "serving-awaiting-owner-approval" }
+    : statusForReview(contentRole, reviewStatus, contentKey);
+  const packagePartition = isSkyPlacementPartitionKey(contentKey) ? "sky-placement" : "core";
+  const packagePartitionManifest = packagePartitionManifests[packagePartition];
   const surface = surfaceForKey(contentKey, record.surface);
   const body = rowBody(record);
 
@@ -272,6 +373,12 @@ function mapPackageRecord(record, bucket) {
       packageContentHash: packageManifest.contentHash,
       packageKeyManifestHash: packageManifest.keyManifestHash,
       packageKeyCount: packageManifest.keyCount,
+      packagePartition,
+      packagePartitionContentHash: packagePartitionManifest.contentHash,
+      packagePartitionKeyManifestHash: packagePartitionManifest.keyManifestHash,
+      packagePartitionKeyCount: packagePartitionManifest.keyCount,
+      distributionState: distributionRelease?.distribution_state ?? null,
+      releaseBatch: distributionRelease?.release_batch ?? null,
       packageBucket: bucket,
       content_role: contentRole,
       review_status: reviewStatus,
@@ -293,11 +400,19 @@ function mapPackageRecord(record, bucket) {
       packageContentHash: packageManifest.contentHash,
       packageKeyManifestHash: packageManifest.keyManifestHash,
       packageKeyCount: packageManifest.keyCount,
+      packagePartition,
+      packagePartitionContentHash: packagePartitionManifest.contentHash,
+      packagePartitionKeyManifestHash: packagePartitionManifest.keyManifestHash,
+      packagePartitionKeyCount: packagePartitionManifest.keyCount,
+      distributionState: distributionRelease?.distribution_state ?? null,
+      releaseBatch: distributionRelease?.release_batch ?? null,
       note: "V3 package mirror for dashboard editing. fallback_source rows are source material and must never render directly."
     },
     reviewer_notes: String(record.note ?? record.notes ?? "").trim(),
     prompt_version: importBatchId,
-    provider: "tldrastro-fallback-architecture-v3",
+    provider: packagePartition === "sky-placement"
+      ? "tldrastro-fallback-architecture-v3-sky-placement"
+      : "tldrastro-fallback-architecture-v3",
     model: "manual",
     updated_at: new Date().toISOString()
   };
@@ -355,11 +470,20 @@ function readPackageSources() {
   const skyPlacementOwnerApprovedFallbacks = readJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
   const skyPlacementOwnerApprovedReaderFallbacks = readJson("bundled-sky-placement-owner-approved-reader-v1.json");
   const skyPlanetFrames = readJson("source-rows/sky-planet-frames-v1.json");
-  const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
+  const skySignCopySources = readSkySignCopySources();
+  const skySignCopy = {
+    rows: skySignCopySources.flatMap((source) => source.rows ?? []),
+    superseded_rows: skySignCopySources.flatMap((source) => source.superseded_rows ?? [])
+  };
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
+  ({
+    manifest: skyPlacementServingManifest,
+    releaseByKey: skyPlacementReleaseByKey,
+    releaseByBatch: skyPlacementReleaseByBatch
+  } = loadSkyPlacementServingManifest());
 
   return {
     sourceRows,
@@ -374,7 +498,7 @@ function readPackageSources() {
     skyPlacementOwnerApprovedFallbacks,
     skyPlacementOwnerApprovedReaderFallbacks,
     skyPlanetFrames,
-    skySignCopySun,
+    skySignCopy,
     timingEventRows,
     weeklyRows,
     templateRows
@@ -383,9 +507,19 @@ function readPackageSources() {
 
 function readerEligibleReviewStatus(row, allowBlank = false) {
   const reviewStatus = String(row.review_status ?? "").trim().toLowerCase();
+  const contentKey = String(row.contentKey ?? "");
+  const distributionRelease = skyPlacementReleaseByKey.get(contentKey)
+    ?? skyPlacementReleaseByBatch.get(String(row.release_batch ?? "").trim());
+  const distributionEligible = !isContinuousSkyPlacementRecord(row, contentKey)
+    || (
+      distributionRelease?.distribution_state === "serving"
+      && distributionRelease.approved_keys?.includes(contentKey)
+    );
 
-  return ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
-    || (allowBlank && !reviewStatus);
+  return (
+    ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
+    || (allowBlank && !reviewStatus)
+  ) && distributionEligible;
 }
 
 function packageRowsWithLatestEligibleOverride(rows, allowBlank = false) {
@@ -423,7 +557,7 @@ function readerPackageBundle(sources) {
         ...sources.skyAspectPhrasebook.hookRows,
         ...sources.skyPlanetFrames.rows,
         ...sources.skyPlacementVoicePass.rows,
-        ...sources.skySignCopySun.rows,
+        ...sources.skySignCopy.rows,
         ...sources.skyPlacementOwnerApprovedReaderFallbacks.rows
       ]),
       vocabularyRows: packageRowsWithLatestEligibleOverride([
@@ -455,8 +589,8 @@ function materializeRows(sources) {
     ...sources.skyAspectPhrasebook.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...(sources.skySignCopySun.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sources.skySignCopySun.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...(sources.skySignCopy.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skySignCopy.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementOwnerApprovedFallbacks.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
@@ -509,44 +643,52 @@ async function deleteStaleRows(currentRows) {
   const currentKeys = new Set(currentRows.map((row) => row.content_key));
   const staleKeys = [];
 
-  for (let offset = 0; ; offset += 1000) {
-    const response = await fetch(
-      `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key&provider=eq.tldrastro-fallback-architecture-v3&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
-      {
-        method: "GET",
-        headers: adminHeaders()
+  for (const provider of [
+    "tldrastro-fallback-architecture-v3",
+    "tldrastro-fallback-architecture-v3-sky-placement"
+  ]) {
+    for (let offset = 0; ; offset += 1000) {
+      const response = await fetch(
+        `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key&provider=eq.${provider}&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
+        {
+          method: "GET",
+          headers: adminHeaders()
+        }
+      );
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(`Fallback architecture V3 stale-row scan failed with ${response.status}: ${JSON.stringify(payload)}`);
       }
-    );
-    const payload = await response.json().catch(() => null);
 
-    if (!response.ok) {
-      throw new Error(`Fallback architecture V3 stale-row scan failed with ${response.status}: ${JSON.stringify(payload)}`);
-    }
-
-    for (const row of payload ?? []) {
-      if (row?.content_key && !currentKeys.has(row.content_key)) {
-        staleKeys.push(row.content_key);
+      for (const row of payload ?? []) {
+        if (row?.content_key && !currentKeys.has(row.content_key)) {
+          staleKeys.push({ contentKey: row.content_key, provider });
+        }
       }
-    }
 
-    if (!Array.isArray(payload) || payload.length < 1000) {
-      break;
+      if (!Array.isArray(payload) || payload.length < 1000) {
+        break;
+      }
     }
   }
 
   for (let index = 0; index < staleKeys.length; index += 100) {
     const batch = staleKeys.slice(index, index + 100);
-    const response = await fetch(
-      `${supabaseUrl()}/rest/v1/generated_interpretations?provider=eq.tldrastro-fallback-architecture-v3&content_key=${encodeURIComponent(restInFilter(batch))}`,
-      {
-        method: "DELETE",
-        headers: adminHeaders({ prefer: "return=minimal" })
-      }
-    );
-    const payload = await response.text().catch(() => "");
+    for (const provider of new Set(batch.map((row) => row.provider))) {
+      const keys = batch.filter((row) => row.provider === provider).map((row) => row.contentKey);
+      const response = await fetch(
+        `${supabaseUrl()}/rest/v1/generated_interpretations?provider=eq.${provider}&content_key=${encodeURIComponent(restInFilter(keys))}`,
+        {
+          method: "DELETE",
+          headers: adminHeaders({ prefer: "return=minimal" })
+        }
+      );
+      const payload = await response.text().catch(() => "");
 
-    if (!response.ok) {
-      throw new Error(`Fallback architecture V3 stale-row delete failed with ${response.status}: ${payload}`);
+      if (!response.ok) {
+        throw new Error(`Fallback architecture V3 stale-row delete failed with ${response.status}: ${payload}`);
+      }
     }
   }
 
@@ -556,24 +698,29 @@ async function deleteStaleRows(currentRows) {
 async function readImportedRows() {
   const imported = [];
 
-  for (let offset = 0; ; offset += 1000) {
-    const response = await fetch(
-      `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key,surface,mode,status,lane,review_state,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,prompt_version,provider,model&provider=eq.tldrastro-fallback-architecture-v3&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
-      {
-        method: "GET",
-        headers: adminHeaders()
+  for (const provider of [
+    "tldrastro-fallback-architecture-v3",
+    "tldrastro-fallback-architecture-v3-sky-placement"
+  ]) {
+    for (let offset = 0; ; offset += 1000) {
+      const response = await fetch(
+        `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key,surface,mode,status,lane,review_state,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,prompt_version,provider,model&provider=eq.${provider}&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
+        {
+          method: "GET",
+          headers: adminHeaders()
+        }
+      );
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(`Fallback architecture V3 verify failed with ${response.status}: ${JSON.stringify(payload)}`);
       }
-    );
-    const payload = await response.json().catch(() => null);
 
-    if (!response.ok) {
-      throw new Error(`Fallback architecture V3 verify failed with ${response.status}: ${JSON.stringify(payload)}`);
-    }
+      imported.push(...payload);
 
-    imported.push(...payload);
-
-    if (!Array.isArray(payload) || payload.length < 1000) {
-      break;
+      if (!Array.isArray(payload) || payload.length < 1000) {
+        break;
+      }
     }
   }
 
@@ -688,6 +835,17 @@ loadLocalWebEnv();
 
 const packageSources = readPackageSources();
 packageManifest = createPackageManifest(readerPackageBundle(packageSources), PACKAGE_VERSION);
+packagePartitionManifests = {
+  core: readJson("bundled-core-manifest-v3.json"),
+  "sky-placement": readJson("bundled-sky-placement-manifest-v3.json")
+};
+if (
+  packageManifest.contentHash !== readJson("bundled-manifest-v3.json").contentHash
+  || packagePartitionManifests.core.packageVersion !== packageManifest.packageVersion
+  || packagePartitionManifests["sky-placement"].packageVersion !== packageManifest.packageVersion
+) {
+  throw new Error("Fallback package or partition manifests are stale. Run npm run build:fallback-manifest.");
+}
 const rows = materializeRows(packageSources);
 const counts = {
   authoredCards: countBy(rows, (row) => row.source_snapshot.contentType === "authored-content"),
@@ -703,6 +861,8 @@ fs.writeFileSync(outPath, `${JSON.stringify({
   schema: "tldrastro-fallback-architecture-v3-dashboard-rows",
   generatedAt: new Date().toISOString(),
   packageManifest,
+  packagePartitionManifests,
+  skyPlacementServingManifest,
   counts,
   rows
 }, null, 2)}\n`);

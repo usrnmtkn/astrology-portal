@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "exactlyMatchesOriginalSolDraft": true,
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "emDash": "pass",
+  "legacyLeakage": "pass",
+  "warmthSource": "complete_and_traced",
+  "evidenceLabels": "owner-corpus-derived",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "44082c453864d55b346130f68bf99355e8cc0d4eaed92aba1f17f40a8a181b88"
+}

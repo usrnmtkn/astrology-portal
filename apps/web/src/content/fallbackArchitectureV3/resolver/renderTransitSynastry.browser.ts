@@ -1514,6 +1514,23 @@ export function createTransitSynastryRenderer(
       ? signCopyRow
       : null;
     if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+      const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
+      if (!continuousSignCopy && standaloneHook?.body_you) {
+        const body = standaloneHook.body_you.trim();
+        if (!body || /\{\{/u.test(body)) {
+          throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
+        }
+        return {
+          headline: `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+          tagline: null,
+          moves: [],
+          keyDates: [],
+          body,
+          parts: [body],
+          templateKey: "sky-placement-standalone-hook-v1",
+          contentKey: standaloneHook.contentKey
+        };
+      }
       if (!continuousSignCopy) {
         throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
       }

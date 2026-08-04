@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "jupiter-ascendant-soft-v1",
+  "target": {
+    "factorA": "jupiter",
+    "factorB": "ascendant",
+    "aspectGroup": "soft",
+    "governedEntryId": "A-jupiter_B-ascendant_trine"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/soft",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You tend to assume the best of how {{holder2}} presents themselves and encourage them when they seem unsure. Feeling accepted by you makes it easier for {{holder2}} to enter situations naturally without overthinking how they come across. That easy optimism can also lead both of you to move past moments when {{holder2}} is genuinely hesitant or uncomfortable.",
+    "body_they": "{{holder1}} tends to assume the best of how you present yourself and encourage you when you seem unsure. Feeling accepted by {{holder1}} makes it easier for you to enter situations naturally without overthinking how you come across. That easy optimism can also lead both of you to move past moments when you are genuinely hesitant or uncomfortable.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-ascendant_trine.json"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": null,
+  "evidenceLabels": [],
+  "harvestMode": "none_found",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0ee329d5262c1142006a722ec55ee481a2b7c2cadf048cf303",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_09aaade6b817bf73006a722eff86b081a1866d21601e8e09fd",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "body_you / body_they, third sentence",
+    "weakest": "The claim that shared optimism can lead them to move past genuine hesitation or discomfort is not supported by the source boundary.",
+    "why": "Direction, reciprocity, and the central acceptance loop are clear: the Jupiter holder assumes the best and encourages, while the Ascendant holder feels accepted and can show up more naturally. However, the final sentence adds an unsupported negative pattern of overlooking discomfort. It is a specific, removable source-drift issue in both variants.",
+    "failedChecks": [
+      "Source fidelity: the final sentence invents a cost not supplied by the Jupiter-to-Ascendant soft source."
+    ],
+    "strengths": [
+      "Fixed Jupiter-to-Ascendant direction is maintained in both variants.",
+      "The two-person response loop is plain and natural after placeholder resolution.",
+      "Core language stays literal, concise, and within the themes of encouragement, goodwill, acceptance, and natural self-presentation.",
+      "No prohibited exclusions, advice, legacy leakage, or invented foundation warmth appear."
+    ],
+    "sourceFidelity": "Mostly faithful through the first two sentences; the final sentence exceeds the compact source boundary by asserting that optimism causes genuine discomfort or hesitation to be passed over.",
+    "foundationTrace": "No foundation lines were supplied and harvest mode is none_found. The draft does not add a reader-directed warmth turn, reassurance, permission, or benediction."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "mode": "dry-run",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "jupiter-ascendant-owner-revisions-v1-exact-approval",
+    "surface": "synastry-aspect",
+    "planet": "jupiter",
+    "sign": "ascendant",
+    "articleBeat": "conjunction-hard-soft-resolver-cards",
+    "before": "The original three Sol payloads stored under packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/<target>/draft.json.",
+    "beforeIsRejected": false,
+    "after": "Exact approved payloads and hashes are stored in packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/OWNER-REVISION-SUMMARY.md and the three owner-revision-candidate.json records.",
+    "whatChanged": "Deleted the conjunction foundation-line sentence and removed its warmth provenance, retained the hard draft exactly, and deleted the unsupported final soft sentence. No model or judge calls were made.",
+    "ownerReason": "The conjunction foundation line was rejected for this context; the hard draft was approved unchanged; the soft source-drift sentence was removed.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/owner-feedback-source.md",
+      "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/OWNER-REVISION-SUMMARY.md",
+      "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/conjunction/owner-revision-candidate.json",
+      "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/owner-revision-candidate.json",
+      "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/soft/owner-revision-candidate.json"
+    ],
+    "provenance": "exact_wording_approval: I explicitly approve the three hashed payloads in OWNER-REVISION-SUMMARY.md as exact wording: Conjunction 7dbc558118a3d1c6ed6f8bd23d20a0c01b303055bed2d3b0b72c267c54a7a61e; Hard 44082c453864d55b346130f68bf99355e8cc0d4eaed92aba1f17f40a8a181b88; Soft d8257ad5c355c29c50d8b35eb85d4f29d9697cf4556551479d971412ff309273. This is exact owner approval of wording only. Promotion to serving happens solely through the authorized shipping PR.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "exact_jupiter_ascendant_conjunction_hard_soft_wording_shipping_via_authorized_pr_only"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_010f8a141c747ed6006a722e77086881a2b34d2f084acac3c4",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 956,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1371,
+    "output_tokens_details": {
+      "reasoning_tokens": 1034
+    },
+    "total_tokens": 2327
+  },
+  "outputText": "{\"body_you\":\"You encourage {{holder2}} when they speak up, meet new people, or try something unfamiliar, and they tend to feel more relaxed and sure of themselves around you. As {{holder2}} responds to that support, you offer even more reassurance, but they can start depending on your encouragement to feel confident or enter situations without thinking much because they assume you will keep backing them. Around you, {{holder2}} can give themselves permission to feel everything: grief, anger, fear, or even hope.\",\"body_they\":\"{{holder1}} encourages you when you speak up, meet new people, or try something unfamiliar, and you tend to feel more relaxed and sure of yourself around them. As you respond to that support, {{holder1}} offers even more reassurance, but you can start depending on their encouragement to feel confident or enter situations without thinking much because you assume they will keep backing you. Around {{holder1}}, you can give yourself permission to feel everything: grief, anger, fear, or even hope.\",\"warmthSource\":{\"sourceArticleId\":\"cancer-full-moon-horoscopes-january-2025\",\"originalLine\":\"Give yourself permission to feel everything: grief, anger, fear, or even hope.\",\"usedForm\":{\"body_you\":\"Around you, {{holder2}} can give themselves permission to feel everything: grief, anger, fear, or even hope.\",\"body_they\":\"Around {{holder1}}, you can give yourself permission to feel everything: grief, anger, fear, or even hope.\"}},\"labels\":[\"owner-corpus-derived\"]}",
+  "error": null
+}

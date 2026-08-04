@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "jupiter-ascendant-conjunction-v1",
+  "target": {
+    "factorA": "jupiter",
+    "factorB": "ascendant",
+    "aspectGroup": "conjunction",
+    "governedEntryId": "A-jupiter_B-ascendant_conjunction"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/conjunction",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You encourage {{holder2}} when they speak up, meet new people, or try something unfamiliar, and they tend to feel more relaxed and sure of themselves around you. As {{holder2}} responds to that support, you offer even more reassurance, but they can start depending on your encouragement to feel confident or enter situations without thinking much because they assume you will keep backing them. Around you, {{holder2}} can give themselves permission to feel everything: grief, anger, fear, or even hope.",
+    "body_they": "{{holder1}} encourages you when you speak up, meet new people, or try something unfamiliar, and you tend to feel more relaxed and sure of yourself around them. As you respond to that support, {{holder1}} offers even more reassurance, but you can start depending on their encouragement to feel confident or enter situations without thinking much because you assume they will keep backing you. Around {{holder1}}, you can give yourself permission to feel everything: grief, anger, fear, or even hope.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-ascendant_conjunction.json",
+      "cancer-full-moon-horoscopes-january-2025"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "cancer-full-moon-horoscopes-january-2025",
+    "originalLine": "Give yourself permission to feel everything: grief, anger, fear, or even hope.",
+    "usedForm": {
+      "body_you": "Around you, {{holder2}} can give themselves permission to feel everything: grief, anger, fear, or even hope.",
+      "body_they": "Around {{holder1}}, you can give yourself permission to feel everything: grief, anger, fear, or even hope."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_010f8a141c747ed6006a722e77086881a2b34d2f084acac3c4",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_03896cf324e9e62f006a722ef580e88191aa7e414a37540f91",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "warmthSource",
+    "weakest": "The final warmth sentence is emotionally broad relative to the specific confidence-and-encouragement dynamic, though it is valid owner-supplied language and does not contradict the card.",
+    "why": "The Jupiter holder consistently encourages the Ascendant holder, whose ease and confidence increase in response; the escalating reassurance-and-dependence loop is explicit. The copy stays within support, optimism, relaxation, natural self-presentation, and the cost of reliance or assumed goodwill. Both directions resolve naturally, remain parallel, and end with one correctly placed supplied foundation line.",
+    "failedChecks": [],
+    "strengths": [
+      "Fixed Jupiter-to-Ascendant direction is clear in both variants.",
+      "The response loop is plain: encouragement leads to greater ease, which prompts more reassurance and can create dependence.",
+      "The cost is specific and source-supported without drifting into literal luck, outcomes, or advice.",
+      "Conjunction behavior reads as close, ongoing encouragement and ease rather than a generic compatibility claim.",
+      "Language is ordinary, literal, and concise.",
+      "Both reader variants preserve the same meaning after placeholder resolution.",
+      "Exactly one owner-derived warmth sentence follows the shadow, with matched provenance."
+    ],
+    "sourceFidelity": "High. Confidence, relaxation, reassurance, support, dependence on encouragement, and carelessness through assumed backing all remain inside the supplied source boundary. No exclusions are triggered.",
+    "foundationTrace": "The final sentence in each variant is a near-verbatim, contextually integrated use of the supplied Cancer Full Moon foundation line: “Give yourself permission to feel everything: grief, anger, fear, or even hope.”"
+  }
+}

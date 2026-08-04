@@ -107,11 +107,20 @@ export default defineConfig(({ mode }) => {
             if (id.includes("vite/preload-helper")) {
               return "vendor";
             }
-            if (id.includes("fallbackArchitectureV3/bundled-manifest-v3.json")) {
+            if (
+              id.includes("fallbackArchitectureV3/bundled-manifest-v3.json")
+              || id.includes("fallbackArchitectureV3/bundled-core-manifest-v3.json")
+            ) {
               return "fallback-content-manifest";
             }
             if (id.includes("fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")) {
               return "fallback-content-deferred-core";
+            }
+            if (
+              id.includes("fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")
+              || id.includes("fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")
+            ) {
+              return "fallback-content-sky-placement";
             }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")

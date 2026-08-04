@@ -1,0 +1,87 @@
+{
+  "schema": "tldrastro-sky-placement-serving-manifest-v1",
+  "runtime_capability": "sky-placement-on-demand-v1",
+  "owner_approval_policy": {
+    "editorial_approval_is_serving_approval": false,
+    "require_explicit_owner_approval_for_every_staged_to_serving_transition": true,
+    "required_approval_fields": [
+      "statement",
+      "approved_at",
+      "source",
+      "approved_keys"
+    ]
+  },
+  "releases": [
+    {
+      "release_id": "pre-manifest-sun-leo-serving",
+      "release_batch": "legacy",
+      "distribution_state": "serving",
+      "transition": "pre_manifest_serving",
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/sun/leo"
+      ],
+      "owner_approval": {
+        "statement": "owner-authored and owner-approved, 2026-07-31",
+        "approved_at": "2026-07-31",
+        "source": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json#rows[0]",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/sun/leo"
+        ]
+      }
+    },
+    {
+      "release_id": "sky-placement-batch-1",
+      "release_batch": "1",
+      "distribution_state": "serving",
+      "transition": "staged_to_serving",
+      "required_runtime_capability": "sky-placement-on-demand-v1",
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/jupiter/libra",
+        "fallback-hook/sky-sign-copy/mercury/pisces",
+        "fallback-hook/sky-sign-copy/mars/libra",
+        "fallback-hook/sky-sign-copy/uranus/gemini",
+        "fallback-hook/sky-sign-copy/mercury/gemini",
+        "fallback-hook/sky-sign-copy/mercury/virgo",
+        "fallback-hook/sky-sign-copy/mars/aries",
+        "fallback-hook/sky-sign-copy/mars/scorpio",
+        "fallback-hook/sky-sign-copy/mars/capricorn",
+        "fallback-hook/sky-sign-copy/saturn/aries",
+        "fallback-hook/sky-sign-copy/jupiter/leo"
+      ],
+      "owner_approval": {
+        "statement": "Owner approved the exact 11-key batch-1 serving diff.",
+        "approved_at": "2026-08-04",
+        "source": "https://github.com/usrnmtkn/astrology-portal/pull/54",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/jupiter/libra",
+          "fallback-hook/sky-sign-copy/mercury/pisces",
+          "fallback-hook/sky-sign-copy/mars/libra",
+          "fallback-hook/sky-sign-copy/uranus/gemini",
+          "fallback-hook/sky-sign-copy/mercury/gemini",
+          "fallback-hook/sky-sign-copy/mercury/virgo",
+          "fallback-hook/sky-sign-copy/mars/aries",
+          "fallback-hook/sky-sign-copy/mars/scorpio",
+          "fallback-hook/sky-sign-copy/mars/capricorn",
+          "fallback-hook/sky-sign-copy/saturn/aries",
+          "fallback-hook/sky-sign-copy/jupiter/leo"
+        ]
+      }
+    },
+    {
+      "release_id": "sky-placement-batch-2",
+      "release_batch": "2",
+      "distribution_state": "staged",
+      "transition": "none",
+      "required_runtime_capability": "sky-placement-on-demand-v1",
+      "migration_gate": {
+        "status": "blocked",
+        "deployed_package_version": null,
+        "verified_at": null,
+        "source": null
+      },
+      "approved_keys": [],
+      "owner_approval": null,
+      "blocker": "Batch 2 requires a separate owner-approved serving diff after the on-demand migration is deployed and verified."
+    }
+  ]
+}
