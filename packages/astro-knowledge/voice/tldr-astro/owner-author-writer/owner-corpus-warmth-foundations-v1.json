@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "id": "owner-corpus-warmth-foundations-v1",
+  "status": "ACTIVE",
+  "purpose": "Supply one owner-corpus-derived feeling or permission beat to each Sky Placement article without treating a frequent phrase as a quota.",
+  "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+  "authorityPolicy": {
+    "sourceText": "owner_authored_final",
+    "foundationText": "owner_directed_collective_adaptation",
+    "use": "generation_foundation_not_verbatim_requirement",
+    "maxWarmthBeatsPerArticle": 1,
+    "requiresExactSourceProvenance": true,
+    "missingMatchPolicy": {
+      "harvest_mode": "none_found",
+      "blocking": false,
+      "inventWarmth": false,
+      "editorialFlag": "Revisit if future owner writing covers the emotional core."
+    }
+  },
+  "records": [
+    {
+      "id": "warmth-foundation-mercury-gemini-v1",
+      "planet": "mercury",
+      "sign": "gemini",
+      "emotionalCore": "stopping feels like missing something",
+      "searchTerms": ["curiosity", "noise", "scattered", "grounding", "avoidance"],
+      "vb005Matches": [],
+      "primary": {
+        "foundationText": "Without grounding, curiosity becomes avoidance. Words become noise.",
+        "sourceId": "owner-article:gemini-new-moon-2025:p004",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/gemini-new-moon-2025.md",
+        "sourceExcerpt": "Without grounding, curiosity becomes avoidance. Words become noise.",
+        "adaptation": "verbatim_pronoun_free"
+      },
+      "alternates": []
+    },
+    {
+      "id": "warmth-foundation-mercury-virgo-v1",
+      "planet": "mercury",
+      "sign": "virgo",
+      "emotionalCore": "being wrong feels unsafe",
+      "searchTerms": ["perfectionism", "checking", "trust", "wrong", "imperfection"],
+      "vb005Matches": ["trying to perfect"],
+      "primary": {
+        "foundationText": "Perfectionism destroys more relationships than imperfection ever could.",
+        "sourceId": "owner-article:this-weeks-astrology-august-30-september-7-2025:p004",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/this-weeks-astrology-august-30-september-7-2025.md",
+        "sourceExcerpt": "perfectionism destroys more relationships than imperfection ever could.",
+        "adaptation": "verbatim_pronoun_free"
+      },
+      "alternates": [
+        {
+          "foundationText": "Nobody can organize their way out of needing to trust.",
+          "sourceId": "owner-article:this-weeks-astrology-august-30-september-7-2025:p004",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/this-weeks-astrology-august-30-september-7-2025.md",
+          "sourceExcerpt": "You can't organize your way out of needing to trust.",
+          "adaptation": "minimal_collectivization"
+        }
+      ]
+    },
+    {
+      "id": "warmth-foundation-mars-scorpio-v1",
+      "planet": "mars",
+      "sign": "scorpio",
+      "emotionalCore": "control standing in for trust",
+      "searchTerms": ["testing", "trust", "control", "access", "guess", "loyalty"],
+      "vb005Matches": ["left unsaid"],
+      "primary": {
+        "foundationText": "Relationships based on trust rather than control.",
+        "sourceId": "owner-article:libra-new-moon:p026",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-new-moon.md",
+        "sourceExcerpt": "relationships based on trust rather than control.",
+        "adaptation": "verbatim_pronoun_free_fragment"
+      },
+      "supporting": [
+        {
+          "foundationText": "Naming what we want works better than testing whether anyone will guess it.",
+          "sourceId": "owner-article:full-moon-in-taurus:p025",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+          "sourceExcerpt": "Try naming what you want clearly instead of testing whether they'll intuit it.",
+          "adaptation": "owner_directed_collectivization"
+        }
+      ],
+      "alternates": [
+        {
+          "foundationText": "Not everyone has earned access to everything. That is true and important.",
+          "sourceId": "owner-article:full-moon-in-taurus:p025",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+          "sourceExcerpt": "Not everyone earned access to all of you, that's true and important.",
+          "adaptation": "owner_directed_collectivization"
+        }
+      ]
+    },
+    {
+      "id": "warmth-foundation-mars-capricorn-v1",
+      "planet": "mars",
+      "sign": "capricorn",
+      "emotionalCore": "rest must be earned",
+      "searchTerms": ["exhaustion", "burnout", "rest", "earned", "pause", "motion"],
+      "vb005Matches": ["trying to earn", "need to prove", "breaking point"],
+      "primary": {
+        "foundationText": "Rest does not have to be earned through exhaustion. Burnout is not a badge of honor. It is just burnout.",
+        "sourceId": "owner-article:new-moon-solar-eclipse-in-virgo:p042",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/new-moon-solar-eclipse-in-virgo.md",
+        "sourceExcerpt": "You don't have to earn rest through exhaustion. You don't have to collapse to deserve a break. Stop treating burnout like it's a badge of honor. It's not. It's just burnout.",
+        "adaptation": "owner_directed_collectivization"
+      },
+      "alternates": [
+        {
+          "foundationText": "Rest is not avoidance. It is a strategy for resilience.",
+          "sourceId": "owner-article:cancer-full-moon-horoscopes-january-2025:p072",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/cancer-full-moon-horoscopes-january-2025.md",
+          "sourceExcerpt": "rest is not avoidance, it’s a strategy for resilience.",
+          "adaptation": "punctuation_only"
+        },
+        {
+          "foundationText": "True power does not come from constant motion. It comes from knowing when to pause.",
+          "sourceId": "owner-article:2025-overview:p095",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/2025-overview.md",
+          "sourceExcerpt": "True power doesn’t come from constant motion. It comes from knowing when to pause, when to rest, when to listen.",
+          "adaptation": "minimal_shortening"
+        }
+      ]
+    },
+    {
+      "id": "warmth-foundation-saturn-aries-v1",
+      "planet": "saturn",
+      "sign": "aries",
+      "emotionalCore": "needing help feels like weakness",
+      "searchTerms": ["help", "burden", "weakness", "independence", "support", "human"],
+      "vb005Matches": ["need to prove"],
+      "primary": {
+        "foundationText": "Needing help does not make anyone a burden. It makes us human.",
+        "sourceId": "owner-article:libra-season-autumn-equinox:p066",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md",
+        "sourceExcerpt": "Being vulnerable doesn't make you a burden. It makes you human.",
+        "adaptation": "owner_directed_collectivization"
+      },
+      "alternates": [
+        {
+          "foundationText": "Building foundations from the inside out.",
+          "sourceId": "owner-article:2025-overview:p136",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/2025-overview.md",
+          "sourceExcerpt": "testing how you build foundations from the inside out",
+          "adaptation": "owner_selected_phrase"
+        }
+      ]
+    },
+    {
+      "id": "warmth-foundation-jupiter-leo-v1",
+      "planet": "jupiter",
+      "sign": "leo",
+      "emotionalCore": "worth measured by applause",
+      "searchTerms": ["applause", "seen", "performing", "recognition", "creative expression", "worth"],
+      "vb005Matches": ["external validation", "center stage", "need to prove"],
+      "primary": {
+        "foundationText": "Creative expression does not require applause to exist.",
+        "sourceId": "owner-article:this-weeks-astrology-august-24th-31st:p015",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/this-weeks-astrology-august-24th-31st.md",
+        "sourceExcerpt": "creative expression that doesn't require applause to exist.",
+        "adaptation": "minimal_collectivization"
+      },
+      "alternates": [
+        {
+          "foundationText": "Built around what is real and what lights us up, not what earns applause.",
+          "sourceId": "owner-article:leo-new-moon-2025:p012",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-new-moon-2025.md",
+          "sourceExcerpt": "building around what’s real, what lights you up, not what earns you applause",
+          "adaptation": "minimal_collectivization"
+        },
+        {
+          "foundationText": "Who we are when the applause fades.",
+          "sourceId": "owner-article:leo-full-moon-2025:p061",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-full-moon-2025.md",
+          "sourceExcerpt": "Who are you, when the applause fades",
+          "adaptation": "minimal_collectivization"
+        }
+      ]
+    },
+    {
+      "id": "warmth-foundation-jupiter-libra-v1",
+      "planet": "jupiter",
+      "sign": "libra",
+      "emotionalCore": "honesty feels like conflict",
+      "searchTerms": ["keeping the peace", "honesty", "voice", "agreement", "approval"],
+      "vb005Matches": ["keeping the peace", "keep the peace", "left unsaid"],
+      "primary": {
+        "foundationText": "Keeping the peace can cost us our voice.",
+        "sourceId": "owner-article:weekly-horoscopes-sept-7-14-2020:p032",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/weekly-horoscopes-sept-7-14-2020.md",
+        "sourceExcerpt": "where keeping the peace has cost you your voice.",
+        "adaptation": "minimal_collectivization"
+      },
+      "alternates": []
+    }
+  ]
+}

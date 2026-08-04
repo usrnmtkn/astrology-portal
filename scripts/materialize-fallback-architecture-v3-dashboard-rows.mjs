@@ -467,6 +467,8 @@ function readPackageSources() {
   const skyArticleRows = readJson("source-rows/sky-article-v1.json");
   const skyAspectPhrasebook = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
+  const skyPlacementOwnerApprovedFallbacks = readJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+  const skyPlacementOwnerApprovedReaderFallbacks = readJson("bundled-sky-placement-owner-approved-reader-v1.json");
   const skyPlanetFrames = readJson("source-rows/sky-planet-frames-v1.json");
   const skySignCopySources = readSkySignCopySources();
   const skySignCopy = {
@@ -493,6 +495,8 @@ function readPackageSources() {
     skyArticleRows,
     skyAspectPhrasebook,
     skyPlacementVoicePass,
+    skyPlacementOwnerApprovedFallbacks,
+    skyPlacementOwnerApprovedReaderFallbacks,
     skyPlanetFrames,
     skySignCopy,
     timingEventRows,
@@ -553,7 +557,8 @@ function readerPackageBundle(sources) {
         ...sources.skyAspectPhrasebook.hookRows,
         ...sources.skyPlanetFrames.rows,
         ...sources.skyPlacementVoicePass.rows,
-        ...sources.skySignCopy.rows
+        ...sources.skySignCopy.rows,
+        ...sources.skyPlacementOwnerApprovedReaderFallbacks.rows
       ]),
       vocabularyRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.vocabularyRows,
@@ -586,6 +591,7 @@ function materializeRows(sources) {
     ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...(sources.skySignCopy.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skySignCopy.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyPlacementOwnerApprovedFallbacks.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),

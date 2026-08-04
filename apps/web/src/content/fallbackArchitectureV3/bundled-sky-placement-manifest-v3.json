@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-04b",
-  "contentHash": "92ceb8ea14ff9ad68afed4447ff4a0da",
-  "keyManifestHash": "d756f460b9f0860ca1f8a112bcd2ea70",
-  "keyCount": 874,
+  "contentHash": "2e4553f20a620e0ea7527eb804a9b4a2",
+  "keyManifestHash": "8c2cb8c7057645cb342878fd538fa577",
+  "keyCount": 885,
   "keys": [
     "hook:fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
     "hook:fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
@@ -877,6 +877,17 @@
     "hook:fallback-hook/sky-placement-turn/venus/scorpio",
     "hook:fallback-hook/sky-placement-turn/venus/taurus",
     "hook:fallback-hook/sky-placement-turn/venus/virgo",
-    "hook:fallback-hook/sky-sign-copy/sun/leo"
+    "hook:fallback-hook/sky-sign-copy/jupiter/leo",
+    "hook:fallback-hook/sky-sign-copy/jupiter/libra",
+    "hook:fallback-hook/sky-sign-copy/mars/aries",
+    "hook:fallback-hook/sky-sign-copy/mars/capricorn",
+    "hook:fallback-hook/sky-sign-copy/mars/libra",
+    "hook:fallback-hook/sky-sign-copy/mars/scorpio",
+    "hook:fallback-hook/sky-sign-copy/mercury/gemini",
+    "hook:fallback-hook/sky-sign-copy/mercury/pisces",
+    "hook:fallback-hook/sky-sign-copy/mercury/virgo",
+    "hook:fallback-hook/sky-sign-copy/saturn/aries",
+    "hook:fallback-hook/sky-sign-copy/sun/leo",
+    "hook:fallback-hook/sky-sign-copy/uranus/gemini"
   ]
 }
