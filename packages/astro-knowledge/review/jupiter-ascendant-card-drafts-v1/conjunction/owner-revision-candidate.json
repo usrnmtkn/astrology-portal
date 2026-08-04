@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "jupiter-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "approvalRecordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/conjunction/exact-approval.json",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "7dbc558118a3d1c6ed6f8bd23d20a0c01b303055bed2d3b0b72c267c54a7a61e",
+  "payload": {
+    "body_you": "You encourage {{holder2}} when they speak up, meet new people, or try something unfamiliar, and they tend to feel more relaxed and sure of themselves around you. As {{holder2}} responds to that support, you offer even more reassurance, but they can start depending on your encouragement to feel confident or enter situations without thinking much because they assume you will keep backing them.",
+    "body_they": "{{holder1}} encourages you when you speak up, meet new people, or try something unfamiliar, and you tend to feel more relaxed and sure of yourself around them. As you respond to that support, {{holder1}} offers even more reassurance, but you can start depending on their encouragement to feel confident or enter situations without thinking much because you assume they will keep backing you.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_and_remove_warmth_provenance",
+    "foundationLineDisposition": "owner_rejected_for_this_context",
+    "matchedWithoutWarmth": "explicit_owner_exception_not_judge_rule_violation"
+  }
+}

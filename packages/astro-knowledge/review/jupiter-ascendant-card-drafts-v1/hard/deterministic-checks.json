@@ -1,0 +1,47 @@
+{
+  "target": "hard",
+  "nonemptyFields": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 4,
+    "body_they": 4
+  },
+  "rowDirection": {
+    "passed": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "legacyLeakage": {
+    "passed": true,
+    "matches": []
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "matched"
+  },
+  "preview": {
+    "youAreJupiter": "Your encouragement can help Bird enter a new situation feeling more open and capable. If you keep talking up what they can handle, though, they may agree to more or present themselves as more certain than they feel. When they hesitate or pull back, you may respond with even more encouragement, which can leave them feeling pushed instead of supported. There is room for Bird to notice where they are manufacturing confidence versus actually feeling it.",
+    "birdIsJupiter": "Bird's encouragement can help you enter a new situation feeling more open and capable. If Bird keeps talking up what you can handle, though, you may agree to more or present yourself as more certain than you feel. When you hesitate or pull back, Bird may respond with even more encouragement, which can leave you feeling pushed instead of supported. There is room for you to notice where you are manufacturing confidence versus actually feeling it."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

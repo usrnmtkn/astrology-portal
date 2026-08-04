@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "jupiter-ascendant-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "44082c453864d55b346130f68bf99355e8cc0d4eaed92aba1f17f40a8a181b88",
+  "payload": {
+    "body_you": "Your encouragement can help {{holder2}} enter a new situation feeling more open and capable. If you keep talking up what they can handle, though, they may agree to more or present themselves as more certain than they feel. When they hesitate or pull back, you may respond with even more encouragement, which can leave them feeling pushed instead of supported. There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.",
+    "body_they": "{{holder1}}'s encouragement can help you enter a new situation feeling more open and capable. If {{holder1}} keeps talking up what you can handle, though, you may agree to more or present yourself as more certain than you feel. When you hesitate or pull back, {{holder1}} may respond with even more encouragement, which can leave you feeling pushed instead of supported. There is room for you to notice where you are manufacturing confidence versus actually feeling it.",
+    "warmthSource": {
+      "sourceArticleId": "this-weeks-astrology-august-24th-31st",
+      "originalLine": "Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.",
+      "usedForm": {
+        "body_you": "There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.",
+        "body_they": "There is room for you to notice where you are manufacturing confidence versus actually feeling it."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_shipping_pr",
+  "servingAuthorization": "this_record_does_not_self_promote_shipping_requires_the_authorized_pr"
+}
