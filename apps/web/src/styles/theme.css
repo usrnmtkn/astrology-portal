@@ -176,6 +176,23 @@
     inset -7px -6px 14px rgba(0, 0, 0, 0.22),
     inset 5px 4px 11px rgba(255, 255, 255, 0.035),
     0 2px 8px rgba(28, 32, 52, 0.12);
+  --lunar-moon-disc-bg:
+    radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.48), transparent 12%),
+    radial-gradient(circle at 58% 58%, rgba(96, 72, 25, 0.18), transparent 16%),
+    radial-gradient(circle at 39% 68%, rgba(77, 59, 24, 0.14), transparent 13%),
+    radial-gradient(circle at 66% 36%, rgba(89, 69, 28, 0.12), transparent 10%),
+    radial-gradient(circle at 48% 54%, var(--color-moon-phase-light), #b79c57 74%);
+  --lunar-moon-shadow-bg:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04), transparent 44%),
+    color-mix(in srgb, var(--lunar-moon-dark) 78%, var(--lunar-moon-dark-edge));
+  --lunar-moon-overlay-bg:
+    radial-gradient(circle at 36% 38%, rgba(72, 57, 26, 0.16), transparent 8%),
+    radial-gradient(circle at 58% 58%, rgba(72, 57, 26, 0.12), transparent 10%),
+    radial-gradient(circle at 48% 72%, rgba(255, 255, 255, 0.12), transparent 10%);
+  --lunar-new-moon-bg:
+    radial-gradient(circle at 42% 34%, rgba(255, 255, 255, 0.05), transparent 17%),
+    radial-gradient(circle at 58% 58%, rgba(255, 255, 255, 0.035), transparent 18%),
+    var(--lunar-moon-dark);
   --shadow-flat: none;
   --shadow: var(--shadow-card);
   --bg-grad:

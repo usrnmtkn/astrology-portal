@@ -1,0 +1,41 @@
+{
+  "artifactType": "calendar_weekly_overview_approval_record",
+  "contentKey": "candidate/calendar-weekly-overview/2026-08-10",
+  "weekStart": "2026-08-10",
+  "weekEnd": "2026-08-16",
+  "headline": "Venus trine Pluto opens the week. The Leo solar eclipse changes what can stay hidden.",
+  "body": "Monday’s Moon in Cancer makes emotional safety the week’s starting point. Venus in Libra trines Pluto in Aquarius the same day, so a relationship, agreement, or shared value can move beyond surface harmony. Notice where care is reciprocal and where keeping the peace has hidden a power imbalance. What is honest can deepen; what depends on avoidance becomes harder to maintain.\n\nOn Tuesday, Mercury in Leo trines Neptune in Aries. Words, images, and intuition move together, which is useful for telling the truth with feeling. Keep the facts intact. A beautiful explanation is not the same as a reliable one.\n\nWednesday’s New Moon solar eclipse in Leo resets the question of visibility, creative ownership, and recognition. Eclipses are not ordinary intention-setting windows; they reveal what is already changing. Watch what leaves, arrives, or becomes impossible to ignore before deciding what it means. Mars enters Cancer later in the week, moving action toward protection, home, and emotional loyalty. Venus trine Uranus closes the week with room for a more honest arrangement, especially where closeness has needed more freedom.",
+  "keyShifts": [
+    "Venus trine Pluto",
+    "Mercury trine Neptune",
+    "New Moon Solar Eclipse in Leo",
+    "Mars enters Cancer",
+    "Venus trine Uranus"
+  ],
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "serving": false,
+  "evidenceSources": {
+    "runtimeFacts": "apps/web/src/services/ephemeris.ts",
+    "knowledge": [
+      "packages/astro-knowledge/data/transits/venus-trine-pluto.json",
+      "packages/astro-knowledge/data/transits/mercury-trine-neptune.json",
+      "packages/astro-knowledge/data/transits/venus-trine-uranus.json",
+      "packages/astro-knowledge/data/frameworks/lunar-cycle-framework.json",
+      "packages/astro-knowledge/data/frameworks/lunar-event-content-architecture.json"
+    ],
+    "voice": [
+      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json",
+      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/authority-policy.json",
+      "/Users/mprez/Desktop/Astro Guide/lunarCalendar/2025 Marie Satori Weekly Emotional Moon.txt"
+    ],
+    "vocabulary": [
+      "packages/astro-knowledge/voice/tldr-astro/owner-vocabulary-bank.json",
+      "packages/astro-knowledge/voice/tldr-astro/style-guide.md"
+    ]
+  },
+  "provenance": "Review-only candidate drafted in Codex on 2026-08-04 from the verified August 10–16 ephemeris sequence and owner-authored weekly Moon guidance.",
+  "notes": "Monday’s Moon supplies the emotional opening only. The overview then moves through the week in chronological order and remains outside reader-serving source rows until the owner explicitly approves this exact wording."
+}

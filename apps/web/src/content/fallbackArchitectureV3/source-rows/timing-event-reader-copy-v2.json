@@ -1,0 +1,66 @@
+{
+  "version": "timing-event-reader-copy-v2",
+  "approval_source": "packages/astro-knowledge/review/timing-event-reader-copy-v2-approved.json",
+  "authoredCards": [
+    {
+      "contentKey": "sky.station.mercury.pisces.retrograde",
+      "surface": "sky",
+      "content_role": "full_copy",
+      "headline": "Mercury stations retrograde in Pisces",
+      "body": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision. Mercury slows to a stop in Pisces and starts moving backward. In this sensitive water sign, we can catch tone, imagery, and feeling faster than facts, which makes intuition vivid and certainty less reliable.\n\nWhen the same conversation circles back, the repeated wording may expose an assumption that kept us talking past one another. We can restate the agreement and confirm the times before anything gets booked. Not every plan falls apart here. Some decisions made during the pause hold. The useful change is knowing which part was an impression and which part was confirmed.",
+      "review_status": "approved",
+      "approved_via": "Owner-approved timing-event reader copy V2, 2026-08-03",
+      "owner_authored": true,
+      "source_keys": [
+        "src.timing.mercury.station-retrograde",
+        "owner/timing-event-reader-copy-v2-approved"
+      ],
+      "note": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned."
+    },
+    {
+      "contentKey": "sky.retrograde.venus.scorpio.retrograde_passage",
+      "surface": "sky",
+      "content_role": "full_copy",
+      "headline": "Venus retrograde in Scorpio",
+      "body": "An old relationship comes back around, and we feel the pull before we know whether anything has actually changed. We pause before answering and look at whether the old problem is different, not only whether the attraction has returned. Venus is retrograde in Scorpio, bringing love, loyalty, money, and private agreements back under review. The temptation is to treat the intensity as an answer, or to test the other person instead of asking them directly.\n\nWe return to the original arrangement and name what it has cost, what it has given, and which promises no longer fit. A commitment made years ago may still be worth keeping, but only if the bond gives something real now. Once those terms are spoken aloud, we can revise the commitment instead of forcing the old version to fit. What matters is whether we can keep the promise now, not how strong the pull is.",
+      "review_status": "approved",
+      "approved_via": "Owner-approved timing-event reader copy V2, 2026-08-03",
+      "owner_authored": true,
+      "source_keys": [
+        "src.timing.venus.retrograde-passage",
+        "owner/timing-event-reader-copy-v2-approved"
+      ],
+      "note": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned."
+    },
+    {
+      "contentKey": "sky.station.chiron.taurus.retrograde",
+      "surface": "sky",
+      "content_role": "full_copy",
+      "headline": "Chiron stations retrograde in Taurus",
+      "body": "We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency. This is not an alarm or a verdict on the project. It is a regular pause for repair inside a story already unfolding. When we talk at home about why the work stopped, an old fear may become plain: rest feels unsafe, comfort feels unearned, and every material choice becomes a measure of worth.\n\nInstead of rushing back to the plan, we look at the survival response underneath it. Some of us stockpile to feel protected. Others refuse comfort entirely, to prove that no need can touch us. Living with this wound can make us unusually good at helping one another build stability without shame. The repair starts when being safe stops having to be earned.",
+      "review_status": "approved",
+      "approved_via": "Owner-approved timing-event reader copy V2, 2026-08-03",
+      "owner_authored": true,
+      "source_keys": [
+        "src.timing.outer.station-retrograde",
+        "owner/timing-event-reader-copy-v2-approved"
+      ],
+      "note": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned."
+    },
+    {
+      "contentKey": "sky.ingress.jupiter.leo",
+      "surface": "sky",
+      "content_role": "full_copy",
+      "headline": "Jupiter enters Leo",
+      "body": "We bring a creative pursuit into the open and invite friends to take part. What felt like a small pleasure can become the plan everyone wants to join before we know whether we can sustain it. As Jupiter enters Leo, we grow through visible self-expression, big-hearted generosity, and the confidence to risk a larger stage. Once praise starts coming, we commit more time, make bolder promises, and give the idea more room.\n\nWe feel the pressure when we begin judging the pursuit by the attention it receives. Jupiter expands whatever is already in motion, not only what deserves more room. Creative courage and inflated ego can grow together, until every setback threatens to become a drama. The desire does not need to shrink. The work is to keep sharing the thing without making the recognition the reason we stay. Once excitement settles into routine, we find out whether we are building a meaningful practice or only chasing applause.",
+      "review_status": "approved",
+      "approved_via": "Owner-approved timing-event reader copy V2, 2026-08-03",
+      "owner_authored": true,
+      "source_keys": [
+        "src.timing.jupiter.ingress",
+        "owner/timing-event-reader-copy-v2-approved"
+      ],
+      "note": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned."
+    }
+  ]
+}
