@@ -18,11 +18,12 @@
 
 const fs = require("fs");
 const path = require("path");
-const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
-
 const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-placement.json"));
+const compiledJudgePolicy = readJson(path.join(root, "voice", "tldr-astro", "judge-policy.generated.json"));
+const { judgePolicyLines: ownerWarmthJudgePolicyLines } = require("./owner-corpus-warmth-policy.js");
+const PLACEMENT_PROMPT_VERSION = "tldr-astro.voice.sky-placement.v5:prompt-warmth-harvest-v1";
 
 const TIER_OF = {};
 for (const [tier, members] of Object.entries(spec.planetTierRegister.tiers)) {
@@ -63,61 +64,54 @@ const renderTrio = (e) => {
   return lines.join("\n");
 };
 
-function buildJudgePrompt(article, { tier = "", planet = "", sign = "" } = {}) {
+function buildJudgePrompt(article, options = {}) {
+  const { tier = "", planet = "", sign = "", deterministicResults = null } = options;
   const placementLabel = planet && sign ? ` for ${planet} in ${sign}` : "";
-  const gold = goldStandard(tier);
+  const gold = goldStandard(tier, 2);
+  const decisionRules = compiledJudgePolicy.decisions.map((entry) => `  [${entry.id}] ${entry.rule}`);
   return [
-    `You are the editor of a modern astrology app. You are strict. Most drafts are "borderline" until proven otherwise.`,
+    `You are the final acceptability judge for one Current Sky placement article${placementLabel}. Classify the untouched draft. Do not rewrite, approve, or promote it.`,
+    tier ? `Planet-speed register: ${TIER_HINT[tier] || tier}` : ``,
     ``,
-    `You are scoring a sky placement article${placementLabel}. Slots: an optional TAGLINE (2-5 word imperative under the title), HOOK, LIVED, TURN, and optional MOVES (2-3 concrete ways to work with the transit), rendered top to bottom as one article. The first sentence of HOOK is promoted by the reader into a standalone bold quote and removed from the body; the remaining hook sentences are the planet-plus-sign meaning paragraph. The date range and dated sky events are computed by the app; they are not part of what you score.`,
-    `The voice: ${spec.voiceDescription}`,
-    buildOwnerVocabularyPrompt({
-      surface: "planet-article",
-      maxCore: 14,
-      maxShared: 10,
-      maxAcShared: 8,
-      maxSdAdditions: 6
-    }),
-    tier ? `This article's register is ${TIER_HINT[tier] || tier}` : ``,
+    `COMPACT FINAL-ACCEPTABILITY RUBRIC`,
+    ...compiledJudgePolicy.compactRubric.map((item, index) => `  ${index + 1}. ${item}`),
     ``,
-    `Score the article 1-3:`,
-    `  3 = in voice. The hook opens with a standalone line someone would send to a friend, then clearly explains what the planet governs and how the sign changes its expression without reading like a definition; the lived beat shows the placement's useful expression in ordinary behavior with its pace; the turn names where that strength becomes the problem and ends on the line with the most bite; the whole thing could ONLY be this planet in this sign. Score 3 does not require flawless prose: one minor explanatory or slightly broad sentence is acceptable when the placement is unmistakable, the lived section is concrete, the turn names a real behavior and consequence, every hard surface rule passes, and no central sentence fails natural English.`,
-    `  2 = borderline. Generally right but one clear flaw: a hook that explains instead of hooks, a generic lived detail, a soft or stacked ending, a mild reach beyond the source, or one beat that could swap into another placement.`,
-    `  1 = off voice. Reads like a sign encyclopedia or a generic horoscope; leads with lore; moralizes or blesses; invents specifics the placement does not support; the whole article would survive a planet/sign swap; or a central sentence fails natural English while the lived section remains generalized, abstract, or lacks a recognizable sequence.`,
+    `SCORED OWNER READABILITY CHECKS`,
+    ...(spec.judgeScoredChecks || []).map((entry) => `  [${entry.id}] ${entry.name}: ${entry.rule}`),
     ``,
-    `Judge hard on these, which a regex cannot catch:`,
-    `  - THE SWAP TEST: strip the headings and ask whether another planet or sign could wear this body without sounding wrong. If yes, score 1.`,
-    `  - Hook quality: sentence 1 must stand alone as a recognition quote, not an announcement ("X enters Y"). The remaining hook must add real planet-function + sign-expression meaning in natural prose, not a definition or keyword list.`,
-    `  - Meaning depth: the article must distinguish what the planet does from how this sign makes it act. If it only supplies atmosphere, scenes, or a generic sign description, score no higher than 2.`,
-    `  - The shadow must be OBSERVABLE BEHAVIOR (what someone does), not an abstract warning.`,
-    `  - CURRENT SKY IS COLLECTIVE: copy may not use "you", "your", "yours", "yourself", "yourselves", or "part of you" anywhere, including MOVES. Second person belongs to transit-to-natal copy. Any otherwise-strong Current Sky draft with second person must score below 3. Historical second-person originals are not gold evidence on this surface.`,
-    `  - FIRST-READ NATURAL ENGLISH RULE: if a central sentence does not make literal sense in natural English, the article cannot receive a score of 2 or 3 unless the failure is isolated and the remaining article is strongly grounded. Score 1 when the hook contains opaque or unnatural personification AND the lived section remains generalized, abstract, or lacks a recognizable sequence. Examples: "The banished want refuses to stay reasonable." "The first idea has spent its excitement." "The arrangement stopped telling the truth." Conventional astrology language such as "Mars governs action" is allowed.`,
-    `  - OBSERVATION BEFORE POLISH: the hook must begin with recognizable pressure, behavior, or a decision. A slogan or abstract placement summary that merely sounds sharp is not a lived premise.`,
-    `  - STACKED ENDING RULE: when the turn has already named the behavior and cost, mark any following slogan, metaphor, reassurance, or second conclusion for deletion. This usually lowers an otherwise strong article from 3 to 2. It does not require a full rewrite.`,
-    `  - Do not infer employment or career from a sign alone. Taurus does not automatically mean work; job language needs support from the planet, house, aspect, or supplied source.`,
-    `  - Preserve strong owner-written lines. Do not reward rewriting a clear sentence merely to make it sound more polished.`,
-    `  - One close with bite, nothing after it: no blessing, recap, or second aphorism restating the first.`,
-    `  - Register match: pace and sweep must fit this tier.`,
-    `  - Sign lore (rulership, modality, elements-as-labels, season history) anywhere in the body.`,
-    `  - Coverage sentences that exist only to be complete.`,
-    `  - FLAT INVENTORY: the lived beat must move from pressure to choice to consequence. If it merely lines up representative examples from work, family, relationships, or public life, score no higher than 2 even when the nouns are concrete. One charged sequence is voice; three peer scenarios are generated coverage.`,
-    `  - ALLOWED COLLECTIVE LANGUAGE: do not flag "people", "someone", or "we" merely because they are collective nouns or pronouns. Flag them only when they conceal a behavior that should be named more specifically.`,
-    `  - If a TAGLINE is present: it must be sharp and sendable, not a label ("Leo season begins" is a label; a claim or imperative is a tagline).`,
-    `  - If MOVES are present: each must be a specific doable action that only fits this placement. "Journal about your feelings" or "trust the process" fails; the moves are held to the same swap test as the body.`,
-    `  - Flag any sentence matching the CC/SD constructions in voice/banned-constructions.json; the tic list identifies copy that reads as CHANI or Spirit Daughter rather than the house voice. Owner-verbatim text is exempt. Treat nearby cases as a judged consideration, not an automatic fail: specific, falsifiable permission to do a nameable thing is house voice; generic affirmational permission is not.`,
+    ...ownerWarmthJudgePolicyLines(options),
     ``,
-    `OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE (positive feedback, not exact-wording approval or gold):`,
-    ...(spec.ownerReviewedBeatCandidates || []).map((e) => `  [${e.sourceId}] ${e.slot.toUpperCase()}: ${e.text}\n      EDITORIAL USE: ${e.use}`),
+    `SCOPED ACTIVE OWNER DECISIONS`,
+    ...decisionRules,
     ``,
-    `CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD for this register:`,
+    `SCORING`,
+    `  3 = in voice. Placement-specific, concrete, natural, and compliant. A minor broad sentence may survive when no central sentence fails natural English.`,
+    `  2 = borderline. The article is usable but has one clear editorial weakness, such as a generic beat or unnecessary second conclusion.`,
+    `  1 = off voice. A central sentence fails natural English, the astrology or subject matter drifts, or the article is generic enough to survive a planet/sign swap.`,
+    `  Any deterministic fail makes the final score 1. In particular, any facilitation-register hit in moves is score 1.`,
+    `  Score 1 when the article contains neither a cycle line nor any clear teaching of what the planet does and how the sign changes its method. A named placement alone is not planet/sign teaching.`,
+    `  Score 1 when a concurrent-events paragraph names an event absent from the supplied eventsDuringTransit facts, even when the prose sounds plausible.`,
+    ``,
+    `OWNER-REGISTER AND SCENE CHECKS`,
+    `  A scene that any astrology account would attach to this sign is a fail. It must be derivable from THIS placement's combined meaning at THIS transit's scale. A Jupiter year is not a dinner; a year-long or slower transit reduced to one evening's logistics scores 1.`,
+    `  Compare the draft with only the eligible owner evidence below. Generic product copy that violates no literal ban still fails the owner-register check. If no approved format exemplar is available, do not invent one or treat a needs-review card as approved.`,
+    `  Treat moves as the highest-risk section until an exact owner-approved moves exemplar exists. In moves, must-have, flexible detail, decision time, each side, proposal, mutual, negotiate, stakeholder, align or alignment, and action item are facilitation-register failures and score 1.`,
+    `  A tagline built as '[Planet] in [Sign] helps us grow through [abstract nouns]' fails. It must state this placement's specific promise as a complete, plain sentence understood on first read.`,
+    `  Prior-residency history is limited to an engine-supplied date range. Celebrity references, pop-culture examples, political examples, and descriptions of what an era was like score 1. The deterministic regex catches only registered exact celebrity names; judge recognizable short forms, surnames, mononyms, stage names, and nicknames here.`,
+    `  Natal-facing sections, second person, entering-the-chat language, main-character-era language, and glow-up language do not belong on Current Sky.`,
+    ``,
+    `DETERMINISTIC CHECK RESULTS`,
+    JSON.stringify(deterministicResults || { status: "not supplied" }, null, 2),
+    ``,
+    `LIMITED OWNER-APPROVED CALIBRATION EVIDENCE`,
     ...(gold.length
-      ? gold.map((e, i) => `  [${i + 1}] ${e.planet} in ${e.sign}\n${renderTrio(e).split("\n").map((l) => `      ${l}`).join("\n")}`)
-      : [`  None yet. Collective adaptation candidates are deliberately excluded until the owner approves their exact wording. Judge from the rubric and the approved beat evidence only.`]),
+      ? gold.map((entry, index) => `  [${index + 1}] ${entry.planet} in ${entry.sign}\n${renderTrio(entry).split("\n").map((line) => `      ${line}`).join("\n")}`)
+      : [`  None available for this register. Use the rubric and active decisions only.`]),
     ``,
-    `ARTICLE TO SCORE:`,
+    `ARTICLE TO SCORE`,
     renderTrio(article),
     ``,
-    `Return ONLY strict JSON: {"score": 1|2|3, "verdict": "in-voice"|"borderline"|"off-voice", "weakest": "the single weakest sentence, quoted", "why": "one short reason"}`,
+    `Return ONLY strict JSON: {"score": 1|2|3, "verdict": "in-voice"|"borderline"|"off-voice", "weakest": ["weakest line quoted", "second-weakest line quoted", "third-weakest line quoted"], "why": "one short reason"}. Always cite three lines when the draft contains at least three lines; use fewer only when the complete draft contains fewer.`
   ].filter(Boolean).join("\n");
 }
 
@@ -137,6 +131,7 @@ async function judgeArticle(article, opts = {}) {
   const result = await runJudgeSamples({
     content: JSON.stringify(article),
     prompt,
+    promptVersion: PLACEMENT_PROMPT_VERSION,
     rubric: JSON.stringify(spec),
     rubricVersion: spec.id || "sky-placement-voice-v1",
     samples: opts.samples,
@@ -149,7 +144,7 @@ async function judgeArticle(article, opts = {}) {
   return { ...result, ...editorialGate(result) };
 }
 
-module.exports = { buildJudgePrompt, judgeArticle, parseVerdict, TIER_OF, TIER_HINT };
+module.exports = { buildJudgePrompt, judgeArticle, parseVerdict, PLACEMENT_PROMPT_VERSION, TIER_OF, TIER_HINT };
 
 if (require.main === module) {
   const [mode, ...rest] = process.argv.slice(2);
