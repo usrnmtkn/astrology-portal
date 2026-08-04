@@ -148,7 +148,13 @@ function assertPacketQuotablesPassOutputBans({ verifiedAstrology, structuralSlot
   for (const record of quotables) {
     for (const ban of bans) {
       const match = record.text.match(outputBanRegex(ban.term));
-      if (match) findings.push({ path: record.path, level: ban.level, term: ban.term, match: match[0], reason: ban.reason });
+      if (!match) continue;
+      const waived = (surface.packetSourceWaivers || []).some((waiver) => (
+        waiver.term === ban.term
+        && typeof waiver.exactText === "string"
+        && record.text.includes(waiver.exactText)
+      ));
+      if (!waived) findings.push({ path: record.path, level: ban.level, term: ban.term, match: match[0], reason: ban.reason });
     }
   }
   if (findings.length) {
@@ -571,10 +577,12 @@ function selectOwnerCorpusWarmthEvidence({ planet, sign, voiceIndex }) {
 
 function astrologyEvidence(planet, sign, surface) {
   const placementPath = path.join(packageRoot, "data", "placements", "sign", `${planet}-${sign}.json`);
-  const planetaryPath = path.join(packageRoot, "data", "planetary", `${planet}.json`);
+  const planetaryId = planet === "north-node" || planet === "south-node" ? "lunar-nodes" : planet;
+  const planetarySign = planetaryId === "lunar-nodes" ? `${planet}-${sign}` : sign;
+  const planetaryPath = path.join(packageRoot, "data", "planetary", `${planetaryId}.json`);
   const placement = JSON.parse(fs.readFileSync(placementPath, "utf8"));
   const planetary = fs.existsSync(planetaryPath) ? JSON.parse(fs.readFileSync(planetaryPath, "utf8")) : null;
-  const signSpecific = planetary?.signs?.find((entry) => entry.sign === sign)?.body || null;
+  const signSpecific = planetary?.signs?.find((entry) => entry.sign === planetarySign)?.body || null;
   const failures = [
     ...(!planetary?.overview ? ["planet function is missing"] : []),
     ...(!signSpecific ? ["sign expression is missing"] : []),

@@ -1,0 +1,37 @@
+{
+  "id": "batch-2-blocker-sign-off-approval-2026-08-04",
+  "recordedAt": "2026-08-04T18:17:03Z",
+  "ownerStatement": "I explicitly approve Decisions A, B, and C in the batch-2 blocker sign-off sheet exactly as written.",
+  "sourceSheet": "packages/astro-knowledge/review/batch-2-blocker-sign-off-sheet.md",
+  "scope": "Source-data fixes and planetary fact boundaries only. This approval does not approve reader copy, writer output, serving, promotion, or billed model calls.",
+  "decisions": {
+    "A": {
+      "approvalStatus": "approved",
+      "applicationStatus": "partially_applied_pending_pluto_rewrite_review",
+      "applied": [
+        "mercury-scorpio delve into -> dig into",
+        "mars-taurus journey sentence replacement",
+        "mercury-taurus exact fact-source settle-into self-lint waiver"
+      ],
+      "pending": {
+        "id": "pluto-aquarius-engine-rewrite",
+        "status": "needs_owner_review_before_application",
+        "before": "Pluto has an elliptical orbit. Rendering must use the engine-computed range for the current sign rather than treating the average as the current residency.",
+        "proposedAfter": "Pluto has an elliptical orbit, so its time in each sign varies widely. The current sign range must come from the calculation rather than the average residency.",
+        "fixed": false
+      }
+    },
+    "B": {
+      "approvalStatus": "approved",
+      "applicationStatus": "applied",
+      "record": "packages/astro-knowledge/data/planetary/chiron.json",
+      "status": "REVIEWED"
+    },
+    "C": {
+      "approvalStatus": "approved",
+      "applicationStatus": "applied",
+      "record": "packages/astro-knowledge/data/planetary/lunar-nodes.json",
+      "status": "REVIEWED"
+    }
+  }
+}

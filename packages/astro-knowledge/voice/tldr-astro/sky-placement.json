@@ -265,6 +265,15 @@
 
   "conditionalBans": [],
 
+  "packetSourceWaivers": [
+    {
+      "id": "mercury-taurus-idiomatic-settle-into-2026-08-04",
+      "term": "\\bsettl(e|es|ing)\\b(?! for)",
+      "exactText": "ideas have time to settle into something useful and real",
+      "reason": "Owner-approved idiomatic settle-into fact-source use; generated copy keeps the normal settle warning."
+    }
+  ],
+
   "outputBans": {
     "fail": [
       {"term": "—", "reason": "em dash banned everywhere"},
