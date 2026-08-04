@@ -30,7 +30,7 @@ import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerS
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import { hasMapboxToken, searchCities, type CitySuggestion } from "../../services/mapbox";
-import { timeZoneForLocation, withTimeZone } from "../../services/timezones";
+import { timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys } from "./calendarContentKeys";
 import { calendarMoonContinuationText, calendarPhaseLabelForDay } from "./calendarPhaseLabel";
@@ -183,16 +183,21 @@ function dateKeyFromDate(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
-function monthStartFromDateKey(dateKey: string) {
+function monthStartFromDateKey(
+  dateKey: string,
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+) {
   const [year = new Date().getFullYear(), month = 1] = dateKey.split("-").map(Number);
+  const monthKey = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-01`;
 
-  return new Date(year, month - 1, 1);
+  return zonedDateTimeToUtc(monthKey, "12:00 PM", timeZone);
 }
 
-function dateFromDateKey(dateKey: string) {
-  const [year = new Date().getFullYear(), month = 1, day = 1] = dateKey.split("-").map(Number);
-
-  return new Date(year, month - 1, day);
+function dateFromDateKey(
+  dateKey: string,
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+) {
+  return zonedDateTimeToUtc(dateKey, "12:00 PM", timeZone);
 }
 
 function weeklyMoonVariantForDate(dateKey: string) {
@@ -450,12 +455,12 @@ function formatSeasonRange(startDateKey: string, endDateKey: string, timeZone: s
     timeZone,
     month: "short",
     day: "numeric"
-  }).format(dateFromDateKey(startDateKey));
+  }).format(dateFromDateKey(startDateKey, timeZone));
   const end = new Intl.DateTimeFormat("en-US", {
     timeZone,
     month: "short",
     day: "numeric"
-  }).format(dateFromDateKey(endDateKey));
+  }).format(dateFromDateKey(endDateKey, timeZone));
 
   return `${start} – ${end}`;
 }
@@ -1603,7 +1608,10 @@ export function LunarCalendar({
     [location.timeZone]
   );
   const initialDateKey = initialRouteState?.date ?? todayKey(location.timeZone || "UTC");
-  const [visibleMonth, setVisibleMonth] = useState(() => monthStartFromDateKey(initialDateKey));
+  const [visibleMonth, setVisibleMonth] = useState(() => monthStartFromDateKey(
+    initialDateKey,
+    location.timeZone || "UTC"
+  ));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => initialDateKey);
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>(initialRouteState?.view ?? "week");
   const [calendar, setCalendar] = useState<LunarCalendarMonthData | null>(null);
@@ -1622,7 +1630,9 @@ export function LunarCalendar({
   useEffect(() => {
     let cancelled = false;
     let cancelHydration: (() => void) | null = null;
-    const visibleAnchor = isWeekBasedView(viewMode) ? dateFromDateKey(visibleWeekDateKey) : visibleMonth;
+    const visibleAnchor = isWeekBasedView(viewMode)
+      ? dateFromDateKey(visibleWeekDateKey, location.timeZone || "UTC")
+      : visibleMonth;
     const storedCalendarKey = calendarStorageKey(location, viewMode, visibleAnchor);
     const storedCalendar = readStoredCalendar(storedCalendarKey);
     const initialDetail = viewMode === "weekly" ? "full" : "basic";
@@ -1709,7 +1719,7 @@ export function LunarCalendar({
       setViewMode(routeState.view);
       setSelectedDateKey(routeState.date);
       setVisibleWeekDateKey(routeState.date);
-      setVisibleMonth(monthStartFromDateKey(routeState.date));
+      setVisibleMonth(monthStartFromDateKey(routeState.date, location.timeZone || "UTC"));
     }
 
     window.addEventListener("popstate", syncCalendarRoute);
@@ -1748,7 +1758,11 @@ export function LunarCalendar({
 
     let cancelled = false;
 
-    getLunarCalendarMonth(location, monthStartFromDateKey(selectedDateKey), { detail: "full" })
+    getLunarCalendarMonth(
+      location,
+      monthStartFromDateKey(selectedDateKey, location.timeZone || "UTC"),
+      { detail: "full" }
+    )
       .then((nextSelectedCalendar) => {
         if (!cancelled) {
           setSelectedCalendar(nextSelectedCalendar);
@@ -1783,8 +1797,8 @@ export function LunarCalendar({
     // additional 42-day visual calendar.
     getLunarCalendarRangeEvents(
       location,
-      dateFromDateKey(season.start),
-      dateFromDateKey(season.end)
+      dateFromDateKey(season.start, location.timeZone || "UTC"),
+      dateFromDateKey(season.end, location.timeZone || "UTC")
     )
       .then((events) => {
         if (!cancelled) {
@@ -2497,7 +2511,7 @@ export function LunarCalendar({
     setSelectedDateKey(dateKey);
     setVisibleWeekDateKey(dateKey);
     if (!dateKeyInMonth(dateKey, visibleMonth)) {
-      setVisibleMonth(monthStartFromDateKey(dateKey));
+      setVisibleMonth(monthStartFromDateKey(dateKey, location.timeZone || "UTC"));
     }
     updateCalendarRouteUrl(viewMode, dateKey);
 
@@ -2532,7 +2546,7 @@ export function LunarCalendar({
 
     setSelectedDateKey(nextDateKey);
     setVisibleWeekDateKey(nextDateKey);
-    setVisibleMonth(monthStartFromDateKey(nextDateKey));
+    setVisibleMonth(monthStartFromDateKey(nextDateKey, location.timeZone || "UTC"));
     updateCalendarRouteUrl(viewMode, nextDateKey);
   };
   const handleCalendarNavigation = (direction: -1 | 1) => {
@@ -2540,7 +2554,7 @@ export function LunarCalendar({
       const nextWeekDateKey = dateKeyFromUtcTime(dayKeyToUtcTime(visibleWeekDateKey) + direction * 7 * 86_400_000);
 
       setVisibleWeekDateKey(nextWeekDateKey);
-      setVisibleMonth(monthStartFromDateKey(nextWeekDateKey));
+      setVisibleMonth(monthStartFromDateKey(nextWeekDateKey, location.timeZone || "UTC"));
       const nextDateKey = selectedDateKey
         ? dateKeyFromUtcTime(dayKeyToUtcTime(selectedDateKey) + direction * 7 * 86_400_000)
         : nextWeekDateKey;
