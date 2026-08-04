@@ -1,0 +1,19 @@
+{
+  "score": 3,
+  "verdict": "in-voice",
+  "weakestField": "warmthSource",
+  "weakest": "The final warmth sentence is emotionally broad relative to the specific confidence-and-encouragement dynamic, though it is valid owner-supplied language and does not contradict the card.",
+  "why": "The Jupiter holder consistently encourages the Ascendant holder, whose ease and confidence increase in response; the escalating reassurance-and-dependence loop is explicit. The copy stays within support, optimism, relaxation, natural self-presentation, and the cost of reliance or assumed goodwill. Both directions resolve naturally, remain parallel, and end with one correctly placed supplied foundation line.",
+  "failedChecks": [],
+  "strengths": [
+    "Fixed Jupiter-to-Ascendant direction is clear in both variants.",
+    "The response loop is plain: encouragement leads to greater ease, which prompts more reassurance and can create dependence.",
+    "The cost is specific and source-supported without drifting into literal luck, outcomes, or advice.",
+    "Conjunction behavior reads as close, ongoing encouragement and ease rather than a generic compatibility claim.",
+    "Language is ordinary, literal, and concise.",
+    "Both reader variants preserve the same meaning after placeholder resolution.",
+    "Exactly one owner-derived warmth sentence follows the shadow, with matched provenance."
+  ],
+  "sourceFidelity": "High. Confidence, relaxation, reassurance, support, dependence on encouragement, and carelessness through assumed backing all remain inside the supplied source boundary. No exclusions are triggered.",
+  "foundationTrace": "The final sentence in each variant is a near-verbatim, contextually integrated use of the supplied Cancer Full Moon foundation line: “Give yourself permission to feel everything: grief, anger, fear, or even hope.”"
+}

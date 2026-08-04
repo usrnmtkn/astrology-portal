@@ -15774,40 +15774,58 @@
       "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Jupiter lands on {{holder2Poss}} Ascendant, and everything around the two of you runs a size larger: laughs, plans, appetites, bills. One's optimism reads the other's presence as a green light, and mostly it is. The blind spot is shared: neither plays the skeptic here. Appoint one on the big calls, then go be enormous together. That's {{holder1Poss}} Jupiter on {{holder2Poss}} Ascendant: expansion and presence running as one instinct.",
-      "body_they": "{{holder1PossCap}} Jupiter lands on {{holder2Poss}} Ascendant, and everything around the two of you runs a size larger: laughs, plans, appetites, bills. One's optimism reads the other's presence as a green light, and mostly it is. The blind spot is shared: neither plays the skeptic here. Appoint one on the big calls, then go be enormous together. That's {{holder1Poss}} Jupiter on {{holder2Poss}} Ascendant: expansion and presence running as one instinct.",
+      "body_you": "You encourage {{holder2}} when they speak up, meet new people, or try something unfamiliar, and they tend to feel more relaxed and sure of themselves around you. As {{holder2}} responds to that support, you offer even more reassurance, but they can start depending on your encouragement to feel confident or enter situations without thinking much because they assume you will keep backing them.",
+      "body_they": "{{holder1}} encourages you when you speak up, meet new people, or try something unfamiliar, and you tend to feel more relaxed and sure of yourself around them. As you respond to that support, {{holder1}} offers even more reassurance, but you can start depending on their encouragement to feel confident or enter situations without thinking much because you assume they will keep backing you.",
       "review_status": "approved",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/conjunction/exact-approval.json",
+        "payloadSha256": "7dbc558118a3d1c6ed6f8bd23d20a0c01b303055bed2d3b0b72c267c54a7a61e",
+        "approvedAt": "2026-08-04"
+      },
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
-      "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts."
+      "notes": "Exact owner-approved Jupiter-to-Ascendant conjunction copy. The owner deleted the supplied foundation line for this context; the matched packet ships without a warmth beat by explicit owner decision."
     },
     {
       "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Jupiter sits at a hard angle to {{holder2Poss}} Ascendant, and the friction is scale. {{holder1PossCap}} enthusiasm rounds everything up: plans, praise, portions; {{holder2Poss}} presence keeps its own proportions and can feel bulldozed by the sheer size of the encouragement. Generosity that ignores the recipient's size is still about the giver. Ask what is wanted, then give exactly that, and this connection becomes pure fuel. That's {{holder1Poss}} Jupiter against {{holder2Poss}} Ascendant: more and enough pulling against each other until the friction builds muscle.",
-      "body_they": "{{holder1PossCap}} Jupiter sits at a hard angle to {{holder2Poss}} Ascendant, and the friction is scale. {{holder1PossCap}} enthusiasm rounds everything up: plans, praise, portions; {{holder2Poss}} presence keeps its own proportions and can feel bulldozed by the sheer size of the encouragement. Generosity that ignores the recipient's size is still about the giver. Ask what is wanted, then give exactly that, and this connection becomes pure fuel. That's {{holder1Poss}} Jupiter against {{holder2Poss}} Ascendant: more and enough pulling against each other until the friction builds muscle.",
+      "body_you": "Your encouragement can help {{holder2}} enter a new situation feeling more open and capable. If you keep talking up what they can handle, though, they may agree to more or present themselves as more certain than they feel. When they hesitate or pull back, you may respond with even more encouragement, which can leave them feeling pushed instead of supported. There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.",
+      "body_they": "{{holder1}}'s encouragement can help you enter a new situation feeling more open and capable. If {{holder1}} keeps talking up what you can handle, though, you may agree to more or present yourself as more certain than you feel. When you hesitate or pull back, {{holder1}} may respond with even more encouragement, which can leave you feeling pushed instead of supported. There is room for you to notice where you are manufacturing confidence versus actually feeling it.",
       "review_status": "approved",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/exact-approval.json",
+        "payloadSha256": "44082c453864d55b346130f68bf99355e8cc0d4eaed92aba1f17f40a8a181b88",
+        "approvedAt": "2026-08-04"
+      },
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
-      "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts."
+      "notes": "Exact owner-approved Jupiter-to-Ascendant hard-aspect copy. The owner approved the Sol draft unchanged, including its traced owner-corpus foundation line."
     },
     {
       "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Jupiter favors {{holder2Poss}} Ascendant, and luck seems to notice. Invitations, introductions, well-timed nudges: good things route through this connection more often than chance explains. Generosity flows without keeping score. Say yes to each other's plans; they have a record. That's {{holder1Poss}} Jupiter with {{holder2Poss}} Ascendant: goodwill and presence on the same side without trying.",
-      "body_they": "{{holder1PossCap}} Jupiter favors {{holder2Poss}} Ascendant, and luck seems to notice. Invitations, introductions, well-timed nudges: good things route through this connection more often than chance explains. Generosity flows without keeping score. Say yes to each other's plans; they have a record. That's {{holder1Poss}} Jupiter with {{holder2Poss}} Ascendant: goodwill and presence on the same side without trying.",
+      "body_you": "You tend to assume the best of how {{holder2}} presents themselves and encourage them when they seem unsure. Feeling accepted by you makes it easier for {{holder2}} to enter situations naturally without overthinking how they come across.",
+      "body_they": "{{holder1}} tends to assume the best of how you present yourself and encourage you when you seem unsure. Feeling accepted by {{holder1}} makes it easier for you to enter situations naturally without overthinking how you come across.",
       "review_status": "approved",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/soft/exact-approval.json",
+        "payloadSha256": "d8257ad5c355c29c50d8b35eb85d4f29d9697cf4556551479d971412ff309273",
+        "approvedAt": "2026-08-04"
+      },
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
-      "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts."
+      "notes": "Exact owner-approved Jupiter-to-Ascendant soft-aspect copy. The owner deleted the unsupported source-drift sentence identified in review."
     },
     {
       "contentKey": "fallback-hook/synastry-pair/saturn/ascendant/conjunction",

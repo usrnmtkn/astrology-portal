@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_076bbedb09e3e32a006a722e92cd1081a28ad4c8acc7c700ee",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 964,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2577,
+    "output_tokens_details": {
+      "reasoning_tokens": 2270
+    },
+    "total_tokens": 3541
+  },
+  "outputText": "{\"body_you\":\"Your encouragement can help {{holder2}} enter a new situation feeling more open and capable. If you keep talking up what they can handle, though, they may agree to more or present themselves as more certain than they feel. When they hesitate or pull back, you may respond with even more encouragement, which can leave them feeling pushed instead of supported. There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.\",\"body_they\":\"{{holder1}}'s encouragement can help you enter a new situation feeling more open and capable. If {{holder1}} keeps talking up what you can handle, though, you may agree to more or present yourself as more certain than you feel. When you hesitate or pull back, {{holder1}} may respond with even more encouragement, which can leave you feeling pushed instead of supported. There is room for you to notice where you are manufacturing confidence versus actually feeling it.\",\"warmthSource\":{\"sourceArticleId\":\"this-weeks-astrology-august-24th-31st\",\"originalLine\":\"Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.\",\"usedForm\":{\"body_you\":\"There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.\",\"body_they\":\"There is room for you to notice where you are manufacturing confidence versus actually feeling it.\"}},\"labels\":[\"owner-corpus-derived\"]}",
+  "error": null
+}

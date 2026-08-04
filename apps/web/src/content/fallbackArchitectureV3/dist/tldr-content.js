@@ -1359,6 +1359,23 @@ ${fogNote}`;
     const signCopyRow = hooks.get(signCopyKey);
     const continuousSignCopy = signCopyRow?.render_policy === "sky-placement-continuous-v2" ? signCopyRow : null;
     if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+      const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
+      if (!continuousSignCopy && standaloneHook?.body_you) {
+        const body = standaloneHook.body_you.trim();
+        if (!body || /\{\{/u.test(body)) {
+          throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
+        }
+        return {
+          headline: `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
+          tagline: null,
+          moves: [],
+          keyDates: [],
+          body,
+          parts: [body],
+          templateKey: "sky-placement-standalone-hook-v1",
+          contentKey: standaloneHook.contentKey
+        };
+      }
       if (!continuousSignCopy) {
         throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
       }
@@ -1806,7 +1823,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-04a";
+var PACKAGE_VERSION = "v3-2026-08-04c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

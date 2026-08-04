@@ -1,0 +1,47 @@
+{
+  "target": "soft",
+  "nonemptyFields": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "legacyLeakage": {
+    "passed": true,
+    "matches": []
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "none_found"
+  },
+  "preview": {
+    "youAreJupiter": "You tend to assume the best of how Bird presents themselves and encourage them when they seem unsure. Feeling accepted by you makes it easier for Bird to enter situations naturally without overthinking how they come across. That easy optimism can also lead both of you to move past moments when Bird is genuinely hesitant or uncomfortable.",
+    "birdIsJupiter": "Bird tends to assume the best of how you present yourself and encourage you when you seem unsure. Feeling accepted by Bird makes it easier for you to enter situations naturally without overthinking how you come across. That easy optimism can also lead both of you to move past moments when you are genuinely hesitant or uncomfortable."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}
