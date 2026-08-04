@@ -8,17 +8,6 @@ import { createClient } from "@supabase/supabase-js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 
-const liveCheckRequested =
-  process.argv.includes("--live") || process.env.TLDR_RUN_LIVE_SUPABASE_CHECK === "1";
-
-if (!liveCheckRequested) {
-  console.log(JSON.stringify({
-    status: "SKIP",
-    reason: "Live Supabase coverage is environment-gated; run npm run test:content:live where credentials are available."
-  }, null, 2));
-  process.exit(0);
-}
-
 function parseEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return {};
   const env = {};
@@ -66,7 +55,8 @@ const supabaseKey = firstPresent(
 );
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error("Live Supabase coverage was requested, but Supabase URL/key env vars are not configured.");
+  console.log(JSON.stringify({ status: "SKIP", reason: "Supabase URL/key env vars are not configured." }, null, 2));
+  process.exit(0);
 }
 
 const expected = expectedRows();
