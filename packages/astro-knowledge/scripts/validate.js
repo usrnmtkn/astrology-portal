@@ -147,8 +147,8 @@ const entryShapes = {
   synastryAspect: {
     schemaFile: "synastry-aspect.schema.json",
     required: ["id", "kind", "planetA", "planetB", "aspect", "plainTranslation", "policy", "voiceNeutral", "status"],
-    optional: ["note", "summaryShort", "summaryDeep", "tension", "advice", "weight", "authoringStatus"],
-    types: { id: "string", kind: "string", planetA: "string", planetB: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string", summaryShort: "string", summaryDeep: "string", tension: "string", advice: "string", weight: "number", authoringStatus: "string" },
+    optional: ["note", "humanMoment", "summaryShort", "summaryDeep", "tension", "advice", "weight", "authoringStatus"],
+    types: { id: "string", kind: "string", planetA: "string", planetB: "string", aspect: "string", plainTranslation: "string", humanMoment: "string", policy: "string", note: "string", summaryShort: "string", summaryDeep: "string", tension: "string", advice: "string", weight: "number", authoringStatus: "string" },
     enums: { kind: ["interaspect"], authoringStatus: ["draft", "approved", "locked"] }
   },
   synastryPointContact: {
