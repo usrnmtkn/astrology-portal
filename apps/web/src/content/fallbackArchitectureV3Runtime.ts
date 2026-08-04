@@ -511,6 +511,25 @@ export function fallbackV3HookBody(contentKey: string, voice: "you" | "they" = "
   return typeof body === "string" ? body : "";
 }
 
+export function fallbackV3LunationCompact(kind: "new-moon" | "full-moon", sign: string) {
+  const signKey = contentIdPart(sign);
+  const contentKey = `fallback-hook/lunation-sign-compact/${kind}/${signKey}`;
+  const body = fallbackV3HookBody(contentKey).trim();
+
+  if (!body) return null;
+
+  const signTitle = signKey
+    .split("-")
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join(" ");
+  return {
+    headline: `${kind === "new-moon" ? "New Moon" : "Full Moon"} in ${signTitle}`,
+    body,
+    parts: [body],
+    contentKey
+  };
+}
+
 // Approved per-placement sentence (planet in sign), voice-aware. "they" is the
 // third-person variant used for friend/event charts. Returns "" on SOURCE_GAP so
 // callers hide the surface rather than substitute copy. The 23c package covers
