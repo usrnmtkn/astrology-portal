@@ -17,6 +17,10 @@ import {
 } from "../../services/generatedContent";
 import {
   calendarAdjacentCopyIsDistinct,
+  calendarWeeklyNarrativeBody,
+  calendarWeeklyNarrativeHeadline,
+  calendarWeeklyNarrativeShifts,
+  calendarWeeklySupportingShifts,
   resolveCalendarWeeklyMoonTone,
   resolveCalendarWeeklyOverview,
   type CalendarEditorialContent
@@ -2091,11 +2095,51 @@ export function LunarCalendar({
     : undefined;
   const weeklyLeadMoon = weeklyDayWriteups.find((writeup) => writeup.guidance?.body)?.guidance ?? null;
   const weeklyMainShifts = weeklyForecast?.mainShifts ?? [];
-  const weeklyForecastHeadline = weeklyForecast?.weeklyHeadline
-    ?? weeklyLeadMoon?.headline
-    ?? "Your week in the sky";
-  const weeklySupportingShifts = weeklyMainShifts;
-  const weeklyForecastBody = weeklyForecast?.weeklyOverview ?? "";
+  const weeklyEventDescriptions = new Map(
+    weeklyDayWriteups.flatMap(({ events }) => (
+      events
+        .filter(({ description }) => Boolean(description.trim()))
+        .map(({ event, description }) => [event.id, description] as const)
+    ))
+  );
+  const weeklyDayGuidance = new Map(
+    weeklyDayWriteups.flatMap(({ day, guidance }) => (
+      guidance?.body ? [[day.dateKey, guidance.body] as const] : []
+    ))
+  );
+  const weeklyNarrativeCandidates = weeklyMainShifts.filter((event) => (
+    event.type === "lunation"
+      ? /^(?:new|full) moon\b/iu.test(event.title)
+      : weeklyEventDescriptions.has(event.id)
+  ));
+  const weeklyNarrativeShifts = calendarWeeklyNarrativeShifts(
+    weeklyNarrativeCandidates,
+    weeklyForecast?.mainEvent && weeklyNarrativeCandidates.some((event) => event.id === weeklyForecast.mainEvent?.id)
+      ? weeklyForecast.mainEvent
+      : undefined
+  );
+  const weeklyForecastHeadline = weeklyForecast?.source === "authored"
+    ? weeklyForecast.weeklyHeadline
+    : calendarWeeklyNarrativeHeadline(
+        weeklyNarrativeShifts,
+        weeklyForecast?.weeklyHeadline ?? weeklyLeadMoon?.headline ?? "Your week in the sky"
+      );
+  const weeklyForecastBody = weeklyForecast
+    ? calendarWeeklyNarrativeBody({
+        overview: weeklyForecast.weeklyOverview,
+        source: weeklyForecast.source,
+        narrativeShifts: weeklyForecast.source === "authored" ? [] : weeklyNarrativeShifts,
+        eventDescriptions: weeklyEventDescriptions,
+        dayGuidance: weeklyDayGuidance
+      })
+    : weeklyLeadMoon?.body ?? "";
+  const weeklySupportingShifts = weeklyForecast?.source === "authored"
+    ? weeklyMainShifts
+    : calendarWeeklySupportingShifts(
+        weeklyMainShifts,
+        weeklyNarrativeShifts,
+        weeklyForecastHeadline
+      );
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {

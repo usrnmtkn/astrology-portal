@@ -93,13 +93,13 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /const weeklyForecastHeadline = weeklyForecast\?\.weeklyHeadline/u,
-  "The weekly hero must use the distinct governed weekly headline instead of promoting Monday's Moon label."
+  /weeklyForecast\?\.source === "authored"[\s\S]*?calendarWeeklyNarrativeHeadline\(/u,
+  "The weekly hero must preserve exact authored headlines while assembling a consistent factual fallback headline."
 );
 assert.match(
   calendarSource,
-  /const weeklySupportingShifts = weeklyMainShifts;/u,
-  "Key shifts must use the ranked, governed weekly selection."
+  /weeklyForecast\?\.source === "authored"[\s\S]*?calendarWeeklySupportingShifts\(/u,
+  "Fallback weeks must not repeat narrative events in the supporting Key shifts list."
 );
 assert.doesNotMatch(
   calendarSource,
@@ -108,8 +108,8 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /const weeklyForecastBody = weeklyForecast\?\.weeklyOverview \?\? "";/u,
-  "The weekly hero must render the governed weekly overview rather than duplicated daily excerpts."
+  /calendarWeeklyNarrativeBody\(\{[\s\S]*?eventDescriptions: weeklyEventDescriptions,[\s\S]*?dayGuidance: weeklyDayGuidance/u,
+  "Fallback weeks must assemble multiple governed editorial units instead of exposing a one-event or boilerplate opener."
 );
 assert.match(
   calendarSource,
