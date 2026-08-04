@@ -26,6 +26,18 @@ node .agents/skills/marie-satori-writer/scripts/compile-writing-packet.js \
 
 The command writes an untracked JSON packet and a human-readable selection report under `packages/astro-knowledge/out/marie-satori-writer/` unless `--out-dir` is supplied.
 
+## Compile an aspect warmth packet
+
+```bash
+node packages/astro-knowledge/scripts/build-aspect-writing-packet.js \
+  --surface natal-aspect \
+  --format full-card \
+  --id jupiter-ascendant-hard \
+  --human-moment "Encouragement feels generous until support becomes pressure."
+```
+
+Full-card matches compile with `harvest_mode: matched`. Use `--format tldr-line` for a vocabulary-only packet. The command exits with status 2 and an editorial flag only when the human-moment beat is missing. A corpus miss compiles with `harvest_mode: none_found` and a non-blocking flag.
+
 ## Run authorship audit
 
 ```bash

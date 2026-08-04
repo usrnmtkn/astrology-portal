@@ -73,6 +73,9 @@ const generationPrompt = generator.buildPrompt({
 });
 
 assert.match(generationPrompt, /RANGE OF GOOD CLOSES/);
+assert.match(generationPrompt, /OWNER FOUNDATION LINES/);
+assert.match(generationPrompt, /Adapt one of these into the card/);
+assert.match(generationPrompt, /warmth beat is exactly one sentence/);
 assert.doesNotMatch(generationPrompt, /Standing out is real currency/);
 assert.doesNotMatch(generationPrompt, /a friend's big-hearted gesture/);
 
@@ -99,6 +102,23 @@ for (const family of [
   assert.match(judgePrompt, new RegExp(family));
 }
 assert.doesNotMatch(judgePrompt, /Stop shrinking/i);
+assert.doesNotMatch(judgePrompt, /turn toward the reader must trace to the supplied owner foundation lines/);
+
+const normalizedWarmthTarget = generator.normalizeCardArgs({
+  a: "sun",
+  b: "pluto",
+  aspect: "opposition",
+  signA: "leo",
+  signB: "aquarius"
+});
+const warmthHarvest = generator.aspectWarmthHarvest(normalizedWarmthTarget);
+assert.equal(warmthHarvest.status, "ready");
+const warmthJudgePrompt = buildJudgePrompt(cleanExample, {
+  tier: "luminary",
+  foundationLines: warmthHarvest.ownerFoundationLines
+});
+assert.match(warmthJudgePrompt, /turn toward the reader must trace to the supplied owner foundation lines/);
+assert.match(warmthJudgePrompt, /SUPPLIED OWNER FOUNDATION LINES/);
 
 const canonicalCloses = new Set(
   examples
@@ -151,6 +171,27 @@ const missingSource = await generator.generateCard({
 assert.equal(missingSource.status, "skipped");
 assert.equal(missingSource.reason, "missing-source");
 
+const missingWarmthCore = await generator.generateCard({
+  a: "sun",
+  b: "moon",
+  aspect: "quincunx",
+  signA: "leo",
+  signB: "pisces"
+}, {
+  generateFn: async () => {
+    throw new Error("A missing human-moment beat must never reach the model.");
+  }
+});
+
+assert.equal(missingWarmthCore.status, "skipped");
+assert.equal(missingWarmthCore.reason, "aspect-warmth-editorial-required");
+assert.deepEqual(missingWarmthCore.flags, [{
+  id: "missing-human-moment-beat",
+  severity: "editorial",
+  blocking: true,
+  reason: "Aspect entry has no human-moment beat. This is editorial data completeness; flag for editorial work. Do not request new owner prose."
+}]);
+
 const stub = await generator.generateCard({
   a: "sun",
   b: "chiron",
@@ -191,6 +232,8 @@ assert.equal(retried.status, "clean");
 assert.equal(retried.attempts, 2);
 assert.equal(retried.lint.score, 3);
 assert.equal(retried.lint.fails, 0);
+assert.equal(retried.warmthHarvest.status, "ready");
+assert.equal(retried.harvest_mode, "matched");
 assert.deepEqual(retried.lintRetryAvoidTerms, [[
   "degree/orb mechanics",
   "collective person",
@@ -256,6 +299,9 @@ assert.match(cronSource, /sky-owner-approval-required/u);
 assert.match(cronSource, /approvedReviewPairKeys/u);
 assert.match(cronSource, /allowReviewSources: options\.allowReviewSources === true/u);
 assert.match(cronSource, /owner-authored-review-pending/u, "The cron must not overwrite an owner-authored review draft.");
+assert.match(cronSource, /aspectWarmthHarvest: result\.warmthHarvest \?\? null/u);
+assert.match(cronSource, /warmthSource: result\.warmthSource \?\? null/u);
+assert.match(cronSource, /evidenceClass: result\.evidenceClass \?\? null/u);
 
 const adminSource = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
 assert.match(adminSource, /judgeScore !== 3/u);

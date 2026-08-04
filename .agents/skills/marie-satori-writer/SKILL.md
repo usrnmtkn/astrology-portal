@@ -1,6 +1,6 @@
 ---
 name: marie-satori-writer
-description: Write, rewrite, refine, compare, or prepare approval candidates for TLDR Astro reader copy using ranked Marie Satori owner evidence, structured before/after corrections, deterministic lint, and an authorship rewrite gate before the Terra judge. Use for Sky Placement editorial work and whenever Codex is asked to make astrology copy sound more like Marie, assess whether wording is authored rather than merely compliant, or record owner feedback without inferring approval.
+description: Write, rewrite, refine, compare, or prepare approval candidates for TLDR Astro reader copy using ranked Marie Satori owner evidence, the required aspect warmth harvest, structured before/after corrections, deterministic lint, and an authorship rewrite gate before the Terra judge. Use for Sky Placement and aspect editorial work, whenever Codex is asked to make astrology copy sound more like Marie, assess whether wording is authored rather than merely compliant, or record owner feedback without inferring approval.
 ---
 
 # Marie Satori Writer
@@ -17,6 +17,7 @@ Produce authored candidate wording from governed evidence. Treat writing, judgin
 - Keep computed dates, degrees, motion, houses, and other moving facts outside prose. Use the checked-in astrology boundary only.
 - Require explicit authorization before any billed generation or judge call.
 - Do not promote content, alter the editorial model registry, or synchronize external content from this skill.
+- Do not write or revise an aspect entry whose human-moment beat is missing. Flag it for editorial work instead of inventing a core. A harvest with `harvest_mode: none_found` is non-blocking; proceed without inventing a reassurance line.
 
 Read [governance.md](references/governance.md) when approval scope, evidence authority, or feedback classification is involved. Read [writer-contract.md](references/writer-contract.md) before drafting or rewriting. Read [commands.md](references/commands.md) when running the deterministic tools.
 
@@ -46,6 +47,10 @@ Require the packet to contain:
 - a selection reason and provenance for every excerpt.
 
 Reject a packet if an `ai_candidate_unreviewed`, `owner_rejected`, `historical_only`, or `third_party_source` record appears as positive evidence.
+
+For any aspect surface, also run `packages/astro-knowledge/scripts/build-aspect-writing-packet.js` before drafting. When the harvest finds a qualifying match, the packet records `harvest_mode: matched` and contains one to three OWNER FOUNDATION LINES selected through `packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md`. Current Sky receives minimally collectivized lines with originals retained in provenance. Natal, transit-to-natal, and synastry aspect surfaces retain the owner's second person. A missing human-moment beat fails closed. A corpus miss records `harvest_mode: none_found` and proceeds without a warmth beat.
+
+For a full aspect card, adapt at most one foundation line into one warmth sentence after the shadow or cost, as the final or penultimate sentence. For TLDR lines and short previews, require `harvest_mode: vocabulary_only` and do not add a warmth beat. When a foundation line is used, record `warmthSource` and label the candidate `owner-corpus-derived`; this evidence metadata never changes approval status.
 
 ### 3. Find one article spine
 
