@@ -1,21 +1,21 @@
 {
-  "artifactType": "calendar_weekly_overview_candidate",
-  "contentKey": "candidate/calendar-weekly-overview/2026-08-03",
+  "artifactType": "calendar_weekly_overview_approval_record",
+  "contentKey": "approved/calendar-weekly-overview/2026-08-03",
   "weekStart": "2026-08-03",
   "weekEnd": "2026-08-09",
-  "headline": "The decision may be easier than maintaining it",
-  "body": "Monday begins with the Moon in Aries, and the impatience may be enough to move a conversation, application, purchase, or decision that has been sitting in discussion. Before treating delay as rejection, check whether the answer is actually missing or whether no one has agreed who carries the next step.\n\nBy Wednesday, the Last Quarter Moon in Taurus makes the practical cost harder to ignore. The decision may be possible, but the schedule, budget, or division of labor does not work yet. If everyone agreed and one person is still expected to absorb the extra responsibility, the agreement is not finished.\n\nVenus enters Libra on Thursday, followed by the Sun trine Saturn. A vague promise can become a fairer arrangement now. Name the deadline. Clarify who is paying. Divide the work before resentment becomes part of the agreement. When Mercury enters Leo on Sunday, say the part that needs recognition and put the revised terms where everyone can see them. Keep the idea if it still matters. Replace the version that no one can maintain.",
+  "headline": "Speed gets an answer. Fairness decides whether it holds.",
+  "body": "Monday’s Moon in Aries makes waiting harder. A delayed answer, unresolved conversation, or task everyone has been circling may finally get a direct response. The impulse is to settle it quickly, especially if silence has started to feel like rejection.\n\nThe Last Quarter Moon in Taurus on Wednesday slows that urgency enough to show the practical limit. Notice what the choice requires from your time, money, energy, or body. If the answer depends on someone quietly covering extra hours, expense, or care, the cost has not been fully named.\n\nVenus enters Libra on Thursday, and the Sun trine Saturn makes a fair correction easier to hold. Ask what each person agreed to, what support is available, and where a boundary needs to be explicit. Mercury enters Leo on Sunday and brings the unspoken need for recognition into the conversation. Say what matters plainly. A workable answer should leave room for honesty, contribution, and follow-through.",
   "keyShifts": [
     "Last Quarter Moon in Taurus",
     "Venus enters Libra",
     "Sun trine Saturn",
     "Mercury enters Leo"
   ],
-  "reviewStatus": "needs_review",
-  "ownerApproved": false,
-  "promotionAuthorized": false,
-  "canonical": false,
-  "serving": false,
+  "reviewStatus": "approved",
+  "ownerApproved": true,
+  "promotionAuthorized": true,
+  "canonical": true,
+  "serving": true,
   "evidenceSources": {
     "runtimeFacts": "apps/web/src/services/ephemeris.ts",
     "knowledge": [
@@ -33,6 +33,6 @@
       "packages/astro-knowledge/voice/tldr-astro/style-guide.md"
     ]
   },
-  "provenance": "Implementation candidate based on the owner-supplied Calendar content-system brief, 2026-08-03",
-  "notes": "Held as a non-serving owner-review candidate. Chiron was removed after the ephemeris fixture confirmed that its station falls on the preceding local Sunday. Explicit exact-wording approval is still required before reader promotion."
+  "provenance": "Owner-approved in Codex chat on 2026-08-04 after the Calendar drift review.",
+  "notes": "Promoted after exact-copy owner approval. Chiron remains excluded because the ephemeris fixture confirms that its station falls on the preceding local Sunday. The approved overview connects Monday's Moon, the Last Quarter Moon, Venus entering Libra, Sun trine Saturn, and Mercury entering Leo in chronological order without duplicating the daily cards."
 }
