@@ -72,6 +72,13 @@ the canonical transit corpus is the authored unit. Both must be selected before
 generic phrasebook, generated, or general fallback prose. A DRAFT transit
 record remains source material and is never promoted merely because the file exists.
 
+Sky Placement distribution has an additional independent gate. Editorially
+approved rows remain `staged` until the owner approves the exact staged-to-serving
+key diff. Record that approval statement, date, source, and approved keys in
+`authored-inputs/sky-placement-serving-manifest-v1.json`. This applies to every
+batch. Batch 2 cannot serve until the on-demand runtime deployment is verified,
+and its serving change must be presented as a separate owner approval.
+
 Do not add a generic sentence in React to make a missing card appear complete.
 The owning surface should omit the unavailable unit and log the source gap.
 
@@ -242,6 +249,8 @@ package verifier. Useful focused gates include:
 node scripts/test-reader-facing-content-contract.mjs
 node scripts/test-fallback-refresh-wiring.mjs
 node scripts/test-sky-placement-regressions.mjs
+node scripts/test-sky-placement-serving-gate.mjs
+node scripts/test-deferred-sky-placement-runtime.mjs
 node scripts/test-weekly-horoscope-assembly.mjs
 node scripts/test-lunation-blend-assembly.mjs
 node --experimental-strip-types scripts/test-bond-transit-grouping.mjs

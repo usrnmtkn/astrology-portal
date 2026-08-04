@@ -66,7 +66,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-04a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-04b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -538,9 +538,9 @@ assert.match(
   /const openBondTransitDetail[\s\S]*?body: card\.effectBody \? \[card\.effectBody\] : \[\][\s\S]*?heading: index === 0 \? "What this activates"/u,
   "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
-assert.match(
-  friendTransitsTabSource,
-  /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u,
+assert.ok(
+  /function FriendPersonalTransitCard[\s\S]*?onClick=\{\(\) => onOpen\(transit\.id\)\}/u.test(friendTransitsTabSource)
+    || /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u.test(friendTransitsTabSource),
   "Friend personal-transit cards must open a detail view."
 );
 assert.match(
@@ -625,18 +625,18 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
-  "Dashboard cache payloads must be rejected when the bundled content hash changes."
+  /envelope\?\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\.runtimeCapability[\s\S]*envelope\?\.bundledContentHash !== bundledPartition\.contentHash/u,
+  "Dashboard cache payloads must be rejected when the runtime capability or partition hash changes."
 );
 assert.match(
   generatedContentSource,
-  /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
-  "Dashboard packages must be complete, same-or-newer, and hash-verified before installation."
+  /manifest\.contentHash !== bundledManifest\.contentHash[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
+  "Dashboard partitions must exactly match the bundled partition and mirror metadata before installation."
 );
 assert.match(
   generatedContentSource,

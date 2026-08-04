@@ -6,10 +6,6 @@ import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-
 import placementInterimFixesV1 from "./fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
 import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.json";
 import skyAspectPhrasebookV1 from "./fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json";
-import skyPlacementVoicePassV1 from "./fallbackArchitectureV3/source-rows/sky-placement-inventories-voice-pass-v1.json";
-import skyPlanetFramesV1 from "./fallbackArchitectureV3/source-rows/sky-planet-frames-v1.json";
-import skyPlacementOwnerApprovedFallbacksV1 from "./fallbackArchitectureV3/bundled-sky-placement-owner-approved-reader-v1.json";
-import skySignCopySunV1 from "./fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json";
 import timingEventReaderCopyV2 from "./fallbackArchitectureV3/source-rows/timing-event-reader-copy-v2.json";
 import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
@@ -126,10 +122,21 @@ export type FallbackArchitectureV3PackageManifest = {
   keys: string[];
 };
 
+export type FallbackArchitectureV3PackagePartitionSummary = Omit<
+  FallbackArchitectureV3PackageManifest,
+  "keys" | "packageVersion"
+>;
+
 export type FallbackArchitectureV3PackageManifestSummary = Omit<
   FallbackArchitectureV3PackageManifest,
   "keys"
->;
+> & {
+  runtimeCapability?: string;
+  partitions?: {
+    core: FallbackArchitectureV3PackagePartitionSummary;
+    skyPlacement: FallbackArchitectureV3PackagePartitionSummary;
+  };
+};
 
 export type SkyEvent = {
   type: string;
@@ -229,96 +236,6 @@ function assertSkyArticleV1Import(
 
 assertSkyArticleV1Import(skyArticleV1);
 
-function assertSkyPlanetFramesV1Import(
-  source: typeof skyPlanetFramesV1
-) {
-  const rows = source.rows;
-  const direct = rows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-placement-frame/"));
-  const retrograde = rows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-placement-retro-frame/"));
-  const keys = new Set(rows.map((row) => row.contentKey));
-
-  if (
-    rows.length !== 23
-    || keys.size !== 23
-    || direct.length !== 14
-    || retrograde.length !== 9
-    || rows.some((row) => row.review_status !== "approved")
-    || rows.some((row) => row.body_you !== row.body_they)
-  ) {
-    throw new Error("Sky planet frames must contain 14 direct and 9 retrograde owner-approved single-voice rows.");
-  }
-}
-
-assertSkyPlanetFramesV1Import(skyPlanetFramesV1);
-
-function assertSkyPlacementVoicePassV1Import(
-  source: typeof skyPlacementVoicePassV1
-) {
-  const rows = source.rows;
-  const keys = new Set(rows.map((row) => row.contentKey));
-
-  if (
-    rows.length !== 42
-    || keys.size !== 42
-    || rows.some((row) => row.review_status !== "needs_review")
-    || rows.some((row) => row.body_you !== row.body_they)
-  ) {
-    throw new Error("Sky placement voice pass must contain 42 review-gated, single-voice rows.");
-  }
-}
-
-assertSkyPlacementVoicePassV1Import(skyPlacementVoicePassV1);
-
-function assertSkySignCopySunV1Import(
-  source: typeof skySignCopySunV1
-) {
-  const rows = source.rows;
-  const supersededRows = source.superseded_rows;
-
-  if (
-    rows.length !== 1
-    || rows[0]?.contentKey !== "fallback-hook/sky-sign-copy/sun/leo"
-    || rows[0]?.review_status !== "approved"
-    || rows[0]?.render_policy !== "sky-placement-continuous-v2"
-    || rows.some((row) => row.body_you !== row.body_they)
-    || supersededRows.length !== 13
-    || new Set(supersededRows.map((row) => row.contentKey)).size !== 12
-    || supersededRows.some((row) => row.review_status !== "superseded")
-  ) {
-    throw new Error("Sun sign copy must contain one approved continuous Leo unit and 13 historical non-rendering superseded rows.");
-  }
-}
-
-assertSkySignCopySunV1Import(skySignCopySunV1);
-
-function assertSkyPlacementOwnerApprovedFallbacksV1Import(
-  source: typeof skyPlacementOwnerApprovedFallbacksV1
-) {
-  const rows = source.rows;
-  const keys = new Set(rows.map((row) => row.contentKey));
-  const secondPerson = /\b(?:you|your|yours|yourself|yourselves)\b/iu;
-
-  if (
-    rows.length !== 11
-    || keys.size !== 11
-    || rows.some((row) => row.review_status !== "approved")
-    || rows.some((row) => row.render_policy !== "sky-placement-continuous-v2")
-    || rows.some((row) => !row.contentKey.startsWith("fallback-hook/sky-sign-copy/"))
-    || rows.some((row) => ["note", "source_keys", "approved_via"].some((field) => field in row))
-    || rows.some((row) => secondPerson.test([
-      row.opening,
-      row.tension,
-      row.development,
-      row.close,
-      ...(row.try_this ?? [])
-    ].join("\n")))
-  ) {
-    throw new Error("Sky Placement owner-approved fallbacks must contain 11 collective, metadata-free approved continuous units.");
-  }
-}
-
-assertSkyPlacementOwnerApprovedFallbacksV1Import(skyPlacementOwnerApprovedFallbacksV1);
-
 function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhrasebookV1) {
   const rows = phrasebook.hookRows;
   const expectedFamilies = new Map([
@@ -386,11 +303,7 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
       ...((bundledSkyCoreRowsV3 as RowsFile).hookRows ?? []),
       ...(lunationBlendUnitsV1.hookRows as HookRow[]),
       ...(skyArticleV1.hookRows as HookRow[]),
-      ...(skyAspectPhrasebookV1.hookRows as HookRow[]),
-      ...(skyPlanetFramesV1.rows as HookRow[]),
-      ...(skyPlacementVoicePassV1.rows as HookRow[]),
-      ...(skySignCopySunV1.rows as HookRow[]),
-      ...(skyPlacementOwnerApprovedFallbacksV1.rows as HookRow[])
+      ...(skyAspectPhrasebookV1.hookRows as HookRow[])
     ],
     vocabularyRows: [
       ...((bundledSkyCoreRowsV3 as RowsFile).vocabularyRows ?? []),
@@ -470,6 +383,8 @@ export function fallbackArchitectureV3ManifestForBundle(
 
 export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary;
 let bundledManifestPromise: Promise<FallbackArchitectureV3PackageManifest> | null = null;
+let bundledCoreManifestPromise: Promise<FallbackArchitectureV3PackageManifest> | null = null;
+let bundledSkyPlacementManifestPromise: Promise<FallbackArchitectureV3PackageManifest> | null = null;
 
 export function loadFallbackArchitectureV3BundledManifest() {
   bundledManifestPromise ??= import("./fallbackArchitectureV3/bundled-manifest-v3.json")
@@ -482,10 +397,35 @@ export function loadFallbackArchitectureV3BundledManifest() {
   return bundledManifestPromise;
 }
 
+export function loadFallbackArchitectureV3BundledCoreManifest() {
+  bundledCoreManifestPromise ??= import("./fallbackArchitectureV3/bundled-core-manifest-v3.json")
+    .then((module) => module.default as FallbackArchitectureV3PackageManifest)
+    .catch((error) => {
+      bundledCoreManifestPromise = null;
+      throw error;
+    });
+
+  return bundledCoreManifestPromise;
+}
+
+export function loadFallbackArchitectureV3BundledSkyPlacementManifest() {
+  bundledSkyPlacementManifestPromise ??= import("./fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")
+    .then((module) => module.default as FallbackArchitectureV3PackageManifest)
+    .catch((error) => {
+      bundledSkyPlacementManifestPromise = null;
+      throw error;
+    });
+
+  return bundledSkyPlacementManifestPromise;
+}
+
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
-let activeReaderBundle = initialReaderBundle;
-let fullFallbackBundleInstalled = false;
+let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
+let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
 let vocabularyRowsByKey = vocabularyRowsByContentKey(initialReaderBundle.rowsFile);
@@ -493,12 +433,50 @@ let hookRowsByKey = hookRowsByContentKey(initialReaderBundle.rowsFile);
 let transitAuthoredCardsByKey = authoredCardsByContentKey(initialReaderBundle.transitLib);
 
 function activateReaderBundle(readerBundle: FallbackArchitectureV3Bundle) {
-  activeReaderBundle = readerBundle;
   fallbackRendererV3 = createAppFallbackRenderer(readerBundle);
   transitSynastryFallbackRendererV3 = createAppTransitRenderer(readerBundle);
   vocabularyRowsByKey = vocabularyRowsByContentKey(readerBundle.rowsFile);
   hookRowsByKey = hookRowsByContentKey(readerBundle.rowsFile);
   transitAuthoredCardsByKey = authoredCardsByContentKey(readerBundle.transitLib);
+}
+
+function mergeReaderBundles(
+  base: FallbackArchitectureV3Bundle,
+  extension: FallbackArchitectureV3Bundle | null
+): FallbackArchitectureV3Bundle {
+  if (!extension) return base;
+
+  return readerEligibleBundle({
+    transitLib: {
+      authoredCards: [
+        ...base.transitLib.authoredCards,
+        ...extension.transitLib.authoredCards
+      ]
+    },
+    templatesFile: {
+      templates: [
+        ...base.templatesFile.templates,
+        ...extension.templatesFile.templates
+      ]
+    },
+    rowsFile: {
+      hookRows: [
+        ...(base.rowsFile.hookRows ?? []),
+        ...(extension.rowsFile.hookRows ?? [])
+      ],
+      vocabularyRows: [
+        ...(base.rowsFile.vocabularyRows ?? []),
+        ...(extension.rowsFile.vocabularyRows ?? [])
+      ]
+    }
+  });
+}
+
+function recomposeReaderBundle() {
+  const localCoreWithDeferred = mergeReaderBundles(initialReaderBundle, localDeferredReaderBundle);
+  const core = dashboardCoreReaderBundle ?? localCoreWithDeferred;
+  const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
+  activateReaderBundle(mergeReaderBundles(core, placement));
 }
 
 const signRulers: Record<string, string> = {
@@ -656,51 +634,41 @@ export function installFallbackArchitectureV3Bundle(
 ) {
   const readerBundle = readerEligibleBundle(bundle);
   const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
-  fullFallbackBundleInstalled = true;
-  activateReaderBundle(readerBundle);
+  dashboardCoreReaderBundle = readerBundle;
+  recomposeReaderBundle();
+
+  return manifest;
+}
+
+export function installSkyPlacementFallbackArchitectureV3Bundle(
+  bundle: FallbackArchitectureV3Bundle,
+  packageVersion = bundle.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
+) {
+  const readerBundle = readerEligibleBundle(bundle);
+  const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
+  dashboardSkyPlacementReaderBundle = readerBundle;
+  recomposeReaderBundle();
 
   return manifest;
 }
 
 export function isDeferredFallbackArchitectureV3BundleLoaded() {
-  return fullFallbackBundleInstalled;
+  return Boolean(localDeferredReaderBundle || dashboardCoreReaderBundle);
 }
 
 export async function loadDeferredFallbackArchitectureV3Bundle() {
-  if (fullFallbackBundleInstalled) {
+  if (localDeferredReaderBundle || dashboardCoreReaderBundle) {
     return false;
   }
 
   deferredFallbackBundlePromise ??= import("./fallbackArchitectureV3DeferredBundle")
     .then(({ deferredFallbackArchitectureV3Bundle }) => {
-      if (fullFallbackBundleInstalled) {
+      if (localDeferredReaderBundle || dashboardCoreReaderBundle) {
         return false;
       }
 
-      const readerBundle = readerEligibleBundle({
-        transitLib: {
-          // The original package order places transit rows before the smaller
-          // Sky/weekly overrides that are already active.
-          authoredCards: [
-            ...deferredFallbackArchitectureV3Bundle.transitLib.authoredCards,
-            ...activeReaderBundle.transitLib.authoredCards
-          ]
-        },
-        templatesFile: activeReaderBundle.templatesFile,
-        rowsFile: {
-          hookRows: [
-            ...(activeReaderBundle.rowsFile.hookRows ?? []),
-            ...(deferredFallbackArchitectureV3Bundle.rowsFile.hookRows ?? [])
-          ],
-          vocabularyRows: [
-            ...(activeReaderBundle.rowsFile.vocabularyRows ?? []),
-            ...(deferredFallbackArchitectureV3Bundle.rowsFile.vocabularyRows ?? [])
-          ]
-        }
-      });
-
-      fullFallbackBundleInstalled = true;
-      activateReaderBundle(readerBundle);
+      localDeferredReaderBundle = readerEligibleBundle(deferredFallbackArchitectureV3Bundle);
+      recomposeReaderBundle();
       return true;
     })
     .catch((error) => {
@@ -709,4 +677,31 @@ export async function loadDeferredFallbackArchitectureV3Bundle() {
     });
 
   return deferredFallbackBundlePromise;
+}
+
+export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
+  return Boolean(localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle);
+}
+
+export async function loadSkyPlacementFallbackArchitectureV3Bundle() {
+  if (localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle) {
+    return false;
+  }
+
+  skyPlacementFallbackBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementBundle")
+    .then(({ skyPlacementFallbackArchitectureV3Bundle }) => {
+      if (localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle) {
+        return false;
+      }
+
+      localSkyPlacementReaderBundle = readerEligibleBundle(skyPlacementFallbackArchitectureV3Bundle);
+      recomposeReaderBundle();
+      return true;
+    })
+    .catch((error) => {
+      skyPlacementFallbackBundlePromise = null;
+      throw error;
+    });
+
+  return skyPlacementFallbackBundlePromise;
 }
