@@ -228,6 +228,6 @@
     }
   ],
   "approvalRecordStatus": "created_15_exact_owner_approved",
-  "servingStatus": "authorized_draft_pr_in_progress_merge_authorization_required",
+  "servingStatus": "fifteen_source_rows_replaced_on_candidate_branch_draft_pr_pending_merge_authorization_required",
   "promotionAuthorized": false
 }
