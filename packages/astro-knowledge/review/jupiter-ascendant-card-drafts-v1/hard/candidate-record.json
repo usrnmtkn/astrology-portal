@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "jupiter-ascendant-hard-v1",
+  "target": {
+    "factorA": "jupiter",
+    "factorB": "ascendant",
+    "aspectGroup": "hard",
+    "governedEntryId": "A-jupiter_B-ascendant_square"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/jupiter/ascendant/hard",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "Your encouragement can help {{holder2}} enter a new situation feeling more open and capable. If you keep talking up what they can handle, though, they may agree to more or present themselves as more certain than they feel. When they hesitate or pull back, you may respond with even more encouragement, which can leave them feeling pushed instead of supported. There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.",
+    "body_they": "{{holder1}}'s encouragement can help you enter a new situation feeling more open and capable. If {{holder1}} keeps talking up what you can handle, though, you may agree to more or present yourself as more certain than you feel. When you hesitate or pull back, {{holder1}} may respond with even more encouragement, which can leave you feeling pushed instead of supported. There is room for you to notice where you are manufacturing confidence versus actually feeling it.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-ascendant_square.json",
+      "this-weeks-astrology-august-24th-31st"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "this-weeks-astrology-august-24th-31st",
+    "originalLine": "Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.",
+    "usedForm": {
+      "body_you": "There is room for {{holder2}} to notice where they are manufacturing confidence versus actually feeling it.",
+      "body_they": "There is room for you to notice where you are manufacturing confidence versus actually feeling it."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_076bbedb09e3e32a006a722e92cd1081a28ad4c8acc7c700ee",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_069fe9bc6e1e708a006a722efa6a58819198a88c8b3400c60e",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "body_you",
+    "weakest": "The opening benefit is slightly generalized, but it remains within Jupiter's encouragement and the Ascendant's approach to new situations.",
+    "why": "The draft keeps the fixed Jupiter-to-Ascendant direction clear in both variants: the Jupiter holder talks up the other person's capacity, the Ascendant holder may overcommit or appear more certain, and hesitation draws further encouragement that feels pressuring. This is a recognizable hard-aspect loop without astrology explanation, invented events, advice, or excluded claims. Both variants preserve the same meaning and resolve naturally. The final reader turn is a near-verbatim adaptation of the supplied owner foundation line and appears once after the cost.",
+    "failedChecks": [],
+    "strengths": [
+      "Clear holder-to-other direction in both reader variants.",
+      "Plain two-person escalation loop: encouragement, overextension or performed certainty, hesitation, then more pressure.",
+      "Hard dynamic is distinct through encouragement becoming pushiness.",
+      "All claims remain inside the supplied Jupiter and Ascendant boundaries.",
+      "Natural placeholder resolution and matching mirrored copy.",
+      "Single, properly placed owner-corpus warmth sentence with direct provenance."
+    ],
+    "sourceFidelity": "High. The copy uses only supported themes: encouragement, confidence, capacity, entering situations, outward certainty, overpromising or taking on too much, and encouragement becoming pressure. It makes no literal-luck, event, guarantee, or advice claims.",
+    "foundationTrace": "The final sentence in each variant directly traces to the supplied line, “notice where you're manufacturing confidence versus actually feeling it,” with only pronoun and framing changes needed for the card."
+  }
+}

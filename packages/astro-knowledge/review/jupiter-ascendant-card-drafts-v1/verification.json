@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "branch": "codex/jupiter-ascendant-card-drafts",
+  "baseCommit": "add65b13575fb7d594572b11f9cb79c5a6ecdaf0",
+  "packetGate": {
+    "conjunction": "ready/matched",
+    "hard": "ready/matched",
+    "soft": "ready/none_found"
+  },
+  "tests": {
+    "aspectCorpusWarmthHarvest": "pass",
+    "skyExactAspectPipeline": "pass",
+    "currentSkyAspectSuiteIncludingCron": "pass",
+    "readerFacingContentContract": "pass",
+    "gitDiffCheck": "pass",
+    "reviewArtifactTrailingWhitespace": "pass",
+    "credentialPatternScan": "pass"
+  },
+  "pinnedCounts": {
+    "targets": 240,
+    "readyFullCard": 198,
+    "matched": 198,
+    "noneFound": 0,
+    "failClosed": 42,
+    "ownerCalibrationEntries": 225
+  },
+  "scope": {
+    "onlyReviewDirectoryAdded": true,
+    "governedEntriesModified": false,
+    "schemaModified": false,
+    "corpusModified": false,
+    "matcherModified": false,
+    "policyModified": false,
+    "fallbackSourceRowsModified": false,
+    "resolverModified": false,
+    "bundledManifestModified": false,
+    "servingContentModified": false
+  },
+  "billing": {
+    "successfulBilledCalls": 6,
+    "solWriterCalls": 3,
+    "terraJudgeCalls": 3,
+    "unbilledRedactedCredentialRejections": 1
+  },
+  "approval": {
+    "status": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "servingChangeAuthorized": false
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "deletionOnlyRevision": true,
+  "deletedFinalSentenceMatchesOwnerInstruction": true,
+  "terraSourceDriftFindingResolved": true,
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "emDash": "pass",
+  "legacyLeakage": "pass",
+  "warmthSource": "null_unchanged",
+  "evidenceLabels": "empty_unchanged",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d8257ad5c355c29c50d8b35eb85d4f29d9697cf4556551479d971412ff309273"
+}
