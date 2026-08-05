@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "mercury-venus-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/mercury-venus/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "be3f2ad2786386c8e152c02ff9bc16f8cb3666c6dd4127e96745ba9cd6cf44d7",
+  "payload": {
+    "body_you": "Your way of talking fits tightly with how {{holder2}} shows love, so they often hear your questions and explanations as affection and answer with more warmth. That response keeps you talking, but when you press a point or explain too much, {{holder2}} can feel that their preferences or worth are being picked apart, which can make you talk even more.",
+    "body_they": "{{holder1}}'s way of talking fits tightly with how you show love, so you often hear their questions and explanations as affection and answer with more warmth. Your response keeps {{holder1}} talking, but when they press a point or explain too much, you can feel that your preferences or worth are being picked apart, which can make them talk even more.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "We don't have to choose between being loved and being ourselves.",
+      "We don't have to choose between being loved and being ourselves."
+    ],
+    "warmthSourceDisposition": "set_null_and_labels_cleared",
+    "approvedAsDraftedRecorded": false,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "8f8a031ba5d1b584b095f8dbe26824d9ef8c3c84d6156fdcf435251306fc286a",
+    "writerProviderResponseSha256": "f497824109a6c18790fa4bfff6f643c57128ca4c8c03e6837851171a1dcbcd04"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/mercury-venus/conjunction/exact-approval.json"
+}

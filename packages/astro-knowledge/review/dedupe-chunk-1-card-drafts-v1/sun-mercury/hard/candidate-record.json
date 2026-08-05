@@ -1,0 +1,9 @@
+{
+  "target": "sun-mercury-hard",
+  "status": "needs_review",
+  "payloadSha256": "84acf46e4845aec1b7d83650a5108def8e0b8a73048cdb53df093bbb90c9e3ec",
+  "harvest_mode": "none_found",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

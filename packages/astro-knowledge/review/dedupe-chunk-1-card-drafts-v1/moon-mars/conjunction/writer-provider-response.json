@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_051ae13cfa82913f006a729cd72e38819c8e494fe807b512bf",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 889,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 845,
+    "output_tokens_details": {
+      "reasoning_tokens": 632
+    },
+    "total_tokens": 1734
+  },
+  "output_text": "{\"body_you\":\"When {{holder2}} acts quickly or reacts sharply, you feel it immediately, and your emotional response pushes them to act again. The exchange gets honest fast, but passion and irritation can become a fight about what you feel before either of you slows down. You're allowed to be affected by emotions.\",\"body_they\":\"When you act quickly or react sharply, {{holder1}} feels it immediately, and their emotional response pushes you to act again. The exchange gets honest fast, but passion and irritation can become a fight about what {{holder1}} feels before either of you slows down. {{holder1}} is allowed to be affected by emotions.\",\"warmthSource\":{\"sourceArticleId\":\"libra-season-autumn-equinox\",\"originalLine\":\"Here's permission you might need: you're allowed to be affected by emotions.\",\"usedForm\":{\"body_you\":\"You're allowed to be affected by emotions.\",\"body_they\":\"{{holder1}} is allowed to be affected by emotions.\"}},\"labels\":[\"owner-corpus-derived\"]}"
+}

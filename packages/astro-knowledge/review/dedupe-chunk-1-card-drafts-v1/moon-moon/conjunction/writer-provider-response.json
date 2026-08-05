@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_09cfbe205f4ddcc1006a72965648f881a0a6e205d9bd6c14ff",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 852,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1123,
+    "output_tokens_details": {
+      "reasoning_tokens": 937
+    },
+    "total_tokens": 1975
+  },
+  "output_text": "{\"body_you\":\"You respond to {{holder2}}'s feelings with the kind of comfort you also need, and {{holder2}} responds to you in the same way. You and {{holder2}} tend to react to stress and recover from it in the same way. If one of you sinks into a low mood or avoids a difficult feeling, the other can follow, leaving neither of you to steady the moment.\",\"body_they\":\"{{holder1}} responds to your feelings with the kind of comfort {{holder1}} also needs, and you respond to {{holder1}} in the same way. You and {{holder1}} tend to react to stress and recover from it in the same way. If one of you sinks into a low mood or avoids a difficult feeling, the other can follow, leaving neither of you to steady the moment.\",\"warmthSource\":null,\"labels\":[]}"
+}
