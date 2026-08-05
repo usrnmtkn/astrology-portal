@@ -323,9 +323,26 @@ function main() {
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-006"));
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "ED-015"));
   assert(packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-018"));
-  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v15:cross-batch-move-variety-v1");
+  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v16:owner-directive-ov044-v1");
   assert.match(packet.writerPrompt, /Across recent batches, do not repeat action templates/u);
   assert.match(packet.writerPrompt, /checking an original source or assigning a one-hour block/u);
+  assert.strictEqual(packet.surfaceRequirements.ownerWriterDirectiveId, "OV-044");
+  assert.match(packet.writerPrompt, /PERMANENT SKY PLACEMENT OWNER WRITER DIRECTIVE \(OV-044\)/u);
+  assert.match(packet.writerPrompt, /Begin with the lived behavior, not a sentence explaining the sign or planet/u);
+  assert.match(packet.writerPrompt, /describes a moment someone could recognize from their own life/u);
+  const ownerDirectiveTerms = require(path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json")).ownerWriterDirective.flaggedTerms;
+  assert.deepStrictEqual(ownerDirectiveTerms, [
+    "exacting",
+    "candor",
+    "ungracious",
+    "vitality",
+    "attachment (as jargon)",
+    "reciprocity",
+    "preset role",
+    "full accounting",
+    "rescue reflex",
+    "secure love"
+  ]);
   assert.strictEqual(packet.packetVersion, "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1");
   assert.match(packet.writerPrompt, /Some verified astrology source rows use natal or second-person register/u);
   assert.deepStrictEqual(
@@ -492,11 +509,15 @@ function main() {
 
   const readiness = buildReadinessReport();
   assert.strictEqual(readiness.totals.placements, 168);
-  assert.strictEqual(readiness.totals.writerReady, 43);
+  assert.strictEqual(readiness.totals.writerReady, 67);
   assert.deepStrictEqual(readiness.writer.ready, [
+    "sun-aries", "sun-taurus", "sun-gemini", "sun-cancer", "sun-leo", "sun-virgo",
+    "sun-libra", "sun-scorpio", "sun-sagittarius", "sun-capricorn", "sun-aquarius", "sun-pisces",
     "mercury-aries", "mercury-taurus", "mercury-gemini", "mercury-cancer", "mercury-leo",
     "mercury-virgo", "mercury-libra", "mercury-scorpio", "mercury-sagittarius", "mercury-capricorn",
     "mercury-aquarius", "mercury-pisces",
+    "venus-aries", "venus-taurus", "venus-gemini", "venus-cancer", "venus-leo", "venus-virgo",
+    "venus-libra", "venus-scorpio", "venus-sagittarius", "venus-capricorn", "venus-aquarius", "venus-pisces",
     "mars-aries", "mars-taurus", "mars-gemini", "mars-cancer", "mars-leo", "mars-virgo",
     "mars-libra", "mars-scorpio", "mars-sagittarius", "mars-capricorn",
     "mars-aquarius", "mars-pisces",
@@ -728,7 +749,7 @@ function main() {
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
-  assert.strictEqual(fixtureAudit.sourceRecordCount, 30);
+  assert.strictEqual(fixtureAudit.sourceRecordCount, 31);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
   console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);

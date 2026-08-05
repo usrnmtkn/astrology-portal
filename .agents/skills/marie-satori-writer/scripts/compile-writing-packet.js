@@ -169,7 +169,7 @@ function assertPacketQuotablesPassOutputBans({ verifiedAstrology, structuralSlot
   const quotables = collectPacketQuotables({ verifiedAstrology, structuralSlots, surface });
   const bans = [
     ...(surface.outputBans?.fail || []).map((entry) => ({ ...entry, level: "fail" })),
-    ...(surface.outputBans?.warn || []).map((entry) => ({ ...entry, level: "warn" }))
+    ...(surface.outputBans?.warn || []).filter((entry) => entry.packetSourceAllowed !== true).map((entry) => ({ ...entry, level: "warn" }))
   ];
   const findings = [];
   for (const record of quotables) {
@@ -188,7 +188,7 @@ function assertPacketQuotablesPassOutputBans({ verifiedAstrology, structuralSlot
     const detail = findings.map((finding) => `${finding.path} matched ${finding.level} outputBan ${JSON.stringify(finding.term)} with ${JSON.stringify(finding.match)}`).join("; ");
     throw new Error(`Packet self-lint failed before prompt render: ${detail}.`);
   }
-  return { passed: true, scanned: quotables.length, policy: "sky-placement.outputBans.fail+warn" };
+  return { passed: true, scanned: quotables.length, policy: "sky-placement.outputBans.fail+blocking-warn" };
 }
 
 function matchesAffinityOperation(entry, target) {
@@ -868,7 +868,10 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
   const axisAppendix = axis
     ? `\n\nCOMBINED NODE-AXIS MODE\nWrite the North Node in ${axis.northSign} and South Node in ${axis.southSign} as one inseparable axis story. Every scene must show both the growth direction and the release. Name both Nodes and both signs in the opening. Do not split the result into two articles.`
     : "";
-  const writerPrompt = `${currentSky ? `${promptConfig.basePrompt}\n\n${promptConfig.currentSkyAppendix}` : promptConfig.basePrompt}${axisAppendix}`;
+  const ownerDirectiveAppendix = surface.ownerWriterDirective?.text
+    ? `\n\nPERMANENT SKY PLACEMENT OWNER WRITER DIRECTIVE (${surface.ownerWriterDirective.id})\n${surface.ownerWriterDirective.text}`
+    : "";
+  const writerPrompt = `${currentSky ? `${promptConfig.basePrompt}\n\n${promptConfig.currentSkyAppendix}` : promptConfig.basePrompt}${ownerDirectiveAppendix}${axisAppendix}`;
   return {
     schemaVersion: 2,
     packetVersion: PACKET_VERSION,
@@ -889,6 +892,7 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
     verifiedAstrology,
     surfaceRequirements: {
       contractId: surface.id,
+      ownerWriterDirectiveId: surface.ownerWriterDirective?.id || null,
       runtimeContractId: "sky-placement-continuous-v2",
       axisMode: axis ? {
         mode: "combined-node-axis",
