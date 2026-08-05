@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0eaee0109b14dca0006a72612ef4988192865b11057a9fd790",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 973,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1511,
+    "output_tokens_details": {
+      "reasoning_tokens": 1198
+    },
+    "total_tokens": 2484
+  },
+  "outputText": "{\"body_you\":\"You quickly notice how {{holder2}} introduces themselves, starts conversations, or approaches a situation, and you tend to ask questions or explain what you see. {{holder2}} may immediately adjust their tone or behavior in response, which gives you more to react to. That close back-and-forth can be lively, but repeated questions or comments can make them second-guess how they come across. You can have feelings about how {{holder2}} handles a situation without being responsible for fixing it.\",\"body_they\":\"{{holder1}} quickly notices how you introduce yourself, start conversations, or approach a situation, and they tend to ask questions or explain what they see. You may immediately adjust your tone or behavior in response, which gives {{holder1}} more to react to. That close back-and-forth can be lively, but repeated questions or comments can make you second-guess how you come across. {{holder1}} can have feelings about how you handle a situation without being responsible for fixing it.\",\"warmthSource\":{\"sourceArticleId\":\"libra-new-moon\",\"originalLine\":\"Give yourself permission to have feelings about other people's situations without being responsible for fixing them.\",\"usedForm\":{\"body_you\":\"You can have feelings about how {{holder2}} handles a situation without being responsible for fixing it.\",\"body_they\":\"{{holder1}} can have feelings about how you handle a situation without being responsible for fixing it.\"}},\"labels\":[\"owner-corpus-derived\"]}",
+  "error": null
+}

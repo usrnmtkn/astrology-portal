@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-ascendant-conjunction-v1",
+  "target": {
+    "factorA": "sun",
+    "factorB": "ascendant",
+    "aspectGroup": "conjunction",
+    "governedEntryId": "A-sun_B-ascendant_conjunction"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/sun/ascendant/conjunction",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You tend to notice {{holder2}} when they enter a situation, and your response to how they present themselves can make them feel seen enough to speak more directly about what they want. Because your confidence carries so much weight with them, they may start checking your reaction before making their own decision. Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+    "body_they": "{{holder1}} tends to notice you when you enter a situation, and their response to how you present yourself can make you feel seen enough to speak more directly about what you want. Because their confidence carries so much weight with you, you may start checking their reaction before making your own decision. Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-sun_B-ascendant_conjunction.json",
+      "full-moon-in-taurus"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "full-moon-in-taurus",
+    "originalLine": "Your body knows the difference between joy and productive joy, you can feel it in how you hold yourself when creating for approval versus creating for pleasure.",
+    "usedForm": {
+      "body_you": "Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+      "body_they": "Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_02db3311c039aed5006a725f5204d881a397c69761b8f2d4f0",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_09eea15b21ffa0ab006a7262061a2881a28d2ffd6e732ade45",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "body_you/body_they",
+    "weakest": "The opening phrase \"tends to notice\" is slightly softer and more generic than the otherwise clear, immediate conjunction dynamic.",
+    "why": "The Sun holder is consistently the active party whose attention and response affect the Ascendant holder's presentation and decisions. The response loop is plain: being noticed supports direct self-expression, while the Sun holder's confidence can become a reaction the Ascendant holder checks before deciding. The final body-awareness sentence is a single sourced warmth turn after the cost, not a second conclusion. Both reader variants preserve the same meaning and resolve naturally.",
+    "failedChecks": [],
+    "strengths": [
+      "Fixed Sun-to-Ascendant direction is maintained in both variants.",
+      "All core claims remain within the supplied boundary and approved human-moment input.",
+      "The entering/presentation focus makes the aspect recognizable without astrology explanation.",
+      "The behavior and cost are clear, literal, and stop cleanly.",
+      "The final warmth sentence has matched owner-foundation provenance and is limited to one sentence."
+    ],
+    "sourceFidelity": "High. The card uses the governed identity-confidence/presentation boundary and approved reliance-on-confidence dynamic without importing outcomes, advice, or outside doctrine.",
+    "foundationTrace": "The final sentence in each variant traces to the supplied full-moon-in-taurus line: \"Your body knows the difference... you can feel it in how you hold yourself.\" Its adapted contrast between self-directed speech and waiting for another's response remains a reader-facing body-awareness turn with explicit matched provenance."
+  }
+}

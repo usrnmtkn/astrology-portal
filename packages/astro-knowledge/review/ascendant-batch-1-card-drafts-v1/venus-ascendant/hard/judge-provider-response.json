@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_060a8590cb9d6d46006a72625abf4c819c94e81407d8af568d",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-terra",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "low",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1313,
+    "input_tokens_details": {
+      "cache_write_tokens": 1310,
+      "cached_tokens": 0
+    },
+    "output_tokens": 415,
+    "output_tokens_details": {
+      "reasoning_tokens": 101
+    },
+    "total_tokens": 1728
+  },
+  "outputText": "{\"score\":3,\"verdict\":\"in-voice\",\"weakestField\":\"body_you\",\"weakest\":\"“That guardedness can make you press your preferences more clearly” is the most interpretive causal step, though it remains a plain and plausible expression of the supplied recurring pressure.\",\"why\":\"The draft keeps the fixed direction intact: the Venus holder’s approval, criticism, and preferences act on the Ascendant holder’s self-presentation. It then gives a clear two-person loop in which self-editing and guardedness reinforce the pressure. Both variants preserve the same meaning, resolve naturally, stay literal, and stop once the behavioral cost and repetition are clear.\",\"failedChecks\":[],\"strengths\":[\"Clear Venus-holder-to-Ascendant-holder direction in both reader variants.\",\"Recognizable hard dynamic through conditional approval, criticism, self-editing, and guardedness.\",\"Plain, ordinary language with no astrology mechanics, invented scene, outcome, advice, or excluded claim.\",\"The repeated tension is expressed as a concrete interpersonal loop rather than a generic conclusion.\",\"Correctly remains plain and unsoftened for a none_found packet.\"],\"sourceFidelity\":\"High. The wording develops the approved human moment—{{holder1}}’s likes, dislikes, and standards making {{holder2}} question their style and natural behavior—without importing outside doctrine or adding unsupported events.\",\"foundationTrace\":\"No owner foundation lines were supplied, and harvest mode is none_found. The card appropriately uses no warmth source or foundation-derived turn.\"}",
+  "error": null
+}

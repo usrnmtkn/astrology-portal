@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "d375336b28da278a475cf8f591665609f69edd98",
+  "phaseACommit": "3f1fc0422563043f153358b0366ff833dcfe7144",
+  "billedCallsMade": 0,
+  "allPacketsReady": true,
+  "modeCounts": {
+    "matched": 9,
+    "none_found": 6
+  },
+  "results": [
+    {
+      "target": "sun-ascendant-conjunction",
+      "governedEntryId": "A-sun_B-ascendant_conjunction",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "976ef04250e5552a8c7b37683972a073a8a5fc6913d4b7403e5c7323554b2e78",
+      "solInputSha256": "59e3096d7c32b487cc020d4afd7909528c6ded40598cfa296246cc7208edde58"
+    },
+    {
+      "target": "sun-ascendant-hard",
+      "governedEntryId": "A-sun_B-ascendant_square",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "ab0f27cfd428c6ea8dae2d110f9359123b5e91975b0842015e7c8f98d1176196",
+      "solInputSha256": "17b71c4a506a30a64884033e9d303ca391f0fb64724ea9f0e32837cbb598298e"
+    },
+    {
+      "target": "sun-ascendant-soft",
+      "governedEntryId": "A-sun_B-ascendant_trine",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "3a921c24f329b1ff5bb22059fa892665e70d8760d06d99b8ae7ba2613c66e25a",
+      "solInputSha256": "c9d61429bc4eaabf032fdbcc8ae8fbf4ae471ec004d98272f5a453faaaeb766d"
+    },
+    {
+      "target": "moon-ascendant-conjunction",
+      "governedEntryId": "A-moon_B-ascendant_conjunction",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "a4b3e6960e522c62ea885ca9ddb3ca314afb97092f5f6561cc4f109f5c1ed332",
+      "solInputSha256": "35c4b71413fbcfd9ed239d137c93e3a6329eaa691cc4afff37cc28f293ba257f"
+    },
+    {
+      "target": "moon-ascendant-hard",
+      "governedEntryId": "A-moon_B-ascendant_square",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "0ee88e5b2fda7546f0e950ab9ba7b201ebc6ea93e177cafce0bcc64e9deaebb8",
+      "solInputSha256": "8701cf8c8b326b750cc5a5d9dec626a64150f5ea42cf602cc1e31e2203ee8df4"
+    },
+    {
+      "target": "moon-ascendant-soft",
+      "governedEntryId": "A-moon_B-ascendant_trine",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "none_found",
+      "actualMode": "none_found",
+      "matched": true,
+      "foundationLineCount": 0,
+      "packetSha256": "b0e12b9124be6f1556249bf1b4f573ff452a30e66f637807c655529adf50d33f",
+      "solInputSha256": "8db716d71c8a8f0408e448e60396d39897caf7de38eb7b992580424de426d131"
+    },
+    {
+      "target": "mercury-ascendant-conjunction",
+      "governedEntryId": "A-mercury_B-ascendant_conjunction",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "eb1f8bebcd1450839faeea9bd5279c270025a7c331cc730579c910a4014bfae0",
+      "solInputSha256": "1be8c0bf52a62869b9be51f69010936b6f51de0c7d87f216aa55ae8b5fe9594b"
+    },
+    {
+      "target": "mercury-ascendant-hard",
+      "governedEntryId": "A-mercury_B-ascendant_square",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "none_found",
+      "actualMode": "none_found",
+      "matched": true,
+      "foundationLineCount": 0,
+      "packetSha256": "bb992135a09fa79efddd6a9c5d7e269c14f02dec55db62e0c0ee17734bb1a5ac",
+      "solInputSha256": "e428e74ce4750bd8c9d1224d9d17c4d8795b5b4520c5eb00674e9b394045f969"
+    },
+    {
+      "target": "mercury-ascendant-soft",
+      "governedEntryId": "A-mercury_B-ascendant_trine",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "none_found",
+      "actualMode": "none_found",
+      "matched": true,
+      "foundationLineCount": 0,
+      "packetSha256": "dde0508c01ee05eedac2f2236cad39695ea78c058a8de5d35b8d59bf527fb7f6",
+      "solInputSha256": "fde5ab4bfc5a3ff60d782e3045e37dda3b470e773acfe70bdfeeec35c62d32ef"
+    },
+    {
+      "target": "venus-ascendant-conjunction",
+      "governedEntryId": "A-venus_B-ascendant_conjunction",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "418baeace513dce15ba52457b3f4dd54db1fb854617b7dea444e87f194503b40",
+      "solInputSha256": "56b5e85aba63c25fdd9d1f8e908cf4b7c5640067d6ea77770775bb5ccfdc008a"
+    },
+    {
+      "target": "venus-ascendant-hard",
+      "governedEntryId": "A-venus_B-ascendant_square",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "none_found",
+      "actualMode": "none_found",
+      "matched": true,
+      "foundationLineCount": 0,
+      "packetSha256": "53cd1037943e8e59f51550c977122f4a59e7859937166450e0b73993ee20967b",
+      "solInputSha256": "17d0ef643d813e680c26be35b0e19250d6cd67fa576c58c066fe2b03bfc56ecf"
+    },
+    {
+      "target": "venus-ascendant-soft",
+      "governedEntryId": "A-venus_B-ascendant_trine",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "none_found",
+      "actualMode": "none_found",
+      "matched": true,
+      "foundationLineCount": 0,
+      "packetSha256": "bcfcc6e38784d89bf7ffd47dac79c6810fca070dde181e1b6bb5ad67d28ddcf5",
+      "solInputSha256": "cafd1577e3643073979031134738f934f21938328ce1ff913a454c72df534c50"
+    },
+    {
+      "target": "saturn-ascendant-conjunction",
+      "governedEntryId": "A-saturn_B-ascendant_conjunction",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "e0a012ae328372e465cbe54c7f692e39ea3bfc53c8ffa00e579ecc1273532567",
+      "solInputSha256": "d672f789835bebfbb42b195fa11d89a3e0cd0815437103247e1650388b8f5fe2"
+    },
+    {
+      "target": "saturn-ascendant-hard",
+      "governedEntryId": "A-saturn_B-ascendant_square",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "none_found",
+      "actualMode": "none_found",
+      "matched": true,
+      "foundationLineCount": 0,
+      "packetSha256": "07b4be96d12559ac943d3f7c1ffe0da4aa6a4dccc8e5da9c7af226e12af1ae2f",
+      "solInputSha256": "e6c4c7737efab1494c1172ae0a08efe3b82a5dc8eafd4b9a879fe65ff700003e"
+    },
+    {
+      "target": "saturn-ascendant-soft",
+      "governedEntryId": "A-saturn_B-ascendant_trine",
+      "status": "ready",
+      "generationAllowed": true,
+      "expectedMode": "matched",
+      "actualMode": "matched",
+      "matched": true,
+      "foundationLineCount": 3,
+      "packetSha256": "521742882c9107577ccaf90c8c5bfde42557582a15e4e0e54765fa767ce25d53",
+      "solInputSha256": "493f1078705d7583caf9d98b8e4f0bdb6c21cc311342a40a43f7c893c58afd00"
+    }
+  ]
+}
