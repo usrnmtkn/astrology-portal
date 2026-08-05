@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "branch": "codex/dedupe-chunk-2-owner-authored",
+  "baseCommit": "f62f947e3c2238efe7760063d1ad81014d6be2ba",
+  "packageVersion": "v3-2026-08-05a",
+  "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "authorship": "owner_authored",
+    "approvedAt": "2026-08-05",
+    "targetCount": 30,
+    "pairCount": 10,
+    "approvalRecordCount": 30,
+    "payloadHashesVerified": true
+  },
+  "scope": {
+    "sourceRowsChanged": 30,
+    "unrelatedSourceRowsChanged": 0,
+    "synastryRowsPreserved": 483,
+    "aspectDistinctPairsAfterShipping": 10,
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "governedHumanMomentsAdded": 0,
+    "dashboardSynchronizationIncluded": false,
+    "productionDeploymentIncluded": false,
+    "mergeAuthorized": false
+  },
+  "tests": {
+    "ownerAuthoredPayloadHashes": "pass_30_of_30",
+    "exactApprovalRecords": "pass_30_of_30",
+    "dedupeChunkResolverAndGeneratedMirrorContract": "pass_30_cards_10_aspect_distinct_pairs_102_node_browser_renders",
+    "governedPacketFailClosedContract": "pass_30_missing_human_moment",
+    "synastryApprovalProvenance": "pass_483_rows_153_approved_330_reviewed_90_exact_63_untraced",
+    "stockCloserHistoricalContract": "pass_336_deletions_preserved",
+    "fallbackManifestCheck": "pass_7218_keys",
+    "fallbackPackageCacheContract": "pass",
+    "fallbackRefreshWiring": "pass",
+    "readerFacingContentContract": "pass",
+    "fullContentSuite": "pass",
+    "typecheck": "pass",
+    "webBuild": "pass",
+    "gitDiffCheck": "pass"
+  },
+  "pullRequestStatus": "draft_open",
+  "servingStatus": "candidate_branch_only_merge_authorization_required"
+}
