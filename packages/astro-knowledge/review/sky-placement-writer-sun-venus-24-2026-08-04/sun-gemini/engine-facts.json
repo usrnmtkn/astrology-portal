@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "gemini",
+  "timeZone": "America/New_York",
+  "transitStart": "May 21, 2027",
+  "transitEnd": "June 21, 2027",
+  "transitStartIso": "2027-05-21T06:18:14.999Z",
+  "transitEndIso": "2027-06-21T14:10:50.999Z",
+  "priorSign": "taurus",
+  "priorSignEntryDate": "April 20, 2027",
+  "priorSignExitDate": "May 21, 2027",
+  "previousResidency": {
+    "sign": "gemini",
+    "entryDate": "May 20, 2025",
+    "exitDate": "June 20, 2025",
+    "entryDateIso": "2025-05-20T18:54:38.999Z",
+    "exitDateIso": "2025-06-21T02:42:15.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-trine-pluto-2027-05-28t15:19:43.999z",
+      "body": "sun-trine-pluto",
+      "bodies": [
+        "sun",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "May 28, 2027",
+      "dateIso": "2027-05-28T15:19:43.999Z",
+      "rank": 1,
+      "meaning": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. The trine makes this a natural strength: Strength and depth, well-controlled. A natural aptitude for investigation, healing, and transformation. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-trine-pluto.json"
+    },
+    {
+      "id": "aspect-sun-sextile-neptune-2027-05-27t16:08:24.999z",
+      "body": "sun-sextile-neptune",
+      "bodies": [
+        "sun",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "May 27, 2027",
+      "dateIso": "2027-05-27T16:08:24.999Z",
+      "rank": 2,
+      "meaning": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. The sextile makes this a natural strength: Imaginative and compassionate; creative and charitable directions come naturally. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-sextile-neptune.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-trine-pluto.json",
+      "packages/astro-knowledge/data/transits/sun-sextile-neptune.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

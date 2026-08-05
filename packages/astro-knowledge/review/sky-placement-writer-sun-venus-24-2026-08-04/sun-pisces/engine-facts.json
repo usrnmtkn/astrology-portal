@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "pisces",
+  "timeZone": "America/New_York",
+  "transitStart": "February 18, 2027",
+  "transitEnd": "March 20, 2027",
+  "transitStartIso": "2027-02-18T21:33:28.999Z",
+  "transitEndIso": "2027-03-20T20:24:41.999Z",
+  "priorSign": "aquarius",
+  "priorSignEntryDate": "January 20, 2027",
+  "priorSignExitDate": "February 18, 2027",
+  "previousResidency": {
+    "sign": "pisces",
+    "entryDate": "February 18, 2025",
+    "exitDate": "March 20, 2025",
+    "entryDateIso": "2025-02-18T10:06:34.999Z",
+    "exitDateIso": "2025-03-20T09:01:29.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-square-uranus-2027-02-20t15:10:41.999z",
+      "body": "sun-square-uranus",
+      "bodies": [
+        "sun",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "February 20, 2027",
+      "dateIso": "2027-02-20T15:10:41.999Z",
+      "rank": 1,
+      "meaning": "Identity meets independence and disruption. The urge to be different and to do things your own way. Psychologically the square is inner tension to integrate: Difference for its own sake: eccentricity, instability, shocking others to no purpose. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-square-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Venus arrives in Sagittarius on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and familiar pleasures start to feel too small. A date gets better after the awkward truth is said. An unfamiliar invitation gets a yes. Attraction grows where there is laughter, candor, and somewhere new for the connection to go.",
+      "tension": "That openness carries a cost when accountability starts to sound like confinement. Venus in Sagittarius can say the blunt thing and call the reaction proof that the connection was too limiting. Restlessness sends attention toward the next possibility before a promise has been kept. What felt brave at first becomes a pattern of making someone else carry the consequences of a choice we called freedom.",
+      "development": "Venus last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. A connection built on shared curiosity still has to survive an inconvenient answer. One frank admission can clear stale resentment. Bluntness used as an exit leaves no room for repair. The same restlessness can spend money on the promise of a larger life, then resent the limits that arrive with the bill. The experience may be worth choosing, but its cost does not disappear once the excitement fades. When every limit is treated as proof that the choice was wrong, desire moves on before trust can form.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "By {{exitDate}}, a connection may still feel exciting, but dropping a promise as soon as it feels limiting makes the next promise harder to believe.",
+      "try_this": [
+        "We can tell someone close to us one honest preference without hiding it in a joke or turning it into an ultimatum.",
+        "We can name the full cost of one tempting experience before deciding whether it is worth the money."
+      ],
+      "aspect_units": [],
+      "body_you": "Venus arrives in Sagittarius on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and familiar pleasures start to feel too small. A date gets better after the awkward truth is said. An unfamiliar invitation gets a yes. Attraction grows where there is laughter, candor, and somewhere new for the connection to go.\n\nThat openness carries a cost when accountability starts to sound like confinement. Venus in Sagittarius can say the blunt thing and call the reaction proof that the connection was too limiting. Restlessness sends attention toward the next possibility before a promise has been kept. What felt brave at first becomes a pattern of making someone else carry the consequences of a choice we called freedom.\n\nVenus last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. A connection built on shared curiosity still has to survive an inconvenient answer. One frank admission can clear stale resentment. Bluntness used as an exit leaves no room for repair. The same restlessness can spend money on the promise of a larger life, then resent the limits that arrive with the bill. The experience may be worth choosing, but its cost does not disappear once the excitement fades. When every limit is treated as proof that the choice was wrong, desire moves on before trust can form.\n\nBy {{exitDate}}, a connection may still feel exciting, but dropping a promise as soon as it feels limiting makes the next promise harder to believe.",
+      "body_they": "Venus arrives in Sagittarius on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and familiar pleasures start to feel too small. A date gets better after the awkward truth is said. An unfamiliar invitation gets a yes. Attraction grows where there is laughter, candor, and somewhere new for the connection to go.\n\nThat openness carries a cost when accountability starts to sound like confinement. Venus in Sagittarius can say the blunt thing and call the reaction proof that the connection was too limiting. Restlessness sends attention toward the next possibility before a promise has been kept. What felt brave at first becomes a pattern of making someone else carry the consequences of a choice we called freedom.\n\nVenus last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. A connection built on shared curiosity still has to survive an inconvenient answer. One frank admission can clear stale resentment. Bluntness used as an exit leaves no room for repair. The same restlessness can spend money on the promise of a larger life, then resent the limits that arrive with the bill. The experience may be worth choosing, but its cost does not disappear once the excitement fades. When every limit is treated as proof that the choice was wrong, desire moves on before trust can form.\n\nBy {{exitDate}}, a connection may still feel exciting, but dropping a promise as soon as it feels limiting makes the next promise harder to believe.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-sagittarius"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

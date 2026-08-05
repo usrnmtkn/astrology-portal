@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "capricorn",
+  "timeZone": "America/New_York",
+  "transitStart": "December 21, 2026",
+  "transitEnd": "January 20, 2027",
+  "transitStartIso": "2026-12-21T20:50:14.999Z",
+  "transitEndIso": "2027-01-20T07:29:51.999Z",
+  "priorSign": "sagittarius",
+  "priorSignEntryDate": "November 22, 2026",
+  "priorSignExitDate": "December 21, 2026",
+  "previousResidency": {
+    "sign": "capricorn",
+    "entryDate": "December 21, 2024",
+    "exitDate": "January 19, 2025",
+    "entryDateIso": "2024-12-21T09:20:34.999Z",
+    "exitDateIso": "2025-01-19T20:00:07.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-square-neptune-2026-12-23t11:37:14.999z",
+      "body": "sun-square-neptune",
+      "bodies": [
+        "sun",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "December 23, 2026",
+      "dateIso": "2026-12-23T11:37:14.999Z",
+      "rank": 1,
+      "meaning": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. Psychologically the square is inner tension to integrate: Susceptibility to illusion and escapism, and to the rescuer/rescued dynamic. The self can get foggy. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-neptune.json"
+    },
+    {
+      "id": "aspect-sun-square-saturn-2026-12-29t23:27:46.999z",
+      "body": "sun-square-saturn",
+      "bodies": [
+        "sun",
+        "saturn"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "December 29, 2026",
+      "dateIso": "2026-12-29T23:27:46.999Z",
+      "rank": 2,
+      "meaning": "Identity meets limit and discipline. The self is built slowly, under weight, and tested against duty and consequence. Psychologically the square is inner tension to integrate: A heavy self-concept: difficulty with authority figures, self-doubt, and a chronic sense of falling short. The remedy is steady, useful work. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-saturn.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-square-neptune.json",
+      "packages/astro-knowledge/data/transits/sun-square-saturn.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

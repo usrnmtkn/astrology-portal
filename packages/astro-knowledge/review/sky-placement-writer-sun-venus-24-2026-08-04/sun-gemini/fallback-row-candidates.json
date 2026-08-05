@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Gemini on {{entryDate}}, and our attention starts moving faster than our decisions. Questions come quickly. A useful distinction in conversation changes how we understand an idea. The missing words arrive, and energy returns with them. The Sun in Gemini makes curiosity visible. We gather what is interesting, connect it to something else, and pass along an explanation that helps the next conversation go further.",
+      "tension": "The pressure starts when every new angle feels too valuable to leave out. We open another tab, ask another question, and add another exception. A choice that was nearly clear becomes harder because each detail creates one more possible direction. Communication stays active, but the point keeps moving. Replies multiply. No one knows which version we mean. More information begins to protect us from the risk of standing behind one conclusion.",
+      "development": "That drift is easy to miss because it looks like engagement. We keep gathering, comparing, and translating. The notes get longer while the sentence that matters remains unwritten. A lively exchange ends with five interpretations and no shared understanding. An explanation gains so many exceptions that nobody can repeat its point. The Sun last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Its return puts the tension between curiosity and commitment back into view. When every version stays in circulation, our attention divides and our confidence goes with it. We know more, yet become less willing to say what the knowledge means.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, every answer kept open for one more angle leaves our words busier and our actual position harder to find.",
+      "try_this": [
+        "We can turn one page of scattered notes into five sentences that end with one clear conclusion.",
+        "We can choose one decision with too many options and remove two that no longer fit what we know.",
+        "We can explain one complicated idea aloud in plain language without adding a second topic."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Gemini on {{entryDate}}, and our attention starts moving faster than our decisions. Questions come quickly. A useful distinction in conversation changes how we understand an idea. The missing words arrive, and energy returns with them. The Sun in Gemini makes curiosity visible. We gather what is interesting, connect it to something else, and pass along an explanation that helps the next conversation go further.\n\nThe pressure starts when every new angle feels too valuable to leave out. We open another tab, ask another question, and add another exception. A choice that was nearly clear becomes harder because each detail creates one more possible direction. Communication stays active, but the point keeps moving. Replies multiply. No one knows which version we mean. More information begins to protect us from the risk of standing behind one conclusion.\n\nThat drift is easy to miss because it looks like engagement. We keep gathering, comparing, and translating. The notes get longer while the sentence that matters remains unwritten. A lively exchange ends with five interpretations and no shared understanding. An explanation gains so many exceptions that nobody can repeat its point. The Sun last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Its return puts the tension between curiosity and commitment back into view. When every version stays in circulation, our attention divides and our confidence goes with it. We know more, yet become less willing to say what the knowledge means.\n\nBefore {{exitDate}}, every answer kept open for one more angle leaves our words busier and our actual position harder to find.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Gemini on {{entryDate}}, and our attention starts moving faster than our decisions. Questions come quickly. A useful distinction in conversation changes how we understand an idea. The missing words arrive, and energy returns with them. The Sun in Gemini makes curiosity visible. We gather what is interesting, connect it to something else, and pass along an explanation that helps the next conversation go further.\n\nThe pressure starts when every new angle feels too valuable to leave out. We open another tab, ask another question, and add another exception. A choice that was nearly clear becomes harder because each detail creates one more possible direction. Communication stays active, but the point keeps moving. Replies multiply. No one knows which version we mean. More information begins to protect us from the risk of standing behind one conclusion.\n\nThat drift is easy to miss because it looks like engagement. We keep gathering, comparing, and translating. The notes get longer while the sentence that matters remains unwritten. A lively exchange ends with five interpretations and no shared understanding. An explanation gains so many exceptions that nobody can repeat its point. The Sun last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Its return puts the tension between curiosity and commitment back into view. When every version stays in circulation, our attention divides and our confidence goes with it. We know more, yet become less willing to say what the knowledge means.\n\nBefore {{exitDate}}, every answer kept open for one more angle leaves our words busier and our actual position harder to find.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sun-gemini"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}
