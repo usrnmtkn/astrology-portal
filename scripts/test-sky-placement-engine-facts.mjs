@@ -115,7 +115,14 @@ try {
     { includeTransitWindows: true }
   );
   const currentJupiter = currentSky.positions.find((position) => position.planet === "Jupiter");
+  const currentSun = currentSky.positions.find((position) => position.planet === "Sun");
+  const currentVenus = currentSky.positions.find((position) => position.planet === "Venus");
+  const currentChiron = currentSky.positions.find((position) => position.planet === "Chiron");
   const currentSouthNode = currentSky.positions.find((position) => position.planet === "South Node");
+  for (const position of [currentSun, currentVenus, currentChiron]) {
+    assert.ok(position?.priorTransitSign && position.priorTransitStart && position.priorTransitEnd);
+    assert.ok(position?.previousSignResidencyStart && position.previousSignResidencyEnd);
+  }
   assert.ok(currentJupiter?.priorTransitSign && currentJupiter.priorTransitStart && currentJupiter.priorTransitEnd);
   assert.ok(currentJupiter?.previousSignResidencyStart && currentJupiter.previousSignResidencyEnd);
   assert.ok(currentSouthNode?.priorTransitSign && currentSouthNode.priorTransitStart && currentSouthNode.priorTransitEnd);
