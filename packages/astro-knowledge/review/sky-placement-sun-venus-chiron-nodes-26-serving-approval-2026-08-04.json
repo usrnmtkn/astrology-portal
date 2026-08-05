@@ -93,7 +93,13 @@
     "skyPlacementKeyManifestHash": "9558df3d3d590e89330472fbd6af07cd",
     "skyPlacementKeyCount": 929
   },
-  "merged": false,
-  "productionDeployed": false,
-  "productionVerification": null
+  "merged": true,
+  "productionDeployed": true,
+  "productionVerification": {
+    "status": "verified_26_of_26",
+    "verifiedAt": "2026-08-05T12:48:30.423Z",
+    "mergeCommit": "600e74748f2778d2e14fbc3f837e03266daf0c03",
+    "deploymentId": "dpl_CQzZh1nZo8JtCuZTnar3FG2RfB3p",
+    "source": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-production-deployment-evidence-2026-08-05.json"
+  }
 }
