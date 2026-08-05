@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mars-pluto-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/pluto/soft",
+  "payloadSha256": "1d456472f38f92ca6dc00a0c809b327c40141ae919ed81de99470457c2ece637",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}}'s depth gives {{holder1}}'s effort real traction. The work does not burn out. It compounds over time.",
+    "body_they": "{{holder2}}'s depth gives {{holder1}}'s effort real traction. The work does not burn out. It compounds over time.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

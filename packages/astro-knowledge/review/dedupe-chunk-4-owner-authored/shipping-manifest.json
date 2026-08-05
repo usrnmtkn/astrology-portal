@@ -1,0 +1,204 @@
+{
+  "chunk": "dedupe-chunk-4-owner-authored",
+  "approvedAt": "2026-08-05",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "4e6a27b7524d46e736eb1128570dc4b2f6dcf3b4131fda5650321827c61c43e8",
+      "previousBodySha256": "1845e68507e3ee8497a40408a658e4c7ae149dae7555fe0b4255c6a256e35b55"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-saturn-hard-exact-approval.json",
+      "payloadSha256": "3c962deaa34c1a33b32b9462669e1143f4226df213a79441784dc7d880c9b536",
+      "previousBodySha256": "1845e68507e3ee8497a40408a658e4c7ae149dae7555fe0b4255c6a256e35b55"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-saturn-soft-exact-approval.json",
+      "payloadSha256": "de50b4e4cfc153f8368927cff7175723d760f18aa52f0eeca24458661865233b",
+      "previousBodySha256": "1845e68507e3ee8497a40408a658e4c7ae149dae7555fe0b4255c6a256e35b55"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "06f6497477bf981d6b36a6436efbe68267f1d12d1cf839e38c1bff1bc95d9060",
+      "previousBodySha256": "d9e97a41dee5e4a6ae52575ea4de18a2dab6da13cdeba64bfeb4c15ebf68ef1b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-uranus-hard-exact-approval.json",
+      "payloadSha256": "9c3d296e88c2163b694ae96872a0afe4dd136b437f2f5534d6c5ce2cf4df1449",
+      "previousBodySha256": "d9e97a41dee5e4a6ae52575ea4de18a2dab6da13cdeba64bfeb4c15ebf68ef1b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-uranus-soft-exact-approval.json",
+      "payloadSha256": "9ab53eacb41bf782388ed77717a0a28bc9522f63e88cbf1ee387a7a60a8aa862",
+      "previousBodySha256": "d9e97a41dee5e4a6ae52575ea4de18a2dab6da13cdeba64bfeb4c15ebf68ef1b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "3b1914a5421826ff2f027085a5faa7de898a0049f8737d63ec14c1a6ba3a5f47",
+      "previousBodySha256": "4801e87915e847b18e197805b3c4c16e73d1f13497729723ab52b87559042bb0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-neptune-hard-exact-approval.json",
+      "payloadSha256": "75dfdc1b6ea563803f6dc10752277e257eccd13ef68a1ca8eb2e4433b9e6b5c0",
+      "previousBodySha256": "4801e87915e847b18e197805b3c4c16e73d1f13497729723ab52b87559042bb0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-neptune-soft-exact-approval.json",
+      "payloadSha256": "e8157639b168b10ad1a52a3cc5ccb13c4afe9fc349b054f70266180892486a75",
+      "previousBodySha256": "4801e87915e847b18e197805b3c4c16e73d1f13497729723ab52b87559042bb0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "15c258a7afb92ce76fc6c98bd54208a488e406cbd8b49c3007b9871037fa1b0c",
+      "previousBodySha256": "8cc6e9b024d702a4e4189ad31e3d155387b4dd89a484283b881d1f346a2a37ea"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-pluto-hard-exact-approval.json",
+      "payloadSha256": "612002cae674fe87798b5e69974336e627274954d8107b6dd00fa2e7eedd6e58",
+      "previousBodySha256": "8cc6e9b024d702a4e4189ad31e3d155387b4dd89a484283b881d1f346a2a37ea"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-pluto-soft-exact-approval.json",
+      "payloadSha256": "1d456472f38f92ca6dc00a0c809b327c40141ae919ed81de99470457c2ece637",
+      "previousBodySha256": "8cc6e9b024d702a4e4189ad31e3d155387b4dd89a484283b881d1f346a2a37ea"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "b9040b948eeedc0dc072756c27abcb86c6a48a8ede2c2b4305943c2e0c3244f5",
+      "previousBodySha256": "b20d27233976c39360a05cbe09a997be6401fb8e68cc0a52387facefd1f29092"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-uranus-hard-exact-approval.json",
+      "payloadSha256": "50631e1aa8ac2bf35dc267162edd62d70e76e0ab558c0838230f516b3929bddf",
+      "previousBodySha256": "b20d27233976c39360a05cbe09a997be6401fb8e68cc0a52387facefd1f29092"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-uranus-soft-exact-approval.json",
+      "payloadSha256": "8eaa7eeda69174d2581ad19423ee01a1e45ef70bf04a32a93ad8bb458a12ab89",
+      "previousBodySha256": "b20d27233976c39360a05cbe09a997be6401fb8e68cc0a52387facefd1f29092"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "938fd334f291a4777018552180ae9a6cb0c442c9abfb3d9bd1ba3daaaf50f8df",
+      "previousBodySha256": "13a538bb13b82c0cdfb4f1d0974bcf0a6cd9a34d50506a3fb6a68a4075ba52cd"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-neptune-hard-exact-approval.json",
+      "payloadSha256": "13812764ac69ac1ef65eedd71ff46dda34f306d68013673d82aa026f238f880a",
+      "previousBodySha256": "13a538bb13b82c0cdfb4f1d0974bcf0a6cd9a34d50506a3fb6a68a4075ba52cd"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-neptune-soft-exact-approval.json",
+      "payloadSha256": "658e27bbbb7cf498008c80ab6353f336750c8ff71a16cd64b5c4469ae686ca21",
+      "previousBodySha256": "13a538bb13b82c0cdfb4f1d0974bcf0a6cd9a34d50506a3fb6a68a4075ba52cd"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "644235e1a2276eddacd11f00962577703f0ac336817b0a6fd5deb6f03a931cea",
+      "previousBodySha256": "a77746cbf84f3e16f5fe5067fc2f28fa67fe039444d9c519f44e6f6fe0f75064"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-pluto-hard-exact-approval.json",
+      "payloadSha256": "832f41496f37f3655ec87690d90250682367735a04540aa93396baf7a2eef7a4",
+      "previousBodySha256": "a77746cbf84f3e16f5fe5067fc2f28fa67fe039444d9c519f44e6f6fe0f75064"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-pluto-soft-exact-approval.json",
+      "payloadSha256": "b8a28fb896f1bd0025349e2241689f7d37275bf6e302837c0f0e9fe93883703a",
+      "previousBodySha256": "a77746cbf84f3e16f5fe5067fc2f28fa67fe039444d9c519f44e6f6fe0f75064"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "6b44f5a42b7041cef128b3a80576efe1047dba4e7b337544b39f720f2d31ae15",
+      "previousBodySha256": "648a1aa8bf1f3ca71d77e2081db70571eed6afa544cba3efd194e24ed8a394ac"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-uranus-hard-exact-approval.json",
+      "payloadSha256": "29ebda46c480ceea39be05e8632b7df36af27597dcadbbc100d3e97e6a9f457b",
+      "previousBodySha256": "648a1aa8bf1f3ca71d77e2081db70571eed6afa544cba3efd194e24ed8a394ac"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-uranus-soft-exact-approval.json",
+      "payloadSha256": "f978014f8ca9cd952f14e79230050f1a784cf54f0b100a7460ef8e5a71649ea9",
+      "previousBodySha256": "648a1aa8bf1f3ca71d77e2081db70571eed6afa544cba3efd194e24ed8a394ac"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "3f3b0d4d6b05d095ea6cbc05ee9dd1e25820dbc2540a1fb8d0fd5f6a0ed79d5e",
+      "previousBodySha256": "8d9de45b2378cd65a0f0394c06db8c1e4377e30a087014b4a7a6b16c34295bbc"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-neptune-hard-exact-approval.json",
+      "payloadSha256": "573bfc7f139d6a6dd1bc9bd890ba0565334aecfbee7080f70e3ab184c6d2cf7f",
+      "previousBodySha256": "8d9de45b2378cd65a0f0394c06db8c1e4377e30a087014b4a7a6b16c34295bbc"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/neptune/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-neptune-soft-exact-approval.json",
+      "payloadSha256": "2f6da2f55b5623162ef7f005f3230203e5abcc2ccf6552524736f72c48d5bb80",
+      "previousBodySha256": "8d9de45b2378cd65a0f0394c06db8c1e4377e30a087014b4a7a6b16c34295bbc"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "f31949ac4fdf3d9c2ed495325ea6a92fbbbd990526b9a0eae772285f5f2d39ac",
+      "previousBodySha256": "e572fef939abd5d1a09bb49b4ab2560543b996bc595f7503ce0a05e85a1f37fe"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/pluto/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-pluto-hard-exact-approval.json",
+      "payloadSha256": "0dd914cf0608648da9a48c3def25b537833bb887f86a96e75f5cbf557236ca50",
+      "previousBodySha256": "e572fef939abd5d1a09bb49b4ab2560543b996bc595f7503ce0a05e85a1f37fe"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-pluto-soft-exact-approval.json",
+      "payloadSha256": "1841cb7f59ad5b3d82640f628f1906a27e75232281fd8332454078acaf9095c4",
+      "previousBodySha256": "e572fef939abd5d1a09bb49b4ab2560543b996bc595f7503ce0a05e85a1f37fe"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/jupiter-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "2d4d92ff071b4c3c1dcb75e75b347952f1d015087e597de9a6b3787938a8c443",
+      "previousBodySha256": "d18a4facf7b783292c537ef851577cfad79d4efa4bba34be23682e808bcb3bc8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/jupiter-saturn-hard-exact-approval.json",
+      "payloadSha256": "ae38aca18c29e11ea76d33d69fb2e94e562625477e9153b5b58ac0aebc8de4d3",
+      "previousBodySha256": "d18a4facf7b783292c537ef851577cfad79d4efa4bba34be23682e808bcb3bc8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/jupiter-saturn-soft-exact-approval.json",
+      "payloadSha256": "e80ad6c0430966413c4bb670b0bf03eb6f8cc74ded39e2fa0eed515a423ef294",
+      "previousBodySha256": "d18a4facf7b783292c537ef851577cfad79d4efa4bba34be23682e808bcb3bc8"
+    }
+  ]
+}
