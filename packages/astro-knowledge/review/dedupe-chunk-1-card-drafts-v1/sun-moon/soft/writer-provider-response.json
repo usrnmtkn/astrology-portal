@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_06109cdad7416db0006a7295623cb88191ade0c0e39ca2742e",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 898,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 768,
+    "output_tokens_details": {
+      "reasoning_tokens": 503
+    },
+    "total_tokens": 1666
+  },
+  "output_text": "{\n  \"body_you\": \"Your way of being puts {{holder2}} at ease, and they show you what they feel without much explanation. You respond naturally to their feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around you, {{holder2}} does not need to prove they are worthy.\",\n  \"body_they\": \"{{holder1}}'s way of being puts you at ease, and you show them what you feel without much explanation. They respond naturally to your feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around {{holder1}}, you do not need to prove you are worthy.\",\n  \"warmthSource\": {\n    \"sourceArticleId\": \"sagittarius-full-moon-2025\",\n    \"originalLine\": \"You don’t need to prove you’re worthy.\",\n    \"usedForm\": {\n      \"body_you\": \"Around you, {{holder2}} does not need to prove they are worthy.\",\n      \"body_they\": \"Around {{holder1}}, you do not need to prove you are worthy.\"\n    }\n  },\n  \"labels\": [\n    \"owner-corpus-derived\"\n  ]\n}"
+}

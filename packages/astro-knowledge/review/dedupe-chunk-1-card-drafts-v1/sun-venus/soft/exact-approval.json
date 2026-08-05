@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-venus-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/venus/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d438e7c716f415fce882a0142e41f36b65f18deec5df0c51e655059c23edb269",
+  "payload": {
+    "body_you": "You readily respond to the way {{holder2}} shows affection, which leaves you feeling noticed and appreciated. Your response makes {{holder2}} feel comfortable showing care without having to work at it. Because getting along takes so little effort, both of you may stop actively engaging and let the connection become routine.",
+    "body_they": "{{holder1}} readily responds to the way you show affection, which leaves {{holder1}} feeling noticed and appreciated. That response makes you feel comfortable showing care without having to work at it. Because getting along takes so little effort, both of you may stop actively engaging and let the connection become routine.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-venus/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

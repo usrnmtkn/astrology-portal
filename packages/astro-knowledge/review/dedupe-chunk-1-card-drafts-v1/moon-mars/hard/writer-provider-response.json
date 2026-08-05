@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0eba2f8a89ba4dcd006a729ce81c00819c9073bef20dedd759",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 803,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 521,
+    "output_tokens_details": {
+      "reasoning_tokens": 393
+    },
+    "total_tokens": 1324
+  },
+  "output_text": "{\"body_you\":\"When your feelings show, {{holder2}} can get defensive or impatient before the conversation is even finished. They may answer sharply or push harder, which hurts you and intensifies your reaction. A small misstep can become a heated argument very quickly.\",\"body_they\":\"When {{holder1}}'s feelings show, you can get defensive or impatient before the conversation is even finished. You may answer sharply or push harder, which hurts {{holder1}} and intensifies their reaction. A small misstep can become a heated argument very quickly.\",\"warmthSource\":null,\"labels\":[]}"
+}

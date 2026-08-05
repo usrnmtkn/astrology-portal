@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_059dc2cb66c4b18f006a729d21c1cc819f99f2212c3fbcdf55",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 928,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 729,
+    "output_tokens_details": {
+      "reasoning_tokens": 471
+    },
+    "total_tokens": 1657
+  },
+  "output_text": "{\"body_you\":\"Your way of talking fits tightly with how {{holder2}} shows love, so they often hear your questions and explanations as affection and answer with more warmth. That response keeps you talking, but when you press a point or explain too much, {{holder2}} can feel that their preferences or worth are being picked apart, which can make you talk even more. We don't have to choose between being loved and being ourselves.\",\"body_they\":\"{{holder1}}'s way of talking fits tightly with how you show love, so you often hear their questions and explanations as affection and answer with more warmth. Your response keeps {{holder1}} talking, but when they press a point or explain too much, you can feel that your preferences or worth are being picked apart, which can make them talk even more. We don't have to choose between being loved and being ourselves.\",\"warmthSource\":{\"sourceArticleId\":\"full-moon-in-aries\",\"originalLine\":\"We don't have to choose between being loved and being ourselves.\",\"usedForm\":{\"body_you\":\"We don't have to choose between being loved and being ourselves.\",\"body_they\":\"We don't have to choose between being loved and being ourselves.\"}},\"labels\":[\"owner-corpus-derived\"]}"
+}

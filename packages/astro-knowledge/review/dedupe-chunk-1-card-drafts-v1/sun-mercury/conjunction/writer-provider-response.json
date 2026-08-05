@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_002bf2d4c5e5cc08006a7295a2c1788192ab3aa7d876a557ba",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 921,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 987,
+    "output_tokens_details": {
+      "reasoning_tokens": 786
+    },
+    "total_tokens": 1908
+  },
+  "output_text": "{\"body_you\":\"When you are together, you give {{holder2}} a lot to think and say, and they can quickly put words to who you are. As they keep describing you back to yourself, their view can start shaping how you see and present yourself. The cost is that their definitions can become so constant that your own sense of yourself gets harder to hear. This closeness can also feel warm and energizing when their words help you recognize yourself.\",\"body_they\":\"When you are together, {{holder1}} gives you a lot to think and say, and you can quickly put words to who they are. As you keep describing them back to themselves, your view can start shaping how they see and present themselves. The cost is that your definitions can become so constant that their own sense of themselves gets harder to hear. This closeness can also feel warm and energizing when your words help them recognize themselves.\",\"warmthSource\":null,\"labels\":[]}"
+}

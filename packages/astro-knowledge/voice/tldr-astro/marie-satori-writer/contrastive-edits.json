@@ -665,6 +665,50 @@
       ],
       "provenance": "exact_wording_approval: With those applied and re-linted, I explicitly approve all seven batch-3 drafts as owner-approved fallback articles for their placement pages.",
       "exactApprovalScope": "owner_approved_fallback_articles_for_placement_pages_serving_separate"
+    },
+    {
+      "id": "synastry-foundation-ground-beneath-disconnected-closer-rejection",
+      "surface": "synastry-aspect",
+      "articleBeat": "warmth-foundation-disconnected-closer",
+      "before": "When the ground beneath you feels unstable, it's natural to want to hold tightly to what you know.",
+      "beforeIsRejected": true,
+      "after": "[rejected without replacement]",
+      "whatChanged": "Removed the line from Moon-Mercury hard, cleared its warmth provenance, recorded the shipped Moon-Ascendant conjunction use, and recorded a future non-blocking editorial flag for foundation-line reuse across shipped or in-flight cards.",
+      "ownerReason": "The line is disconnected from the described interaction loop in this context and has already been used on a shipped card.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "foundation-line-disconnected-closer",
+        "foundation-line-reuse"
+      ],
+      "approvalLevel": "owner_rejected",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/hard/draft.json",
+        "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/conjunction/exact-approval.json",
+        "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md"
+      ],
+      "provenance": "rejection: The 'ground beneath you feels unstable' line is owner-rejected as a card closer when disconnected from the described loop; it is already shipped on Moon-Ascendant conjunction, and future harvest runs must flag foundation-line reuse across shipped or in-flight cards."
+    },
+    {
+      "id": "synastry-foundation-deeper-work-security-disconnected-closer-rejection",
+      "surface": "synastry-aspect",
+      "articleBeat": "warmth-foundation-disconnected-closer",
+      "before": "But the deeper work lies in redefining what makes you feel secure.",
+      "beforeIsRejected": true,
+      "after": "[rejected without replacement]",
+      "whatChanged": "Removed the line from Moon-Moon hard and Moon-Venus conjunction, cleared their warmth provenance, and recorded a future non-blocking editorial flag for foundation-line reuse across shipped or in-flight cards.",
+      "ownerReason": "The line is disconnected from the described interaction loop in both contexts and was reused twice within one in-flight chunk.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "foundation-line-disconnected-closer",
+        "foundation-line-reuse"
+      ],
+      "approvalLevel": "owner_rejected",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/hard/draft.json",
+        "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-venus/conjunction/draft.json",
+        "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md"
+      ],
+      "provenance": "rejection: The 'deeper work lies in redefining what makes you feel secure' line is owner-rejected as a card closer when disconnected from the described loop; it appeared twice in this chunk, and future harvest runs must flag foundation-line reuse across shipped or in-flight cards."
     }
   ]
 }

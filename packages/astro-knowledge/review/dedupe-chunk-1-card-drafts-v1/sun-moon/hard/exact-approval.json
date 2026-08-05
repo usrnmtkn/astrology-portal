@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-moon-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/moon/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "ee31044d043ce2f9aa9cfad7b8522a462350c0b0e338416faee01e59ace45033",
+  "payload": {
+    "body_you": "When you push ahead with what you want to build, {{holder2}} can feel that their need for reassurance or rest is getting in your way. They may go quiet and adjust around you, which leaves them tense and leaves you unsure why they are pulling back.",
+    "body_they": "When {{holder1}} pushes ahead with what they want to build, you can feel that your need for reassurance or rest is getting in their way. You may go quiet and adjust around them, which leaves you tense and leaves {{holder1}} unsure why you are pulling back.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

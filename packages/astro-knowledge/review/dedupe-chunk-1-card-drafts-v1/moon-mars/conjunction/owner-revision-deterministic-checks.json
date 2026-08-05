@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "sourceProviderResponsePreserved": true,
+  "exactlyMatchesOriginalDraft": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "status": "pass",
+    "body_you": 3,
+    "body_they": 3
+  },
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "asciiPunctuation": "pass",
+  "emOrEnDash": "pass",
+  "exclusions": "pass",
+  "stockCloser": "pass",
+  "warmthSource": "preserved_unchanged",
+  "warmthSourcePassed": true,
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "ownerDecisionOperation": "approve_as_drafted",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "60b260c510b84c271348e3ba5709d2f237879d0a861fa4c643d16e0bee2d2eda",
+  "ownerApprovedPayloadSha256": "60b260c510b84c271348e3ba5709d2f237879d0a861fa4c643d16e0bee2d2eda",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/conjunction/exact-approval.json",
+  "ownerExactApproval": "pass"
+}

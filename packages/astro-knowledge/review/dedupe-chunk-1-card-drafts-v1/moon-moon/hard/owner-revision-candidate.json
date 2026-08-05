@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-moon-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d580943572e448eb24d4b4e80b2e05cbdeb3bb4c4445b3c6b83bec5a7d87cbe0",
+  "payload": {
+    "body_you": "What helps you feel settled often unsettles {{holder2}}, and {{holder2}}'s way of seeking comfort can make you feel just as unsafe. You both react from that discomfort, so each attempt to feel understood can trigger another defensive response and leave neither of you feeling cared for.",
+    "body_they": "What helps {{holder1}} feel settled often unsettles you, and your way of seeking comfort can make {{holder1}} feel just as unsafe. You both react from that discomfort, so each attempt to feel understood can trigger another defensive response and leave neither of you feeling cared for.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "Together, the deeper work lies in redefining what makes each of you feel secure.",
+      "Together, the deeper work lies in redefining what makes each of you feel secure."
+    ],
+    "warmthSourceDisposition": "set_null_and_labels_cleared",
+    "approvedAsDraftedRecorded": false,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "fe0ed63a0643dcca294dd4492762b8be1928b49170a333d8980f301d21da0c41",
+    "writerProviderResponseSha256": "c535206a07087e0b5c0a08dbbb5ab45bb40cafbf22707616aaf6bbc22252ecc0"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/hard/exact-approval.json"
+}

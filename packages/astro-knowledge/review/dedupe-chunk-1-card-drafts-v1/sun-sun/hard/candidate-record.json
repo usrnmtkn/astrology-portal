@@ -1,0 +1,9 @@
+{
+  "target": "sun-sun-hard",
+  "status": "needs_review",
+  "payloadSha256": "237b6dc8517923ab5ac2b2f941b0b76c1845dcbda25c26c8190a135ef3fd300e",
+  "harvest_mode": "none_found",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

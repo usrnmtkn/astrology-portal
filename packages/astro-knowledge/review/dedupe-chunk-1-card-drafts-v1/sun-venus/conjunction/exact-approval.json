@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-venus-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/venus/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "2a427f56e6180fc03d487d872ebd4b4c78b439fd7154020b16176fd9f0ebc4e2",
+  "payload": {
+    "body_you": "{{holder2}} shows affection by praising who you are, and you become more open and expressive in response. Your sense of worth can become tied to external validation when their praise starts determining how good you feel about yourself.",
+    "body_they": "You show affection by praising who {{holder1}} is, and {{holder1}} becomes more open and expressive in response. {{holder1}}'s sense of worth can become tied to external validation when your praise starts determining how good they feel about themselves.",
+    "warmthSource": {
+      "sourceArticleId": "total-lunar-eclipse-in-virgo",
+      "originalLine": "If your financial situation feels unstable, if your sense of worth has been tied to external validation, if the structures that once made you feel safe now feel like constraints, this is where the illusion falls apart.",
+      "usedForm": {
+        "body_you": "Your sense of worth can become tied to external validation when their praise starts determining how good you feel about yourself.",
+        "body_they": "{{holder1}}'s sense of worth can become tied to external validation when your praise starts determining how good they feel about themselves."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-venus/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

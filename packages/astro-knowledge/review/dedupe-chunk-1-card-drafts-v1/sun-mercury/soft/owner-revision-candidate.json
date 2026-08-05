@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-mercury-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "50468e2e49a63514678073430f9613b6b8e1a6bdfb17be8320e999f0a73e043e",
+  "payload": {
+    "body_you": "Your sense of who you are is easy for {{holder2}} to understand, so they usually follow what you mean without making you explain every step. Their replies help you put your position into clearer words, and you leave the conversation feeling more like yourself. This takes little effort, which can make its steadying effect easy to overlook.",
+    "body_they": "{{holder1}}'s sense of who they are is easy for you to understand, so you usually follow what they mean without making them explain every step. Your replies help {{holder1}} put their position into clearer words, and they leave the conversation feeling more like themselves. This takes little effort, which can make its steadying effect easy to overlook.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "c7390379250cf2805a02740c06734c0028b03a1b9007b3b0a1d3bcdf3472f461",
+    "writerProviderResponseSha256": "023c5ffd2151d61e5c77eb0c36439469e763b99e9d96cd9a83a7a4411bed5fd8"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/soft/exact-approval.json"
+}

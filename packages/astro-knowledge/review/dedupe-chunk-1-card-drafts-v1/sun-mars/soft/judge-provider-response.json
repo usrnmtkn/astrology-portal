@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_09cb4fe154d3e138006a7296531f6c81a39491395d7e0868b5",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 826,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 223,
+    "output_tokens_details": {
+      "reasoning_tokens": 98
+    },
+    "total_tokens": 1049
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the fixed direction: the Sun holder supplies direction, while the Mars holder quickly puts energy behind it. The first two sentences establish a recognizable behavior loop through readiness, movement, and focus, and the third adds a concrete cost in acting before checking the pace. \\\"The easy momentum can carry both of you into action before either of you has paused to check the pace\\\" stays within the governed boundary rather than introducing an outside outcome. The two rows preserve parallel meaning without excluded claims or a stock concluding line.\"}"
+}

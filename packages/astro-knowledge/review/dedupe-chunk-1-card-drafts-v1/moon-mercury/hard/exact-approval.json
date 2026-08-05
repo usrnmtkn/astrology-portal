@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-mercury-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/mercury/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "c1535dbdc30dfc7bd2da9e50f1035a78a4a11b6ca2707c09e9cd48662f92cbfb",
+  "payload": {
+    "body_you": "When you want {{holder2}} to stay with you in a feeling, your need for comfort presses on how they think and talk. They reach for logic, questions, or explanations, and you can feel dissected instead of supported, so you keep asking for emotional company while they keep trying to make sense of it.",
+    "body_they": "When {{holder1}} wants you to stay with them in a feeling, their need for comfort presses on how you think and talk. You reach for logic, questions, or explanations, and they can feel dissected instead of supported, so they keep asking for emotional company while you keep trying to make sense of it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

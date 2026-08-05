@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-mercury-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "2a5f60ed6f30f02781a82c9fb6fb51ae6be323a3708ce8c14bed253bb8798225",
+  "payload": {
+    "body_you": "You can tell {{holder2}} what you feel before you have sorted it into careful words. {{holder2}} usually follows the emotion behind what you say and responds without turning it into a debate. This ease can leave some details unspoken because you both assume the meaning is already clear. Even so, being understood without polishing every feeling brings a quiet steadiness between you.",
+    "body_they": "{{holder1}} can tell you what they feel before they have sorted it into careful words. You usually follow the emotion behind what they say and respond without turning it into a debate. This ease can leave some details unspoken because you both assume the meaning is already clear. Even so, understanding {{holder1}} without requiring every feeling to be polished brings a quiet steadiness between you.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "7bc0e6923c4a2e68fd0a4e988d84f4326da5be93e7d8ab34e07ed5d390340fb2",
+    "writerProviderResponseSha256": "335f476138315e7599a0da3666c2dc28c7b1dda7b89d73906361a419958d3cf0"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/soft/exact-approval.json"
+}

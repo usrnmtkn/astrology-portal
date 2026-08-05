@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-mars-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "631ea04b17e76bfa71767ba63ca1287543d80ac485907cd5eaebc07f6b472bcd",
+  "payload": {
+    "body_you": "You give {{holder2}}'s urge to act a clear direction, and they respond by moving faster, which pushes you to commit just as quickly. That feedback loop can rush decisions before either of you checks whether you both actually agreed, and a difference of opinion can quickly feel like a contest. When you are both genuinely on board, their drive and your direction make acting together feel exciting and immediate.",
+    "body_they": "{{holder1}} gives your urge to act a clear direction, and you respond by moving faster, which pushes them to commit just as quickly. That feedback loop can rush decisions before either of you checks whether you both actually agreed, and a difference of opinion can quickly feel like a contest. When you are both genuinely on board, your drive and their direction make acting together feel exciting and immediate.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "8a838b1c3ac301062a26f9051bd75cf637292a4c56d86b656e3ffd596381b393",
+    "writerProviderResponseSha256": "4e0088b17bf9ac3e5e451f94d9e8b9a7cbb937dfeb6af478616667403733337b"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/conjunction/exact-approval.json"
+}
