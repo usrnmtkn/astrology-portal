@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-ascendant-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/ascendant/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "a4acdf5be0d288ecf6b114e4f8102758f320f1214ea09e4bdd9ea84d46f46475",
+  "payload": {
+    "body_you": "Your affection makes {{holder2}} feel liked and accepted when they show up as themselves, and they quickly notice what seems to please you. Because your response matters so much, they may start changing their manner or appearance to keep your approval, until presenting themselves freely feels harder.",
+    "body_they": "{{holder1}}'s affection makes you feel liked and accepted when you show up as yourself, and you quickly notice what seems to please them. Because their response matters so much, you may start changing your manner or appearance to keep their approval, until presenting yourself freely feels harder.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

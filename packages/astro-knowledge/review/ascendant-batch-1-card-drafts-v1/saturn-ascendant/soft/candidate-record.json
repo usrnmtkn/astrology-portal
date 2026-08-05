@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "saturn-ascendant-soft-v1",
+  "target": {
+    "factorA": "saturn",
+    "factorB": "ascendant",
+    "aspectGroup": "soft",
+    "governedEntryId": "A-saturn_B-ascendant_trine"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/saturn/ascendant/soft",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You respond consistently to how {{holder2}} speaks, acts, and enters new situations, so they know you take them seriously. Your standards can still make them pause and check how they are coming across. You appreciate {{holder2}}'s authenticity instead of making them feel like they're too much or not enough.",
+    "body_they": "{{holder1}} responds consistently to how you speak, act, and enter new situations, so you know they take you seriously. Their standards can still make you pause and check how you are coming across. {{holder1}} appreciates your authenticity instead of making you feel like you're too much or not enough.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-ascendant_trine.json",
+      "full-moon-in-aries"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "full-moon-in-aries",
+    "originalLine": "The right friends will appreciate your authenticity; the wrong ones will make you feel like you're too much or not enough.",
+    "usedForm": {
+      "body_you": "You appreciate {{holder2}}'s authenticity instead of making them feel like they're too much or not enough.",
+      "body_they": "{{holder1}} appreciates your authenticity instead of making you feel like you're too much or not enough."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_03dacaf3230b5f90006a7261dee23c819cabfc1e73e2f1c61a",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_0cab2dd633a64855006a726271b418819d84993c53803aa3ca",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "body_you/body_they, second sentence",
+    "weakest": "“Your standards can still make them pause and check how they are coming across” adds self-monitoring that is not clearly supported by the governed boundary.",
+    "why": "The direction, mirrored reader variants, and central interaction are clear: the Saturn holder is consistent, takes the Ascendant holder seriously, and supports authentic self-presentation. The final warmth turn is well traced to the supplied foundation line. However, the pause-and-check claim introduces a potentially inhibiting effect that the soft source does not establish; the source says standards work smoothly with free presentation and quietly steady the bond. This is a single repairable source-boundary issue.",
+    "failedChecks": [
+      "Source-boundary fidelity is borderline for the added claim that standards make the Ascendant holder pause and check how they are coming across."
+    ],
+    "strengths": [
+      "Fixed Saturn-holder-to-Ascendant-holder direction is maintained in both variants.",
+      "The two-person response loop is plain and natural after placeholder resolution.",
+      "The language is ordinary, literal, and free of excluded claims, advice, invented scenarios, or astrology mechanics.",
+      "The authenticity reassurance is a near-verbatim, properly attributed use of the supplied owner foundation line.",
+      "The card ends without an added conclusion or stock closer."
+    ],
+    "sourceFidelity": "Mostly faithful to the approved human-moment input and the soft Saturn-to-Ascendant boundary, but the self-checking cost is an unsupported or overly sharp inference for a source framed as easy and quietly steadying.",
+    "foundationTrace": "The final sentence in each field directly traces to the supplied full-moon-in-aries line: “The right friends will appreciate your authenticity; the wrong ones will make you feel like you're too much or not enough.”"
+  }
+}

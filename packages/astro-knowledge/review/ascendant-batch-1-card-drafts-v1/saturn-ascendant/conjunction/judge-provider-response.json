@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0661a5dc02deab37006a726264e368819dab4e087a06ba2282",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-terra",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "low",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1662,
+    "input_tokens_details": {
+      "cache_write_tokens": 1659,
+      "cached_tokens": 0
+    },
+    "output_tokens": 622,
+    "output_tokens_details": {
+      "reasoning_tokens": 265
+    },
+    "total_tokens": 2284
+  },
+  "outputText": "{\"score\":3,\"verdict\":\"in-voice\",\"weakestField\":\"body_you/body_they opening sentence\",\"weakest\":\"The references to tone and reactions are slightly more specific than the governed wording, though they remain a natural, literal expression of becoming more aware of how one presents and enters situations.\",\"why\":\"The fixed direction is clear in both variants: the Saturn holder applies standards and may criticize, while the Ascendant holder monitors their presentation and withholds parts of themselves. The behavior and interpersonal cost are plain, recognizable, and contained. The final warmth sentence is a single source-supported turn after the cost, not a separate conclusion.\",\"failedChecks\":[],\"strengths\":[\"Both reader variants preserve the same holder-to-Ascendant-holder dynamic after placeholder resolution.\",\"The draft stays within standards, self-consciousness, seriousness, criticism, and self-restraint supplied by the governed boundary and approved human moment.\",\"The presentation and entry language makes the conjunction surface recognizable without astrology explanation.\",\"The prose is direct and literal, with no excluded claims, invented scene, advice, or stock closing.\",\"The warmth sentence is supported by an exact supplied owner foundation line and appears only once after the shadow.\"],\"sourceFidelity\":\"High. The draft develops the supplied standard-to-self-monitoring loop without importing outside doctrine or unsupported outcomes. The conditional concern about standards making someone feel like a failure closely follows the governed foundation wording.\",\"foundationTrace\":\"The final sentence in each variant traces directly to new-moon-solar-eclipse-in-virgo: “Question those impossibly high standards that leave you feeling like a failure.” Its used form preserves the high-standards/failure relationship while applying it to the directed two-person interaction.\"}",
+  "error": null
+}

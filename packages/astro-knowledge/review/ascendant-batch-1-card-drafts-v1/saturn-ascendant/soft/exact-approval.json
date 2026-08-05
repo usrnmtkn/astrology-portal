@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "saturn-ascendant-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/saturn/ascendant/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "f7be4e2ece5bc2d5c89246a98e002e50a41bab19b79d7e8fcf6be5bd9399206f",
+  "payload": {
+    "body_you": "You respond consistently to how {{holder2}} speaks, acts, and enters new situations, so they know you take them seriously. You appreciate {{holder2}}'s authenticity instead of making them feel like they're too much or not enough.",
+    "body_they": "{{holder1}} responds consistently to how you speak, act, and enter new situations, so you know they take you seriously. {{holder1}} appreciates your authenticity instead of making you feel like you're too much or not enough.",
+    "warmthSource": {
+      "sourceArticleId": "full-moon-in-aries",
+      "originalLine": "The right friends will appreciate your authenticity; the wrong ones will make you feel like you're too much or not enough.",
+      "usedForm": {
+        "body_you": "You appreciate {{holder2}}'s authenticity instead of making them feel like they're too much or not enough.",
+        "body_they": "{{holder1}} appreciates your authenticity instead of making you feel like you're too much or not enough."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/saturn-ascendant/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

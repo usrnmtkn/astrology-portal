@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-ascendant-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/ascendant/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "f54f9519772a9ecfee46a636c883234028fd2392ac10f25ab3f2f8d026f49ffb",
+  "payload": {
+    "body_you": "You may show approval when {{holder2}} presents themselves in a way you like and become cool or critical when they do not. {{holder2}} can start second-guessing and editing how they act around you, leaving them less natural and more guarded. That guardedness can make you press your preferences more clearly, so the tension repeats.",
+    "body_they": "{{holder1}} may show approval when you present yourself in a way they like and become cool or critical when you do not. You can start second-guessing and editing how you act around {{holder1}}, leaving you less natural and more guarded. Your guardedness can make {{holder1}} press their preferences more clearly, so the tension repeats.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

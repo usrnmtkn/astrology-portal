@@ -1,0 +1,15 @@
+{
+  "body_you": "You respond consistently to how {{holder2}} speaks, acts, and enters new situations, so they know you take them seriously. Your standards can still make them pause and check how they are coming across. You appreciate {{holder2}}'s authenticity instead of making them feel like they're too much or not enough.",
+  "body_they": "{{holder1}} responds consistently to how you speak, act, and enter new situations, so you know they take you seriously. Their standards can still make you pause and check how you are coming across. {{holder1}} appreciates your authenticity instead of making you feel like you're too much or not enough.",
+  "warmthSource": {
+    "sourceArticleId": "full-moon-in-aries",
+    "originalLine": "The right friends will appreciate your authenticity; the wrong ones will make you feel like you're too much or not enough.",
+    "usedForm": {
+      "body_you": "You appreciate {{holder2}}'s authenticity instead of making them feel like they're too much or not enough.",
+      "body_they": "{{holder1}} appreciates your authenticity instead of making you feel like you're too much or not enough."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

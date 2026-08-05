@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_07bb861190f7bd01006a726245a2dc819d80102b02cf2cc122",
+  "status": "completed",
+  "httpStatus": 200,
+  "model": "gpt-5.6-terra",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "low",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1238,
+    "input_tokens_details": {
+      "cache_write_tokens": 1235,
+      "cached_tokens": 0
+    },
+    "output_tokens": 666,
+    "output_tokens_details": {
+      "reasoning_tokens": 367
+    },
+    "total_tokens": 1904
+  },
+  "outputText": "{\"score\":2,\"verdict\":\"borderline\",\"weakestField\":\"body_you\",\"weakest\":\"The interaction is a clear one-way chain, but the repeated two-person response loop is only implied by “When this keeps happening.”\",\"why\":\"The direction is correct and the language stays literal, natural, and within the supplied boundary. However, both variants mostly paraphrase the approved human moment, then add a generic guardedness outcome. They do not make clear how {{holder2}}’s explaining or defending changes the ongoing exchange with the Mercury holder, so the recognizable hard pattern feels incomplete.\",\"failedChecks\":[\"The resulting two-person response loop is not plain.\",\"The card relies heavily on paraphrase of the supplied human-moment input rather than developing the recurring interaction. \"],\"strengths\":[\"Mercury-holder action is correctly directed toward the Ascendant holder’s presentation.\",\"Both reader variants preserve the same meaning after placeholder resolution.\",\"No advice, invented warmth, excluded claims, astrology mechanics, metaphor, or stock closing language.\",\"The prose is ordinary, concise, and literal.\"],\"sourceFidelity\":\"Mostly faithful. The questions/comments, picked-apart feeling, explaining/defending, and difficulty acting naturally are directly supported. Becoming guarded is a plausible but less directly grounded extension.\",\"foundationTrace\":\"No owner foundation lines were supplied; harvest mode is none_found. The draft appropriately contains no warmth beat or foundation-derived language.\"}",
+  "error": null
+}

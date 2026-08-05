@@ -1,0 +1,51 @@
+{
+  "target": "sun-ascendant-soft",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 4,
+    "body_they": 4
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "matched",
+    "reason": "Used foundation line has complete exact provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "When you are clear about who you are and what you want, Bird feels more comfortable being themselves while meeting people or entering a new situation. As they relax and respond more naturally, it becomes easier for you to keep expressing yourself clearly. Because this happens with so little effort, neither of you may mention it, and the help can be taken for granted. With Bird responding naturally, you notice where you're manufacturing confidence versus actually feeling it.",
+    "readerIsAscendantHolder": "When Bird is clear about who they are and what they want, you feel more comfortable being yourself while meeting people or entering a new situation. As you relax and respond more naturally, it becomes easier for Bird to keep expressing themselves clearly. Because this happens with so little effort, neither of you may mention it, and the help can be taken for granted. With you responding naturally, Bird notices where they're manufacturing confidence versus actually feeling it."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}
