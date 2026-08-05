@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_04b63fbb41f30b2f006a72826beff0819da0647d52e54f1e99",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 813,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1159,
+    "output_tokens_details": {
+      "reasoning_tokens": 1034
+    },
+    "total_tokens": 1972
+  },
+  "output_text": "{\"body_you\":\"You tend to interpret the way {{holder2}} comes across generously, even when you are not fully sure what they mean. {{holder2}} then monitors themselves less and acts more naturally around you. This ease can leave your assumptions about them untested.\",\"body_they\":\"{{holder1}} tends to interpret the way you come across generously, even when they are not fully sure what you mean. You then monitor yourself less and act more naturally around {{holder1}}. This ease can leave their assumptions about you untested.\",\"warmthSource\":null,\"labels\":[]}"
+}

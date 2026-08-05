@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "neptune-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "8ef56d0d1b532d87dd8041dffd1bd89b74a8f5d384770327bd81440335f49e38",
+  "payload": {
+    "body_you": "You see something special in {{holder2}}, and your hopes about them affect how freely they present themselves around you. If you show the most interest when they match the person you imagine, they may start adjusting how they act to keep that image intact and become less sure what feels natural.",
+    "body_they": "{{holder1}} sees something special in you, and their hopes about you affect how freely you present yourself around them. If they show the most interest when you match the person they imagine, you may start adjusting how you act to keep that image intact and become less sure what feels natural.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "At its best, your belief in them can make them feel encouraged to enter situations with more openness.",
+      "At its best, their belief in you can make you feel encouraged to enter situations with more openness."
+    ],
+    "warmthSourceDisposition": "null_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "162b6904affe06aebb647597204c36e92ee819ef96efcd20ee7ddf7d22cc1b5b",
+    "writerProviderResponseSha256": "dc053d5b25572dd8dc4d7459ff70aab1eaec9f7ecbbcada2fb097231b4bd481d"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/conjunction/exact-approval.json"
+}

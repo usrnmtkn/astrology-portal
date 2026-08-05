@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "pluto-ascendant-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/pluto/ascendant/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "43c9d014c1ba2fe06cf332ecb9c215c9721ea81ed8b18071cbc9226637efb944",
+  "payload": {
+    "body_you": "You pay close attention to how {{holder2}} presents themselves and enters situations. Because your interest feels natural to them, they show you more of themselves, and their openness makes you want to understand them more deeply.",
+    "body_they": "{{holder1}} pays close attention to how you present yourself and enter situations. Because their interest feels natural to you, you show them more of yourself, and your openness makes {{holder1}} want to understand you more deeply.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

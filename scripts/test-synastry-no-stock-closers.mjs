@@ -15,7 +15,7 @@ const manifestPath = path.join(
 );
 const synastryPrefix = "fallback-hook/synastry-pair/";
 const batchExactKeys = new Set(
-  ["sun", "moon", "mercury", "venus", "saturn"].flatMap((planet) =>
+  ["sun", "moon", "mercury", "venus", "saturn", "neptune", "pluto"].flatMap((planet) =>
     ["conjunction", "hard", "soft"].map(
       (group) => `${synastryPrefix}${planet}/ascendant/${group}`,
     ),
