@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "branch": "codex/ascendant-batch-2-card-drafts",
+  "baseCommit": "a5800c343c5a761df3167c5ba38099eba123170c",
+  "packageVersion": "v3-2026-08-04g",
+  "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "approvedAt": "2026-08-04",
+    "targetCount": 6,
+    "approvalRecordCount": 6,
+    "payloadHashesVerified": true
+  },
+  "scope": {
+    "sourceRowsChanged": 6,
+    "unrelatedSourceRowsChanged": 0,
+    "originalSolArtifactsPreserved": true,
+    "additionalBilledCalls": 0,
+    "dashboardSynchronizationIncluded": false,
+    "productionDeploymentIncluded": false,
+    "mergeAuthorized": false
+  },
+  "tests": {
+    "ownerRevisionDeterministicChecks": "pass_6_of_6",
+    "exactApprovalPayloadHashes": "pass_6_of_6",
+    "ascendantBatchResolverAndGeneratedMirrorContract": "pass_6_cards_24_node_browser_direction_checks",
+    "synastryApprovalProvenance": "pass_483_rows_153_approved_330_reviewed_30_exact_123_untraced",
+    "stockCloserHistoricalContract": "pass_336_deletions_preserved",
+    "fallbackManifestCheck": "pass_7206_keys",
+    "fallbackPackageCacheContract": "pass",
+    "fallbackRefreshWiring": "pass",
+    "readerFacingContentContract": "pass",
+    "fullContentSuite": "pass",
+    "typecheck": "pass",
+    "webBuild": "pass",
+    "gitDiffCheck": "pass"
+  },
+  "pullRequestStatus": "draft_pending",
+  "servingStatus": "candidate_branch_only_merge_authorization_required"
+}
