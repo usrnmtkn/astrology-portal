@@ -1,0 +1,18 @@
+{
+  "batch": "ascendant-batch-2",
+  "authorization": "exactly 6 successful Sol writer calls and exactly 6 successful Terra judge calls; one per target; any failure stops the batch for owner direction",
+  "outputDir": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1",
+  "expectedCalls": { "writer": 6, "judge": 6, "total": 12 },
+  "models": {
+    "writer": { "model": "gpt-5.6-sol", "reasoningEffort": "xhigh", "maxOutputTokens": 12000 },
+    "judge": { "model": "gpt-5.6-terra", "reasoningEffort": "low", "maxOutputTokens": 4000 }
+  },
+  "targets": [
+    { "id": "neptune-ascendant-conjunction", "planet": "neptune", "aspectLabel": "conjunction", "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-neptune_B-ascendant_conjunction.json", "expectedMode": "matched" },
+    { "id": "neptune-ascendant-hard", "planet": "neptune", "aspectLabel": "hard", "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-neptune_B-ascendant_square.json", "expectedMode": "matched" },
+    { "id": "neptune-ascendant-soft", "planet": "neptune", "aspectLabel": "soft", "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-neptune_B-ascendant_trine.json", "expectedMode": "none_found" },
+    { "id": "pluto-ascendant-conjunction", "planet": "pluto", "aspectLabel": "conjunction", "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-pluto_B-ascendant_conjunction.json", "expectedMode": "none_found" },
+    { "id": "pluto-ascendant-hard", "planet": "pluto", "aspectLabel": "hard", "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-pluto_B-ascendant_square.json", "expectedMode": "none_found" },
+    { "id": "pluto-ascendant-soft", "planet": "pluto", "aspectLabel": "soft", "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-pluto_B-ascendant_trine.json", "expectedMode": "matched" }
+  ]
+}
