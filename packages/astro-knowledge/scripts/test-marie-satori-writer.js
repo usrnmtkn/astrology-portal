@@ -176,7 +176,7 @@ function main() {
     "laughter, candor, and somewhere new",
     "attraction feels easier without a preset role"
   ]) assert(!finalSunVenusText.includes(retiredText));
-  assert.strictEqual(combined26Proposal.status, "held_for_explicit_owner_serving_approval");
+  assert.strictEqual(combined26Proposal.status, "explicit_owner_serving_approval_recorded");
   assert.strictEqual(combined26Proposal.exactScopedKeyCount, 26);
   assert.strictEqual(combined26Proposal.rows.length, 26);
   assert.strictEqual(new Set(combined26Proposal.rows.map((entry) => entry.key)).size, 26);
@@ -184,9 +184,10 @@ function main() {
   assert.deepStrictEqual(combined26Proposal.contentKeyChanges.replacementKeys, ["fallback-hook/sky-sign-copy/sun/leo"]);
   assert.deepStrictEqual(combined26Proposal.contentKeyChanges.removedKeys, []);
   assert.deepStrictEqual(combined26Proposal.runtimeEligibilityFlips.map((entry) => entry.id), ["chiron-aries", "north-node-aquarius", "south-node-leo"]);
-  assert.strictEqual(combined26Proposal.servingTransition.owner_approval, null);
-  assert.strictEqual(combined26Proposal.governance.applied, false);
-  assert.strictEqual(combined26Proposal.governance.explicitOwnerServingConfirmationRequired, true);
+  assert.match(combined26Proposal.servingTransition.owner_approval.statement, /confirm the 26-key serving diff as proposed/u);
+  assert.deepStrictEqual(combined26Proposal.servingTransition.owner_approval.approved_keys, combined26Proposal.rows.map((entry) => entry.key));
+  assert.strictEqual(combined26Proposal.governance.applied, true);
+  assert.strictEqual(combined26Proposal.governance.explicitOwnerServingConfirmationRequired, false);
 
   const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
   const requiredTags = [
@@ -549,9 +550,9 @@ function main() {
   assert.strictEqual(northNodeAquarius.scenarioPolicy, southNodeLeo.scenarioPolicy);
   assert.strictEqual(northNodeAquarius.axisPair.pairedPlacementId, southNodeLeo.id);
   assert.strictEqual(southNodeLeo.axisPair.pairedPlacementId, northNodeAquarius.id);
-  assert.strictEqual(chironAries.runtimeEligible, false);
-  assert.strictEqual(northNodeAquarius.runtimeEligible, false);
-  assert.strictEqual(southNodeLeo.runtimeEligible, false);
+  assert.strictEqual(chironAries.runtimeEligible, true);
+  assert.strictEqual(northNodeAquarius.runtimeEligible, true);
+  assert.strictEqual(southNodeLeo.runtimeEligible, true);
 
   const readiness = buildReadinessReport();
   assert.strictEqual(readiness.totals.placements, 168);
