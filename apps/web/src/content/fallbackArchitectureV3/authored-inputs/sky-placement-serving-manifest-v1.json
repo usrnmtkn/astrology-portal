@@ -102,6 +102,74 @@
           "fallback-hook/sky-sign-copy/mercury/sagittarius"
         ]
       }
+    },
+    {
+      "release_id": "sky-placement-batch-3",
+      "release_batch": "3",
+      "distribution_state": "serving",
+      "transition": "staged_to_serving",
+      "required_runtime_capability": "sky-placement-on-demand-v1",
+      "migration_gate": {
+        "status": "verified",
+        "deployed_package_version": "v3-2026-08-04b",
+        "verified_at": "2026-08-04T18:17:03Z",
+        "source": "packages/astro-knowledge/review/sky-placement-production-deployment-evidence-2026-08-04.json#Vercel-dpl_GxWYk5B8bKdxEices36VEmf1G2mA"
+      },
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/mercury/capricorn",
+        "fallback-hook/sky-sign-copy/mercury/aquarius",
+        "fallback-hook/sky-sign-copy/mars/taurus",
+        "fallback-hook/sky-sign-copy/mars/gemini",
+        "fallback-hook/sky-sign-copy/mars/cancer",
+        "fallback-hook/sky-sign-copy/mars/leo",
+        "fallback-hook/sky-sign-copy/mars/virgo"
+      ],
+      "owner_approval": {
+        "statement": "I explicitly approve the exact 12-key batches 3 and 4 staged_to_serving diff, producing the combined 19-key batches 2 through 4 serving set, recorded in sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json.",
+        "approved_at": "2026-08-04",
+        "source": "packages/astro-knowledge/review/sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/mercury/capricorn",
+          "fallback-hook/sky-sign-copy/mercury/aquarius",
+          "fallback-hook/sky-sign-copy/mars/taurus",
+          "fallback-hook/sky-sign-copy/mars/gemini",
+          "fallback-hook/sky-sign-copy/mars/cancer",
+          "fallback-hook/sky-sign-copy/mars/leo",
+          "fallback-hook/sky-sign-copy/mars/virgo"
+        ]
+      }
+    },
+    {
+      "release_id": "sky-placement-batch-4",
+      "release_batch": "4",
+      "distribution_state": "serving",
+      "transition": "staged_to_serving",
+      "required_runtime_capability": "sky-placement-on-demand-v1",
+      "migration_gate": {
+        "status": "verified",
+        "deployed_package_version": "v3-2026-08-04b",
+        "verified_at": "2026-08-04T18:17:03Z",
+        "source": "packages/astro-knowledge/review/sky-placement-production-deployment-evidence-2026-08-04.json#Vercel-dpl_GxWYk5B8bKdxEices36VEmf1G2mA"
+      },
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/mars/sagittarius",
+        "fallback-hook/sky-sign-copy/mars/aquarius",
+        "fallback-hook/sky-sign-copy/mars/pisces",
+        "fallback-hook/sky-sign-copy/neptune/aries",
+        "fallback-hook/sky-sign-copy/pluto/aquarius"
+      ],
+      "owner_approval": {
+        "statement": "I explicitly approve the exact 12-key batches 3 and 4 staged_to_serving diff, producing the combined 19-key batches 2 through 4 serving set, recorded in sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json.",
+        "approved_at": "2026-08-04",
+        "source": "packages/astro-knowledge/review/sky-placement-batches-2-through-4-serving-diff-proposal-2026-08-04.json",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/mars/sagittarius",
+          "fallback-hook/sky-sign-copy/mars/aquarius",
+          "fallback-hook/sky-sign-copy/mars/pisces",
+          "fallback-hook/sky-sign-copy/neptune/aries",
+          "fallback-hook/sky-sign-copy/pluto/aquarius"
+        ]
+      }
     }
   ]
 }

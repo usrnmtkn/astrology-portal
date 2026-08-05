@@ -34,19 +34,24 @@ const skyAspectPhrasebook = readPackageJson("source-rows/sky-aspect-phrasebook-v
 const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlacementOwnerApprovedFallbacks = readPackageJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
 const skyPlacementOwnerApprovedReaderFallbacks = readPackageJson("bundled-sky-placement-owner-approved-reader-v1.json");
-const skyPlacementBatch2Approval = JSON.parse(fs.readFileSync(
-  path.join(repoRoot, "packages/astro-knowledge/review/sky-placement-writer-batch-2-owner-edited-approved-v1.json"),
+const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFileSync(
+  path.join(repoRoot, `packages/astro-knowledge/review/sky-placement-writer-batch-${batch}-owner-edited-approved-v1.json`),
   "utf8"
-));
+)));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
-assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 18);
-assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 18);
+assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 30);
+assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 30);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
-for (const approvedArticle of skyPlacementBatch2Approval.articles) {
+const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => (
+  approval.id.includes("batch-4")
+    ? approval.articles.filter((article) => !["chiron-aries", "nodes-aquarius-leo"].includes(article.sourceRunId))
+    : approval.articles
+));
+for (const approvedArticle of runtimeEligibleApprovedArticles) {
   const contentKey = `fallback-hook/sky-sign-copy/${approvedArticle.planet}/${approvedArticle.sign}`;
   const servingRow = skyPlacementOwnerApprovedFallbacks.rows.find((row) => row.contentKey === contentKey);
   assert.ok(servingRow, `${contentKey} must exist in the owner-approved serving source.`);
@@ -90,7 +95,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-04f");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-04g");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
