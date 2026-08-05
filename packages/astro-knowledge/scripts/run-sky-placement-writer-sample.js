@@ -22,12 +22,16 @@ function parseCli(argv) {
     const index = args.indexOf(flag);
     return index >= 0 ? args[index + 1] : null;
   };
-  const positional = args.filter((value, index) => !value.startsWith("--") && (index === 0 || !["--out", "--planet", "--sign", "--engine-facts"].includes(args[index - 1])));
+  const positional = args.filter((value, index) => !value.startsWith("--") && (index === 0 || !["--out", "--planet", "--sign", "--engine-facts", "--max-output-tokens"].includes(args[index - 1])));
   const planet = String(valueFor("--planet") || positional[0] || "jupiter").trim().toLowerCase();
   const sign = String(valueFor("--sign") || positional[1] || "libra").trim().toLowerCase();
   const outDir = valueFor("--out")
     ? path.resolve(valueFor("--out"))
     : path.join(__dirname, "..", "review", `sky-placement-writer-${planet}-${sign}-candidate`);
+  const maxOutputTokens = Number(valueFor("--max-output-tokens") || 12000);
+  if (!Number.isInteger(maxOutputTokens) || maxOutputTokens < 1 || maxOutputTokens > 128000) {
+    throw new Error("--max-output-tokens must be an integer from 1 to 128000.");
+  }
   return {
     planet,
     sign,
@@ -35,7 +39,9 @@ function parseCli(argv) {
     engineFactsPath: valueFor("--engine-facts") ? path.resolve(valueFor("--engine-facts")) : null,
     planOnly: args.includes("--plan"),
     authorizeLive: args.includes("--authorize-live"),
-    writerOnly: args.includes("--writer-only")
+    writerOnly: args.includes("--writer-only"),
+    maxOutputTokens,
+    reinforceCollectiveVoice: args.includes("--reinforce-collective-voice")
   };
 }
 
@@ -195,6 +201,12 @@ async function main() {
 
   const task = `Write one complete continuous Current Sky fallback article for ${titleToken(planet)} in ${titleToken(sign)}. Keep the transit as the subject and use lived moments as evidence without letting one invented scenario carry the card. Return only opening, tension, development, close, and try_this.`;
   const packet = buildPacket({ planet, sign, requestedBeat: "full_article", emphasisBeat: "turn", task, engineFacts });
+  packet.writerRunOverrides = { maxOutputTokens: cli.maxOutputTokens };
+  if (cli.reinforceCollectiveVoice) {
+    const collectiveVoiceSteer = "Collective voice is mandatory in every field: do not use you, your, yours, yourself, or yourselves, including inside quoted or imagined speech.";
+    packet.writerPrompt = `${packet.writerPrompt}\n\n${collectiveVoiceSteer}`;
+    packet.writerRunOverrides.collectiveVoiceSteer = collectiveVoiceSteer;
+  }
   const modelInput = renderModelInput(packet);
   writeJson(path.join(outDir, "packet.json"), packet);
   fs.writeFileSync(path.join(outDir, "model-input.md"), modelInput, "utf8");
@@ -211,9 +223,10 @@ async function main() {
       retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
       warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
       ownerCorpusWarmthEvidence: packet.ownerCorpusWarmthEvidence,
+      writerRunOverrides: packet.writerRunOverrides || { maxOutputTokens: cli.maxOutputTokens },
       factSources: packet.verifiedAstrology.sourcePassages,
       structuralSlots: packet.structuralSlots,
-      nextCommand: `node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live${cli.writerOnly ? " --writer-only" : ""} --planet ${planet} --sign ${sign}${cli.engineFactsPath ? ` --engine-facts ${cli.engineFactsPath}` : ""} --out ${outDir}`
+      nextCommand: `node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live${cli.writerOnly ? " --writer-only" : ""}${cli.reinforceCollectiveVoice ? " --reinforce-collective-voice" : ""} --max-output-tokens ${cli.maxOutputTokens} --planet ${planet} --sign ${sign}${cli.engineFactsPath ? ` --engine-facts ${cli.engineFactsPath}` : ""} --out ${outDir}`
     };
     writeJson(path.join(outDir, "plan.json"), plan);
     process.stdout.write(`${JSON.stringify(plan, null, 2)}\n`);
@@ -237,7 +250,7 @@ async function main() {
     model: release.model,
     input: modelInput,
     reasoning: { effort: release.reasoningEffort },
-    max_output_tokens: 12000,
+    max_output_tokens: cli.maxOutputTokens,
     text: {
       format: {
         type: "json_schema",
@@ -305,6 +318,7 @@ async function main() {
     retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
     warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
     ownerCorpusWarmthEvidence: packet.ownerCorpusWarmthEvidence,
+    writerRunOverrides: packet.writerRunOverrides,
     routingMatchStatus: "matched",
     usage: payload.usage || null,
     article
@@ -347,7 +361,8 @@ async function main() {
         packetVersion: packet.packetVersion,
         retrievedOwnerSourceIds: packet.ownerPassages.map((entry) => entry.sourceId),
         warmthOwnerSourceIds: packet.ownerCorpusWarmthEvidence.sourceIds,
-        harvestMode: packet.ownerCorpusWarmthEvidence.harvest_mode
+        harvestMode: packet.ownerCorpusWarmthEvidence.harvest_mode,
+        writerRunOverrides: packet.writerRunOverrides
       },
       judgeRouting: null,
       deterministicChecks: checks,

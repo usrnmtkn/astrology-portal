@@ -1,0 +1,65 @@
+{
+  "responseId": "resp_0edab480dd2dbff7006a72917a860c819e8565b0fa9595f35b",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:sagittarius-full-moon-2025:p018:window-4-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:venus-retrograde-2025:p073:window-4-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:sun-sagittarius",
+    "planet": "sun",
+    "sign": "sagittarius",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8200,
+    "input_tokens_details": {
+      "cache_write_tokens": 8197,
+      "cached_tokens": 0
+    },
+    "output_tokens": 3453,
+    "output_tokens_details": {
+      "reasoning_tokens": 3082
+    },
+    "total_tokens": 11653
+  },
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Sagittarius on {{entryDate}}, and the focus shifts toward what else there is to learn. A question that seemed settled opens again. We pick up a subject we once ignored, speak more plainly about what we believe, or feel energy return when an idea gives the day a larger meaning.",
+    "tension": "The trouble starts when a wide view becomes a way around the detail that does not fit. We make the claim bigger, skip the fact that weakens it, and call the whole thing honesty. Restlessness adds pressure. A new question feels alive, while the answer that asks something of us begins to feel small and tedious. The Sun in Sagittarius brings confidence to what we say matters. Without follow-through, our beliefs start doing more work than our choices.",
+    "development": "The Sun last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Under this transit, the gap between conviction and conduct gets easier to see. We start another book before the difficult chapter is finished, turn one vivid experience into a rule for everyone, or explain the principle behind a decision instead of owning the result. Each move protects the larger story for a moment. Then the unfinished work remains, the claim cannot hold, and what we say carries less weight.",
+    "close": "Before {{exitDate}}, each belief used to excuse a choice widens the distance between what we say and what we have actually lived.",
+    "try_this": [
+      "We can finish the next chapter of a book or the next lesson of a course already underway.",
+      "We can correct one exaggeration out loud as soon as we notice that the sharper version has taken over."
+    ]
+  }
+}

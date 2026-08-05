@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Libra on {{entryDate}}, and agreement starts to feel more energizing than going it alone. We revise a choice after another view catches what we missed. A hard conversation gets less defensive when both sides are heard. The Sun in Libra draws confidence from that exchange, especially when the result feels balanced without flattening either side.",
+      "tension": "That openness has a cost when every preference gets held up for approval. We add another option, soften the answer that might disappoint someone, and wait for a sign that everyone is comfortable. The decision still gets made, but now it belongs to the strongest opinion or the nearest deadline. This is the approval loop: treating agreement as proof that the choice is right. Confidence thins when nobody can tell what we wanted before everyone else answered.",
+      "development": "The Sun last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure can spread through different parts of life: a creative idea is revised until its sharpest part disappears; a shared decision drags because the honest objection stays polite and partial; a relationship looks calm because the same side keeps adjusting. Each move preserves contact in the moment. It also makes the eventual correction more expensive. Once no one trusts the first answer, even simple choices require another round of checking. Resentment gathers around agreements we technically made. The Sun in Libra builds confidence through relationship, but constant adjustment leaves those relationships without a clear answer about what we want.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, the cost of a withheld preference shows up as delay, quiet resentment, or a decision that belongs to whoever spoke first.",
+      "try_this": [
+        "We can state one preference before hearing the rest of the group's answers.",
+        "We can choose one visible detail, such as a color or outfit, without asking whether everyone likes it."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Libra on {{entryDate}}, and agreement starts to feel more energizing than going it alone. We revise a choice after another view catches what we missed. A hard conversation gets less defensive when both sides are heard. The Sun in Libra draws confidence from that exchange, especially when the result feels balanced without flattening either side.\n\nThat openness has a cost when every preference gets held up for approval. We add another option, soften the answer that might disappoint someone, and wait for a sign that everyone is comfortable. The decision still gets made, but now it belongs to the strongest opinion or the nearest deadline. This is the approval loop: treating agreement as proof that the choice is right. Confidence thins when nobody can tell what we wanted before everyone else answered.\n\nThe Sun last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure can spread through different parts of life: a creative idea is revised until its sharpest part disappears; a shared decision drags because the honest objection stays polite and partial; a relationship looks calm because the same side keeps adjusting. Each move preserves contact in the moment. It also makes the eventual correction more expensive. Once no one trusts the first answer, even simple choices require another round of checking. Resentment gathers around agreements we technically made. The Sun in Libra builds confidence through relationship, but constant adjustment leaves those relationships without a clear answer about what we want.\n\nBefore {{exitDate}}, the cost of a withheld preference shows up as delay, quiet resentment, or a decision that belongs to whoever spoke first.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Libra on {{entryDate}}, and agreement starts to feel more energizing than going it alone. We revise a choice after another view catches what we missed. A hard conversation gets less defensive when both sides are heard. The Sun in Libra draws confidence from that exchange, especially when the result feels balanced without flattening either side.\n\nThat openness has a cost when every preference gets held up for approval. We add another option, soften the answer that might disappoint someone, and wait for a sign that everyone is comfortable. The decision still gets made, but now it belongs to the strongest opinion or the nearest deadline. This is the approval loop: treating agreement as proof that the choice is right. Confidence thins when nobody can tell what we wanted before everyone else answered.\n\nThe Sun last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure can spread through different parts of life: a creative idea is revised until its sharpest part disappears; a shared decision drags because the honest objection stays polite and partial; a relationship looks calm because the same side keeps adjusting. Each move preserves contact in the moment. It also makes the eventual correction more expensive. Once no one trusts the first answer, even simple choices require another round of checking. Resentment gathers around agreements we technically made. The Sun in Libra builds confidence through relationship, but constant adjustment leaves those relationships without a clear answer about what we want.\n\nBefore {{exitDate}}, the cost of a withheld preference shows up as delay, quiet resentment, or a decision that belongs to whoever spoke first.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sun-libra"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

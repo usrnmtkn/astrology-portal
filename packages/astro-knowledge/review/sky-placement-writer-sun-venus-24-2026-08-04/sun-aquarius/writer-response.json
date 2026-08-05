@@ -1,0 +1,65 @@
+{
+  "responseId": "resp_02a264d92e9106d4006a7291f6621081a28474d49a6b353c56",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:aquarius-season-2025:p052:window-3-3",
+    "owner-article:aquarius-full-moon-2025:p001:window-2-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:sun-aquarius",
+    "planet": "sun",
+    "sign": "aquarius",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8281,
+    "input_tokens_details": {
+      "cache_write_tokens": 8278,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4827,
+    "output_tokens_details": {
+      "reasoning_tokens": 4420
+    },
+    "total_tokens": 13108
+  },
+  "article": {
+    "opening": "The Sun in Aquarius makes familiar rules easier to question. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aquarius on {{entryDate}}, and attention turns toward ideas, habits, and expectations that no longer fit. A familiar rule gets questioned out loud. A routine changes because its original purpose no longer makes sense. A group finally hears the perspective it had been missing.",
+    "tension": "The pressure rises when independence starts needing proof. Questioning a stale expectation can open a better path, but soon every agreement can feel like conformity. We reject a useful suggestion because it came from the group, keep our thinking private until it is flawless, or stand so far outside the process that the group cannot act on what we see. Distance starts to feel like evidence that the idea is original. The group loses the perspective, and we lose the chance to find where it needs work.",
+    "development": "The Sun last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure returns when a different view has to survive contact with the group it could serve. An idea gets announced before the group knows what it improves. A sharp observation arrives without context, so the group dismisses it as another provocation. A shared effort goes on without us because joining feels too much like being absorbed. The idea may be right and still go nowhere. When identity depends on staying separate, disagreement feels like a demand to fall in line, and working together looks like surrender.",
+    "close": "By {{exitDate}}, an idea defended mainly as proof of independence can leave us outside the group it was supposed to help.",
+    "try_this": [
+      "We can replace one stale routine this week and keep the change only if it makes daily life easier.",
+      "We can bring one unusual idea to a group we already belong to, along with one plain example of how it would help."
+    ]
+  }
+}
