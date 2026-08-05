@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0cf77b552d1219c2006a729607791081a2ae8bf1c0828b686e",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1197,
+    "input_tokens_details": {
+      "cache_write_tokens": 1194,
+      "cached_tokens": 0
+    },
+    "output_tokens": 359,
+    "output_tokens_details": {
+      "reasoning_tokens": 218
+    },
+    "total_tokens": 1556
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the required direction: {{holder2}} gives the affection, while {{holder1}} feels insufficiently recognized. The middle sentence provides a recognizable loop, with {{holder1}} pulling back, {{holder2}} repeating the same approach, and both ending up unseen or confused. However, the final sentence, \\\"Even so, {{holder2}} is trying to care for you, not dismiss you,\\\" functions as a generic reassurance and second conclusion rather than advancing the specific mismatch. The draft is parallel and stays within the governed boundary, but that stock closing keeps it from a 3.\"}"
+}

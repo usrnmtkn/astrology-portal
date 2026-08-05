@@ -1,0 +1,9 @@
+{
+  "target": "moon-mars-hard",
+  "status": "needs_review",
+  "payloadSha256": "929a1940b2bae8e8a98fbd52d65190bf328de1c0f1d472c64ee6da895c2da465",
+  "harvest_mode": "none_found",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

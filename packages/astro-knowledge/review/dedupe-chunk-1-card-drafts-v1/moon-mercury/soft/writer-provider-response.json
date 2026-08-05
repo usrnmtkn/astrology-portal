@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_069a0e3edaba53e8006a729c86adb881a392493f1b4a81d299",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 919,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 639,
+    "output_tokens_details": {
+      "reasoning_tokens": 463
+    },
+    "total_tokens": 1558
+  },
+  "output_text": "{\"body_you\":\"You can tell {{holder2}} what you feel before you have sorted it into careful words. {{holder2}} usually follows the emotion behind what you say and responds without turning it into a debate. This ease can leave some details unspoken because you both assume the meaning is already clear. Even so, being understood without polishing every feeling brings a quiet steadiness between you.\",\"body_they\":\"{{holder1}} can tell you what they feel before they have sorted it into careful words. You usually follow the emotion behind what they say and respond without turning it into a debate. This ease can leave some details unspoken because you both assume the meaning is already clear. Even so, understanding {{holder1}} without requiring every feeling to be polished brings a quiet steadiness between you.\",\"warmthSource\":null,\"labels\":[]}"
+}
