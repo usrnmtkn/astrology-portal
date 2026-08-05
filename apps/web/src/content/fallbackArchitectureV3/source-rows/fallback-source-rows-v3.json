@@ -31721,85 +31721,115 @@
    "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/conjunction",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Neptune lands on {{holder2Poss}} Ascendant, and a soft focus settles over how these two see each other. There is real magic in it: imagination, compassion, the benefit of every doubt. There is also blur: the person seen and the person standing there can drift apart quietly. Keep checking the actual against the lovely; both can be true.",
-   "body_they": "{{holder1PossCap}} Neptune lands on {{holder2Poss}} Ascendant, and a soft focus settles over how these two see each other. There is real magic in it: imagination, compassion, the benefit of every doubt. There is also blur: the person seen and the person standing there can drift apart quietly. Keep checking the actual against the lovely; both can be true.",
-   "review_status": "reviewed",
+   "body_you": "You see something special in {{holder2}}, and your hopes about them affect how freely they present themselves around you. If you show the most interest when they match the person you imagine, they may start adjusting how they act to keep that image intact and become less sure what feels natural.",
+   "body_they": "{{holder1}} sees something special in you, and their hopes about you affect how freely you present yourself around them. If they show the most interest when you match the person they imagine, you may start adjusting how you act to keep that image intact and become less sure what feels natural.",
+   "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-   "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+   "notes": "Exact owner-approved Ascendant batch 2 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/conjunction/exact-approval.json",
+    "payloadSha256": "8ef56d0d1b532d87dd8041dffd1bd89b74a8f5d384770327bd81440335f49e38",
+    "approvedAt": "2026-08-04"
+   }
   },
   {
    "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/hard",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Neptune sits at a hard angle to {{holder2Poss}} Ascendant, and the risk is loving a portrait instead of a person. {{holder1PossCap}} imagination paints over {{holder2Poss}} actual manner: softer here, more meaningful there, until the real one disappoints by being real. Disappointment on this connection is almost never the person failing; it is the painting peeling. Ask real questions, accept unglamorous answers, repeat.",
-   "body_they": "{{holder1PossCap}} Neptune sits at a hard angle to {{holder2Poss}} Ascendant, and the risk is loving a portrait instead of a person. {{holder1PossCap}} imagination paints over {{holder2Poss}} actual manner: softer here, more meaningful there, until the real one disappoints by being real. Disappointment on this connection is almost never the person failing; it is the painting peeling. Ask real questions, accept unglamorous answers, repeat.",
-   "review_status": "reviewed",
+   "body_you": "You may admire a version of {{holder2}} that fits your hopes, and {{holder2}} may not be able to tell what you actually think of them. {{holder2}} may respond by becoming more careful around you and adjusting how they come across based on whether you seem pleased, which can leave them feeling unseen. They want to be seen not just for their dreams but for their willingness to feel everything so deeply.",
+   "body_they": "{{holder1}} may admire a version of you that fits their hopes, and you may not be able to tell what they actually think of you. You may respond by becoming more careful around {{holder1}} and adjusting how you come across based on whether they seem pleased, which can leave you feeling unseen. You want to be seen not just for your dreams but for your willingness to feel everything so deeply.",
+   "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-   "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+   "notes": "Exact owner-approved Ascendant batch 2 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/hard/exact-approval.json",
+    "payloadSha256": "b2c1c9702fc02a7244d0e2204f52692260359e00178bbc9ab95167c28d963ac6",
+    "approvedAt": "2026-08-04"
+   }
   },
   {
    "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Neptune softens {{holder2Poss}} Ascendant: extra grace in how these two read each other. Benefit of the doubt is the default, and it is usually deserved. The only upkeep is honesty, so the softness never becomes a screen. Keep asking real questions under the kindness.",
-   "body_they": "{{holder1PossCap}} Neptune softens {{holder2Poss}} Ascendant: extra grace in how these two read each other. Benefit of the doubt is the default, and it is usually deserved. The only upkeep is honesty, so the softness never becomes a screen. Keep asking real questions under the kindness.",
-   "review_status": "reviewed",
+   "body_you": "You tend to interpret the way {{holder2}} comes across generously, even when you are not fully sure what they mean. {{holder2}} then monitors themselves less and acts more naturally around you. This ease can leave your assumptions about them untested.",
+   "body_they": "{{holder1}} tends to interpret the way you come across generously, even when they are not fully sure what you mean. You then monitor yourself less and act more naturally around {{holder1}}. This ease can leave their assumptions about you untested.",
+   "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-   "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+   "notes": "Exact owner-approved Ascendant batch 2 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/soft/exact-approval.json",
+    "payloadSha256": "91f6efc2105acce579f55447477fd6912d445a9c6f566d1a7fa36644008d39fb",
+    "approvedAt": "2026-08-04"
+   }
   },
   {
    "contentKey": "fallback-hook/synastry-pair/pluto/ascendant/conjunction",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Pluto lands on {{holder2Poss}} Ascendant, and the first meeting registered somewhere deep. This connection does not do casual: fascination, influence, and a little wariness arrive as a set. Time around each other changes people, mostly for the truer. Keep the influence mutual and spoken, and the depth stays a gift.",
-   "body_they": "{{holder1PossCap}} Pluto lands on {{holder2Poss}} Ascendant, and the first meeting registered somewhere deep. This connection does not do casual: fascination, influence, and a little wariness arrive as a set. Time around each other changes people, mostly for the truer. Keep the influence mutual and spoken, and the depth stays a gift.",
-   "review_status": "reviewed",
+   "body_you": "You notice every shift in how {{holder2}} acts, and you may press them to reveal more or try to influence how they come across. Your close attention can feel intimate at first, but {{holder2}} may grow guarded when it starts to feel like constant scrutiny. They can end up feeling watched rather than known.",
+   "body_they": "{{holder1}} notices every shift in how you act, and they may press you to reveal more or try to influence how you come across. Their close attention can feel intimate at first, but you may grow guarded when it starts to feel like constant scrutiny. You can end up feeling watched rather than known.",
+   "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-   "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+   "notes": "Exact owner-approved Ascendant batch 2 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/conjunction/exact-approval.json",
+    "payloadSha256": "bc47d7f3ab41bd529f608294f80764c4741c59ac063f5c9d5845e65d62348708",
+    "approvedAt": "2026-08-04"
+   }
   },
   {
    "contentKey": "fallback-hook/synastry-pair/pluto/ascendant/hard",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Pluto sits at a hard angle to {{holder2Poss}} Ascendant, and it stares. {{holder1PossCap}} depth reads straight past {{holder2Poss}} manner and hunts for what is underneath, which can feel like being x-rayed without consent. Being seen through is intimacy only when it is invited; uninvited, it is surveillance. The rule that saves this connection: insight is offered, never wielded.",
-   "body_they": "{{holder1PossCap}} Pluto sits at a hard angle to {{holder2Poss}} Ascendant, and it stares. {{holder1PossCap}} depth reads straight past {{holder2Poss}} manner and hunts for what is underneath, which can feel like being x-rayed without consent. Being seen through is intimacy only when it is invited; uninvited, it is surveillance. The rule that saves this connection: insight is offered, never wielded.",
-   "review_status": "reviewed",
+   "body_you": "Your intensity and need to know what {{holder2}} is really thinking can put pressure on how they act around you. Instead of reacting naturally, they may choose every word and expression carefully and keep more of themselves hidden. Their restraint can make you press them for a more honest response, which leaves them even more guarded.",
+   "body_they": "{{holder1}}'s intensity and need to know what you are really thinking can put pressure on how you act around them. Instead of reacting naturally, you may choose every word and expression carefully and keep more of yourself hidden. Your restraint can make {{holder1}} press you for a more honest response, which leaves you even more guarded.",
+   "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-   "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+   "notes": "Exact owner-approved Ascendant batch 2 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/hard/exact-approval.json",
+    "payloadSha256": "893bb3b215f8859a08283211f81e280193097411fbb07a2ed6749a2464973cda",
+    "approvedAt": "2026-08-04"
+   }
   },
   {
    "contentKey": "fallback-hook/synastry-pair/pluto/ascendant/soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Pluto deepens {{holder2Poss}} Ascendant without frightening it. Real subjects surface naturally: money, fear, family, the things most friendships route around. Nothing has to be dredged; it just comes up and gets handled. Use this for the conversations that have nowhere else to go.",
-   "body_they": "{{holder1PossCap}} Pluto deepens {{holder2Poss}} Ascendant without frightening it. Real subjects surface naturally: money, fear, family, the things most friendships route around. Nothing has to be dredged; it just comes up and gets handled. Use this for the conversations that have nowhere else to go.",
-   "review_status": "reviewed",
+   "body_you": "You pay close attention to how {{holder2}} presents themselves and enters situations. Because your interest feels natural to them, they show you more of themselves, and their openness makes you want to understand them more deeply.",
+   "body_they": "{{holder1}} pays close attention to how you present yourself and enter situations. Because their interest feels natural to you, you show them more of yourself, and your openness makes {{holder1}} want to understand you more deeply.",
+   "review_status": "approved",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-   "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+   "notes": "Exact owner-approved Ascendant batch 2 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/soft/exact-approval.json",
+    "payloadSha256": "43c9d014c1ba2fe06cf332ecb9c215c9721ea81ed8b18071cbc9226637efb944",
+    "approvedAt": "2026-08-04"
+   }
   },
   {
    "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",

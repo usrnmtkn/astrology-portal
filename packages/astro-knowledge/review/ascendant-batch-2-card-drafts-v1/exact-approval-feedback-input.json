@@ -1,0 +1,19 @@
+{
+  "id": "ascendant-batch-2-owner-revisions-v1-exact-approval",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "synastry-aspect",
+  "articleBeat": "neptune-pluto-ascendant-conjunction-hard-soft-resolver-cards",
+  "before": "The original six Sol payloads stored under packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/<pair>/<target>/draft.json.",
+  "beforeIsRejected": false,
+  "after": "The exact approved payloads and hashes stored in packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/OWNER-REVISION-SUMMARY.md and the six owner-revision-candidate.json records.",
+  "whatChanged": "Applied the owner's specified deletions to Neptune conjunction and Pluto soft, and retained the four approved-as-drafted payloads. No additional model or judge calls were made.",
+  "ownerReason": "The owner reviewed all six candidates and explicitly approved the final hash-bound payloads as exact wording.",
+  "failureTags": [],
+  "ownerStatement": "I explicitly approve the six hashed payloads in OWNER-REVISION-SUMMARY.md as exact wording: neptune/conjunction 8ef56d0d1b532d87dd8041dffd1bd89b74a8f5d384770327bd81440335f49e38; neptune/hard b2c1c9702fc02a7244d0e2204f52692260359e00178bbc9ab95167c28d963ac6; neptune/soft 91f6efc2105acce579f55447477fd6912d445a9c6f566d1a7fa36644008d39fb; pluto/conjunction bc47d7f3ab41bd529f608294f80764c4741c59ac063f5c9d5845e65d62348708; pluto/hard 893bb3b215f8859a08283211f81e280193097411fbb07a2ed6749a2464973cda; pluto/soft 43c9d014c1ba2fe06cf332ecb9c215c9721ea81ed8b18071cbc9226637efb944. This is exact owner approval of wording only. Create the six exact-approval records and prepare a single shipping PR, then stop at the draft PR for merge authorization.",
+  "approvalScope": "exact_ascendant_batch_2_six_payloads_wording_shipping_via_draft_pr_merge_authorization_required",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+    "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/OWNER-REVISION-SUMMARY.md",
+    "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-revision-manifest.json"
+  ]
+}
