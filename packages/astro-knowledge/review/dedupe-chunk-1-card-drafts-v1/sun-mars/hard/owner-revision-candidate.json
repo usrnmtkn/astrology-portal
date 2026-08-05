@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-mars-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "90e807008d9730ce41f45d73c0befb0a121558a249a20d417150b070eee88db5",
+  "payload": {
+    "body_you": "When {{holder2}} moves quickly or pushes a choice, you can take their momentum as a challenge to your authority. You push back or try to take control, so {{holder2}} presses harder, turning ordinary decisions into arguments about who is in charge. The intensity can also feel energizing to both of you.",
+    "body_they": "When you move quickly or push a choice, {{holder1}} can take your momentum as a challenge to their authority. {{holder1}} pushes back or tries to take control, so you press harder, turning ordinary decisions into arguments about who is in charge. The intensity can also feel energizing to both of you.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "2d3831a11d844538954f3da9338f5aa130db9bb73f4e49283aea2a6e2ce1bea2",
+    "writerProviderResponseSha256": "c773f25f4e58c8ddf80a0a4d26da8d56462dd96d96f7ff3f5cb96470a17cfdfa"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/hard/exact-approval.json"
+}

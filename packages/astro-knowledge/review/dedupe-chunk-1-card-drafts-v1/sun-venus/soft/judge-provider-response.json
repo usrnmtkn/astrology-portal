@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_019d7d3b3422b89a006a729618956081a295387211ff8849e5",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 850,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 196,
+    "output_tokens_details": {
+      "reasoning_tokens": 76
+    },
+    "total_tokens": 1046
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants preserve the fixed direction: the Sun holder responds to the Venus holder's affection, feels appreciated, and creates ease for the Venus holder's caring. The first two sentences establish a clear reciprocal behavior loop, while the third gives the governed cost of that ease: \\\"both of you may stop actively engaging and let the connection become routine.\\\" The they-version closely parallels the you-version without changing agency or meaning. The draft stays within the supplied boundary and avoids excluded claims or an added conclusion.\"}"
+}

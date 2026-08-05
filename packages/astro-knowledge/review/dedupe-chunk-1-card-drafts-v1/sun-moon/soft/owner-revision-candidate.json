@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-moon-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "711727f56af0f5654c9e3037534775547ae9df484cbd3c64bcb79e176abaebdb",
+  "payload": {
+    "body_you": "Your way of being puts {{holder2}} at ease, and they show you what they feel without much explanation. You respond naturally to their feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around you, {{holder2}} does not need to prove they are worthy.",
+    "body_they": "{{holder1}}'s way of being puts you at ease, and you show them what you feel without much explanation. They respond naturally to your feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around {{holder1}}, you do not need to prove you are worthy.",
+    "warmthSource": {
+      "sourceArticleId": "sagittarius-full-moon-2025",
+      "originalLine": "You don’t need to prove you’re worthy.",
+      "usedForm": {
+        "body_you": "Around you, {{holder2}} does not need to prove they are worthy.",
+        "body_they": "Around {{holder1}}, you do not need to prove you are worthy."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "preserved_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "5eef4cf883a1f686f8fee7364ed671ffa423a3e4166a9108e20716cc03e5c0e9",
+    "writerProviderResponseSha256": "50814743401f51fe6b4f1bfd4ab663c86e64ecd8f2c3bf44d12973ac7d9d5d43"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/soft/exact-approval.json"
+}

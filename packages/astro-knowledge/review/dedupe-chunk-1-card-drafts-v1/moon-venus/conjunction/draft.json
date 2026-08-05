@@ -1,0 +1,15 @@
+{
+  "body_you": "{{holder2}}'s affection makes you feel cared for, and you respond with warmth that helps {{holder2}} relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken. But the deeper work lies in redefining what makes you feel secure.",
+  "body_they": "Your affection makes {{holder1}} feel cared for, and {{holder1}} responds with warmth that helps you relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken. But the deeper work lies in redefining what makes you feel secure.",
+  "warmthSource": {
+    "sourceArticleId": "cancer-new-moon-2025",
+    "originalLine": "But the deeper work lies in redefining what makes you feel secure.",
+    "usedForm": {
+      "body_you": "But the deeper work lies in redefining what makes you feel secure.",
+      "body_they": "But the deeper work lies in redefining what makes you feel secure."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

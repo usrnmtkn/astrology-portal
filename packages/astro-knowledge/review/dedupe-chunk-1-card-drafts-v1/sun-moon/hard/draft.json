@@ -1,0 +1,15 @@
+{
+  "body_you": "When you push ahead with what you want to build, {{holder2}} can feel that their need for reassurance or rest is getting in your way. They may go quiet and adjust around you, which leaves them tense and leaves you unsure why they are pulling back. There is room for what you are building and for what {{holder2}} needs, without either of you becoming smaller so the other can feel secure.",
+  "body_they": "When {{holder1}} pushes ahead with what they want to build, you can feel that your need for reassurance or rest is getting in their way. You may go quiet and adjust around them, which leaves you tense and leaves {{holder1}} unsure why you are pulling back. There is room for what {{holder1}} is building and for what you need, without either of you becoming smaller so the other can feel secure.",
+  "warmthSource": {
+    "sourceArticleId": "libra-season-autumn-equinox",
+    "originalLine": "The ones who don't need you to be smaller so they can feel secure.",
+    "usedForm": {
+      "body_you": "There is room for what you are building and for what {{holder2}} needs, without either of you becoming smaller so the other can feel secure.",
+      "body_they": "There is room for what {{holder1}} is building and for what you need, without either of you becoming smaller so the other can feel secure."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

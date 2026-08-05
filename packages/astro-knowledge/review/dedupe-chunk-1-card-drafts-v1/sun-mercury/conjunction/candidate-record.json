@@ -1,0 +1,9 @@
+{
+  "target": "sun-mercury-conjunction",
+  "status": "needs_review",
+  "payloadSha256": "6a71102168ece1dd7bf461f763217decbb59e01e7677c5d83fd11ea01bd86696",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

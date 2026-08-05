@@ -18,11 +18,26 @@ const synastryPrefix = "fallback-hook/synastry-pair/";
 const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
   "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
+  "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/",
 ];
 const batchExactKeys = new Set(
-  ["sun", "moon", "mercury", "venus", "saturn", "neptune", "pluto"].flatMap((planet) =>
+  [
+    ...["sun", "moon", "mercury", "venus", "saturn", "neptune", "pluto"].map(
+      (planet) => [planet, "ascendant"],
+    ),
+    ["sun", "moon"],
+    ["sun", "sun"],
+    ["sun", "mercury"],
+    ["sun", "venus"],
+    ["sun", "mars"],
+    ["moon", "moon"],
+    ["moon", "mercury"],
+    ["moon", "venus"],
+    ["moon", "mars"],
+    ["mercury", "venus"],
+  ].flatMap(([planetA, planetB]) =>
     ["conjunction", "hard", "soft"].map(
-      (group) => `${synastryPrefix}${planet}/ascendant/${group}`,
+      (group) => `${synastryPrefix}${planetA}/${planetB}/${group}`,
     ),
   ),
 );
@@ -96,7 +111,7 @@ for (const row of rows) {
 }
 
 assert.deepEqual(statusCounts, { approved: 153, reviewed: 330 });
-assert.deepEqual(levelCounts, { exact_owner_approved: 30, owner_signoff_untraced: 123 });
+assert.deepEqual(levelCounts, { exact_owner_approved: 60, owner_signoff_untraced: 93 });
 assert.deepEqual(batchExactRows, batchExactKeys);
 assert.equal(manifest.totals.synastryRows, 483);
 assert.equal(manifest.totals.approved, 132);
