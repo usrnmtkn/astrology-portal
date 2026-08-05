@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "conjunction",
   "plainTranslation": "Their idealism, vagueness, and dreams sit right on top of how freely you present yourself and enter situations.",
+  "humanMoment": "{{holder1}} sees something special in {{holder2}}, but {{holder2}} may start becoming the version of themselves that {{holder1}} wants to believe in.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,
