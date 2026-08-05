@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "mercury-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/mercury-ascendant/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_with_required_ascii_normalization",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "64fab3d1533eb0e92b6d635fdaef4462a0f47b85800742741e8f798f380256fa",
+  "payload": {
+    "body_you": "You quickly notice how {{holder2}} introduces themselves, starts conversations, or approaches a situation, and you tend to ask questions or explain what you see. {{holder2}} may immediately adjust their tone or behavior in response, which gives you more to react to. That close back-and-forth can be lively, but repeated questions or comments can make them second-guess how they come across. You can have feelings about how {{holder2}} handles a situation without being responsible for fixing it.",
+    "body_they": "{{holder1}} quickly notices how you introduce yourself, start conversations, or approach a situation, and they tend to ask questions or explain what they see. You may immediately adjust your tone or behavior in response, which gives {{holder1}} more to react to. That close back-and-forth can be lively, but repeated questions or comments can make you second-guess how you come across. {{holder1}} can have feelings about how you handle a situation without being responsible for fixing it.",
+    "warmthSource": {
+      "sourceArticleId": "libra-new-moon",
+      "originalLine": "Give yourself permission to have feelings about other people's situations without being responsible for fixing them.",
+      "usedForm": {
+        "body_you": "You can have feelings about how {{holder2}} handles a situation without being responsible for fixing it.",
+        "body_they": "{{holder1}} can have feelings about how you handle a situation without being responsible for fixing it."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "foundationLineDisposition": "retained",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "1e85a1cce287480d486c38ff6d7112737667eb0f57d6d96c8070d054fa03320e",
+    "writerProviderResponseSha256": "8c62518410e4aa78dc1a547913ad9d3c0e47276e329264b1bf7c96fdd9fb6b7f"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/mercury-ascendant/conjunction/exact-approval.json"
+}

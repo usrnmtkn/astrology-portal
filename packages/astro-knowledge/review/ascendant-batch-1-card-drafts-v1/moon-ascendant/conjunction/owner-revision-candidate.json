@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_with_required_ascii_normalization",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "1d2ccbb6caac197155f9c401b1466bc876ae413c67da411165969af263ad20c9",
+  "payload": {
+    "body_you": "You notice {{holder2}}'s mood almost immediately, and your own mood and need for comfort affect how freely they act around you. When they want to be understood, your quick response can feel comforting, and they may relax into being themselves. When they want privacy, the same attention can feel exposing, and they may hold back as soon as they sense your reaction. When the ground beneath you feels unstable, it's natural to want to hold tightly to what you know.",
+    "body_they": "{{holder1}} notices your mood almost immediately, and their own mood and need for comfort affect how freely you act around them. When you want to be understood, their quick response can feel comforting, and you may relax into being yourself. When you want privacy, the same attention can feel exposing, and you may hold back as soon as you sense their reaction. When the ground beneath {{holder1}} feels unstable, it's natural for them to want to hold tightly to what they know.",
+    "warmthSource": {
+      "sourceArticleId": "aquarius-season-2025",
+      "originalLine": "When the ground beneath you feels unstable, it's natural to want to hold tightly to what you know.",
+      "usedForm": {
+        "body_you": "When the ground beneath you feels unstable, it's natural to want to hold tightly to what you know.",
+        "body_they": "When the ground beneath {{holder1}} feels unstable, it's natural for them to want to hold tightly to what they know."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "foundationLineDisposition": "retained",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "2642f02b807217bc70048bce117f079d7fef11ac1f5542d74ba735c5f6a883e0",
+    "writerProviderResponseSha256": "4d1b0fb2bda57e781d01551610f591eb86db1c7772891ff2f2765ec1a5f664d0"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/conjunction/exact-approval.json"
+}

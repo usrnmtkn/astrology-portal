@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-ascendant-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "6d34067efce400fd9d22ea6000e338a2f94c9fd108ac5dcf5b15eee16cd885d0",
+  "payload": {
+    "body_you": "You often set the tone or direction before {{holder2}} has had room to show how they want to come across. They may explain their choices more firmly or push back, which can lead you to press your point again. Repeating that pattern can leave them feeling crowded out and you feeling challenged.",
+    "body_they": "{{holder1}} often sets the tone or direction before you have had room to show how you want to come across. You may explain your choices more firmly or push back, which can lead them to press their point again. Repeating that pattern can leave you feeling crowded out and them feeling challenged.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "If they have felt stuck or hesitant to make bold moves, this friction can push them into action.",
+      "If you have felt stuck or hesitant to make bold moves, this friction can push you into action."
+    ],
+    "foundationLineDisposition": "removed_with_deleted_sentence",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "61d0253b72c9068af6857cbc425580ad1bad6505e12d61dd0371430ba2b101be",
+    "writerProviderResponseSha256": "0b123f7f93ccc9981e951b98fc8b4908ede5bc420ef972376b2b87f6638c5939"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/hard/exact-approval.json"
+}

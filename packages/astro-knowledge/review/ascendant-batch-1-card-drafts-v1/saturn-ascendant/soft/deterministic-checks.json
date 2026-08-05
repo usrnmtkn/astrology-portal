@@ -1,0 +1,51 @@
+{
+  "target": "saturn-ascendant-soft",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "matched",
+    "reason": "Used foundation line has complete exact provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "You respond consistently to how Bird speaks, acts, and enters new situations, so they know you take them seriously. Your standards can still make them pause and check how they are coming across. You appreciate Bird's authenticity instead of making them feel like they're too much or not enough.",
+    "readerIsAscendantHolder": "Bird responds consistently to how you speak, act, and enter new situations, so you know they take you seriously. Their standards can still make you pause and check how you are coming across. Bird appreciates your authenticity instead of making you feel like you're too much or not enough."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

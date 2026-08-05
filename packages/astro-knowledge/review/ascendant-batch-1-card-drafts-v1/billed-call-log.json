@@ -1,0 +1,764 @@
+{
+  "schemaVersion": 1,
+  "authorization": "exactly 15 successful Sol writer calls and exactly 15 successful Terra judge calls; one per target; no retries without owner direction",
+  "billingAccountConfirmation": "Owner confirmed that the OPENAI_API_KEY in apps/web/.env.local belongs to the intended editorial billing account.",
+  "expected": {
+    "writer": 15,
+    "judge": 15,
+    "total": 30,
+    "incompleteAttempts": 1
+  },
+  "calls": [
+    {
+      "kind": "writer",
+      "target": "sun-ascendant-conjunction",
+      "responseId": "resp_02db3311c039aed5006a725f5204d881a397c69761b8f2d4f0",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 1007,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4380,
+        "output_tokens_details": {
+          "reasoning_tokens": 4074
+        },
+        "total_tokens": 5387
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "sun-ascendant-hard",
+      "responseId": "resp_0336b9388ebc2366006a725f9f72f081a2990e17c58c06ed77",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 980,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1256,
+        "output_tokens_details": {
+          "reasoning_tokens": 968
+        },
+        "total_tokens": 2236
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "sun-ascendant-soft",
+      "responseId": "resp_0768a54f1ff9560f006a725fb549e08191a98b1436f5d6217c",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 962,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3933,
+        "output_tokens_details": {
+          "reasoning_tokens": 3624
+        },
+        "total_tokens": 4895
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "moon-ascendant-conjunction",
+      "responseId": "resp_0baf078381acbde9006a725ff99d3c819eadf73e87dd6000a9",
+      "status": "incomplete",
+      "billingStatus": "billed_or_unknown",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 981,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 6000,
+        "output_tokens_details": {
+          "reasoning_tokens": 6000
+        },
+        "total_tokens": 6981
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "moon-ascendant-conjunction",
+      "responseId": "resp_02ae972ec0bf1465006a7260d6de7081a185ccc609951a0c82",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 981,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 2392,
+        "output_tokens_details": {
+          "reasoning_tokens": 2070
+        },
+        "total_tokens": 3373
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "moon-ascendant-hard",
+      "responseId": "resp_0049a8b3d4fa50a0006a7261034e3c8191b59cf801fe35b6a1",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 977,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 783,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 1760
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "moon-ascendant-soft",
+      "responseId": "resp_026dd7d4877f54a7006a7261116108819296a8fd2fb39864be",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 824,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1730,
+        "output_tokens_details": {
+          "reasoning_tokens": 1538
+        },
+        "total_tokens": 2554
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "mercury-ascendant-conjunction",
+      "responseId": "resp_0eaee0109b14dca0006a72612ef4988192865b11057a9fd790",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 973,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1511,
+        "output_tokens_details": {
+          "reasoning_tokens": 1198
+        },
+        "total_tokens": 2484
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "mercury-ascendant-hard",
+      "responseId": "resp_037d4547060137ff006a726147cd78819e855ef71aa4e6d0c4",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 836,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1165,
+        "output_tokens_details": {
+          "reasoning_tokens": 1034
+        },
+        "total_tokens": 2001
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "mercury-ascendant-soft",
+      "responseId": "resp_0b16e231f92523e5006a72615e2b088192bf84708347031184",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 828,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1006,
+        "output_tokens_details": {
+          "reasoning_tokens": 866
+        },
+        "total_tokens": 1834
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "venus-ascendant-conjunction",
+      "responseId": "resp_026937673cd976ef006a726171ee5c81a1b8760f30db3e72a8",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 995,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1589,
+        "output_tokens_details": {
+          "reasoning_tokens": 1310
+        },
+        "total_tokens": 2584
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "venus-ascendant-hard",
+      "responseId": "resp_020577bbd4874fe6006a72618e3018819fb3d5f7d4cc7f08ca",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 839,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 667,
+        "output_tokens_details": {
+          "reasoning_tokens": 497
+        },
+        "total_tokens": 1506
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "venus-ascendant-soft",
+      "responseId": "resp_0138dc268367e18e006a726199c604819eb0aa9c15bc03fc15",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 834,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 652,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 1486
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "saturn-ascendant-conjunction",
+      "responseId": "resp_0fd7c88d34f0e7e5006a7261a5c1188191ba6c65940b3aa23a",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 930,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1814,
+        "output_tokens_details": {
+          "reasoning_tokens": 1552
+        },
+        "total_tokens": 2744
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "saturn-ascendant-hard",
+      "responseId": "resp_05969f338199901f006a7261cbdd48819dbece14c24754ebd2",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 807,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 985,
+        "output_tokens_details": {
+          "reasoning_tokens": 844
+        },
+        "total_tokens": 1792
+      }
+    },
+    {
+      "kind": "writer",
+      "target": "saturn-ascendant-soft",
+      "responseId": "resp_03dacaf3230b5f90006a7261dee23c819cabfc1e73e2f1c61a",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 976,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1370,
+        "output_tokens_details": {
+          "reasoning_tokens": 1122
+        },
+        "total_tokens": 2346
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "sun-ascendant-conjunction",
+      "responseId": "resp_09eea15b21ffa0ab006a7262061a2881a28d2ffd6e732ade45",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1847,
+        "input_tokens_details": {
+          "cache_write_tokens": 1844,
+          "cached_tokens": 0
+        },
+        "output_tokens": 632,
+        "output_tokens_details": {
+          "reasoning_tokens": 306
+        },
+        "total_tokens": 2479
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "sun-ascendant-hard",
+      "responseId": "resp_01723233acfda44e006a72620f1640819ca663b6ab60c36c89",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1781,
+        "input_tokens_details": {
+          "cache_write_tokens": 1778,
+          "cached_tokens": 0
+        },
+        "output_tokens": 783,
+        "output_tokens_details": {
+          "reasoning_tokens": 390
+        },
+        "total_tokens": 2564
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "sun-ascendant-soft",
+      "responseId": "resp_081e327bbd2893b9006a7262190368819c961c4ec4ee0cfc57",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1801,
+        "input_tokens_details": {
+          "cache_write_tokens": 1798,
+          "cached_tokens": 0
+        },
+        "output_tokens": 869,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 2670
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "moon-ascendant-conjunction",
+      "responseId": "resp_0a774e92ae8e9bfd006a726224d0948192819351b0224affb4",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1847,
+        "input_tokens_details": {
+          "cache_write_tokens": 1844,
+          "cached_tokens": 0
+        },
+        "output_tokens": 780,
+        "output_tokens_details": {
+          "reasoning_tokens": 446
+        },
+        "total_tokens": 2627
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "moon-ascendant-hard",
+      "responseId": "resp_0d145fad2ef39931006a72623045f481a3be80676ca105cf40",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1760,
+        "input_tokens_details": {
+          "cache_write_tokens": 1757,
+          "cached_tokens": 0
+        },
+        "output_tokens": 458,
+        "output_tokens_details": {
+          "reasoning_tokens": 144
+        },
+        "total_tokens": 2218
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "moon-ascendant-soft",
+      "responseId": "resp_01f2c24c08aa77c2006a7262360ea8819c87d9fc071e074d53",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1350,
+        "input_tokens_details": {
+          "cache_write_tokens": 1347,
+          "cached_tokens": 0
+        },
+        "output_tokens": 475,
+        "output_tokens_details": {
+          "reasoning_tokens": 168
+        },
+        "total_tokens": 1825
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "mercury-ascendant-conjunction",
+      "responseId": "resp_03101d4edf823c3c006a72623bee44819e8e029d57b36658d4",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1828,
+        "input_tokens_details": {
+          "cache_write_tokens": 1825,
+          "cached_tokens": 0
+        },
+        "output_tokens": 741,
+        "output_tokens_details": {
+          "reasoning_tokens": 345
+        },
+        "total_tokens": 2569
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "mercury-ascendant-hard",
+      "responseId": "resp_07bb861190f7bd01006a726245a2dc819d80102b02cf2cc122",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1238,
+        "input_tokens_details": {
+          "cache_write_tokens": 1235,
+          "cached_tokens": 0
+        },
+        "output_tokens": 666,
+        "output_tokens_details": {
+          "reasoning_tokens": 367
+        },
+        "total_tokens": 1904
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "mercury-ascendant-soft",
+      "responseId": "resp_0bcfc6088b0e1f0e006a72624e7708819d9a4df9c04e35f82b",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1251,
+        "input_tokens_details": {
+          "cache_write_tokens": 1248,
+          "cached_tokens": 0
+        },
+        "output_tokens": 445,
+        "output_tokens_details": {
+          "reasoning_tokens": 147
+        },
+        "total_tokens": 1696
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "venus-ascendant-conjunction",
+      "responseId": "resp_0044bfdb61559541006a726253dff0819ca65dfe85b261b485",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1772,
+        "input_tokens_details": {
+          "cache_write_tokens": 1769,
+          "cached_tokens": 0
+        },
+        "output_tokens": 533,
+        "output_tokens_details": {
+          "reasoning_tokens": 152
+        },
+        "total_tokens": 2305
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "venus-ascendant-hard",
+      "responseId": "resp_060a8590cb9d6d46006a72625abf4c819c94e81407d8af568d",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1313,
+        "input_tokens_details": {
+          "cache_write_tokens": 1310,
+          "cached_tokens": 0
+        },
+        "output_tokens": 415,
+        "output_tokens_details": {
+          "reasoning_tokens": 101
+        },
+        "total_tokens": 1728
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "venus-ascendant-soft",
+      "responseId": "resp_0a0b4fada4fa9dea006a72625fd4c881a397c40d35338f15a9",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1242,
+        "input_tokens_details": {
+          "cache_write_tokens": 1239,
+          "cached_tokens": 0
+        },
+        "output_tokens": 377,
+        "output_tokens_details": {
+          "reasoning_tokens": 99
+        },
+        "total_tokens": 1619
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "saturn-ascendant-conjunction",
+      "responseId": "resp_0661a5dc02deab37006a726264e368819dab4e087a06ba2282",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1662,
+        "input_tokens_details": {
+          "cache_write_tokens": 1659,
+          "cached_tokens": 0
+        },
+        "output_tokens": 622,
+        "output_tokens_details": {
+          "reasoning_tokens": 265
+        },
+        "total_tokens": 2284
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "saturn-ascendant-hard",
+      "responseId": "resp_01c8f8f1cc3b18f6006a72626cd1d881a39833a5f821bc5775",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1229,
+        "input_tokens_details": {
+          "cache_write_tokens": 1226,
+          "cached_tokens": 0
+        },
+        "output_tokens": 373,
+        "output_tokens_details": {
+          "reasoning_tokens": 83
+        },
+        "total_tokens": 1602
+      }
+    },
+    {
+      "kind": "judge",
+      "target": "saturn-ascendant-soft",
+      "responseId": "resp_0cab2dd633a64855006a726271b418819d84993c53803aa3ca",
+      "status": "completed",
+      "billingStatus": "billed",
+      "credentialMaterialRecorded": false,
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "low",
+      "actualReasoningEffort": "low",
+      "usage": {
+        "input_tokens": 1703,
+        "input_tokens_details": {
+          "cache_write_tokens": 1700,
+          "cached_tokens": 0
+        },
+        "output_tokens": 571,
+        "output_tokens_details": {
+          "reasoning_tokens": 196
+        },
+        "total_tokens": 2274
+      }
+    }
+  ],
+  "actual": {
+    "writer": 15,
+    "judge": 15,
+    "total": 30,
+    "attempts": 31
+  },
+  "replacementAuthorization": "Owner authorized one replacement Sol call for Moon-Ascendant conjunction with a higher output-token limit; successful-call budget remains 15 Sol and 15 Terra; no other retries without stopping."
+}

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "mercury-ascendant-conjunction-v1",
+  "target": {
+    "factorA": "mercury",
+    "factorB": "ascendant",
+    "aspectGroup": "conjunction",
+    "governedEntryId": "A-mercury_B-ascendant_conjunction"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/mercury/ascendant/conjunction",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You quickly notice how {{holder2}} introduces themselves, starts conversations, or approaches a situation, and you tend to ask questions or explain what you see. {{holder2}} may immediately adjust their tone or behavior in response, which gives you more to react to. That close back-and-forth can be lively, but repeated questions or comments can make them second-guess how they come across. You can have feelings about how {{holder2}} handles a situation without being responsible for fixing it.",
+    "body_they": "{{holder1}} quickly notices how you introduce yourself, start conversations, or approach a situation, and they tend to ask questions or explain what they see. You may immediately adjust your tone or behavior in response, which gives {{holder1}} more to react to. That close back-and-forth can be lively, but repeated questions or comments can make you second-guess how you come across. {{holder1}} can have feelings about how you handle a situation without being responsible for fixing it.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-ascendant_conjunction.json",
+      "libra-new-moon"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "libra-new-moon",
+    "originalLine": "Give yourself permission to have feelings about other people's situations without being responsible for fixing them.",
+    "usedForm": {
+      "body_you": "You can have feelings about how {{holder2}} handles a situation without being responsible for fixing it.",
+      "body_they": "{{holder1}} can have feelings about how you handle a situation without being responsible for fixing it."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0eaee0109b14dca0006a72612ef4988192865b11057a9fd790",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_03101d4edf823c3c006a72623bee44819e8e029d57b36658d4",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "warmthSource",
+    "weakest": "The final foundation-derived sentence is valid and well-provenanced, but it is less specific to the Mercury-to-Ascendant interaction than the preceding behavior and cost.",
+    "why": "The fixed direction is clear in both variants: {{holder1}} notices and comments on {{holder2}}'s presentation and approach, {{holder2}} adjusts in response, and the resulting loop can lead to second-guessing. The language remains ordinary, literal, and bounded to questions, explanations, presentation, closeness, and the pressure of repeated comments. The card ends after a single, provenance-backed warmth turn rather than adding another conclusion.",
+    "failedChecks": [],
+    "strengths": [
+      "Both reader variants preserve the same actor, recipient, response, and cost after placeholder resolution.",
+      "The interaction is recognizable as close and constant without explaining astrology mechanics.",
+      "The draft makes the two-person feedback loop plain rather than treating either person in isolation.",
+      "The shadow is specific and source-supported: repeated questions or comments can affect how the Ascendant holder sees and presents themselves.",
+      "The final warmth sentence uses an approved owner foundation line with exact recorded provenance."
+    ],
+    "sourceFidelity": "High. The draft stays within the governed boundary by centering {{holder1}}'s questions and explanations on {{holder2}}'s self-presentation and entry into situations, then grounding the cost in {{holder2}} adjusting and second-guessing how they come across. No excluded outcomes, invented scenes, advice, or outside doctrine appear.",
+    "foundationTrace": "The final sentence in each variant is a near-verbatim adaptation of the supplied libra-new-moon line: “Give yourself permission to have feelings about other people's situations without being responsible for fixing them.” Its subject is directionally adapted to the reader role, and the warmthSource record provides complete exact provenance."
+  }
+}

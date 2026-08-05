@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-ascendant-hard-v1",
+  "target": {
+    "factorA": "sun",
+    "factorB": "ascendant",
+    "aspectGroup": "hard",
+    "governedEntryId": "A-sun_B-ascendant_square"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/sun/ascendant/hard",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "You often set the tone or direction before {{holder2}} has had room to show how they want to come across. They may explain their choices more firmly or push back, which can lead you to press your point again. Repeating that pattern can leave them feeling crowded out and you feeling challenged. If they have felt stuck or hesitant to make bold moves, this friction can push them into action.",
+    "body_they": "{{holder1}} often sets the tone or direction before you have had room to show how you want to come across. You may explain your choices more firmly or push back, which can lead them to press their point again. Repeating that pattern can leave you feeling crowded out and them feeling challenged. If you have felt stuck or hesitant to make bold moves, this friction can push you into action.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-sun_B-ascendant_square.json",
+      "first-new-moon-of-2025-aquarius-new-moon"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "first-new-moon-of-2025-aquarius-new-moon",
+    "originalLine": "If you’ve felt stuck or hesitant to make bold moves, this planetary shift will push you into action.",
+    "usedForm": {
+      "body_you": "If they have felt stuck or hesitant to make bold moves, this friction can push them into action.",
+      "body_they": "If you have felt stuck or hesitant to make bold moves, this friction can push you into action."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0336b9388ebc2366006a725f9f72f081a2990e17c58c06ed77",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_01723233acfda44e006a72620f1640819ca663b6ab60c36c89",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "warmthSource",
+    "weakest": "The final warmth sentence changes the owner line’s cause from a planetary shift to relationship friction, creating a new causal claim that is not supported by the governed source boundary.",
+    "why": "The central interaction is clear and correctly directed: the Sun holder sets the tone, the Ascendant holder clarifies or pushes back, and both repeat a recognizable pressure loop. However, the final sentence adds that this specific friction can push the Ascendant holder into action. Although it closely uses supplied owner wording, the substitution of “this friction” for “this planetary shift” makes the relationship dynamic responsible for an outcome the source material does not establish.",
+    "failedChecks": [
+      "Source-boundary fidelity: the warmth line attributes movement into action to the synastry friction rather than retaining the supplied line’s original causal frame."
+    ],
+    "strengths": [
+      "Correct fixed direction in both reader variants.",
+      "The two-person response loop is plain, concrete, and recognizable.",
+      "The behavior and costs stay ordinary and literal: crowding out, pushing back, pressing a point, and feeling challenged.",
+      "Both variants preserve the same meaning after placeholder resolution.",
+      "All deterministic checks passed, including shape, direction, exclusions, advice, and provenance metadata."
+    ],
+    "sourceFidelity": "Partial. The core three sentences are well supported by the approved human moment and governed boundary. The final sentence has legitimate lexical grounding in the supplied owner foundation line, but its changed causal subject introduces unsupported relational causation.",
+    "foundationTrace": "The final sentence traces near-verbatim to first-new-moon-of-2025-aquarius-new-moon: “If you’ve felt stuck or hesitant to make bold moves, this planetary shift will push you into action.” The draft preserves the condition and action language but replaces “this planetary shift” with “this friction,” which is the repair needed."
+  }
+}

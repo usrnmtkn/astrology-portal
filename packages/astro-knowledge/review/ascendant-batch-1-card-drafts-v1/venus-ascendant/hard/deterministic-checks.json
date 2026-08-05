@@ -1,0 +1,51 @@
+{
+  "target": "venus-ascendant-hard",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "none_found",
+    "reason": "none_found correctly carries no invented warmth provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "You may show approval when Bird presents themselves in a way you like and become cool or critical when they do not. Bird can start second-guessing and editing how they act around you, leaving them less natural and more guarded. That guardedness can make you press your preferences more clearly, so the tension repeats.",
+    "readerIsAscendantHolder": "Bird may show approval when you present yourself in a way they like and become cool or critical when you do not. You can start second-guessing and editing how you act around Bird, leaving you less natural and more guarded. Your guardedness can make Bird press their preferences more clearly, so the tension repeats."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

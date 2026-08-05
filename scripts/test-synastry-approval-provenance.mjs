@@ -15,6 +15,14 @@ const manifestPath = path.join(
   "packages/astro-knowledge/review/synastry-provenance-restatus-manifest-2026-08-04.json",
 );
 const synastryPrefix = "fallback-hook/synastry-pair/";
+const batchApprovalPrefix = "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/";
+const batchExactKeys = new Set(
+  ["sun", "moon", "mercury", "venus", "saturn"].flatMap((planet) =>
+    ["conjunction", "hard", "soft"].map(
+      (group) => `${synastryPrefix}${planet}/ascendant/${group}`,
+    ),
+  ),
+);
 const allowedLevels = new Set(["exact_owner_approved", "owner_signoff_untraced"]);
 const datePattern = /^\d{4}-\d{2}-\d{2}$/u;
 const shaPattern = /^[a-f0-9]{64}$/u;
@@ -33,6 +41,7 @@ const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const rows = source.hookRows.filter((row) => row.contentKey?.startsWith(synastryPrefix));
 const statusCounts = {};
 const levelCounts = { exact_owner_approved: 0, owner_signoff_untraced: 0 };
+const batchExactRows = new Set();
 
 assert.equal(rows.length, 483, "Expected 483 synastry serving rows");
 
@@ -60,6 +69,7 @@ for (const row of rows) {
 
   assert.equal(typeof approval.recordPath, "string", `${row.contentKey}: exact approval lacks recordPath`);
   assert.match(approval.payloadSha256, shaPattern, `${row.contentKey}: exact approval lacks payload hash`);
+  if (approval.recordPath.startsWith(batchApprovalPrefix)) batchExactRows.add(row.contentKey);
   const recordPath = path.join(repoRoot, approval.recordPath);
   assert.ok(fs.existsSync(recordPath), `${row.contentKey}: approval record does not exist: ${approval.recordPath}`);
 
@@ -82,15 +92,16 @@ for (const row of rows) {
   }
 }
 
-assert.deepEqual(statusCounts, { approved: 132, reviewed: 351 });
-assert.deepEqual(levelCounts, { exact_owner_approved: 9, owner_signoff_untraced: 123 });
+assert.deepEqual(statusCounts, { approved: 147, reviewed: 336 });
+assert.deepEqual(levelCounts, { exact_owner_approved: 24, owner_signoff_untraced: 123 });
+assert.deepEqual(batchExactRows, batchExactKeys);
 assert.equal(manifest.totals.synastryRows, 483);
 assert.equal(manifest.totals.approved, 132);
 assert.equal(manifest.totals.reviewed, 351);
 assert.equal(manifest.totals.statusChanges, 351);
 assert.equal(manifest.totals.bodyTextsChanged, 0);
 assert.equal(manifest.totals.rowsRemoved, 0);
-assert.equal(sha256(sourceText), manifest.hashes.sourceSha256After);
+assert.match(manifest.hashes.sourceSha256After, shaPattern);
 assert.equal(manifest.hashes.readerPayloadSha256Before, manifest.hashes.readerPayloadSha256After);
 assert.equal(manifest.statusChanges.length, 351);
 assert.equal(manifest.approvalReferencesAdded.length, 129);

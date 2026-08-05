@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-ascendant-soft-v1",
+  "target": {
+    "factorA": "moon",
+    "factorB": "ascendant",
+    "aspectGroup": "soft",
+    "governedEntryId": "A-moon_B-ascendant_trine"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/moon/ascendant/soft",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "When {{holder2}} enters a situation and shows their natural personality, your emotional reactions tend to help them stay relaxed instead of making them adjust around you. Your feelings, needs, and comfort habits fit easily with how they express themselves, so they do not have to hide what they feel or carefully manage your response. Neither of you usually has to work hard to keep this part of the relationship comfortable.",
+    "body_they": "When you enter a situation and show your natural personality, {{holder1}}'s emotional reactions tend to help you stay relaxed instead of making you adjust around them. Their feelings, needs, and comfort habits fit easily with how you express yourself, so you do not have to hide what you feel or carefully manage their response. Neither of you usually has to work hard to keep this part of the relationship comfortable.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-moon_B-ascendant_trine.json"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": null,
+  "evidenceLabels": [],
+  "harvestMode": "none_found",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_026dd7d4877f54a7006a7261116108819296a8fd2fb39864be",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_01f2c24c08aa77c2006a7262360ea8819c87d9fc071e074d53",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "body_you",
+    "weakest": "The first sentence is slightly more elaborate than necessary, but it remains a plain, supported rendering of the Moon holder's emotional response easing the Ascendant holder's self-presentation.",
+    "why": "Both variants keep the fixed direction clear: the Moon holder's feelings, needs, and comfort habits affect the Ascendant holder's way of entering situations and showing themselves. The response loop is recognizable and stays within the supplied boundary: the Ascendant holder can relax, express feelings without managing the Moon holder's reaction, and neither person has to strain to keep this area comfortable. The prose is literal, parallel across reader variants, and contains no invented warmth turn or second conclusion.",
+    "failedChecks": [],
+    "strengths": [
+      "Clear Moon-holder-to-Ascendant-holder action in both reader variants.",
+      "Supported soft dynamic is concrete: relaxed self-expression without adjustment or response-management.",
+      "Both bodies preserve the same meaning after placeholder resolution.",
+      "Plain, ordinary register with no metaphor, advice, invented scenario, or excluded claim.",
+      "Appropriately omits a warmth beat for none_found harvest mode."
+    ],
+    "sourceFidelity": "High. The draft closely and validly expands the governed translation and approved human moment without importing outside doctrine or unsupported outcomes.",
+    "foundationTrace": "No owner foundation lines were supplied, and harvest mode is none_found. Judgment relies only on the governed source boundary and approved human-moment input."
+  }
+}

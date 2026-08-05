@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "mercury-ascendant-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/mercury-ascendant/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "exact_owner_authored_replacement_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d4f3a1cbdc4bb25759f69df3740ed3b0ff5c145651c564ede0c9b200b49db47c",
+  "payload": {
+    "body_you": "Your questions and comments can make {{holder2}} feel picked apart for how they come across. They may start explaining or defending themselves instead of acting naturally. The more {{holder2}} explains, the more you have to question or respond to. After a while, {{holder2}} starts thinking too hard about what to say before the conversation even begins.",
+    "body_they": "{{holder1}}'s questions and comments can make you feel picked apart for how you come across. You may start explaining or defending yourself instead of acting naturally. The more you explain, the more {{holder1}} has to question or respond to. After a while, you start thinking too hard about what to say before the conversation even begins.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "replace_final_sentence_with_two_owner_authored_sentences",
+    "deletedText": [
+      "When this keeps happening, they can become guarded about how they present themselves around you.",
+      "When this keeps happening, you can become guarded about how you present yourself around {{holder1}}."
+    ],
+    "foundationLineDisposition": "none_found_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "25e23565634d55d9dee67ff65d017f9181dd7858c7bd4832ea7d309e461c1011",
+    "writerProviderResponseSha256": "aa0b45cb6d6fe2de69933be554400ed992bbea129c3c347341454c298b9bf9bd"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/mercury-ascendant/hard/exact-approval.json"
+}

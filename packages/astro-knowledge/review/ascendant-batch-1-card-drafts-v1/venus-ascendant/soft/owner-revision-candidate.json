@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "venus-ascendant-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "fd00adb62ad8dcb67c529b70826682ba4f2f65db97263a4f422c94d499c8122d",
+  "payload": {
+    "body_you": "You respond warmly to the way {{holder2}} naturally comes across. That makes {{holder2}} more relaxed around you. The ease can go mostly unnoticed because neither of you has to work hard to create it.",
+    "body_they": "{{holder1}} responds warmly to the way you naturally come across. That makes you more relaxed around {{holder1}}. The ease can go mostly unnoticed because neither of you has to work hard to create it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_clause_both_variants",
+    "deletedText": [
+      "and less likely to monitor how they are presenting themselves",
+      "and less likely to monitor how you are presenting yourself"
+    ],
+    "foundationLineDisposition": "none_found_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "d69597586f9d4f9216a95420db857383786bf50a54acd53da00838792f7ccd70",
+    "writerProviderResponseSha256": "4a498b1cf3d81ce8bead07861cebe44ef1b271f8386a20d1c16fd0c1ac58810f"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/soft/exact-approval.json"
+}

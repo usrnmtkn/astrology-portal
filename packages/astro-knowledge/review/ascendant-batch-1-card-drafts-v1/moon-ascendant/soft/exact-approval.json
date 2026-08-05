@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-ascendant-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/ascendant/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "610cfe115306dbb08984cf12df6c3f594257f19d3f5d1bb7294783ab7c458eb8",
+  "payload": {
+    "body_you": "When {{holder2}} enters a situation and shows their natural personality, your emotional reactions tend to help them stay relaxed instead of making them adjust around you. Your feelings, needs, and comfort habits fit easily with how they express themselves, so they do not have to hide what they feel or carefully manage your response. Neither of you usually has to work hard to keep this part of the relationship comfortable.",
+    "body_they": "When you enter a situation and show your natural personality, {{holder1}}'s emotional reactions tend to help you stay relaxed instead of making you adjust around them. Their feelings, needs, and comfort habits fit easily with how you express yourself, so you do not have to hide what you feel or carefully manage their response. Neither of you usually has to work hard to keep this part of the relationship comfortable.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

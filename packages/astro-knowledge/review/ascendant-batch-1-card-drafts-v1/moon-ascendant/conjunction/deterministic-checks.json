@@ -1,0 +1,51 @@
+{
+  "target": "moon-ascendant-conjunction",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 4,
+    "body_they": 4
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "matched",
+    "reason": "Used foundation line has complete exact provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "You notice Bird's mood almost immediately, and your own mood and need for comfort affect how freely they act around you. When they want to be understood, your quick response can feel comforting, and they may relax into being themselves. When they want privacy, the same attention can feel exposing, and they may hold back as soon as they sense your reaction. When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.",
+    "readerIsAscendantHolder": "Bird notices your mood almost immediately, and their own mood and need for comfort affect how freely you act around them. When you want to be understood, their quick response can feel comforting, and you may relax into being yourself. When you want privacy, the same attention can feel exposing, and you may hold back as soon as you sense their reaction. When the ground beneath Bird feels unstable, it’s natural for them to want to hold tightly to what they know."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "sourceProviderResponsePreserved": true,
+  "exactlyMatchesAsciiNormalizedOriginalSolDraft": false,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "status": "pass",
+    "body_you": 3,
+    "body_they": 3
+  },
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "asciiPunctuation": "pass",
+  "emOrEnDash": "pass",
+  "stockCloser": "pass",
+  "warmthSource": "owner_decided_no_warmth_beat",
+  "warmthSourcePassed": true,
+  "evidenceLabels": [],
+  "ownerDecisionOperation": "delete_final_sentence_both_variants",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "6d34067efce400fd9d22ea6000e338a2f94c9fd108ac5dcf5b15eee16cd885d0",
+  "ownerExactApproval": "pass",
+  "ownerApprovedPayloadSha256": "6d34067efce400fd9d22ea6000e338a2f94c9fd108ac5dcf5b15eee16cd885d0",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/hard/exact-approval.json"
+}

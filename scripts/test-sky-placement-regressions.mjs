@@ -288,8 +288,8 @@ assert.match(placementRows, /fallbackV3DignityLine/, "Dignity badges must layer 
 assert.match(placementRows, /friendPlacementDescription[\s\S]*fallbackV3PlacementSentence/u, "Friend chart placement rows must read package placement sentences, including covered angles.");
 assert.match(
   ascendantSaturnSquare.body,
-  /^X's Saturn sits at a hard angle to your Ascendant, and it can feel like being graded on arrival\./u,
-  "The package must preserve the owner-approved Ascendant-Saturn authored pair body."
+  /^X may point out problems in how you come across or tell you to be more careful\./u,
+  "The package must preserve the exact owner-approved Ascendant-Saturn hard body."
 );
 assert.match(
   northNodeSouthNodeConjunction.body,

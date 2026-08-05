@@ -1,0 +1,35 @@
+{
+  "mode": "dry-run",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "owner_rejected",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "synastry-foundation-manufacturing-confidence-soft-context-rejection",
+    "surface": "synastry-aspect",
+    "planet": "sun",
+    "articleBeat": "warmth-foundation-soft-context",
+    "before": "Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.",
+    "beforeIsRejected": true,
+    "after": "[rejected without replacement]",
+    "whatChanged": "Removed the adapted line from Sun-Ascendant soft, cleared its warmth provenance, and recorded a future non-blocking editorial flag for foundation-line reuse across shipped cards.",
+    "ownerReason": "The line does not belong in a soft-aspect context and should not be repeated across shipped cards without explicit editorial review.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [
+      "foundation-line-context-mismatch",
+      "foundation-line-reuse"
+    ],
+    "approvalLevel": "owner_rejected",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/soft/draft.json",
+      "packages/astro-knowledge/review/jupiter-ascendant-card-drafts-v1/hard/exact-approval.json",
+      "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md"
+    ],
+    "provenance": "rejection: The 'manufacturing confidence' foundation line is owner-rejected for soft-aspect contexts and was already used in the shipped Jupiter-Ascendant hard card; flag foundation-line reuse across shipped cards for future harvest runs.",
+    "feedbackKind": "rejection",
+    "exactApprovalScope": "not_exact_approval"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

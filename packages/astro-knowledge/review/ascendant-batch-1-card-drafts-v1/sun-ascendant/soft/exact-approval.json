@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-ascendant-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/ascendant/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "8eb7ffc64ca8adef7c4362d880d2c491ebce07c3317512af66cd78d6271a1776",
+  "payload": {
+    "body_you": "When you are clear about who you are and what you want, {{holder2}} feels more comfortable being themselves while meeting people or entering a new situation. As they relax and respond more naturally, it becomes easier for you to keep expressing yourself clearly.",
+    "body_they": "When {{holder1}} is clear about who they are and what they want, you feel more comfortable being yourself while meeting people or entering a new situation. As you relax and respond more naturally, it becomes easier for {{holder1}} to keep expressing themselves clearly.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

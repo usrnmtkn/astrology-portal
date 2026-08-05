@@ -1,0 +1,51 @@
+{
+  "target": "moon-ascendant-soft",
+  "nonemptyFields": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "passed": true,
+    "body_you": 3,
+    "body_they": 3
+  },
+  "rowDirection": {
+    "passed": true,
+    "body_you": true,
+    "body_they": true
+  },
+  "placeholders": {
+    "passed": true,
+    "found": [
+      "{{holder2}}",
+      "{{holder1}}"
+    ]
+  },
+  "punctuation": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "stockCloser": {
+    "passed": true,
+    "match": null
+  },
+  "excludedClaims": {
+    "passed": true,
+    "match": null
+  },
+  "advice": {
+    "passed": true,
+    "match": null
+  },
+  "warmthProvenance": {
+    "passed": true,
+    "harvestMode": "none_found",
+    "reason": "none_found correctly carries no invented warmth provenance."
+  },
+  "preview": {
+    "readerIsPlanetHolder": "When Bird enters a situation and shows their natural personality, your emotional reactions tend to help them stay relaxed instead of making them adjust around you. Your feelings, needs, and comfort habits fit easily with how they express themselves, so they do not have to hide what they feel or carefully manage your response. Neither of you usually has to work hard to keep this part of the relationship comfortable.",
+    "readerIsAscendantHolder": "When you enter a situation and show your natural personality, Bird's emotional reactions tend to help you stay relaxed instead of making you adjust around them. Their feelings, needs, and comfort habits fit easily with how you express yourself, so you do not have to hide what you feel or carefully manage their response. Neither of you usually has to work hard to keep this part of the relationship comfortable."
+  },
+  "unresolvedPreviewTokens": {
+    "passed": true
+  },
+  "overallPassed": true
+}

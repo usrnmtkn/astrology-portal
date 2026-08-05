@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-ascendant-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/ascendant/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d4f3a1cbdc4bb25759f69df3740ed3b0ff5c145651c564ede0c9b200b49db47c",
+  "payload": {
+    "body_you": "Your questions and comments can make {{holder2}} feel picked apart for how they come across. They may start explaining or defending themselves instead of acting naturally. The more {{holder2}} explains, the more you have to question or respond to. After a while, {{holder2}} starts thinking too hard about what to say before the conversation even begins.",
+    "body_they": "{{holder1}}'s questions and comments can make you feel picked apart for how you come across. You may start explaining or defending yourself instead of acting naturally. The more you explain, the more {{holder1}} has to question or respond to. After a while, you start thinking too hard about what to say before the conversation even begins.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/mercury-ascendant/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

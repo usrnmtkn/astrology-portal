@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "reviewSet": "ascendant-batch-1-card-drafts-v1",
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "servingChanged": true,
+  "governedDataChanged": true,
+  "writerCalls": 15,
+  "judgeCalls": 15,
+  "billedCalls": 30,
+  "incompleteAttempts": 1,
+  "totalAttempts": 31,
+  "targets": [
+    {
+      "pair": "sun-ascendant",
+      "target": "conjunction",
+      "candidateRecord": "sun-ascendant/conjunction/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "sun-ascendant",
+      "target": "hard",
+      "candidateRecord": "sun-ascendant/hard/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 2,
+      "terraVerdict": "borderline",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "sun-ascendant",
+      "target": "soft",
+      "candidateRecord": "sun-ascendant/soft/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 2,
+      "terraVerdict": "borderline",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "moon-ascendant",
+      "target": "conjunction",
+      "candidateRecord": "moon-ascendant/conjunction/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "moon-ascendant",
+      "target": "hard",
+      "candidateRecord": "moon-ascendant/hard/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "moon-ascendant",
+      "target": "soft",
+      "candidateRecord": "moon-ascendant/soft/candidate-record.json",
+      "harvestMode": "none_found",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "mercury-ascendant",
+      "target": "conjunction",
+      "candidateRecord": "mercury-ascendant/conjunction/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "mercury-ascendant",
+      "target": "hard",
+      "candidateRecord": "mercury-ascendant/hard/candidate-record.json",
+      "harvestMode": "none_found",
+      "deterministicPassed": true,
+      "terraScore": 2,
+      "terraVerdict": "borderline",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "mercury-ascendant",
+      "target": "soft",
+      "candidateRecord": "mercury-ascendant/soft/candidate-record.json",
+      "harvestMode": "none_found",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "venus-ascendant",
+      "target": "conjunction",
+      "candidateRecord": "venus-ascendant/conjunction/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 2,
+      "terraVerdict": "borderline",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "venus-ascendant",
+      "target": "hard",
+      "candidateRecord": "venus-ascendant/hard/candidate-record.json",
+      "harvestMode": "none_found",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "venus-ascendant",
+      "target": "soft",
+      "candidateRecord": "venus-ascendant/soft/candidate-record.json",
+      "harvestMode": "none_found",
+      "deterministicPassed": true,
+      "terraScore": 2,
+      "terraVerdict": "borderline",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "saturn-ascendant",
+      "target": "conjunction",
+      "candidateRecord": "saturn-ascendant/conjunction/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "saturn-ascendant",
+      "target": "hard",
+      "candidateRecord": "saturn-ascendant/hard/candidate-record.json",
+      "harvestMode": "none_found",
+      "deterministicPassed": true,
+      "terraScore": 3,
+      "terraVerdict": "in-voice",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    },
+    {
+      "pair": "saturn-ascendant",
+      "target": "soft",
+      "candidateRecord": "saturn-ascendant/soft/candidate-record.json",
+      "harvestMode": "matched",
+      "deterministicPassed": true,
+      "terraScore": 2,
+      "terraVerdict": "borderline",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved"
+    }
+  ]
+}

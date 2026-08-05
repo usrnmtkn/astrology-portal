@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-ascendant-soft-v1",
+  "target": {
+    "factorA": "sun",
+    "factorB": "ascendant",
+    "aspectGroup": "soft",
+    "governedEntryId": "A-sun_B-ascendant_trine"
+  },
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_judged",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "candidateRow": {
+    "contentKey": "fallback-hook/synastry-pair/sun/ascendant/soft",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "When you are clear about who you are and what you want, {{holder2}} feels more comfortable being themselves while meeting people or entering a new situation. As they relax and respond more naturally, it becomes easier for you to keep expressing yourself clearly. Because this happens with so little effort, neither of you may mention it, and the help can be taken for granted. With {{holder2}} responding naturally, you notice where you're manufacturing confidence versus actually feeling it.",
+    "body_they": "When {{holder1}} is clear about who they are and what they want, you feel more comfortable being yourself while meeting people or entering a new situation. As you relax and respond more naturally, it becomes easier for {{holder1}} to keep expressing themselves clearly. Because this happens with so little effort, neither of you may mention it, and the help can be taken for granted. With you responding naturally, {{holder1}} notices where they're manufacturing confidence versus actually feeling it.",
+    "review_status": "needs_review",
+    "source_keys": [
+      "packages/astro-knowledge/data/synastry/aspects/A-sun_B-ascendant_trine.json",
+      "this-weeks-astrology-august-24th-31st"
+    ],
+    "notes": "Sol-generated owner-review candidate only. Not approved, promoted, canonical, render-eligible, or serving."
+  },
+  "warmthSource": {
+    "sourceArticleId": "this-weeks-astrology-august-24th-31st",
+    "originalLine": "Monday through Wednesday, notice where you're manufacturing confidence versus actually feeling it.",
+    "usedForm": {
+      "body_you": "With {{holder2}} responding naturally, you notice where you're manufacturing confidence versus actually feeling it.",
+      "body_they": "With you responding naturally, {{holder1}} notices where they're manufacturing confidence versus actually feeling it."
+    }
+  },
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "harvestMode": "matched",
+  "provenance": {
+    "compiledWritingPacket": "writing-packet.json",
+    "writerModelInput": "sol-model-input.md",
+    "writerResponseId": "resp_0768a54f1ff9560f006a725fb549e08191a98b1436f5d6217c",
+    "writerModel": "gpt-5.6-sol",
+    "writerReasoningEffort": "xhigh",
+    "deterministicChecks": "deterministic-checks.json",
+    "judgeModelInput": "terra-model-input.md",
+    "judgeResponseId": "resp_081e327bbd2893b9006a7262190368819c961c4ec4ee0cfc57",
+    "judgeModel": "gpt-5.6-terra",
+    "judgeReasoningEffort": "low",
+    "judgeVerdict": "terra-verdict.json"
+  },
+  "deterministicPassed": true,
+  "terra": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "body_you / body_they, third sentence",
+    "weakest": "“the help can be taken for granted” adds a relational consequence not stated in the governed source boundary.",
+    "why": "The direction is clear and consistent: the Sun holder’s self-definition helps the Ascendant holder feel more at ease presenting themselves, and the reciprocal response loop is plain. The soft quality is also recognizable through the low-effort, unspoken ease. However, the claim that this help may be taken for granted is a specific consequence beyond the supplied boundary’s language about ease and quiet steadiness. It is a small, repairable source-fidelity drift rather than a structural failure.",
+    "failedChecks": [
+      "Supported-claim boundary: “the help can be taken for granted” is not directly supported by the governed source or approved human-moment input."
+    ],
+    "strengths": [
+      "Both variants preserve the fixed Sun-to-Ascendant direction.",
+      "The central human moment closely follows the approved input.",
+      "The reciprocal loop is ordinary, literal, and easy to follow.",
+      "The low-effort framing reflects the soft-aspect source boundary.",
+      "The final confidence sentence has exact owner-foundation provenance and appears after the cost without adding another conclusion.",
+      "Deterministic checks pass."
+    ],
+    "sourceFidelity": "Mostly faithful. The identity/clarity-to-comfortable-self-presentation interaction, effortless quality, and confidence wording remain grounded in supplied material. The “taken for granted” consequence is the lone unsupported extension.",
+    "foundationTrace": "The final sentence in each variant is a near-verbatim contextual adaptation of the matched foundation line: “notice where you’re manufacturing confidence versus actually feeling it.”"
+  }
+}

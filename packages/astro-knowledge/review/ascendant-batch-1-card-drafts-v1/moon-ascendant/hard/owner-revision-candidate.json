@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-ascendant-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_with_required_ascii_normalization",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "bfbc1453900c1e1c39e83b9cf369084f50e99cddd0015f63af1258ecf5868dd7",
+  "payload": {
+    "body_you": "Your moods and need for comfort can make {{holder2}} cautious about how they act around you. They may watch your reactions and change how they enter a situation to prevent tension before anything has even happened, which leaves them less free to be themselves. The pressure on {{holder2}} to be what you expect is real, but so is their capacity to choose themselves.",
+    "body_they": "{{holder1}}'s moods and need for comfort can make you cautious about how you act around them. You may watch their reactions and change how you enter a situation to prevent tension before anything has even happened, which leaves you less free to be yourself. The pressure to be what they expect is real, but so is your capacity to choose yourself.",
+    "warmthSource": {
+      "sourceArticleId": "leo-new-moon-2025",
+      "originalLine": "The pressure to be what others expect is real, but so is your capacity to choose yourself.",
+      "usedForm": {
+        "body_you": "The pressure on {{holder2}} to be what you expect is real, but so is their capacity to choose themselves.",
+        "body_they": "The pressure to be what they expect is real, but so is your capacity to choose yourself."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "foundationLineDisposition": "retained",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "2a89f6467f1846f7caf6a9d0905b2a9204cdf4f5eeb200bcfdec79bd3ef05d1c",
+    "writerProviderResponseSha256": "78b8a76e96fe4495255b60cce7f6667349d4ab58f224f3f36a95f37d6b4a1c1e"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/hard/exact-approval.json"
+}
