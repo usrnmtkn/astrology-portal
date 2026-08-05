@@ -133,7 +133,7 @@ for (const row of rows) {
 }
 
 assert.deepEqual(statusCounts, { approved: 153, reviewed: 330 });
-assert.deepEqual(levelCounts, { exact_owner_approved: 120, owner_signoff_untraced: 33 });
+assert.deepEqual(levelCounts, { exact_owner_approved: 153, owner_signoff_untraced: 0 });
 assert.deepEqual(batchExactRows, batchExactKeys);
 assert.equal(manifest.totals.synastryRows, 483);
 assert.equal(manifest.totals.approved, 132);
