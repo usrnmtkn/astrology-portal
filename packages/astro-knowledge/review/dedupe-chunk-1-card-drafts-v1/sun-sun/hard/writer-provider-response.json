@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_07e525686b4b6d02006a729580fea0819d9aeaadc29245d11d",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 778,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 590,
+    "output_tokens_details": {
+      "reasoning_tokens": 432
+    },
+    "total_tokens": 1368
+  },
+  "output_text": "{\"body_you\":\"You and {{holder2}} often want different things at the same time, and both of you can feel crowded by the other's direction. When you insist on your way, {{holder2}} pushes back to protect theirs, and that resistance makes you press harder. Disagreements can become contests over whose judgment and priorities will lead.\",\"body_they\":\"{{holder1}} and you often want different things at the same time, and both of you can feel crowded by the other's direction. When {{holder1}} insists on their way, you push back to protect yours, and your resistance makes {{holder1}} press harder. Disagreements can become contests over whose judgment and priorities will lead.\",\"warmthSource\":null,\"labels\":[]}"
+}

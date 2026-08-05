@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_02189c210e59ddb9006a7295c4d66881a0b559f8f52ee86f66",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 793,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1110,
+    "output_tokens_details": {
+      "reasoning_tokens": 948
+    },
+    "total_tokens": 1903
+  },
+  "output_text": "{\"body_you\":\"Your sense of who you are is easy for {{holder2}} to understand, so they usually follow what you mean without making you explain every step. Their replies help you put your position into clearer words, and you leave the conversation feeling more like yourself. This takes little effort, which can make its steadying effect easy to overlook.\",\"body_they\":\"{{holder1}}'s sense of who they are is easy for you to understand, so you usually follow what they mean without making them explain every step. Your replies help {{holder1}} put their position into clearer words, and they leave the conversation feeling more like themselves. This takes little effort, which can make its steadying effect easy to overlook.\",\"warmthSource\":null,\"labels\":[]}"
+}

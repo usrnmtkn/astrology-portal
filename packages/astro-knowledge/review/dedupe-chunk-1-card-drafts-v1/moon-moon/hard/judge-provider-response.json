@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_07905f0f49c41297006a72968339ac81a1a18a4ab759362ddf",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1278,
+    "input_tokens_details": {
+      "cache_write_tokens": 1275,
+      "cached_tokens": 0
+    },
+    "output_tokens": 311,
+    "output_tokens_details": {
+      "reasoning_tokens": 156
+    },
+    "total_tokens": 1589
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the fixed direction: in \\\"What helps you feel settled often unsettles {{holder2}}\\\" and its reciprocal counterpart, each person's comfort response is shown as destabilizing the other. The second sentence supplies a recognizable loop and cost: discomfort leads to defensive reactions, which leave \\\"neither of you feeling cared for.\\\" The variants remain meaningfully parallel and stay within the governed emotional-needs boundary. However, the final sentence, \\\"Together, the deeper work lies in redefining what makes each of you feel secure,\\\" functions as a broad second conclusion after the loop has already landed, even though its reader-facing turn is properly traced to the supplied foundation line.\"}"
+}

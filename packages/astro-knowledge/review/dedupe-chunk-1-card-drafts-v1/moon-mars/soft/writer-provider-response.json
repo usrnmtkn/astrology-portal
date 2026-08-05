@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0d288d881c063a1d006a729d08f720819db3e272808b13ccdf",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 792,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1125,
+    "output_tokens_details": {
+      "reasoning_tokens": 991
+    },
+    "total_tokens": 1917
+  },
+  "output_text": "{\"body_you\":\"{{holder2}} can move quickly or speak directly without making you pull back. Your emotional reactions help shape what {{holder2}} does next, while your moods do not make them stop to calm you down. Neither of you has to spend much effort managing the other's pace or response.\",\"body_they\":\"You can move quickly or speak directly without making {{holder1}} pull back. Their emotional reactions help shape what you do next, while their moods do not make you stop to calm them down. Neither of you has to spend much effort managing the other's pace or response.\",\"warmthSource\":null,\"labels\":[]}"
+}
