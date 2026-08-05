@@ -14,6 +14,7 @@ const signupViewSource = fs.readFileSync(
 const manualChartsPanelSource = appSource.slice(appSource.indexOf("function ManualChartsPanel"));
 const profileViewSource = appSource.slice(appSource.indexOf("function ProfileView"), appSource.indexOf("function ManualChartsPanel"));
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
+const indexSource = fs.readFileSync(path.join(repoRoot, "apps/web/index.html"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
@@ -134,6 +135,26 @@ const styleWaitIndex = mainSource.indexOf('await import("./styles.css")');
 assert.ok(appImportIndex >= 0, "Startup must create an App import promise.");
 assert.ok(styleWaitIndex >= 0, "Startup must await its reader stylesheet entry.");
 assert.ok(appImportIndex < styleWaitIndex, "The App download must start before startup waits for CSS.");
+assert.match(
+  indexSource,
+  /addEventListener\("vite:preloadError"/u,
+  "The document bootstrap must recover when a stale deployment preload fails."
+);
+assert.match(
+  indexSource,
+  /The calendar needs a fresh load/u,
+  "A repeated startup failure must render a visible reload action instead of a blank page."
+);
+assert.match(
+  indexSource,
+  /addEventListener\("unhandledrejection"[\s\S]*root"\)\?\.firstElementChild\) recover\(\)/u,
+  "The document bootstrap must recover from startup imports that reject before React mounts."
+);
+assert.match(
+  indexSource,
+  /sessionStorage\.setItem\(recoveryKey[\s\S]*location\.reload\(\)/u,
+  "Startup recovery must retry once before showing its manual reload action."
+);
 assert.doesNotMatch(mainSource, /setInterval\s*\(/u, "Blank-restore recovery must not keep a lifetime polling interval.");
 assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Startup must keep bounded blank-mount checks.");
 assert.match(viteSource, /fallback-content-core/u, "Core fallback content must have a stable cache chunk.");
