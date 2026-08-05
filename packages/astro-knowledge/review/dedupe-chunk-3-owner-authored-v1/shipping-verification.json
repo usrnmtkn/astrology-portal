@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "branch": "codex/dedupe-chunk-3-owner-authored",
+  "baseCommit": "54cc66a872e440b89eed1522d92becfa96c7adc6",
+  "packageVersion": "v3-2026-08-05b",
+  "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "authorship": "owner_authored",
+    "approvedAt": "2026-08-05",
+    "targetCount": 30,
+    "pairCount": 10,
+    "approvalRecordCount": 30,
+    "payloadHashesVerified": true
+  },
+  "scope": {
+    "sourceRowsChanged": 30,
+    "unrelatedSourceRowsChanged": 0,
+    "synastryRowsPreserved": 483,
+    "aspectDistinctPairsAfterShipping": 10,
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "governedHumanMomentsAdded": 0,
+    "dashboardSynchronizationIncluded": false,
+    "productionDeploymentIncluded": true,
+    "mergeAuthorized": true
+  },
+  "tests": {
+    "ownerAuthoredPayloadHashes": "pass_30_of_30",
+    "exactApprovalRecords": "pass_30_of_30",
+    "dedupeChunkResolverAndGeneratedMirrorContract": "pass_30_cards_10_aspect_distinct_pairs_120_node_browser_renders",
+    "governedPacketFailClosedContract": "pass_30_missing_human_moment",
+    "synastryApprovalProvenance": "pass_483_rows_153_approved_330_reviewed_120_exact_33_untraced",
+    "stockCloserHistoricalContract": "pass_336_deletions_preserved",
+    "fallbackManifestCheck": "pass_7243_keys",
+    "fallbackPackageCacheContract": "pass",
+    "fallbackRefreshWiring": "pass",
+    "readerFacingContentContract": "pass",
+    "fullContentSuite": "pass",
+    "typecheck": "pass",
+    "webBuild": "pass",
+    "gitDiffCheck": "pass"
+  },
+  "bundleBudget": {
+    "currentMainLocalBytes": 2630331,
+    "candidateLocalBytes": 2634724,
+    "contentDeltaBytes": 4393,
+    "priorBudgetBytes": 2630376,
+    "localOverageBytes": 4348,
+    "candidateBudgetBytes": 2634724,
+    "reason": "Minimum local increase required solely by the larger owner-authored content payload and its generated distribution artifacts. Hosted CI remains authoritative for cross-platform gzip variance."
+  },
+  "pullRequestStatus": "authorized_for_draft_ready_merge",
+  "servingStatus": "candidate_branch_only_until_merge"
+}
