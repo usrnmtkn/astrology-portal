@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "packetType": "aspect-writing-packet",
+  "status": "ready",
+  "generationAllowed": true,
+  "target": {
+    "id": "A-neptune_B-ascendant_conjunction",
+    "surface": "synastry-aspect",
+    "format": "full-card",
+    "humanMoment": "{{holder1}} sees something special in {{holder2}}, but {{holder2}} may start becoming the version of themselves that {{holder1}} wants to believe in."
+  },
+  "method": {
+    "id": "corpus-warmth-harvest",
+    "sourcePath": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "required": true
+  },
+  "warmthHarvest": {
+    "schemaVersion": 1,
+    "status": "ready",
+    "generationAllowed": true,
+    "surface": "synastry-aspect",
+    "voice": "second_person",
+    "harvest_mode": "matched",
+    "humanMoment": "{{holder1}} sees something special in {{holder2}}, but {{holder2}} may start becoming the version of themselves that {{holder1}} wants to believe in.",
+    "searchTerms": [
+      "want",
+      "wants",
+      "wanted",
+      "desire",
+      "hunger",
+      "hungry",
+      "attraction",
+      "urge",
+      "craving",
+      "appetite",
+      "pleasure"
+    ],
+    "ownerFoundationLines": [
+      {
+        "sourceArticleId": "aquarius-season-2025",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/aquarius-season-2025.md",
+        "originalLine": "When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.",
+        "suppliedLine": "When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.",
+        "selectionReasons": [
+          "1 emotional-core term",
+          "second person retained for natal surface"
+        ]
+      },
+      {
+        "sourceArticleId": "cancer-new-moon-2025",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/cancer-new-moon-2025.md",
+        "originalLine": "You might feel the urge to rework how you earn, save, or spend.",
+        "suppliedLine": "You might feel the urge to rework how you earn, save, or spend.",
+        "selectionReasons": [
+          "1 emotional-core term",
+          "second person retained for natal surface"
+        ]
+      },
+      {
+        "sourceArticleId": "full-moon-in-taurus",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+        "originalLine": "Your body knows the difference between joy and productive joy, you can feel it in how you hold yourself when creating for approval versus creating for pleasure.",
+        "suppliedLine": "Your body knows the difference between joy and productive joy, you can feel it in how you hold yourself when creating for approval versus creating for pleasure.",
+        "selectionReasons": [
+          "1 emotional-core term",
+          "second person retained for natal surface"
+        ]
+      }
+    ],
+    "flags": [],
+    "insertInstruction": "Adapt one of these into the card where it lands naturally, keeping its meaning and register. Verbatim is preferred when it fits. Use at most one.",
+    "placementInstruction": "Use one warmth sentence after the shadow or cost is named. It must be the final sentence or the sentence before it. Do not add a second conclusion."
+  },
+  "promptBlock": "OWNER FOUNDATION LINES:\n[1] (aquarius-season-2025) When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.\n[2] (cancer-new-moon-2025) You might feel the urge to rework how you earn, save, or spend.\n[3] (full-moon-in-taurus) Your body knows the difference between joy and productive joy, you can feel it in how you hold yourself when creating for approval versus creating for pleasure.\n\nAdapt one of these into the card where it lands naturally, keeping its meaning and register. Verbatim is preferred when it fits. Use at most one.\nUse one warmth sentence after the shadow or cost is named. It must be the final sentence or the sentence before it. Do not add a second conclusion.",
+  "scaleRule": {
+    "harvest_mode": "matched",
+    "insertWarmthBeat": true,
+    "maximumWarmthSentences": 1,
+    "placement": "after the shadow or cost; final or penultimate sentence",
+    "stackedEndingRuleUnchanged": true
+  },
+  "pronounPolicy": "Second person is allowed; supply owner lines verbatim with pronouns intact.",
+  "candidateRecordContract": {
+    "whenFoundationLineIsUsed": {
+      "requiredLabel": "owner-corpus-derived",
+      "warmthSource": {
+        "sourceArticleId": "required",
+        "originalLine": "required",
+        "usedForm": "required"
+      }
+    },
+    "approvalEffect": "none",
+    "reviewGatesUnchanged": true
+  },
+  "judgeAddition": "The card's turn toward the reader must trace to the supplied owner foundation lines when present. An invented permission or reassurance line in place of the supplied material scores 2; a card with no turn toward the reader at all, when foundation lines were supplied, scores 2. Verbatim or near-verbatim use of a supplied owner line is never penalized as copying - it is the owner's own writing.",
+  "flags": []
+}
