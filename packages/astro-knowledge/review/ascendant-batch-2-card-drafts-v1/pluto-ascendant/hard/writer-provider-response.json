@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0f3272675e8fe440006a7282953d40819f97c7912a3f4b9391",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 806,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1153,
+    "output_tokens_details": {
+      "reasoning_tokens": 997
+    },
+    "total_tokens": 1959
+  },
+  "output_text": "{\"body_you\":\"Your intensity and need to know what {{holder2}} is really thinking can put pressure on how they act around you. Instead of reacting naturally, they may choose every word and expression carefully and keep more of themselves hidden. Their restraint can make you press them for a more honest response, which leaves them even more guarded.\",\"body_they\":\"{{holder1}}'s intensity and need to know what you are really thinking can put pressure on how you act around them. Instead of reacting naturally, you may choose every word and expression carefully and keep more of yourself hidden. Your restraint can make {{holder1}} press you for a more honest response, which leaves you even more guarded.\",\"warmthSource\":null,\"labels\":[]}"
+}

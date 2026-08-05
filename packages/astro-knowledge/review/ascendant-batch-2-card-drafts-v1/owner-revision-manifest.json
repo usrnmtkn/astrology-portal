@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "reviewSet": "ascendant-batch-2-card-drafts-v1",
+  "revisionMethod": "owner_directed_deletions_and_approved_as_drafted_no_model_calls",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "originalSolArtifactsPreserved": true,
+  "additionalBilledCalls": 0,
+  "deterministicChecks": "pass: 6 of 6",
+  "targetCount": 6,
+  "targets": [
+    {
+      "target": "neptune-ascendant-conjunction",
+      "candidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/conjunction/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/conjunction/owner-revision-deterministic-checks.json",
+      "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+      "payloadSha256": "8ef56d0d1b532d87dd8041dffd1bd89b74a8f5d384770327bd81440335f49e38",
+      "deterministicChecks": "pass",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved",
+      "approvedAt": "2026-08-04",
+      "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/conjunction/exact-approval.json"
+    },
+    {
+      "target": "neptune-ascendant-hard",
+      "candidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/hard/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/hard/owner-revision-deterministic-checks.json",
+      "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+      "payloadSha256": "b2c1c9702fc02a7244d0e2204f52692260359e00178bbc9ab95167c28d963ac6",
+      "deterministicChecks": "pass",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved",
+      "approvedAt": "2026-08-04",
+      "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/hard/exact-approval.json"
+    },
+    {
+      "target": "neptune-ascendant-soft",
+      "candidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/soft/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/soft/owner-revision-deterministic-checks.json",
+      "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+      "payloadSha256": "91f6efc2105acce579f55447477fd6912d445a9c6f566d1a7fa36644008d39fb",
+      "deterministicChecks": "pass",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved",
+      "approvedAt": "2026-08-04",
+      "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/soft/exact-approval.json"
+    },
+    {
+      "target": "pluto-ascendant-conjunction",
+      "candidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/conjunction/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/conjunction/owner-revision-deterministic-checks.json",
+      "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+      "payloadSha256": "bc47d7f3ab41bd529f608294f80764c4741c59ac063f5c9d5845e65d62348708",
+      "deterministicChecks": "pass",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved",
+      "approvedAt": "2026-08-04",
+      "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/conjunction/exact-approval.json"
+    },
+    {
+      "target": "pluto-ascendant-hard",
+      "candidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/hard/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/hard/owner-revision-deterministic-checks.json",
+      "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+      "payloadSha256": "893bb3b215f8859a08283211f81e280193097411fbb07a2ed6749a2464973cda",
+      "deterministicChecks": "pass",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved",
+      "approvedAt": "2026-08-04",
+      "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/hard/exact-approval.json"
+    },
+    {
+      "target": "pluto-ascendant-soft",
+      "candidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/soft/owner-revision-candidate.json",
+      "checksPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/soft/owner-revision-deterministic-checks.json",
+      "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+      "payloadSha256": "43c9d014c1ba2fe06cf332ecb9c215c9721ea81ed8b18071cbc9226637efb944",
+      "deterministicChecks": "pass",
+      "status": "exact_owner_approved",
+      "approvalLevel": "exact_owner_approved",
+      "approvedAt": "2026-08-04",
+      "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/soft/exact-approval.json"
+    }
+  ],
+  "approvalRecordStatus": "created_6_exact_owner_approved",
+  "servingStatus": "six_source_rows_replaced_on_candidate_branch_draft_pr_pending_merge_authorization_required",
+  "promotionAuthorized": false
+}
