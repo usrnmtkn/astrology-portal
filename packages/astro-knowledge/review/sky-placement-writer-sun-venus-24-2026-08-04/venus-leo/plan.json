@@ -1,0 +1,169 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "venus",
+  "sign": "leo",
+  "outDir": "/private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-leo",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:leo-season-2025:p092:window-1-3",
+    "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:venus-in-cancer:p009:window-3-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:venus-leo",
+    "planet": "venus",
+    "sign": "leo",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/venus-leo.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With Venus in Leo, affection wants joy, celebration, romance, and visible appreciation. You value love that feels alive, proud, and creative."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/venus.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Venus describes attraction, pleasure, beauty, values, money, comfort, desire, and the conditions that help connection feel worth choosing. It shows what someone is drawn toward and what helps affection become real rather than only appealing. Venus moves through all twelve signs in about a year, with retrograde cycles that ask for review around love, value, beauty, money, and desire. Its sign describes the style of relating; its house shows where ease, attraction, and value become active. With Venus in Leo, your love is dramatic, warm, and generous. You appreciate grand gestures of love and seek to be adored and admired in your relationships. You are drawn to those who are confident and expressive, and you enjoy sharing a glamorous social life with your partner."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "cancer",
+          "priorSignEntryDate": "July 2, 2027",
+          "priorSignExitDate": "July 27, 2027",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "renderOwner": "engine",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 1 year",
+          "typicalSignStay": "roughly 3 weeks to 4 months per sign",
+          "variabilityNote": "A retrograde in the sign can extend the residency."
+        }
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": [
+          "eventsDuringTransit"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "aspect_insert",
+        "renderOwner": "engine",
+        "maxEvents": 2,
+        "facts": {
+          "eventsDuringTransit": [
+            {
+              "id": "aspect-venus-trine-neptune-2027-08-01t19:32:48.999z",
+              "date": "August 1, 2027",
+              "body": "venus-trine-neptune",
+              "eventType": "exact-aspect",
+              "meaning": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism. The trine makes this a natural strength: Refined aesthetic and tender, imaginative affection. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/venus-trine-neptune.json"
+            },
+            {
+              "id": "aspect-venus-sextile-uranus-2027-08-03t23:53:22.999z",
+              "date": "August 3, 2027",
+              "body": "venus-sextile-uranus",
+              "eventType": "exact-aspect",
+              "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. The sextile makes this a natural strength: Exciting, unconventional bonds and an original aesthetic; freedom inside closeness. The growth edge is not to coast on the ease.",
+              "meaningSource": "packages/astro-knowledge/data/transits/venus-sextile-uranus.json"
+            }
+          ]
+        }
+      },
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": [
+          "previousResidencyEntryDate",
+          "previousResidencyExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "renderOwner": "writer",
+        "facts": {
+          "sign": "leo",
+          "entryDate": "June 13, 2026",
+          "exitDate": "July 9, 2026",
+          "renderTokens": {
+            "entryDate": "{{previousResidencyEntryDate}}",
+            "exitDate": "{{previousResidencyExitDate}}"
+          }
+        }
+      }
+    ],
+    "inactive": []
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet venus --sign leo --engine-facts /private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-leo/engine-facts.json --out /private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-leo"
+}

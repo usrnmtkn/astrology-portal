@@ -1,0 +1,65 @@
+{
+  "responseId": "resp_02b1da455f49fb3f006a7295778ed081a18e700ea1ea9c2c62",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:venus-in-cancer:p009:window-3-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:gemini-new-moon-2025:p004:window-2-3"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:venus-scorpio",
+    "planet": "venus",
+    "sign": "scorpio",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8194,
+    "input_tokens_details": {
+      "cache_write_tokens": 8191,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4292,
+    "output_tokens_details": {
+      "reasoning_tokens": 3889
+    },
+    "total_tokens": 12486
+  },
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Scorpio on {{entryDate}}, and attraction becomes more private, intense, and exacting. A casual answer no longer feels sufficient. The follow-up question gets asked. A vague reply is remembered. Affection shows up as attention to what is not being said and a willingness to enter conversations that usually get avoided.",
+    "tension": "That attention can uncover what a pleasant exchange would miss. It can also turn every gap into evidence. We notice a changed tone, ask what it means, then keep pressing after a clear answer has been given. Someone withholds a detail to see whether it will be noticed. Reassurance arrives, but gets treated as suspicious because it came too easily. Control starts to look like a way to make trust certain. The bond gets more intense, but not more honest.",
+    "development": "Venus last moved through Scorpio from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and similar questions of attachment can surface now in different forms. The pressure grows when depth is measured by distress. A calm connection can seem less convincing than one that keeps us guessing. We protect privacy by keeping back the one detail that would change the conversation. A direct request for honesty becomes a test with no announced rules. Once love has to survive repeated suspicion to count as real, even open affection gets checked for hidden motives. We collect more clues, but become less able to receive what is offered without wondering what it hides.",
+    "close": "Before {{exitDate}}, repeated tests can leave a bond full of doubt and short on the trust they were meant to prove.",
+    "try_this": [
+      "We can ask one direct question about a current bond instead of checking for clues.",
+      "We can accept one offered kindness, such as a meal or a ride, without treating it as a debt or a test."
+    ]
+  }
+}

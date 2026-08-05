@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "aquarius",
+  "timeZone": "America/New_York",
+  "transitStart": "January 20, 2027",
+  "transitEnd": "February 18, 2027",
+  "transitStartIso": "2027-01-20T07:29:51.999Z",
+  "transitEndIso": "2027-02-18T21:33:28.999Z",
+  "priorSign": "capricorn",
+  "priorSignEntryDate": "December 21, 2026",
+  "priorSignExitDate": "January 20, 2027",
+  "previousResidency": {
+    "sign": "aquarius",
+    "entryDate": "January 19, 2025",
+    "exitDate": "February 18, 2025",
+    "entryDateIso": "2025-01-19T20:00:07.999Z",
+    "exitDateIso": "2025-02-18T10:06:34.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-sextile-neptune-2027-01-22t08:29:40.999z",
+      "body": "sun-sextile-neptune",
+      "bodies": [
+        "sun",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "January 22, 2027",
+      "dateIso": "2027-01-22T08:29:40.999Z",
+      "rank": 1,
+      "meaning": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. The sextile makes this a natural strength: Imaginative and compassionate; creative and charitable directions come naturally. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-sextile-neptune.json"
+    },
+    {
+      "id": "aspect-sun-trine-uranus-2027-01-22t02:18:56.999z",
+      "body": "sun-trine-uranus",
+      "bodies": [
+        "sun",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "January 21, 2027",
+      "dateIso": "2027-01-22T02:18:56.999Z",
+      "rank": 2,
+      "meaning": "Identity meets independence and disruption. The urge to be different and to do things your own way. The trine makes this a natural strength: Originality that reads as brilliance or healthy independence. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-trine-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-sextile-neptune.json",
+      "packages/astro-knowledge/data/transits/sun-trine-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

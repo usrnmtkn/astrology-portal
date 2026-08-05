@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "scorpio",
+  "timeZone": "America/New_York",
+  "transitStart": "October 23, 2026",
+  "transitEnd": "November 22, 2026",
+  "transitStartIso": "2026-10-23T09:37:56.999Z",
+  "transitEndIso": "2026-11-22T07:23:20.999Z",
+  "priorSign": "libra",
+  "priorSignEntryDate": "September 22, 2026",
+  "priorSignExitDate": "October 23, 2026",
+  "previousResidency": {
+    "sign": "scorpio",
+    "entryDate": "October 22, 2024",
+    "exitDate": "November 21, 2024",
+    "entryDateIso": "2024-10-22T22:14:44.999Z",
+    "exitDateIso": "2024-11-21T19:56:29.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-square-pluto-2026-10-26t12:11:47.999z",
+      "body": "sun-square-pluto",
+      "bodies": [
+        "sun",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "October 26, 2026",
+      "dateIso": "2026-10-26T12:11:47.999Z",
+      "rank": 1,
+      "meaning": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Psychologically the square is inner tension to integrate: Power runs to extremes and relationships tip into control struggles. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-pluto.json"
+    },
+    {
+      "id": "aspect-sun-square-jupiter-2026-11-18t09:38:35.999z",
+      "body": "sun-square-jupiter",
+      "bodies": [
+        "sun",
+        "jupiter"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "November 18, 2026",
+      "dateIso": "2026-11-18T09:38:35.999Z",
+      "rank": 2,
+      "meaning": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate. Psychologically the square is inner tension to integrate: The same confidence overreaches. Sooner or later the luck gets pushed too far. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-jupiter.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-square-pluto.json",
+      "packages/astro-knowledge/data/transits/sun-square-jupiter.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}
