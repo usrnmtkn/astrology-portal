@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-uranus-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/uranus/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "6ad3522fbf60622bc23af0b5e6f27311b05086fadcab027b6d039f76b9f71488",
+  "payload": {
+    "body_you": "{{holder2}} keeps {{holder1}} emotionally awake. Around them, {{holder1}} may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make {{holder1}} wonder which version of the closeness will be waiting at the door.",
+    "body_they": "{{holder2}} keeps {{holder1}} emotionally awake. Around them, {{holder1}} may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make {{holder1}} wonder which version of the closeness will be waiting at the door.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-uranus/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

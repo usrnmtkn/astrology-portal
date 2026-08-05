@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-pluto-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/pluto/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "02a1e4f8b36f1041ddda9921ed158433ebe980033d9c8c8dfad1ed663c5f776d",
+  "payload": {
+    "body_you": "{{holder1}} can tell {{holder2}} the difficult truth without changing it to make the conversation easier. {{holder2}} stays present with feelings {{holder1}} usually hides, but does not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because {{holder1}} can go deeper without losing track of what still belongs to them.",
+    "body_they": "{{holder1}} can tell {{holder2}} the difficult truth without changing it to make the conversation easier. {{holder2}} stays present with feelings {{holder1}} usually hides, but does not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because {{holder1}} can go deeper without losing track of what still belongs to them.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-pluto/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

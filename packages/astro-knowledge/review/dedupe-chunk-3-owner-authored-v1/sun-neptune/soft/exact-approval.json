@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-neptune-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/neptune/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "fd4b84005ee55792d765de36cc5313c90afa838945b24b8f56bbfe629a3fce72",
+  "payload": {
+    "body_you": "{{holder2}} gives {{holder1}} the benefit of the doubt before reaching for the red pen. That kindness can make {{holder1}} feel accepted, especially when they are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them.",
+    "body_they": "{{holder2}} gives {{holder1}} the benefit of the doubt before reaching for the red pen. That kindness can make {{holder1}} feel accepted, especially when they are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-neptune/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}
