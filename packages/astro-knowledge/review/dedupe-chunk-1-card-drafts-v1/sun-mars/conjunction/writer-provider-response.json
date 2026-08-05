@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_027adb3733383b83006a72961bc330819fb676e8ad9c20b484",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 937,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1073,
+    "output_tokens_details": {
+      "reasoning_tokens": 890
+    },
+    "total_tokens": 2010
+  },
+  "output_text": "{\"body_you\":\"You give {{holder2}}'s urge to act a clear direction, and they respond by moving faster, which pushes you to commit just as quickly. That feedback loop can rush decisions before either of you checks whether you both actually agreed, and a difference of opinion can quickly feel like a contest. When you are both genuinely on board, their drive and your direction make acting together feel exciting and immediate.\",\"body_they\":\"{{holder1}} gives your urge to act a clear direction, and you respond by moving faster, which pushes them to commit just as quickly. That feedback loop can rush decisions before either of you checks whether you both actually agreed, and a difference of opinion can quickly feel like a contest. When you are both genuinely on board, your drive and their direction make acting together feel exciting and immediate.\",\"warmthSource\":null,\"labels\":[]}"
+}

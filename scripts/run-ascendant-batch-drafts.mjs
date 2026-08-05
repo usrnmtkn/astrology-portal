@@ -167,6 +167,22 @@ Return strict JSON: {"score": <1|2|3>, "verdict": "<in-voice|borderline|out-of-v
 // Renames only; never touches wording. Records what was normalized.
 function normalizeDraft(draft) {
   const normalized = [];
+  // Typographic -> ASCII punctuation (the owner corpus contains curly quotes;
+  // serving convention is straight). Wording-neutral, applied to all text fields.
+  const ascii = (s) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
+  const fixText = (obj, key, label) => {
+    if (typeof obj?.[key] === "string" && ascii(obj[key]) !== obj[key]) {
+      obj[key] = ascii(obj[key]);
+      normalized.push(`${label}: typographic punctuation -> ASCII`);
+    }
+  };
+  fixText(draft, "body_you", "body_you");
+  fixText(draft, "body_they", "body_they");
+  if (draft?.warmthSource && typeof draft.warmthSource === "object") {
+    fixText(draft.warmthSource, "originalLine", "warmthSource.originalLine");
+    fixText(draft.warmthSource.usedForm || {}, "body_you", "warmthSource.usedForm.body_you");
+    fixText(draft.warmthSource.usedForm || {}, "body_they", "warmthSource.usedForm.body_they");
+  }
   const ws = draft?.warmthSource;
   if (ws && typeof ws === "object") {
     const aliases = { ownerFoundationSource: "sourceArticleId", ownerFoundationLine: "originalLine" };
@@ -285,12 +301,12 @@ const redactedCall = (kind, target, r, requested) => ({
 });
 
 // ---------- main ----------
-const log = {
-  schemaVersion: 1,
-  authorization: config.authorization,
-  expected: config.expectedCalls,
-  calls: [],
-};
+// The call log is cumulative across invocations: load and append, never replace.
+const logPath = path.join(OUT_ROOT, "billed-call-log.json");
+const log = fs.existsSync(logPath)
+  ? JSON.parse(fs.readFileSync(logPath, "utf8"))
+  : { schemaVersion: 1, authorization: config.authorization, expected: config.expectedCalls, calls: [] };
+if (!Array.isArray(log.calls)) log.calls = [];
 let stopped = false;
 
 for (const t of config.targets) {

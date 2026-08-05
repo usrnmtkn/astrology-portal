@@ -1,0 +1,9 @@
+{
+  "target": "moon-mars-conjunction",
+  "status": "needs_review",
+  "payloadSha256": "60b260c510b84c271348e3ba5709d2f237879d0a861fa4c643d16e0bee2d2eda",
+  "harvest_mode": "matched",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}
