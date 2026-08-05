@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-04h",
-  "contentHash": "73e67e47a33c3423ac1860353f154617",
-  "keyManifestHash": "30ac86938ea73c9f903d24158925fc03",
-  "keyCount": 7218,
+  "packageVersion": "v3-2026-08-04i",
+  "contentHash": "c943e6a754ad53033d8ed1596173f017",
+  "keyManifestHash": "64af4f25c4432dc91b21496764562775",
+  "keyCount": 7220,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -5352,6 +5352,7 @@
     "hook:fallback-hook/sky-season-shadow/scorpio",
     "hook:fallback-hook/sky-season-shadow/taurus",
     "hook:fallback-hook/sky-season-shadow/virgo",
+    "hook:fallback-hook/sky-sign-copy/chiron/aries",
     "hook:fallback-hook/sky-sign-copy/jupiter/leo",
     "hook:fallback-hook/sky-sign-copy/jupiter/libra",
     "hook:fallback-hook/sky-sign-copy/mars/aquarius",
@@ -5379,6 +5380,7 @@
     "hook:fallback-hook/sky-sign-copy/mercury/taurus",
     "hook:fallback-hook/sky-sign-copy/mercury/virgo",
     "hook:fallback-hook/sky-sign-copy/neptune/aries",
+    "hook:fallback-hook/sky-sign-copy/nodes/aquarius-leo",
     "hook:fallback-hook/sky-sign-copy/pluto/aquarius",
     "hook:fallback-hook/sky-sign-copy/saturn/aries",
     "hook:fallback-hook/sky-sign-copy/sun/leo",
