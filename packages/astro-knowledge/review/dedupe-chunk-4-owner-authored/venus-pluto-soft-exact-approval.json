@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-pluto-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/pluto/soft",
+  "payloadSha256": "1841cb7f59ad5b3d82640f628f1906a27e75232281fd8332454078acaf9095c4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "The connection has real depth without the undertow. {{holder1}} feels important to {{holder2}}, not monitored or claimed.",
+    "body_they": "The connection has real depth without the undertow. {{holder1}} feels important to {{holder2}}, not monitored or claimed.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
