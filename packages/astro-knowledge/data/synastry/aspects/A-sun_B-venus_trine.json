@@ -5,6 +5,7 @@
   "planetB": "venus",
   "aspect": "trine",
   "plainTranslation": "Affection that flows effortlessly. The Sun person feels valued, the Venus person feels at ease - smooth, harmonious, kind. Failure mode: lacking tension or challenge. A warm foundation; keep it from getting sleepy.",
+  "humanMoment": "{{holder1}} feels appreciated and {{holder2}} feels completely at ease, with zero effort required from either side.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
   "voiceNeutral": true,
