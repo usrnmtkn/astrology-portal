@@ -75,6 +75,35 @@ if (batch2.distribution_state === "staged") {
   assert.match(batch2.migration_gate?.source ?? "", /dpl_GxWYk5B8bKdxEices36VEmf1G2mA/u);
 }
 
+const expectedBatch3Keys = [
+  "fallback-hook/sky-sign-copy/mercury/capricorn",
+  "fallback-hook/sky-sign-copy/mercury/aquarius",
+  "fallback-hook/sky-sign-copy/mars/taurus",
+  "fallback-hook/sky-sign-copy/mars/gemini",
+  "fallback-hook/sky-sign-copy/mars/cancer",
+  "fallback-hook/sky-sign-copy/mars/leo",
+  "fallback-hook/sky-sign-copy/mars/virgo"
+];
+const expectedBatch4Keys = [
+  "fallback-hook/sky-sign-copy/mars/sagittarius",
+  "fallback-hook/sky-sign-copy/mars/aquarius",
+  "fallback-hook/sky-sign-copy/mars/pisces",
+  "fallback-hook/sky-sign-copy/neptune/aries",
+  "fallback-hook/sky-sign-copy/pluto/aquarius"
+];
+for (const [batch, expectedKeys] of [["3", expectedBatch3Keys], ["4", expectedBatch4Keys]]) {
+  const release = manifest.releases.find((candidate) => String(candidate.release_batch) === batch);
+  assert.ok(release, `Batch ${batch} must have an explicit serving-manifest release.`);
+  assert.equal(release.distribution_state, "serving");
+  assert.deepEqual(release.approved_keys, expectedKeys);
+  assert.deepEqual(release.owner_approval?.approved_keys, expectedKeys);
+  assert.match(release.owner_approval?.statement ?? "", /exact 12-key batches 3 and 4 staged_to_serving diff/u);
+  assert.equal(release.migration_gate?.deployed_package_version, "v3-2026-08-04b");
+}
+assert.equal([...expectedBatch2Keys, ...expectedBatch3Keys, ...expectedBatch4Keys].length, 19);
+assert.ok(!approvedKeys.has("fallback-hook/sky-sign-copy/chiron/aries"));
+assert.ok(!approvedKeys.has("fallback-hook/sky-sign-copy/nodes/aquarius-leo"));
+
 const runtimeSource = readSource("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
 const placementBundleSource = readSource("apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts");
 const appSource = readSource("apps/web/src/App.tsx");
@@ -91,4 +120,4 @@ assert.match(materializerSource, /serving-awaiting-owner-approval/u);
 assert.match(importerSource, /distribution_state: "staged"/u);
 assert.match(importerSource, /Editorial approval does not authorize serving/u);
 
-console.log(`Sky Placement serving gate passed with batch 2 ${batch2.distribution_state}.`);
+console.log("Sky Placement serving gate passed with 19 approved batches 2-4 keys and Chiron/Nodes excluded.");
