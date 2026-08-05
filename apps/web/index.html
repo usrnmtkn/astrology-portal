@@ -7,6 +7,36 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (() => {
+        const recoveryKey = "tldrastro:startupReload";
+        let recoveryStarted = false;
+        const recover = () => {
+          if (recoveryStarted) return;
+          recoveryStarted = true;
+          const now = Date.now();
+          const previousReload = Number(sessionStorage.getItem(recoveryKey) || 0);
+
+          if (now - previousReload >= 30000) {
+            sessionStorage.setItem(recoveryKey, String(now));
+            location.reload();
+            return;
+          }
+
+          document.body.innerHTML =
+            "<main role='alert' style='padding:2rem;background:#fff;color:#111'><h1>The calendar needs a fresh load</h1><p>The app was updated while this tab was open.</p><button>Reload calendar</button></main>";
+          document.querySelector("button")?.addEventListener("click", () => location.reload());
+        };
+
+        addEventListener("vite:preloadError", (event) => {
+          event.preventDefault();
+          recover();
+        });
+        addEventListener("unhandledrejection", () => {
+          if (!document.getElementById("root")?.firstElementChild) recover();
+        });
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
