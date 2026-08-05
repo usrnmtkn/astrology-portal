@@ -1,0 +1,34 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "owner_rejected",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "synastry-foundation-ground-beneath-disconnected-closer-rejection",
+    "surface": "synastry-aspect",
+    "articleBeat": "warmth-foundation-disconnected-closer",
+    "before": "When the ground beneath you feels unstable, it's natural to want to hold tightly to what you know.",
+    "beforeIsRejected": true,
+    "after": "[rejected without replacement]",
+    "whatChanged": "Removed the line from Moon-Mercury hard, cleared its warmth provenance, recorded the shipped Moon-Ascendant conjunction use, and recorded a future non-blocking editorial flag for foundation-line reuse across shipped or in-flight cards.",
+    "ownerReason": "The line is disconnected from the described interaction loop in this context and has already been used on a shipped card.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [
+      "foundation-line-disconnected-closer",
+      "foundation-line-reuse"
+    ],
+    "approvalLevel": "owner_rejected",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/hard/draft.json",
+      "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/moon-ascendant/conjunction/exact-approval.json",
+      "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md"
+    ],
+    "provenance": "rejection: The 'ground beneath you feels unstable' line is owner-rejected as a card closer when disconnected from the described loop; it is already shipped on Moon-Ascendant conjunction, and future harvest runs must flag foundation-line reuse across shipped or in-flight cards.",
+    "feedbackKind": "rejection",
+    "exactApprovalScope": "not_exact_approval"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

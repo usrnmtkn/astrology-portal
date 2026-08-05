@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-mars-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/mars/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "90e807008d9730ce41f45d73c0befb0a121558a249a20d417150b070eee88db5",
+  "payload": {
+    "body_you": "When {{holder2}} moves quickly or pushes a choice, you can take their momentum as a challenge to your authority. You push back or try to take control, so {{holder2}} presses harder, turning ordinary decisions into arguments about who is in charge. The intensity can also feel energizing to both of you.",
+    "body_they": "When you move quickly or push a choice, {{holder1}} can take your momentum as a challenge to their authority. {{holder1}} pushes back or tries to take control, so you press harder, turning ordinary decisions into arguments about who is in charge. The intensity can also feel energizing to both of you.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
