@@ -32,6 +32,10 @@ function argVal(flag) {
 }
 const DRY = args.includes("--dry-run");
 const ONLY = argVal("--only");
+// --reuse-draft: if a target dir already has draft.json (a preserved successful
+// Sol output), skip the Sol call and proceed to checks + Terra. Also skips
+// targets that already have a terra-verdict.json (fully complete).
+const REUSE = args.includes("--reuse-draft");
 const configPath = argVal("--batch");
 if (!configPath) {
   console.error("Required: --batch <config.json>");
@@ -104,7 +108,9 @@ If you use a supplied foundation line, record its exact provenance. Use no more 
 When warmthSource is used, it must identify one supplied owner foundation line exactly. usedForm.body_you and usedForm.body_they must be the exact sentences appearing in their respective bodies. Set labels to ["owner-corpus-derived"].
 
 OUTPUT
-Return strict JSON with exactly: body_you, body_they, warmthSource, labels. Do not include commentary.`;
+Return strict JSON with exactly: body_you, body_they, warmthSource, labels. Do not include commentary.
+warmthSource must be null or exactly this shape, with these exact field names:
+{"sourceArticleId": "<sourceArticleId of the supplied line>", "originalLine": "<the supplied line verbatim>", "usedForm": {"body_you": "<exact sentence as it appears in body_you>", "body_they": "<exact sentence as it appears in body_they>"}}`;
 }
 
 function terraPrompt(t, entry, packet, draft, checks) {
@@ -136,6 +142,30 @@ Return strict JSON: {"score": <1|2|3>, "verdict": "<in-voice|borderline|out-of-v
 }
 
 // ---------- deterministic checks ----------
+// Normalize known warmthSource field aliases from writer output before checking.
+// Renames only; never touches wording. Records what was normalized.
+function normalizeDraft(draft) {
+  const normalized = [];
+  const ws = draft?.warmthSource;
+  if (ws && typeof ws === "object") {
+    const aliases = { ownerFoundationSource: "sourceArticleId", ownerFoundationLine: "originalLine" };
+    for (const [from, to] of Object.entries(aliases)) {
+      if (from in ws && !(to in ws)) {
+        ws[to] = ws[from];
+        delete ws[from];
+        normalized.push(`warmthSource.${from} -> ${to}`);
+      }
+    }
+    for (const extra of ["ownerFoundationLineIndex"]) {
+      if (extra in ws) {
+        delete ws[extra];
+        normalized.push(`warmthSource.${extra} removed`);
+      }
+    }
+  }
+  return normalized;
+}
+
 function runChecks(t, packet, draft) {
   const checks = { target: t.id, passed: true };
   const fail = (k, detail) => {
@@ -258,6 +288,10 @@ for (const t of config.targets) {
     stopped = true;
     break;
   }
+  if (REUSE && fs.existsSync(path.join(dir, "terra-verdict.json"))) {
+    console.log(`[reuse] ${t.id}: already complete, skipping`);
+    continue;
+  }
   writeArtifact(dir, "writing-packet.json", packet);
   const sol = solPrompt(t, entry, packet);
   writeArtifact(dir, "sol-model-input.md", sol);
@@ -267,43 +301,50 @@ for (const t of config.targets) {
     continue;
   }
 
-  // Sol call
-  let solRes;
-  try {
-    solRes = await callModel({
-      model: config.models.writer.model,
-      reasoningEffort: config.models.writer.reasoningEffort,
-      input: sol,
-      maxOutputTokens: config.models.writer.maxOutputTokens,
-    });
-  } catch (e) {
-    log.calls.push({ kind: "writer", target: t.id, status: "failed", billingStatus: "unbilled", error: e.body || String(e.message) });
-    console.error(`STOP ${t.id}: Sol call failed (${e.message}). Batch stops for direction.`);
-    stopped = true;
-    break;
-  }
-  log.calls.push(redactedCall("writer", t.id, solRes, config.models.writer));
-  writeArtifact(dir, "writer-provider-response.json", {
-    responseId: solRes.responseId,
-    status: solRes.status,
-    model: solRes.model,
-    usage: solRes.usage,
-    output_text: solRes.text,
-  });
-  if (solRes.status !== "completed") {
-    console.error(`STOP ${t.id}: Sol response status ${solRes.status}. Incomplete attempt preserved; batch stops for direction.`);
-    stopped = true;
-    break;
-  }
-
   let draft;
-  try {
-    draft = JSON.parse(solRes.text.replace(/^```json\s*|```\s*$/g, ""));
-  } catch {
-    console.error(`STOP ${t.id}: Sol output is not valid JSON. Batch stops for direction.`);
-    stopped = true;
-    break;
+  const existingDraft = path.join(dir, "draft.json");
+  if (REUSE && fs.existsSync(existingDraft)) {
+    draft = JSON.parse(fs.readFileSync(existingDraft, "utf8"));
+    console.log(`[reuse] ${t.id}: reusing preserved Sol draft, no writer call`);
+  } else {
+    // Sol call
+    let solRes;
+    try {
+      solRes = await callModel({
+        model: config.models.writer.model,
+        reasoningEffort: config.models.writer.reasoningEffort,
+        input: sol,
+        maxOutputTokens: config.models.writer.maxOutputTokens,
+      });
+    } catch (e) {
+      log.calls.push({ kind: "writer", target: t.id, status: "failed", billingStatus: "unbilled", error: e.body || String(e.message) });
+      console.error(`STOP ${t.id}: Sol call failed (${e.message}). Batch stops for direction.`);
+      stopped = true;
+      break;
+    }
+    log.calls.push(redactedCall("writer", t.id, solRes, config.models.writer));
+    writeArtifact(dir, "writer-provider-response.json", {
+      responseId: solRes.responseId,
+      status: solRes.status,
+      model: solRes.model,
+      usage: solRes.usage,
+      output_text: solRes.text,
+    });
+    if (solRes.status !== "completed") {
+      console.error(`STOP ${t.id}: Sol response status ${solRes.status}. Incomplete attempt preserved; batch stops for direction.`);
+      stopped = true;
+      break;
+    }
+    try {
+      draft = JSON.parse(solRes.text.replace(/^```json\s*|```\s*$/g, ""));
+    } catch {
+      console.error(`STOP ${t.id}: Sol output is not valid JSON. Batch stops for direction.`);
+      stopped = true;
+      break;
+    }
   }
+  const normalized = normalizeDraft(draft);
+  if (normalized.length) writeArtifact(dir, "draft-normalization.json", { target: t.id, renamesOnly: true, normalized });
   writeArtifact(dir, "draft.json", draft);
 
   const checks = runChecks(t, packet, draft);

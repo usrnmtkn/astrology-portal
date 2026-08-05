@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0b8d331a0b669b82006a7280f3f86c819f90c84ebf178203cb",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1149,
+    "input_tokens_details": {
+      "cache_write_tokens": 1146,
+      "cached_tokens": 0
+    },
+    "output_tokens": 426,
+    "output_tokens_details": {
+      "reasoning_tokens": 258
+    },
+    "total_tokens": 1575
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the stated direction: {{holder1}}'s hopes shape how {{holder2}} presents themselves, and the wording stays parallel across \\\"You see something special in {{holder2}}\\\" and \\\"{{holder1}} sees something special in you.\\\" The middle sentence provides a recognizable behavior-and-cost loop: selective interest in an imagined version can lead to self-adjustment and less certainty about what feels natural. However, the draft relies very closely on the approved human-moment input, with limited additional texture beyond spelling out that same dynamic. The final \\\"At its best\\\" sentence adds an encouraging conclusion that is not traceable to any supplied foundation line, so it cannot reach a 3 under the matched-harvest rule.\"}"
+}

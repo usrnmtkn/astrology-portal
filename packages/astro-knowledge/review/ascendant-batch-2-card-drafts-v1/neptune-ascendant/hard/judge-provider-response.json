@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0199da3a7615ef72006a728269d5a88192be87de5f51457a9d",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1293,
+    "input_tokens_details": {
+      "cache_write_tokens": 1290,
+      "cached_tokens": 0
+    },
+    "output_tokens": 120,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 1413
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the fixed direction: {{holder1}} is the one whose hoped-for version of the other shapes how {{holder2}} or you present themselves. The first two sentences form a recognizable governed loop, moving from unclear perception to approval-watching and self-adjustment, with the cost of feeling unseen. The variants are meaningfully parallel and contain no excluded claims or added doctrine. The final sentence is a reader-facing warmth turn directly traced to the supplied foundation line, rather than an invented conclusion.\"}"
+}
