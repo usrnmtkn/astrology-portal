@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-sun-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-sun/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "237b6dc8517923ab5ac2b2f941b0b76c1845dcbda25c26c8190a135ef3fd300e",
+  "payload": {
+    "body_you": "You and {{holder2}} often want different things at the same time, and both of you can feel crowded by the other's direction. When you insist on your way, {{holder2}} pushes back to protect theirs, and that resistance makes you press harder. Disagreements can become contests over whose judgment and priorities will lead.",
+    "body_they": "{{holder1}} and you often want different things at the same time, and both of you can feel crowded by the other's direction. When {{holder1}} insists on their way, you push back to protect yours, and your resistance makes {{holder1}} press harder. Disagreements can become contests over whose judgment and priorities will lead.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "55c395dd19fa81277fceb3c16a44932bf90457fa856bd15b98f8ef4d88ec57f0",
+    "writerProviderResponseSha256": "b806ab959021a826251ec82700bfa4bac8b6594b4684cbea5cd8d694a4f547f5"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-sun/hard/exact-approval.json"
+}

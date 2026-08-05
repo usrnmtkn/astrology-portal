@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-venus-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/venus/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "be3f2ad2786386c8e152c02ff9bc16f8cb3666c6dd4127e96745ba9cd6cf44d7",
+  "payload": {
+    "body_you": "Your way of talking fits tightly with how {{holder2}} shows love, so they often hear your questions and explanations as affection and answer with more warmth. That response keeps you talking, but when you press a point or explain too much, {{holder2}} can feel that their preferences or worth are being picked apart, which can make you talk even more.",
+    "body_they": "{{holder1}}'s way of talking fits tightly with how you show love, so you often hear their questions and explanations as affection and answer with more warmth. Your response keeps {{holder1}} talking, but when they press a point or explain too much, you can feel that your preferences or worth are being picked apart, which can make them talk even more.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/mercury-venus/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

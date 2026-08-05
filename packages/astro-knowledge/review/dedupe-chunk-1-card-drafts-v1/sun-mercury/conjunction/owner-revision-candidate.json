@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-mercury-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "99ad27eddfbf36be43bdbcd08faa05fe3ec0ed94dc4ba07425cb69bb8f6b16bb",
+  "payload": {
+    "body_you": "When you are together, you give {{holder2}} a lot to think and say, and they can quickly put words to who you are. As they keep describing you back to yourself, their view can start shaping how you see and present yourself. The cost is that their definitions can become so constant that your own sense of yourself gets harder to hear.",
+    "body_they": "When you are together, {{holder1}} gives you a lot to think and say, and you can quickly put words to who they are. As you keep describing them back to themselves, your view can start shaping how they see and present themselves. The cost is that your definitions can become so constant that their own sense of themselves gets harder to hear.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "This closeness can also feel warm and energizing when their words help you recognize yourself.",
+      "This closeness can also feel warm and energizing when your words help them recognize themselves."
+    ],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": false,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "cbc005e2802aac2f81db980cdb94800c9483dbaba449af9cd8743e96dea32eeb",
+    "writerProviderResponseSha256": "a0c301b2a9d2ea983bc0e643f312c641c1c0a745ff86c7b5dda926373b41e943"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/conjunction/exact-approval.json"
+}
