@@ -1513,9 +1513,23 @@ export function createTransitSynastryRenderer(
     const continuousSignCopy = signCopyRow?.render_policy === "sky-placement-continuous-v2"
       ? signCopyRow
       : null;
+    if (continuousSignCopy) {
+      return renderContinuousSkyPlacement(continuousSignCopy, {
+        planet,
+        sign,
+        events,
+        entryDate,
+        exitDate,
+        priorSign,
+        priorSignEntryDate,
+        priorSignExitDate,
+        previousResidencyEntryDate,
+        previousResidencyExitDate
+      });
+    }
     if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
       const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
-      if (!continuousSignCopy && standaloneHook?.body_you) {
+      if (standaloneHook?.body_you) {
         const body = standaloneHook.body_you.trim();
         if (!body || /\{\{/u.test(body)) {
           throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
@@ -1531,21 +1545,7 @@ export function createTransitSynastryRenderer(
           contentKey: standaloneHook.contentKey
         };
       }
-      if (!continuousSignCopy) {
-        throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
-      }
-      return renderContinuousSkyPlacement(continuousSignCopy, {
-        planet,
-        sign,
-        events,
-        entryDate,
-        exitDate,
-        priorSign,
-        priorSignEntryDate,
-        priorSignExitDate,
-        previousResidencyEntryDate,
-        previousResidencyExitDate
-      });
+      throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
     }
 
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));

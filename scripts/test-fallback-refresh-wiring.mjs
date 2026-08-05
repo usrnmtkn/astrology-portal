@@ -43,14 +43,10 @@ const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
-assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 30);
-assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 30);
+assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 32);
+assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 32);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
-const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => (
-  approval.id.includes("batch-4")
-    ? approval.articles.filter((article) => !["chiron-aries", "nodes-aquarius-leo"].includes(article.sourceRunId))
-    : approval.articles
-));
+const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => approval.articles);
 for (const approvedArticle of runtimeEligibleApprovedArticles) {
   const contentKey = `fallback-hook/sky-sign-copy/${approvedArticle.planet}/${approvedArticle.sign}`;
   const servingRow = skyPlacementOwnerApprovedFallbacks.rows.find((row) => row.contentKey === contentKey);
@@ -95,7 +91,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-04h");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-04i");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
