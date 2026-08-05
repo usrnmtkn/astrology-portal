@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-sun-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/sun/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "237b6dc8517923ab5ac2b2f941b0b76c1845dcbda25c26c8190a135ef3fd300e",
+  "payload": {
+    "body_you": "You and {{holder2}} often want different things at the same time, and both of you can feel crowded by the other's direction. When you insist on your way, {{holder2}} pushes back to protect theirs, and that resistance makes you press harder. Disagreements can become contests over whose judgment and priorities will lead.",
+    "body_they": "{{holder1}} and you often want different things at the same time, and both of you can feel crowded by the other's direction. When {{holder1}} insists on their way, you push back to protect yours, and your resistance makes {{holder1}} press harder. Disagreements can become contests over whose judgment and priorities will lead.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-sun/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

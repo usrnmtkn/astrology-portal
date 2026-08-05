@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-mars-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/mars/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "60b260c510b84c271348e3ba5709d2f237879d0a861fa4c643d16e0bee2d2eda",
+  "payload": {
+    "body_you": "When {{holder2}} acts quickly or reacts sharply, you feel it immediately, and your emotional response pushes them to act again. The exchange gets honest fast, but passion and irritation can become a fight about what you feel before either of you slows down. You're allowed to be affected by emotions.",
+    "body_they": "When you act quickly or react sharply, {{holder1}} feels it immediately, and their emotional response pushes you to act again. The exchange gets honest fast, but passion and irritation can become a fight about what {{holder1}} feels before either of you slows down. {{holder1}} is allowed to be affected by emotions.",
+    "warmthSource": {
+      "sourceArticleId": "libra-season-autumn-equinox",
+      "originalLine": "Here's permission you might need: you're allowed to be affected by emotions.",
+      "usedForm": {
+        "body_you": "You're allowed to be affected by emotions.",
+        "body_they": "{{holder1}} is allowed to be affected by emotions."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
