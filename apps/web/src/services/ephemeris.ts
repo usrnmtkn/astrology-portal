@@ -410,10 +410,7 @@ function previousSameSignResidencyFor(
   currentStart: Date,
   longitudeOffset = 0
 ) {
-  const searchYears = planet === "Jupiter" ? 14
-    : planet === "Chiron" ? 60
-      : ["North Node", "South Node"].includes(planet) ? 22
-        : 32;
+  const searchYears = placementSearchYears(planet);
   const minimumGapYears = planet === "Jupiter" ? 6 : 1;
   const stepDays = transitSearchStepDays(planet);
   const maxIterations = Math.ceil((searchYears * 365.25) / stepDays);
@@ -436,6 +433,20 @@ function previousSameSignResidencyFor(
   return null;
 }
 
+const SKY_PLACEMENT_STRUCTURAL_FACT_PLANETS = new Set([
+  "Sun",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto",
+  "Chiron",
+  "North Node"
+]);
+
 function skyPlacementStructuralTransitFacts(
   swe: SwissEphInstance,
   planet: string,
@@ -443,9 +454,7 @@ function skyPlacementStructuralTransitFacts(
   sign: string,
   transitWindow: { transitStart?: string; transitEnd?: string }
 ) {
-  // Jupiter in Libra quotes both prior-sign and prior-cycle dates. The node
-  // axis also needs its prior-sign handoff for the reader's engine fact line.
-  if (!["Jupiter", "North Node"].includes(planet) || !transitWindow.transitStart || !transitWindow.transitEnd) {
+  if (!SKY_PLACEMENT_STRUCTURAL_FACT_PLANETS.has(planet) || !transitWindow.transitStart || !transitWindow.transitEnd) {
     return {};
   }
 
@@ -453,9 +462,7 @@ function skyPlacementStructuralTransitFacts(
   const priorReference = new Date(currentStart.getTime() - 5 * 60_000);
   const priorTransitSign = exactPlanetSign(swe, planetId, priorReference);
   const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorTransitSign);
-  const previousResidency = planet === "Jupiter"
-    ? previousSameSignResidencyFor(swe, planet, planetId, sign, currentStart)
-    : null;
+  const previousResidency = previousSameSignResidencyFor(swe, planet, planetId, sign, currentStart);
 
   return {
     priorTransitSign,

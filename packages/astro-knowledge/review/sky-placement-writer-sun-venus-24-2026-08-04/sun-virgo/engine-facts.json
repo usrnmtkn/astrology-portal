@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "virgo",
+  "timeZone": "America/New_York",
+  "transitStart": "August 22, 2026",
+  "transitEnd": "September 22, 2026",
+  "transitStartIso": "2026-08-23T02:18:48.999Z",
+  "transitEndIso": "2026-09-23T00:05:13.999Z",
+  "priorSign": "leo",
+  "priorSignEntryDate": "July 22, 2026",
+  "priorSignExitDate": "August 22, 2026",
+  "previousResidency": {
+    "sign": "virgo",
+    "entryDate": "August 22, 2024",
+    "exitDate": "September 22, 2024",
+    "entryDateIso": "2024-08-22T14:55:03.999Z",
+    "exitDateIso": "2024-09-22T12:43:39.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-square-uranus-2026-08-28t22:18:54.999z",
+      "body": "sun-square-uranus",
+      "bodies": [
+        "sun",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "August 28, 2026",
+      "dateIso": "2026-08-28T22:18:54.999Z",
+      "rank": 1,
+      "meaning": "Identity meets independence and disruption. The urge to be different and to do things your own way. Psychologically the square is inner tension to integrate: Difference for its own sake: eccentricity, instability, shocking others to no purpose. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-uranus.json"
+    },
+    {
+      "id": "aspect-sun-sextile-mars-2026-09-14t19:52:48.999z",
+      "body": "sun-sextile-mars",
+      "bodies": [
+        "sun",
+        "mars"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "September 14, 2026",
+      "dateIso": "2026-09-14T19:52:48.999Z",
+      "rank": 2,
+      "meaning": "Identity meets drive and aggression. Energy, assertion, and the will to act become central to the sense of self. The sextile makes this a natural strength: Action with little temper behind it. Things get done and the drive feels available rather than volatile. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-sextile-mars.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-square-uranus.json",
+      "packages/astro-knowledge/data/transits/sun-sextile-mars.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

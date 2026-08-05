@@ -15,19 +15,22 @@
     {
       "release_id": "pre-manifest-sun-leo-serving",
       "release_batch": "legacy",
-      "distribution_state": "serving",
-      "transition": "pre_manifest_serving",
-      "approved_keys": [
-        "fallback-hook/sky-sign-copy/sun/leo"
-      ],
-      "owner_approval": {
+      "distribution_state": "superseded",
+      "transition": "superseded_by_sky-placement-sun-venus-chiron-nodes-26",
+      "approved_keys": [],
+      "owner_approval": null,
+      "historical_owner_approval": {
         "statement": "owner-authored and owner-approved, 2026-07-31",
         "approved_at": "2026-07-31",
         "source": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json#rows[0]",
         "approved_keys": [
           "fallback-hook/sky-sign-copy/sun/leo"
         ]
-      }
+      },
+      "superseded_keys": [
+        "fallback-hook/sky-sign-copy/sun/leo"
+      ],
+      "superseded_by": "sky-placement-sun-venus-chiron-nodes-26"
     },
     {
       "release_id": "sky-placement-batch-1",
@@ -168,6 +171,80 @@
           "fallback-hook/sky-sign-copy/mars/pisces",
           "fallback-hook/sky-sign-copy/neptune/aries",
           "fallback-hook/sky-sign-copy/pluto/aquarius"
+        ]
+      }
+    },
+    {
+      "release_id": "sky-placement-sun-venus-chiron-nodes-26",
+      "release_batch": "sun-venus-chiron-nodes-26",
+      "distribution_state": "serving",
+      "transition": "staged_to_serving",
+      "required_runtime_capability": "sky-placement-on-demand-v1",
+      "migration_gate": {
+        "status": "verified",
+        "deployed_package_version": "v3-2026-08-04g",
+        "verified_at": "2026-08-04",
+        "source": "Vercel dpl_Cc7eZBaDB4qgWB7TtxxXncS4fhXW"
+      },
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/sun/aries",
+        "fallback-hook/sky-sign-copy/sun/taurus",
+        "fallback-hook/sky-sign-copy/sun/gemini",
+        "fallback-hook/sky-sign-copy/sun/cancer",
+        "fallback-hook/sky-sign-copy/sun/leo",
+        "fallback-hook/sky-sign-copy/sun/virgo",
+        "fallback-hook/sky-sign-copy/sun/libra",
+        "fallback-hook/sky-sign-copy/sun/scorpio",
+        "fallback-hook/sky-sign-copy/sun/sagittarius",
+        "fallback-hook/sky-sign-copy/sun/capricorn",
+        "fallback-hook/sky-sign-copy/sun/aquarius",
+        "fallback-hook/sky-sign-copy/sun/pisces",
+        "fallback-hook/sky-sign-copy/venus/aries",
+        "fallback-hook/sky-sign-copy/venus/taurus",
+        "fallback-hook/sky-sign-copy/venus/gemini",
+        "fallback-hook/sky-sign-copy/venus/cancer",
+        "fallback-hook/sky-sign-copy/venus/leo",
+        "fallback-hook/sky-sign-copy/venus/virgo",
+        "fallback-hook/sky-sign-copy/venus/libra",
+        "fallback-hook/sky-sign-copy/venus/scorpio",
+        "fallback-hook/sky-sign-copy/venus/sagittarius",
+        "fallback-hook/sky-sign-copy/venus/capricorn",
+        "fallback-hook/sky-sign-copy/venus/aquarius",
+        "fallback-hook/sky-sign-copy/venus/pisces",
+        "fallback-hook/sky-sign-copy/chiron/aries",
+        "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+      ],
+      "owner_approval": {
+        "statement": "I confirm the 26-key serving diff as proposed, including the Sun in Leo payload replacement.",
+        "approved_at": "2026-08-04",
+        "source": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-serving-approval-2026-08-04.json",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/sun/aries",
+          "fallback-hook/sky-sign-copy/sun/taurus",
+          "fallback-hook/sky-sign-copy/sun/gemini",
+          "fallback-hook/sky-sign-copy/sun/cancer",
+          "fallback-hook/sky-sign-copy/sun/leo",
+          "fallback-hook/sky-sign-copy/sun/virgo",
+          "fallback-hook/sky-sign-copy/sun/libra",
+          "fallback-hook/sky-sign-copy/sun/scorpio",
+          "fallback-hook/sky-sign-copy/sun/sagittarius",
+          "fallback-hook/sky-sign-copy/sun/capricorn",
+          "fallback-hook/sky-sign-copy/sun/aquarius",
+          "fallback-hook/sky-sign-copy/sun/pisces",
+          "fallback-hook/sky-sign-copy/venus/aries",
+          "fallback-hook/sky-sign-copy/venus/taurus",
+          "fallback-hook/sky-sign-copy/venus/gemini",
+          "fallback-hook/sky-sign-copy/venus/cancer",
+          "fallback-hook/sky-sign-copy/venus/leo",
+          "fallback-hook/sky-sign-copy/venus/virgo",
+          "fallback-hook/sky-sign-copy/venus/libra",
+          "fallback-hook/sky-sign-copy/venus/scorpio",
+          "fallback-hook/sky-sign-copy/venus/sagittarius",
+          "fallback-hook/sky-sign-copy/venus/capricorn",
+          "fallback-hook/sky-sign-copy/venus/aquarius",
+          "fallback-hook/sky-sign-copy/venus/pisces",
+          "fallback-hook/sky-sign-copy/chiron/aries",
+          "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
         ]
       }
     }

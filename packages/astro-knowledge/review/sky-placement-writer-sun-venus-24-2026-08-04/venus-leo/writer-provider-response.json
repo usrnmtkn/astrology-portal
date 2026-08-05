@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0387bb51420d0d63006a729494cd0481a280956d947ed43911",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8182,
+    "input_tokens_details": {
+      "cache_write_tokens": 8179,
+      "cached_tokens": 0
+    },
+    "output_tokens": 3978,
+    "output_tokens_details": {
+      "reasoning_tokens": 3624
+    },
+    "total_tokens": 12160
+  },
+  "outputText": "{\"opening\":\"Venus in Leo makes affection easier to see. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus arrives in Leo on {{entryDate}}, and affection becomes more openly expressive. A compliment gets said while it still matters. A finished creative effort gets more than a quick nod. Warmth takes a visible form.\",\"tension\":\"The pressure begins when appreciation has to arrive with applause. A private thank-you feels too small, and a modest response can look like indifference. We make the gesture bigger, spend beyond what feels comfortable, or turn a missed compliment into drama so the reaction will prove that love is present. Warmth is still being offered, but now it carries a test nobody agreed to take.\",\"development\":\"Venus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This return brings the same pressure back into view. A gift stops feeling generous when its worth depends on the response. A creative choice that began as pleasure gets remade for approval. In a relationship, a quiet act of care gets overlooked because it did not arrive in a dramatic form. Then admiration becomes the measure of connection, and ordinary affection starts to register as absence. The more proof we demand, the harder it becomes to recognize what is already real.\",\"close\":\"Before {{exitDate}}, the demand for visible proof can leave grand gestures everywhere while ordinary care goes unnoticed.\",\"try_this\":[\"We can tell someone exactly what we admire about something they made, without waiting for a special occasion.\",\"We can set a spending limit before choosing a gift or outfit meant to make an impression.\"]}"
+}

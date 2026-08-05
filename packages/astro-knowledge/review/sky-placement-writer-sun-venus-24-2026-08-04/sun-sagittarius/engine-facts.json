@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "sagittarius",
+  "timeZone": "America/New_York",
+  "transitStart": "November 22, 2026",
+  "transitEnd": "December 21, 2026",
+  "transitStartIso": "2026-11-22T07:23:20.999Z",
+  "transitEndIso": "2026-12-21T20:50:14.999Z",
+  "priorSign": "scorpio",
+  "priorSignEntryDate": "October 23, 2026",
+  "priorSignExitDate": "November 22, 2026",
+  "previousResidency": {
+    "sign": "sagittarius",
+    "entryDate": "November 21, 2024",
+    "exitDate": "December 21, 2024",
+    "entryDateIso": "2024-11-21T19:56:29.999Z",
+    "exitDateIso": "2024-12-21T09:20:34.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-sextile-pluto-2026-11-25t17:27:21.999z",
+      "body": "sun-sextile-pluto",
+      "bodies": [
+        "sun",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "November 25, 2026",
+      "dateIso": "2026-11-25T17:27:21.999Z",
+      "rank": 1,
+      "meaning": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. The sextile makes this a natural strength: Strength and depth, well-controlled. A natural aptitude for investigation, healing, and transformation. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-sextile-pluto.json"
+    },
+    {
+      "id": "aspect-sun-trine-neptune-2026-11-24t00:07:40.999z",
+      "body": "sun-trine-neptune",
+      "bodies": [
+        "sun",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "November 23, 2026",
+      "dateIso": "2026-11-24T00:07:40.999Z",
+      "rank": 2,
+      "meaning": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. The trine makes this a natural strength: Imaginative and compassionate; creative and charitable directions come naturally. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-trine-neptune.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-sextile-pluto.json",
+      "packages/astro-knowledge/data/transits/sun-trine-neptune.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

@@ -43,14 +43,10 @@ const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
-assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 30);
-assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 30);
+assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 56);
+assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 56);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
-const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => (
-  approval.id.includes("batch-4")
-    ? approval.articles.filter((article) => !["chiron-aries", "nodes-aquarius-leo"].includes(article.sourceRunId))
-    : approval.articles
-));
+const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => approval.articles);
 for (const approvedArticle of runtimeEligibleApprovedArticles) {
   const contentKey = `fallback-hook/sky-sign-copy/${approvedArticle.planet}/${approvedArticle.sign}`;
   const servingRow = skyPlacementOwnerApprovedFallbacks.rows.find((row) => row.contentKey === contentKey);
@@ -797,6 +793,19 @@ try {
   for (const row of skySignCopySun.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    const ownerReplacement = skyPlacementOwnerApprovedFallbacks.rows.find((candidate) => (
+      candidate.contentKey === row.contentKey
+    ));
+    if (ownerReplacement) {
+      assert.equal(
+        materializedRow.body,
+        ownerReplacement.body_you,
+        `${row.contentKey} must use the explicitly approved owner replacement.`
+      );
+      assert.equal(materializedRow.source_snapshot.review_status, "approved");
+      assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+      continue;
+    }
     assert.equal(materializedRow.body, row.body_you);
     assert.equal(materializedRow.status, "DRAFT");
     assert.equal(materializedRow.source_snapshot.review_status, "approved");
@@ -814,7 +823,9 @@ try {
   for (const row of skySignCopySun.superseded_rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} supersession must remain in dashboard history.`);
-    if (row.contentKey === "fallback-hook/sky-sign-copy/sun/leo") {
+    if (skyPlacementOwnerApprovedFallbacks.rows.some((candidate) => (
+      candidate.contentKey === row.contentKey
+    ))) {
       assert.equal(materializedRow.source_snapshot.review_status, "approved");
       continue;
     }

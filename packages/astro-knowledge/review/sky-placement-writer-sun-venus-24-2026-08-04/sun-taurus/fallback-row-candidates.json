@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/taurus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Taurus on {{entryDate}}, and attention shifts to what can be built slowly enough to last. A loose idea gets a solid shape. We repair what is useful, return to a creative piece, and keep a small practice long enough to feel its effect. Confidence grows through visible results rather than speed or applause.",
+      "tension": "That patience has a cost when any interruption starts to feel like a threat. We keep the routine after it stops restoring energy. We defend a preference as though changing it would erase the self that chose it. An unfinished piece gets one more adjustment, then another, because finished means visible. Each decision preserves comfort for another day while making change harder.",
+      "development": "The Sun last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now, the pressure spreads through small choices. A useful object becomes too precious to use. A familiar method survives because learning another one feels wasteful. A plan keeps its old shape even after the conditions around it change. Each choice avoids discomfort today. Together they send energy into preserving what exists, while the creation that still matters remains unfinished.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, what we refuse to release can consume more energy than the change we were trying to avoid.",
+      "try_this": [
+        "We can complete one small creative piece at its current level of polish.",
+        "We can take the same short walk on three mornings and notice whether the body has more energy afterward."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Taurus on {{entryDate}}, and attention shifts to what can be built slowly enough to last. A loose idea gets a solid shape. We repair what is useful, return to a creative piece, and keep a small practice long enough to feel its effect. Confidence grows through visible results rather than speed or applause.\n\nThat patience has a cost when any interruption starts to feel like a threat. We keep the routine after it stops restoring energy. We defend a preference as though changing it would erase the self that chose it. An unfinished piece gets one more adjustment, then another, because finished means visible. Each decision preserves comfort for another day while making change harder.\n\nThe Sun last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now, the pressure spreads through small choices. A useful object becomes too precious to use. A familiar method survives because learning another one feels wasteful. A plan keeps its old shape even after the conditions around it change. Each choice avoids discomfort today. Together they send energy into preserving what exists, while the creation that still matters remains unfinished.\n\nBefore {{exitDate}}, what we refuse to release can consume more energy than the change we were trying to avoid.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Taurus on {{entryDate}}, and attention shifts to what can be built slowly enough to last. A loose idea gets a solid shape. We repair what is useful, return to a creative piece, and keep a small practice long enough to feel its effect. Confidence grows through visible results rather than speed or applause.\n\nThat patience has a cost when any interruption starts to feel like a threat. We keep the routine after it stops restoring energy. We defend a preference as though changing it would erase the self that chose it. An unfinished piece gets one more adjustment, then another, because finished means visible. Each decision preserves comfort for another day while making change harder.\n\nThe Sun last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now, the pressure spreads through small choices. A useful object becomes too precious to use. A familiar method survives because learning another one feels wasteful. A plan keeps its old shape even after the conditions around it change. Each choice avoids discomfort today. Together they send energy into preserving what exists, while the creation that still matters remains unfinished.\n\nBefore {{exitDate}}, what we refuse to release can consume more energy than the change we were trying to avoid.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sun-taurus"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

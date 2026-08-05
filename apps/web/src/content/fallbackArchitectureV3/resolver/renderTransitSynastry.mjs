@@ -15,6 +15,7 @@ const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-r
 const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
 const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-aspect-phrasebook-v1.json"), "utf8"));
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
+const skyPlacementOwnerApprovedReaderV1 = JSON.parse(fs.readFileSync(path.join(here, "../bundled-sky-placement-owner-approved-reader-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
 lib.authoredCards.push(...lunationBlend.authoredCards);
@@ -24,6 +25,7 @@ rowsFile.hookRows.push(...bondLanguagePass2.rows);
 rowsFile.hookRows.push(...skyArticleV1.hookRows);
 rowsFile.hookRows.push(...skyAspectPhrasebookV1.hookRows);
 rowsFile.hookRows.push(...skySignCopySunV1.rows);
+rowsFile.hookRows.push(...skyPlacementOwnerApprovedReaderV1.rows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
 rowsFile.vocabularyRows.push(...skyArticleV1.vocabularyRows);
 const READER_ELIGIBLE_STATUS = new Set(["approved_reuse", "approved", "reviewed"]);
@@ -1215,7 +1217,12 @@ function renderContinuousSkyPlacement(signCopy, {
     const priorSignExit = priorSignExitDate
       ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body
       : null;
-    const allowedUses = transitDate === dates.entry.body && priorSignExit === transitDate ? 3 : 2;
+    const priorResidencyDates = [previousResidencyEntryDate, previousResidencyExitDate]
+      .filter(Boolean)
+      .map((value) => continuousSkyPlacementDate(value, "previous-residency").body);
+    const allowedUses = 2
+      + (transitDate === dates.entry.body && priorSignExit === transitDate ? 1 : 0)
+      + priorResidencyDates.filter((value) => value === transitDate).length;
     if (renderedText.split(transitDate).length - 1 > allowedUses) {
       throw new SourceGapError(`SOURCE_GAP: repeated sky placement date ${planet}/${sign}`);
     }

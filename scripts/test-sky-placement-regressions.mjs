@@ -54,11 +54,19 @@ const renderer = createTransitSynastryRenderer(
     vocabularyRows: [...fallbackSourceRows.vocabularyRows, ...skyArticleV1.vocabularyRows]
   }
 );
-const sunLeo = renderer.renderSkyPlacement({
+const sunLeoFacts = {
   planet: "sun",
   sign: "leo",
-  entryDate: "July 22",
-  exitDate: "August 23",
+  entryDate: "July 22, 2026",
+  exitDate: "August 23, 2026",
+  priorSign: "cancer",
+  priorSignEntryDate: "June 21, 2026",
+  priorSignExitDate: "July 22, 2026",
+  previousResidencyEntryDate: "July 22, 2025",
+  previousResidencyExitDate: "August 22, 2025"
+};
+const sunLeo = renderer.renderSkyPlacement({
+  ...sunLeoFacts,
   events: [{
     type: "aspect",
     a: "sun",
@@ -71,10 +79,7 @@ const sunLeo = renderer.renderSkyPlacement({
   }]
 });
 const sunLeoReference = renderSkyPlacementReference({
-  planet: "sun",
-  sign: "leo",
-  entryDate: "July 22",
-  exitDate: "August 23",
+  ...sunLeoFacts,
   events: [{
     type: "aspect",
     a: "sun",
@@ -87,10 +92,7 @@ const sunLeoReference = renderSkyPlacementReference({
   }]
 });
 const sunLeoMoonOpposition = renderer.renderSkyPlacement({
-  planet: "sun",
-  sign: "leo",
-  entryDate: "July 22",
-  exitDate: "August 23",
+  ...sunLeoFacts,
   events: [{
     type: "aspect",
     a: "sun",
@@ -361,14 +363,13 @@ assert.ok(
 );
 assert.match(
   sunLeo.body,
-  /^July 22 to August 23\n\nThe Sun moves into Leo on July 22,/u,
-  "Package Sun-in-Leo copy must lead with the engine-filled fact line and lived opening."
+  /^July 22 to August 23, 2026\n\nAfter moving through Cancer from June 21 to July 22, the Sun enters Leo on July 22,/u,
+  "Package Sun-in-Leo copy must lead with the engine-filled fact line and exact owner-approved opening."
 );
-assert.match(sunLeo.body, /A birthday, launch, or personal win becomes harder to treat like an ordinary day\./u);
-assert.match(sunLeo.body, /Not every project needs an audience, but the work you want recognized has to leave your desk eventually\./u);
-assert.match(sunLeo.body, /The encouraging response may be real\. It still does not mean the budget, deadline, or workload can stretch forever\./u);
-assert.match(sunLeo.body, /Take the good response seriously, then check the calendar, the cost, and who is doing the work\./u);
-assert.match(sunLeo.body, /Before August 23, choose one piece of work, decision, or role you are ready to stand behind\. Share the part that is ready now\. People can see what you made before every detail is perfect\./u);
+assert.match(sunLeo.body, /being seen helps the work reach who it was made for\./u);
+assert.match(sunLeo.body, /Soon the bold work is no longer getting bolder\. It is getting easier to applaud\./u);
+assert.match(sunLeo.body, /The Sun last moved through Leo from July 22 to August 22\./u);
+assert.match(sunLeo.body, /Before August 23, attention moves again, and choices made only to hold it can leave the real idea unfinished\./u);
 assert.doesNotMatch(
   sunLeo.body,
   /Somewhere along the way|rescheduling a decision|version of yourself|The useful version|The distortion|Wishing you|Leo is the fifth sign|The Leo trap/iu,
@@ -376,13 +377,13 @@ assert.doesNotMatch(
 );
 assert.match(
   sunLeo.body,
-  /The problem begins when attention becomes the only proof that the work matters\./u,
+  /When it becomes the only fuel, purpose gets replaced by the need to keep attention from moving\./u,
   "Sun-in-Leo must keep the owner-approved central tension."
 );
-assert.match(
+assert.doesNotMatch(
   sunLeo.body,
   /On July 29, the Sun meets Jupiter in Leo\./u,
-  "Sun-in-Leo must render the owner-approved aspect opportunity with the engine date."
+  "The exact owner-approved Sun-in-Leo fallback must not inherit the superseded aspect insert."
 );
 assert.doesNotMatch(
   sunLeoMoonOpposition.body,
@@ -394,23 +395,27 @@ assert.doesNotMatch(
   /\b(?:conjunction|square|trine|sextile|opposition|applying|separating|orb)\b/iu,
   "Sky placement bodies must not expose aspect jargon."
 );
-assert.throws(
-  () => renderer.renderSkyPlacement({
-    planet: "sun",
-    sign: "aries",
-    entryDate: "March 20",
-    exitDate: "April 20"
-  }),
-  /SOURCE_GAP: continuous sky placement sign copy sun\/aries/u,
-  "Superseded Sun-in-Aries modules must stay dark until its replacement is approved."
-);
+const sunAries = renderer.renderSkyPlacement({
+  planet: "sun",
+  sign: "aries",
+  entryDate: "March 20, 2027",
+  exitDate: "April 20, 2027",
+  priorSign: "pisces",
+  priorSignEntryDate: "February 18, 2027",
+  priorSignExitDate: "March 20, 2027",
+  previousResidencyEntryDate: "March 20, 2026",
+  previousResidencyExitDate: "April 20, 2026",
+  events: []
+});
+assert.equal(sunAries.contentKey, "fallback-hook/sky-sign-copy/sun/aries");
+assert.match(sunAries.body, /The Sun in Aries makes a clean decision feel like a return to life\./u);
 assert.equal(sunLeo.tagline, null, "The continuous unit must not append the retired quote-style tagline.");
 assert.deepEqual(
   sunLeo.moves,
   [
-    "Put one piece of work you are proud of where other people can see it.",
-    "Give someone else clear credit for what they contributed.",
-    "Ask directly for the support, recognition, or opportunity you need."
+    "We can finish one small project this week and put our name on it.",
+    "We can thank someone in front of others for a specific contribution without turning the praise back toward ourselves.",
+    "We can choose one visible detail on something we are making without asking anyone else to approve it."
   ],
   "Sun-in-Leo must expose the owner's optional Try this list verbatim."
 );
@@ -515,7 +520,7 @@ assert.deepEqual(
   "Browser and Node continuous Sun fallback assembly must remain byte-identical."
 );
 
-assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 30);
+assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 56);
 const ownerFallbackDateFacts = {
   entryDate: "August 24, 2028",
   exitDate: "September 24, 2029",
