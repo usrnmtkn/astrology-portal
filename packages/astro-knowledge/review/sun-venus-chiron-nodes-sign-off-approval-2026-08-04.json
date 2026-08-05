@@ -1,0 +1,19 @@
+{
+  "id": "sun-venus-chiron-nodes-sign-off-approval-2026-08-04",
+  "recordedAt": "2026-08-05T01:00:00Z",
+  "source": "owner statement in Codex task",
+  "sheet": "packages/astro-knowledge/review/sun-venus-chiron-nodes-sign-off-sheet.md",
+  "ownerStatement": "I explicitly approve Decisions A and B in the sun-venus-chiron-nodes sign-off sheet at review/sun-venus-chiron-nodes-sign-off-sheet.md exactly as written.",
+  "approvedDecisions": [
+    "A",
+    "B"
+  ],
+  "decisionA": {
+    "status": "authorized_for_application",
+    "scope": "Apply the six exact fact-boundary fixes and mark all 24 Sun/Venus rows REVIEWED."
+  },
+  "decisionB": {
+    "status": "authorized_for_proposal_only_pending_serving_approval",
+    "scope": "Prepare the three runtimeEligible flips and exact two-key serving transition with deployment evidence; do not apply the serving transition before explicit serving approval."
+  }
+}

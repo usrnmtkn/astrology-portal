@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_08acaf069d6760ff006a7294d5c55481a39feaee55ed0c83bb",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8218,
+    "input_tokens_details": {
+      "cache_write_tokens": 8215,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4897,
+    "output_tokens_details": {
+      "reasoning_tokens": 4464
+    },
+    "total_tokens": 13115
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Virgo on {{entryDate}}, and the small proof of care starts carrying more weight. Someone mentions a sticking cabinet door, and it gets fixed that afternoon. A shared expense gets checked before it grows. Affection feels more convincing when it is attentive, useful, and real enough to improve daily life.\",\"tension\":\"The pressure begins when every detail starts looking like a test. We notice what is unfinished or slightly off, then correct it before anyone asks. We remember every need, take over every repair, and quietly expect the effort to prove how much we care. The same attention then turns on the response. If thanks are late or the result is imperfect, criticism takes the place of the request we never made. Love begins to feel earned through flawless usefulness, while pleasure and help are treated as things to repay.\",\"development\":\"Venus last moved through Virgo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the usefulness test may be easier to spot. Someone fixes a shared problem and resents that nobody noticed. We redo work already handled because it was not done exactly right. A kind offer gets refused, then care feels one-sided. Venus in Virgo can make receiving feel strangely exposed, because accepting help means letting care arrive without controlling its form. Criticism grows where a clear request could have been made, and closeness narrows to a list of what still needs improvement. Every detail may be handled well. The connection can still go thin when being needed feels safer than receiving.\",\"close\":\"By {{exitDate}}, a bond organized around flawless usefulness can contain plenty of care while leaving us unable to receive any of it.\",\"try_this\":[\"We can accept one offered favor this week without returning it immediately or listing what we owe.\",\"We can name one need in a full sentence instead of correcting how someone tried to help.\",\"We can take one item we already value in for repair and put it back into use.\"]}"
+}

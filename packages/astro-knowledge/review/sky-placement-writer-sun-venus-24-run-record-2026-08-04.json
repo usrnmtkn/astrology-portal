@@ -1,0 +1,1046 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-sun-venus-24-2026-08-04",
+  "recordedAt": "2026-08-05T01:55:36.933Z",
+  "authorization": {
+    "source": "owner statement in Codex on 2026-08-04",
+    "decisionsApproved": [
+      "A",
+      "B"
+    ],
+    "writerCallsAuthorized": 24,
+    "writerOnly": true,
+    "terraAuthorized": false
+  },
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1"
+  },
+  "results": {
+    "preflightPackets": 24,
+    "selfLintPassedBeforeRender": 24,
+    "billedWriterAttempts": 24,
+    "completedArticles": 23,
+    "incompleteArticles": 1,
+    "incompleteIds": [
+      "venus-taurus"
+    ],
+    "billedRetries": 0,
+    "terraCalls": 0,
+    "deterministicOverallPassed": 22,
+    "deterministicFailedIds": [
+      "venus-leo"
+    ]
+  },
+  "tokenUsage": {
+    "input_tokens": 196343,
+    "cache_write_tokens": 196271,
+    "cached_input_tokens": 0,
+    "output_tokens": 120341,
+    "reasoning_tokens": 111321,
+    "total_tokens": 316684,
+    "uncached_nonwrite_input_tokens": 72
+  },
+  "billingEstimate": {
+    "note": "The calls used the OpenAI Responses API. The API billing dashboard is authoritative. Codex credits are shown only as a rate-card equivalent for budgeting.",
+    "apiUsdEstimate": 4.837284,
+    "codexCreditsEquivalent": 120.932094,
+    "apiRatesPerMillionTokens": {
+      "uncachedInputUsd": 5,
+      "cacheWriteInputUsd": 6.25,
+      "cachedInputUsd": 0.5,
+      "outputUsd": 30
+    },
+    "codexRatesPerMillionTokens": {
+      "uncachedInputCredits": 125,
+      "cacheWriteInputCredits": 156.25,
+      "cachedInputCredits": 12.5,
+      "outputCredits": 750
+    },
+    "sources": [
+      "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+      "https://learn.chatgpt.com/docs/pricing#what-are-tokens-and-credits"
+    ]
+  },
+  "governance": {
+    "allCandidatesHeldForOwnerReview": true,
+    "automaticRevisionPerformed": false,
+    "automaticPromotionPerformed": false,
+    "governedContentChanged": false,
+    "servingChanged": false
+  },
+  "units": [
+    {
+      "id": "sun-aries",
+      "callStatus": "completed",
+      "responseId": "resp_0941851f8fd197a6006a728edd3ca4819183ccc3f5e37eccd1",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8182,
+        "input_tokens_details": {
+          "cache_write_tokens": 8179,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4278,
+        "output_tokens_details": {
+          "reasoning_tokens": 3897
+        },
+        "total_tokens": 12460
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 5 sentences; spec says 2-4",
+          "turn is 6 sentences; spec says 2-5 with one close",
+          "hook is long (74 words); the hook is the sendable line, not a paragraph",
+          "closer is long; end on a shorter line with bite"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-taurus",
+      "callStatus": "completed",
+      "responseId": "resp_0eb203d21a0a5c31006a728f2b19b0819ca564157537344728",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8176,
+        "input_tokens_details": {
+          "cache_write_tokens": 8173,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4516,
+        "output_tokens_details": {
+          "reasoning_tokens": 4182
+        },
+        "total_tokens": 12692
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 5 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-gemini",
+      "callStatus": "completed",
+      "responseId": "resp_0b5cf8fb9e4c868a006a728f7a2e1881a3ae6247acf3d1f363",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8165,
+        "input_tokens_details": {
+          "cache_write_tokens": 8162,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4561,
+        "output_tokens_details": {
+          "reasoning_tokens": 4142
+        },
+        "total_tokens": 12726
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 6 sentences; spec says 2-4",
+          "lived is 7 sentences; spec says 2-4",
+          "turn is 9 sentences; spec says 2-5 with one close",
+          "hook is long (75 words); the hook is the sendable line, not a paragraph"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-cancer",
+      "callStatus": "completed",
+      "responseId": "resp_0011b98fc9327477006a728fc60c0c81a1a3d22c603699c659",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8211,
+        "input_tokens_details": {
+          "cache_write_tokens": 8208,
+          "cached_tokens": 0
+        },
+        "output_tokens": 5888,
+        "output_tokens_details": {
+          "reasoning_tokens": 5498
+        },
+        "total_tokens": 14099
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 6 sentences; spec says 2-4",
+          "turn is 6 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-leo",
+      "callStatus": "completed",
+      "responseId": "resp_0d676ec405bfd109006a72902ef5d8819ebd82d5fb114c64f5",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8214,
+        "input_tokens_details": {
+          "cache_write_tokens": 8211,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4220,
+        "output_tokens_details": {
+          "reasoning_tokens": 3807
+        },
+        "total_tokens": 12434
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 7 sentences; spec says 2-4",
+          "turn is 6 sentences; spec says 2-5 with one close",
+          "hook is long (71 words); the hook is the sendable line, not a paragraph"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-virgo",
+      "callStatus": "completed",
+      "responseId": "resp_07f5e34e631240c2006a72907e7da0819e8e88578ceff3659f",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8188,
+        "input_tokens_details": {
+          "cache_write_tokens": 8185,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4935,
+        "output_tokens_details": {
+          "reasoning_tokens": 4574
+        },
+        "total_tokens": 13123
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 6 sentences; spec says 2-4",
+          "turn is 6 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-libra",
+      "callStatus": "completed",
+      "responseId": "resp_09b5e4e4491e25d9006a7290cd4ea8819db4eff7ec5f5dacbe",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8220,
+        "input_tokens_details": {
+          "cache_write_tokens": 8217,
+          "cached_tokens": 0
+        },
+        "output_tokens": 5702,
+        "output_tokens_details": {
+          "reasoning_tokens": 5292
+        },
+        "total_tokens": 13922
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 5 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-scorpio",
+      "callStatus": "completed",
+      "responseId": "resp_0107c0bb00dded30006a72912f327c8191b982b3581fda1722",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8154,
+        "input_tokens_details": {
+          "cache_write_tokens": 8151,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4226,
+        "output_tokens_details": {
+          "reasoning_tokens": 3878
+        },
+        "total_tokens": 12380
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "turn is 6 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-sagittarius",
+      "callStatus": "completed",
+      "responseId": "resp_0edab480dd2dbff7006a72917a860c819e8565b0fa9595f35b",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8200,
+        "input_tokens_details": {
+          "cache_write_tokens": 8197,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3453,
+        "output_tokens_details": {
+          "reasoning_tokens": 3082
+        },
+        "total_tokens": 11653
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 6 sentences; spec says 2-4"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-capricorn",
+      "callStatus": "completed",
+      "responseId": "resp_0e1d588009b99898006a7291b9d02c8192ac39721b474d410e",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8208,
+        "input_tokens_details": {
+          "cache_write_tokens": 8205,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3288,
+        "output_tokens_details": {
+          "reasoning_tokens": 2966
+        },
+        "total_tokens": 11496
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 5 sentences; spec says 2-4",
+          "turn is 6 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-aquarius",
+      "callStatus": "completed",
+      "responseId": "resp_02a264d92e9106d4006a7291f6621081a28474d49a6b353c56",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8281,
+        "input_tokens_details": {
+          "cache_write_tokens": 8278,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4827,
+        "output_tokens_details": {
+          "reasoning_tokens": 4420
+        },
+        "total_tokens": 13108
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 5 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "sun-pisces",
+      "callStatus": "completed",
+      "responseId": "resp_06b37f53ff03bc27006a7292470748819e93cbeb3aa0e771d4",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8036,
+        "input_tokens_details": {
+          "cache_write_tokens": 8033,
+          "cached_tokens": 0
+        },
+        "output_tokens": 5613,
+        "output_tokens_details": {
+          "reasoning_tokens": 5178
+        },
+        "total_tokens": 13649
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 7 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-aries",
+      "callStatus": "completed",
+      "responseId": "resp_0737aa5f4fd6756b006a7292a9f69c819f881219a84bc9df6a",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8170,
+        "input_tokens_details": {
+          "cache_write_tokens": 8167,
+          "cached_tokens": 0
+        },
+        "output_tokens": 5840,
+        "output_tokens_details": {
+          "reasoning_tokens": 5456
+        },
+        "total_tokens": 14010
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 6 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-taurus",
+      "callStatus": "incomplete_max_output_tokens",
+      "responseId": "resp_04b3919d9c60052c006a72930bb1a4819180cafabaee2477d2",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8157,
+        "input_tokens_details": {
+          "cache_write_tokens": 8154,
+          "cached_tokens": 0
+        },
+        "output_tokens": 12000,
+        "output_tokens_details": {
+          "reasoning_tokens": 11912
+        },
+        "total_tokens": 20157
+      },
+      "lint": null,
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-gemini",
+      "callStatus": "completed",
+      "responseId": "resp_03fda3a36d82f501006a7293fb6fb48191acc8d0719328ac34",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8184,
+        "input_tokens_details": {
+          "cache_write_tokens": 8181,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4989,
+        "output_tokens_details": {
+          "reasoning_tokens": 4606
+        },
+        "total_tokens": 13173
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 2,
+        "fails": 0,
+        "warns": 1,
+        "findings": [
+          {
+            "severity": "warn",
+            "source": "sky-placement",
+            "term": "\\breveals?\\b",
+            "match": "reveal",
+            "reason": "old-surface watch word; prefer shows, exposes"
+          }
+        ],
+        "notes": [
+          "hook is 6 sentences; spec says 2-4",
+          "lived is 6 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-cancer",
+      "callStatus": "completed",
+      "responseId": "resp_0fe9bf5dd35c7d61006a72944cf02c819db3d8b66329598a4f",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8134,
+        "input_tokens_details": {
+          "cache_write_tokens": 8131,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4600,
+        "output_tokens_details": {
+          "reasoning_tokens": 4142
+        },
+        "total_tokens": 12734
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 7 sentences; spec says 2-4",
+          "turn is 8 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-leo",
+      "callStatus": "completed",
+      "responseId": "resp_0387bb51420d0d63006a729494cd0481a280956d947ed43911",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8182,
+        "input_tokens_details": {
+          "cache_write_tokens": 8179,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3978,
+        "output_tokens_details": {
+          "reasoning_tokens": 3624
+        },
+        "total_tokens": 12160
+      },
+      "lint": {
+        "overallPassed": false,
+        "score": 1,
+        "fails": 2,
+        "warns": 0,
+        "findings": [
+          {
+            "severity": "fail",
+            "source": "current-sky-person",
+            "term": "second-person",
+            "match": "you",
+            "reason": "Current Sky placement copy is collective; second person belongs to transit-to-natal copy"
+          },
+          {
+            "severity": "fail",
+            "source": "compiled-editorial-decision",
+            "decisionId": "ED-003",
+            "slot": null,
+            "term": "regex",
+            "match": "you",
+            "reason": "Current Sky is collective; second person belongs to natal or transit-to-natal copy."
+          }
+        ],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-virgo",
+      "callStatus": "completed",
+      "responseId": "resp_08acaf069d6760ff006a7294d5c55481a39feaee55ed0c83bb",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8218,
+        "input_tokens_details": {
+          "cache_write_tokens": 8215,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4897,
+        "output_tokens_details": {
+          "reasoning_tokens": 4464
+        },
+        "total_tokens": 13115
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 6 sentences; spec says 2-4",
+          "turn is 9 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-libra",
+      "callStatus": "completed",
+      "responseId": "resp_0e056897ad249367006a72952bda2481a2b032598c97d964f2",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8217,
+        "input_tokens_details": {
+          "cache_write_tokens": 8214,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4012,
+        "output_tokens_details": {
+          "reasoning_tokens": 3624
+        },
+        "total_tokens": 12229
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 6 sentences; spec says 2-4",
+          "lived is 6 sentences; spec says 2-4"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-scorpio",
+      "callStatus": "completed",
+      "responseId": "resp_02b1da455f49fb3f006a7295778ed081a18e700ea1ea9c2c62",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8194,
+        "input_tokens_details": {
+          "cache_write_tokens": 8191,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4292,
+        "output_tokens_details": {
+          "reasoning_tokens": 3889
+        },
+        "total_tokens": 12486
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 7 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-sagittarius",
+      "callStatus": "completed",
+      "responseId": "resp_0544c6269b1d8958006a7295c6b70c81a2bfd8db445e828d9e",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8159,
+        "input_tokens_details": {
+          "cache_write_tokens": 8156,
+          "cached_tokens": 0
+        },
+        "output_tokens": 5391,
+        "output_tokens_details": {
+          "reasoning_tokens": 5018
+        },
+        "total_tokens": 13550
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-capricorn",
+      "callStatus": "completed",
+      "responseId": "resp_0aacc1d7f1c70d34006a7296275d0481a0b83b6644d238e48a",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8164,
+        "input_tokens_details": {
+          "cache_write_tokens": 8161,
+          "cached_tokens": 0
+        },
+        "output_tokens": 7505,
+        "output_tokens_details": {
+          "reasoning_tokens": 7127
+        },
+        "total_tokens": 15669
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "hook is 5 sentences; spec says 2-4",
+          "lived is 5 sentences; spec says 2-4",
+          "turn is 6 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-aquarius",
+      "callStatus": "completed",
+      "responseId": "resp_0af189116cce0d87006a7296a580e081a0b29a3729b24b90d6",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8248,
+        "input_tokens_details": {
+          "cache_write_tokens": 8245,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4352,
+        "output_tokens_details": {
+          "reasoning_tokens": 3955
+        },
+        "total_tokens": 12600
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 6 sentences; spec says 2-4",
+          "turn is 7 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    },
+    {
+      "id": "venus-pisces",
+      "callStatus": "completed",
+      "responseId": "resp_00f0f96aeb9ce0ac006a72970295f881a0be52a404a0495088",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "usage": {
+        "input_tokens": 8081,
+        "input_tokens_details": {
+          "cache_write_tokens": 8078,
+          "cached_tokens": 0
+        },
+        "output_tokens": 2978,
+        "output_tokens_details": {
+          "reasoning_tokens": 2588
+        },
+        "total_tokens": 11059
+      },
+      "lint": {
+        "overallPassed": true,
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [
+          "lived is 5 sentences; spec says 2-4",
+          "turn is 9 sentences; spec says 2-5 with one close"
+        ]
+      },
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    }
+  ],
+  "followUpAuthorization": {
+    "recordedAt": "2026-08-05T02:15:17.068Z",
+    "source": "owner statement in Codex on 2026-08-04",
+    "statement": "Retry Venus in Taurus once with a 16,000-token cap. Regenerate Venus in Leo once with a one-line collective-voice steer. Two billed calls total, no Terra.",
+    "authorizedWriterCalls": 2,
+    "terraAuthorized": false
+  },
+  "followUpResults": {
+    "billedWriterAttempts": 2,
+    "completedArticles": 2,
+    "billedRetriesBeyondAuthorization": 0,
+    "terraCalls": 0,
+    "deterministicOverallPassed": 2,
+    "units": [
+      {
+        "id": "venus-taurus-retry-16k-v2",
+        "responseId": "resp_0ef10476bcd2b1db006a729ba082308191bbe1f048ad7965f5",
+        "callStatus": "completed",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "writerRunOverrides": {
+          "maxOutputTokens": 16000
+        },
+        "usage": {
+          "input_tokens": 8157,
+          "input_tokens_details": {
+            "cache_write_tokens": 8154,
+            "cached_tokens": 0
+          },
+          "output_tokens": 8149,
+          "output_tokens_details": {
+            "reasoning_tokens": 7768
+          },
+          "total_tokens": 16306
+        },
+        "lint": {
+          "overallPassed": true,
+          "score": 3,
+          "fails": 0,
+          "warns": 0,
+          "findings": [],
+          "notes": [
+            "hook is 5 sentences; spec says 2-4",
+            "lived is 5 sentences; spec says 2-4",
+            "turn is 6 sentences; spec says 2-5 with one close"
+          ]
+        },
+        "reviewStatus": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "artifactRoot": "packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-taurus-retry-16k-v2"
+      },
+      {
+        "id": "venus-leo-collective-retry-v2",
+        "responseId": "resp_02c21ebf72e65cf0006a729c36ef9481a289d85aac8ff33389",
+        "callStatus": "completed",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "writerRunOverrides": {
+          "maxOutputTokens": 12000,
+          "collectiveVoiceSteer": "Collective voice is mandatory in every field: do not use you, your, yours, yourself, or yourselves, including inside quoted or imagined speech."
+        },
+        "usage": {
+          "input_tokens": 8212,
+          "input_tokens_details": {
+            "cache_write_tokens": 8209,
+            "cached_tokens": 0
+          },
+          "output_tokens": 2973,
+          "output_tokens_details": {
+            "reasoning_tokens": 2588
+          },
+          "total_tokens": 11185
+        },
+        "lint": {
+          "overallPassed": true,
+          "score": 3,
+          "fails": 0,
+          "warns": 0,
+          "findings": [],
+          "notes": [
+            "hook is 5 sentences; spec says 2-4",
+            "lived is 5 sentences; spec says 2-4",
+            "turn is 6 sentences; spec says 2-5 with one close"
+          ]
+        },
+        "reviewStatus": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "artifactRoot": "packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-leo-collective-retry-v2"
+      }
+    ]
+  },
+  "followUpTokenUsage": {
+    "input_tokens": 16369,
+    "cache_write_tokens": 16363,
+    "cached_input_tokens": 0,
+    "output_tokens": 11122,
+    "reasoning_tokens": 10356,
+    "total_tokens": 27491,
+    "uncached_nonwrite_input_tokens": 6
+  },
+  "followUpBillingEstimate": {
+    "apiUsdEstimate": 0.435959,
+    "codexCreditsEquivalent": 10.898969
+  },
+  "aggregateAfterFollowUp": {
+    "billedWriterAttempts": 26,
+    "completedArticleAttempts": 25,
+    "incompleteArticleAttempts": 1,
+    "currentReviewablePlacementDrafts": 24,
+    "terraCalls": 0,
+    "tokenUsage": {
+      "input_tokens": 212712,
+      "cache_write_tokens": 212634,
+      "cached_input_tokens": 0,
+      "output_tokens": 131463,
+      "reasoning_tokens": 121677,
+      "total_tokens": 344175,
+      "uncached_nonwrite_input_tokens": 78
+    },
+    "apiUsdEstimate": 5.273243,
+    "codexCreditsEquivalent": 131.831063
+  }
+}

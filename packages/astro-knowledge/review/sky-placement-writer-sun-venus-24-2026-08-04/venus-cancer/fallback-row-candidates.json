@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/cancer",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Cancer on {{entryDate}}, and affection becomes more protective. We remember which food brings comfort. We make home feel warmer before anyone arrives. Affection lives in the extra portion saved, the family story recalled at the right moment, and the quiet choice to stay close when a relationship feels tender.",
+      "tension": "When security feels uncertain, we may do more before anyone asks. We keep the kitchen stocked, remember every preference, cover a small expense, or rearrange home to make staying easy. Then a changed plan can feel like rejection. A cool response can make us defend the care instead of naming the need underneath it. The unspoken bargain is simple: all this tending should make the connection safe. Because that bargain was never said aloud, the care lands as obligation while we feel unappreciated. We check more often, hold on harder, and grow defensive when the response does not match the effort.",
+      "development": "Venus was last in Cancer from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure appears through more than one kind of exchange. A gift carries the hope of a certain reaction. Help continues after it has been declined. An old hurt enters a new disagreement as proof that devotion has not been matched. Even pleasure gets harder to receive, because relaxing can feel risky when closeness seems uncertain. The more care is used to prevent distance, the less freely both sides can choose closeness. What began as protection leaves one side monitoring every response and the other pulling away from the pressure.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, care offered to secure love can leave us doing more for less connection, while every changed plan feels like a warning that the bond is slipping.",
+      "try_this": [
+        "We can ask for one concrete form of closeness, such as a visit or a shared meal, before offering extra care.",
+        "We can set a spending limit before buying food, gifts, or home comforts for someone we want to keep close.",
+        "We can accept one offered meal, ride, or favor without immediately trying to repay it."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Cancer on {{entryDate}}, and affection becomes more protective. We remember which food brings comfort. We make home feel warmer before anyone arrives. Affection lives in the extra portion saved, the family story recalled at the right moment, and the quiet choice to stay close when a relationship feels tender.\n\nWhen security feels uncertain, we may do more before anyone asks. We keep the kitchen stocked, remember every preference, cover a small expense, or rearrange home to make staying easy. Then a changed plan can feel like rejection. A cool response can make us defend the care instead of naming the need underneath it. The unspoken bargain is simple: all this tending should make the connection safe. Because that bargain was never said aloud, the care lands as obligation while we feel unappreciated. We check more often, hold on harder, and grow defensive when the response does not match the effort.\n\nVenus was last in Cancer from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure appears through more than one kind of exchange. A gift carries the hope of a certain reaction. Help continues after it has been declined. An old hurt enters a new disagreement as proof that devotion has not been matched. Even pleasure gets harder to receive, because relaxing can feel risky when closeness seems uncertain. The more care is used to prevent distance, the less freely both sides can choose closeness. What began as protection leaves one side monitoring every response and the other pulling away from the pressure.\n\nBefore {{exitDate}}, care offered to secure love can leave us doing more for less connection, while every changed plan feels like a warning that the bond is slipping.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Cancer on {{entryDate}}, and affection becomes more protective. We remember which food brings comfort. We make home feel warmer before anyone arrives. Affection lives in the extra portion saved, the family story recalled at the right moment, and the quiet choice to stay close when a relationship feels tender.\n\nWhen security feels uncertain, we may do more before anyone asks. We keep the kitchen stocked, remember every preference, cover a small expense, or rearrange home to make staying easy. Then a changed plan can feel like rejection. A cool response can make us defend the care instead of naming the need underneath it. The unspoken bargain is simple: all this tending should make the connection safe. Because that bargain was never said aloud, the care lands as obligation while we feel unappreciated. We check more often, hold on harder, and grow defensive when the response does not match the effort.\n\nVenus was last in Cancer from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure appears through more than one kind of exchange. A gift carries the hope of a certain reaction. Help continues after it has been declined. An old hurt enters a new disagreement as proof that devotion has not been matched. Even pleasure gets harder to receive, because relaxing can feel risky when closeness seems uncertain. The more care is used to prevent distance, the less freely both sides can choose closeness. What began as protection leaves one side monitoring every response and the other pulling away from the pressure.\n\nBefore {{exitDate}}, care offered to secure love can leave us doing more for less connection, while every changed plan feels like a warning that the bond is slipping.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-cancer"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

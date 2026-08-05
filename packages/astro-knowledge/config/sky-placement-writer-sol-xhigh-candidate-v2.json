@@ -3,7 +3,7 @@
   "provider": "openai",
   "model": "gpt-5.6-sol",
   "reasoningEffort": "xhigh",
-  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "promptVersion": "sky-placement-writer-v16:owner-directive-ov044-v1",
   "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
   "runtimeContract": "sky-placement-continuous-v2",
   "rubricVersion": "not-applicable-writing-only",
