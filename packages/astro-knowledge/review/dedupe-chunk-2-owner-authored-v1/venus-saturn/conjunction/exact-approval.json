@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-saturn-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/saturn/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "15820d33d615cbe564a26a1bb3332e8e1409fdefbb5f48fa8a7614810a09dad4",
+  "payload": {
+    "body_you": "{{holder2}} shows up, keeps promises, and gives {{holder1}} something reliable. {{holder1}} may trust that {{holder2}} will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. {{holder1}} may know that {{holder2}} is committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience.",
+    "body_they": "{{holder2}} shows up, keeps promises, and gives {{holder1}} something reliable. {{holder1}} may trust that {{holder2}} will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. {{holder1}} may know that {{holder2}} is committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-saturn/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

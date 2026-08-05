@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-jupiter-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/jupiter/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b293aa954f33b4a180bb969380b6fc28aa6c1104a179cda71dd3b2c86f1d2fe7",
+  "payload": {
+    "body_you": "{{holder1}}'s affection gives {{holder2}} more confidence in the relationship, while {{holder2}} makes it easier for {{holder1}} to express warmth openly. Time together often feels generous and encouraging. {{holder1}} feels appreciated, and {{holder2}} feels that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive.",
+    "body_they": "{{holder1}}'s affection gives {{holder2}} more confidence in the relationship, while {{holder2}} makes it easier for {{holder1}} to express warmth openly. Time together often feels generous and encouraging. {{holder1}} feels appreciated, and {{holder2}} feels that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-jupiter/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
