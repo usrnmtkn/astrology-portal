@@ -48,8 +48,10 @@
     "contentDeltaBytes": 4393,
     "priorBudgetBytes": 2630376,
     "localOverageBytes": 4348,
-    "candidateBudgetBytes": 2634724,
-    "reason": "Minimum local increase required solely by the larger owner-authored content payload and its generated distribution artifacts. Hosted CI remains authoritative for cross-platform gzip variance."
+    "hostedCandidateBytes": 2634735,
+    "hostedOverageBytes": 4359,
+    "candidateBudgetBytes": 2634735,
+    "reason": "Minimum hosted-CI increase required solely by the larger owner-authored content payload and its generated distribution artifacts. Hosted Linux measured 11 bytes above the local macOS candidate."
   },
   "pullRequestStatus": "authorized_for_draft_ready_merge",
   "servingStatus": "candidate_branch_only_until_merge"
