@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mars-mars-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mars/mars/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "6d45d6c3ace0668965303dcd1f61aed723b0c363c894e6507144ac383bb8c864",
+  "payload": {
+    "body_you": "{{holder1}} and {{holder2}} usually move at a similar pace and understand how the other person takes action. They can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until their priorities finally split, and then both discover that agreement had been doing more work than they realized.",
+    "body_they": "{{holder1}} and {{holder2}} usually move at a similar pace and understand how the other person takes action. They can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until their priorities finally split, and then both discover that agreement had been doing more work than they realized.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mars-mars/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

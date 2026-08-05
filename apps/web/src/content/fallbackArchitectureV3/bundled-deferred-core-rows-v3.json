@@ -8619,51 +8619,54 @@
       "contentKey": "fallback-hook/synastry-pair/mercury/mercury/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Mercuries follow the same logic: you analyze life in similar ways, which makes working side by side feel effortless. Shared logic is not the same as harmony, though. You can still disagree, you will simply do it efficiently.",
-      "body_they": "Your Mercuries follow the same logic: you analyze life in similar ways, which makes working side by side feel effortless. Shared logic is not the same as harmony, though. You can still disagree, you will simply do it efficiently.",
+      "body_you": "{{holder1}} and {{holder2}} tend to think at the same speed and follow the same jumps in conversation. They may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, {{holder1}} and {{holder2}} may assume they reached the same conclusion when neither person actually stopped to explain what they meant.",
+      "body_they": "{{holder1}} and {{holder2}} tend to think at the same speed and follow the same jumps in conversation. They may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, {{holder1}} and {{holder2}} may assume they reached the same conclusion when neither person actually stopped to explain what they meant.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mercury/conjunction/exact-approval.json",
+        "payloadSha256": "8e1319382da4d38bf52b87fbc024a3fb41d8a8e54d1ab3de5ec44800d463ac05",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/mercury/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Mercuries follow the same logic: you analyze life in similar ways, which makes working side by side feel effortless. Shared logic is not the same as harmony, though. You can still disagree, you will simply do it efficiently.",
-      "body_they": "Your Mercuries follow the same logic: you analyze life in similar ways, which makes working side by side feel effortless. Shared logic is not the same as harmony, though. You can still disagree, you will simply do it efficiently.",
+      "body_you": "{{holder1}} and {{holder2}} process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. {{holder1}} may feel misunderstood by {{holder2}}, while {{holder2}} may feel that {{holder1}} is missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion.",
+      "body_they": "{{holder1}} and {{holder2}} process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. {{holder1}} may feel misunderstood by {{holder2}}, while {{holder2}} may feel that {{holder1}} is missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mercury/hard/exact-approval.json",
+        "payloadSha256": "62698e84d5ca8c8ed7eac83c2924da093b6b34f0c9afce0daf5f3562c1046d42",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/mercury/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Mercuries follow the same logic: you analyze life in similar ways, which makes working side by side feel effortless. Shared logic is not the same as harmony, though. You can still disagree, you will simply do it efficiently.",
-      "body_they": "Your Mercuries follow the same logic: you analyze life in similar ways, which makes working side by side feel effortless. Shared logic is not the same as harmony, though. You can still disagree, you will simply do it efficiently.",
+      "body_you": "Conversation tends to move easily between {{holder1}} and {{holder2}}. They can follow each other's reasoning, return to unfinished discussions, and explain complicated ideas without spending half the conversation correcting misunderstandings. That ease can make {{holder1}} and {{holder2}} feel mentally close, even when they have not spoken for a while. The connection often resumes exactly where it stopped.",
+      "body_they": "Conversation tends to move easily between {{holder1}} and {{holder2}}. They can follow each other's reasoning, return to unfinished discussions, and explain complicated ideas without spending half the conversation correcting misunderstandings. That ease can make {{holder1}} and {{holder2}} feel mentally close, even when they have not spoken for a while. The connection often resumes exactly where it stopped.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mercury/soft/exact-approval.json",
+        "payloadSha256": "0edf9ff39622f26ce41a1098ae17feab3c56562f026cf2ad3392807692eea5ef",
+        "approvedAt": "2026-08-05"
       }
     },
     {
@@ -8724,204 +8727,216 @@
       "contentKey": "fallback-hook/synastry-pair/mercury/mars/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Mercury holds the wheel while {{holder2Poss}} Mars provides the drive. The arrangement flows while the direction is welcome, and sours when the Mars side grows tired of being steered, so trade places from time to time.",
-      "body_they": "{{holder1PossCap}} Mercury holds the wheel while {{holder2Poss}} Mars provides the drive. The arrangement flows while the direction is welcome, and sours when the Mars side grows tired of being steered, so trade places from time to time.",
+      "body_you": "When {{holder1}} has an idea, {{holder2}} is ready to do something with it. {{holder1}} gives language to the plan, and {{holder2}} adds speed, urgency, and the willingness to act before the moment passes. This can make {{holder1}} feel sharper and more decisive around {{holder2}}. It can also make disagreements escalate quickly. {{holder2}} reacts while {{holder1}} is still explaining, and a conversation that began with one idea can end with both defending how they spoke.",
+      "body_they": "When {{holder1}} has an idea, {{holder2}} is ready to do something with it. {{holder1}} gives language to the plan, and {{holder2}} adds speed, urgency, and the willingness to act before the moment passes. This can make {{holder1}} feel sharper and more decisive around {{holder2}}. It can also make disagreements escalate quickly. {{holder2}} reacts while {{holder1}} is still explaining, and a conversation that began with one idea can end with both defending how they spoke.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mars/conjunction/exact-approval.json",
+        "payloadSha256": "86afdcc3c32d75d1d7d9b591012f537697c63ecd681fb92eadb2ff45bfc430cd",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/mars/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Mercury holds the wheel while {{holder2Poss}} Mars provides the drive. The arrangement flows while the direction is welcome, and sours when the Mars side grows tired of being steered, so trade places from time to time.",
-      "body_they": "{{holder1PossCap}} Mercury holds the wheel while {{holder2Poss}} Mars provides the drive. The arrangement flows while the direction is welcome, and sours when the Mars side grows tired of being steered, so trade places from time to time.",
+      "body_you": "{{holder1}} may feel rushed, interrupted, or pushed into answering before the thought is finished. {{holder2}} may experience {{holder1}}'s need to explain as delay, avoidance, or an attempt to keep the conversation going long after the point seems clear. The frustration becomes personal quickly. {{holder1}} starts defending the right to finish, while {{holder2}} starts defending the right to react. Soon the argument is no longer about the original decision.",
+      "body_they": "{{holder1}} may feel rushed, interrupted, or pushed into answering before the thought is finished. {{holder2}} may experience {{holder1}}'s need to explain as delay, avoidance, or an attempt to keep the conversation going long after the point seems clear. The frustration becomes personal quickly. {{holder1}} starts defending the right to finish, while {{holder2}} starts defending the right to react. Soon the argument is no longer about the original decision.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mars/hard/exact-approval.json",
+        "payloadSha256": "d25a5a489f0e76dcd31da53d9ac782a4c85fe579fc1ea3fa7768d4c51c621f89",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/mars/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Mercury holds the wheel while {{holder2Poss}} Mars provides the drive. The arrangement flows while the direction is welcome, and sours when the Mars side grows tired of being steered, so trade places from time to time.",
-      "body_they": "{{holder1PossCap}} Mercury holds the wheel while {{holder2Poss}} Mars provides the drive. The arrangement flows while the direction is welcome, and sours when the Mars side grows tired of being steered, so trade places from time to time.",
+      "body_you": "{{holder1}} and {{holder2}} can move from discussion to action with very little delay. {{holder1}} names the problem clearly, and {{holder2}} knows what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. {{holder1}} helps {{holder2}} act with a clearer purpose, while {{holder2}} keeps {{holder1}} from thinking past the moment when action would help.",
+      "body_they": "{{holder1}} and {{holder2}} can move from discussion to action with very little delay. {{holder1}} names the problem clearly, and {{holder2}} knows what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. {{holder1}} helps {{holder2}} act with a clearer purpose, while {{holder2}} keeps {{holder1}} from thinking past the moment when action would help.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mars/soft/exact-approval.json",
+        "payloadSha256": "26219a839056002edbd1d7266b8d83a4c5338ca094053e7548703fa712e59631",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/venus/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Venuses share the same tastes: the same company, the same pleasures, the same rhythm of one-on-one time, so being together asks very little effort. The one risk is pleasantness papering over real differences, so let honest friction in when it matters.",
-      "body_they": "Your Venuses share the same tastes: the same company, the same pleasures, the same rhythm of one-on-one time, so being together asks very little effort. The one risk is pleasantness papering over real differences, so let honest friction in when it matters.",
+      "body_you": "{{holder1}} and {{holder2}} usually recognize the same forms of affection, pleasure, and consideration. They may enjoy similar places, notice the same details, or understand without much explanation what makes the other person feel appreciated. That similarity can make the relationship feel immediately familiar. It can also give {{holder1}} and {{holder2}} the same blind spots. If both avoid the same uncomfortable conversation or expect care to arrive in the same unspoken way, neither person notices what is missing.",
+      "body_they": "{{holder1}} and {{holder2}} usually recognize the same forms of affection, pleasure, and consideration. They may enjoy similar places, notice the same details, or understand without much explanation what makes the other person feel appreciated. That similarity can make the relationship feel immediately familiar. It can also give {{holder1}} and {{holder2}} the same blind spots. If both avoid the same uncomfortable conversation or expect care to arrive in the same unspoken way, neither person notices what is missing.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-venus/conjunction/exact-approval.json",
+        "payloadSha256": "8ba710783daa5428d9a46facd2032570972befcea12e72658b95b24baa592f3e",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/venus/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Venuses share the same tastes: the same company, the same pleasures, the same rhythm of one-on-one time, so being together asks very little effort. The one risk is pleasantness papering over real differences, so let honest friction in when it matters.",
-      "body_they": "Your Venuses share the same tastes: the same company, the same pleasures, the same rhythm of one-on-one time, so being together asks very little effort. The one risk is pleasantness papering over real differences, so let honest friction in when it matters.",
+      "body_you": "{{holder1}} and {{holder2}} may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. {{holder1}} keeps offering the kind of care {{holder1}} would want, while {{holder2}} does the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. {{holder1}} may believe the effort is obvious, and {{holder2}} may be waiting for proof that never arrives in a form {{holder2}} recognizes.",
+      "body_they": "{{holder1}} and {{holder2}} may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. {{holder1}} keeps offering the kind of care {{holder1}} would want, while {{holder2}} does the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. {{holder1}} may believe the effort is obvious, and {{holder2}} may be waiting for proof that never arrives in a form {{holder2}} recognizes.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-venus/hard/exact-approval.json",
+        "payloadSha256": "582d397c060c73cabd1dee63987306b4c24586b333ff4fa897cd64ce0512ee2e",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/venus/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Venuses share the same tastes: the same company, the same pleasures, the same rhythm of one-on-one time, so being together asks very little effort. The one risk is pleasantness papering over real differences, so let honest friction in when it matters.",
-      "body_they": "Your Venuses share the same tastes: the same company, the same pleasures, the same rhythm of one-on-one time, so being together asks very little effort. The one risk is pleasantness papering over real differences, so let honest friction in when it matters.",
+      "body_you": "{{holder1}} and {{holder2}} tend to enjoy the same pace and understand what the other person finds pleasant. Affection feels easy to give and easy to receive because neither person has to translate every preference. The ease can make the relationship feel naturally comfortable. It can also allow both people to assume that closeness will continue without much attention, because so little friction forces the connection to change.",
+      "body_they": "{{holder1}} and {{holder2}} tend to enjoy the same pace and understand what the other person finds pleasant. Affection feels easy to give and easy to receive because neither person has to translate every preference. The ease can make the relationship feel naturally comfortable. It can also allow both people to assume that closeness will continue without much attention, because so little friction forces the connection to change.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-venus/soft/exact-approval.json",
+        "payloadSha256": "ed4540e74da32f2c0b252db6f878f177814690b0f861c2692812a3b7060e68fd",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/mars/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Mars brings the pursuit while {{holder1Poss}} Venus holds the magnetism, creating a natural and lively pull between you. It thrives best when care and effort flow both ways, rather than leaning solely on {{holder1Poss}} Venusian grace.",
-      "body_they": "{{holder2PossCap}} Mars brings the pursuit while {{holder1Poss}} Venus holds the magnetism, creating a natural and lively pull between you. It thrives best when care and effort flow both ways, rather than leaning solely on {{holder1Poss}} Venusian grace.",
+      "body_you": "{{holder2}} makes {{holder1}} feel wanted, noticed, and difficult to ignore. {{holder1}} responds quickly to {{holder2}}'s attention, and the attraction or creative charge between them can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. {{holder1}} and {{holder2}} may feel strongly pulled toward each other before they know how well their daily lives, values, or expectations fit.",
+      "body_they": "{{holder2}} makes {{holder1}} feel wanted, noticed, and difficult to ignore. {{holder1}} responds quickly to {{holder2}}'s attention, and the attraction or creative charge between them can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. {{holder1}} and {{holder2}} may feel strongly pulled toward each other before they know how well their daily lives, values, or expectations fit.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-mars/conjunction/exact-approval.json",
+        "payloadSha256": "a5423e22ecfda632f4a4cd60eed0234914d1a3ccf807c4a633485d0589e73440",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/mars/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Mars brings the pursuit while {{holder1Poss}} Venus holds the magnetism, creating a natural and lively pull between you. It thrives best when care and effort flow both ways, rather than leaning solely on {{holder1Poss}} Venusian grace.",
-      "body_they": "{{holder2PossCap}} Mars brings the pursuit while {{holder1Poss}} Venus holds the magnetism, creating a natural and lively pull between you. It thrives best when care and effort flow both ways, rather than leaning solely on {{holder1Poss}} Venusian grace.",
+      "body_you": "{{holder1}} and {{holder2}} may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. {{holder1}} and {{holder2}} can start using intensity as proof of connection even when neither person feels fully understood.",
+      "body_they": "{{holder1}} and {{holder2}} may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. {{holder1}} and {{holder2}} can start using intensity as proof of connection even when neither person feels fully understood.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-mars/hard/exact-approval.json",
+        "payloadSha256": "45c00cbb35352193200d046b6e5f21f575601984c61989299b3007635a726d10",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/mars/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Mars brings the pursuit while {{holder1Poss}} Venus holds the magnetism, creating a natural and lively pull between you. It thrives best when care and effort flow both ways, rather than leaning solely on {{holder1Poss}} Venusian grace.",
-      "body_they": "{{holder2PossCap}} Mars brings the pursuit while {{holder1Poss}} Venus holds the magnetism, creating a natural and lively pull between you. It thrives best when care and effort flow both ways, rather than leaning solely on {{holder1Poss}} Venusian grace.",
+      "body_you": "{{holder1}}'s affection and {{holder2}}'s desire tend to move in the same direction. {{holder2}} feels encouraged to approach, while {{holder1}} is usually receptive to the attention. The connection can feel warm and uncomplicated. Because the pull requires so little negotiation, {{holder1}} and {{holder2}} may stop noticing the small choices that keep desire from becoming automatic.",
+      "body_they": "{{holder1}}'s affection and {{holder2}}'s desire tend to move in the same direction. {{holder2}} feels encouraged to approach, while {{holder1}} is usually receptive to the attention. The connection can feel warm and uncomplicated. Because the pull requires so little negotiation, {{holder1}} and {{holder2}} may stop noticing the small choices that keep desire from becoming automatic.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-mars/soft/exact-approval.json",
+        "payloadSha256": "ade57a5ddbd8595067e788735ddb5a9d8cc9576820296e8669fc8559f787ec0b",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mars/mars/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Marses are provoked by the same things, and irritation travels between you quickly: when one ignites, the other tends to catch. Fighting side by side, you are formidable. Facing each other, choose your battles with care.",
-      "body_they": "Your Marses are provoked by the same things, and irritation travels between you quickly: when one ignites, the other tends to catch. Fighting side by side, you are formidable. Facing each other, choose your battles with care.",
+      "body_you": "{{holder1}} and {{holder2}} move with the same urgency. When they want the same outcome, plans happen quickly, and neither person has to convince the other to act. When they disagree, both push. {{holder1}} does not want to follow {{holder2}}'s pace, and {{holder2}} does not want to yield to {{holder1}}. The argument becomes a contest over who gets to decide what happens next.",
+      "body_they": "{{holder1}} and {{holder2}} move with the same urgency. When they want the same outcome, plans happen quickly, and neither person has to convince the other to act. When they disagree, both push. {{holder1}} does not want to follow {{holder2}}'s pace, and {{holder2}} does not want to yield to {{holder1}}. The argument becomes a contest over who gets to decide what happens next.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-mars/conjunction/exact-approval.json",
+        "payloadSha256": "8077f2b79323c41c211341a6263489b2b6ceb8100f0c53968a0d96ea0e4b1674",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mars/mars/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Marses are provoked by the same things, and irritation travels between you quickly: when one ignites, the other tends to catch. Fighting side by side, you are formidable. Facing each other, choose your battles with care.",
-      "body_they": "Your Marses are provoked by the same things, and irritation travels between you quickly: when one ignites, the other tends to catch. Fighting side by side, you are formidable. Facing each other, choose your battles with care.",
+      "body_you": "{{holder1}} and {{holder2}} can provoke each other almost immediately. Irritation sits close to attraction, competition, or admiration, which can make conflict feel charged even when the original issue is small. Once the disagreement starts, winning can become more important than solving the problem. {{holder1}} pushes because {{holder2}} will not move, and {{holder2}} pushes harder for the same reason.",
+      "body_they": "{{holder1}} and {{holder2}} can provoke each other almost immediately. Irritation sits close to attraction, competition, or admiration, which can make conflict feel charged even when the original issue is small. Once the disagreement starts, winning can become more important than solving the problem. {{holder1}} pushes because {{holder2}} will not move, and {{holder2}} pushes harder for the same reason.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-mars/hard/exact-approval.json",
+        "payloadSha256": "59e912fedf9bc8ca49154829d8733a922b85b5be3343f5c0ecbf94219b4a2ee2",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mars/mars/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your Marses are provoked by the same things, and irritation travels between you quickly: when one ignites, the other tends to catch. Fighting side by side, you are formidable. Facing each other, choose your battles with care.",
-      "body_they": "Your Marses are provoked by the same things, and irritation travels between you quickly: when one ignites, the other tends to catch. Fighting side by side, you are formidable. Facing each other, choose your battles with care.",
+      "body_you": "{{holder1}} and {{holder2}} usually move at a similar pace and understand how the other person takes action. They can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until their priorities finally split, and then both discover that agreement had been doing more work than they realized.",
+      "body_they": "{{holder1}} and {{holder2}} usually move at a similar pace and understand how the other person takes action. They can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until their priorities finally split, and then both discover that agreement had been doing more work than they realized.",
       "review_status": "approved",
       "source_keys": [
         "406773757 Hayden's Book of Synastry (Ch. 19 pair entries)"
       ],
-      "notes": "Per-pair synastry enrichment (appended after the aspect-type line). Same core meaning across groups; the type line carries the aspect flavor.",
-      "approved_via": "owner sign-off, chat 2026-07-21",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-21"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-mars/soft/exact-approval.json",
+        "payloadSha256": "6d45d6c3ace0668965303dcd1f61aed723b0c363c894e6507144ac383bb8c864",
+        "approvedAt": "2026-08-05"
       }
     },
     {
@@ -13310,84 +13325,90 @@
       "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter turns {{holder1Poss}} Mercury up: small ideas become plans, and conversations end bigger than they started. You make each other smarter and more optimistic. Fact-check the enthusiasm occasionally and this is a powerhouse.",
-      "body_they": "{{holder2PossCap}} Jupiter turns {{holder1Poss}} Mercury up: small ideas become plans, and conversations end bigger than they started. You make each other smarter and more optimistic. Fact-check the enthusiasm occasionally and this is a powerhouse.",
+      "body_you": "{{holder2}} makes {{holder1}} feel that an idea deserves more attention, more confidence, and a larger audience. Around {{holder2}}, {{holder1}} may speak more freely, take intellectual risks, or finally say something that had previously felt too ambitious. The excitement can make every idea sound important before it has been tested. {{holder2}} expands the possibility, and {{holder1}} may start speaking from the size of that possibility rather than the information already available.",
+      "body_they": "{{holder2}} makes {{holder1}} feel that an idea deserves more attention, more confidence, and a larger audience. Around {{holder2}}, {{holder1}} may speak more freely, take intellectual risks, or finally say something that had previously felt too ambitious. The excitement can make every idea sound important before it has been tested. {{holder2}} expands the possibility, and {{holder1}} may start speaking from the size of that possibility rather than the information already available.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-jupiter/conjunction/exact-approval.json",
+        "payloadSha256": "6138d4d231347974bc4af9a9ad145dac134daf2a6544eb860127a91730ebacc0",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter turns {{holder1Poss}} Mercury up: small ideas become plans, and conversations end bigger than they started. You make each other smarter and more optimistic. Fact-check the enthusiasm occasionally and this is a powerhouse.",
-      "body_they": "{{holder2PossCap}} Jupiter turns {{holder1Poss}} Mercury up: small ideas become plans, and conversations end bigger than they started. You make each other smarter and more optimistic. Fact-check the enthusiasm occasionally and this is a powerhouse.",
+      "body_you": "{{holder2}} tends to enlarge the conversation, while {{holder1}} is trying to keep the point precise. {{holder1}} may offer one fact or concern, and {{holder2}} responds with a larger theory, a bigger plan, or a reason the detail should not matter so much. {{holder1}} can leave these conversations feeling talked past. {{holder2}} may feel that {{holder1}} is focusing on limitations. More gets discussed, but the point {{holder1}} was trying to make becomes harder to find.",
+      "body_they": "{{holder2}} tends to enlarge the conversation, while {{holder1}} is trying to keep the point precise. {{holder1}} may offer one fact or concern, and {{holder2}} responds with a larger theory, a bigger plan, or a reason the detail should not matter so much. {{holder1}} can leave these conversations feeling talked past. {{holder2}} may feel that {{holder1}} is focusing on limitations. More gets discussed, but the point {{holder1}} was trying to make becomes harder to find.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-jupiter/hard/exact-approval.json",
+        "payloadSha256": "69e1f2ec5baa550fd95c3c735045fd1d517a860cb9feb286d169077a0ec4a1c5",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter turns {{holder1Poss}} Mercury up: small ideas become plans, and conversations end bigger than they started. You make each other smarter and more optimistic. Fact-check the enthusiasm occasionally and this is a powerhouse.",
-      "body_they": "{{holder2PossCap}} Jupiter turns {{holder1Poss}} Mercury up: small ideas become plans, and conversations end bigger than they started. You make each other smarter and more optimistic. Fact-check the enthusiasm occasionally and this is a powerhouse.",
+      "body_you": "{{holder2}} helps {{holder1}} see beyond the immediate question, while {{holder1}} gives {{holder2}} the facts and distinctions that keep the larger idea useful. Conversation between them can feel hopeful without becoming empty. {{holder2}} reminds {{holder1}} that the idea could go further, and {{holder1}} helps explain how that growth might actually work.",
+      "body_they": "{{holder2}} helps {{holder1}} see beyond the immediate question, while {{holder1}} gives {{holder2}} the facts and distinctions that keep the larger idea useful. Conversation between them can feel hopeful without becoming empty. {{holder2}} reminds {{holder1}} that the idea could go further, and {{holder1}} helps explain how that growth might actually work.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-jupiter/soft/exact-approval.json",
+        "payloadSha256": "140b7db1fa36eba0bba5c75d1109d03d2fb6958158923d7df7faeb604a92eb11",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/saturn/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Mercury seriously, turning loose ideas into workable plans. {{holder1}} may sometimes feel graded rather than heard, so let some conversations stay play. Together you can build almost anything you can discuss.",
-      "body_they": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Mercury seriously, turning loose ideas into workable plans. {{holder1}} may sometimes feel graded rather than heard, so let some conversations stay play. Together you can build almost anything you can discuss.",
+      "body_you": "{{holder2}} takes {{holder1}}'s ideas seriously. Instead of treating the conversation as temporary, {{holder2}} may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when {{holder2}} corrects every unfinished thought. {{holder1}} may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized.",
+      "body_they": "{{holder2}} takes {{holder1}}'s ideas seriously. Instead of treating the conversation as temporary, {{holder2}} may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when {{holder2}} corrects every unfinished thought. {{holder1}} may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-saturn/conjunction/exact-approval.json",
+        "payloadSha256": "634933f771a5c97548bc6d1385dd71d011d814b58f358f52753c6d1b03c46fd7",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/saturn/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Mercury seriously, turning loose ideas into workable plans. {{holder1}} may sometimes feel graded rather than heard, so let some conversations stay play. Together you can build almost anything you can discuss.",
-      "body_they": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Mercury seriously, turning loose ideas into workable plans. {{holder1}} may sometimes feel graded rather than heard, so let some conversations stay play. Together you can build almost anything you can discuss.",
+      "body_you": "{{holder2}}'s questions and doubts can sound final to {{holder1}}. A concern that {{holder2}} sees as practical may land as proof that the idea is foolish, unrealistic, or not worth explaining. Over time, {{holder1}} may say less around {{holder2}} or begin preparing for disagreement before the conversation starts. {{holder2}} may then see the silence as a lack of clarity, while {{holder1}} experiences the same silence as protection from another discouraging response.",
+      "body_they": "{{holder2}}'s questions and doubts can sound final to {{holder1}}. A concern that {{holder2}} sees as practical may land as proof that the idea is foolish, unrealistic, or not worth explaining. Over time, {{holder1}} may say less around {{holder2}} or begin preparing for disagreement before the conversation starts. {{holder2}} may then see the silence as a lack of clarity, while {{holder1}} experiences the same silence as protection from another discouraging response.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-saturn/hard/exact-approval.json",
+        "payloadSha256": "24af389a92b035895429dafc64cedbedffaa2458eb8466841258965164220a55",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mercury/saturn/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Mercury seriously, turning loose ideas into workable plans. {{holder1}} may sometimes feel graded rather than heard, so let some conversations stay play. Together you can build almost anything you can discuss.",
-      "body_they": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Mercury seriously, turning loose ideas into workable plans. {{holder1}} may sometimes feel graded rather than heard, so let some conversations stay play. Together you can build almost anything you can discuss.",
+      "body_you": "{{holder2}} helps {{holder1}} slow down long enough to make the idea useful, while {{holder1}} keeps {{holder2}} from relying on an answer simply because it has worked before. Their conversations tend to produce something concrete. {{holder1}} brings the current information, and {{holder2}} gives the idea enough structure to be finished rather than endlessly discussed.",
+      "body_they": "{{holder2}} helps {{holder1}} slow down long enough to make the idea useful, while {{holder1}} keeps {{holder2}} from relying on an answer simply because it has worked before. Their conversations tend to produce something concrete. {{holder1}} brings the current information, and {{holder2}} gives the idea enough structure to be finished rather than endlessly discussed.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-saturn/soft/exact-approval.json",
+        "payloadSha256": "28776667c583a8905ad0037f8b13678ac5332b2e55820ce4dd913c0e8e9b93ac",
+        "approvedAt": "2026-08-05"
       }
     },
     {
@@ -13520,84 +13541,90 @@
       "contentKey": "fallback-hook/synastry-pair/venus/jupiter/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter delights in {{holder1Poss}} Venus, and generosity flows both ways almost automatically. This is one of the sweetest connections in synastry: affection, plenty, and easy laughter. The only excess to watch is excess itself.",
-      "body_they": "{{holder2PossCap}} Jupiter delights in {{holder1Poss}} Venus, and generosity flows both ways almost automatically. This is one of the sweetest connections in synastry: affection, plenty, and easy laughter. The only excess to watch is excess itself.",
+      "body_you": "{{holder2}} makes pleasure, affection, and generosity feel larger around {{holder1}}. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after {{holder1}} and {{holder2}} have stopped checking what they can realistically sustain.",
+      "body_they": "{{holder2}} makes pleasure, affection, and generosity feel larger around {{holder1}}. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after {{holder1}} and {{holder2}} have stopped checking what they can realistically sustain.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-jupiter/conjunction/exact-approval.json",
+        "payloadSha256": "c4e75fb66e437cdd01678fbd19312364fab1882b7c392bf66459edd9186d0073",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/jupiter/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter delights in {{holder1Poss}} Venus, and generosity flows both ways almost automatically. This is one of the sweetest connections in synastry: affection, plenty, and easy laughter. The only excess to watch is excess itself.",
-      "body_they": "{{holder2PossCap}} Jupiter delights in {{holder1Poss}} Venus, and generosity flows both ways almost automatically. This is one of the sweetest connections in synastry: affection, plenty, and easy laughter. The only excess to watch is excess itself.",
+      "body_you": "{{holder2}} keeps reaching for more while {{holder1}} is trying to protect what already matters. {{holder2}} may see {{holder1}} as cautious, withholding, or unwilling to enjoy the moment. {{holder1}} may see {{holder2}} as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. {{holder2}} wants it to grow, while {{holder1}} wants to know that the existing care will not be lost in the push for more.",
+      "body_they": "{{holder2}} keeps reaching for more while {{holder1}} is trying to protect what already matters. {{holder2}} may see {{holder1}} as cautious, withholding, or unwilling to enjoy the moment. {{holder1}} may see {{holder2}} as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. {{holder2}} wants it to grow, while {{holder1}} wants to know that the existing care will not be lost in the push for more.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-jupiter/hard/exact-approval.json",
+        "payloadSha256": "5258f3cec5736ef6f711e28867ce7c2c345fa3b612160b0d6c77f9dcf09d9d7f",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/jupiter/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter delights in {{holder1Poss}} Venus, and generosity flows both ways almost automatically. This is one of the sweetest connections in synastry: affection, plenty, and easy laughter. The only excess to watch is excess itself.",
-      "body_they": "{{holder2PossCap}} Jupiter delights in {{holder1Poss}} Venus, and generosity flows both ways almost automatically. This is one of the sweetest connections in synastry: affection, plenty, and easy laughter. The only excess to watch is excess itself.",
+      "body_you": "{{holder1}}'s affection gives {{holder2}} more confidence in the relationship, while {{holder2}} makes it easier for {{holder1}} to express warmth openly. Time together often feels generous and encouraging. {{holder1}} feels appreciated, and {{holder2}} feels that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive.",
+      "body_they": "{{holder1}}'s affection gives {{holder2}} more confidence in the relationship, while {{holder2}} makes it easier for {{holder1}} to express warmth openly. Time together often feels generous and encouraging. {{holder1}} feels appreciated, and {{holder2}} feels that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-jupiter/soft/exact-approval.json",
+        "payloadSha256": "b293aa954f33b4a180bb969380b6fc28aa6c1104a179cda71dd3b2c86f1d2fe7",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/saturn/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn commits to {{holder1Poss}} Venus, offering the kind of love that shows up on time and stays. {{holder1}} may sometimes want more warmth and less duty; love from {{holder2Poss}} side looks like building. Say the difference plainly, and this becomes the connection that lasts decades.",
-      "body_they": "{{holder2PossCap}} Saturn commits to {{holder1Poss}} Venus, offering the kind of love that shows up on time and stays. {{holder1}} may sometimes want more warmth and less duty; love from {{holder2Poss}} side looks like building. Say the difference plainly, and this becomes the connection that lasts decades.",
+      "body_you": "{{holder2}} shows up, keeps promises, and gives {{holder1}} something reliable. {{holder1}} may trust that {{holder2}} will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. {{holder1}} may know that {{holder2}} is committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience.",
+      "body_they": "{{holder2}} shows up, keeps promises, and gives {{holder1}} something reliable. {{holder1}} may trust that {{holder2}} will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. {{holder1}} may know that {{holder2}} is committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-saturn/conjunction/exact-approval.json",
+        "payloadSha256": "15820d33d615cbe564a26a1bb3332e8e1409fdefbb5f48fa8a7614810a09dad4",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/saturn/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn commits to {{holder1Poss}} Venus, offering the kind of love that shows up on time and stays. {{holder1}} may sometimes want more warmth and less duty; love from {{holder2Poss}} side looks like building. Say the difference plainly, and this becomes the connection that lasts decades.",
-      "body_they": "{{holder2PossCap}} Saturn commits to {{holder1Poss}} Venus, offering the kind of love that shows up on time and stays. {{holder1}} may sometimes want more warmth and less duty; love from {{holder2Poss}} side looks like building. Say the difference plainly, and this becomes the connection that lasts decades.",
+      "body_you": "{{holder1}} reaches for warmth and keeps meeting {{holder2}}'s caution, responsibilities, or emotional distance. {{holder2}} may believe that loyalty should speak for itself, while {{holder1}} keeps waiting for affection that feels easier to recognize. After enough time, both may describe the relationship as mature or realistic when it has actually become lonely. {{holder1}} feels denied, and {{holder2}} feels unfairly judged for the care that has already been shown through responsibility.",
+      "body_they": "{{holder1}} reaches for warmth and keeps meeting {{holder2}}'s caution, responsibilities, or emotional distance. {{holder2}} may believe that loyalty should speak for itself, while {{holder1}} keeps waiting for affection that feels easier to recognize. After enough time, both may describe the relationship as mature or realistic when it has actually become lonely. {{holder1}} feels denied, and {{holder2}} feels unfairly judged for the care that has already been shown through responsibility.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-saturn/hard/exact-approval.json",
+        "payloadSha256": "e9d3d95d84aa312c81dcc1a32b2de1b61df93045a293edefd34f2f12368ab5ed",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/venus/saturn/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn commits to {{holder1Poss}} Venus, offering the kind of love that shows up on time and stays. {{holder1}} may sometimes want more warmth and less duty; love from {{holder2Poss}} side looks like building. Say the difference plainly, and this becomes the connection that lasts decades.",
-      "body_they": "{{holder2PossCap}} Saturn commits to {{holder1Poss}} Venus, offering the kind of love that shows up on time and stays. {{holder1}} may sometimes want more warmth and less duty; love from {{holder2Poss}} side looks like building. Say the difference plainly, and this becomes the connection that lasts decades.",
+      "body_you": "{{holder1}} knows what to expect from {{holder2}}, and {{holder2}} gives {{holder1}} something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. {{holder1}} and {{holder2}} can trust the commitment while still assuming that warmth does not need to be spoken or shown very often.",
+      "body_they": "{{holder1}} knows what to expect from {{holder2}}, and {{holder2}} gives {{holder1}} something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. {{holder1}} and {{holder2}} can trust the commitment while still assuming that warmth does not need to be spoken or shown very often.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-saturn/soft/exact-approval.json",
+        "payloadSha256": "42a25f1402e0ff43d5cced564129a16709b715053e28c7797e04740282fba46f",
+        "approvedAt": "2026-08-05"
       }
     },
     {
@@ -13730,42 +13757,45 @@
       "contentKey": "fallback-hook/synastry-pair/mars/jupiter/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter amplifies {{holder1Poss}} Mars, and together you attempt things neither would try alone. Energy, luck, and nerve stack up between you. Point the momentum at something worthy, because this pairing will build or burn at the same speed.",
-      "body_they": "{{holder2PossCap}} Jupiter amplifies {{holder1Poss}} Mars, and together you attempt things neither would try alone. Energy, luck, and nerve stack up between you. Point the momentum at something worthy, because this pairing will build or burn at the same speed.",
+      "body_you": "{{holder2}} makes {{holder1}} feel more capable, more confident, and more justified in acting now. Together, they can turn a modest plan into something larger before either person has checked the time, money, or responsibility involved. {{holder1}} feels encouraged by {{holder2}}, and {{holder2}} enjoys giving the push. Second thoughts tend to arrive after the commitment has already been made.",
+      "body_they": "{{holder2}} makes {{holder1}} feel more capable, more confident, and more justified in acting now. Together, they can turn a modest plan into something larger before either person has checked the time, money, or responsibility involved. {{holder1}} feels encouraged by {{holder2}}, and {{holder2}} enjoys giving the push. Second thoughts tend to arrive after the commitment has already been made.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-jupiter/conjunction/exact-approval.json",
+        "payloadSha256": "74a307e00ae6ce195350dc0a393227e7858b27486648ee80213efc0b3a19bcad",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mars/jupiter/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter amplifies {{holder1Poss}} Mars, and together you attempt things neither would try alone. Energy, luck, and nerve stack up between you. Point the momentum at something worthy, because this pairing will build or burn at the same speed.",
-      "body_they": "{{holder2PossCap}} Jupiter amplifies {{holder1Poss}} Mars, and together you attempt things neither would try alone. Energy, luck, and nerve stack up between you. Point the momentum at something worthy, because this pairing will build or burn at the same speed.",
+      "body_you": "{{holder2}} keeps raising the stakes on what {{holder1}} is trying to do. What begins as encouragement can leave {{holder1}} feeling pressured to prove more, spend more, risk more, or move faster than originally intended. {{holder2}} may believe {{holder1}} needs confidence. {{holder1}} may experience the same push as dissatisfaction with what {{holder1}} is already doing.",
+      "body_they": "{{holder2}} keeps raising the stakes on what {{holder1}} is trying to do. What begins as encouragement can leave {{holder1}} feeling pressured to prove more, spend more, risk more, or move faster than originally intended. {{holder2}} may believe {{holder1}} needs confidence. {{holder1}} may experience the same push as dissatisfaction with what {{holder1}} is already doing.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-jupiter/hard/exact-approval.json",
+        "payloadSha256": "3f42b8b7c4c4001ee14bce3c2e858b7ca5183c4bb4c4cfc9a844027a2638f779",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/mars/jupiter/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter amplifies {{holder1Poss}} Mars, and together you attempt things neither would try alone. Energy, luck, and nerve stack up between you. Point the momentum at something worthy, because this pairing will build or burn at the same speed.",
-      "body_they": "{{holder2PossCap}} Jupiter amplifies {{holder1Poss}} Mars, and together you attempt things neither would try alone. Energy, luck, and nerve stack up between you. Point the momentum at something worthy, because this pairing will build or burn at the same speed.",
+      "body_you": "{{holder2}} gives {{holder1}} more confidence to act, while {{holder1}} gives {{holder2}}'s optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. {{holder1}} and {{holder2}} may not notice how much larger the plan has become until they are already responsible for carrying it.",
+      "body_they": "{{holder2}} gives {{holder1}} more confidence to act, while {{holder1}} gives {{holder2}}'s optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. {{holder1}} and {{holder2}} may not notice how much larger the plan has become until they are already responsible for carrying it.",
       "review_status": "approved",
-      "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
+      "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-jupiter/soft/exact-approval.json",
+        "payloadSha256": "81508c5a80ed589a2f4b1fab0e9b1895550fc4fa9c522d3aae321e4eaa6c262b",
+        "approvedAt": "2026-08-05"
       }
     },
     {

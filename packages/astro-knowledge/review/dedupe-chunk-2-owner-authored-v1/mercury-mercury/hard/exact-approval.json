@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-mercury-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mercury/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "62698e84d5ca8c8ed7eac83c2924da093b6b34f0c9afce0daf5f3562c1046d42",
+  "payload": {
+    "body_you": "{{holder1}} and {{holder2}} process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. {{holder1}} may feel misunderstood by {{holder2}}, while {{holder2}} may feel that {{holder1}} is missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion.",
+    "body_they": "{{holder1}} and {{holder2}} process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. {{holder1}} may feel misunderstood by {{holder2}}, while {{holder2}} may feel that {{holder1}} is missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-mercury/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
