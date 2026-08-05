@@ -41,6 +41,7 @@ const mercuryAscendantHardOpening = String(mercuryAscendantHardSource?.body_you 
   .split(". ")[0]
   .replaceAll("{{holder1PossCap}}", "Your")
   .replaceAll("{{holder2Poss}}", "Alisa's")
+  .replaceAll("{{holder2}}", "Alisa")
   .concat(".");
 
 async function selectFriendDetailTab(

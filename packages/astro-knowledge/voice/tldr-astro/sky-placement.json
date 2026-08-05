@@ -323,6 +323,8 @@
       ,{"term": "\\bthe practical choice is\\b", "reason": "coaching scaffold; state the transit, behavior, and consequence directly"}
       ,{"term": "\\bthe correction is not\\b", "reason": "coaching scaffold; state what changes without announcing a lesson"}
       ,{"term": "\\bthe next choice is whether\\b", "reason": "coaching scaffold; do not turn development into a decision worksheet"}
+      ,{"term": "\\bnot a passing mood\\b", "reason": "banned timing formula; state the actual duration or change without contrasting it with a mood"}
+      ,{"term": "\\ba(?: [a-z-]+){0,2} chapter,\\s*not a\\b", "reason": "banned chapter-not-X formula; state the timescale directly"}
     ],
     "warn": [
       {"term": "group chat", "reason": "Allowed when the scene is literally a group conversation; flag for reviewer attention, and allow at most one occurrence across a batch"},

@@ -515,7 +515,7 @@ assert.deepEqual(
   "Browser and Node continuous Sun fallback assembly must remain byte-identical."
 );
 
-assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 18);
+assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 30);
 const ownerFallbackDateFacts = {
   entryDate: "August 24, 2028",
   exitDate: "September 24, 2029",
