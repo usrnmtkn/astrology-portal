@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-04i",
-  "contentHash": "492e6026c172414a82b19634923a0896",
-  "keyManifestHash": "e7cd3ffcd3778a209724580e37cc57ac",
-  "keyCount": 906,
+  "contentHash": "3cafd90c8e314d00cd5cc90ee670655c",
+  "keyManifestHash": "9558df3d3d590e89330472fbd6af07cd",
+  "keyCount": 929,
   "keys": [
     "hook:fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
     "hook:fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
@@ -908,7 +908,30 @@
     "hook:fallback-hook/sky-sign-copy/nodes/aquarius-leo",
     "hook:fallback-hook/sky-sign-copy/pluto/aquarius",
     "hook:fallback-hook/sky-sign-copy/saturn/aries",
+    "hook:fallback-hook/sky-sign-copy/sun/aquarius",
+    "hook:fallback-hook/sky-sign-copy/sun/aries",
+    "hook:fallback-hook/sky-sign-copy/sun/cancer",
+    "hook:fallback-hook/sky-sign-copy/sun/capricorn",
+    "hook:fallback-hook/sky-sign-copy/sun/gemini",
     "hook:fallback-hook/sky-sign-copy/sun/leo",
-    "hook:fallback-hook/sky-sign-copy/uranus/gemini"
+    "hook:fallback-hook/sky-sign-copy/sun/libra",
+    "hook:fallback-hook/sky-sign-copy/sun/pisces",
+    "hook:fallback-hook/sky-sign-copy/sun/sagittarius",
+    "hook:fallback-hook/sky-sign-copy/sun/scorpio",
+    "hook:fallback-hook/sky-sign-copy/sun/taurus",
+    "hook:fallback-hook/sky-sign-copy/sun/virgo",
+    "hook:fallback-hook/sky-sign-copy/uranus/gemini",
+    "hook:fallback-hook/sky-sign-copy/venus/aquarius",
+    "hook:fallback-hook/sky-sign-copy/venus/aries",
+    "hook:fallback-hook/sky-sign-copy/venus/cancer",
+    "hook:fallback-hook/sky-sign-copy/venus/capricorn",
+    "hook:fallback-hook/sky-sign-copy/venus/gemini",
+    "hook:fallback-hook/sky-sign-copy/venus/leo",
+    "hook:fallback-hook/sky-sign-copy/venus/libra",
+    "hook:fallback-hook/sky-sign-copy/venus/pisces",
+    "hook:fallback-hook/sky-sign-copy/venus/sagittarius",
+    "hook:fallback-hook/sky-sign-copy/venus/scorpio",
+    "hook:fallback-hook/sky-sign-copy/venus/taurus",
+    "hook:fallback-hook/sky-sign-copy/venus/virgo"
   ]
 }
