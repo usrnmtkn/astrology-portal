@@ -1,0 +1,65 @@
+{
+  "responseId": "resp_0af189116cce0d87006a7296a580e081a0b29a3729b24b90d6",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:aquarius-season-2025:p052:window-3-3",
+    "owner-article:aquarius-full-moon-2025:p001:window-2-4",
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:venus-in-cancer:p009:window-3-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:venus-aquarius",
+    "planet": "venus",
+    "sign": "aquarius",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8248,
+    "input_tokens_details": {
+      "cache_write_tokens": 8245,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4352,
+    "output_tokens_details": {
+      "reasoning_tokens": 3955
+    },
+    "total_tokens": 12600
+  },
+  "article": {
+    "opening": "Venus enters Aquarius on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and attraction feels easier without a preset role. A conversation gets interesting enough to change the tone of a friendship. An unusual choice in clothes or art feels better than the version everyone already approves. We are drawn toward shared values, unfamiliar points of view, and connections that allow separate lives.",
+    "tension": "The first difficult moment arrives when attachment asks for a name. We keep the tone casual after the heart is involved. We call a clear need a demand, or treat a reasonable expectation as proof that the bond has become conventional. Someone stops asking what the connection is because seeming unbothered feels safer than admitting it matters. Eventually, someone else takes that cool tone at face value and pulls back. The connection remains technically free, but no longer feels dependable.",
+    "development": "Venus last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure gathers around what has not been said. Friends may both feel the charge and keep treating it as a joke. Partners may assume time apart speaks for itself, even as one side reads it as rejection. Nothing gets said because the bond is supposed to be easy. Aquarius can strip away borrowed rules, but the absence of a rule is not an agreement. When nobody names the attachment, each side starts protecting independence from a demand that has not even been made.",
+    "close": "By {{exitDate}}, the bond may still look free even though neither side trusts it enough to state a need or make a promise.",
+    "try_this": [
+      "We can tell someone we care about that we need one evening alone, then choose the next time we will meet.",
+      "We can ask a friend we feel drawn to on a real date with a clear time and place."
+    ]
+  }
+}

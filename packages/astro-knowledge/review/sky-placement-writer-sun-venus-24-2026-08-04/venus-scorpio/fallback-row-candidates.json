@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/scorpio",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Scorpio on {{entryDate}}, and attraction becomes more private, intense, and exacting. A casual answer no longer feels sufficient. The follow-up question gets asked. A vague reply is remembered. Affection shows up as attention to what is not being said and a willingness to enter conversations that usually get avoided.",
+      "tension": "That attention can uncover what a pleasant exchange would miss. It can also turn every gap into evidence. We notice a changed tone, ask what it means, then keep pressing after a clear answer has been given. Someone withholds a detail to see whether it will be noticed. Reassurance arrives, but gets treated as suspicious because it came too easily. Control starts to look like a way to make trust certain. The bond gets more intense, but not more honest.",
+      "development": "Venus last moved through Scorpio from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and similar questions of attachment can surface now in different forms. The pressure grows when depth is measured by distress. A calm connection can seem less convincing than one that keeps us guessing. We protect privacy by keeping back the one detail that would change the conversation. A direct request for honesty becomes a test with no announced rules. Once love has to survive repeated suspicion to count as real, even open affection gets checked for hidden motives. We collect more clues, but become less able to receive what is offered without wondering what it hides.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, repeated tests can leave a bond full of doubt and short on the trust they were meant to prove.",
+      "try_this": [
+        "We can ask one direct question about a current bond instead of checking for clues.",
+        "We can accept one offered kindness, such as a meal or a ride, without treating it as a debt or a test."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Scorpio on {{entryDate}}, and attraction becomes more private, intense, and exacting. A casual answer no longer feels sufficient. The follow-up question gets asked. A vague reply is remembered. Affection shows up as attention to what is not being said and a willingness to enter conversations that usually get avoided.\n\nThat attention can uncover what a pleasant exchange would miss. It can also turn every gap into evidence. We notice a changed tone, ask what it means, then keep pressing after a clear answer has been given. Someone withholds a detail to see whether it will be noticed. Reassurance arrives, but gets treated as suspicious because it came too easily. Control starts to look like a way to make trust certain. The bond gets more intense, but not more honest.\n\nVenus last moved through Scorpio from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and similar questions of attachment can surface now in different forms. The pressure grows when depth is measured by distress. A calm connection can seem less convincing than one that keeps us guessing. We protect privacy by keeping back the one detail that would change the conversation. A direct request for honesty becomes a test with no announced rules. Once love has to survive repeated suspicion to count as real, even open affection gets checked for hidden motives. We collect more clues, but become less able to receive what is offered without wondering what it hides.\n\nBefore {{exitDate}}, repeated tests can leave a bond full of doubt and short on the trust they were meant to prove.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Scorpio on {{entryDate}}, and attraction becomes more private, intense, and exacting. A casual answer no longer feels sufficient. The follow-up question gets asked. A vague reply is remembered. Affection shows up as attention to what is not being said and a willingness to enter conversations that usually get avoided.\n\nThat attention can uncover what a pleasant exchange would miss. It can also turn every gap into evidence. We notice a changed tone, ask what it means, then keep pressing after a clear answer has been given. Someone withholds a detail to see whether it will be noticed. Reassurance arrives, but gets treated as suspicious because it came too easily. Control starts to look like a way to make trust certain. The bond gets more intense, but not more honest.\n\nVenus last moved through Scorpio from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and similar questions of attachment can surface now in different forms. The pressure grows when depth is measured by distress. A calm connection can seem less convincing than one that keeps us guessing. We protect privacy by keeping back the one detail that would change the conversation. A direct request for honesty becomes a test with no announced rules. Once love has to survive repeated suspicion to count as real, even open affection gets checked for hidden motives. We collect more clues, but become less able to receive what is offered without wondering what it hides.\n\nBefore {{exitDate}}, repeated tests can leave a bond full of doubt and short on the trust they were meant to prove.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-scorpio"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Aries on {{entryDate}}, and attraction stops hinting and starts making the first move. A preference gets said before anyone asks. A flirtation gets named. An item left in the cart suddenly feels worth buying. Venus in Aries makes desire visible: we reach for what we like and say why.",
+      "tension": "That speed clears away mixed signals, but it can make waiting feel like evidence that the spark is gone. A delayed answer starts to look like rejection. A difference in taste becomes something to win. We may buy fast for the pleasure of choosing, then wonder why the thing itself matters less once it is ours. In connection, a bold beginning can cool as soon as attention is returned. When pursuit carries more of the feeling than intimacy, desire needs fresh resistance to stay alive.",
+      "development": "Venus last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The first rush still has to meet ordinary life. A direct invitation becomes a real exchange, and now both sides have preferences. The quick purchase still has to be worth its price after the thrill of choosing it. A new look still has to feel right after the compliments stop. If the first rush becomes the standard, ordinary pleasure starts to look flat. We start another chase, spend again, or turn a difference into a contest because intensity is easier to recognize than contentment.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, some attractions deepen once the answer is yes, and others fade because the chase was carrying the feeling.",
+      "try_this": [
+        "We can give one clear compliment that names exactly what caught our attention.",
+        "We can return one impulse purchase that felt more exciting at checkout than it does at home."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Aries on {{entryDate}}, and attraction stops hinting and starts making the first move. A preference gets said before anyone asks. A flirtation gets named. An item left in the cart suddenly feels worth buying. Venus in Aries makes desire visible: we reach for what we like and say why.\n\nThat speed clears away mixed signals, but it can make waiting feel like evidence that the spark is gone. A delayed answer starts to look like rejection. A difference in taste becomes something to win. We may buy fast for the pleasure of choosing, then wonder why the thing itself matters less once it is ours. In connection, a bold beginning can cool as soon as attention is returned. When pursuit carries more of the feeling than intimacy, desire needs fresh resistance to stay alive.\n\nVenus last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The first rush still has to meet ordinary life. A direct invitation becomes a real exchange, and now both sides have preferences. The quick purchase still has to be worth its price after the thrill of choosing it. A new look still has to feel right after the compliments stop. If the first rush becomes the standard, ordinary pleasure starts to look flat. We start another chase, spend again, or turn a difference into a contest because intensity is easier to recognize than contentment.\n\nBefore {{exitDate}}, some attractions deepen once the answer is yes, and others fade because the chase was carrying the feeling.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Aries on {{entryDate}}, and attraction stops hinting and starts making the first move. A preference gets said before anyone asks. A flirtation gets named. An item left in the cart suddenly feels worth buying. Venus in Aries makes desire visible: we reach for what we like and say why.\n\nThat speed clears away mixed signals, but it can make waiting feel like evidence that the spark is gone. A delayed answer starts to look like rejection. A difference in taste becomes something to win. We may buy fast for the pleasure of choosing, then wonder why the thing itself matters less once it is ours. In connection, a bold beginning can cool as soon as attention is returned. When pursuit carries more of the feeling than intimacy, desire needs fresh resistance to stay alive.\n\nVenus last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The first rush still has to meet ordinary life. A direct invitation becomes a real exchange, and now both sides have preferences. The quick purchase still has to be worth its price after the thrill of choosing it. A new look still has to feel right after the compliments stop. If the first rush becomes the standard, ordinary pleasure starts to look flat. We start another chase, spend again, or turn a difference into a contest because intensity is easier to recognize than contentment.\n\nBefore {{exitDate}}, some attractions deepen once the answer is yes, and others fade because the chase was carrying the feeling.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-aries"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}
