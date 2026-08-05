@@ -5,6 +5,7 @@
   "planetB": "venus",
   "aspect": "conjunction",
   "plainTranslation": "Tenderness and care fold together. The Moon person feels nurtured by the Venus person's affection; the Venus person feels emotionally safe. Warm, comforting, genuinely sweet. Failure mode: so cozy it avoids all friction and stays surface-soft. Enjoy the warmth; make room for honesty too.",
+  "humanMoment": "{{holder2}}'s affection makes {{holder1}} feel sheltered, and {{holder1}}'s warmth makes {{holder2}} feel safe. That ease is a gift, but it can also become a place to hide from harder conversations.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
   "voiceNeutral": true,
