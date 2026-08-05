@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-mars-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mars/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "86afdcc3c32d75d1d7d9b591012f537697c63ecd681fb92eadb2ff45bfc430cd",
+  "payload": {
+    "body_you": "When {{holder1}} has an idea, {{holder2}} is ready to do something with it. {{holder1}} gives language to the plan, and {{holder2}} adds speed, urgency, and the willingness to act before the moment passes. This can make {{holder1}} feel sharper and more decisive around {{holder2}}. It can also make disagreements escalate quickly. {{holder2}} reacts while {{holder1}} is still explaining, and a conversation that began with one idea can end with both defending how they spoke.",
+    "body_they": "When {{holder1}} has an idea, {{holder2}} is ready to do something with it. {{holder1}} gives language to the plan, and {{holder2}} adds speed, urgency, and the willingness to act before the moment passes. This can make {{holder1}} feel sharper and more decisive around {{holder2}}. It can also make disagreements escalate quickly. {{holder2}} reacts while {{holder1}} is still explaining, and a conversation that began with one idea can end with both defending how they spoke.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-mars/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
