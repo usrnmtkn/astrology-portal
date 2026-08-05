@@ -3,13 +3,14 @@
 All text below is the unchanged output of the authorized writer-only run. Nothing in this sheet is owner-approved, canonical, promoted, or serving.
 
 - Preflight packets passing v15 self-lint: **24 / 24**
-- Billed Sol-xhigh attempts: **24**
-- Completed drafts: **23**
-- Incomplete drafts: **1** (Venus in Taurus reached the 12,000-token output cap)
+- Initial billed Sol-xhigh attempts: **24**
+- Authorized follow-up Sol-xhigh attempts: **2**
+- Current reviewable drafts: **24 / 24 placements**
+- Preserved prior failures: **Venus in Taurus incomplete; Venus in Leo second-person lint failure**
 - Terra calls: **0**
-- Billed retries: **0**
-- Provider tokens: **316,684** total (196,343 input; 120,341 output, including 111,321 reasoning)
-- Estimated API charge: **$4.84**; Codex rate-card equivalent: **120.93 credits**
+- Billed attempts beyond authorization: **0**
+- Aggregate provider tokens: **344,175** total (212,712 input; 131,463 output, including 121,677 reasoning)
+- Aggregate estimated API charge: **$5.27**; Codex rate-card equivalent: **131.83 credits**
 
 The OpenAI billing dashboard is authoritative. The estimate uses the current Sol rates and the documented 1.25x cache-write rate.
 
@@ -30,10 +31,10 @@ The OpenAI billing dashboard is authoritative. The estimate uses the current Sol
 | Sun Aquarius | completed | 3 (0 fail, 0 warn) | needs_review |
 | Sun Pisces | completed | 3 (0 fail, 0 warn) | needs_review |
 | Venus Aries | completed | 3 (0 fail, 0 warn) | needs_review |
-| Venus Taurus | incomplete_max_output_tokens | not run | needs_review |
+| Venus Taurus | completed on authorized 16k retry; original incomplete preserved | 3 (0 fail, 0 warn) | needs_review |
 | Venus Gemini | completed | 2 (0 fail, 1 warn) | needs_review |
 | Venus Cancer | completed | 3 (0 fail, 0 warn) | needs_review |
-| Venus Leo | completed | 1 (2 fail, 0 warn) | needs_review |
+| Venus Leo | completed on collective-voice retry; original failed draft preserved | 3 (0 fail, 0 warn) | needs_review |
 | Venus Virgo | completed | 3 (0 fail, 0 warn) | needs_review |
 | Venus Libra | completed | 3 (0 fail, 0 warn) | needs_review |
 | Venus Scorpio | completed | 3 (0 fail, 0 warn) | needs_review |
@@ -772,3 +773,72 @@ By {{exitDate}}, sympathy and imagined potential can leave us doing all the work
 - We can ask what kind of help is wanted before stepping in to solve anything.
 - We can set a cash limit before buying a gift or covering someone else's expense.
 - We can play one album while drawing, cooking, or arranging a shelf only for pleasure.
+
+## Authorized follow-up drafts
+
+These are separate candidates. The original Venus in Taurus incomplete response and original Venus in Leo lint-failing draft remain preserved in the initial-run sections above.
+
+### Venus in Taurus — 16,000-token retry
+
+- Response: `resp_0ef10476bcd2b1db006a729ba082308191bbe1f048ad7965f5`
+- Status: `needs_review`
+- Writer override: `{"maxOutputTokens":16000}`
+- Tokens: 16,306 total (8,157 input; 8,149 output; 7,768 reasoning)
+- Lint: score 3; 0 fail; 0 warn; overall pass
+  - NOTE: hook is 5 sentences; spec says 2-4
+  - NOTE: lived is 5 sentences; spec says 2-4
+  - NOTE: turn is 6 sentences; spec says 2-5 with one close
+
+**Opening**
+
+After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Taurus on {{entryDate}}, and a spark matters less if it cannot be trusted to last. We notice what holds up. A promise is kept without a reminder. Money goes toward the thing that will be used often rather than the thing that creates a brief rush. Affection feels real when care shows up again tomorrow.
+
+**Tension**
+
+Consistency feels safe, but repetition can hide the point when something no longer feels good. We keep paying for a comfort we barely notice because it is part of the routine. We keep a connection in the same shape because the familiar pattern feels safer than finding out what has changed. When affection arrives differently, we ask for the same reassurance again and read any difference as withdrawal. More money goes toward restoring the old feeling, and more care comes with an expectation that was never said aloud.
+
+**Development**
+
+Venus last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Familiarity cannot tell us whether something still holds value. A costly comfort bought for a quick lift leaves the expense behind after the pleasure fades. Soon, an ordinary change in affection feels like a test of loyalty. We notice who returned each favor and who did not. The body is comfortable, but desire has gone quiet.
+
+**Close**
+
+By {{exitDate}}, what looked like stability may be a routine that costs money, trust, and desire to preserve.
+
+**Try this**
+
+- We can total the last four comfort purchases and mark the one that was actually worth the money.
+- We can clean one worn pair of shoes and put it back into regular use.
+- We can keep one small promise exactly as made, especially one that makes daily life easier for someone close.
+
+### Venus in Leo — collective-voice retry
+
+- Response: `resp_02c21ebf72e65cf0006a729c36ef9481a289d85aac8ff33389`
+- Status: `needs_review`
+- Writer override: `{"maxOutputTokens":12000,"collectiveVoiceSteer":"Collective voice is mandatory in every field: do not use you, your, yours, yourself, or yourselves, including inside quoted or imagined speech."}`
+- Tokens: 11,185 total (8,212 input; 2,973 output; 2,588 reasoning)
+- Lint: score 3; 0 fail; 0 warn; overall pass
+  - NOTE: hook is 5 sentences; spec says 2-4
+  - NOTE: lived is 5 sentences; spec says 2-4
+  - NOTE: turn is 6 sentences; spec says 2-5 with one close
+
+**Opening**
+
+After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Leo on {{entryDate}}, and affection becomes easier to see. The compliment gets specific. The invitation feels like an occasion. We dress with more nerve, choose gifts with a flourish, and want love to arrive with enough warmth that its meaning is unmistakable. Venus in Leo draws us toward what feels proud, creative, generous, and fully alive.
+
+**Tension**
+
+Visible appreciation gives affection a form. Soon, only the biggest response feels convincing. We give more than was asked, spend more than planned, or turn a simple celebration into a test of how much someone cares. If the reaction is smaller than expected, generosity hardens into scorekeeping. A quiet kindness can disappear beside a grand gesture, and admiration starts carrying more weight than the relationship itself.
+
+**Development**
+
+Venus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and old questions about attention, taste, and worth can return in a different setting. This time, the pressure may show up in several places at once. A beautiful purchase can feel satisfying until the bill remains after the pleasure fades. A creative offering can feel free until a muted response makes the effort seem worthless. In love, steady care may be overlooked because it does not arrive with ceremony. We start choosing what reflects admiration back to us and miss what has been real without being loud.
+
+**Close**
+
+By {{exitDate}}, Venus in Leo can leave real affection sitting in plain sight while the search for a bigger reaction continues.
+
+**Try this**
+
+- We can name one quiet act of care that mattered and thank the person who did it.
+- We can set a spending limit before buying a gift, then choose the most personal option under that amount.

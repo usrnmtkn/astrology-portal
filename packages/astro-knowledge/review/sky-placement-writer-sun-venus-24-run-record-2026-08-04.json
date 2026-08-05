@@ -916,5 +916,131 @@
       "promotionAuthorized": false,
       "canonical": false
     }
-  ]
+  ],
+  "followUpAuthorization": {
+    "recordedAt": "2026-08-05T02:15:17.068Z",
+    "source": "owner statement in Codex on 2026-08-04",
+    "statement": "Retry Venus in Taurus once with a 16,000-token cap. Regenerate Venus in Leo once with a one-line collective-voice steer. Two billed calls total, no Terra.",
+    "authorizedWriterCalls": 2,
+    "terraAuthorized": false
+  },
+  "followUpResults": {
+    "billedWriterAttempts": 2,
+    "completedArticles": 2,
+    "billedRetriesBeyondAuthorization": 0,
+    "terraCalls": 0,
+    "deterministicOverallPassed": 2,
+    "units": [
+      {
+        "id": "venus-taurus-retry-16k-v2",
+        "responseId": "resp_0ef10476bcd2b1db006a729ba082308191bbe1f048ad7965f5",
+        "callStatus": "completed",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "writerRunOverrides": {
+          "maxOutputTokens": 16000
+        },
+        "usage": {
+          "input_tokens": 8157,
+          "input_tokens_details": {
+            "cache_write_tokens": 8154,
+            "cached_tokens": 0
+          },
+          "output_tokens": 8149,
+          "output_tokens_details": {
+            "reasoning_tokens": 7768
+          },
+          "total_tokens": 16306
+        },
+        "lint": {
+          "overallPassed": true,
+          "score": 3,
+          "fails": 0,
+          "warns": 0,
+          "findings": [],
+          "notes": [
+            "hook is 5 sentences; spec says 2-4",
+            "lived is 5 sentences; spec says 2-4",
+            "turn is 6 sentences; spec says 2-5 with one close"
+          ]
+        },
+        "reviewStatus": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "artifactRoot": "packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-taurus-retry-16k-v2"
+      },
+      {
+        "id": "venus-leo-collective-retry-v2",
+        "responseId": "resp_02c21ebf72e65cf0006a729c36ef9481a289d85aac8ff33389",
+        "callStatus": "completed",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "writerRunOverrides": {
+          "maxOutputTokens": 12000,
+          "collectiveVoiceSteer": "Collective voice is mandatory in every field: do not use you, your, yours, yourself, or yourselves, including inside quoted or imagined speech."
+        },
+        "usage": {
+          "input_tokens": 8212,
+          "input_tokens_details": {
+            "cache_write_tokens": 8209,
+            "cached_tokens": 0
+          },
+          "output_tokens": 2973,
+          "output_tokens_details": {
+            "reasoning_tokens": 2588
+          },
+          "total_tokens": 11185
+        },
+        "lint": {
+          "overallPassed": true,
+          "score": 3,
+          "fails": 0,
+          "warns": 0,
+          "findings": [],
+          "notes": [
+            "hook is 5 sentences; spec says 2-4",
+            "lived is 5 sentences; spec says 2-4",
+            "turn is 6 sentences; spec says 2-5 with one close"
+          ]
+        },
+        "reviewStatus": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "canonical": false,
+        "artifactRoot": "packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-leo-collective-retry-v2"
+      }
+    ]
+  },
+  "followUpTokenUsage": {
+    "input_tokens": 16369,
+    "cache_write_tokens": 16363,
+    "cached_input_tokens": 0,
+    "output_tokens": 11122,
+    "reasoning_tokens": 10356,
+    "total_tokens": 27491,
+    "uncached_nonwrite_input_tokens": 6
+  },
+  "followUpBillingEstimate": {
+    "apiUsdEstimate": 0.435959,
+    "codexCreditsEquivalent": 10.898969
+  },
+  "aggregateAfterFollowUp": {
+    "billedWriterAttempts": 26,
+    "completedArticleAttempts": 25,
+    "incompleteArticleAttempts": 1,
+    "currentReviewablePlacementDrafts": 24,
+    "terraCalls": 0,
+    "tokenUsage": {
+      "input_tokens": 212712,
+      "cache_write_tokens": 212634,
+      "cached_input_tokens": 0,
+      "output_tokens": 131463,
+      "reasoning_tokens": 121677,
+      "total_tokens": 344175,
+      "uncached_nonwrite_input_tokens": 78
+    },
+    "apiUsdEstimate": 5.273243,
+    "codexCreditsEquivalent": 131.831063
+  }
 }
