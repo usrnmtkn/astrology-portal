@@ -164,7 +164,7 @@ console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailCh
 console.log(`On-demand Sky Placement fallback: ${formatBytes(measurements.skyPlacementFallbackChunkGzipBytes)} gzip`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
-console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip (${measurements.totalJavaScriptGzipBytes} B) across ${javaScriptFiles.length} files`);
+console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);
 console.log(`All CSS: ${formatBytes(measurements.totalCssGzipBytes)} gzip across ${cssFiles.length} files`);
 console.log("");
 console.log("Largest JavaScript chunks:");
