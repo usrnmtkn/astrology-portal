@@ -1,0 +1,9 @@
+{
+  "target": "neptune-ascendant-conjunction",
+  "status": "needs_review",
+  "payloadSha256": "e7d846a017836e25ae3abb9ff3222ac05ac55e5ea8fb9a5d6379e083aa701983",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

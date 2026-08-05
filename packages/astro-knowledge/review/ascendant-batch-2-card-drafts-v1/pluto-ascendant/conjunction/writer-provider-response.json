@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_06cd76bd8c18be39006a728282d86481a3bbb2f6ab05780c71",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 828,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 666,
+    "output_tokens_details": {
+      "reasoning_tokens": 516
+    },
+    "total_tokens": 1494
+  },
+  "output_text": "{\"body_you\":\"You notice every shift in how {{holder2}} acts, and you may press them to reveal more or try to influence how they come across. Your close attention can feel intimate at first, but {{holder2}} may grow guarded when it starts to feel like constant scrutiny. They can end up feeling watched rather than known.\",\"body_they\":\"{{holder1}} notices every shift in how you act, and they may press you to reveal more or try to influence how you come across. Their close attention can feel intimate at first, but you may grow guarded when it starts to feel like constant scrutiny. You can end up feeling watched rather than known.\",\"warmthSource\":null,\"labels\":[]}"
+}

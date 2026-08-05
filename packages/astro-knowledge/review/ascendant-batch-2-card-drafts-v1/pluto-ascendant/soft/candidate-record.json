@@ -1,0 +1,9 @@
+{
+  "target": "pluto-ascendant-soft",
+  "status": "needs_review",
+  "payloadSha256": "7ab22d33db12ccd5b28f27c4cc95c5f9dbe821fe32cd8a8865b0c153eae73ab6",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

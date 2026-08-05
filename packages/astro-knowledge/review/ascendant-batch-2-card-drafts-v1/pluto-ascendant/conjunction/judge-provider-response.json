@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_082580c455e5381c006a72829135f0819eaf7346776d3bcb01",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 874,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 283,
+    "output_tokens_details": {
+      "reasoning_tokens": 151
+    },
+    "total_tokens": 1157
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the fixed direction: {{holder1}} notices shifts, presses for more, and may influence how {{holder2}} comes across. The first two sentences establish a clear behavior-and-cost loop, moving from close attention and pressure to guardedness under scrutiny. The closing sentence, \\\"They can end up feeling watched rather than known,\\\" is permitted near-verbatim use of the approved human-moment input and lands the cost without adding a second conclusion. The variants are meaningfully parallel, and the added control over presentation stays within the governed boundary.\"}"
+}

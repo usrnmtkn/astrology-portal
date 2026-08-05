@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0469a73d4f2c20e6006a7282a71bc0819289b8327922f54456",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 857,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 183,
+    "output_tokens_details": {
+      "reasoning_tokens": 69
+    },
+    "total_tokens": 1040
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the fixed direction: {{holder1}}'s intensity pressures {{holder2}}'s presentation and natural response. The draft builds a clear behavior-and-cost loop in \\\"they may choose every word and expression carefully and keep more of themselves hidden,\\\" followed by pressure for honesty that leaves them \\\"even more guarded.\\\" This stays within the governed boundary and approved human moment, and the two versions preserve the same meaning without excluded claims or an added conclusion.\"}"
+}
