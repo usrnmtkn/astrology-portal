@@ -1,0 +1,43 @@
+{
+  "target": "mercury-venus-hard",
+  "passed": true,
+  "exactOutputShape": {
+    "passed": true
+  },
+  "sentenceCount_body_you": {
+    "passed": true,
+    "n": 3
+  },
+  "noDashes_body_you": {
+    "passed": true
+  },
+  "asciiPunctuation_body_you": {
+    "passed": true
+  },
+  "sentenceCount_body_they": {
+    "passed": true,
+    "n": 3
+  },
+  "noDashes_body_they": {
+    "passed": true
+  },
+  "asciiPunctuation_body_they": {
+    "passed": true
+  },
+  "rowDirection_body_you": {
+    "passed": true
+  },
+  "rowDirection_body_they": {
+    "passed": true
+  },
+  "exclusions_body_you": {
+    "passed": true
+  },
+  "exclusions_body_they": {
+    "passed": true
+  },
+  "warmthRecord": {
+    "passed": true,
+    "mode": "none_found"
+  }
+}

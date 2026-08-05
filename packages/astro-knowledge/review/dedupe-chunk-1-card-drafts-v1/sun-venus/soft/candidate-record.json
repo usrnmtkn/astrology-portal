@@ -1,0 +1,9 @@
+{
+  "target": "sun-venus-soft",
+  "status": "needs_review",
+  "payloadSha256": "d438e7c716f415fce882a0142e41f36b65f18deec5df0c51e655059c23edb269",
+  "harvest_mode": "none_found",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

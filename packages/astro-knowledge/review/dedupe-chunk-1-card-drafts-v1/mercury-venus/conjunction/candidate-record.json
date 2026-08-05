@@ -1,0 +1,9 @@
+{
+  "target": "mercury-venus-conjunction",
+  "status": "needs_review",
+  "payloadSha256": "6a2c52d329666eb9b6cfdc0431ca4353a9c0e7afe5c0bed00a548eabd00b9613",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

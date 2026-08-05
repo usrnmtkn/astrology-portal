@@ -1,0 +1,15 @@
+{
+  "body_you": "Your way of being puts {{holder2}} at ease, and they show you what they feel without much explanation. You respond naturally to their feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around you, {{holder2}} does not need to prove they are worthy.",
+  "body_they": "{{holder1}}'s way of being puts you at ease, and you show them what you feel without much explanation. They respond naturally to your feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around {{holder1}}, you do not need to prove you are worthy.",
+  "warmthSource": {
+    "sourceArticleId": "sagittarius-full-moon-2025",
+    "originalLine": "You don’t need to prove you’re worthy.",
+    "usedForm": {
+      "body_you": "Around you, {{holder2}} does not need to prove they are worthy.",
+      "body_they": "Around {{holder1}}, you do not need to prove you are worthy."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

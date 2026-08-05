@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0081773f10fe9ac4006a7295def5dc81a296cb3abf104fd99f",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 966,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 994,
+    "output_tokens_details": {
+      "reasoning_tokens": 725
+    },
+    "total_tokens": 1960
+  },
+  "output_text": "{\"body_you\":\"{{holder2}} shows affection by praising who you are, and you become more open and expressive in response. Your sense of worth can become tied to external validation when their praise starts determining how good you feel about yourself. The affection between you feels warm, gentle, and easy to return.\",\"body_they\":\"You show affection by praising who {{holder1}} is, and {{holder1}} becomes more open and expressive in response. {{holder1}}'s sense of worth can become tied to external validation when your praise starts determining how good they feel about themselves. The affection between you feels warm, gentle, and easy to return.\",\"warmthSource\":{\"sourceArticleId\":\"total-lunar-eclipse-in-virgo\",\"originalLine\":\"If your financial situation feels unstable, if your sense of worth has been tied to external validation, if the structures that once made you feel safe now feel like constraints, this is where the illusion falls apart.\",\"usedForm\":{\"body_you\":\"Your sense of worth can become tied to external validation when their praise starts determining how good you feel about yourself.\",\"body_they\":\"{{holder1}}'s sense of worth can become tied to external validation when your praise starts determining how good they feel about themselves.\"}},\"labels\":[\"owner-corpus-derived\"]}"
+}

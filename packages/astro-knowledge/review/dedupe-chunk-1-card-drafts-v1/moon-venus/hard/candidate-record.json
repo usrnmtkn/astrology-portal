@@ -1,0 +1,9 @@
+{
+  "target": "moon-venus-hard",
+  "status": "needs_review",
+  "payloadSha256": "b0015e3cc1a06a075c6b4f4ccf0a5c3702503b32db78eec6bfcf6e9ca4156c0d",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

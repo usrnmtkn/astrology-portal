@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-mercury-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/mercury/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "50468e2e49a63514678073430f9613b6b8e1a6bdfb17be8320e999f0a73e043e",
+  "payload": {
+    "body_you": "Your sense of who you are is easy for {{holder2}} to understand, so they usually follow what you mean without making you explain every step. Their replies help you put your position into clearer words, and you leave the conversation feeling more like yourself. This takes little effort, which can make its steadying effect easy to overlook.",
+    "body_they": "{{holder1}}'s sense of who they are is easy for you to understand, so you usually follow what they mean without making them explain every step. Your replies help {{holder1}} put their position into clearer words, and they leave the conversation feeling more like themselves. This takes little effort, which can make its steadying effect easy to overlook.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
