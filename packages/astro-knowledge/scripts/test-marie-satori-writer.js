@@ -142,6 +142,52 @@ function main() {
   assert.strictEqual(batch3Lint.hardFailures, 0);
   assert.strictEqual(batch3Lint.warnings, 1);
 
+  const sunVenus24Approved = require(path.join("..", "review", "sky-placement-writer-sun-venus-24-owner-approved-fallbacks-2026-08-04.json"));
+  const sunVenus24Lint = require(path.join("..", "review", "sky-placement-writer-sun-venus-24-owner-approved-fallbacks-2026-08-04-lint.json"));
+  const combined26Proposal = require(path.join("..", "review", "sky-placement-sun-venus-chiron-nodes-26-serving-diff-proposal-2026-08-04.json"));
+  assert.strictEqual(sunVenus24Approved.articles.length, 24);
+  assert.strictEqual(sunVenus24Approved.ownerApproved, true);
+  assert.strictEqual(sunVenus24Approved.servingAuthorized, false);
+  assert.strictEqual(sunVenus24Approved.generationEvidence, false);
+  assert(sunVenus24Approved.articles.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.reviewStatus === "approved"
+    && entry.ownerApproved === true
+    && entry.renderEligible === false
+    && entry.servingAuthorized === false
+    && entry.generationEvidence === false
+    && entry.promotionAuthorized === false
+    && entry.canonical === false
+    && entry.lint.score === 3
+    && entry.lint.fails === 0
+    && entry.lint.warns === 0
+  )));
+  assert.deepStrictEqual(sunVenus24Lint.scoreCounts, { 3: 24 });
+  assert.strictEqual(sunVenus24Lint.totalFails, 0);
+  assert.strictEqual(sunVenus24Lint.totalWarns, 0);
+  assert.strictEqual(sunVenus24Lint.batchRepetition.passed, true);
+  const finalSunVenusText = JSON.stringify(sunVenus24Approved.articles.map((entry) => entry.article));
+  for (const retiredText of [
+    "helps the work reach the people it was made for",
+    "other people's moods and requests keep deciding where the day goes",
+    "vitality drops when attention stays fixed on defects",
+    "questions about reciprocity may return in a different form",
+    "similar questions of attachment can surface now in different forms",
+    "laughter, candor, and somewhere new",
+    "attraction feels easier without a preset role"
+  ]) assert(!finalSunVenusText.includes(retiredText));
+  assert.strictEqual(combined26Proposal.status, "held_for_explicit_owner_serving_approval");
+  assert.strictEqual(combined26Proposal.exactScopedKeyCount, 26);
+  assert.strictEqual(combined26Proposal.rows.length, 26);
+  assert.strictEqual(new Set(combined26Proposal.rows.map((entry) => entry.key)).size, 26);
+  assert.strictEqual(combined26Proposal.contentKeyChanges.netNewKeys, 25);
+  assert.deepStrictEqual(combined26Proposal.contentKeyChanges.replacementKeys, ["fallback-hook/sky-sign-copy/sun/leo"]);
+  assert.deepStrictEqual(combined26Proposal.contentKeyChanges.removedKeys, []);
+  assert.deepStrictEqual(combined26Proposal.runtimeEligibilityFlips.map((entry) => entry.id), ["chiron-aries", "north-node-aquarius", "south-node-leo"]);
+  assert.strictEqual(combined26Proposal.servingTransition.owner_approval, null);
+  assert.strictEqual(combined26Proposal.governance.applied, false);
+  assert.strictEqual(combined26Proposal.governance.explicitOwnerServingConfirmationRequired, true);
+
   const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
   const requiredTags = [
     "polished_but_flat", "abstract_hook", "abstract_consequence", "requires_interpretation",
