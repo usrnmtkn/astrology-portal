@@ -101,8 +101,22 @@ for (const [batch, expectedKeys] of [["3", expectedBatch3Keys], ["4", expectedBa
   assert.equal(release.migration_gate?.deployed_package_version, "v3-2026-08-04b");
 }
 assert.equal([...expectedBatch2Keys, ...expectedBatch3Keys, ...expectedBatch4Keys].length, 19);
-assert.ok(!approvedKeys.has("fallback-hook/sky-sign-copy/chiron/aries"));
-assert.ok(!approvedKeys.has("fallback-hook/sky-sign-copy/nodes/aquarius-leo"));
+const chironNodesPromotion = manifest.releases.find((release) => release.release_id === "sky-placement-chiron-nodes-promotion");
+const expectedChironNodesKeys = [
+  "fallback-hook/sky-sign-copy/chiron/aries",
+  "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+];
+assert.ok(chironNodesPromotion, "Chiron and Nodes must have an explicit serving-manifest release.");
+assert.equal(chironNodesPromotion.distribution_state, "serving");
+assert.equal(chironNodesPromotion.transition, "staged_to_serving");
+assert.equal(chironNodesPromotion.required_runtime_capability, manifest.runtime_capability);
+assert.equal(chironNodesPromotion.migration_gate?.status, "verified");
+assert.equal(chironNodesPromotion.migration_gate?.deployed_package_version, "v3-2026-08-04g");
+assert.match(chironNodesPromotion.migration_gate?.source ?? "", /dpl_Cc7eZBaDB4qgWB7TtxxXncS4fhXW/u);
+assert.deepEqual(chironNodesPromotion.approved_keys, expectedChironNodesKeys);
+assert.deepEqual(chironNodesPromotion.owner_approval?.approved_keys, expectedChironNodesKeys);
+assert.match(chironNodesPromotion.owner_approval?.statement ?? "", /explicitly approve the Chiron in Aries and Nodes in Aquarius\/Leo serving promotion/u);
+assert.ok(expectedChironNodesKeys.every((contentKey) => approvedKeys.has(contentKey)));
 
 const runtimeSource = readSource("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
 const placementBundleSource = readSource("apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts");
@@ -120,4 +134,4 @@ assert.match(materializerSource, /serving-awaiting-owner-approval/u);
 assert.match(importerSource, /distribution_state: "staged"/u);
 assert.match(importerSource, /Editorial approval does not authorize serving/u);
 
-console.log("Sky Placement serving gate passed with 19 approved batches 2-4 keys and Chiron/Nodes excluded.");
+console.log("Sky Placement serving gate passed with 19 approved batches 2-4 keys plus the two-key Chiron/Nodes promotion.");

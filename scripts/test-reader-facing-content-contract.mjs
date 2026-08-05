@@ -75,30 +75,30 @@ for (const [bundleName, bundle] of [
   );
 }
 
-for (const reviewOnlyPlacementId of [
+for (const servingPlacementId of [
   "chiron-aries",
   "north-node-aquarius",
   "south-node-leo"
 ]) {
-  const reviewOnlyPlacement = fullKnowledge.placements.find((entry) => entry.id === reviewOnlyPlacementId);
+  const servingPlacement = fullKnowledge.placements.find((entry) => entry.id === servingPlacementId);
   assert.ok(
-    reviewOnlyPlacement,
-    `${reviewOnlyPlacementId} must remain available in the full editorial knowledge package.`
+    servingPlacement,
+    `${servingPlacementId} must remain available in the full editorial knowledge package.`
   );
   assert.equal(
-    reviewOnlyPlacement.runtimeEligible,
-    false,
-    `${reviewOnlyPlacementId} must require an explicit serving approval before entering reader bundles.`
+    servingPlacement.runtimeEligible,
+    true,
+    `${servingPlacementId} must retain its explicit serving approval.`
   );
   assert.equal(
-    skyWebKnowledge.placements.some((entry) => entry.id === reviewOnlyPlacementId),
-    false,
-    `${reviewOnlyPlacementId} must remain unavailable in the Sky reader bundle until serving is approved.`
+    skyWebKnowledge.placements.some((entry) => entry.id === servingPlacementId),
+    true,
+    `${servingPlacementId} must remain available in the Sky reader bundle after serving approval.`
   );
   assert.equal(
-    natalWebKnowledge.placements.some((entry) => entry.id === reviewOnlyPlacementId),
-    false,
-    `${reviewOnlyPlacementId} must remain unavailable in the Natal reader bundle until serving is approved.`
+    natalWebKnowledge.placements.some((entry) => entry.id === servingPlacementId),
+    true,
+    `${servingPlacementId} must remain available in the Natal reader bundle after serving approval.`
   );
 }
 
