@@ -12905,420 +12905,450 @@
       "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter believes in {{holder1Poss}} Sun, and {{holder1}} can feel it: more confidence, more appetite, more yes. It is one of the warmest connections two charts can share. Keep the encouragement tied to real plans, and the growth is mutual.",
-      "body_they": "{{holder2PossCap}} Jupiter believes in {{holder1Poss}} Sun, and {{holder1}} can feel it: more confidence, more appetite, more yes. It is one of the warmest connections two charts can share. Keep the encouragement tied to real plans, and the growth is mutual.",
+      "body_you": "Around {{holder2}}, {{holder1}} feels invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. {{holder1}} may agree to the bigger role, expense, or commitment because {{holder2}} believes in it, then realize the plan arrived with considerably more luggage than expected.",
+      "body_they": "Around {{holder2}}, {{holder1}} feels invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. {{holder1}} may agree to the bigger role, expense, or commitment because {{holder2}} believes in it, then realize the plan arrived with considerably more luggage than expected.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/conjunction/exact-approval.json",
+        "payloadSha256": "97a389e9f17bec1a68bb71dae1c23c686dbeff7b115b8955220bb9ae59ff0672",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter believes in {{holder1Poss}} Sun, and {{holder1}} can feel it: more confidence, more appetite, more yes. It is one of the warmest connections two charts can share. Keep the encouragement tied to real plans, and the growth is mutual.",
-      "body_they": "{{holder2PossCap}} Jupiter believes in {{holder1Poss}} Sun, and {{holder1}} can feel it: more confidence, more appetite, more yes. It is one of the warmest connections two charts can share. Keep the encouragement tied to real plans, and the growth is mutual.",
+      "body_you": "{{holder1}} may feel as though the current version of them is never quite exciting enough for {{holder2}}. {{holder2}} thinks they are waving {{holder1}} toward a larger life, but {{holder1}} hears disappointment with the life already being lived. Soon {{holder1}} is chasing the brighter title, louder entrance, or more impressive answer, wondering when who they are now will finally receive a standing ovation.",
+      "body_they": "{{holder1}} may feel as though the current version of them is never quite exciting enough for {{holder2}}. {{holder2}} thinks they are waving {{holder1}} toward a larger life, but {{holder1}} hears disappointment with the life already being lived. Soon {{holder1}} is chasing the brighter title, louder entrance, or more impressive answer, wondering when who they are now will finally receive a standing ovation.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/hard/exact-approval.json",
+        "payloadSha256": "66c48c4ed2da783a7ac824bacd6e079fbfb9178e411f299290895c15a9a61f22",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/jupiter/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter believes in {{holder1Poss}} Sun, and {{holder1}} can feel it: more confidence, more appetite, more yes. It is one of the warmest connections two charts can share. Keep the encouragement tied to real plans, and the growth is mutual.",
-      "body_they": "{{holder2PossCap}} Jupiter believes in {{holder1Poss}} Sun, and {{holder1}} can feel it: more confidence, more appetite, more yes. It is one of the warmest connections two charts can share. Keep the encouragement tied to real plans, and the growth is mutual.",
+      "body_you": "{{holder2}} believes in {{holder1}} without treating them like a renovation project. The support opens doors without shoving {{holder1}} through them. {{holder2}} can celebrate the future taking shape while still appreciating the person already here.",
+      "body_they": "{{holder2}} believes in {{holder1}} without treating them like a renovation project. The support opens doors without shoving {{holder1}} through them. {{holder2}} can celebrate the future taking shape while still appreciating the person already here.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/soft/exact-approval.json",
+        "payloadSha256": "e3d8f34bba1c0259a42c24ce7579642a5d5198d2810542c4807163516ccaa70f",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/saturn/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Sun seriously, which reads as respect on good days and judgment on hard ones. From {{holder2Poss}} side comes structure and staying power; from {{holder1Poss}} side, light and a reason to loosen. Built patiently, this is the connection long partnerships are made of.",
-      "body_they": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Sun seriously, which reads as respect on good days and judgment on hard ones. From {{holder2Poss}} side comes structure and staying power; from {{holder1Poss}} side, light and a reason to loosen. Built patiently, this is the connection long partnerships are made of.",
+      "body_you": "{{holder2}} takes {{holder1}}'s direction seriously and helps turn a rough idea into a plan that can actually be followed. That support can feel reassuring, especially when {{holder1}} needs help staying with the work after the excitement wears off. It can also make {{holder2}}'s approval feel like the gate every decision has to pass through.",
+      "body_they": "{{holder2}} takes {{holder1}}'s direction seriously and helps turn a rough idea into a plan that can actually be followed. That support can feel reassuring, especially when {{holder1}} needs help staying with the work after the excitement wears off. It can also make {{holder2}}'s approval feel like the gate every decision has to pass through.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/conjunction/exact-approval.json",
+        "payloadSha256": "fa13448ac628e4e158e2fa5867feaf27be1ea97fbc6fbdd7090a1636b02aafea",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/saturn/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Sun seriously, which reads as respect on good days and judgment on hard ones. From {{holder2Poss}} side comes structure and staying power; from {{holder1Poss}} side, light and a reason to loosen. Built patiently, this is the connection long partnerships are made of.",
-      "body_they": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Sun seriously, which reads as respect on good days and judgment on hard ones. From {{holder2Poss}} side comes structure and staying power; from {{holder1Poss}} side, light and a reason to loosen. Built patiently, this is the connection long partnerships are made of.",
+      "body_you": "{{holder1}} may feel judged before they have had the chance to show what they can do. {{holder2}} thinks they are pointing out the loose floorboard before anyone steps on it, while {{holder1}} hears another reason the whole idea should stay in the basement. {{holder1}} resents being stopped, and {{holder2}} feels like they have to intervene before the decision creates a problem neither wants to clean up.",
+      "body_they": "{{holder1}} may feel judged before they have had the chance to show what they can do. {{holder2}} thinks they are pointing out the loose floorboard before anyone steps on it, while {{holder1}} hears another reason the whole idea should stay in the basement. {{holder1}} resents being stopped, and {{holder2}} feels like they have to intervene before the decision creates a problem neither wants to clean up.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/hard/exact-approval.json",
+        "payloadSha256": "4e449ddb4a44ff7042a804726867301be45d32f915b8cdfb3fe30ebb80c3657c",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/saturn/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Sun seriously, which reads as respect on good days and judgment on hard ones. From {{holder2Poss}} side comes structure and staying power; from {{holder1Poss}} side, light and a reason to loosen. Built patiently, this is the connection long partnerships are made of.",
-      "body_they": "{{holder2PossCap}} Saturn takes {{holder1Poss}} Sun seriously, which reads as respect on good days and judgment on hard ones. From {{holder2Poss}} side comes structure and staying power; from {{holder1Poss}} side, light and a reason to loosen. Built patiently, this is the connection long partnerships are made of.",
+      "body_you": "{{holder2}} helps {{holder1}} stay with the plan after the first rush of motivation fades. When progress slows or the work becomes repetitive, {{holder2}} does not vanish or take over. The support is easy to miss because it looks less like applause and more like someone still showing up when the glamorous part is over.",
+      "body_they": "{{holder2}} helps {{holder1}} stay with the plan after the first rush of motivation fades. When progress slows or the work becomes repetitive, {{holder2}} does not vanish or take over. The support is easy to miss because it looks less like applause and more like someone still showing up when the glamorous part is over.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/soft/exact-approval.json",
+        "payloadSha256": "42948128a16fdc54b1822a7834d2a212da1127ad5f91c4db8da7bd26f21f88ed",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/uranus/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Sun surprised, and around {{holder2}}, life feels more original and more awake to {{holder1}}. The connection stays electric as long as neither tries to make it predictable. Give it room and it keeps renewing itself.",
-      "body_they": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Sun surprised, and around {{holder2}}, life feels more original and more awake to {{holder1}}. The connection stays electric as long as neither tries to make it predictable. Give it room and it keeps renewing itself.",
+      "body_you": "Around {{holder2}}, {{holder1}} may feel freer to admit the preference, idea, or version of themselves that usually stays backstage. {{holder2}} makes detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script.",
+      "body_they": "Around {{holder2}}, {{holder1}} may feel freer to admit the preference, idea, or version of themselves that usually stays backstage. {{holder2}} makes detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/conjunction/exact-approval.json",
+        "payloadSha256": "528bcc753fb6db53318f8bbb7fee295bd85b8a0e06adf7c8c19aafac8fcc540f",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/uranus/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Sun surprised, and around {{holder2}}, life feels more original and more awake to {{holder1}}. The connection stays electric as long as neither tries to make it predictable. Give it room and it keeps renewing itself.",
-      "body_they": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Sun surprised, and around {{holder2}}, life feels more original and more awake to {{holder1}}. The connection stays electric as long as neither tries to make it predictable. Give it room and it keeps renewing itself.",
+      "body_you": "Just as {{holder1}} begins trusting the arrangement, {{holder2}} changes the rhythm, questions the plan, or needs a different amount of space. {{holder2}} experiences the shift as necessary freedom, while {{holder1}} experiences it as the chair being pulled away the moment they sat down. After enough sudden changes, {{holder1}} starts bracing before anything has even happened.",
+      "body_they": "Just as {{holder1}} begins trusting the arrangement, {{holder2}} changes the rhythm, questions the plan, or needs a different amount of space. {{holder2}} experiences the shift as necessary freedom, while {{holder1}} experiences it as the chair being pulled away the moment they sat down. After enough sudden changes, {{holder1}} starts bracing before anything has even happened.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/hard/exact-approval.json",
+        "payloadSha256": "cb8a377c4f3283f7c35c6db82dbe84abe752827a6a84ddd519ebcc2fae789571",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/uranus/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Sun surprised, and around {{holder2}}, life feels more original and more awake to {{holder1}}. The connection stays electric as long as neither tries to make it predictable. Give it room and it keeps renewing itself.",
-      "body_they": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Sun surprised, and around {{holder2}}, life feels more original and more awake to {{holder1}}. The connection stays electric as long as neither tries to make it predictable. Give it room and it keeps renewing itself.",
+      "body_you": "{{holder2}} gives {{holder1}} room to be unusual without turning the difference into a problem to solve. {{holder1}} can change their mind, question expectations, and keep the odd little details that make them recognizable. {{holder2}} gets freedom too, because closeness here does not require either person to become smaller or more predictable.",
+      "body_they": "{{holder2}} gives {{holder1}} room to be unusual without turning the difference into a problem to solve. {{holder1}} can change their mind, question expectations, and keep the odd little details that make them recognizable. {{holder2}} gets freedom too, because closeness here does not require either person to become smaller or more predictable.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/soft/exact-approval.json",
+        "payloadSha256": "ee9bdaf28b3d513fce37875e530660de41148263340cc0b71328362b024d7828",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/neptune/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Neptune sees a glow around {{holder1Poss}} Sun, which leaves {{holder1}} feeling wonderfully seen, sometimes more ideal than real. The inspiration is precious; the pedestal is the hazard. Keep checking in with who each of you actually is, and the magic stays honest.",
-      "body_they": "{{holder2PossCap}} Neptune sees a glow around {{holder1Poss}} Sun, which leaves {{holder1}} feeling wonderfully seen, sometimes more ideal than real. The inspiration is precious; the pedestal is the hazard. Keep checking in with who each of you actually is, and the magic stays honest.",
+      "body_you": "{{holder2}} sees something luminous in {{holder1}}, and {{holder1}} may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn {{holder1}} into the lead character of a story {{holder2}} started writing before learning all the facts.",
+      "body_they": "{{holder2}} sees something luminous in {{holder1}}, and {{holder1}} may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn {{holder1}} into the lead character of a story {{holder2}} started writing before learning all the facts.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/conjunction/exact-approval.json",
+        "payloadSha256": "ca5ca31adbd70795d3f09c29586f19ed89e6b3aad4c44b6cad51b011f3373eda",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/neptune/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Neptune sees a glow around {{holder1Poss}} Sun, which leaves {{holder1}} feeling wonderfully seen, sometimes more ideal than real. The inspiration is precious; the pedestal is the hazard. Keep checking in with who each of you actually is, and the magic stays honest.",
-      "body_they": "{{holder2PossCap}} Neptune sees a glow around {{holder1Poss}} Sun, which leaves {{holder1}} feeling wonderfully seen, sometimes more ideal than real. The inspiration is precious; the pedestal is the hazard. Keep checking in with who each of you actually is, and the magic stays honest.",
+      "body_you": "{{holder1}} may keep meeting a version of themselves that exists mainly in {{holder2}}'s imagination. {{holder2}} reads motives, qualities, or feelings into {{holder1}}, then treats the correction like an unexpected plot twist. {{holder1}} ends up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit.",
+      "body_they": "{{holder1}} may keep meeting a version of themselves that exists mainly in {{holder2}}'s imagination. {{holder2}} reads motives, qualities, or feelings into {{holder1}}, then treats the correction like an unexpected plot twist. {{holder1}} ends up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/hard/exact-approval.json",
+        "payloadSha256": "b6297295dcb6934ad776e2dfea554ad1904dedb77df440c4988ba27ff55e249c",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/neptune/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Neptune sees a glow around {{holder1Poss}} Sun, which leaves {{holder1}} feeling wonderfully seen, sometimes more ideal than real. The inspiration is precious; the pedestal is the hazard. Keep checking in with who each of you actually is, and the magic stays honest.",
-      "body_they": "{{holder2PossCap}} Neptune sees a glow around {{holder1Poss}} Sun, which leaves {{holder1}} feeling wonderfully seen, sometimes more ideal than real. The inspiration is precious; the pedestal is the hazard. Keep checking in with who each of you actually is, and the magic stays honest.",
+      "body_you": "{{holder2}} gives {{holder1}} the benefit of the doubt before reaching for the red pen. That kindness can make {{holder1}} feel accepted, especially when they are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them.",
+      "body_they": "{{holder2}} gives {{holder1}} the benefit of the doubt before reaching for the red pen. That kindness can make {{holder1}} feel accepted, especially when they are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/soft/exact-approval.json",
+        "payloadSha256": "fd4b84005ee55792d765de36cc5313c90afa838945b24b8f56bbfe629a3fce72",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/pluto/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Pluto looks straight through {{holder1Poss}} Sun, past the presentation to the person. That leaves {{holder1}} magnetically seen, and sometimes exposed. This connection changes both of you; it works when the intensity goes into growing each other rather than steering each other.",
-      "body_they": "{{holder2PossCap}} Pluto looks straight through {{holder1Poss}} Sun, past the presentation to the person. That leaves {{holder1}} magnetically seen, and sometimes exposed. This connection changes both of you; it works when the intensity goes into growing each other rather than steering each other.",
+      "body_you": "{{holder2}} pays close attention to who {{holder1}} is, what drives them, and what they might become. At first, that focus can feel magnetic, like {{holder1}} has finally entered a room where nothing important goes unnoticed. Over time, being unforgettable to {{holder2}} can begin to feel less like devotion and more like having someone else's name written across the deed.",
+      "body_they": "{{holder2}} pays close attention to who {{holder1}} is, what drives them, and what they might become. At first, that focus can feel magnetic, like {{holder1}} has finally entered a room where nothing important goes unnoticed. Over time, being unforgettable to {{holder2}} can begin to feel less like devotion and more like having someone else's name written across the deed.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/conjunction/exact-approval.json",
+        "payloadSha256": "7dba2ffba30d95cd2d80993cf85d2dcd11d8aaff9b2509c36bb89ca6fb455aa3",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/pluto/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Pluto looks straight through {{holder1Poss}} Sun, past the presentation to the person. That leaves {{holder1}} magnetically seen, and sometimes exposed. This connection changes both of you; it works when the intensity goes into growing each other rather than steering each other.",
-      "body_they": "{{holder2PossCap}} Pluto looks straight through {{holder1Poss}} Sun, past the presentation to the person. That leaves {{holder1}} magnetically seen, and sometimes exposed. This connection changes both of you; it works when the intensity goes into growing each other rather than steering each other.",
+      "body_you": "A disagreement between {{holder1}} and {{holder2}} can become a struggle over who gets the final word, the last move, or the key to the locked drawer. {{holder1}} resists being reshaped, while {{holder2}} pushes harder because resistance feels like a loss of influence. The original issue disappears beneath silence, testing, jealousy, or the need to prove who holds the power.",
+      "body_they": "A disagreement between {{holder1}} and {{holder2}} can become a struggle over who gets the final word, the last move, or the key to the locked drawer. {{holder1}} resists being reshaped, while {{holder2}} pushes harder because resistance feels like a loss of influence. The original issue disappears beneath silence, testing, jealousy, or the need to prove who holds the power.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/hard/exact-approval.json",
+        "payloadSha256": "f9bb9b2182e0b919a71b7057c7dccc51cdbefd179275b52b7156d2337a3f9ef1",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/pluto/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Pluto looks straight through {{holder1Poss}} Sun, past the presentation to the person. That leaves {{holder1}} magnetically seen, and sometimes exposed. This connection changes both of you; it works when the intensity goes into growing each other rather than steering each other.",
-      "body_they": "{{holder2PossCap}} Pluto looks straight through {{holder1Poss}} Sun, past the presentation to the person. That leaves {{holder1}} magnetically seen, and sometimes exposed. This connection changes both of you; it works when the intensity goes into growing each other rather than steering each other.",
+      "body_you": "{{holder2}} takes {{holder1}} seriously without trying to edit the person standing in front of them. {{holder1}} can feel stronger under that attention because the depth does not come with a takeover plan. The intensity reads as loyalty, not pressure, because {{holder2}} supports what matters without trying to own it.",
+      "body_they": "{{holder2}} takes {{holder1}} seriously without trying to edit the person standing in front of them. {{holder1}} can feel stronger under that attention because the depth does not come with a takeover plan. The intensity reads as loyalty, not pressure, because {{holder2}} supports what matters without trying to own it.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/soft/exact-approval.json",
+        "payloadSha256": "0b59b1cbebf31babb68fc1a40b462fac0218826d4c9431b95be0506a371125dc",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/jupiter/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter makes {{holder1Poss}} Moon feel safe to take up space: feelings get met with generosity instead of analysis. Comfort comes easily between you, sometimes too easily. Enjoy the plenty and keep one eye on the excess.",
-      "body_they": "{{holder2PossCap}} Jupiter makes {{holder1Poss}} Moon feel safe to take up space: feelings get met with generosity instead of analysis. Comfort comes easily between you, sometimes too easily. Enjoy the plenty and keep one eye on the excess.",
+      "body_you": "{{holder2}} makes {{holder1}} feel that every emotion is welcome at the table. {{holder1}} may become more open, expressive, and hopeful around them, especially after keeping a feeling packed away for too long. The trouble begins when {{holder2}} turns one difficult afternoon into a motivational seminar and {{holder1}} only wanted someone to stay for the weather.",
+      "body_they": "{{holder2}} makes {{holder1}} feel that every emotion is welcome at the table. {{holder1}} may become more open, expressive, and hopeful around them, especially after keeping a feeling packed away for too long. The trouble begins when {{holder2}} turns one difficult afternoon into a motivational seminar and {{holder1}} only wanted someone to stay for the weather.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/conjunction/exact-approval.json",
+        "payloadSha256": "d3e8133d96174be80dc2262ad83d25bded343bbc35b30b57814b7e0d5fc91f71",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/jupiter/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter makes {{holder1Poss}} Moon feel safe to take up space: feelings get met with generosity instead of analysis. Comfort comes easily between you, sometimes too easily. Enjoy the plenty and keep one eye on the excess.",
-      "body_they": "{{holder2PossCap}} Jupiter makes {{holder1Poss}} Moon feel safe to take up space: feelings get met with generosity instead of analysis. Comfort comes easily between you, sometimes too easily. Enjoy the plenty and keep one eye on the excess.",
+      "body_you": "{{holder1}} may feel cheered up before they feel understood. {{holder2}} offers optimism because they want to lift the mood, but {{holder1}} can hear that the worry is too gloomy, inconvenient, or excessive to keep discussing. Eventually {{holder1}} starts trimming the feeling before sharing it, while {{holder2}} mistakes the smaller version for proof that the encouragement worked.",
+      "body_they": "{{holder1}} may feel cheered up before they feel understood. {{holder2}} offers optimism because they want to lift the mood, but {{holder1}} can hear that the worry is too gloomy, inconvenient, or excessive to keep discussing. Eventually {{holder1}} starts trimming the feeling before sharing it, while {{holder2}} mistakes the smaller version for proof that the encouragement worked.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/hard/exact-approval.json",
+        "payloadSha256": "f7bf273b22ff681a500a359661d679109034ff1abe5118d7ff212b596d26f95d",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/jupiter/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Jupiter makes {{holder1Poss}} Moon feel safe to take up space: feelings get met with generosity instead of analysis. Comfort comes easily between you, sometimes too easily. Enjoy the plenty and keep one eye on the excess.",
-      "body_they": "{{holder2PossCap}} Jupiter makes {{holder1Poss}} Moon feel safe to take up space: feelings get met with generosity instead of analysis. Comfort comes easily between you, sometimes too easily. Enjoy the plenty and keep one eye on the excess.",
+      "body_you": "{{holder1}} tends to feel lighter around {{holder2}} without having to paste on a smile first. {{holder2}} brings hope into difficult moments without turning every feeling into an emergency or a lesson. Comfort and optimism work together here, more like an open window than a demand to leave the room.",
+      "body_they": "{{holder1}} tends to feel lighter around {{holder2}} without having to paste on a smile first. {{holder2}} brings hope into difficult moments without turning every feeling into an emergency or a lesson. Comfort and optimism work together here, more like an open window than a demand to leave the room.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/soft/exact-approval.json",
+        "payloadSha256": "a829d59caacc3d21694b8616f1fea6d60e79621a08306cc8e45a6907a38e159f",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/saturn/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn gives {{holder1Poss}} Moon something solid to lean on, and the safety is real even when the warmth stays quiet. The connection here shows in reliability rather than words. Say the soft thing out loud sometimes; the structure can carry it.",
-      "body_they": "{{holder2PossCap}} Saturn gives {{holder1Poss}} Moon something solid to lean on, and the safety is real even when the warmth stays quiet. The connection here shows in reliability rather than words. Say the soft thing out loud sometimes; the structure can carry it.",
+      "body_you": "{{holder2}} may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. {{holder1}} can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away.",
+      "body_they": "{{holder2}} may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. {{holder1}} can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/conjunction/exact-approval.json",
+        "payloadSha256": "450661628394f5f3a1e8b3ea58fd54516b517d7e5074639da74dc4396e6dc3cd",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/saturn/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn gives {{holder1Poss}} Moon something solid to lean on, and the safety is real even when the warmth stays quiet. The connection here shows in reliability rather than words. Say the soft thing out loud sometimes; the structure can carry it.",
-      "body_they": "{{holder2PossCap}} Saturn gives {{holder1Poss}} Moon something solid to lean on, and the safety is real even when the warmth stays quiet. The connection here shows in reliability rather than words. Say the soft thing out loud sometimes; the structure can carry it.",
+      "body_you": "{{holder1}} reaches for warmth, reassurance, or a little softness, and {{holder2}} responds with caution, practical help, silence, or the next responsibility on the list. {{holder2}} believes reliability should make the care obvious, while {{holder1}} begins feeling guilty for needing something less useful and more human. The relationship can become excellent in an emergency and strangely lonely on an ordinary Tuesday.",
+      "body_they": "{{holder1}} reaches for warmth, reassurance, or a little softness, and {{holder2}} responds with caution, practical help, silence, or the next responsibility on the list. {{holder2}} believes reliability should make the care obvious, while {{holder1}} begins feeling guilty for needing something less useful and more human. The relationship can become excellent in an emergency and strangely lonely on an ordinary Tuesday.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/hard/exact-approval.json",
+        "payloadSha256": "1200105974cb160cd805435541a741aa700fd81f0dc8bc8637bf1a4d81a3e76d",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/saturn/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Saturn gives {{holder1Poss}} Moon something solid to lean on, and the safety is real even when the warmth stays quiet. The connection here shows in reliability rather than words. Say the soft thing out loud sometimes; the structure can carry it.",
-      "body_they": "{{holder2PossCap}} Saturn gives {{holder1Poss}} Moon something solid to lean on, and the safety is real even when the warmth stays quiet. The connection here shows in reliability rather than words. Say the soft thing out loud sometimes; the structure can carry it.",
+      "body_you": "{{holder1}} knows {{holder2}} will still be there tomorrow. {{holder2}} does not panic over every mood, and {{holder1}} can rely on their patience through difficult periods. The quiet can feel safe, though affection may sit unopened for too long when both assume the commitment already says enough.",
+      "body_they": "{{holder1}} knows {{holder2}} will still be there tomorrow. {{holder2}} does not panic over every mood, and {{holder1}} can rely on their patience through difficult periods. The quiet can feel safe, though affection may sit unopened for too long when both assume the commitment already says enough.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/soft/exact-approval.json",
+        "payloadSha256": "8b12268605e666678c828ac99456e4f4d46c6a82576e1eb7f3bc2c85d81225ec",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/uranus/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Moon guessing: exciting on the good days, destabilizing on the tender ones. Freedom comes easier to {{holder1}} around {{holder2}}, and holding comes harder. Scheduled closeness sounds unromantic and works: pick your rituals and let everything else stay loose.",
-      "body_they": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Moon guessing: exciting on the good days, destabilizing on the tender ones. Freedom comes easier to {{holder1}} around {{holder2}}, and holding comes harder. Scheduled closeness sounds unromantic and works: pick your rituals and let everything else stay loose.",
+      "body_you": "{{holder2}} keeps {{holder1}} emotionally awake. Around them, {{holder1}} may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make {{holder1}} wonder which version of the closeness will be waiting at the door.",
+      "body_they": "{{holder2}} keeps {{holder1}} emotionally awake. Around them, {{holder1}} may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make {{holder1}} wonder which version of the closeness will be waiting at the door.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/conjunction/exact-approval.json",
+        "payloadSha256": "6ad3522fbf60622bc23af0b5e6f27311b05086fadcab027b6d039f76b9f71488",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/uranus/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Moon guessing: exciting on the good days, destabilizing on the tender ones. Freedom comes easier to {{holder1}} around {{holder2}}, and holding comes harder. Scheduled closeness sounds unromantic and works: pick your rituals and let everything else stay loose.",
-      "body_they": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Moon guessing: exciting on the good days, destabilizing on the tender ones. Freedom comes easier to {{holder1}} around {{holder2}}, and holding comes harder. Scheduled closeness sounds unromantic and works: pick your rituals and let everything else stay loose.",
+      "body_you": "What feels like breathing room to {{holder2}} can feel like sudden disappearance to {{holder1}}. Whenever {{holder1}} begins trusting the rhythm, {{holder2}} needs more space, a different plan, or an unexpected change of scene. {{holder1}} reaches for reassurance, {{holder2}} reaches for the exit, and both end up protecting the need that already feels most threatened.",
+      "body_they": "What feels like breathing room to {{holder2}} can feel like sudden disappearance to {{holder1}}. Whenever {{holder1}} begins trusting the rhythm, {{holder2}} needs more space, a different plan, or an unexpected change of scene. {{holder1}} reaches for reassurance, {{holder2}} reaches for the exit, and both end up protecting the need that already feels most threatened.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/hard/exact-approval.json",
+        "payloadSha256": "d160d2ac68d339257f39a056b769248cbb79a305b15aef202002b67c56f066ab",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/uranus/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Moon guessing: exciting on the good days, destabilizing on the tender ones. Freedom comes easier to {{holder1}} around {{holder2}}, and holding comes harder. Scheduled closeness sounds unromantic and works: pick your rituals and let everything else stay loose.",
-      "body_they": "{{holder2PossCap}} Uranus keeps {{holder1Poss}} Moon guessing: exciting on the good days, destabilizing on the tender ones. Freedom comes easier to {{holder1}} around {{holder2}}, and holding comes harder. Scheduled closeness sounds unromantic and works: pick your rituals and let everything else stay loose.",
+      "body_you": "{{holder2}} can take space without making {{holder1}} feel unwanted, and {{holder1}} can have feelings without making {{holder2}} feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair.",
+      "body_they": "{{holder2}} can take space without making {{holder1}} feel unwanted, and {{holder1}} can have feelings without making {{holder2}} feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/soft/exact-approval.json",
+        "payloadSha256": "313869f97c272b6a22dd854eaa72775c5ddfc0d6afb95c218b60b55d7332d315",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/neptune/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Neptune feels {{holder1Poss}} Moon without being told, and the empathy between you can be almost telepathic. It is tender, and it can blur who is feeling what. Keep asking instead of assuming, and this stays one of the gentlest connections there is.",
-      "body_they": "{{holder2PossCap}} Neptune feels {{holder1Poss}} Moon without being told, and the empathy between you can be almost telepathic. It is tender, and it can blur who is feeling what. Keep asking instead of assuming, and this stays one of the gentlest connections there is.",
+      "body_you": "{{holder1}}'s feelings and {{holder2}}'s imagination blend easily, like two songs playing through the same wall. {{holder2}} may sense a shift before {{holder1}} says anything, while {{holder1}} feels understood without having to provide a full transcript. The tenderness is real, though neither may be entirely certain which emotion entered the room first.",
+      "body_they": "{{holder1}}'s feelings and {{holder2}}'s imagination blend easily, like two songs playing through the same wall. {{holder2}} may sense a shift before {{holder1}} says anything, while {{holder1}} feels understood without having to provide a full transcript. The tenderness is real, though neither may be entirely certain which emotion entered the room first.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/conjunction/exact-approval.json",
+        "payloadSha256": "b98f428a2c07383ebac4d77a00c666d3227dc7859794cce68a7e4160d712ec85",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/neptune/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Neptune feels {{holder1Poss}} Moon without being told, and the empathy between you can be almost telepathic. It is tender, and it can blur who is feeling what. Keep asking instead of assuming, and this stays one of the gentlest connections there is.",
-      "body_they": "{{holder2PossCap}} Neptune feels {{holder1Poss}} Moon without being told, and the empathy between you can be almost telepathic. It is tender, and it can blur who is feeling what. Keep asking instead of assuming, and this stays one of the gentlest connections there is.",
+      "body_you": "{{holder2}} may comfort {{holder1}} for a feeling {{holder1}} is not actually having. {{holder2}} becomes convinced that {{holder1}} is sad, distant, disappointed, or quietly asking to be rescued, then treats the correction as part of the mystery. {{holder1}} ends up managing the actual emotion and the elaborate bouquet sent to the wrong address.",
+      "body_they": "{{holder2}} may comfort {{holder1}} for a feeling {{holder1}} is not actually having. {{holder2}} becomes convinced that {{holder1}} is sad, distant, disappointed, or quietly asking to be rescued, then treats the correction as part of the mystery. {{holder1}} ends up managing the actual emotion and the elaborate bouquet sent to the wrong address.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/hard/exact-approval.json",
+        "payloadSha256": "c93d252b2ba036312f1efd794a7d3fed81dc6b3b57394c71372023da47722cf4",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Neptune feels {{holder1Poss}} Moon without being told, and the empathy between you can be almost telepathic. It is tender, and it can blur who is feeling what. Keep asking instead of assuming, and this stays one of the gentlest connections there is.",
-      "body_they": "{{holder2PossCap}} Neptune feels {{holder1Poss}} Moon without being told, and the empathy between you can be almost telepathic. It is tender, and it can blur who is feeling what. Keep asking instead of assuming, and this stays one of the gentlest connections there is.",
+      "body_you": "{{holder2}} often knows when {{holder1}} needs gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves {{holder1}} feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+      "body_they": "{{holder2}} often knows when {{holder1}} needs gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves {{holder1}} feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/soft/exact-approval.json",
+        "payloadSha256": "1af998fe2fd653219ae48930332d08b55d1331c306d52b33c69029a1d1d0ad43",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/pluto/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Pluto reaches the levels of {{holder1Poss}} Moon most people never touch, and the closeness can feel fated. Feelings run deep and so does the grip. Loyalty is the gift here; possession is the shadow. Held with open hands, this connection bonds for life.",
-      "body_they": "{{holder2PossCap}} Pluto reaches the levels of {{holder1Poss}} Moon most people never touch, and the closeness can feel fated. Feelings run deep and so does the grip. Loyalty is the gift here; possession is the shadow. Held with open hands, this connection bonds for life.",
+      "body_you": "{{holder2}} reaches feelings {{holder1}} usually keeps behind several locked doors. {{holder1}} may feel exposed, understood, and intensely attached in very little time because {{holder2}} notices emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins.",
+      "body_they": "{{holder2}} reaches feelings {{holder1}} usually keeps behind several locked doors. {{holder1}} may feel exposed, understood, and intensely attached in very little time because {{holder2}} notices emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/conjunction/exact-approval.json",
+        "payloadSha256": "1f90934fed886643710b7ef062985a9e775fc77348fe67b211c605784ae885da",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/pluto/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Pluto reaches the levels of {{holder1Poss}} Moon most people never touch, and the closeness can feel fated. Feelings run deep and so does the grip. Loyalty is the gift here; possession is the shadow. Held with open hands, this connection bonds for life.",
-      "body_they": "{{holder2PossCap}} Pluto reaches the levels of {{holder1Poss}} Moon most people never touch, and the closeness can feel fated. Feelings run deep and so does the grip. Loyalty is the gift here; possession is the shadow. Held with open hands, this connection bonds for life.",
+      "body_you": "{{holder1}} may feel watched even when nobody is speaking. {{holder2}} notices the changed tone, delayed reply, or private reaction and wants an answer before {{holder1}} is ready to give one. {{holder1}} guards more because {{holder2}} keeps looking, and {{holder2}} looks harder because the door keeps closing.",
+      "body_they": "{{holder1}} may feel watched even when nobody is speaking. {{holder2}} notices the changed tone, delayed reply, or private reaction and wants an answer before {{holder1}} is ready to give one. {{holder1}} guards more because {{holder2}} keeps looking, and {{holder2}} looks harder because the door keeps closing.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/hard/exact-approval.json",
+        "payloadSha256": "500de93b0c4788a0cb26f4c99cbcfc6f581fc8c65ac9243cdaec0bbaefc06840",
+        "approvedAt": "2026-08-05"
       }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/moon/pluto/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder2PossCap}} Pluto reaches the levels of {{holder1Poss}} Moon most people never touch, and the closeness can feel fated. Feelings run deep and so does the grip. Loyalty is the gift here; possession is the shadow. Held with open hands, this connection bonds for life.",
-      "body_they": "{{holder2PossCap}} Pluto reaches the levels of {{holder1Poss}} Moon most people never touch, and the closeness can feel fated. Feelings run deep and so does the grip. Loyalty is the gift here; possession is the shadow. Held with open hands, this connection bonds for life.",
+      "body_you": "{{holder1}} can tell {{holder2}} the difficult truth without changing it to make the conversation easier. {{holder2}} stays present with feelings {{holder1}} usually hides, but does not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because {{holder1}} can go deeper without losing track of what still belongs to them.",
+      "body_they": "{{holder1}} can tell {{holder2}} the difficult truth without changing it to make the conversation easier. {{holder2}} stays present with feelings {{holder1}} usually hides, but does not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because {{holder1}} can go deeper without losing track of what still belongs to them.",
       "review_status": "approved",
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
-      "approved_via": "owner sign-off, chat 2026-07-22",
       "approval": {
-        "approvalLevel": "owner_signoff_untraced",
-        "approvedAt": "2026-07-22"
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/soft/exact-approval.json",
+        "payloadSha256": "02a1e4f8b36f1041ddda9921ed158433ebe980033d9c8c8dfad1ed663c5f776d",
+        "approvedAt": "2026-08-05"
       }
     },
     {

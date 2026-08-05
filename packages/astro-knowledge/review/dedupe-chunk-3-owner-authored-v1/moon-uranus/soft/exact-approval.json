@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-uranus-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/uranus/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "313869f97c272b6a22dd854eaa72775c5ddfc0d6afb95c218b60b55d7332d315",
+  "payload": {
+    "body_you": "{{holder2}} can take space without making {{holder1}} feel unwanted, and {{holder1}} can have feelings without making {{holder2}} feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair.",
+    "body_they": "{{holder2}} can take space without making {{holder1}} feel unwanted, and {{holder1}} can have feelings without making {{holder2}} feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-uranus/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}
