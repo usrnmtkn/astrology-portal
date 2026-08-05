@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "pluto-ascendant-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_no_model_call",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "43c9d014c1ba2fe06cf332ecb9c215c9721ea81ed8b18071cbc9226637efb944",
+  "payload": {
+    "body_you": "You pay close attention to how {{holder2}} presents themselves and enters situations. Because your interest feels natural to them, they show you more of themselves, and their openness makes you want to understand them more deeply.",
+    "body_they": "{{holder1}} pays close attention to how you present yourself and enter situations. Because their interest feels natural to you, you show them more of yourself, and your openness makes {{holder1}} want to understand you more deeply.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_two_sentences_both_variants",
+    "deletedText": [
+      "Your focus can feel controlling if you press for more than {{holder2}} has chosen to share.",
+      "Still, {{holder2}} can be more open around you without immediately feeling exposed.",
+      "Their focus can feel controlling if they press for more than you have chosen to share.",
+      "Still, you can be more open around {{holder1}} without immediately feeling exposed."
+    ],
+    "warmthSourceDisposition": "null_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "f35e5c0fe4ab006a60cf969e625631fb28fbfc5e180570d1ee39ec2d7e98a1d1",
+    "writerProviderResponseSha256": "aade6533eb172a5df974c20739d80c5466b0842a62dae69d5bb32e0aa50fa256"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/soft/exact-approval.json"
+}
