@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-neptune-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/neptune/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b98f428a2c07383ebac4d77a00c666d3227dc7859794cce68a7e4160d712ec85",
+  "payload": {
+    "body_you": "{{holder1}}'s feelings and {{holder2}}'s imagination blend easily, like two songs playing through the same wall. {{holder2}} may sense a shift before {{holder1}} says anything, while {{holder1}} feels understood without having to provide a full transcript. The tenderness is real, though neither may be entirely certain which emotion entered the room first.",
+    "body_they": "{{holder1}}'s feelings and {{holder2}}'s imagination blend easily, like two songs playing through the same wall. {{holder2}} may sense a shift before {{holder1}} says anything, while {{holder1}} feels understood without having to provide a full transcript. The tenderness is real, though neither may be entirely certain which emotion entered the room first.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-neptune/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

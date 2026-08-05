@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-neptune-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/neptune/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b6297295dcb6934ad776e2dfea554ad1904dedb77df440c4988ba27ff55e249c",
+  "payload": {
+    "body_you": "{{holder1}} may keep meeting a version of themselves that exists mainly in {{holder2}}'s imagination. {{holder2}} reads motives, qualities, or feelings into {{holder1}}, then treats the correction like an unexpected plot twist. {{holder1}} ends up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit.",
+    "body_they": "{{holder1}} may keep meeting a version of themselves that exists mainly in {{holder2}}'s imagination. {{holder2}} reads motives, qualities, or feelings into {{holder1}}, then treats the correction like an unexpected plot twist. {{holder1}} ends up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-neptune/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}
