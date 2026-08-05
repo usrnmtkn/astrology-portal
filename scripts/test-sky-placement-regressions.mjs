@@ -366,10 +366,10 @@ assert.match(
   /^July 22 to August 23, 2026\n\nAfter moving through Cancer from June 21 to July 22, the Sun enters Leo on July 22,/u,
   "Package Sun-in-Leo copy must lead with the engine-filled fact line and exact owner-approved opening."
 );
-assert.match(sunLeo.body, /being seen helps the work reach who it was made for\./u);
-assert.match(sunLeo.body, /Soon the bold work is no longer getting bolder\. It is getting easier to applaud\./u);
-assert.match(sunLeo.body, /The Sun last moved through Leo from July 22 to August 22\./u);
-assert.match(sunLeo.body, /Before August 23, attention moves again, and choices made only to hold it can leave the real idea unfinished\./u);
+assert.match(sunLeo.body, /the work reaches the audience it was made for\./u);
+assert.match(sunLeo.body, /We are making it easier to approve\./u);
+assert.doesNotMatch(sunLeo.body, /last moved through/u, "Annual Sun ingress carries no look-back (owner rule 2026-08-05).");
+assert.match(sunLeo.body, /What we name during Leo season is what Virgo season will ask us to build\./u);
 assert.doesNotMatch(
   sunLeo.body,
   /Somewhere along the way|rescheduling a decision|version of yourself|The useful version|The distortion|Wishing you|Leo is the fifth sign|The Leo trap/iu,
@@ -377,7 +377,7 @@ assert.doesNotMatch(
 );
 assert.match(
   sunLeo.body,
-  /When it becomes the only fuel, purpose gets replaced by the need to keep attention from moving\./u,
+  /The problem begins when the response starts deciding what we make next\./u,
   "Sun-in-Leo must keep the owner-approved central tension."
 );
 assert.doesNotMatch(
