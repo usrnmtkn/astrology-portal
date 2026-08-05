@@ -1,0 +1,299 @@
+{
+ "mars-saturn/conjunction": {
+  "payload": {
+   "body_you": "{{holder2}} grounds {{holder1}}'s momentum into discipline, or brakes it to a full stop. The tension comes when moving fast and moving carefully start treating each other like the enemy.",
+   "body_they": "{{holder2}} grounds {{holder1}}'s momentum into discipline, or brakes it to a full stop. The tension comes when moving fast and moving carefully start treating each other like the enemy.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "4e6a27b7524d46e736eb1128570dc4b2f6dcf3b4131fda5650321827c61c43e8"
+ },
+ "mars-saturn/hard": {
+  "payload": {
+   "body_you": "{{holder1}} feels blocked or judged, while {{holder2}} sees a reckless drive that needs reining in. Every decision devolves into an argument over timing.",
+   "body_they": "{{holder1}} feels blocked or judged, while {{holder2}} sees a reckless drive that needs reining in. Every decision devolves into an argument over timing.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "3c962deaa34c1a33b32b9462669e1143f4226df213a79441784dc7d880c9b536"
+ },
+ "mars-saturn/soft": {
+  "payload": {
+   "body_you": "{{holder1}} brings the drive, and {{holder2}} helps turn it into a plan that can survive delays, frustration, and the point where motivation usually drops. The ambition becomes achievable because the work does not depend on speed alone.",
+   "body_they": "{{holder1}} brings the drive, and {{holder2}} helps turn it into a plan that can survive delays, frustration, and the point where motivation usually drops. The ambition becomes achievable because the work does not depend on speed alone.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "de50b4e4cfc153f8368927cff7175723d760f18aa52f0eeca24458661865233b"
+ },
+ "mars-uranus/conjunction": {
+  "payload": {
+   "body_you": "{{holder1}}'s drive meets {{holder2}}'s unpredictability, making plans happen instantly or not at all. They start fast and switch direction even faster.",
+   "body_they": "{{holder1}}'s drive meets {{holder2}}'s unpredictability, making plans happen instantly or not at all. They start fast and switch direction even faster.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "06f6497477bf981d6b36a6436efbe68267f1d12d1cf839e38c1bff1bc95d9060"
+ },
+ "mars-uranus/hard": {
+  "payload": {
+   "body_you": "Just as {{holder1}} commits to a direction, {{holder2}} changes course, or {{holder2}} needs immediate space right when {{holder1}} reaches for backup. Both start acting independently just to avoid the collision.",
+   "body_they": "Just as {{holder1}} commits to a direction, {{holder2}} changes course, or {{holder2}} needs immediate space right when {{holder1}} reaches for backup. Both start acting independently just to avoid the collision.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "9c3d296e88c2163b694ae96872a0afe4dd136b437f2f5534d6c5ce2cf4df1449"
+ },
+ "mars-uranus/soft": {
+  "payload": {
+   "body_you": "{{holder1}} can act without making {{holder2}} feel crowded, and {{holder2}} can change direction without leaving {{holder1}} stranded. Neither person has to disappear or take over to keep the plan moving.",
+   "body_they": "{{holder1}} can act without making {{holder2}} feel crowded, and {{holder2}} can change direction without leaving {{holder1}} stranded. Neither person has to disappear or take over to keep the plan moving.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "9ab53eacb41bf782388ed77717a0a28bc9522f63e88cbf1ee387a7a60a8aa862"
+ },
+ "mars-neptune/conjunction": {
+  "payload": {
+   "body_you": "{{holder2}} gives {{holder1}}'s drive an ideal to chase, but the target keeps shifting. Energy gets spent, though rarely on the original plan.",
+   "body_they": "{{holder2}} gives {{holder1}}'s drive an ideal to chase, but the target keeps shifting. Energy gets spent, though rarely on the original plan.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "3b1914a5421826ff2f027085a5faa7de898a0049f8737d63ec14c1a6ba3a5f47"
+ },
+ "mars-neptune/hard": {
+  "payload": {
+   "body_you": "{{holder1}} pushes for a straight answer and {{holder2}} drifts or goes vague. The harder {{holder1}} presses, the harder it gets to pin down what is actually happening.",
+   "body_they": "{{holder1}} pushes for a straight answer and {{holder2}} drifts or goes vague. The harder {{holder1}} presses, the harder it gets to pin down what is actually happening.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "75dfdc1b6ea563803f6dc10752277e257eccd13ef68a1ca8eb2e4433b9e6b5c0"
+ },
+ "mars-neptune/soft": {
+  "payload": {
+   "body_you": "{{holder2}} gives {{holder1}} a reason to care about the work, and {{holder1}} helps turn the idea into something that can actually be started. The vision no longer has to remain private or unfinished.",
+   "body_they": "{{holder2}} gives {{holder1}} a reason to care about the work, and {{holder1}} helps turn the idea into something that can actually be started. The vision no longer has to remain private or unfinished.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "e8157639b168b10ad1a52a3cc5ccb13c4afe9fc349b054f70266180892486a75"
+ },
+ "mars-pluto/conjunction": {
+  "payload": {
+   "body_you": "{{holder1}}'s drive and {{holder2}}'s intensity combine into concentrated force. Directed at a shared goal, they are difficult to stop. Turned against each other, neither person knows how to back down.",
+   "body_they": "{{holder1}}'s drive and {{holder2}}'s intensity combine into concentrated force. Directed at a shared goal, they are difficult to stop. Turned against each other, neither person knows how to back down.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "15c258a7afb92ce76fc6c98bd54208a488e406cbd8b49c3007b9871037fa1b0c"
+ },
+ "mars-pluto/hard": {
+  "payload": {
+   "body_you": "{{holder1}}'s determination meets {{holder2}}'s need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome they originally wanted.",
+   "body_they": "{{holder1}}'s determination meets {{holder2}}'s need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome they originally wanted.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "612002cae674fe87798b5e69974336e627274954d8107b6dd00fa2e7eedd6e58"
+ },
+ "mars-pluto/soft": {
+  "payload": {
+   "body_you": "{{holder2}}'s depth gives {{holder1}}'s effort real traction. The work does not burn out. It compounds over time.",
+   "body_they": "{{holder2}}'s depth gives {{holder1}}'s effort real traction. The work does not burn out. It compounds over time.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "1d456472f38f92ca6dc00a0c809b327c40141ae919ed81de99470457c2ece637"
+ },
+ "mercury-uranus/conjunction": {
+  "payload": {
+   "body_you": "{{holder2}} completely shakes up how {{holder1}} thinks. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning.",
+   "body_they": "{{holder2}} completely shakes up how {{holder1}} thinks. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "b9040b948eeedc0dc072756c27abcb86c6a48a8ede2c2b4305943c2e0c3244f5"
+ },
+ "mercury-uranus/hard": {
+  "payload": {
+   "body_you": "{{holder1}} tries to finish a thought and {{holder2}} jumps to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed.",
+   "body_they": "{{holder1}} tries to finish a thought and {{holder2}} jumps to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "50631e1aa8ac2bf35dc267162edd62d70e76e0ab558c0838230f516b3929bddf"
+ },
+ "mercury-uranus/soft": {
+  "payload": {
+   "body_you": "{{holder2}} keeps {{holder1}}'s thinking from going stale, while {{holder1}} gives {{holder2}}'s leaps somewhere to land. The conversation stays interesting without becoming impossible to follow.",
+   "body_they": "{{holder2}} keeps {{holder1}}'s thinking from going stale, while {{holder1}} gives {{holder2}}'s leaps somewhere to land. The conversation stays interesting without becoming impossible to follow.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "8eaa7eeda69174d2581ad19423ee01a1e45ef70bf04a32a93ad8bb458a12ab89"
+ },
+ "mercury-neptune/conjunction": {
+  "payload": {
+   "body_you": "{{holder1}}'s words and {{holder2}}'s imagination blend until facts and feelings blur together. Conversations feel effortless, but actual agreements remain slippery.",
+   "body_they": "{{holder1}}'s words and {{holder2}}'s imagination blend until facts and feelings blur together. Conversations feel effortless, but actual agreements remain slippery.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "938fd334f291a4777018552180ae9a6cb0c442c9abfb3d9bd1ba3daaaf50f8df"
+ },
+ "mercury-neptune/hard": {
+  "payload": {
+   "body_you": "{{holder1}} hears what they hoped {{holder2}} meant instead of what {{holder2}} actually said. The plan quietly changes shape, and neither person can point to the sentence where the agreement disappeared.",
+   "body_they": "{{holder1}} hears what they hoped {{holder2}} meant instead of what {{holder2}} actually said. The plan quietly changes shape, and neither person can point to the sentence where the agreement disappeared.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "13812764ac69ac1ef65eedd71ff46dda34f306d68013673d82aa026f238f880a"
+ },
+ "mercury-neptune/soft": {
+  "payload": {
+   "body_you": "{{holder2}} catches the meaning beneath {{holder1}}'s words, and {{holder1}} gives shape to what {{holder2}} can only hint at. They understand each other before every detail has been explained.",
+   "body_they": "{{holder2}} catches the meaning beneath {{holder1}}'s words, and {{holder1}} gives shape to what {{holder2}} can only hint at. They understand each other before every detail has been explained.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "658e27bbbb7cf498008c80ab6353f336750c8ff71a16cd64b5c4469ae686ca21"
+ },
+ "mercury-pluto/conjunction": {
+  "payload": {
+   "body_you": "Conversations with {{holder2}} skip the pleasantries and go deep immediately. {{holder1}} can feel recognized or thoroughly interrogated, often in the same breath.",
+   "body_they": "Conversations with {{holder2}} skip the pleasantries and go deep immediately. {{holder1}} can feel recognized or thoroughly interrogated, often in the same breath.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "644235e1a2276eddacd11f00962577703f0ac336817b0a6fd5deb6f03a931cea"
+ },
+ "mercury-pluto/hard": {
+  "payload": {
+   "body_you": "{{holder2}} probes, and {{holder1}}'s words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition.",
+   "body_they": "{{holder2}} probes, and {{holder1}}'s words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "832f41496f37f3655ec87690d90250682367735a04540aa93396baf7a2eef7a4"
+ },
+ "mercury-pluto/soft": {
+  "payload": {
+   "body_you": "{{holder1}} can state the plain truth to {{holder2}} without it being turned into a case file. The depth stays welcome because {{holder2}} does not keep digging after {{holder1}} is done.",
+   "body_they": "{{holder1}} can state the plain truth to {{holder2}} without it being turned into a case file. The depth stays welcome because {{holder2}} does not keep digging after {{holder1}} is done.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "b8a28fb896f1bd0025349e2241689f7d37275bf6e302837c0f0e9fe93883703a"
+ },
+ "venus-uranus/conjunction": {
+  "payload": {
+   "body_you": "{{holder2}} makes affection feel exciting and completely unforced. It is exhilarating to receive, but nearly impossible to put on a schedule.",
+   "body_they": "{{holder2}} makes affection feel exciting and completely unforced. It is exhilarating to receive, but nearly impossible to put on a schedule.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "6b44f5a42b7041cef128b3a80576efe1047dba4e7b337544b39f720f2d31ae15"
+ },
+ "venus-uranus/hard": {
+  "payload": {
+   "body_you": "{{holder1}} reaches for consistency, and {{holder2}} pulls back at that exact moment. Asking for certainty is the quickest way to get less of it.",
+   "body_they": "{{holder1}} reaches for consistency, and {{holder2}} pulls back at that exact moment. Asking for certainty is the quickest way to get less of it.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "29ebda46c480ceea39be05e8632b7df36af27597dcadbbc100d3e97e6a9f457b"
+ },
+ "venus-uranus/soft": {
+  "payload": {
+   "body_you": "{{holder1}} can rely on {{holder2}}'s affection without requiring constant reassurance, and {{holder2}} can keep their independence without disappearing whenever the connection becomes familiar.",
+   "body_they": "{{holder1}} can rely on {{holder2}}'s affection without requiring constant reassurance, and {{holder2}} can keep their independence without disappearing whenever the connection becomes familiar.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "f978014f8ca9cd952f14e79230050f1a784cf54f0b100a7460ef8e5a71649ea9"
+ },
+ "venus-neptune/conjunction": {
+  "payload": {
+   "body_you": "{{holder2}} sees {{holder1}} through an idealized lens, and being admired that way can feel extraordinary. The problem begins when {{holder1}} has to compete with the version {{holder2}} imagined.",
+   "body_they": "{{holder2}} sees {{holder1}} through an idealized lens, and being admired that way can feel extraordinary. The problem begins when {{holder1}} has to compete with the version {{holder2}} imagined.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "3f3b0d4d6b05d095ea6cbc05ee9dd1e25820dbc2540a1fb8d0fd5f6a0ed79d5e"
+ },
+ "venus-neptune/hard": {
+  "payload": {
+   "body_you": "{{holder1}} keeps trying to connect with someone who is never fully present. What {{holder2}} means sincerely in the moment does not always become something they can follow through on later.",
+   "body_they": "{{holder1}} keeps trying to connect with someone who is never fully present. What {{holder2}} means sincerely in the moment does not always become something they can follow through on later.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "573bfc7f139d6a6dd1bc9bd890ba0565334aecfbee7080f70e3ab184c6d2cf7f"
+ },
+ "venus-neptune/soft": {
+  "payload": {
+   "body_you": "There is a gentleness here that neither person has to force. They tend to see the best in each other without losing sight of the person who is actually there.",
+   "body_they": "There is a gentleness here that neither person has to force. They tend to see the best in each other without losing sight of the person who is actually there.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "2f6da2f55b5623162ef7f005f3230203e5abcc2ccf6552524736f72c48d5bb80"
+ },
+ "venus-pluto/conjunction": {
+  "payload": {
+   "body_you": "{{holder2}}'s interest in {{holder1}} is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access.",
+   "body_they": "{{holder2}}'s interest in {{holder1}} is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "f31949ac4fdf3d9c2ed495325ea6a92fbbbd990526b9a0eae772285f5f2d39ac"
+ },
+ "venus-pluto/hard": {
+  "payload": {
+   "body_you": "Strong attraction does not automatically make the connection healthy. The question is whether both people can say no, take space, and maintain lives outside the relationship without being punished for it.",
+   "body_they": "Strong attraction does not automatically make the connection healthy. The question is whether both people can say no, take space, and maintain lives outside the relationship without being punished for it.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "0dd914cf0608648da9a48c3def25b537833bb887f86a96e75f5cbf557236ca50"
+ },
+ "venus-pluto/soft": {
+  "payload": {
+   "body_you": "The connection has real depth without the undertow. {{holder1}} feels important to {{holder2}}, not monitored or claimed.",
+   "body_they": "The connection has real depth without the undertow. {{holder1}} feels important to {{holder2}}, not monitored or claimed.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "1841cb7f59ad5b3d82640f628f1906a27e75232281fd8332454078acaf9095c4"
+ },
+ "jupiter-saturn/conjunction": {
+  "payload": {
+   "body_you": "{{holder1}} wants to expand, and {{holder2}} wants proof that the plan can hold. Pushing for more and cutting back happen in the same conversation.",
+   "body_they": "{{holder1}} wants to expand, and {{holder2}} wants proof that the plan can hold. Pushing for more and cutting back happen in the same conversation.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "2d4d92ff071b4c3c1dcb75e75b347952f1d015087e597de9a6b3787938a8c443"
+ },
+ "jupiter-saturn/hard": {
+  "payload": {
+   "body_you": "Every idea {{holder1}} brings to the table, {{holder2}} edits down. Optimism starts feeling policed, while caution gets treated like an obstacle.",
+   "body_they": "Every idea {{holder1}} brings to the table, {{holder2}} edits down. Optimism starts feeling policed, while caution gets treated like an obstacle.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "ae38aca18c29e11ea76d33d69fb2e94e562625477e9153b5b58ac0aebc8de4d3"
+ },
+ "jupiter-saturn/soft": {
+  "payload": {
+   "body_you": "{{holder1}} brings the larger possibility, and {{holder2}} helps give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail.",
+   "body_they": "{{holder1}} brings the larger possibility, and {{holder2}} helps give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "e80ad6c0430966413c4bb670b0bf03eb6f8cc74ded39e2fa0eed515a423ef294"
+ }
+}

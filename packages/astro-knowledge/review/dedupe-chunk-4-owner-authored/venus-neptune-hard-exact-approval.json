@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-neptune-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/neptune/hard",
+  "payloadSha256": "573bfc7f139d6a6dd1bc9bd890ba0565334aecfbee7080f70e3ab184c6d2cf7f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} keeps trying to connect with someone who is never fully present. What {{holder2}} means sincerely in the moment does not always become something they can follow through on later.",
+    "body_they": "{{holder1}} keeps trying to connect with someone who is never fully present. What {{holder2}} means sincerely in the moment does not always become something they can follow through on later.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
