@@ -170,6 +170,32 @@
           "fallback-hook/sky-sign-copy/pluto/aquarius"
         ]
       }
+    },
+    {
+      "release_id": "sky-placement-chiron-nodes-promotion",
+      "release_batch": "chiron-nodes-2026-08-04",
+      "distribution_state": "serving",
+      "transition": "staged_to_serving",
+      "required_runtime_capability": "sky-placement-on-demand-v1",
+      "migration_gate": {
+        "status": "verified",
+        "deployed_package_version": "v3-2026-08-04g",
+        "verified_at": "2026-08-04",
+        "source": "Vercel dpl_Cc7eZBaDB4qgWB7TtxxXncS4fhXW"
+      },
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/chiron/aries",
+        "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+      ],
+      "owner_approval": {
+        "statement": "I explicitly approve the Chiron in Aries and Nodes in Aquarius/Leo serving promotion as proposed: set the three fact rows runtimeEligible: true and add the two article keys to the serving set via the standard transition with the recorded deployment evidence.",
+        "approved_at": "2026-08-04",
+        "source": "packages/astro-knowledge/review/sky-placement-chiron-nodes-serving-promotion-approval-2026-08-04.json",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/chiron/aries",
+          "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+        ]
+      }
     }
   ]
 }

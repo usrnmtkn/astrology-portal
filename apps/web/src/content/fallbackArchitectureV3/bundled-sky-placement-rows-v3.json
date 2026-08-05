@@ -11933,6 +11933,41 @@
         "We can turn off one recommendation feed for a week and choose each article, song, or video directly."
       ],
       "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/chiron/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Chiron returns to Aries on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, bringing the pressure back to wanting, beginning, and taking up space. A hand rises, then drops. A clear preference becomes \"either is fine.\" In another moment, the freeze is covered by an answer sharper than the question.",
+      "tension": "Chiron in Aries exposes the tender spot around wanting, beginning, and existing without apology. Acting before confidence arrives can interrupt the old response that made silence feel safer. But when every hesitation feels shameful, movement becomes a test of worth. We force an answer, treat a pause as rejection, or push past a limit just to prove nobody can stop us. What began as courage leaves no space for uncertainty, and the original fear still decides the pace.",
+      "development": "Chiron last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and this return puts the same pressure back into ordinary moments. Someone volunteers to go first, then spends the rest of the day replaying how it looked. At a family table, a sibling stops laughing along with the old joke about being too much. Elsewhere, a simple no holds through the silence that follows. The wound around identity remains. What changes is how we carry it. A want is spoken without becoming a demand. A refusal stands without turning into a fight.",
+      "close": "Before {{exitDate}}, a swallowed want leaves the decision to someone else.",
+      "try_this": [
+        "We can go first in one low-stakes moment where we usually wait for a cue.",
+        "We can ask for one wrong order to be corrected in a calm sentence.",
+        "We can repeat one clear no in the same tone when someone pushes again."
+      ],
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/nodes/aquarius-leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "The North Node in Aquarius and the South Node in Leo move attention from the name on the work to what a group can make together. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the North Node enters Aquarius and the South Node enters Leo on {{entryDate}}, and shared purpose starts carrying more weight than personal recognition. A group keeps the best idea even when it came from the least visible contributor. A creative part still matters after the group changes it.",
+      "tension": "The South Node in Leo knows how to catch attention and give an idea a memorable face. That skill can make shared work easier to notice. The cost appears when every project also has to confirm who is special. We pull a group effort toward the contributor with the biggest audience, defend our part after a better version appears, or lose interest when credit spreads around. The North Node in Aquarius keeps pointing to the shared result, while the need for applause keeps asking for center stage.",
+      "development": "The Nodes last occupied the Aquarius-Leo axis from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. An idea becomes more useful when its originator lets someone else improve it. A group gets further when credit reflects actual contributions instead of settling on the familiar name. The unfamiliar part is staying invested as attention spreads out. Another voice may become the public face, and the first spark no longer owns the outcome. Creative expression remains real without applause. If we keep demanding proof that our part mattered, the group spends its energy protecting status instead of developing the idea.",
+      "close": "Before {{exitDate}}, shared projects lose useful ideas whenever every change has to preserve one name at the center.",
+      "try_this": [
+        "We can bring one idea to a shared project and accept one change that makes it more useful, even if the final version looks less like ours.",
+        "We can name the contributor whose work improved a group result, especially when someone else is getting the attention."
+      ],
+      "review_status": "approved"
     }
   ],
   "vocabularyRows": []
