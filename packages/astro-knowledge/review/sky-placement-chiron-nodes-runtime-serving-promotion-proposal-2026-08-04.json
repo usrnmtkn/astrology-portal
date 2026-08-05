@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "proposalId": "sky-placement-chiron-nodes-runtime-serving-promotion-2026-08-04",
+  "recordedAt": "2026-08-05T01:55:36.933Z",
+  "status": "held_for_explicit_owner_serving_approval",
+  "decisionB": {
+    "ownerApprovedAsWritten": true,
+    "scope": "prepare proposal only",
+    "source": "packages/astro-knowledge/review/sun-venus-chiron-nodes-sign-off-sheet.md#decision-b"
+  },
+  "runtimeEligibilityFlips": [
+    {
+      "id": "chiron-aries",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/chiron-aries.json",
+      "status": "REVIEWED",
+      "before": {
+        "runtimeEligible": false
+      },
+      "after": {
+        "runtimeEligible": true
+      }
+    },
+    {
+      "id": "north-node-aquarius",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/north-node-aquarius.json",
+      "status": "REVIEWED",
+      "before": {
+        "runtimeEligible": false
+      },
+      "after": {
+        "runtimeEligible": true
+      }
+    },
+    {
+      "id": "south-node-leo",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/south-node-leo.json",
+      "status": "REVIEWED",
+      "before": {
+        "runtimeEligible": false
+      },
+      "after": {
+        "runtimeEligible": true
+      }
+    }
+  ],
+  "servingTransition": {
+    "transition": "staged_to_serving",
+    "proposedKeys": [
+      "fallback-hook/sky-sign-copy/chiron/aries",
+      "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+    ],
+    "exactKeyCount": 2,
+    "rows": [
+      {
+        "key": "fallback-hook/sky-sign-copy/chiron/aries",
+        "approvedArtifactId": "sky-placement-batch-4-chiron-aries-owner-approved-v1",
+        "approvedArtifactSource": "packages/astro-knowledge/review/sky-placement-writer-batch-4-owner-edited-approved-v1.json",
+        "sourceKeys": [
+          "chiron-aries"
+        ],
+        "articleHashSha256": "130da3053ed152ef6958075c45a1101001f42fa86e9ce8037f8977bbef635e3d",
+        "article": {
+          "opening": "Chiron returns to Aries on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, bringing the pressure back to wanting, beginning, and taking up space. A hand rises, then drops. A clear preference becomes \"either is fine.\" In another moment, the freeze is covered by an answer sharper than the question.",
+          "tension": "Chiron in Aries exposes the tender spot around wanting, beginning, and existing without apology. Acting before confidence arrives can interrupt the old response that made silence feel safer. But when every hesitation feels shameful, movement becomes a test of worth. We force an answer, treat a pause as rejection, or push past a limit just to prove nobody can stop us. What began as courage leaves no space for uncertainty, and the original fear still decides the pace.",
+          "development": "Chiron last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and this return puts the same pressure back into ordinary moments. Someone volunteers to go first, then spends the rest of the day replaying how it looked. At a family table, a sibling stops laughing along with the old joke about being too much. Elsewhere, a simple no holds through the silence that follows. The wound around identity remains. What changes is how we carry it. A want is spoken without becoming a demand. A refusal stands without turning into a fight.",
+          "close": "Before {{exitDate}}, a swallowed want leaves the decision to someone else.",
+          "try_this": [
+            "We can go first in one low-stakes moment where we usually wait for a cue.",
+            "We can ask for one wrong order to be corrected in a calm sentence.",
+            "We can repeat one clear no in the same tone when someone pushes again."
+          ]
+        }
+      },
+      {
+        "key": "fallback-hook/sky-sign-copy/nodes/aquarius-leo",
+        "approvedArtifactId": "sky-placement-batch-4-nodes-aquarius-leo-owner-approved-v1",
+        "approvedArtifactSource": "packages/astro-knowledge/review/sky-placement-writer-batch-4-owner-edited-approved-v1.json",
+        "sourceKeys": [
+          "north-node-aquarius",
+          "south-node-leo"
+        ],
+        "articleHashSha256": "f54bc749dc54fe7cca1c279aca0acc3712a51b44d40e587d501d948d05e60262",
+        "article": {
+          "opening": "The North Node in Aquarius and the South Node in Leo move attention from the name on the work to what a group can make together. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the North Node enters Aquarius and the South Node enters Leo on {{entryDate}}, and shared purpose starts carrying more weight than personal recognition. A group keeps the best idea even when it came from the least visible contributor. A creative part still matters after the group changes it.",
+          "tension": "The South Node in Leo knows how to catch attention and give an idea a memorable face. That skill can make shared work easier to notice. The cost appears when every project also has to confirm who is special. We pull a group effort toward the contributor with the biggest audience, defend our part after a better version appears, or lose interest when credit spreads around. The North Node in Aquarius keeps pointing to the shared result, while the need for applause keeps asking for center stage.",
+          "development": "The Nodes last occupied the Aquarius-Leo axis from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. An idea becomes more useful when its originator lets someone else improve it. A group gets further when credit reflects actual contributions instead of settling on the familiar name. The unfamiliar part is staying invested as attention spreads out. Another voice may become the public face, and the first spark no longer owns the outcome. Creative expression remains real without applause. If we keep demanding proof that our part mattered, the group spends its energy protecting status instead of developing the idea.",
+          "close": "Before {{exitDate}}, shared projects lose useful ideas whenever every change has to preserve one name at the center.",
+          "try_this": [
+            "We can bring one idea to a shared project and accept one change that makes it more useful, even if the final version looks less like ours.",
+            "We can name the contributor whose work improved a group result, especially when someone else is getting the attention."
+          ]
+        }
+      }
+    ],
+    "deploymentEvidence": {
+      "status": "verified",
+      "deployedPackageVersion": "v3-2026-08-04g",
+      "verifiedAt": "2026-08-04",
+      "source": "Vercel dpl_Cc7eZBaDB4qgWB7TtxxXncS4fhXW",
+      "mergeCommit": "2a4b3dffd8ab648a5982eb4c2a7a0e5b761a474f",
+      "deployedFallbackContentHash": "91d393e81ef6d9cc2242dcc20dc28cb8",
+      "keyManifestHash": "388652c251d27bfe839cb88410247812",
+      "runtimeCapability": "sky-placement-on-demand-v1"
+    }
+  },
+  "governance": {
+    "applied": false,
+    "sourceRowsChanged": false,
+    "manifestChanged": false,
+    "packagesRegenerated": false,
+    "explicitServingApprovalRequired": true
+  }
+}

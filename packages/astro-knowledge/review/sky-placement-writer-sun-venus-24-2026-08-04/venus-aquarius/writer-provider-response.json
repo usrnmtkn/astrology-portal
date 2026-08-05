@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0af189116cce0d87006a7296a580e081a0b29a3729b24b90d6",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8248,
+    "input_tokens_details": {
+      "cache_write_tokens": 8245,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4352,
+    "output_tokens_details": {
+      "reasoning_tokens": 3955
+    },
+    "total_tokens": 12600
+  },
+  "outputText": "{\"opening\":\"Venus enters Aquarius on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and attraction feels easier without a preset role. A conversation gets interesting enough to change the tone of a friendship. An unusual choice in clothes or art feels better than the version everyone already approves. We are drawn toward shared values, unfamiliar points of view, and connections that allow separate lives.\",\"tension\":\"The first difficult moment arrives when attachment asks for a name. We keep the tone casual after the heart is involved. We call a clear need a demand, or treat a reasonable expectation as proof that the bond has become conventional. Someone stops asking what the connection is because seeming unbothered feels safer than admitting it matters. Eventually, someone else takes that cool tone at face value and pulls back. The connection remains technically free, but no longer feels dependable.\",\"development\":\"Venus last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure gathers around what has not been said. Friends may both feel the charge and keep treating it as a joke. Partners may assume time apart speaks for itself, even as one side reads it as rejection. Nothing gets said because the bond is supposed to be easy. Aquarius can strip away borrowed rules, but the absence of a rule is not an agreement. When nobody names the attachment, each side starts protecting independence from a demand that has not even been made.\",\"close\":\"By {{exitDate}}, the bond may still look free even though neither side trusts it enough to state a need or make a promise.\",\"try_this\":[\"We can tell someone we care about that we need one evening alone, then choose the next time we will meet.\",\"We can ask a friend we feel drawn to on a real date with a clear time and place.\"]}"
+}
