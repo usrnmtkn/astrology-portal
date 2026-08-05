@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "authorization": "exactly 6 successful Sol writer calls and exactly 6 successful Terra judge calls; one per target; any failure stops the batch for owner direction",
+  "expected": {
+    "writer": 6,
+    "judge": 6,
+    "total": 12
+  },
+  "calls": []
+}
