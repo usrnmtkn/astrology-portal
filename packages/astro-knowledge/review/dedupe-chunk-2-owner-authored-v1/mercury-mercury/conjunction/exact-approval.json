@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-mercury-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mercury/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "8e1319382da4d38bf52b87fbc024a3fb41d8a8e54d1ab3de5ec44800d463ac05",
+  "payload": {
+    "body_you": "{{holder1}} and {{holder2}} tend to think at the same speed and follow the same jumps in conversation. They may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, {{holder1}} and {{holder2}} may assume they reached the same conclusion when neither person actually stopped to explain what they meant.",
+    "body_they": "{{holder1}} and {{holder2}} tend to think at the same speed and follow the same jumps in conversation. They may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, {{holder1}} and {{holder2}} may assume they reached the same conclusion when neither person actually stopped to explain what they meant.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-mercury/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

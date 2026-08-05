@@ -29,6 +29,16 @@ const batchExactKeys = new Set(
     ["moon", "venus"],
     ["moon", "mars"],
     ["mercury", "venus"],
+    ["mercury", "mercury"],
+    ["mercury", "mars"],
+    ["mercury", "jupiter"],
+    ["mercury", "saturn"],
+    ["venus", "venus"],
+    ["venus", "mars"],
+    ["venus", "jupiter"],
+    ["venus", "saturn"],
+    ["mars", "mars"],
+    ["mars", "jupiter"],
   ].flatMap(([planetA, planetB]) =>
     ["conjunction", "hard", "soft"].map(
       (group) => `${synastryPrefix}${planetA}/${planetB}/${group}`,
