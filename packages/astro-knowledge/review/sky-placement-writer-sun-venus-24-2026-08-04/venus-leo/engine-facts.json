@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "leo",
+  "timeZone": "America/New_York",
+  "transitStart": "July 27, 2027",
+  "transitEnd": "August 20, 2027",
+  "transitStartIso": "2027-07-27T12:30:58.999Z",
+  "transitEndIso": "2027-08-20T19:42:44.999Z",
+  "priorSign": "cancer",
+  "priorSignEntryDate": "July 2, 2027",
+  "priorSignExitDate": "July 27, 2027",
+  "previousResidency": {
+    "sign": "leo",
+    "entryDate": "June 13, 2026",
+    "exitDate": "July 9, 2026",
+    "entryDateIso": "2026-06-13T10:46:47.999Z",
+    "exitDateIso": "2026-07-09T17:22:07.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-trine-neptune-2027-08-01t19:32:48.999z",
+      "body": "venus-trine-neptune",
+      "bodies": [
+        "venus",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "August 1, 2027",
+      "dateIso": "2027-08-01T19:32:48.999Z",
+      "rank": 1,
+      "meaning": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism. The trine makes this a natural strength: Refined aesthetic and tender, imaginative affection. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-trine-neptune.json"
+    },
+    {
+      "id": "aspect-venus-sextile-uranus-2027-08-03t23:53:22.999z",
+      "body": "venus-sextile-uranus",
+      "bodies": [
+        "venus",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "August 3, 2027",
+      "dateIso": "2027-08-03T23:53:22.999Z",
+      "rank": 2,
+      "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. The sextile makes this a natural strength: Exciting, unconventional bonds and an original aesthetic; freedom inside closeness. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-sextile-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-trine-neptune.json",
+      "packages/astro-knowledge/data/transits/venus-sextile-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

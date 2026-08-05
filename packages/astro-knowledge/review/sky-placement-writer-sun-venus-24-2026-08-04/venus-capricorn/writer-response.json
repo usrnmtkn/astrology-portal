@@ -1,0 +1,66 @@
+{
+  "responseId": "resp_0aacc1d7f1c70d34006a7296275d0481a0b83b6644d238e48a",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:venus-in-cancer:p009:window-3-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:gemini-new-moon-2025:p004:window-2-3"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:venus-capricorn",
+    "planet": "venus",
+    "sign": "capricorn",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8164,
+    "input_tokens_details": {
+      "cache_write_tokens": 8161,
+      "cached_tokens": 0
+    },
+    "output_tokens": 7505,
+    "output_tokens_details": {
+      "reasoning_tokens": 7127
+    },
+    "total_tokens": 15669
+  },
+  "article": {
+    "opening": "Venus enters Capricorn on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and consistency begins to matter more than first impressions. Plans get confirmed. Money goes toward what will last. Interest grows when someone handles an errand, returns a call, or keeps a promise after the first excitement passes. What feels worth choosing now has a future attached to it.",
+    "tension": "The need for reliability can become a test we never admit is underway. We notice who pays, who calls back, and who makes time, then start keeping a private account of every uneven exchange. Affection is held back until enough proof arrives. A shared plan starts to feel like security, so a change of mind reads as a broken promise. Control may keep disappointment at a distance, but it also makes connection feel conditional.",
+    "development": "Venus last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same questions about what deserves time, money, and loyalty return in a new form. A wanted purchase gets dismissed because pleasure alone does not feel like enough reason. A dependable connection can carry more expectation than we have said aloud. We may stay with an arrangement because time has already been invested, and call that commitment. When every act of care creates an obligation, support becomes another form of debt.",
+    "close": "By {{exitDate}}, some promises will still be kept, but the connection around them may feel more like an obligation than a choice.",
+    "try_this": [
+      "We can wear one thing chosen for beauty rather than usefulness.",
+      "We can thank someone for one repeated act that has made care feel reliable.",
+      "We can cancel one recurring charge that no longer brings enough use or pleasure to justify its cost."
+    ]
+  }
+}

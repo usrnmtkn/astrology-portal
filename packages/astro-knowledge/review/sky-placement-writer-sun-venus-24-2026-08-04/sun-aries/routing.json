@@ -1,0 +1,21 @@
+{
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:gemini-new-moon-2025:p004:window-2-3",
+    "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008"
+  ],
+  "warmthOwnerSourceIds": [],
+  "routingMatchStatus": "matched",
+  "provider": "openai",
+  "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2"
+}

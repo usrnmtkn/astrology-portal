@@ -62,7 +62,7 @@
         "provider": "openai",
         "model": "gpt-5.6-sol",
         "reasoningEffort": "xhigh",
-        "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+        "promptVersion": "sky-placement-writer-v16:owner-directive-ov044-v1",
         "rubricVersion": "not-applicable-writing-only",
         "evaluationSetVersion": "sky-placement-writer-heldout-pending-v2",
         "policyVersion": "editorial-writer-policy-v1",

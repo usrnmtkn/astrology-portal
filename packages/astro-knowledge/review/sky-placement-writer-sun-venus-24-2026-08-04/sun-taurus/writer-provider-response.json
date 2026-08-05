@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0eb203d21a0a5c31006a728f2b19b0819ca564157537344728",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8176,
+    "input_tokens_details": {
+      "cache_write_tokens": 8173,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4516,
+    "output_tokens_details": {
+      "reasoning_tokens": 4182
+    },
+    "total_tokens": 12692
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Taurus on {{entryDate}}, and attention shifts to what can be built slowly enough to last. A loose idea gets a solid shape. We repair what is useful, return to a creative piece, and keep a small practice long enough to feel its effect. Confidence grows through visible results rather than speed or applause.\",\"tension\":\"That patience has a cost when any interruption starts to feel like a threat. We keep the routine after it stops restoring energy. We defend a preference as though changing it would erase the self that chose it. An unfinished piece gets one more adjustment, then another, because finished means visible. Each decision preserves comfort for another day while making change harder.\",\"development\":\"The Sun last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now, the pressure spreads through small choices. A useful object becomes too precious to use. A familiar method survives because learning another one feels wasteful. A plan keeps its old shape even after the conditions around it change. Each choice avoids discomfort today. Together they send energy into preserving what exists, while the creation that still matters remains unfinished.\",\"close\":\"Before {{exitDate}}, what we refuse to release can consume more energy than the change we were trying to avoid.\",\"try_this\":[\"We can complete one small creative piece at its current level of polish.\",\"We can take the same short walk on three mornings and notice whether the body has more energy afterward.\"]}"
+}
