@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "sky-placement-sun-venus-chiron-nodes-26-serving-diff-proposal-2026-08-04",
   "recordedAt": "2026-08-05T03:11:09.443Z",
-  "status": "held_for_explicit_owner_serving_approval",
+  "status": "explicit_owner_serving_approval_recorded",
   "transition": "staged_to_serving",
   "exactScopedKeyCount": 26,
   "contentKeyChanges": {
@@ -107,8 +107,40 @@
       "fallback-hook/sky-sign-copy/chiron/aries",
       "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
     ],
-    "owner_approval": null,
-    "explicitServingApprovalRequired": true
+    "owner_approval": {
+      "statement": "I confirm the 26-key serving diff as proposed, including the Sun in Leo payload replacement.",
+      "approved_at": "2026-08-04",
+      "source": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-serving-approval-2026-08-04.json",
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/sun/aries",
+        "fallback-hook/sky-sign-copy/sun/taurus",
+        "fallback-hook/sky-sign-copy/sun/gemini",
+        "fallback-hook/sky-sign-copy/sun/cancer",
+        "fallback-hook/sky-sign-copy/sun/leo",
+        "fallback-hook/sky-sign-copy/sun/virgo",
+        "fallback-hook/sky-sign-copy/sun/libra",
+        "fallback-hook/sky-sign-copy/sun/scorpio",
+        "fallback-hook/sky-sign-copy/sun/sagittarius",
+        "fallback-hook/sky-sign-copy/sun/capricorn",
+        "fallback-hook/sky-sign-copy/sun/aquarius",
+        "fallback-hook/sky-sign-copy/sun/pisces",
+        "fallback-hook/sky-sign-copy/venus/aries",
+        "fallback-hook/sky-sign-copy/venus/taurus",
+        "fallback-hook/sky-sign-copy/venus/gemini",
+        "fallback-hook/sky-sign-copy/venus/cancer",
+        "fallback-hook/sky-sign-copy/venus/leo",
+        "fallback-hook/sky-sign-copy/venus/virgo",
+        "fallback-hook/sky-sign-copy/venus/libra",
+        "fallback-hook/sky-sign-copy/venus/scorpio",
+        "fallback-hook/sky-sign-copy/venus/sagittarius",
+        "fallback-hook/sky-sign-copy/venus/capricorn",
+        "fallback-hook/sky-sign-copy/venus/aquarius",
+        "fallback-hook/sky-sign-copy/venus/pisces",
+        "fallback-hook/sky-sign-copy/chiron/aries",
+        "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+      ]
+    },
+    "explicitServingApprovalRequired": false
   },
   "rows": [
     {
@@ -1019,13 +1051,18 @@
     "runtimeCapability": "sky-placement-on-demand-v1"
   },
   "governance": {
-    "applied": false,
-    "sourceRowsChanged": false,
-    "placementRuntimeEligibilityChanged": false,
-    "manifestChanged": false,
-    "packagesRegenerated": false,
+    "applied": true,
+    "sourceRowsChanged": true,
+    "placementRuntimeEligibilityChanged": true,
+    "manifestChanged": true,
+    "packagesRegenerated": true,
     "merged": false,
     "deployed": false,
-    "explicitOwnerServingConfirmationRequired": true
+    "explicitOwnerServingConfirmationRequired": false
+  },
+  "ownerServingApproval": {
+    "statement": "I confirm the 26-key serving diff as proposed, including the Sun in Leo payload replacement.",
+    "approvedAt": "2026-08-04",
+    "source": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-serving-approval-2026-08-04.json"
   }
 }

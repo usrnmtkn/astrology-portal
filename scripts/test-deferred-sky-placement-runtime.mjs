@@ -45,7 +45,12 @@ const facts = {
   events: [],
   asOfDate: "2026-08-01",
   entryDate: "July 22, 2026",
-  exitDate: "August 23, 2026"
+  exitDate: "August 23, 2026",
+  priorSign: "cancer",
+  priorSignEntryDate: "June 21, 2026",
+  priorSignExitDate: "July 22, 2026",
+  previousResidencyEntryDate: "July 22, 2025",
+  previousResidencyExitDate: "August 22, 2025"
 };
 
 assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false);
@@ -68,7 +73,8 @@ const after = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts
 assert.equal(after.templateKey, "sky-placement-continuous-v2");
 assert.equal(after.contentKey, "fallback-hook/sky-sign-copy/sun/leo");
 assert.match(after.body, /^July 22 to August 23, 2026/mu);
-assert.match(after.body, /The Sun moves into Leo on July 22/u);
+assert.match(after.body, /the Sun enters Leo on July 22/u);
+assert.match(after.body, /helps the work reach who it was made for/u);
 assert.match(after.body, /Before August 23/u);
 assert.doesNotMatch(after.body, /\{\{/u, "Engine-owned local-time slots must resolve after the partition loads.");
 assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), false);

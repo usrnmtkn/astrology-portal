@@ -637,8 +637,8 @@ function nodeAxisDescriptor(planet, sign) {
     && north.axisPair?.pairedSign === southSign
     && south.axisPair?.pairedSign === northSign;
   if (!reciprocal) throw new Error(`Combined Nodes placement pair ${axisId} lacks an explicit reciprocal pair link.`);
-  if (north.runtimeEligible !== false || south.runtimeEligible !== false) {
-    throw new Error(`Combined Nodes placement pair ${axisId} must remain runtimeEligible false.`);
+  if (north.runtimeEligible !== south.runtimeEligible) {
+    throw new Error(`Combined Nodes placement pair ${axisId} must share one runtimeEligible status.`);
   }
   for (const field of ["supportedDomains", "unsupportedDomainWarnings", "scenarioPolicy"]) {
     if (JSON.stringify(north[field]) !== JSON.stringify(south[field])) {

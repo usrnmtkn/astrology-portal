@@ -1210,7 +1210,8 @@ ${fogNote}`;
     }
     for (const transitDate of [dates.entry.body, dates.exit.body]) {
       const priorSignExit = priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null;
-      const allowedUses = transitDate === dates.entry.body && priorSignExit === transitDate ? 3 : 2;
+      const priorResidencyDates = [previousResidencyEntryDate, previousResidencyExitDate].filter((value) => Boolean(value)).map((value) => continuousSkyPlacementDate(value, "previous-residency").body);
+      const allowedUses = 2 + (transitDate === dates.entry.body && priorSignExit === transitDate ? 1 : 0) + priorResidencyDates.filter((value) => value === transitDate).length;
       if (renderedText.split(transitDate).length - 1 > allowedUses) {
         throw new SourceGapError(`SOURCE_GAP: repeated sky placement date ${planet}/${sign}`);
       }
