@@ -20,7 +20,22 @@ Grammar note: {{signStyle}} resolves to a phrase like "with directness, courage,
 start" (use after a verb: "leans {{signStyle}}"); {{signNeed}} resolves to "to act, lead, and
 be first" (use as "wanting {{signNeed}}"). Tier REVIEWED (imports DRAFT).
 """
-import os, json
+import os, json, re
+
+# These legacy fallback keys contained owner-banned timing formulas. They are
+# deliberately absent from HOOKS and guarded here so a later cleanup cannot
+# silently restore them to generated copy. Their replacement content belongs
+# in the governed V3 authored/resolver lanes, not this retired phrasebank seam.
+RETIRED_HOOK_KEYS = {
+    "sky.ingress.jupiter",
+    "you.natal-placement",
+    "you.transit-through-house",
+}
+
+BANNED_OUTPUT_FORMULAS = (
+    re.compile(r"\bnot a passing mood\b", re.IGNORECASE),
+    re.compile(r"\ba(?: [a-z-]+){0,2} chapter,\s*not a\b", re.IGNORECASE),
+)
 
 # hook key -> (surface, mode, headline, summary, body) with {{slots}}
 HOOKS = {
@@ -62,9 +77,8 @@ HOOKS = {
  "sky.ingress.mars": ("sky", "feed", "Mars enters {{sign}}",
    "Drive takes on a new edge as Mars enters {{sign}}.",
    "Mars enters {{sign}} for about six weeks, so drive and temper both start to act {{signStyle}}. It shapes how people push, compete, and begin things for a while. Pick your battles to match the tone rather than fight it."),
- "sky.ingress.jupiter": ("sky", "feed", "Jupiter enters {{sign}}",
-   "A yearlong chapter of growth opens as Jupiter enters {{sign}}.",
-   "Jupiter enters {{sign}} for roughly a year, so growth and appetite start to reach {{signStyle}}. This is a longer chapter, not a passing mood. Notice what {{sign}} opens up and lean toward the room it offers."),
+ # RETIRED: sky.ingress.jupiter used the banned chapter-versus-mood formula.
+ # Governed ingress copy now comes from the reviewed V3 timing-event lane.
  "sky.ingress.saturn": ("sky", "feed", "Saturn enters {{sign}}",
    "A multiyear chapter of work begins as Saturn enters {{sign}}.",
    "Saturn enters {{sign}} for about two and a half years, so the themes of {{sign}} become the area that gets tested and made to earn its keep. It is a long, slow chapter. Expect steady work here rather than quick results."),
@@ -92,9 +106,8 @@ HOOKS = {
  "sky.retrograde-section": ("sky", "feed", "The current retrogrades",
    "What to keep in mind while planets move backward.",
    "There are {{count}} planets retrograde at the moment, and {{fastestPlanet}} is the first to turn forward again. While they are all backing up, their areas of life tend to move in fits and starts. Treat this as a season for finishing and refining what already exists rather than starting from scratch."),
- "you.natal-placement": ("you", "in_depth", "{{planet}} in {{sign}}",
-   "How {{planet}} works in your chart.",
-   "You were born with {{planet}} in {{sign}}, so {{planetTopic}} tends to show up {{signStyle}} for you. This is not a passing mood, it is part of your wiring, steady across your whole life. Once you can name the pattern, you can work with it on purpose instead of being surprised by it each time."),
+ # RETIRED: you.natal-placement used the banned passing-mood contrast.
+ # Governed natal placement copy now comes from the V3 placement renderer.
  "you.natal-house-placement": ("you", "in_depth", "{{planet}} in your {{house}} house",
    "Where {{planet}}'s themes play out for you.",
    "With {{planet}} in your {{house}} house, {{planetTopic}} tends to concentrate around {{houseTopic}}. That is the corner of life where this part of you does most of its living, for better and worse. When you want to work with {{planet}}, this is the arena to watch."),
@@ -107,9 +120,8 @@ HOOKS = {
  "you.transit-to-natal": ("you", "feed", "{{transitPlanet}} {{aspect}} your {{natalPoint}}",
    "A passing sky event lands on something personal.",
    "Right now {{transitPlanet}} is {{aspect}} your natal {{natalPoint}}, putting {{transitPlanetTopic}} in direct contact with {{natalPointTopic}}. This is {{timingIntensity}} and {{timingPhase}}, so it colors the days more than it rewrites anything. Notice what it stirs up in you, take what is useful from it, and trust that it moves on."),
- "you.transit-through-house": ("you", "feed", "{{transitPlanet}} through your {{house}} house",
-   "A longer chapter in one area of your life.",
-   "From {{transitStart}} to {{transitEnd}}, {{transitPlanet}} crosses your {{house}} house, so {{houseTopic}} becomes the part of life quietly under construction. This is a slow chapter, not a single event, and you may only see its shape looking back. Notice what you keep wanting to build or let go of there."),
+ # RETIRED: you.transit-through-house used the banned chapter-not-event formula.
+ # Governed house-transit copy now comes from authored V3 transit rows.
  "you.transit-to-angle": ("you", "feed", "{{transitPlanet}} {{aspect}} your {{angle}}",
    "A noticeable shift at a sensitive point.",
    "{{transitPlanet}} is {{aspect}} your {{angle}}, and contacts to the angles tend to be felt more plainly than an ordinary transit. Something around {{angleTopic}} can come into focus and ask for a response. This is {{timingIntensity}} and {{timingPhase}}. Give it room instead of forcing a quick answer."),
@@ -152,8 +164,15 @@ HOOKS = {
 }
 
 def main():
+    restored = RETIRED_HOOK_KEYS.intersection(HOOKS)
+    if restored:
+        raise RuntimeError(f"retired fallback hooks restored: {sorted(restored)}")
+
     records = []
     for key, (surface, mode, headline, summary, body) in HOOKS.items():
+        for pattern in BANNED_OUTPUT_FORMULAS:
+            if pattern.search(" ".join((headline, summary, body))):
+                raise RuntimeError(f"banned output formula in fallback hook {key}: {pattern.pattern}")
         records.append({
             "content_key": f"fallback-hook/{key}",
             "surface": surface, "mode": mode, "status": "DRAFT",
