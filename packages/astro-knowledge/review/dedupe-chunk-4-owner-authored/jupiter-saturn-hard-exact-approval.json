@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-jupiter-saturn-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/hard",
+  "payloadSha256": "ae38aca18c29e11ea76d33d69fb2e94e562625477e9153b5b58ac0aebc8de4d3",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Every idea {{holder1}} brings to the table, {{holder2}} edits down. Optimism starts feeling policed, while caution gets treated like an obstacle.",
+    "body_they": "Every idea {{holder1}} brings to the table, {{holder2}} edits down. Optimism starts feeling policed, while caution gets treated like an obstacle.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

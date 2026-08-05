@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mars-neptune-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/neptune/soft",
+  "payloadSha256": "e8157639b168b10ad1a52a3cc5ccb13c4afe9fc349b054f70266180892486a75",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} gives {{holder1}} a reason to care about the work, and {{holder1}} helps turn the idea into something that can actually be started. The vision no longer has to remain private or unfinished.",
+    "body_they": "{{holder2}} gives {{holder1}} a reason to care about the work, and {{holder1}} helps turn the idea into something that can actually be started. The vision no longer has to remain private or unfinished.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

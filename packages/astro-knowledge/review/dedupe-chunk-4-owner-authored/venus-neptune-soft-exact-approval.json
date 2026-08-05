@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-neptune-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/neptune/soft",
+  "payloadSha256": "2f6da2f55b5623162ef7f005f3230203e5abcc2ccf6552524736f72c48d5bb80",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "There is a gentleness here that neither person has to force. They tend to see the best in each other without losing sight of the person who is actually there.",
+    "body_they": "There is a gentleness here that neither person has to force. They tend to see the best in each other without losing sight of the person who is actually there.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
