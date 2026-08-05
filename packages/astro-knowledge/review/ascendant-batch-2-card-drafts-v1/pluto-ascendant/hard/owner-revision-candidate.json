@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "pluto-ascendant-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "893bb3b215f8859a08283211f81e280193097411fbb07a2ed6749a2464973cda",
+  "payload": {
+    "body_you": "Your intensity and need to know what {{holder2}} is really thinking can put pressure on how they act around you. Instead of reacting naturally, they may choose every word and expression carefully and keep more of themselves hidden. Their restraint can make you press them for a more honest response, which leaves them even more guarded.",
+    "body_they": "{{holder1}}'s intensity and need to know what you are really thinking can put pressure on how you act around them. Instead of reacting naturally, you may choose every word and expression carefully and keep more of yourself hidden. Your restraint can make {{holder1}} press you for a more honest response, which leaves you even more guarded.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "e83c421b03b0abe57df7f42a416bb57b0361d42bfd1563b4431384caca35c1ba",
+    "writerProviderResponseSha256": "3a3363d25903d79e0e3f6be1babe12892a1052165402672e41536fc41d88a018"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/hard/exact-approval.json"
+}
