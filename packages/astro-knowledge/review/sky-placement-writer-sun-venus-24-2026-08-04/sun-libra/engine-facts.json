@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "libra",
+  "timeZone": "America/New_York",
+  "transitStart": "September 22, 2026",
+  "transitEnd": "October 23, 2026",
+  "transitStartIso": "2026-09-23T00:05:13.999Z",
+  "transitEndIso": "2026-10-23T09:37:56.999Z",
+  "priorSign": "virgo",
+  "priorSignEntryDate": "August 22, 2026",
+  "priorSignExitDate": "September 22, 2026",
+  "previousResidency": {
+    "sign": "libra",
+    "entryDate": "September 22, 2024",
+    "exitDate": "October 22, 2024",
+    "entryDateIso": "2024-09-22T12:43:39.999Z",
+    "exitDateIso": "2024-10-22T22:14:44.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-trine-pluto-2026-09-26t05:34:31.999z",
+      "body": "sun-trine-pluto",
+      "bodies": [
+        "sun",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "September 26, 2026",
+      "dateIso": "2026-09-26T05:34:31.999Z",
+      "rank": 1,
+      "meaning": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. The trine makes this a natural strength: Strength and depth, well-controlled. A natural aptitude for investigation, healing, and transformation. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-trine-pluto.json"
+    },
+    {
+      "id": "aspect-sun-trine-uranus-2026-09-28t16:21:41.999z",
+      "body": "sun-trine-uranus",
+      "bodies": [
+        "sun",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "September 28, 2026",
+      "dateIso": "2026-09-28T16:21:41.999Z",
+      "rank": 2,
+      "meaning": "Identity meets independence and disruption. The urge to be different and to do things your own way. The trine makes this a natural strength: Originality that reads as brilliance or healthy independence. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-trine-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-trine-pluto.json",
+      "packages/astro-knowledge/data/transits/sun-trine-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

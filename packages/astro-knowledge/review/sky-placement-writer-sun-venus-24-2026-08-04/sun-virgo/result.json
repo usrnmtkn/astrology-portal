@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "runId": "sun-virgo",
+  "recordedAt": "2026-08-05T01:24:27.732Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "sun",
+    "sign": "virgo"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:virgo-season-2025:p014:window-2-2",
+      "owner-article:venus-in-virgo-2025:p012:window-3-2",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and unfinished details become hard to ignore. The loose button gets sewn on. The confusing instructions get rewritten. A routine that drains energy gets simplified. The Sun in Virgo finds purpose in this kind of care, where skill produces a visible result.",
+    "tension": "The list of improvements keeps growing. We fix one flaw and immediately find the next. A finished task gets reopened because one line could be cleaner. An offer to help meets so many corrections that the helper backs away. Soon the same scrutiny is aimed at the self. Confidence depends on being useful, while every mistake becomes proof that more work is required.",
+    "development": "The Sun moved through Virgo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This pass can expose the same exhausting bargain: life will feel settled once every weak spot has been handled. It appears when a small repair becomes a full overhaul, a useful idea stays hidden until it is flawless, or care for the body becomes another test to pass. The result may improve, but vitality drops when attention stays fixed on defects. Repeated correction makes help less likely. If every attempt to help meets another fix, others stop stepping in, and we end up carrying more alone.",
+    "close": "Before {{exitDate}}, the result can keep improving while our confidence shrinks under a standard that never says enough.",
+    "try_this": [
+      "We can repair one small thing we use every day, then put the tools away as soon as it works.",
+      "We can let someone finish one shared task in their own way without correcting the method."
+    ]
+  }
+}

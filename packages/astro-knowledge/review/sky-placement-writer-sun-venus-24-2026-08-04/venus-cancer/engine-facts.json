@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "cancer",
+  "timeZone": "America/New_York",
+  "transitStart": "July 2, 2027",
+  "transitEnd": "July 27, 2027",
+  "transitStartIso": "2027-07-03T02:01:31.999Z",
+  "transitEndIso": "2027-07-27T12:30:58.999Z",
+  "priorSign": "gemini",
+  "priorSignEntryDate": "June 8, 2027",
+  "priorSignExitDate": "July 2, 2027",
+  "previousResidency": {
+    "sign": "cancer",
+    "entryDate": "May 18, 2026",
+    "exitDate": "June 13, 2026",
+    "entryDateIso": "2026-05-19T01:05:17.999Z",
+    "exitDateIso": "2026-06-13T10:46:47.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-square-neptune-2027-07-08t12:27:55.999z",
+      "body": "venus-square-neptune",
+      "bodies": [
+        "venus",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "July 8, 2027",
+      "dateIso": "2027-07-08T12:27:55.999Z",
+      "rank": 1,
+      "meaning": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism. Psychologically the square is inner tension to integrate: Seeing what you want to see in love, idealizing others, and the disillusionment that follows. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-neptune.json"
+    },
+    {
+      "id": "aspect-venus-square-saturn-2027-07-25t15:19:27.999z",
+      "body": "venus-square-saturn",
+      "bodies": [
+        "venus",
+        "saturn"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "July 25, 2027",
+      "dateIso": "2027-07-25T15:19:27.999Z",
+      "rank": 2,
+      "meaning": "Affection and value meet limit. Loyalty, restraint in pleasure and love, and a strong sense of obligation. Psychologically the square is inner tension to integrate: Difficulty enjoying success, fear of loss, blocked rewards, and free-floating guilt. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-saturn.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-square-neptune.json",
+      "packages/astro-knowledge/data/transits/venus-square-saturn.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

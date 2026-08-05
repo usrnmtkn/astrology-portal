@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0544c6269b1d8958006a7295c6b70c81a2bfd8db445e828d9e",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8159,
+    "input_tokens_details": {
+      "cache_write_tokens": 8156,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5391,
+    "output_tokens_details": {
+      "reasoning_tokens": 5018
+    },
+    "total_tokens": 13550
+  },
+  "outputText": "{\"opening\":\"Venus arrives in Sagittarius on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and familiar pleasures start to feel too small. A date gets better after the awkward truth is said. An unfamiliar invitation gets a yes. Attraction grows where there is laughter, candor, and somewhere new for the connection to go.\",\"tension\":\"That openness carries a cost when accountability starts to sound like confinement. Venus in Sagittarius can say the blunt thing and call the reaction proof that the connection was too limiting. Restlessness sends attention toward the next possibility before a promise has been kept. What felt brave at first becomes a pattern of making someone else carry the consequences of a choice we called freedom.\",\"development\":\"Venus last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. A connection built on shared curiosity still has to survive an inconvenient answer. One frank admission can clear stale resentment. Bluntness used as an exit leaves no room for repair. The same restlessness can spend money on the promise of a larger life, then resent the limits that arrive with the bill. The experience may be worth choosing, but its cost does not disappear once the excitement fades. When every limit is treated as proof that the choice was wrong, desire moves on before trust can form.\",\"close\":\"By {{exitDate}}, a connection may still feel exciting, but dropping a promise as soon as it feels limiting makes the next promise harder to believe.\",\"try_this\":[\"We can tell someone close to us one honest preference without hiding it in a joke or turning it into an ultimatum.\",\"We can name the full cost of one tempting experience before deciding whether it is worth the money.\"]}"
+}

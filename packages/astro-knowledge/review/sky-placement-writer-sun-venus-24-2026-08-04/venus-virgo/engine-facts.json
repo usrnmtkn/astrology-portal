@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "virgo",
+  "timeZone": "America/New_York",
+  "transitStart": "July 9, 2026",
+  "transitEnd": "August 6, 2026",
+  "transitStartIso": "2026-07-09T17:22:07.999Z",
+  "transitEndIso": "2026-08-06T19:12:45.999Z",
+  "priorSign": "leo",
+  "priorSignEntryDate": "June 13, 2026",
+  "priorSignExitDate": "July 9, 2026",
+  "previousResidency": {
+    "sign": "virgo",
+    "entryDate": "August 4, 2024",
+    "exitDate": "August 29, 2024",
+    "entryDateIso": "2024-08-05T02:22:54.999Z",
+    "exitDateIso": "2024-08-29T13:22:44.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-square-uranus-2026-07-13t14:26:37.999z",
+      "body": "venus-square-uranus",
+      "bodies": [
+        "venus",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "July 13, 2026",
+      "dateIso": "2026-07-13T14:26:37.999Z",
+      "rank": 1,
+      "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. Psychologically the square is inner tension to integrate: Erratic affections, sudden attractions and ruptures, and a refusal to be tied down. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-uranus.json"
+    },
+    {
+      "id": "aspect-venus-square-mars-2026-07-29t07:09:49.999z",
+      "body": "venus-square-mars",
+      "bodies": [
+        "venus",
+        "mars"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "July 29, 2026",
+      "dateIso": "2026-07-29T07:09:49.999Z",
+      "rank": 2,
+      "meaning": "Attraction meets drive. Desire, and the channeling of energy into pleasure, art, or pursuit. The conjunction can either fuse charm and drive or have the two cancel out. Psychologically the square is inner tension to integrate: Bad timing in romance, indecision, and friction between wanting and acting. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-mars.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-square-uranus.json",
+      "packages/astro-knowledge/data/transits/venus-square-mars.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}
