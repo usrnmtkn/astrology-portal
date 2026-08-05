@@ -64,9 +64,29 @@ function titleCase(s) {
   return s.split("-").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
 }
 
+// Second-party support: targets default to Ascendant pairs (planetB "ascendant",
+// with its established role phrasing). Planet-planet pair targets set planetB to
+// the second planet; role phrasing then comes from roleB/actsOn in the target.
+function partyB(t) {
+  const planetB = t.planetB || "ascendant";
+  if (planetB === "ascendant") {
+    return {
+      name: "Ascendant",
+      actsOn: "how the Ascendant holder presents themselves and enters situations",
+      dirName: `${t.planet}-ascendant`,
+    };
+  }
+  return {
+    name: titleCase(planetB),
+    actsOn: t.actsOn || `the ${titleCase(planetB)} holder's ${planetB}-side of the contact`,
+    dirName: `${t.planet}-${planetB}`,
+  };
+}
+
 // ---------- prompt construction (batch-1 templates, verbatim structure) ----------
 function solPrompt(t, entry, packet) {
   const planet = titleCase(t.planet);
+  const b = partyB(t);
   const lines = packet.warmthHarvest.ownerFoundationLines;
   const foundationBlock =
     packet.warmthHarvest.harvest_mode === "matched"
@@ -83,8 +103,8 @@ No owner foundation line qualified for this core (harvest_mode: none_found). Kee
 You are the Sol writing lane producing one TLDR Astro synastry-card candidate for owner review. Write literal, ordinary, recognizable behavior. Explain what happens between the two people plainly. Metaphors, slogans, and compressed imagery may not replace meaning. Return only the requested JSON.
 The candidate is not approved, canonical, promotable, render-eligible, or serving content.
 
-TARGET: ${planet} -> Ascendant, ${t.aspectLabel}
-DIRECTION: {{holder1}} is always the ${planet} holder. {{holder2}} is always the Ascendant holder. The ${planet} holder acts on how the Ascendant holder presents themselves and enters situations.
+TARGET: ${planet} -> ${b.name}, ${t.aspectLabel}
+DIRECTION: {{holder1}} is always the ${planet} holder. {{holder2}} is always the ${b.name} holder. The ${planet} holder acts on ${b.actsOn}.
 
 GOVERNED MEANING BOUNDARY
 plainTranslation: ${entry.plainTranslation}
@@ -97,8 +117,8 @@ ${foundationBlock}
 
 SURFACE AND ROW CONTRACT
 Write one card in two resolver-safe reader variants that carry the same meaning:
-- body_you: the reader is {{holder1}}, so refer to the ${planet} holder as 'you' and keep the Ascendant holder as {{holder2}}.
-- body_they: the reader is {{holder2}}, so keep the ${planet} holder as {{holder1}} and refer to the Ascendant holder as 'you'.
+- body_you: the reader is {{holder1}}, so refer to the ${planet} holder as 'you' and keep the ${b.name} holder as {{holder2}}.
+- body_they: the reader is {{holder2}}, so keep the ${planet} holder as {{holder1}} and refer to the ${b.name} holder as 'you'.
 Use ordinary sentences a tired reader can understand immediately. Make the direction and response loop unmistakable. Give recognizable behavior and its cost. Use two to four sentences per field. Stop when the interaction is clear.
 Do not use an em dash or en dash. Do not give advice. Do not add a stock closer, slogan, definition, abstract recap, second conclusion, guaranteed outcome, invented scene, corporate phrasing, or formal explanation of astrology.
 Do not copy the governed meaning notes as ready-made target prose. Do not use any legacy card as a writing model; no legacy wording is present in this request.
@@ -115,10 +135,11 @@ warmthSource must be null or exactly this shape, with these exact field names:
 
 function terraPrompt(t, entry, packet, draft, checks) {
   const planet = titleCase(t.planet);
+  const b = partyB(t);
   return `You are the Terra editorial judge for one TLDR Astro synastry aspect candidate. This score supports owner review only and can never approve or promote copy. Return only strict JSON.
 
-TARGET: ${planet} -> Ascendant, ${t.aspectLabel}
-DIRECTION: {{holder1}} is the ${planet} holder and acts on {{holder2}}'s Ascendant presentation and entry into situations.
+TARGET: ${planet} -> ${b.name}, ${t.aspectLabel}
+DIRECTION: {{holder1}} is the ${planet} holder. {{holder2}} is the ${b.name} holder. The ${planet} holder acts on ${b.actsOn}.
 GOVERNED SOURCE BOUNDARY:
 plainTranslation: ${entry.plainTranslation}
 summaryDeep: ${entry.summaryDeep}
@@ -276,7 +297,7 @@ for (const t of config.targets) {
   if (ONLY && t.id !== ONLY) continue;
   if (stopped) break;
 
-  const dir = path.join(OUT_ROOT, `${t.planet}-ascendant`, t.aspectLabel);
+  const dir = path.join(OUT_ROOT, partyB(t).dirName, t.aspectLabel);
   const entry = loadEntry({ entryFile: path.join(repoRoot, t.entryFile) });
   const packet = buildAspectWritingPacket({ surface: "synastry-aspect", format: "full-card", entry });
 
