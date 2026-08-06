@@ -134,15 +134,20 @@ try {
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.sections\.map/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
-  assert.match(youPage, /weekly-horoscope__reading daily-horoscope-summary/u);
   assert.match(youPage, /weekly-horoscope__macro daily-horoscope-summary/u);
-  assert.match(youPage, /weekly-horoscope__aspect daily-horoscope-summary/u);
+  assert.match(youPage, /weekly-horoscope__transits/u);
+  assert.match(youPage, /\{weeklyTransitRows\}/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__reading/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__aspect/u);
   assert.match(youPage, />The macro view</u);
-  assert.match(youPage, />Aspect</u);
-  assert.match(youPage, />Your horoscope</u);
-  assert.match(youPage, /Based on \{weeklyHoroscopeAssembly\.horoscope\.driverLabel\}/u);
-  assert.match(youPage, />Current house pass</u);
-  assert.match(youPage, /weeklyHoroscopeAssembly\.horoscope\.timing/u);
+  assert.doesNotMatch(youPage, />Aspect</u);
+  assert.doesNotMatch(youPage, />Your horoscope</u);
+  assert.doesNotMatch(youPage, />Current house pass</u);
+  assert.match(app, /weeklyTransitRows/u);
+  assert.match(app, /weeklyTransitDisplayTitle/u);
+  assert.match(app, /activeTransitAspectIdentities/u);
   assert.match(app, /buildWeeklyHoroscope\(\{/u);
   assert.doesNotMatch(app, /weeklyHoroscopeRequested/u);
   assert.match(weeklySource, /getLunarCalendarRangeEvents/u);
@@ -152,10 +157,10 @@ try {
     /getLunarCalendarMonth/u,
     "Weekly assembly must not calculate the 42-day visual calendar."
   );
-  assert.doesNotMatch(
+  assert.match(
     weeklySource,
-    /includeTransitWindows/u,
-    "Weekly snapshots must not search unused sign and retrograde transit windows."
+    /stationEventPositions[\s\S]*includeTransitWindows/u,
+    "Exact station cards need the active house-pass window for the shared transit-card timing row."
   );
   assert.match(
     weeklySource,

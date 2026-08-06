@@ -25,13 +25,21 @@ export type WeeklyHoroscopeSection = {
   accented: boolean;
   source: "lunation" | "station" | "return" | "heavy" | "weekly-moon";
   unit: string;
+  orb?: number;
+  house?: number;
 };
 
 export type WeeklyHoroscopeReading = {
+  dateKey?: string;
+  dayLabel: string;
   headline: string;
   driverLabel: string;
   timing?: string;
   body: string;
+  tag?: string;
+  source: WeeklyHoroscopeSection["source"];
+  orb?: number;
+  house?: number;
   sourceUnits: string[];
 };
 
@@ -446,7 +454,8 @@ function renderStation(
       driverLabel: event.title,
       timing: undefined,
       body: authored.body,
-      source: "station" as const
+      source: "station" as const,
+      house: undefined as number | undefined
     }
     : (() => {
       const rendered = transitSynastryFallbackRendererV3.renderTransitRetro({
@@ -459,7 +468,8 @@ function renderStation(
         driverLabel: event.title,
         timing: undefined,
         body: rendered.body,
-        source: "station" as const
+        source: "station" as const,
+        house: undefined as number | undefined
       };
     })();
   const sign = normalizeId(event.sign ?? "");
@@ -481,7 +491,8 @@ function renderStation(
       driverLabel,
       timing,
       body: `${station.body}\n\n${houseLayer.body}`,
-      source: station.source
+      source: station.source,
+      house
     };
   } catch (error) {
     if (!(error instanceof SourceGapError)) throw error;
@@ -614,18 +625,26 @@ function composeWeeklyReading(sections: WeeklyHoroscopeSection[]): WeeklyHorosco
   const dominant = sections.find((section) => section.accented) ?? sections[0];
   if (!dominant) {
     return {
+      dayLabel: "This week",
       headline: "Your week",
       driverLabel: "this week’s transits to your natal chart",
       body: "No single transit takes over the week. Keep your schedule realistic and leave room to respond to what develops.",
+      source: "weekly-moon",
       sourceUnits: []
     };
   }
 
   return {
+    dateKey: dominant.dateKey,
+    dayLabel: dominant.dayLabel,
     headline: dominant.headline || dominant.driverLabel,
     driverLabel: dominant.driverLabel,
     timing: dominant.timing,
     body: dominant.body,
+    tag: dominant.tag,
+    source: dominant.source,
+    orb: dominant.orb,
+    house: dominant.house,
     sourceUnits: [dominant.unit]
   };
 }
@@ -642,9 +661,16 @@ function composeWeeklyAspects(
       && !primaryUnits.has(section.unit)
     ))
     .map((section) => ({
+      dateKey: section.dateKey,
+      dayLabel: section.dayLabel,
       headline: section.headline || section.driverLabel,
       driverLabel: section.driverLabel,
+      timing: section.timing,
       body: section.body,
+      tag: section.tag,
+      source: section.source,
+      orb: section.orb,
+      house: section.house,
       sourceUnits: [section.unit]
     }));
 }
@@ -723,6 +749,7 @@ export async function buildWeeklyHoroscope({
             timing: rendered.timing,
             body: weeklyVoice(rendered.body),
             tag: event.direction === "retrograde" ? "Stations retrograde" : "Stations direct",
+            house: rendered.house,
             accented: false,
             source: rendered.source,
             unit: `station:${event.id}`,
@@ -790,7 +817,7 @@ export async function buildWeeklyHoroscope({
 
   let sections = capped
     .sort((first, second) => first.sortTime.localeCompare(second.sortTime))
-    .map(({ priority: _priority, sortTime: _sortTime, orb: _orb, ...section }) => section);
+    .map(({ priority: _priority, sortTime: _sortTime, ...section }) => section);
 
   if (sections.length === 0) {
     const mondayMoon = snapshots[0]?.positions.find((position) => position.planet === "Moon");

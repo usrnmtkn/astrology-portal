@@ -1588,18 +1588,26 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
 // card by swapping perspective (never by editing this output). ----
 // facts: transiting, aspect (transit's aspect TO the contact), planetA (reader's), planetB
 // (friend's), natalAspect (the synastry aspect between A and B), otherName, sign?, window?
-export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, window: win }) {
+export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, duplicateIndex, window: win }) {
   if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
     throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
   }
   const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
   const g = GROUP[aspect] ?? aspect;
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-  // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
-  // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
-  const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you
-    ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
-    ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+  // Exact aspect copy wins the first card. Later cards on the same view sharing this
+  // transiting planet + exact aspect (duplicateIndex > 0) rotate to the family lane so
+  // no two cards repeat the same effect paragraph. Legacy soft/hard rows also remain
+  // the fallback lane for nodes, Lilith, missing exact rows, and their existing
+  // repeat-viewer variant rotation.
+  const exactEffect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you;
+  const familyVariantEffect = variant
+    ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you
+    : null;
+  const familyEffect = hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+  const effect = duplicateIndex && duplicateIndex > 0
+    ? familyVariantEffect ?? familyEffect ?? exactEffect
+    : exactEffect ?? familyVariantEffect ?? familyEffect;
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
   const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";

@@ -1593,6 +1593,7 @@ ${fogNote}`;
     friendPossessivePronoun,
     sign,
     variant,
+    duplicateIndex,
     window: win
   }) {
     if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
@@ -1600,7 +1601,10 @@ ${fogNote}`;
     }
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || g === "conjunction" && !HEAVY.has(transiting) ? "soft" : "hard";
-    const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null) ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+    const exactEffect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you;
+    const familyVariantEffect = variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null;
+    const familyEffect = hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+    const effect = duplicateIndex && duplicateIndex > 0 ? familyVariantEffect ?? familyEffect ?? exactEffect : exactEffect ?? familyVariantEffect ?? familyEffect;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";

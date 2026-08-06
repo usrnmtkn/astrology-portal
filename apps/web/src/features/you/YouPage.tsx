@@ -121,6 +121,7 @@ export type YouPageProps = {
   signatureTitle: string;
   signaturesReady: boolean;
   standaloneTransitRows?: ReactNode[];
+  weeklyTransitRows?: ReactNode[];
   transitArticle?: YouTransitArticle | null;
 };
 
@@ -467,7 +468,8 @@ function YouUpdatesTab({
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   onCreateChart,
-  standaloneTransitRows = []
+  standaloneTransitRows = [],
+  weeklyTransitRows = []
 }: {
   aspectRows: ReactNode[];
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
@@ -479,6 +481,7 @@ function YouUpdatesTab({
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
+  weeklyTransitRows?: ReactNode[];
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
@@ -493,19 +496,8 @@ function YouUpdatesTab({
     <section className="weekly-horoscope__loading" aria-label="Loading weekly transits">
       <span className="summary-skeleton" aria-hidden="true"><span /><span /></span>
     </section>
-  ) : (
+  ) : weeklyTransitRows.length === 0 && !weeklyHoroscopeAssembly.macro ? null : (
     <section className="weekly-horoscope weekly-horoscope--embedded" aria-label="This week's transits">
-      <header className="weekly-horoscope__header">
-        <div>
-          <span className="eyebrow section-label">This week</span>
-          <h2>
-            {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekStart}T12:00:00Z`))}
-            {" – "}
-            {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${weeklyHoroscopeAssembly.weekEnd}T12:00:00Z`))}
-          </h2>
-        </div>
-        <span className="weekly-horoscope__chip ui-pill ui-pill--neutral">{weeklyHoroscopeAssembly.chip}</span>
-      </header>
       {weeklyHoroscopeAssembly.macro ? (
         <article className="weekly-horoscope__macro daily-horoscope-summary">
           <span className="eyebrow section-label">The macro view</span>
@@ -515,37 +507,11 @@ function YouUpdatesTab({
             .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </article>
       ) : null}
-      <article className="weekly-horoscope__reading daily-horoscope-summary">
-        <span className="eyebrow section-label">Your horoscope</span>
-        <h3>{weeklyHoroscopeAssembly.horoscope.headline}</h3>
-        <p className="weekly-horoscope__driver">
-          Based on {weeklyHoroscopeAssembly.horoscope.driverLabel}
-        </p>
-        {weeklyHoroscopeAssembly.horoscope.timing ? (
-          <p className="weekly-horoscope__timing">
-            <span>Current house pass</span>
-            {weeklyHoroscopeAssembly.horoscope.timing}
-          </p>
-        ) : null}
-        {weeklyHoroscopeAssembly.horoscope.body
-          .split(/\n{2,}/)
-          .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-      </article>
-      {weeklyHoroscopeAssembly.aspects.map((aspect) => (
-        <article
-          className="weekly-horoscope__aspect daily-horoscope-summary"
-          key={aspect.sourceUnits.join(":")}
-        >
-          <span className="eyebrow section-label">Aspect</span>
-          <h3>{aspect.headline}</h3>
-          <p className="weekly-horoscope__driver">
-            Based on {aspect.driverLabel}
-          </p>
-          {aspect.body
-            .split(/\n{2,}/)
-            .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-        </article>
-      ))}
+      {weeklyTransitRows.length > 0 ? (
+        <div className="updates-aspect-list weekly-horoscope__transits" aria-label="Weekly transit cards">
+          {weeklyTransitRows}
+        </div>
+      ) : null}
     </section>
   );
 
@@ -1054,6 +1020,7 @@ export function YouPage({
   signatureTitle,
   signaturesReady,
   standaloneTransitRows = [],
+  weeklyTransitRows = [],
   transitArticle
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("transits");
@@ -1186,6 +1153,7 @@ export function YouPage({
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}
+              weeklyTransitRows={weeklyTransitRows}
             />
           )}
         </main>
