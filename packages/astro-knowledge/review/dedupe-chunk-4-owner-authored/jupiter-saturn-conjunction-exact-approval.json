@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-jupiter-saturn-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/conjunction",
+  "payloadSha256": "2d4d92ff071b4c3c1dcb75e75b347952f1d015087e597de9a6b3787938a8c443",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} wants to expand, and {{holder2}} wants proof that the plan can hold. Pushing for more and cutting back happen in the same conversation.",
+    "body_they": "{{holder1}} wants to expand, and {{holder2}} wants proof that the plan can hold. Pushing for more and cutting back happen in the same conversation.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
