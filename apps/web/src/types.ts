@@ -118,6 +118,31 @@ export type SkySnapshot = {
     orb: number;
     exactAt?: string | null;
     applying?: boolean;
+    timing?: {
+      group: "this-week" | "this-season" | "undercurrent";
+      phase: "building" | "exact" | "fading";
+      engagementStart: string;
+      engagementEnd: string;
+      timeZone?: string;
+      buildsAllWeek?: boolean;
+      passIndex: number;
+      exactPasses: Array<{
+        exactAt: string;
+        firstMotion: "direct" | "retrograde";
+        secondMotion: "direct" | "retrograde";
+      }>;
+      cycleLocation?: {
+        previousYear?: number | null;
+        nextYear?: number | null;
+        cycleYears?: number | null;
+        ambiguous?: boolean;
+      } | null;
+      relation?: {
+        fastPlanet: string;
+        undercurrentA: string;
+        undercurrentB: string;
+      } | null;
+    } | null;
     series?: {
       index: number;
       count: number;
