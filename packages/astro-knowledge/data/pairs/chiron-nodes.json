@@ -1,0 +1,24 @@
+{
+  "id": "chiron-nodes",
+  "planetA": "chiron",
+  "planetB": "nodes",
+  "traditional": "The medicine is on the path; the chapter's assignment runs through the wound work.",
+  "modern": {
+    "blend": "The old injury surfaces exactly when the new chapter needs the skill it blocks.",
+    "harmonious": "The helper role arrives; the release doubles as treatment.",
+    "hard": "Healing treated as a prerequisite that postpones the path it belongs to.",
+    "business": "The stretch assignment touches the sore spot on purpose; that is the curriculum."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The old injury surfaces exactly when the new chapter needs the skill it blocks.",
+  "harmonious": "The helper role arrives; the release doubles as treatment.",
+  "hard": "Healing treated as a prerequisite that postpones the path it belongs to.",
+  "business": "The stretch assignment touches the sore spot on purpose; that is the curriculum."
+}

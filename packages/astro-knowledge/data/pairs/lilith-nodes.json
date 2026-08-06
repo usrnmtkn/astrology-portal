@@ -1,0 +1,24 @@
+{
+  "id": "lilith-nodes",
+  "planetA": "lilith",
+  "planetB": "nodes",
+  "traditional": "The reclaimed want belongs to the future; the exile returns and the chapter decides its place.",
+  "modern": {
+    "blend": "The banished appetite turns out to be the hunger the north node meant.",
+    "harmonious": "The want stops being a secret and starts being a plan.",
+    "hard": "Reclamation aimed at revenge serves the past; the respectable habit revealed as release-side material.",
+    "business": "The unconventional direction you keep suppressing may be the actual strategy."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The banished appetite turns out to be the hunger the north node meant.",
+  "harmonious": "The want stops being a secret and starts being a plan.",
+  "hard": "Reclamation aimed at revenge serves the past; the respectable habit revealed as release-side material.",
+  "business": "The unconventional direction you keep suppressing may be the actual strategy."
+}

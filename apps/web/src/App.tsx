@@ -190,6 +190,7 @@ import {
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   angularDistance,
@@ -3521,6 +3522,22 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
 }
 
 function currentSkyAspectTransitWindow(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+  const engagementStart = aspect.timing?.engagementStart
+    ? new Date(aspect.timing.engagementStart)
+    : null;
+  const engagementEnd = aspect.timing?.engagementEnd
+    ? new Date(aspect.timing.engagementEnd)
+    : null;
+
+  if (
+    engagementStart
+    && engagementEnd
+    && !Number.isNaN(engagementStart.getTime())
+    && !Number.isNaN(engagementEnd.getTime())
+  ) {
+    return { start: engagementStart, end: engagementEnd };
+  }
+
   const fastestPlanet = fastestSkyAspectPlanet(aspect);
   const speed = fastestPlanet ? averageDailyMotion[fastestPlanet] ?? 1 : 1;
   const aspectWindowOrb = skyAspectWindowOrb(fastestPlanet);
@@ -3535,6 +3552,10 @@ function currentSkyAspectTransitWindow(aspect: SkySnapshot["aspects"][number], g
 
 function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
+
+  if (aspect.timing) {
+    return skyAspectDateRange(aspect, window.start, window.end);
+  }
 
   return formatSkyAspectDateRange(window.start, window.end, new Date(generatedAt));
 }
@@ -3629,6 +3650,12 @@ function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = ne
 
 function skyAspectTimingDisplay(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
+
+  if (aspect.timing) {
+    const durationLabel = timingGroupLabel(aspect.timing.group) ?? "Ongoing";
+    const rangeLabel = skyAspectDateRange(aspect, window.start, window.end);
+    return { durationLabel, rangeLabel, label: `${durationLabel} · ${rangeLabel}` };
+  }
 
   return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt), true);
 }
@@ -4194,14 +4221,9 @@ function normalizeSkyAspectSurface(
   };
 }
 
-function skyAspectSeriesLine(aspect: SkySnapshot["aspects"][number]) {
-  const series = aspect.series;
-
-  if (!series || series.count < 2 || series.index < 1 || series.index > series.count || !series.throughLabel.trim()) {
-    return null;
-  }
-
-  return `The ${ordinalHouse(series.index)} of ${series.count} passes, running through ${series.throughLabel.trim()}.`;
+function skyAspectSeriesLine(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+  const lines = skyAspectNarrativeTimingLines(aspect, generatedAt);
+  return lines.length > 0 ? lines.join(" ") : null;
 }
 
 function skyAspectMechanicsCaption(
@@ -4246,7 +4268,7 @@ function currentSkyAspectDetailArticle(
     subtitle: "",
     suppressTldr: true,
     body,
-    seriesLine: skyAspectSeriesLine(aspect),
+    seriesLine: skyAspectSeriesLine(aspect, generatedAt),
     mechanicsCaption: skyAspectMechanicsCaption(aspect, positions),
     sections: [],
     historicalLookback,
@@ -14859,6 +14881,8 @@ function ActiveAspects({
           {group.aspects.map(({ aspect, normalized }) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
+            const narrativeTiming = skyAspectNarrativeTimingLines(aspect, generatedAt);
+            const exactChip = wholeDegreeOrb(aspect.orb) === "0°";
 
             const displaySummary = stripSkyAspectTimingPrefix(
               normalizedSurfacePreview(normalized),
@@ -14882,11 +14906,16 @@ function ActiveAspects({
                     </span>
                     <span>{timing.rangeLabel}</span>
                   </span>
+                  {narrativeTiming.length > 0 ? (
+                    <span className="aspect-row-narrative-timing">
+                      {narrativeTiming.map((line) => <span key={line}>{line}</span>)}
+                    </span>
+                  ) : null}
                   {displaySummary ? <p>{displaySummary}</p> : null}
                 </div>
-                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                <span className="aspect-row-meta" aria-label={exactChip ? "exact aspect" : `${wholeDegreeOrb(aspect.orb)} orb`}>
                   <span className="aspect-row-dot" aria-hidden="true" />
-                  <span>{wholeDegreeOrb(aspect.orb)}</span>
+                  <span>{exactChip ? "exact" : wholeDegreeOrb(aspect.orb)}</span>
                 </span>
               </button>
             );
