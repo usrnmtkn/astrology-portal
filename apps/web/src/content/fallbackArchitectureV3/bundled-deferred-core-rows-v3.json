@@ -16800,169 +16800,229 @@
       "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Chiron lands on {{holder2Poss}} Ascendant, which means the tender history and the daily manner share an address. Each can brush the other's oldest bruise by accident, and soothe it the same way. That double power asks for gentleness as a default setting. Ask before assuming a reaction was about today.",
-      "body_they": "{{holder1PossCap}} Chiron lands on {{holder2Poss}} Ascendant, which means the tender history and the daily manner share an address. Each can brush the other's oldest bruise by accident, and soothe it the same way. That double power asks for gentleness as a default setting. Ask before assuming a reaction was about today.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} notices where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making {{holder2}} explain every reaction.",
+      "body_they": "{{holder1}} notices where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making {{holder2}} explain every reaction.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-conjunction-exact-approval.json",
+        "payloadSha256": "5f274820f90ae57b07966661b7ed4e9125e491f8b9efd00aef7f11a79b24890e",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Chiron sits at a hard angle to {{holder2Poss}} Ascendant, so ordinary moments occasionally hit an old bruise. Something in {{holder2Poss}} manner, harmless and unchosen, matches the shape of {{holder1Poss}} oldest wound, and the reaction that follows outsizes anything that actually happened. Nobody is guilty here, and pretending otherwise wounds twice. Say where it landed, gently, without a trial.",
-      "body_they": "{{holder1PossCap}} Chiron sits at a hard angle to {{holder2Poss}} Ascendant, so ordinary moments occasionally hit an old bruise. Something in {{holder2Poss}} manner, harmless and unchosen, matches the shape of {{holder1Poss}} oldest wound, and the reaction that follows outsizes anything that actually happened. Nobody is guilty here, and pretending otherwise wounds twice. Say where it landed, gently, without a trial.",
-      "review_status": "reviewed",
+      "body_you": "{{holder2}}'s natural way of speaking or reacting can touch a sensitive place for {{holder1}}. {{holder1}} may pull back, become defensive, or take the reaction personally. In turn, {{holder2}} can feel criticized for simply being themselves, and both may become unusually cautious around each other.",
+      "body_they": "{{holder2}}'s natural way of speaking or reacting can touch a sensitive place for {{holder1}}. {{holder1}} may pull back, become defensive, or take the reaction personally. In turn, {{holder2}} can feel criticized for simply being themselves, and both may become unusually cautious around each other.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-hard-exact-approval.json",
+        "payloadSha256": "c4564353174a6f043db892b99c7005f21fe7db69ef5158d3b9de7c2243469651",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Chiron rests near {{holder2Poss}} Ascendant, and old hurts get quieter in this company. Nothing clinical happens: just presence that does not poke. Healing as a side effect of hanging out. Keep hanging out.",
-      "body_they": "{{holder1PossCap}} Chiron rests near {{holder2Poss}} Ascendant, and old hurts get quieter in this company. Nothing clinical happens: just presence that does not poke. Healing as a side effect of hanging out. Keep hanging out.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} tends to understand where {{holder2}} is more vulnerable without making it the center of the relationship. {{holder2}} can relax around them and does not have to explain every reaction. Care shows up in the way {{holder1}} adjusts without drawing unnecessary attention to it.",
+      "body_they": "{{holder1}} tends to understand where {{holder2}} is more vulnerable without making it the center of the relationship. {{holder2}} can relax around them and does not have to explain every reaction. Care shows up in the way {{holder1}} adjusts without drawing unnecessary attention to it.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-soft-exact-approval.json",
+        "payloadSha256": "71f671345b303d467c040babdfc1d35860c6c5b5b2f1f5fbb71f35c721dd8ac2",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} North Node lands on {{holder2Poss}} Ascendant, and the meeting had a strange punctuality to it. This connection pulls both lives forward: the growth one keeps postponing looks doable in the other's company. It will ask more than a comfortable friendship asks. Answer anyway; this is the kind that ends up in the story.",
-      "body_they": "{{holder1PossCap}} North Node lands on {{holder2Poss}} Ascendant, and the meeting had a strange punctuality to it. This connection pulls both lives forward: the growth one keeps postponing looks doable in the other's company. It will ask more than a comfortable friendship asks. Answer anyway; this is the kind that ends up in the story.",
-      "review_status": "reviewed",
+      "body_you": "Around {{holder1}}, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. {{holder1}} can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+      "body_they": "Around {{holder1}}, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. {{holder1}} can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-conjunction-exact-approval.json",
+        "payloadSha256": "a5e01957e67a07f2f8e91d1040160f38d9132881e0442ff6d09cce738221304f",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} North Node sits at a hard angle to {{holder2Poss}} Ascendant, which makes this friendship an assignment wearing casual clothes. {{holder1PossCap}} growth requires exactly what {{holder2Poss}} manner does not hand over easily, so the connection keeps asking both to stretch. Comfortable friendships maintain people; this one develops them, and development has a cost. Pay it in small accommodations, on purpose.",
-      "body_they": "{{holder1PossCap}} North Node sits at a hard angle to {{holder2Poss}} Ascendant, which makes this friendship an assignment wearing casual clothes. {{holder1PossCap}} growth requires exactly what {{holder2Poss}} manner does not hand over easily, so the connection keeps asking both to stretch. Comfortable friendships maintain people; this one develops them, and development has a cost. Pay it in small accommodations, on purpose.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} keeps challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+      "body_they": "{{holder1}} keeps challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-hard-exact-approval.json",
+        "payloadSha256": "64af9ef0789fde12d578754493f82bf93e5cbc71089bc22752cdd8d2c69920f0",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} North Node flows with {{holder2Poss}} Ascendant: growth and daily life pointed the same direction. Time together quietly moves both stories forward, no syllabus required. This is a keep-choosing-it friendship. Choose it.",
-      "body_they": "{{holder1PossCap}} North Node flows with {{holder2Poss}} Ascendant: growth and daily life pointed the same direction. Time together quietly moves both stories forward, no syllabus required. This is a keep-choosing-it friendship. Choose it.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} makes unfamiliar choices feel easier for {{holder2}} to try. {{holder2}} may speak up sooner, take a chance, or step into a new role without feeling like they are forcing themselves. Change tends to happen more naturally around {{holder1}}.",
+      "body_they": "{{holder1}} makes unfamiliar choices feel easier for {{holder2}} to try. {{holder2}} may speak up sooner, take a chance, or step into a new role without feeling like they are forcing themselves. Change tends to happen more naturally around {{holder1}}.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-soft-exact-approval.json",
+        "payloadSha256": "389a534bb3d15214104504b7b58bad897266381373e6122392cff5f7d238d2c1",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} South Node lands on {{holder2Poss}} Ascendant, and the first conversation felt like a resumed one. Comfort arrived pre-installed: known rhythms, easy silence, no auditions. The gift is rest; the tax is inertia, where the connection only ever revisits. Point it at one new thing a season and keep the rest as the porch.",
-      "body_they": "{{holder1PossCap}} South Node lands on {{holder2Poss}} Ascendant, and the first conversation felt like a resumed one. Comfort arrived pre-installed: known rhythms, easy silence, no auditions. The gift is rest; the tax is inertia, where the connection only ever revisits. Point it at one new thing a season and keep the rest as the porch.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} feels familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+      "body_they": "{{holder1}} feels familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-conjunction-exact-approval.json",
+        "payloadSha256": "c2d968934235ba68e05b44d5a94a129203a42e70b4081bea51e8afdcd677eb4d",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} South Node sits at a hard angle to {{holder2Poss}} Ascendant, so the past keeps stepping into the present. {{holder1PossCap}} familiar patterns respond to a remembered version of {{holder2}}, and the actual person keeps having grown since the memory was taken. Being related to as who you were is lonely, even when it is affectionate. Update the picture regularly: ask what changed lately and believe the answer.",
-      "body_they": "{{holder1PossCap}} South Node sits at a hard angle to {{holder2Poss}} Ascendant, so the past keeps stepping into the present. {{holder1PossCap}} familiar patterns respond to a remembered version of {{holder2}}, and the actual person keeps having grown since the memory was taken. Being related to as who you were is lonely, even when it is affectionate. Update the picture regularly: ask what changed lately and believe the answer.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+      "body_they": "{{holder1}} may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-hard-exact-approval.json",
+        "payloadSha256": "48b3a8e2321447adc848c03424bc2b0378521782714c6d2f7af6880207476112",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} South Node rests near {{holder2Poss}} Ascendant: old-shoe ease, zero maintenance. Both exhale here, and that is a real function, not a lack of one. Not every connection must build; some restore. Let this one restore.",
-      "body_they": "{{holder1PossCap}} South Node rests near {{holder2Poss}} Ascendant: old-shoe ease, zero maintenance. Both exhale here, and that is a real function, not a lack of one. Not every connection must build; some restore. Let this one restore.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} and {{holder2}} understand each other's habits quickly. They know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new.",
+      "body_they": "{{holder1}} and {{holder2}} understand each other's habits quickly. They know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-soft-exact-approval.json",
+        "payloadSha256": "7d1e909cdb20bd1bb3cfbc28e713a6645d134c16d77907dbbd06f9a2a760caf4",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/conjunction",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Lilith lands on {{holder2Poss}} Ascendant, and the filters never fully installed between you. The unedited talk starts early and stays; it is bracing, loyal, occasionally too much. Honesty this fast builds a rare kind of trust and needs a rare kind of care. Aim it, never fling it.",
-      "body_they": "{{holder1PossCap}} Lilith lands on {{holder2Poss}} Ascendant, and the filters never fully installed between you. The unedited talk starts early and stays; it is bracing, loyal, occasionally too much. Honesty this fast builds a rare kind of trust and needs a rare kind of care. Aim it, never fling it.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} brings out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+      "body_they": "{{holder1}} brings out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-conjunction-exact-approval.json",
+        "payloadSha256": "e263b48f61e0e9d2d1eefcef989e9263fc01d85e53879dae4ce16ada230d4ec3",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/hard",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Lilith sits at a hard angle to {{holder2Poss}} Ascendant, and it plays out as raw versus curated. {{holder1PossCap}} unedited side treats {{holder2Poss}} polish as a dare, poking at it to see what is underneath; the polish tightens in response, which invites more poking. Both positions are honest: one refuses to pretend, the other refuses to be ambushed. The truce is jurisdiction: nobody has to drop their guard on command, and nobody gets punished for showing up raw.",
-      "body_they": "{{holder1PossCap}} Lilith sits at a hard angle to {{holder2Poss}} Ascendant, and it plays out as raw versus curated. {{holder1PossCap}} unedited side treats {{holder2Poss}} polish as a dare, poking at it to see what is underneath; the polish tightens in response, which invites more poking. Both positions are honest: one refuses to pretend, the other refuses to be ambushed. The truce is jurisdiction: nobody has to drop their guard on command, and nobody gets punished for showing up raw.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} may see {{holder2}}'s composure as avoidance or an attempt to keep everyone comfortable. {{holder2}} may experience {{holder1}}'s directness as judgment or pressure. {{holder1}} keeps pushing for the full truth, while {{holder2}} wants more care in how that truth is delivered.",
+      "body_they": "{{holder1}} may see {{holder2}}'s composure as avoidance or an attempt to keep everyone comfortable. {{holder2}} may experience {{holder1}}'s directness as judgment or pressure. {{holder1}} keeps pushing for the full truth, while {{holder2}} wants more care in how that truth is delivered.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-hard-exact-approval.json",
+        "payloadSha256": "836fde498d8a7cf958f8a5b34101f78dbb359d6536f232881dbada8bdfbfabd7",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/soft",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "{{holder1PossCap}} Lilith relaxes near {{holder2Poss}} Ascendant, and the unedited version is simply welcome. Blunt lands as refreshing, odd lands as interesting, and nobody polishes. Rooms like this are pressure valves; most people have none. Guard it.",
-      "body_they": "{{holder1PossCap}} Lilith relaxes near {{holder2Poss}} Ascendant, and the unedited version is simply welcome. Blunt lands as refreshing, odd lands as interesting, and nobody polishes. Rooms like this are pressure valves; most people have none. Guard it.",
-      "review_status": "reviewed",
+      "body_you": "{{holder1}} makes it easier for {{holder2}} to be direct about what they want and what they will not accept. {{holder2}} does not have to make their preferences easier for {{holder1}} to hear. There is more room for honesty here without every difference turning into a fight.",
+      "body_they": "{{holder1}} makes it easier for {{holder2}} to be direct about what they want and what they will not accept. {{holder2}} does not have to make their preferences easier for {{holder1}} to hear. There is more room for honesty here without every difference turning into a fight.",
+      "review_status": "approved",
       "source_keys": [
         "haydens-synastry/planets-on-angles",
         "package natal-aspect register"
       ],
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
-      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-soft-exact-approval.json",
+        "payloadSha256": "6e2512bb4078d47a1a2e4b89c6c6dd97d18b1ad7685d63f9523ae0e0b349a21e",
+        "approvedAt": "2026-08-05"
+      }
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/midheaven/conjunction",
