@@ -39,9 +39,9 @@ Every slot must survive absence. A You > Transits day with no qualifying non-Moo
 
 ## 3. AT A GLANCE (headline + body)
 
-Driver: the transiting Moon. Its whole-sign house in the user's chart supplies the topic; its tightest applying aspect to a natal planet supplies the emotional charge (square = self-friction, opposition = other-friction, conjunction = saturation, trine/sextile = ease). Baseline sections 2-4 define the grammar.
+Driver: the transiting Moon. Its tightest applying aspect to a supported natal target selects the aspect-group/target copy (square = self-friction, opposition = other-friction, conjunction = saturation, trine/sextile = ease). The Moon's whole-sign house supplies the topic only when no supported applying contact is within orb. Baseline sections 2-4 define the grammar.
 
-- SHIPPED (Copy Batch A, 2026-07-23): call `renderDailyGlance({ natal, aspect })` with the Moon's tightest applying aspect to a natal planet; returns `{ headline, body }`, both engine-hidden per the baseline grammars. Aspect groups: conjunction, square, opposition, soft (trine/sextile collapse). If the Moon makes no aspect within 5 degrees, call `renderDailyGlance({ house: moonWholeSignHouse })` for the house fallback. 136 rows: 4 groups x 14 natal targets x 2 slots, plus 12 houses x 2.
+- SHIPPED (Copy Batch A, 2026-07-23): call `renderDailyGlance({ natal, aspect })` with the Moon's tightest applying aspect to a supported natal planet or point; returns `{ headline, body }`, both engine-hidden per the baseline grammars. Aspect groups: conjunction, square, opposition, soft (trine/sextile collapse). Ascendant and Descendant are excluded because this content model has no angle keys. If no supported applying contact is within 5 degrees, including when every in-orb contact is separating, call `renderDailyGlance({ house: moonWholeSignHouse })` for the house fallback. 136 rows: 4 groups x 14 natal targets x 2 slots, plus 12 houses x 2.
 - Show the Moon's `renderTransitLabel` in the Behind-this-forecast stack so the driver is still discoverable; the At-a-Glance surface itself never names the astrology.
 - Never invent an aphorism headline in the app layer; the resolver returns the only approved copy.
 
