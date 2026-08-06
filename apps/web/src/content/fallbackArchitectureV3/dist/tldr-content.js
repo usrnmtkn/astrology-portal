@@ -1230,6 +1230,63 @@ ${fogNote}`;
       contentKey: signCopy.contentKey
     };
   }
+  function skyEventSignForPlanet(event, planet) {
+    if (event.a === planet) return event.aSign ?? null;
+    if (event.b === planet) return event.bSign ?? null;
+    return null;
+  }
+  function renderMoonSignEntry(entryRow, { planet, sign, events = [], entryDate, exitDate }) {
+    if (!entryDate || !exitDate) {
+      throw new SourceGapError(`SOURCE_GAP: Moon sign-entry dates ${planet}/${sign}`);
+    }
+    const livedRow = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`);
+    const closeRow = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`);
+    const movesRow = hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`);
+    if (!entryRow.body_you || !livedRow?.body_you || !closeRow?.body_you || !movesRow?.body_you) {
+      throw new SourceGapError(`SOURCE_GAP: Moon sign-entry structure ${planet}/${sign}`);
+    }
+    const entryLabel = continuousSkyPlacementDate(entryDate, "Moon entry").body;
+    const exitLabel = continuousSkyPlacementDate(exitDate, "Moon exit").body;
+    const opening = fillKeep(entryRow.body_you, { entryDate: entryLabel });
+    const livedParts = livedRow.body_you.split(/\n{2,}/u).map((part) => part.trim()).filter(Boolean);
+    const close = fillKeep(closeRow.body_you, { exitDate: exitLabel });
+    let aspectBody = null;
+    for (const event of events) {
+      if (event.type !== "aspect" || !event.exactDate || !event.a || !event.b || !event.aspect) continue;
+      const planets = /* @__PURE__ */ new Set([event.a, event.b]);
+      const unit = (entryRow.moon_entry_aspect_units ?? []).find((candidate) => candidate.aspect === event.aspect && candidate.planets.length === 2 && candidate.planets.every((planetName) => planets.has(planetName)) && Object.entries(candidate.signs).every(([planetName, expectedSign]) => skyEventSignForPlanet(event, planetName) === expectedSign));
+      if (unit) {
+        aspectBody = fillKeep(unit.body, {
+          aspectDate: continuousSkyPlacementDate(event.exactDate, "Moon aspect").body
+        });
+        break;
+      }
+    }
+    const moves = movesRow.body_you.split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
+    const parts = [opening, ...livedParts, aspectBody, close].filter((part) => Boolean(part));
+    const articleSections = [
+      { kind: "collective-read", heading: "", body: [opening, ...livedParts].join("\n\n") },
+      ...aspectBody ? [{ kind: "dated-aspect", heading: "", body: aspectBody }] : [],
+      { kind: "exit-tone-shift", heading: "", body: close }
+    ];
+    const renderedText = [...parts, ...moves].join("\n");
+    if (/\{\{/u.test(renderedText)) {
+      throw new SourceGapError(`SOURCE_GAP: Moon sign-entry slots ${planet}/${sign}`);
+    }
+    return {
+      headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
+      tagline: null,
+      moves,
+      movesPresentation: "plain",
+      closingCharge: null,
+      keyDates: [],
+      body: parts.join("\n\n"),
+      parts,
+      articleSections,
+      templateKey: "sky-placement-moon-entry-v1",
+      contentKey: entryRow.contentKey
+    };
+  }
   function renderSkyPlacement({
     planet,
     sign,
@@ -1355,6 +1412,16 @@ ${fogNote}`;
         templateKey: "sky-article-v1",
         contentKey: authoredArticle.contentKey
       };
+    }
+    const moonEntryRow = hooks.get(`fallback-hook/sky-placement-hook/${planet}/${sign}`);
+    if (moonEntryRow?.render_policy === "sky-placement-moon-entry-v1") {
+      return renderMoonSignEntry(moonEntryRow, {
+        planet,
+        sign,
+        events,
+        entryDate,
+        exitDate
+      });
     }
     const signCopyKey = `fallback-hook/sky-sign-copy/${planet}/${sign}`;
     const signCopyRow = hooks.get(signCopyKey);
@@ -1824,7 +1891,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-05f";
+var PACKAGE_VERSION = "v3-2026-08-06g";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
