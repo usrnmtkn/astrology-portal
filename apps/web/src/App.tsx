@@ -143,7 +143,8 @@ import {
   assertLunationBodyMatchesEventSky,
   buildWeeklyHoroscope,
   lunationBlendFacts,
-  type WeeklyHoroscopeAssembly
+  type WeeklyHoroscopeAssembly,
+  type WeeklyHoroscopeReading
 } from "./services/weeklyHoroscope";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -1716,6 +1717,90 @@ function transitCardPreview(text: string) {
   return hasMore
     ? `${preview.replace(/[.!?…]+$/u, "").trim()}…`
     : preview;
+}
+
+const weeklyTransitAspectPattern = /^(.+?)\s+(conjunct(?:ion)?|sextile|square|trine|opposite|opposition)\s+(?:your\s+)?(.+)$/iu;
+
+function normalizedTransitAspectName(value: string) {
+  const normalized = value.trim().toLowerCase();
+
+  if (normalized === "conjunct") return "conjunction";
+  if (normalized === "opposite") return "opposition";
+  return normalized;
+}
+
+function weeklyTransitAspectParts(label: string) {
+  const match = label.trim().match(weeklyTransitAspectPattern);
+
+  if (!match) return null;
+
+  return {
+    transiting: normalizeContentIdPart(match[1]),
+    aspect: normalizedTransitAspectName(match[2]),
+    natal: normalizeContentIdPart(match[3])
+  };
+}
+
+function transitAspectIdentity(transiting: string, aspect: string, natal: string) {
+  return [
+    normalizeContentIdPart(transiting),
+    normalizedTransitAspectName(aspect),
+    normalizeContentIdPart(natal)
+  ].join(":");
+}
+
+function weeklyTransitHouse(reading: WeeklyHoroscopeReading) {
+  if (typeof reading.house === "number" && reading.house >= 1 && reading.house <= 12) {
+    return reading.house;
+  }
+
+  const match = `${reading.headline} ${reading.driverLabel}`.match(/\byour\s+(\d{1,2})(?:st|nd|rd|th)\s+house\b/iu);
+  const house = Number.parseInt(match?.[1] ?? "", 10);
+
+  return house >= 1 && house <= 12 ? house : null;
+}
+
+function weeklyTransitDisplayTitle(reading: WeeklyHoroscopeReading, house: number | null) {
+  if (!house || /\bhouse\b/iu.test(reading.headline)) return reading.headline;
+
+  return `${reading.headline} in your ${ordinalHouse(house)} house`;
+}
+
+function weeklyTransitPlanet(reading: WeeklyHoroscopeReading) {
+  const knownBodies = [
+    "North Node",
+    "South Node",
+    "Ascendant",
+    "Chiron",
+    "Jupiter",
+    "Mercury",
+    "Neptune",
+    "Saturn",
+    "Uranus",
+    "Venus",
+    "Pluto",
+    "Mars",
+    "Moon",
+    "Sun"
+  ];
+  const copy = `${reading.driverLabel} ${reading.headline}`.trim();
+
+  return knownBodies.find((body) => copy.toLowerCase().startsWith(body.toLowerCase())) ?? "";
+}
+
+function weeklyTransitDurationLabel(timing?: string) {
+  if (!timing) return "This week";
+
+  const [startLabel, endLabel] = timing.split(/\s+[–-]\s+/u);
+  const start = new Date(startLabel);
+  const end = new Date(endLabel);
+  const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86_400_000));
+
+  if (!Number.isFinite(days)) return "This week";
+  if (days >= 330) return `${Math.max(1, Math.round(days / 365))}Y`;
+  if (days >= 45) return `${Math.max(1, Math.round(days / 30.44))}M`;
+  if (days >= 14) return `${Math.max(1, Math.round(days / 7))}W`;
+  return `${days}D`;
 }
 
 function normalizedArticleCopy(value: ReactNode) {
@@ -10401,6 +10486,7 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
+  const profileNatalSkyRequestRef = useRef<{ key: string; request: Promise<SkySnapshot> } | null>(null);
   const [profileNatalAspectPatternStatus, setProfileNatalAspectPatternStatus] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
   const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
   const [personalTimingGeneratedStatus, setPersonalTimingGeneratedStatus] = useState<PersonalTimingStatus>("idle");
@@ -11724,6 +11810,7 @@ export function App() {
     const birthTime = validChartBirthTime(primaryChart);
 
     if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
+      profileNatalSkyRequestRef.current = null;
       setProfileNatalSky(null);
       setProfileNatalAspectPatternStatus("idle");
       return;
@@ -11733,8 +11820,20 @@ export function App() {
     let cancelled = false;
     const birthLocation = primaryChart.birthLocation;
     const birthDateTime = zonedDateTimeToUtc(birthDate, unknownBirthTime ? "12:00 PM" : birthTime, birthLocation.timeZone);
+    const natalSkyRequestKey = [
+      userProfile.id,
+      birthDateTime.toISOString(),
+      birthLocation.latitude,
+      birthLocation.longitude,
+      birthLocation.timeZone
+    ].join("|");
+    const natalSkyRequest = profileNatalSkyRequestRef.current?.key === natalSkyRequestKey
+      ? profileNatalSkyRequestRef.current.request
+      : getAstrodienstSky(birthLocation, birthDateTime);
 
-    getAstrodienstSky(birthLocation, birthDateTime)
+    profileNatalSkyRequestRef.current = { key: natalSkyRequestKey, request: natalSkyRequest };
+
+    natalSkyRequest
       .then((calculatedNatalSky) => {
         if (cancelled) {
           return;
@@ -11816,13 +11915,12 @@ export function App() {
     };
   }, [
     userProfile?.id,
-    userProfile?.sun,
-    userProfile?.moon,
-    userProfile?.rising,
     userProfile?.charts[0]?.birthDate,
     userProfile?.charts[0]?.birthTime,
     userProfile?.charts[0]?.birthCity,
     userProfile?.charts[0]?.birthLocation?.label,
+    userProfile?.charts[0]?.birthLocation?.latitude,
+    userProfile?.charts[0]?.birthLocation?.longitude,
     userProfile?.charts[0]?.birthLocation?.timeZone,
     sky?.generatedAt,
     activeSunriseOrbDegrees,
@@ -15449,7 +15547,6 @@ function ProfileView({
 }) {
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
-  const [weeklyHoroscopeRequested, setWeeklyHoroscopeRequested] = useState(false);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
   useContentRegistryRevision();
   const primaryChart = profile.charts[0];
@@ -15475,7 +15572,7 @@ function ProfileView({
   const safeRising = displayRising || "your rising sign";
   const natalPositions = natalSky?.positions ?? [];
   useEffect(() => {
-    if (!weeklyHoroscopeRequested || !natalSky || !displayRising || displayRising === "Rising pending") {
+    if (!natalSky || !displayRising || displayRising === "Rising pending") {
       setWeeklyHoroscopeAssembly(null);
       return;
     }
@@ -15505,27 +15602,30 @@ function ProfileView({
         }
       : {};
 
-    buildWeeklyHoroscope({
-      userId: profile.id,
-      natalSky,
-      risingSign: displayRising,
-      location: currentLocation,
-      dailyServedUnitsByDate
-    })
-      .then((assembly) => {
-        if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+    const weeklyAssemblyTimer = window.setTimeout(() => {
+      buildWeeklyHoroscope({
+        userId: profile.id,
+        natalSky,
+        risingSign: displayRising,
+        location: currentLocation,
+        dailyServedUnitsByDate
       })
-      .catch((error) => {
-        console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
-        if (!cancelled) {
-          setWeeklyHoroscopeAssembly((current) => current
-            ? { ...current, status: "error" }
-            : null);
-        }
-      });
+        .then((assembly) => {
+          if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+        })
+        .catch((error) => {
+          console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
+          if (!cancelled) {
+            setWeeklyHoroscopeAssembly((current) => current
+              ? { ...current, status: "error" }
+              : null);
+          }
+        });
+    }, 1_000);
 
     return () => {
       cancelled = true;
+      window.clearTimeout(weeklyAssemblyTimer);
     };
   }, [
     profile.id,
@@ -15537,8 +15637,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
-    targetDate,
-    weeklyHoroscopeRequested
+    targetDate
   ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
     ? timingContextForChart({
@@ -16066,6 +16165,112 @@ function ProfileView({
       )];
     })
     : [];
+  const activeTransitAspectIdentities = new Set(
+    aspectRows.map((transit) => transitAspectIdentity(
+      transit.transitPlanet,
+      transit.aspect,
+      transit.natalPoint
+    ))
+  );
+  const weeklyTransitRows = weeklyHoroscopeAssembly?.status === "ready"
+    ? [weeklyHoroscopeAssembly.horoscope, ...weeklyHoroscopeAssembly.aspects]
+      .filter((reading) => {
+        const aspectParts = weeklyTransitAspectParts(reading.driverLabel);
+
+        return !aspectParts || !activeTransitAspectIdentities.has(transitAspectIdentity(
+          aspectParts.transiting,
+          aspectParts.aspect,
+          aspectParts.natal
+        ));
+      })
+      .map((reading) => {
+        const aspectParts = weeklyTransitAspectParts(reading.driverLabel);
+        const house = weeklyTransitHouse(reading);
+        const displayTitle = weeklyTransitDisplayTitle(reading, house);
+        const planet = weeklyTransitPlanet(reading) || (aspectParts ? titleCase(aspectParts.transiting) : "");
+        const preview = transitCardPreview(reading.body);
+        const durationLabel = weeklyTransitDurationLabel(reading.timing);
+        const timingLabel = reading.timing ?? reading.dayLabel;
+        const articleId = `weekly-transit-${reading.sourceUnits.join("-") || normalizeContentIdPart(reading.headline)}`;
+        const openArticle = () => {
+          setActivePlacementRouteId(null);
+          setTransitArticle({
+            id: articleId,
+            title: displayTitle,
+            glyph: planet ? pointGlyph(planet) : "",
+            subtitle: "",
+            summary: "",
+            sections: [{
+              heading: displayTitle,
+              tldr: "",
+              body: reading.body
+            }],
+            meta: [
+              ...(timingLabel ? [{ label: reading.timing ? "Date range" : "Timing", value: timingLabel }] : []),
+              { label: "Based on", value: reading.driverLabel }
+            ]
+          });
+        };
+
+        return (
+          <button
+            type="button"
+            className="updates-aspect-row weekly-transit-row"
+            key={articleId}
+            onClick={openArticle}
+          >
+            <span className="updates-aspect-row__glyphs" aria-hidden="true">
+              {aspectParts ? (
+                <AspectGlyphs
+                  from={titleCase(aspectParts.transiting)}
+                  aspect={aspectParts.aspect}
+                  to={titleCase(aspectParts.natal)}
+                />
+              ) : (
+                <span className="planet-glyph">{planet ? pointGlyph(planet) : "○"}</span>
+              )}
+            </span>
+            <span className="updates-aspect-row__content">
+              <span className="updates-aspect-row__title">{displayTitle}</span>
+              <span className="updates-aspect-row__meta-line">
+                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                  <DurationLabelText label={durationLabel} />
+                </span>
+                {timingLabel ? <span>{timingLabel}</span> : null}
+              </span>
+              {preview ? <span className="updates-aspect-row__description transit-card-preview">{preview}</span> : null}
+              {house ? (
+                <span className="house-transit-keywords" aria-label="House keywords">
+                  <span className="ui-pill house-transit-term-tag">
+                    {longTransitPlanets.has(planet) ? "Long-term" : "Short-term"}
+                  </span>
+                  {houseLifeAreaKeywords(house).map((keyword) => (
+                    <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${articleId}-${keyword}`}>
+                      {keyword}
+                    </span>
+                  ))}
+                </span>
+              ) : reading.tag ? (
+                <span className="updates-aspect-row__life-areas">
+                  <span className="ui-pill house-transit-term-tag">{reading.tag}</span>
+                </span>
+              ) : null}
+            </span>
+            {house || typeof reading.orb === "number" ? (
+              <span
+                className="updates-aspect-row__meta"
+                aria-label={house ? `${ordinalHouse(house)} house` : `${wholeDegreeOrb(reading.orb ?? 0)} orb`}
+              >
+                <span className="updates-aspect-row__dot" aria-hidden="true" />
+                <span className="updates-aspect-row__orb">
+                  {house ?? wholeDegreeOrb(reading.orb ?? 0)}
+                </span>
+              </span>
+            ) : null}
+          </button>
+        );
+      })
+    : [];
   const dailyDoDont = (() => {
     const seeded = new Set(["moon", "venus", "mars", "mercury", "saturn"]);
     const transitCandidate = qualifyingDailyTransits
@@ -16233,7 +16438,6 @@ function ProfileView({
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
         dailyUpdateSummary={dailyUpdateSummary}
         weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
-        onRequestWeeklyHoroscope={() => setWeeklyHoroscopeRequested(true)}
         displayMoon={displayMoon}
         displayRising={displayRising}
         displaySun={displaySun}
@@ -16271,6 +16475,7 @@ function ProfileView({
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
         standaloneTransitRows={standaloneHouseTransitRows}
+        weeklyTransitRows={weeklyTransitRows}
         transitArticle={transitArticle}
       />
     </Suspense>
