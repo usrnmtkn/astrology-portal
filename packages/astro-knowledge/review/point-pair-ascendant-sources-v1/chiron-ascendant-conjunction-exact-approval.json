@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "point-pair-ascendant-sources-v1-chiron-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",
+  "payloadSha256": "5f274820f90ae57b07966661b7ed4e9125e491f8b9efd00aef7f11a79b24890e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} notices where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making {{holder2}} explain every reaction.",
+    "body_they": "{{holder1}} notices where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making {{holder2}} explain every reaction.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
