@@ -13,6 +13,9 @@ const signupViewSource = fs.readFileSync(
 );
 const manualChartsPanelSource = appSource.slice(appSource.indexOf("function ManualChartsPanel"));
 const profileViewSource = appSource.slice(appSource.indexOf("function ProfileView"), appSource.indexOf("function ManualChartsPanel"));
+const natalSkyEffectStart = appSource.indexOf("    const natalSkyRequestKey = [");
+const natalSkyEffectEnd = appSource.indexOf("\n\n  useEffect(() => {", natalSkyEffectStart);
+const natalSkyEffectSource = appSource.slice(natalSkyEffectStart, natalSkyEffectEnd);
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
 const indexSource = fs.readFileSync(path.join(repoRoot, "apps/web/index.html"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
@@ -379,6 +382,32 @@ assert.match(
   youPageSource,
   /id="wheel-natal"[\s\S]*id="wheel-updates-transits"/u,
   "The deferred You page must own natal and transit wheel presentation."
+);
+assert.ok(natalSkyEffectStart >= 0 && natalSkyEffectEnd > natalSkyEffectStart, "The natal-sky effect must remain inspectable.");
+assert.doesNotMatch(
+  natalSkyEffectSource,
+  /userProfile\?\.(?:sun|moon|rising),/u,
+  "Derived Big Three updates must not retrigger the natal ephemeris calculation."
+);
+assert.match(
+  appSource,
+  /profileNatalSkyRequestRef = useRef<\{ key: string; request: Promise<SkySnapshot> \} \| null>\(null\)/u,
+  "Natal ephemeris calculations must retain an in-flight or resolved request for the same birth inputs."
+);
+assert.match(
+  natalSkyEffectSource,
+  /profileNatalSkyRequestRef\.current\?\.key === natalSkyRequestKey[\s\S]*profileNatalSkyRequestRef\.current = \{ key: natalSkyRequestKey, request: natalSkyRequest \}/u,
+  "Repeated effect runs must reuse the natal ephemeris request when birth inputs are unchanged."
+);
+assert.match(
+  natalSkyEffectSource,
+  /userProfile\?\.charts\[0\]\?\.birthDate,[\s\S]*userProfile\?\.charts\[0\]\?\.birthTime,[\s\S]*userProfile\?\.charts\[0\]\?\.birthLocation\?\.latitude,[\s\S]*userProfile\?\.charts\[0\]\?\.birthLocation\?\.longitude,[\s\S]*userProfile\?\.charts\[0\]\?\.birthLocation\?\.timeZone,/u,
+  "Birth date, time, and location must continue to retrigger the natal ephemeris calculation."
+);
+assert.match(
+  profileViewSource,
+  /const weeklyAssemblyTimer = window\.setTimeout\([\s\S]*buildWeeklyHoroscope\(\{[\s\S]*\}, 1_000\);[\s\S]*window\.clearTimeout\(weeklyAssemblyTimer\)/u,
+  "Weekly assembly must yield to the primary chart render and cancel before starting after navigation."
 );
 assert.doesNotMatch(
   appSource,
