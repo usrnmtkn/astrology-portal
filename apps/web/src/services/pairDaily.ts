@@ -1,4 +1,4 @@
-export type PairDailyVariant = 1 | 2 | 3;
+export type PairDailyVariantSeed = number;
 
 function stablePairIdentityHash(readerChartId: string, friendChartId: string) {
   const seed = `${readerChartId}:${friendChartId}`;
@@ -19,10 +19,12 @@ export function stablePairDailyVariant(
   readerChartId: string,
   friendChartId: string,
   isoDate: string
-): PairDailyVariant {
+): PairDailyVariantSeed {
   const normalizedDate = isoDate.trim().slice(0, 10);
   const parsedDate = Date.parse(`${normalizedDate}T00:00:00Z`);
   const day = Number.isFinite(parsedDate) ? Math.floor(parsedDate / 86_400_000) : 0;
 
-  return ((stablePairIdentityHash(readerChartId, friendChartId) + day) % 3 + 1) as PairDailyVariant;
+  // Return a stable positive seed rather than a fixed 1-3 slot. Each approved
+  // frame family maps this seed across its own eligible row count.
+  return ((stablePairIdentityHash(readerChartId, friendChartId) + day) % 2_147_483_647) + 1;
 }
