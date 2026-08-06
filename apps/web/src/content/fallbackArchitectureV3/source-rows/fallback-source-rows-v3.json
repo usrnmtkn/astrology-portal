@@ -29371,19 +29371,19 @@
    "contentKey": "fallback-hook/daily-headline/square/mars",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Being annoyed doesn't mean something is wrong.",
-   "body_they": "Being annoyed doesn't mean something is wrong.",
+   "body_you": "Anger this quick is usually the exhaustion talking.",
+   "body_they": "Anger this quick is usually the exhaustion talking.",
    "review_status": "approved",
-   "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
+   "notes": "Owner v3 rewrite (overload thesis), exact approval 2026-08-05; supersedes batch-3 landing. GR-004 new candidate recorded in batch-3 owner-authored file."
   },
   {
    "contentKey": "fallback-hook/daily-body/square/mars",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress, care, or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that takes longer than the job itself would have. That anger that flares up out of nowhere is connected to something deeper that needs acknowledgment, not management. Stop pushing through exhaustion and start asking why you feel the need to prove yourself constantly. Give them your timeline, step out of the argument, and handle the rest once your schedule is clear. You don't have to carry every fight home with you.",
-   "body_they": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress, care, or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that takes longer than the job itself would have. That anger that flares up out of nowhere is connected to something deeper that needs acknowledgment, not management. Stop pushing through exhaustion and start asking why you feel the need to prove yourself constantly. Give them your timeline, step out of the argument, and handle the rest once your schedule is clear. You don't have to carry every fight home with you.",
+   "body_you": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that drains more energy than the task itself. That flare of anger isn't a character flaw to fix. It is a signal that your bandwidth is full. You don't owe anyone an immediate reaction just because they brought an immediate demand. State your timeline, step out of the argument, and protect what's left of your day.",
+   "body_they": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that drains more energy than the task itself. That flare of anger isn't a character flaw to fix. It is a signal that your bandwidth is full. You don't owe anyone an immediate reaction just because they brought an immediate demand. State your timeline, step out of the argument, and protect what's left of your day.",
    "review_status": "approved",
-   "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
+   "notes": "Owner v3 rewrite (overload thesis), exact approval 2026-08-05; supersedes batch-3 landing. GR-004 new candidate recorded in batch-3 owner-authored file."
   },
   {
    "contentKey": "fallback-hook/daily-headline/square/jupiter",
