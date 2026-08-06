@@ -199,6 +199,7 @@ import {
   normalizedAngle,
   relationshipCompositeSky,
   samePlanetExactAspect,
+  selectDailyGlanceDriver,
   synastryWheelAspectLines,
   transitAspectDefinitions,
   wholeSignHouseForSign,
@@ -1783,41 +1784,11 @@ function normalizeDailyTimingSurface(generated: LiveGeneratedContent | null, sum
   };
 }
 
-type DailyGlanceDriver =
-  | { kind: "aspect"; natal: string; aspect: "conjunction" | "square" | "opposition" | "trine" | "sextile"; orb: number }
-  | { kind: "house"; house: number };
-
-function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot): DailyGlanceDriver | null {
+function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot) {
   const moon = currentSky.positions.find((position) => position.planet === "Moon");
 
   if (!moon || typeof moon.longitude !== "number") {
     return null;
-  }
-
-  const moonLongitude = moon.longitude;
-  const natalTargets = natalTransitTargets(natalSky)
-    .filter((target): target is PlanetPosition & { longitude: number } => typeof target.longitude === "number");
-  const tightestAspect = natalTargets
-    .flatMap((target) => transitAspectDefinitions.map((definition) => {
-      const separation = angularDistance(moonLongitude, target.longitude);
-      const orb = Math.abs(separation - definition.exact);
-
-      return {
-        natal: normalizeContentIdPart(target.planet),
-        aspect: definition.type,
-        orb
-      };
-    }))
-    .filter((candidate) => candidate.orb <= 5)
-    .sort((first, second) => first.orb - second.orb)[0];
-
-  if (tightestAspect) {
-    return {
-      kind: "aspect",
-      natal: tightestAspect.natal,
-      aspect: tightestAspect.aspect,
-      orb: tightestAspect.orb
-    };
   }
 
   const house = typeof moon.house === "number" && moon.house >= 1 && moon.house <= 12
@@ -1825,8 +1796,11 @@ function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot): Dail
     : natalSky.ascendant
       ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
       : null;
+  const driver = selectDailyGlanceDriver(moon.longitude, natalSky.positions, house);
 
-  return house ? { kind: "house", house } : null;
+  return driver?.kind === "aspect"
+    ? { ...driver, natal: normalizeContentIdPart(driver.natal) }
+    : driver;
 }
 
 function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapshot, natalSky: SkySnapshot, targetDate: string): LiveGeneratedContent | null {
