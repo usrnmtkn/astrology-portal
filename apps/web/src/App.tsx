@@ -10486,6 +10486,7 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
+  const profileNatalSkyRequestRef = useRef<{ key: string; request: Promise<SkySnapshot> } | null>(null);
   const [profileNatalAspectPatternStatus, setProfileNatalAspectPatternStatus] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
   const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
   const [personalTimingGeneratedStatus, setPersonalTimingGeneratedStatus] = useState<PersonalTimingStatus>("idle");
@@ -11809,6 +11810,7 @@ export function App() {
     const birthTime = validChartBirthTime(primaryChart);
 
     if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
+      profileNatalSkyRequestRef.current = null;
       setProfileNatalSky(null);
       setProfileNatalAspectPatternStatus("idle");
       return;
@@ -11818,8 +11820,20 @@ export function App() {
     let cancelled = false;
     const birthLocation = primaryChart.birthLocation;
     const birthDateTime = zonedDateTimeToUtc(birthDate, unknownBirthTime ? "12:00 PM" : birthTime, birthLocation.timeZone);
+    const natalSkyRequestKey = [
+      userProfile.id,
+      birthDateTime.toISOString(),
+      birthLocation.latitude,
+      birthLocation.longitude,
+      birthLocation.timeZone
+    ].join("|");
+    const natalSkyRequest = profileNatalSkyRequestRef.current?.key === natalSkyRequestKey
+      ? profileNatalSkyRequestRef.current.request
+      : getAstrodienstSky(birthLocation, birthDateTime);
 
-    getAstrodienstSky(birthLocation, birthDateTime)
+    profileNatalSkyRequestRef.current = { key: natalSkyRequestKey, request: natalSkyRequest };
+
+    natalSkyRequest
       .then((calculatedNatalSky) => {
         if (cancelled) {
           return;
@@ -11901,13 +11915,12 @@ export function App() {
     };
   }, [
     userProfile?.id,
-    userProfile?.sun,
-    userProfile?.moon,
-    userProfile?.rising,
     userProfile?.charts[0]?.birthDate,
     userProfile?.charts[0]?.birthTime,
     userProfile?.charts[0]?.birthCity,
     userProfile?.charts[0]?.birthLocation?.label,
+    userProfile?.charts[0]?.birthLocation?.latitude,
+    userProfile?.charts[0]?.birthLocation?.longitude,
     userProfile?.charts[0]?.birthLocation?.timeZone,
     sky?.generatedAt,
     activeSunriseOrbDegrees,
@@ -15589,27 +15602,30 @@ function ProfileView({
         }
       : {};
 
-    buildWeeklyHoroscope({
-      userId: profile.id,
-      natalSky,
-      risingSign: displayRising,
-      location: currentLocation,
-      dailyServedUnitsByDate
-    })
-      .then((assembly) => {
-        if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+    const weeklyAssemblyTimer = window.setTimeout(() => {
+      buildWeeklyHoroscope({
+        userId: profile.id,
+        natalSky,
+        risingSign: displayRising,
+        location: currentLocation,
+        dailyServedUnitsByDate
       })
-      .catch((error) => {
-        console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
-        if (!cancelled) {
-          setWeeklyHoroscopeAssembly((current) => current
-            ? { ...current, status: "error" }
-            : null);
-        }
-      });
+        .then((assembly) => {
+          if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+        })
+        .catch((error) => {
+          console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
+          if (!cancelled) {
+            setWeeklyHoroscopeAssembly((current) => current
+              ? { ...current, status: "error" }
+              : null);
+          }
+        });
+    }, 1_000);
 
     return () => {
       cancelled = true;
+      window.clearTimeout(weeklyAssemblyTimer);
     };
   }, [
     profile.id,
