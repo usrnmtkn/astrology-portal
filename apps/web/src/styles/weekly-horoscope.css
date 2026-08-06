@@ -4,62 +4,18 @@
   width: min(280px, 100%);
 }
 
-.weekly-horoscope__header {
-  align-items: flex-end;
-  display: flex;
-  gap: var(--space-3);
-  justify-content: space-between;
-  margin: var(--space-1) 0 0;
-}
-
-.weekly-horoscope__header h2 {
-  font-family: var(--font-display);
-  font-size: var(--type-large-title-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--leading-title);
-  margin: var(--section-label-gap-after) 0 0;
-}
-
-.weekly-horoscope__chip {
-  flex: 0 0 auto;
+.weekly-horoscope--embedded {
+  display: grid;
+  gap: var(--card-list-gap);
+  padding-top: var(--section-label-gap-before);
 }
 
 .weekly-horoscope__macro,
-.weekly-horoscope__aspect,
-.weekly-horoscope__reading {
+.weekly-horoscope__transits {
   width: 100%;
-}
-
-.weekly-horoscope__aspect .weekly-horoscope__driver,
-.weekly-horoscope__reading .weekly-horoscope__driver {
-  color: var(--card-meta-color);
-  font-size: var(--text-compact-caption);
-  margin-top: calc(var(--space-1) * -1);
-}
-
-.weekly-horoscope__timing {
-  color: var(--card-meta-color);
-  display: flex;
-  flex-wrap: wrap;
-  font-size: var(--text-compact-caption);
-  gap: var(--space-1);
-  margin-top: calc(var(--space-2) * -1);
-}
-
-.weekly-horoscope__timing span {
-  color: var(--ink);
-  font-weight: var(--weight-semibold);
 }
 
 .weekly-horoscope__loading {
   min-height: 220px;
   padding: var(--surface-card-padding) 0;
-}
-
-@media (max-width: 720px) {
-  .weekly-horoscope__header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
 }
