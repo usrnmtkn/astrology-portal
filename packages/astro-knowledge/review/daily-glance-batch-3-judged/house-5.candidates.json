@@ -1,0 +1,989 @@
+[
+ {
+  "sample": 1,
+  "candidate": {
+   "headline": "Playing it cool erases the fun you wanted.",
+   "body": "You edit the joke out of a message and replace it with a neutral reply. You lose the part that made responding fun. You have a little room over the next few hours to show one clear sign of interest and keep the rest private. Send the playful line you almost deleted."
+  },
+  "raw": "{\"headline\":\"Playing it cool erases the fun you wanted.\",\"body\":\"You edit the joke out of a message and replace it with a neutral reply. You lose the part that made responding fun. You have a little room over the next few hours to show one clear sign of interest and keep the rest private. Send the playful line you almost deleted.\"}",
+  "writerUsage": {
+   "inputTokens": 3633,
+   "cachedInputTokens": 0,
+   "cacheWriteTokens": 3630,
+   "outputTokens": 2148,
+   "reasoningTokens": 2070,
+   "totalTokens": 5781
+  },
+  "responseId": "resp_00f08feff0945fd3006a73725ae100819190f27cd3115a59f2",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "house/5",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "52 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send the playful line you almost deleted."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": "No detectable friendship/group/hope/community cue."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": [
+      "over the next few hours"
+     ]
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "No aspect-group headline grammar applies."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You lose the part that made responding fun.",
+      "Send the playful line you almost deleted."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "house/5",
+       "matches": [
+        "creativity-play"
+       ],
+       "required": 1,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron"
+      ],
+      "swappableTo": [
+       {
+        "key": "soft/mercury",
+        "matches": [
+         "communication",
+         "mild-ease"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 52,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "house/5",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well: it is plain and conversational, naming a recognizable cost (loss of fun and engagement) early and clearly. The structure is tight, with the truth stated upfront and supported by a concrete example. Hedging is minimal, with a confident tone. The formula avoids clichés or mechanical phrasing, and the line about 'playing it cool erases the fun you wanted' is a strong, relatable insight that someone might save or share. The specificity is good, as it captures the subtle social dynamic of messaging in this house/key.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Playing it cool erases the fun you wanted.",
+    "why": "This sentence crisply names a common but often unspoken feeling—the cost of self-censorship in casual communication—making it a memorable and sharable insight that embodies the owner's voice and the key's emotional register."
+   },
+   "usage": {
+    "input_tokens": 1126,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 249,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1375
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 2,
+  "candidate": {
+   "headline": "Editing out every risk turns flirting into politeness.",
+   "body": "You rewrite a message until it sounds like one you could send anyone. Within ten minutes, you remove the joke and every clear sign that you meant more. You lose the fun first. Put one honest, playful line back and send that version."
+  },
+  "raw": "{\"headline\":\"Editing out every risk turns flirting into politeness.\",\"body\":\"You rewrite a message until it sounds like one you could send anyone. Within ten minutes, you remove the joke and every clear sign that you meant more. You lose the fun first. Put one honest, playful line back and send that version.\"}",
+  "writerUsage": {
+   "inputTokens": 3633,
+   "cachedInputTokens": 3630,
+   "cacheWriteTokens": 0,
+   "outputTokens": 4213,
+   "reasoningTokens": 4142,
+   "totalTokens": 7846
+  },
+  "responseId": "resp_053ee86efa88ee58006a73728a143c81a084840a309728c5f6",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "house/5",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "43 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Put one honest, playful line back and send that version."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": "No detectable friendship/group/hope/community cue."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "No aspect-group headline grammar applies."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You lose the fun first."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "house/5",
+       "matches": [
+        "creativity-play"
+       ],
+       "required": 1,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron"
+      ],
+      "swappableTo": [
+       {
+        "key": "soft/mercury",
+        "matches": [
+         "communication",
+         "mild-ease"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 43,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "house/5",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples: plain, conversational, and true to a lived experience. It names a recognizable cost—losing fun and risk in flirting—which is a clear social stake. The truth arrives early and is supported by a concrete example of rewriting a message. Hedging is absent, and the formula avoids mechanical or templated language. The line about losing the fun first is a strong, sharable insight that captures a common but unspoken feeling. The specificity fits the house/5 key's tone and target well.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You lose the fun first.",
+    "why": "This sentence succinctly names a subtle but widely felt experience in flirting and communication—the loss of playfulness when risk is edited out. It is clear, evocative, and something readers might save or share because it puts into words a feeling they recognize but rarely express so plainly."
+   },
+   "usage": {
+    "input_tokens": 1119,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 252,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1371
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 3,
+  "candidate": {
+   "headline": "Flirting disappears when every message turns into logistics.",
+   "body": "You start with a joke, then rewrite the text until it only confirms a time and place. You can keep things practical so quickly over the next few hours that you remove every sign of interest from the exchange. You edit out the point. Send the text with one playful line intact."
+  },
+  "raw": "{\"headline\":\"Flirting disappears when every message turns into logistics.\",\"body\":\"You start with a joke, then rewrite the text until it only confirms a time and place. You can keep things practical so quickly over the next few hours that you remove every sign of interest from the exchange. You edit out the point. Send the text with one playful line intact.\"}",
+  "writerUsage": {
+   "inputTokens": 3633,
+   "cachedInputTokens": 3630,
+   "cacheWriteTokens": 0,
+   "outputTokens": 2279,
+   "reasoningTokens": 2200,
+   "totalTokens": 5912
+  },
+  "responseId": "resp_021bf3258eace92a006a7372de446881a3ad485116b65d9b7a",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "house/5",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "52 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send the text with one playful line intact."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": "No detectable friendship/group/hope/community cue."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": [
+      "over the next few hours"
+     ]
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "No aspect-group headline grammar applies."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You edit out the point.",
+      "Send the text with one playful line intact."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": true,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "house/5",
+       "matches": [
+        "creativity-play"
+       ],
+       "required": 1,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 52,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "house/5",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate matches the owner's voice well with plain, conversational truth and a clear lived example that arrives early. It names a recognizable cost—the loss of flirtation and interest—if the message becomes purely logistical, which carries real emotional stakes. The structure is tight, with the truth stated upfront and supported by the example, ending with a clear, actionable thought. Hedging is minimal, and the formula avoids mechanical or templated phrasing. The line 'You edit out the point' is a strong screenshot-worthy sentence that captures a common but unspoken experience. The specificity is solid, fitting the house/5 key's register about interpersonal dynamics and subtle emotional cues.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You edit out the point.",
+    "why": "This sentence crisply names the experience of losing the original playful or romantic intent in a message thread, something many feel but rarely articulate so directly. It captures the emotional cost of turning a flirtatious exchange into mere logistics, making it a memorable and shareable insight."
+   },
+   "usage": {
+    "input_tokens": 1127,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 276,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1403
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 4,
+  "candidate": {
+   "headline": "Fun becomes harder to share when you make it prove its worth.",
+   "body": "You type a playful reply, then replace it with something polite as you look at the unfinished work beside you. You keep the conversation moving and make it harder to find out how they respond when you are playful. One joke does not make you irresponsible. Put one playful line back in the reply and send it."
+  },
+  "raw": "{\"headline\":\"Fun becomes harder to share when you make it prove its worth.\",\"body\":\"You type a playful reply, then replace it with something polite as you look at the unfinished work beside you. You keep the conversation moving and make it harder to find out how they respond when you are playful. One joke does not make you irresponsible. Put one playful line back in the reply and send it.\"}",
+  "writerUsage": {
+   "inputTokens": 3633,
+   "cachedInputTokens": 3630,
+   "cacheWriteTokens": 0,
+   "outputTokens": 4229,
+   "reasoningTokens": 4142,
+   "totalTokens": 7862
+  },
+  "responseId": "resp_0cf925f080e9385f006a73730a96fc8192b96246890ac95b80",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "house/5",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "12 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "57 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": false,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 2 detected instruction(s); final sentence: Put one playful line back in the reply and send it."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": "No detectable friendship/group/hope/community cue."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "No aspect-group headline grammar applies."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "One joke does not make you irresponsible."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": true,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "house/5",
+       "matches": [
+        "creativity-play"
+       ],
+       "required": 1,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You keep the conversation moving and make it harder to find out how they respond when you are playful.",
+      "One joke does not make you irresponsible."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 12,
+    "headlineSentences": 1,
+    "bodyWords": 57,
+    "bodySentences": 4,
+    "instructions": 2,
+    "timeAnchors": 0,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 2
+   }
+  },
+  "judge": {
+   "key": "house/5",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate matches the owner's voice well with plain conversational truth and a relatable scenario. It names a recognizable cost—missing out on genuine connection due to self-censorship—and delivers the insight early, supported by a clear example. The ending completes the thought with a gentle instruction. Hedging is minimal, and the phrasing avoids formulaic templates. The line about making it harder to find out how they respond when you are playful is a strong, sharable insight. The specificity fits the house key's tone, focusing on interpersonal dynamics and subtle emotional costs.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You keep the conversation moving and make it harder to find out how they respond when you are playful.",
+    "why": "This sentence crisply names a subtle but common experience—how self-censoring playful communication creates distance—something readers will recognize but may not have clearly articulated. It captures the emotional cost and the dynamic in a way that feels fresh and true to the owner's voice."
+   },
+   "usage": {
+    "input_tokens": 1135,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 268,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1403
+   },
+   "advisoryOnly": true
+  }
+ }
+]

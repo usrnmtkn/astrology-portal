@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "configId": "daily-glance-writer-sol-xhigh-pilot-v1",
+  "packetVersion": "daily-glance-writer-packet-v1:owner-six+key-facts+p4+sm-dg",
+  "promptVersion": "daily-glance-writer-v1:owner-reset-pilots",
+  "status": "owner-authorized-pilot",
+  "authorities": [
+    "packages/astro-knowledge/review/daily-glance-rebuild-plan-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-format-model-costar-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-reference-pair-soft-mars-2026-08-04.md"
+  ],
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-pilot-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 3,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "pricing": {
+    "currency": "USD",
+    "unit": "per_1m_tokens",
+    "retrievedAt": "2026-08-02",
+    "source": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+    "shortContextMaximumInputTokens": 272000,
+    "shortContext": {
+      "input": 5,
+      "cachedInput": 0.5,
+      "cacheWrite": 6.25,
+      "output": 30
+    },
+    "longContext": {
+      "input": 10,
+      "cachedInput": 1,
+      "cacheWrite": 12.5,
+      "output": 45
+    }
+  },
+  "output": {
+    "fields": ["headline", "body"],
+    "headline": {
+      "sentences": 1,
+      "minimumWords": 4,
+      "maximumWords": 16,
+      "terminal": "."
+    },
+    "body": {
+      "minimumSentences": 3,
+      "maximumSentences": 5,
+      "minimumWords": 40,
+      "maximumWords": 65,
+      "maximumInstructions": 1,
+      "instructionPosition": "final-sentence"
+    },
+    "engineHiddenTerms": [
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "lilith",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto",
+      "chiron",
+      "node",
+      "nodes",
+      "aries",
+      "taurus",
+      "gemini",
+      "cancer",
+      "leo",
+      "virgo",
+      "libra",
+      "scorpio",
+      "sagittarius",
+      "capricorn",
+      "aquarius",
+      "pisces",
+      "square",
+      "opposition",
+      "conjunction",
+      "trine",
+      "sextile",
+      "aspect",
+      "house",
+      "eleventh",
+      "11th",
+      "planet",
+      "natal",
+      "transit"
+    ]
+  },
+  "styleMarkers": [
+    {
+      "id": "SM-DG-1",
+      "rule": "The reader is the grammatical subject; abstractions do not act."
+    },
+    {
+      "id": "SM-DG-2",
+      "rule": "Inner states are offered with may, never asserted as diagnosis."
+    },
+    {
+      "id": "SM-DG-3",
+      "rule": "Alternatives are real options, not images; use no metaphor in this register."
+    },
+    {
+      "id": "SM-DG-4",
+      "rule": "Rhythm is even and comma-joined; use no staccato punch sentences."
+    },
+    {
+      "id": "SM-DG-5",
+      "rule": "The word whether is not owner language and must not appear."
+    },
+    {
+      "id": "SM-DG-6",
+      "rule": "Ambient-force energy language is banned; ordinary effort-cost use remains allowed."
+    }
+  ],
+  "ownerPassageSourceIds": [
+    "daily-glance-soft-mars-owner-headline",
+    "daily-glance-soft-mars-owner-body",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+    "owner-article:venus-in-virgo-2025:p009",
+    "owner-article:mercury-in-taurus-2025:p005",
+    "owner-article:virgo-season-2025:p003"
+  ],
+  "referencePassages": [
+    {
+      "sourceId": "daily-glance-soft-mars-owner-headline",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-reference-pair-soft-mars-2026-08-04.md",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "daily-glance-voice-anchor-and-structural-model",
+      "text": "It takes less energy to do the thing than to keep putting it off."
+    },
+    {
+      "sourceId": "daily-glance-soft-mars-owner-body",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-reference-pair-soft-mars-2026-08-04.md",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "daily-glance-voice-anchor-and-structural-model",
+      "text": "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again."
+    }
+  ],
+  "keys": [
+    {
+      "key": "square/lilith",
+      "register": "self-friction",
+      "emotionalCore": "an unnamed want pushing against comfort",
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/data/pairs/moon-lilith.json",
+          "selector": "modern.hard",
+          "text": "The mood with no name that is a want with no permission; comfort eating standing in for desire."
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F2.square",
+          "text": "friction that builds toward an adjustment; malefic-leaning; the friction is internal to the person's own day (self-friction register per DG-R2)."
+        }
+      ]
+    },
+    {
+      "key": "opposition/mars",
+      "register": "other-friction",
+      "emotionalCore": "reacting quickly when another person pushes",
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/data/pairs/moon-mars.json",
+          "selector": "modern.hard",
+          "text": "Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling."
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F2.opposition",
+          "text": "the other side comes fully into view; awareness- and relationship-oriented; friction arrives through another person (other-friction register)."
+        }
+      ]
+    },
+    {
+      "key": "house/11",
+      "register": "topic-led-house-fallback",
+      "emotionalCore": "finding one's place among friends and shared plans",
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F4.house-11",
+          "text": "friendships, groups, hopes, community"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "key": "soft/pluto",
+  "responseId": "resp_0cf590b53e9f40a4006a728f269438819ea586c441f7d840e1",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 37977,
+  "usage": {
+    "inputTokens": 1259,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 1256,
+    "outputTokens": 2092,
+    "reasoningTokens": 2001,
+    "totalTokens": 3351
+  },
+  "estimatedCostUsd": 0.070625,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "5eebb6c88ad8c4722e5fc17e6d6c7f736f679cbe63cb3b22a8f9f89c99f2eeaf",
+  "incompleteDetails": null
+}

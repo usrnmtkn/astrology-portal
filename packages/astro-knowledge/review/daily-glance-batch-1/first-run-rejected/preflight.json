@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "status": "packet-self-lint-passed-for-existing-raws",
+  "calls": {
+    "plannedWriter": 7,
+    "plannedJudge": 0,
+    "billedMade": 0
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-1-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 7,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "keys": [
+    {
+      "key": "square/moon",
+      "ownerSourceIds": [
+        "daily-glance-square-lilith-owner-headline",
+        "daily-glance-square-lilith-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-moon.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.square"
+      ],
+      "modelInputSha256": "f574a1fa5c9783c4bd892a6cacbf6fee83da97a4a5db01472d97f2eb3c4355f4",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/mars",
+      "ownerSourceIds": [
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003",
+        "owner-article:venus-in-virgo-2025:p018",
+        "owner-article:mercury-in-taurus-2025:p040"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-mars.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "modelInputSha256": "721d222988f0cd53c3df8056011031f02d1a259790ac43bc20c9811256604dfc",
+      "packetLintPassed": true
+    },
+    {
+      "key": "opposition/sun",
+      "ownerSourceIds": [
+        "daily-glance-opposition-mars-owner-headline",
+        "daily-glance-opposition-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/sun-moon.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.opposition"
+      ],
+      "modelInputSha256": "0808797def21ef5b6bf061e288be31780ed3190be56bbeedbac301aaa3244fde",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/lilith",
+      "ownerSourceIds": [
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003",
+        "owner-article:venus-in-virgo-2025:p018",
+        "owner-article:mercury-in-taurus-2025:p040"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-lilith.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "modelInputSha256": "8a9e2979f621e71599c7eece40945ddb4be77d8ebf3a36368415da0197af5ba4",
+      "packetLintPassed": true
+    },
+    {
+      "key": "soft/pluto",
+      "ownerSourceIds": [
+        "daily-glance-soft-mars-owner-headline",
+        "daily-glance-soft-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-pluto.json#modern.harmonious",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.soft"
+      ],
+      "modelInputSha256": "a042f5afeb262176410b1da8743c1445dd4f9962e6f4c9272bf5f5f4694706c3",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/north-node",
+      "ownerSourceIds": [
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003",
+        "owner-article:venus-in-virgo-2025:p018",
+        "owner-article:mercury-in-taurus-2025:p040"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-nodes.json#traditional",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "modelInputSha256": "eed0b34a4ce5137bbfba0f55197c1752174c4d0aa700842818038c5ef8ace5ae",
+      "packetLintPassed": true
+    },
+    {
+      "key": "opposition/south-node",
+      "ownerSourceIds": [
+        "daily-glance-opposition-mars-owner-headline",
+        "daily-glance-opposition-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-nodes.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.opposition"
+      ],
+      "modelInputSha256": "7ab5089ae537e0808f447c8b0b3040c41ac7b5280f3fc4999e9ce1d2502537a9",
+      "packetLintPassed": true
+    }
+  ]
+}
