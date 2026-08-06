@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "status": "owner-rejected-first-run",
+  "authority": "packages/astro-knowledge/review/daily-glance-harvest-wiring-2026-08-04.md",
+  "reason": "Flat, not lived, and not the owner's voice; failure evidence only.",
+  "files": [
+    {
+      "name": "batch-lint.json",
+      "sha256": "9208867c196ada56e79a742611dcbdc52a24393e653aac26f0ccbd54921a6e22"
+    },
+    {
+      "name": "conjunction-lilith.lint.json",
+      "sha256": "c455d98ebce053952753918d948440c913c64dc27fa25323ccf063083f4a7f73"
+    },
+    {
+      "name": "conjunction-lilith.model-input.md",
+      "sha256": "8a9e2979f621e71599c7eece40945ddb4be77d8ebf3a36368415da0197af5ba4"
+    },
+    {
+      "name": "conjunction-lilith.packet-lint.json",
+      "sha256": "e8894c56908aef71e22bc1f0084fc6d48b0e74135ec007f504d1125c9838dc8c"
+    },
+    {
+      "name": "conjunction-lilith.packet.json",
+      "sha256": "2133ae7ab255d09a2d14e466baf136136e7ebf53014695462635043d0601224a"
+    },
+    {
+      "name": "conjunction-lilith.provider.json",
+      "sha256": "03848f7675aa00fd0089a964b6b4596fb8f4a07febb9204b0932e39d88134019"
+    },
+    {
+      "name": "conjunction-lilith.raw.txt",
+      "sha256": "1a83d19a21549c830fc4eb13b749dd396433cb3e4af9c08162061b76860b3f29"
+    },
+    {
+      "name": "conjunction-mars.lint.json",
+      "sha256": "16f42c2a170538a55db35fa04414dc65e19d45f6ea7a8f1d6134ec68addcf9ef"
+    },
+    {
+      "name": "conjunction-mars.model-input.md",
+      "sha256": "721d222988f0cd53c3df8056011031f02d1a259790ac43bc20c9811256604dfc"
+    },
+    {
+      "name": "conjunction-mars.packet-lint.json",
+      "sha256": "9851d23ee86222dae9f6f975db1cb819a6fe5f9c839eedd933b3251c0ccf6f39"
+    },
+    {
+      "name": "conjunction-mars.packet.json",
+      "sha256": "e1756bd8cef13ec0f3c6f62b557e4b9630c5efc8fe588684cfd52c1045b6b489"
+    },
+    {
+      "name": "conjunction-mars.provider.json",
+      "sha256": "9ae2c5fbca8e9b8d646e906764b7fede6b503319a46f290b98731ae0d810640d"
+    },
+    {
+      "name": "conjunction-mars.raw.txt",
+      "sha256": "fea781ad71837cb17f5a5a9bd7294239d29339ec384ac1832bb1770a6cf14b1d"
+    },
+    {
+      "name": "conjunction-north-node.lint.json",
+      "sha256": "db66e1f487ca23304ea3ab572b1d046f5787b6c29cee3d5398054a6783786769"
+    },
+    {
+      "name": "conjunction-north-node.model-input.md",
+      "sha256": "eed0b34a4ce5137bbfba0f55197c1752174c4d0aa700842818038c5ef8ace5ae"
+    },
+    {
+      "name": "conjunction-north-node.packet-lint.json",
+      "sha256": "94f41307b360f81f37a463838e3b41c88a4acd868817bb4356818b884cfb0e3b"
+    },
+    {
+      "name": "conjunction-north-node.packet.json",
+      "sha256": "ac7b9bc42c18a82089b0be01b8f1df017f28752a5b5fccf594da009fa77af1c8"
+    },
+    {
+      "name": "conjunction-north-node.provider.json",
+      "sha256": "6c6c5afb8700eb749828d9912bb825636481687101c1983ac9af1f72cba3153f"
+    },
+    {
+      "name": "conjunction-north-node.raw.txt",
+      "sha256": "fbfa773eca538eaa106461410e6ddf34c0fce283f7da9339d1e91457891c161b"
+    },
+    {
+      "name": "opposition-south-node.lint.json",
+      "sha256": "6f9063e40230e922cb1cd18f7c2e9047b5a9b8f2078b92ca057109c69c08f9a9"
+    },
+    {
+      "name": "opposition-south-node.model-input.md",
+      "sha256": "7ab5089ae537e0808f447c8b0b3040c41ac7b5280f3fc4999e9ce1d2502537a9"
+    },
+    {
+      "name": "opposition-south-node.packet-lint.json",
+      "sha256": "ef271571d25cb2dd3c133b69bf60c68912cb50254d8281cf22869c0371d33644"
+    },
+    {
+      "name": "opposition-south-node.packet.json",
+      "sha256": "abab2cb76911d67c2c38d5d5cd641599261b6d1d1937561c9c5c35e546cde842"
+    },
+    {
+      "name": "opposition-south-node.provider.json",
+      "sha256": "6d2f254060232c1f120d7f1447310580d823b1e2fb1a49bd49297d646b9c8d3e"
+    },
+    {
+      "name": "opposition-south-node.raw.txt",
+      "sha256": "447b0b6d8e3f171d35649d90ba3a5c4f7332812002270a31a754abd980ca9679"
+    },
+    {
+      "name": "opposition-sun.lint.json",
+      "sha256": "3f44aebe4b1631edb76dc5be55f0dbd42c0cd2f611f68a6683dedd90ec772553"
+    },
+    {
+      "name": "opposition-sun.model-input.md",
+      "sha256": "0808797def21ef5b6bf061e288be31780ed3190be56bbeedbac301aaa3244fde"
+    },
+    {
+      "name": "opposition-sun.packet-lint.json",
+      "sha256": "f6a749d129644b74b083724631ab6148ee46e5c404202572df3399bb2dac1f95"
+    },
+    {
+      "name": "opposition-sun.packet.json",
+      "sha256": "ecc1e5e227ba4c6a3c97b18edee86315a2170180c86969b4dbe54aeb441e704a"
+    },
+    {
+      "name": "opposition-sun.provider.json",
+      "sha256": "42d3482ecaa91e3b860f962295ef4765ca92b2aa52f0474a0d51713b620d6150"
+    },
+    {
+      "name": "opposition-sun.raw.txt",
+      "sha256": "25a4ac65ff3ae2a6fd554a939bb8cc6a9313269fda107b5b44a9a009e645ef39"
+    },
+    {
+      "name": "preflight.json",
+      "sha256": "286ff2c6649a746db7a45f217e7922f0302d686d0f7b877c8fcdcab22a15d203"
+    },
+    {
+      "name": "soft-pluto.lint.json",
+      "sha256": "e2a9b97441a0ae55d2643cb9e33d1b233557b7a35ae82f1cab5bf5efd3882736"
+    },
+    {
+      "name": "soft-pluto.model-input.md",
+      "sha256": "a042f5afeb262176410b1da8743c1445dd4f9962e6f4c9272bf5f5f4694706c3"
+    },
+    {
+      "name": "soft-pluto.packet-lint.json",
+      "sha256": "262b6d3bf55dbd15f32df6643663efeb20b73dc2a991c2e1640510fa1324285d"
+    },
+    {
+      "name": "soft-pluto.packet.json",
+      "sha256": "3e57b98ea87f914d3b5aeec5283ccbaeb9581f6e6c3290d8eab26c5bed42f164"
+    },
+    {
+      "name": "soft-pluto.provider.json",
+      "sha256": "54d8b117ef29c4befee48853117ba014ab8b28c1878c2098fce1b4fa0b27745a"
+    },
+    {
+      "name": "soft-pluto.raw.txt",
+      "sha256": "5eebb6c88ad8c4722e5fc17e6d6c7f736f679cbe63cb3b22a8f9f89c99f2eeaf"
+    },
+    {
+      "name": "square-moon.lint.json",
+      "sha256": "c55901c88e5d998d02e2acd4a942249e892878eb307d1970d8c15233da05c79c"
+    },
+    {
+      "name": "square-moon.model-input.md",
+      "sha256": "f574a1fa5c9783c4bd892a6cacbf6fee83da97a4a5db01472d97f2eb3c4355f4"
+    },
+    {
+      "name": "square-moon.packet-lint.json",
+      "sha256": "11267c69bd90e1e380b7c88c8ce66a1abb10791da4e7eb57cd0fc5de38943ce5"
+    },
+    {
+      "name": "square-moon.packet.json",
+      "sha256": "c7644e0010bfc2c4311c18b5ab105cdd8fb29f90c51d42035165a9d871668cd5"
+    },
+    {
+      "name": "square-moon.provider.json",
+      "sha256": "15f6c79445d24ffdb26d245eb41f3c312b860fd9fe8732a40a8b42cb002253fd"
+    },
+    {
+      "name": "square-moon.raw.txt",
+      "sha256": "70c8eaee509bf9778cff0ad94393ef6e3e2f2ea8eb94d291a2897f6006c66c34"
+    },
+    {
+      "name": "summary.json",
+      "sha256": "fcb686bd2ec9e1f8a4f2f4066e495939dcf59314ad619dc2a9b5b933be766696"
+    }
+  ]
+}

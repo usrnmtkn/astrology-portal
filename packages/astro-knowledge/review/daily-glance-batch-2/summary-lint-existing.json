@@ -1,0 +1,442 @@
+{
+  "schemaVersion": 1,
+  "status": "owner-review-required",
+  "lintExistingOnly": true,
+  "immutableRawOutputs": true,
+  "revisionsMade": 0,
+  "callsMadeThisRun": 0,
+  "calls": {
+    "writer": 7,
+    "judge": 0,
+    "terra": 0,
+    "total": 7
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-2-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 7,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "results": [
+    {
+      "key": "conjunction/chiron",
+      "lintPassed": false,
+      "responseId": "resp_0bfc7b4cd2bf25e3006a72a3d2f03081a3a38b059f6d8c65a3",
+      "usage": {
+        "inputTokens": 2240,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2237,
+        "outputTokens": 3487,
+        "reasoningTokens": 3387,
+        "totalTokens": 5727
+      },
+      "estimatedCostUsd": 0.11860625,
+      "latencyMs": 70686
+    },
+    {
+      "key": "square/chiron",
+      "lintPassed": false,
+      "responseId": "resp_017ffcb05dd06eee006a72a418c078819da526b4110d5869de",
+      "usage": {
+        "inputTokens": 2251,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2248,
+        "outputTokens": 8000,
+        "reasoningTokens": 8000,
+        "totalTokens": 10251
+      },
+      "estimatedCostUsd": 0.254065,
+      "latencyMs": 141367
+    },
+    {
+      "key": "opposition/chiron",
+      "lintPassed": false,
+      "responseId": "resp_0b9599c87e11bea8006a72a4e7d1348192b6c2c916e8c717c2",
+      "usage": {
+        "inputTokens": 2246,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2243,
+        "outputTokens": 4769,
+        "reasoningTokens": 4660,
+        "totalTokens": 7015
+      },
+      "estimatedCostUsd": 0.15710375,
+      "latencyMs": 80010
+    },
+    {
+      "key": "conjunction/moon",
+      "lintPassed": false,
+      "responseId": "resp_05e2849db2032c87006a72a537b09c81a0866e5d4f2a8239bd",
+      "usage": {
+        "inputTokens": 2235,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2232,
+        "outputTokens": 15124,
+        "reasoningTokens": 15020,
+        "totalTokens": 17359
+      },
+      "estimatedCostUsd": 0.467685,
+      "latencyMs": 263494
+    },
+    {
+      "key": "conjunction/uranus",
+      "lintPassed": false,
+      "responseId": "resp_0c253cb57460fcb1006a72a63f317481a3836394f4275103cc",
+      "usage": {
+        "inputTokens": 2267,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2264,
+        "outputTokens": 4245,
+        "reasoningTokens": 4142,
+        "totalTokens": 6512
+      },
+      "estimatedCostUsd": 0.141515,
+      "latencyMs": 66419
+    },
+    {
+      "key": "soft/lilith",
+      "lintPassed": false,
+      "responseId": "resp_0963a9a0d7fd52c3006a72a6819eec81a0a2ac3d5ea0e6e185",
+      "usage": {
+        "inputTokens": 2208,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2205,
+        "outputTokens": 6324,
+        "reasoningTokens": 6214,
+        "totalTokens": 8532
+      },
+      "estimatedCostUsd": 0.20351625,
+      "latencyMs": 116214
+    },
+    {
+      "key": "house/1",
+      "lintPassed": false,
+      "responseId": "resp_00818b7632af2399006a72a6f63348819c983bd9048e824405",
+      "usage": {
+        "inputTokens": 2200,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2197,
+        "outputTokens": 3724,
+        "reasoningTokens": 3624,
+        "totalTokens": 5924
+      },
+      "estimatedCostUsd": 0.12546625,
+      "latencyMs": 73561
+    }
+  ],
+  "batchLint": {
+    "schemaVersion": 1,
+    "passed": false,
+    "rules": {
+      "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
+      "DG-R7": "No body opener construction may repeat within the batch.",
+      "OWNER-TEST-specificity": "Every body must match its key profile and fail all six swap profiles."
+    },
+    "checks": [
+      {
+        "id": "batch-output-count",
+        "passed": false,
+        "details": "6/7 outputs"
+      },
+      {
+        "id": "DG-R1-recurring-sentence-frame",
+        "passed": true,
+        "details": "No three-word sentence frame appears in more than two outputs."
+      },
+      {
+        "id": "DG-R7-opener-variety",
+        "passed": true,
+        "details": "6 distinct opener constructions."
+      },
+      {
+        "id": "OWNER-TEST-specificity-batch",
+        "passed": false,
+        "details": [
+          {
+            "key": "conjunction/chiron",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "conjunction/chiron",
+                "matches": [
+                  "care-old-hurt"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "swappableTo": [
+                {
+                  "key": "opposition/chiron",
+                  "matches": [
+                    "care-old-hurt",
+                    "other-person"
+                  ],
+                  "passed": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "opposition/chiron",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "opposition/chiron",
+                "matches": [
+                  "care-old-hurt",
+                  "other-person"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "swappableTo": [
+                {
+                  "key": "square/chiron",
+                  "matches": [
+                    "care-old-hurt",
+                    "self-friction"
+                  ],
+                  "passed": true
+                }
+              ]
+            }
+          },
+          {
+            "key": "conjunction/moon",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "conjunction/moon",
+                "matches": [
+                  "feelings-needs"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "swappableTo": []
+            }
+          },
+          {
+            "key": "conjunction/uranus",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "conjunction/uranus",
+                "matches": [
+                  "change-routine"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "swappableTo": []
+            }
+          },
+          {
+            "key": "soft/lilith",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "soft/lilith",
+                "matches": [
+                  "desire-appetite"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "swappableTo": []
+            }
+          },
+          {
+            "key": "house/1",
+            "passed": true,
+            "details": {
+              "own": {
+                "key": "house/1",
+                "matches": [
+                  "self-presentation"
+                ],
+                "required": 1,
+                "passed": true
+              },
+              "swappableTo": []
+            }
+          }
+        ]
+      }
+    ],
+    "openerConstructions": [
+      {
+        "key": "conjunction/chiron",
+        "frame": "you type"
+      },
+      {
+        "key": "opposition/chiron",
+        "frame": "a loved"
+      },
+      {
+        "key": "conjunction/moon",
+        "frame": "you read"
+      },
+      {
+        "key": "conjunction/uranus",
+        "frame": "you open"
+      },
+      {
+        "key": "soft/lilith",
+        "frame": "when your"
+      },
+      {
+        "key": "house/1",
+        "frame": "you choose"
+      }
+    ],
+    "repeatedFrames": [],
+    "repeatedOpeners": [],
+    "specificityResults": [
+      {
+        "key": "conjunction/chiron",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "conjunction/chiron",
+            "matches": [
+              "care-old-hurt"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "swappableTo": [
+            {
+              "key": "opposition/chiron",
+              "matches": [
+                "care-old-hurt",
+                "other-person"
+              ],
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "opposition/chiron",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "opposition/chiron",
+            "matches": [
+              "care-old-hurt",
+              "other-person"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "swappableTo": [
+            {
+              "key": "square/chiron",
+              "matches": [
+                "care-old-hurt",
+                "self-friction"
+              ],
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "conjunction/moon",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "conjunction/moon",
+            "matches": [
+              "feelings-needs"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "swappableTo": []
+        }
+      },
+      {
+        "key": "conjunction/uranus",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "conjunction/uranus",
+            "matches": [
+              "change-routine"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "swappableTo": []
+        }
+      },
+      {
+        "key": "soft/lilith",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "soft/lilith",
+            "matches": [
+              "desire-appetite"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "swappableTo": []
+        }
+      },
+      {
+        "key": "house/1",
+        "passed": true,
+        "details": {
+          "own": {
+            "key": "house/1",
+            "matches": [
+              "self-presentation"
+            ],
+            "required": 1,
+            "passed": true
+          },
+          "swappableTo": []
+        }
+      }
+    ]
+  },
+  "totals": {
+    "inputTokens": 15647,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 15626,
+    "outputTokens": 45673,
+    "reasoningTokens": 45047,
+    "totalTokens": 61320,
+    "estimatedCostUsd": 1.4679575000000002
+  },
+  "pricing": {
+    "currency": "USD",
+    "unit": "per_1m_tokens",
+    "retrievedAt": "2026-08-02",
+    "source": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+    "shortContextMaximumInputTokens": 272000,
+    "shortContext": {
+      "input": 5,
+      "cachedInput": 0.5,
+      "cacheWrite": 6.25,
+      "output": 30
+    },
+    "longContext": {
+      "input": 10,
+      "cachedInput": 1,
+      "cacheWrite": 12.5,
+      "output": 45
+    }
+  }
+}

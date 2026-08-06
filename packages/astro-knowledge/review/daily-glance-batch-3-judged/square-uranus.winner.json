@@ -1,0 +1,250 @@
+{
+ "key": "square/uranus",
+ "advisoryOnly": true,
+ "winner": {
+  "headline": "One sudden mood shift makes the usual plan feel confining.",
+  "body": "Notice the first urge to clear your schedule, and move one commitment before you cancel anything. You are halfway through answering work messages when another reminder arrives, and you may suddenly resent every remaining item on the schedule. If you cancel everything, you still have to send explanations and remake the plan. You add more work. You can revise the next few hours before deciding the entire plan is unworkable."
+ },
+ "judge": {
+  "key": "square/uranus",
+  "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+  "judgeModel": "gpt-4.1-mini",
+  "score": 3,
+  "dimScore": 7,
+  "verdict": {
+   "score": 3,
+   "verdict": "This candidate fits the owner's voice well with plain, conversational truth and a clear, early statement of the issue. It names a recognizable cost—resentment and the extra work of rescheduling and explaining—giving the stakes real weight. The structure is tight, with the interpretation upfront and the example supporting it immediately. Hedging is minimal and the formula avoids clichés or mechanical phrasing. The line about resenting every remaining item and the cost of canceling everything is a strong, shareable insight. The specificity to the square/uranus transit is clear in the sudden mood shift and impulse to disrupt plans.",
+   "dimensions": {
+    "voice": true,
+    "stakes": true,
+    "structure": true,
+    "hedging": true,
+    "formula": true,
+    "screenshot_line": true,
+    "specificity": true
+   },
+   "best_line": "If you cancel everything, you still have to send explanations and remake the plan.",
+   "why": "This line crisply names a common but often unspoken frustration: the hidden work and social cost of canceling plans impulsively. It captures the tension between emotional impulse and practical consequences in a way that feels authentic and relatable, making it a memorable takeaway that someone would save or share."
+  },
+  "usage": {
+   "input_tokens": 1176,
+   "input_tokens_details": {
+    "cache_write_tokens": 0,
+    "cached_tokens": 0
+   },
+   "output_tokens": 278,
+   "output_tokens_details": {
+    "reasoning_tokens": 0
+   },
+   "total_tokens": 1454
+  },
+  "advisoryOnly": true
+ },
+ "lint": {
+  "schemaVersion": 1,
+  "key": "square/uranus",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+   "required": false
+  },
+  "checks": [
+   {
+    "id": "P4-headline-one-declarative-sentence",
+    "passed": true,
+    "details": "1 sentence(s)"
+   },
+   {
+    "id": "P4-headline-word-count",
+    "passed": true,
+    "details": "10 words"
+   },
+   {
+    "id": "P4-body-sentence-count",
+    "passed": true,
+    "details": "5 sentences"
+   },
+   {
+    "id": "P4-body-word-count",
+    "passed": true,
+    "details": "70 words"
+   },
+   {
+    "id": "P4-one-final-instruction",
+    "passed": true,
+    "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: You can revise the next few hours before deciding the entire plan is unworkable."
+   },
+   {
+    "id": "P4-body-supports-without-repeating",
+    "passed": true,
+    "details": "Body does not repeat the full headline."
+   },
+   {
+    "id": "global+VC-016+DG+SM-output-bans",
+    "passed": true,
+    "details": "No prohibited match."
+   },
+   {
+    "id": "DG-R2-register",
+    "passed": true,
+    "details": "Self-friction cue present."
+   },
+   {
+    "id": "DG-R3-no-slogan-or-restatement-closer",
+    "passed": true,
+    "details": "No known slogan or full-headline restatement detected."
+   },
+   {
+    "id": "DG-R4-no-outcome-promise",
+    "passed": true,
+    "details": "No deterministic outcome promise detected."
+   },
+   {
+    "id": "DG-R7-varied-opener",
+    "passed": true,
+    "details": "Body uses a non-fixed opener."
+   },
+   {
+    "id": "DG-R9-enumerated-instruction-allowed",
+    "passed": true,
+    "details": "No enumerated one-X/one-Y instruction present."
+   },
+   {
+    "id": "B1-L1-time-anchor-max-once",
+    "passed": true,
+    "details": "No time-anchor phrase used."
+   },
+   {
+    "id": "B1-L2-may-inner-states-only",
+    "passed": false,
+    "details": [
+     "may suddenly resent every remaining item on the schedule"
+    ]
+   },
+   {
+    "id": "B1-L3+L4-headline-group-grammar",
+    "passed": false,
+    "details": {
+     "squareGrammar": false,
+     "otherGrammar": false,
+     "softGrammar": false
+    }
+   },
+   {
+    "id": "SM-DG-2-no-diagnostic-history",
+    "passed": true,
+    "details": "No diagnostic reader-history frame detected."
+   },
+   {
+    "id": "DG-R11-unhedged-headline",
+    "passed": true,
+    "details": "Headline makes an unhedged claim."
+   },
+   {
+    "id": "DG-R12-no-time-anchor-opener",
+    "passed": true,
+    "details": "Body opens inside the scene."
+   },
+   {
+    "id": "DG-R13-may-max-once",
+    "passed": true,
+    "details": "1 may usage(s)"
+   },
+   {
+    "id": "DG-R14-scene-not-biographical",
+    "passed": true,
+    "details": "No biographical anchor detected."
+   },
+   {
+    "id": "DG-R15-action-repairs-moment",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R16-owner-reserved-construction",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-max-one",
+    "passed": true,
+    "details": "No quoted-dialogue line used."
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+    "passed": true,
+    "advisory": true,
+    "details": "No quoted-dialogue judgment needed."
+   },
+   {
+    "id": "OWNER-DIRECTIVE-short-blunt-line",
+    "passed": true,
+    "details": [
+     "You add more work."
+    ]
+   },
+   {
+    "id": "OWNER-TEST-specificity",
+    "passed": false,
+    "advisory": false,
+    "details": {
+     "own": {
+      "key": "square/uranus",
+      "matches": [
+       "disruption"
+      ],
+      "required": 2,
+      "passed": false
+     },
+     "comparisonScope": [
+      "square/mars",
+      "opposition/jupiter",
+      "opposition/pluto",
+      "soft/mercury",
+      "soft/uranus",
+      "soft/chiron",
+      "house/5"
+     ],
+     "swappableTo": [
+      {
+       "key": "soft/mercury",
+       "matches": [
+        "communication",
+        "mild-ease"
+       ],
+       "passed": true
+      }
+     ],
+     "advisorySwappableTo": []
+    }
+   },
+   {
+    "id": "OWNER-TEST-morning-read",
+    "passed": true,
+    "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+   },
+   {
+    "id": "OWNER-TEST-screenshot",
+    "passed": true,
+    "details": [
+     "You are halfway through answering work messages when another reminder arrives, and you may suddenly resent every remaining item on the schedule.",
+     "If you cancel everything, you still have to send explanations and remake the plan.",
+     "You can revise the next few hours before deciding the entire plan is unworkable."
+    ]
+   }
+  ],
+  "findings": [],
+  "counts": {
+   "headlineWords": 10,
+   "headlineSentences": 1,
+   "bodyWords": 70,
+   "bodySentences": 5,
+   "instructions": 1,
+   "timeAnchors": 0,
+   "mayUsages": 1,
+   "quotedDialogueLines": 0,
+   "screenshotCandidateLines": 3
+  }
+ }
+}
