@@ -1898,13 +1898,13 @@ const pairDailyAspectGroups: Record<string, string> = {
   sextile: "soft"
 };
 
-function dailyGlanceClauseKey(driver: NonNullable<ReturnType<typeof dailyGlanceDriver>>) {
+function pairDailyClauseKey(driver: NonNullable<ReturnType<typeof dailyGlanceDriver>>) {
   if (driver.kind === "house") {
-    return `fallback-hook/daily-headline/house/${driver.house}`;
+    return `fallback-hook/pair-daily/clause/house/${driver.house}`;
   }
 
   const group = pairDailyAspectGroups[driver.aspect] ?? driver.aspect;
-  return `fallback-hook/daily-headline/${group}/${driver.natal}`;
+  return `fallback-hook/pair-daily/clause/${group}/${driver.natal}`;
 }
 
 function pairDailyMoonElement(sign: string): "fire" | "earth" | "air" | "water" | null {
@@ -13346,7 +13346,9 @@ export function App() {
                 <FriendsRoute>
                   <ManualChartsPanel
                     profile={userProfile}
+                    profileHandle={ownSocialProfile?.handle ?? null}
                     currentSky={sky}
+                    fallbackArchitectureV3Version={fallbackArchitectureV3Version}
                     profileNatalSky={profileNatalSky}
                     profileTransits={activeTransits}
                     natalGeneratedContent={natalGeneratedContent}
@@ -16514,7 +16516,9 @@ function ProfileView({
 
 function ManualChartsPanel({
   profile,
+  profileHandle,
   currentSky,
+  fallbackArchitectureV3Version,
   profileNatalSky,
   profileTransits,
   natalGeneratedContent,
@@ -16530,7 +16534,9 @@ function ManualChartsPanel({
   onOpenDetail
 }: {
   profile: UserProfile;
+  profileHandle: string | null;
   currentSky: SkySnapshot | null;
+  fallbackArchitectureV3Version: number;
   profileNatalSky: SkySnapshot | null;
   profileTransits: TransitItem[];
   natalGeneratedContent: GeneratedContentMap;
@@ -16935,7 +16941,8 @@ function ManualChartsPanel({
         shared: {
           kind: "bond" as const,
           family: selectedBondTransit.effectFamily,
-          bondClauseKey: selectedBondTransit.effectContentKey
+          bondClauseKey: selectedBondTransit.effectContentKey,
+          transiting: selectedBondTransit.transitPlanet
         }
       };
     }
@@ -16973,11 +16980,14 @@ function ManualChartsPanel({
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderPairDaily({
-        reader: { clauseKey: dailyGlanceClauseKey(selectedPairDailySelection.readerDriver) },
+        reader: {
+          handle: profileHandle,
+          clauseKey: pairDailyClauseKey(selectedPairDailySelection.readerDriver)
+        },
         friend: {
           handle: selectedSocialFriend?.handle ?? null,
           displayName: selectedChart.displayName,
-          clauseKey: dailyGlanceClauseKey(selectedPairDailySelection.friendDriver)
+          clauseKey: pairDailyClauseKey(selectedPairDailySelection.friendDriver)
         },
         shared: selectedPairDailySelection.shared,
         variant: stablePairDailyVariant(readerChartId, friendChartId, isoDate)
@@ -16992,7 +17002,9 @@ function ManualChartsPanel({
     }
   }, [
     currentSky,
+    fallbackArchitectureV3Version,
     profile.charts,
+    profileHandle,
     profile.id,
     selectedChart,
     selectedPairDailySelection,
