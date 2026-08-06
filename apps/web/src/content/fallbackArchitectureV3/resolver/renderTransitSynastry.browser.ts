@@ -153,12 +153,24 @@ export interface CircleStoryFacts {
 }
 export interface CircleRenderResult { headline: string; subtitle: string; names: string; body: string; sections: { name: string; body: string }[]; question: string | null; parts: string[]; templateKey: string; contentKey?: string }
 type CircleRow = { contentKey: string; body_you: string; headline?: string; question?: string };
+export interface PairDailyFacts {
+  reader: { clauseKey: string };
+  friend: { handle?: string | null; displayName?: string | null; clauseKey: string };
+  shared?: {
+    kind: "bond" | "moon" | null;
+    family?: "soft" | "hard";
+    element?: "fire" | "earth" | "air" | "water";
+    bondClauseKey?: string;
+  };
+  variant?: number | null;
+}
 export interface TransitRenderResult {
   headline: string;
   body: string;
   parts: string[];
   templateKey: string;
   contentKey?: string;
+  sourceKeys?: string[];
   window?: string | null;
   tagline?: string | null;
   moves?: string[];
@@ -1732,6 +1744,86 @@ export function createTransitSynastryRenderer(
     return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
   }
 
+  // ---- Today between you two (PAIR-DAILY-TODAY-SPEC.md) ----
+  // Selection stays in the engine; only approved rows can assemble here.
+  const pairDailyVariantKey = (baseKey: string, variant: number | null | undefined, count: number) => {
+    const normalized = Number.isFinite(Number(variant))
+      ? ((Math.abs(Math.trunc(Number(variant))) - 1) % count) + 1
+      : 1;
+    return normalized === 1 ? baseKey : `${baseKey}/variant-${normalized}`;
+  };
+  const pairDailyRow = (key: string) => (
+    hooks.get(key) ?? cards.get(key) ?? vocab.get(key) ?? null
+  ) as ({ contentKey: string; body?: string; body_you?: string; body_they?: string } | null);
+  const pairDailyBody = (key: string, voice: "you" | "they") => {
+    const row = pairDailyRow(key);
+    const body = voice === "they"
+      ? row?.body_they
+      : row?.body_you ?? row?.body;
+    if (typeof body !== "string" || !body.trim()) {
+      throw new SourceGapError(`SOURCE_GAP: pair daily row ${key} (${voice})`);
+    }
+    return body.trim();
+  };
+  const pairDailyFriendReference = (friend: PairDailyFacts["friend"]) => {
+    const normalizedHandle = (friend.handle ?? "").toString().trim().replace(/^@+/u, "");
+    if (normalizedHandle) return `@${normalizedHandle}`;
+    const normalizedName = (friend.displayName ?? "").toString().trim();
+    return normalizedName || "your friend";
+  };
+
+  function renderPairDaily({ reader, friend, shared = { kind: null }, variant = 1 }: PairDailyFacts): TransitRenderResult {
+    if (!reader?.clauseKey || !friend?.clauseKey) {
+      throw new SourceGapError("SOURCE_GAP: pair daily requires both daily clause keys");
+    }
+    const openerKey = pairDailyVariantKey("fallback-hook/pair-daily/opener", variant, 3);
+    const opener = pairDailyBody(openerKey, "you");
+    const ctx: Ctx = {
+      readerClause: pairDailyBody(reader.clauseKey, "you"),
+      friendHandle: pairDailyFriendReference(friend),
+      friendClause: pairDailyBody(friend.clauseKey, "they")
+    };
+    const parts = [fill(opener, ctx)];
+    const sourceKeys = [openerKey, reader.clauseKey, friend.clauseKey];
+
+    if (shared?.kind === "bond") {
+      if (!shared.family || !shared.bondClauseKey) {
+        throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
+      }
+      const frameKey = pairDailyVariantKey(
+        `fallback-hook/pair-daily/shared-bond/${shared.family}`,
+        variant,
+        2
+      );
+      parts.push(fill(pairDailyBody(frameKey, "you"), {
+        bondClause: pairDailyBody(shared.bondClauseKey, "you")
+      }));
+      sourceKeys.push(frameKey, shared.bondClauseKey);
+    } else if (shared?.kind === "moon") {
+      if (!shared.element) throw new SourceGapError("SOURCE_GAP: pair daily Moon element");
+      const frameKey = `fallback-hook/pair-daily/shared-moon/${shared.element}`;
+      parts.push(pairDailyBody(frameKey, "you"));
+      sourceKeys.push(frameKey);
+    } else if (shared?.kind != null) {
+      throw new SourceGapError(`SOURCE_GAP: pair daily shared kind ${shared.kind}`);
+    }
+
+    const body = parts.join(" ").replace(/\s{2,}/g, " ").trim();
+    const leftover = body.match(/\{\{([\w.]+)\}\}/u);
+    if (leftover) throw new SourceGapError(`SOURCE_GAP: pair daily missing slot ${leftover[1]}`);
+    if (/\b(?:until|through)\b/iu.test(body)) {
+      throw new SourceGapError("SOURCE_GAP: pair daily must use today-only window wording");
+    }
+    return {
+      headline: "",
+      body,
+      parts,
+      templateKey: "fallback-template/pair.daily",
+      contentKey: openerKey,
+      sourceKeys
+    };
+  }
+
   // ---- Calendar page (CALENDAR-CONTENT-SPEC.md): lunar phases, void of course, season
   // markers, and the owner's weekly Moon-sign tone. Replaces the legacy phase sidebar copy. ----
 
@@ -1816,9 +1908,17 @@ export function createTransitSynastryRenderer(
     const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
     // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
     // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
-    const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you
-      ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
-      ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+    const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
+    const variantEffectKey = variant
+      ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`
+      : null;
+    const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
+    const effectKey = hooks.get(exactEffectKey)?.body_you
+      ? exactEffectKey
+      : variantEffectKey && hooks.get(variantEffectKey)?.body_you
+        ? variantEffectKey
+        : familyEffectKey;
+    const effect = hooks.get(effectKey)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
@@ -1846,7 +1946,7 @@ export function createTransitSynastryRenderer(
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL: Record<string, string> = { conjunction: "conjunct", opposition: "opposite" };
     const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
-    return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit" };
+    return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit", contentKey: effectKey };
   }
 
   // ---- Per-rising lunation horoscope (owner weekly shape): recognizable situation
@@ -2014,5 +2114,5 @@ export function createTransitSynastryRenderer(
     };
   }
 
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
