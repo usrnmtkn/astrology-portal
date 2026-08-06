@@ -39,7 +39,7 @@ let failures = 0;
 
 for (const [key, entry] of Object.entries(payloads)) {
   const [pair, aspect] = key.split("/");
-  const dash = pair.indexOf("-");
+  const dash = pair.lastIndexOf("-");
   const a = pair.slice(0, dash);
   const b = pair.slice(dash + 1);
   const contentKey = `fallback-hook/synastry-pair/${a}/${b}/${aspect}`;
@@ -77,7 +77,7 @@ for (const [key, entry] of Object.entries(payloads)) {
     payloadSha256: entry.sha256,
     approvedAt
   };
-  row.approved_via = [row.approved_via, `owner-authored exact approval, ${approvedAt}`].filter(Boolean).join(" | ");
+  delete row.approved_via; // superseded by the structured exact approval record
   manifest.push({ contentKey, recordPath: recordRel, payloadSha256: entry.sha256, previousBodySha256: crypto.createHash("sha256").update(previousBody || "").digest("hex") });
 }
 
@@ -92,7 +92,7 @@ const cm = new Map(check.hookRows.map((r) => [r.contentKey, r]));
 let ok = 0;
 for (const [key, entry] of Object.entries(payloads)) {
   const [pair, aspect] = key.split("/");
-  const dash = pair.indexOf("-");
+  const dash = pair.lastIndexOf("-");
   const contentKey = `fallback-hook/synastry-pair/${pair.slice(0, dash)}/${pair.slice(dash + 1)}/${aspect}`;
   const r = cm.get(contentKey);
   if (r.body_you === entry.payload.body_you && r.approval?.payloadSha256 === entry.sha256) ok++;
