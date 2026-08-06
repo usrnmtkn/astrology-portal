@@ -1,0 +1,138 @@
+{
+  "schema": "tldrastro-sky-placement-review-bundle-v1",
+  "version": "8.0.0",
+  "created": "2026-08-03",
+  "status": "needs_review",
+  "editorialStatus": "source_derived_writer_candidate",
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generation": {
+    "method": "owner-corpus-source-derived-offline-rewrite",
+    "apiCalls": 0,
+    "sourceBundle": "review/sky-placement-voice-pass-v7-writer-candidates.json",
+    "sourceReport": "review/sky-placement-uranus-pisces-source-derived-v8.md",
+    "writerPolicy": "config/marie-satori-writer-policy-v1.json"
+  },
+  "candidates": [
+    {
+      "candidateId": "sky-placement-v8-saturn-capricorn",
+      "supersedesCandidateId": "sky-placement-v7-saturn-capricorn",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "title": "Saturn in Capricorn",
+      "status": "needs_review",
+      "reviewStatus": "needs_review",
+      "editorialStatus": "source_derived_writer_candidate",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "meaningSource": "data/placements/sign/saturn-capricorn.json",
+      "article": {
+        "tagline": "Stop rewarding overwork",
+        "hook": "Ambition stops looking impressive when the person holding everything together cannot take a day off. Saturn in Capricorn exposes the plans that only work because someone remembers every deadline, catches every mistake, and stays late to make up the difference. Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off.",
+        "lived": "Over roughly two and a half years, a project can win praise while one person still sends corrections at midnight, covers a vacant role, and logs in on vacation. The first missed deadline shows what the praise concealed: nobody else knows the process, the budget depends on free overtime, and the work stops when that person does. Saturn reinforces what can survive a handoff. The rest was never a strong plan; it was one person's unpaid time.",
+        "turn": "Being needed can feel like proof of competence until every problem belongs to the same person. We answer messages during dinner, redo delegated work, and postpone rest so nobody sees the system fail. The organization calls that person indispensable instead of admitting the deadlines, knowledge, and recovery plan were never shared. A plan that cannot survive one person's absence was never fully built.",
+        "moves": [
+          "Document the task nobody else can complete before the next deadline forces a handoff.",
+          "Give one recurring responsibility to someone who can carry it without supervision.",
+          "Close the laptop at the agreed time and record what fails before asking the same person to cover it."
+        ]
+      },
+      "writerReview": {
+        "status": "pending_owner_review",
+        "changedSlots": ["tagline"],
+        "ownerFeedbackApplied": "Every V7 tagline was rejected; this replacement names the behavior rewarded by the article.",
+        "apiCalls": 0
+      }
+    },
+    {
+      "candidateId": "sky-placement-v8-neptune-libra",
+      "supersedesCandidateId": "sky-placement-v7-neptune-libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "title": "Neptune in Libra",
+      "status": "needs_review",
+      "reviewStatus": "needs_review",
+      "editorialStatus": "source_derived_writer_candidate",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "meaningSource": "data/placements/sign/neptune-libra.json",
+      "article": {
+        "tagline": "Make room for no",
+        "hook": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable. Neptune in Libra makes disagreement easy to soften and hard to resolve.",
+        "lived": "Neptune stays in one sign for roughly fourteen years, long enough for a habit of avoiding disagreement to become normal. One person says yes to dinner, changes the time twice, and cancels an hour before because the real answer was no. Nobody argued, so the evening is still described as peaceful. After enough years, everyone knows which questions are safer not to ask, and decisions keep getting made around answers nobody gave.",
+        "turn": "The problem is not only the cancellation. It is the agreement that was never real. One person avoids discomfort in the moment; everyone else reorganizes later and learns not to trust the next yes. A plan is not shared when someone has to agree, cancel, and take the blame for being unreliable just to keep the peace.",
+        "moves": [
+          "Say no when the answer is no, before someone else arranges their time around a yes.",
+          "Ask for each person's first choice before negotiating a compromise.",
+          "Reopen one agreement that looks peaceful only because disagreement keeps arriving as cancellation."
+        ]
+      },
+      "writerReview": {
+        "status": "pending_owner_review",
+        "changedSlots": ["tagline"],
+        "ownerFeedbackApplied": "Every V7 tagline was rejected; this replacement names the decision the article keeps postponing.",
+        "apiCalls": 0
+      }
+    },
+    {
+      "candidateId": "sky-placement-v8-uranus-pisces",
+      "supersedesCandidateId": "sky-placement-v7-uranus-pisces",
+      "planet": "uranus",
+      "sign": "pisces",
+      "title": "Uranus in Pisces",
+      "status": "needs_review",
+      "reviewStatus": "needs_review",
+      "editorialStatus": "source_derived_writer_candidate",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "meaningSource": "data/placements/sign/uranus-pisces.json",
+      "article": {
+        "tagline": "Plan past the crisis",
+        "hook": "Friends answer every call, and nobody says out loud that the same request keeps returning. Uranus breaks precedent; in Pisces, feeling deeply and helping in the moment stop being enough.",
+        "lived": "The phone lights up after midnight, and everyone already knows what the message will say. Friends send what they can, rearrange the morning, and promise to check in tomorrow. A month later, the same request returns. Uranus spends roughly seven years in Pisces, long enough for another rescue to stop being the only answer.",
+        "turn": "Urgency can still decide everything. Every message feels impossible to ignore, so plans are cancelled, money is sent without a limit, and nobody asks what can continue after tonight. Answering every crisis immediately can leave nobody able to answer the next one.",
+        "moves": [
+          "Turn one repeated request into a plan that begins before the next late-night message.",
+          "Decide what help can continue for a month before promising it for tonight.",
+          "Keep one limit in place even when the reason for crossing it feels compassionate."
+        ]
+      },
+      "livedAlternatives": [
+        {
+          "candidateId": "sky-placement-v8-uranus-pisces-lived-a",
+          "status": "needs_review",
+          "ownerApproved": false,
+          "promotionAuthorized": false,
+          "canonical": false,
+          "text": "Someone cancels again because they are overwhelmed. The first time, everyone understands; by the fifth, dinner starts without waiting for an answer. Uranus spends roughly seven years in Pisces, long enough for the old accommodation to stop feeling kind. A real reason does not have to become a rule everyone else lives around."
+        },
+        {
+          "candidateId": "sky-placement-v8-uranus-pisces-lived-b",
+          "status": "needs_review",
+          "ownerApproved": false,
+          "promotionAuthorized": false,
+          "canonical": false,
+          "recommended": true,
+          "text": "The phone lights up after midnight, and everyone already knows what the message will say. Friends send what they can, rearrange the morning, and promise to check in tomorrow. A month later, the same request returns. Uranus spends roughly seven years in Pisces, long enough for another rescue to stop being the only answer."
+        },
+        {
+          "candidateId": "sky-placement-v8-uranus-pisces-lived-c",
+          "status": "needs_review",
+          "ownerApproved": false,
+          "promotionAuthorized": false,
+          "canonical": false,
+          "text": "The first emergency gets a fundraiser. The second gets the same urgent messages and another promise that this time will be different. By the third, everyone involved has to admit that surviving the week did not solve the month. Uranus spends roughly seven years in Pisces, long enough for temporary relief to stop passing as a plan."
+        }
+      ],
+      "writerReview": {
+        "status": "pending_owner_review",
+        "changedSlots": ["tagline", "hook", "lived", "turn", "moves"],
+        "ownerFeedbackApplied": "Removed the generic People opener, harsh harm language, letters, and the institutional case-study structure. The full article now follows one recurring late-night request.",
+        "apiCalls": 0
+      }
+    }
+  ]
+}
