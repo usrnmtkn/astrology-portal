@@ -1,0 +1,24 @@
+{
+  "id": "venus-chiron",
+  "planetA": "venus",
+  "planetB": "chiron",
+  "traditional": "Wanting to be wanted meets the standing expectation of rejection; affection arrives and the old injury answers the door.",
+  "modern": {
+    "blend": "Sweetness and suspicion arrive together; the love may be real even where the doubt is loud.",
+    "harmonious": "Closeness deepens where the guard drops; received affection actually lands.",
+    "hard": "Pulling back just as it gets good; the small tests set for loved ones to prove they care, which push away what they check for.",
+    "business": "Recognition at work stings oddly; take the compliment at face value once."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Sweetness and suspicion arrive together; the love may be real even where the doubt is loud.",
+  "harmonious": "Closeness deepens where the guard drops; received affection actually lands.",
+  "hard": "Pulling back just as it gets good; the small tests set for loved ones to prove they care, which push away what they check for.",
+  "business": "Recognition at work stings oddly; take the compliment at face value once."
+}

@@ -1,0 +1,24 @@
+{
+  "id": "moon-nodes",
+  "planetA": "moon",
+  "planetB": "nodes",
+  "traditional": "Comfort points backward while the assignment points forward; the south node is where the familiar lives.",
+  "modern": {
+    "blend": "Homesickness for a finished chapter; uncomfortable and wrong are different readings.",
+    "harmonious": "The new territory starts to feel like home faster than expected.",
+    "hard": "The old habit that returns under stress; the retreat that costs the chapter time.",
+    "business": "The comfortable workflow versus the needed one; discomfort is not a defect report."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Homesickness for a finished chapter; uncomfortable and wrong are different readings.",
+  "harmonious": "The new territory starts to feel like home faster than expected.",
+  "hard": "The old habit that returns under stress; the retreat that costs the chapter time.",
+  "business": "The comfortable workflow versus the needed one; discomfort is not a defect report."
+}
