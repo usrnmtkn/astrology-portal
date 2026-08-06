@@ -1,0 +1,15 @@
+{
+  "id": "A-south-node_B-ascendant_square",
+  "kind": "interaspect",
+  "planetA": "south-node",
+  "planetB": "ascendant",
+  "aspect": "square",
+  "plainTranslation": "Their familiar patterns press against how freely you present yourself and enter situations.",
+  "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
+  "note": "Point-pair source entry drafted from governed point cores (data/points) and node point-contacts; owner-reviewed. Chiron is not a promise of healing; the Nodes are not destiny or fate claims; Lilith is not a sexualized shorthand.",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "authoringStatus": "draft",
+  "summaryShort": "Their familiar patterns press against how freely you present yourself and enter situations.",
+  "summaryDeep": "Their familiar patterns press against how freely you present yourself and enter situations. What is comfortable to them keeps casting you as someone you used to be. The familiarity is warm, and it argues quietly against you becoming anyone new."
+}
