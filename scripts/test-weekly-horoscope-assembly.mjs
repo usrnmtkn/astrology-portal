@@ -171,6 +171,11 @@ try {
     personalizedChironStation.driverLabel,
     "Chiron stations retrograde in your 12th house"
   );
+  assert.equal(
+    personalizedChironStation.house,
+    12,
+    "The station renderer must expose the calculated house as structured presentation data."
+  );
   assert.match(
     personalizedChironStation.body,
     /Chiron in your 12th house brings quiet grief, old anxieties, and unspoken losses back to the surface/u
@@ -646,21 +651,23 @@ try {
     path.join(repoRoot, "apps/web/src/services/weeklyHoroscope.ts"),
     "utf8"
   );
-  assert.match(youPage, /\{ value: "daily", label: "Daily" \}/u);
-  assert.match(youPage, /\{ value: "weekly", label: "Weekly" \}/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.sections\.map/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
-  assert.match(youPage, /weekly-horoscope__reading daily-horoscope-summary/u);
   assert.match(youPage, /weekly-horoscope__macro daily-horoscope-summary/u);
-  assert.match(youPage, /weekly-horoscope__aspect daily-horoscope-summary/u);
   assert.match(youPage, />The macro view</u);
-  assert.match(youPage, />Aspect</u);
-  assert.match(youPage, />Your horoscope</u);
-  assert.match(youPage, /Based on \{weeklyHoroscopeAssembly\.horoscope\.driverLabel\}/u);
-  assert.match(youPage, />Current house pass</u);
-  assert.match(youPage, /weeklyHoroscopeAssembly\.horoscope\.timing/u);
+  assert.match(youPage, /updates-aspect-list weekly-horoscope__transits/u);
+  assert.match(youPage, /\{weeklyTransitRows\}/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
+  assert.doesNotMatch(youPage, />Current house pass</u);
+  assert.match(app, /className="updates-aspect-row weekly-transit-row"/u);
+  assert.match(app, /weeklyTransitDisplayTitle\(reading, house\)/u);
+  assert.match(app, /title: displayTitle/u);
+  assert.match(app, /activeTransitAspectIdentities/u);
+  assert.match(app, /weeklyTransitAspectParts\(reading\.driverLabel\)/u);
   assert.match(app, /buildWeeklyHoroscope\(\{/u);
+  assert.doesNotMatch(app, /weeklyHoroscopeRequested/u);
   assert.match(weeklySource, /getLunarCalendarRangeEvents/u);
   assert.match(weeklySource, /weeklyEphemerisCache/u);
   assert.doesNotMatch(
