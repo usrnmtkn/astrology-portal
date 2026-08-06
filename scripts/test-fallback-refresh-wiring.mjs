@@ -445,6 +445,10 @@ assert.equal(
 );
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const compatibilityTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/CompatibilityTab.tsx"),
+  "utf8"
+);
 const bondGroupingSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/bondTransitGrouping.ts"),
   "utf8"
@@ -461,6 +465,39 @@ const runtimeSource = fs.readFileSync(
 const generatedContentSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
   "utf8"
+);
+const pairDailySelectionStart = appSource.indexOf("const selectedPairDailySelection = useMemo(");
+const pairDailySelectionEnd = appSource.indexOf("\n  const selectedPairDaily = useMemo(", pairDailySelectionStart);
+const pairDailySelectionSource = appSource.slice(pairDailySelectionStart, pairDailySelectionEnd);
+
+assert.ok(
+  pairDailySelectionStart >= 0 && pairDailySelectionEnd > pairDailySelectionStart,
+  "Pair Daily must have a dedicated friend-profile selection memo."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const readerDriver = dailyGlanceDriver\(currentSky, profileNatalSky\);[\s\S]*?const friendDriver = dailyGlanceDriver\(currentSky, selectedChart\.natalChart\);/u,
+  "Pair Daily must reuse the Daily At-a-Glance driver for both charts."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily/u,
+  "Pair Daily must reuse the first already-ranked bond card and its effect family."
+);
+assert.doesNotMatch(
+  pairDailySelectionSource,
+  /rank|sort\(|dailyTransitQualifies/u,
+  "Pair Daily must not introduce a parallel driver or shared-condition ranking system."
+);
+assert.match(
+  pairDailySelectionSource,
+  /if \(!readerDriver \|\| !friendDriver\) return null;/u,
+  "Pair Daily must hide when either person's daily driver is absent."
+);
+assert.match(
+  compatibilityTabSource,
+  /\{daily \? \([\s\S]*?Today between you two[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
+  "Compatibility must render no Pair Daily chrome when assembled copy is absent."
 );
 
 assert.match(
