@@ -59,6 +59,10 @@ export interface BondTransitFacts {
   friendPossessivePronoun?: string | null;
   sign?: string | null;
   variant?: number | null;
+  // 0-based index among cards on one view that share this transiting planet + exact
+  // aspect. Index 0 keeps the exact-aspect row; later cards rotate to the family lane
+  // so no two cards on one screen repeat the same effect paragraph.
+  duplicateIndex?: number | null;
   window?: string | null;
 }
 export interface LunationHoroscopeFacts {
@@ -2154,6 +2158,7 @@ export function createTransitSynastryRenderer(
     friendPossessivePronoun,
     sign,
     variant,
+    duplicateIndex,
     window: win
   }: BondTransitFacts): TransitRenderResult {
     if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
@@ -2161,18 +2166,20 @@ export function createTransitSynastryRenderer(
     }
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-    // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
-    // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
+    // Exact aspect copy wins the first card. Later cards on the same view sharing this
+    // transiting planet + exact aspect rotate to the family lane so no two cards repeat
+    // the same effect paragraph. Legacy soft/hard rows remain the fallback lane for
+    // nodes, Lilith, missing exact rows, and their repeat-viewer variant rotation.
     const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
     const variantEffectKey = variant
       ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`
       : null;
     const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
-    const effectKey = hooks.get(exactEffectKey)?.body_you
-      ? exactEffectKey
-      : variantEffectKey && hooks.get(variantEffectKey)?.body_you
-        ? variantEffectKey
-        : familyEffectKey;
+    const effectCandidates = duplicateIndex && duplicateIndex > 0
+      ? [variantEffectKey, familyEffectKey, exactEffectKey]
+      : [exactEffectKey, variantEffectKey, familyEffectKey];
+    const effectKey = effectCandidates.find((key): key is string => Boolean(key && hooks.get(key)?.body_you))
+      ?? familyEffectKey;
     const effect = hooks.get(effectKey)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
