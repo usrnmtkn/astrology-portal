@@ -14108,26 +14108,26 @@
       "contentKey": "fallback-hook/daily-headline/square/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to be impressive today to be worth taking seriously.",
-      "body_they": "You don't have to be impressive today to be worth taking seriously.",
+      "body_you": "You're arguing with yourself, and both sides have a point.",
+      "body_they": "You're arguing with yourself, and both sides have a point.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The gap between who you are and who you planned to be is loudest on days like this. Stop measuring today against the highlight version of yourself. The plan was a sketch, not a contract, and you are allowed to redraw it. Start smaller. Start anyway.",
-      "body_they": "The gap between who you are and who you planned to be is loudest on days like this. Stop measuring today against the highlight version of yourself. The plan was a sketch, not a contract, and you are allowed to redraw it. Start smaller. Start anyway.",
+      "body_you": "What would happen if you stopped managing everyone's perception of you? A quiet conflict is running under your day between who you know yourself to be and the version you present so people will take you seriously, approve of you, or leave you alone. That version may have helped you avoid criticism, rejection, or conflict. But forcing composure when you are burnt out, defensive, or uninspired is an exhausting way to live.",
+      "body_they": "What would happen if you stopped managing everyone's perception of you? A quiet conflict is running under your day between who you know yourself to be and the version you present so people will take you seriously, approve of you, or leave you alone. That version may have helped you avoid criticism, rejection, or conflict. But forcing composure when you are burnt out, defensive, or uninspired is an exhausting way to live.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can outgrow a feeling and still catch yourself reaching for it.",
-      "body_they": "You can outgrow a feeling and still catch yourself reaching for it.",
+      "body_you": "The plan is not more important than the energy you actually have.",
+      "body_they": "The plan is not more important than the energy you actually have.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14135,8 +14135,8 @@
       "contentKey": "fallback-hook/daily-body/square/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "An old mood turns up today with a brand-new excuse. Stop arguing with yourself about whether you're allowed to feel it - feelings move through faster when nobody puts them on trial. Let it pass before you decide anything it's whispering.",
-      "body_they": "An old mood turns up today with a brand-new excuse. Stop arguing with yourself about whether you're allowed to feel it - feelings move through faster when nobody puts them on trial. Let it pass before you decide anything it's whispering.",
+      "body_you": "You may get halfway through the errands and realize the rest of the list is too much. Forcing the original schedule can turn a normal day into a fight with yourself. Changing the plan does not make you unreliable. Remove one nonessential task before you start resenting everything that remains.",
+      "body_they": "You may get halfway through the errands and realize the rest of the list is too much. Forcing the original schedule can turn a normal day into a fight with yourself. Changing the plan does not make you unreliable. Remove one nonessential task before you start resenting everything that remains.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14144,152 +14144,152 @@
       "contentKey": "fallback-hook/daily-headline/square/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can be right and still say it at the wrong time.",
-      "body_they": "You can be right and still say it at the wrong time.",
+      "body_you": "Not everything you think needs to be said.",
+      "body_they": "Not everything you think needs to be said.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today your words run ahead of your patience. Stop rehearsing your comeback while they're still talking - most arguments are just two people waiting for their turn. Listen once, all the way through, and it changes your next sentence.",
-      "body_they": "Today your words run ahead of your patience. Stop rehearsing your comeback while they're still talking - most arguments are just two people waiting for their turn. Listen once, all the way through, and it changes your next sentence.",
+      "body_you": "Your thoughts are outrunning your judgment today. It is tempting to jump to conclusions, fill in missing details with worst-case guesses, or answer before you actually understand what is being said. Pause before you reply. You don't need to win the moment at the expense of getting it right. Don't make permanent choices with temporary information.",
+      "body_they": "Your thoughts are outrunning your judgment today. It is tempting to jump to conclusions, fill in missing details with worst-case guesses, or answer before you actually understand what is being said. Pause before you reply. You don't need to win the moment at the expense of getting it right. Don't make permanent choices with temporary information.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to earn affection you already have.",
-      "body_they": "You don't have to earn affection you already have.",
+      "body_you": "A delayed reply can make a quiet phone feel like a final verdict.",
+      "body_they": "A delayed reply can make a quiet phone feel like a final verdict.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you'll be tempted to keep score: who reached out, who owes who a call. Stop tallying warmth like it runs out. Ask for the time you want directly instead of testing for it - testing always finds the failure it's looking for.",
-      "body_they": "Today you'll be tempted to keep score: who reached out, who owes who a call. Stop tallying warmth like it runs out. Ask for the time you want directly instead of testing for it - testing always finds the failure it's looking for.",
+      "body_you": "You send a warm text and get silence back, and within ten minutes you are wondering if you were too much, while an impulse purchase in your cart starts looking like a reasonable fix for your feelings. Put the phone down and step away from the checkout screen. A slow reply does not get to decide what you are worth.",
+      "body_they": "You send a warm text and get silence back, and within ten minutes you are wondering if you were too much, while an impulse purchase in your cart starts looking like a reasonable fix for your feelings. Put the phone down and step away from the checkout screen. A slow reply does not get to decide what you are worth.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can be furious about something and still handle it well.",
-      "body_they": "You can be furious about something and still handle it well.",
+      "body_you": "Being annoyed doesn't mean something is wrong.",
+      "body_they": "Being annoyed doesn't mean something is wrong.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The irritation today is real, but its aim is off. Stop snapping at whoever happens to be closest. Anger with no job picks one at random, and it usually picks someone you love. Move your body, then talk. In that order.",
-      "body_they": "The irritation today is real, but its aim is off. Stop snapping at whoever happens to be closest. Anger with no job picks one at random, and it usually picks someone you love. Move your body, then talk. In that order.",
+      "body_you": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress, care, or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that takes longer than the job itself would have. That anger that flares up out of nowhere is connected to something deeper that needs acknowledgment, not management. Stop pushing through exhaustion and start asking why you feel the need to prove yourself constantly. Give them your timeline, step out of the argument, and handle the rest once your schedule is clear. You don't have to carry every fight home with you.",
+      "body_they": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress, care, or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that takes longer than the job itself would have. That anger that flares up out of nowhere is connected to something deeper that needs acknowledgment, not management. Stop pushing through exhaustion and start asking why you feel the need to prove yourself constantly. Give them your timeline, step out of the argument, and handle the rest once your schedule is clear. You don't have to carry every fight home with you.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to say yes today to prove you're generous.",
-      "body_they": "You don't have to say yes today to prove you're generous.",
+      "body_you": "The temptation is to say yes before you see the bill.",
+      "body_they": "The temptation is to say yes before you see the bill.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your appetite is bigger than your calendar today. Stop promising things future-you has to pay for. One real commitment beats five eager almost-yeses, and people remember which ones you kept. Pick the one that matters. Decline the rest kindly.",
-      "body_they": "Your appetite is bigger than your calendar today. Stop promising things future-you has to pay for. One real commitment beats five eager almost-yeses, and people remember which ones you kept. Pick the one that matters. Decline the rest kindly.",
+      "body_you": "A rush of optimism can make every idea look manageable and every invitation feel worth saying yes to. You may add work, spend money, or promise time before finishing what is already in front of you. Check your calendar, bank balance, and actual energy before you expand. More will not help if the current plan is already asking too much.",
+      "body_they": "A rush of optimism can make every idea look manageable and every invitation feel worth saying yes to. You may add work, spend money, or promise time before finishing what is already in front of you. Check your calendar, bank balance, and actual energy before you expand. More will not help if the current plan is already asking too much.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can take a break without abandoning everything you've built.",
-      "body_they": "You can take a break without abandoning everything you've built.",
+      "body_you": "Your inner critic is working overtime.",
+      "body_they": "Your inner critic is working overtime.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the to-do list reads like a verdict on your character. Stop treating rest as something you have to earn - the work will meet you tomorrow exactly where you left it. Do the one thing that's actually due and let the rest wait.",
-      "body_they": "Today the to-do list reads like a verdict on your character. Stop treating rest as something you have to earn - the work will meet you tomorrow exactly where you left it. Do the one thing that's actually due and let the rest wait.",
+      "body_you": "A slow start or unfinished task can make the whole day feel like proof that you are falling behind. You may respond by working through exhaustion and tightening every standard until nothing you finish feels good enough. Choose the work that actually matters today. Nobody has to earn rest, including you.",
+      "body_they": "A slow start or unfinished task can make the whole day feel like proof that you are falling behind. You may respond by working through exhaustion and tightening every standard until nothing you finish feels good enough. Choose the work that actually matters today. Nobody has to earn rest, including you.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to burn anything down to feel free again.",
-      "body_they": "You don't have to burn anything down to feel free again.",
+      "body_you": "Your routine could use a small shake-up.",
+      "body_they": "Your routine could use a small shake-up.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Restlessness spikes today and starts pricing exits. Stop mistaking boredom for evidence that everything is wrong. The urge to shock your own life passes; what it costs does not. Change one small thing on purpose. Notice the difference.",
-      "body_they": "Restlessness spikes today and starts pricing exits. Stop mistaking boredom for evidence that everything is wrong. The urge to shock your own life passes; what it costs does not. Change one small thing on purpose. Notice the difference.",
+      "body_you": "You sit down to handle a single tedious administrative form or look at one annoying obligation on your calendar, and expect restlessness. It is easy to let one frustrating task make your whole day feel suffocating, convincing you that you preach balance while practicing burnout and need to scrap the entire schedule. You don't have to optimize every second of your existence, nor do you need to tear everything down just to get some breathing room. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are.",
+      "body_they": "You sit down to handle a single tedious administrative form or look at one annoying obligation on your calendar, and expect restlessness. It is easy to let one frustrating task make your whole day feel suffocating, convincing you that you preach balance while practicing burnout and need to scrap the entire schedule. You don't have to optimize every second of your existence, nor do you need to tear everything down just to get some breathing room. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can want to disappear for a while and still love your life.",
-      "body_they": "You can want to disappear for a while and still love your life.",
+      "body_you": "Question the story you're telling yourself.",
+      "body_they": "Question the story you're telling yourself.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the fog is internal: half-plans, half-feelings, nothing landing. Stop deciding big things inside a mood this blurry. Not every day is for clarity; some are for drifting on purpose. Do the small concrete task in front of you. Clarity comes back on its own.",
-      "body_they": "Today the fog is internal: half-plans, half-feelings, nothing landing. Stop deciding big things inside a mood this blurry. Not every day is for clarity; some are for drifting on purpose. Do the small concrete task in front of you. Clarity comes back on its own.",
+      "body_you": "A delayed reply, vague plan, or conversation that suddenly feels off leaves enough room for your imagination to write the worst possible ending. You reread the message, study the wording, and connect the silence to every time someone disappointed you before. Soon, you are responding as if they have already disappointed you again. Give it time. Do not send the second message, cancel the plan, or make the decision for them before they have answered.",
+      "body_they": "A delayed reply, vague plan, or conversation that suddenly feels off leaves enough room for your imagination to write the worst possible ending. You reread the message, study the wording, and connect the silence to every time someone disappointed you before. Soon, you are responding as if they have already disappointed you again. Give it time. Do not send the second message, cancel the plan, or make the decision for them before they have answered.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to control everything just because you can see everything.",
-      "body_they": "You don't have to control everything just because you can see everything.",
+      "body_you": "Control is not the same as safety.",
+      "body_they": "Control is not the same as safety.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you notice every angle and every motive, including your own. Stop gripping situations that were never yours to run. Gripping harder does not make anything safer; it just makes your hands tired. Pick the one thing actually yours to handle. Handle that.",
-      "body_they": "Today you notice every angle and every motive, including your own. Stop gripping situations that were never yours to run. Gripping harder does not make anything safer; it just makes your hands tired. Pick the one thing actually yours to handle. Handle that.",
+      "body_you": "You may respond to uncertainty by reorganizing the schedule, checking the account again, watching everyone's mood so nothing catches you off guard. Micro-managing every detail doesn't quiet the anxiety; it only expands the list of things you have to monitor. Hyper-vigilance is not safety; it is just exhaustion. Decide what actually needs your intervention today, and let the situation breathe.",
+      "body_they": "You may respond to uncertainty by reorganizing the schedule, checking the account again, watching everyone's mood so nothing catches you off guard. Micro-managing every detail doesn't quiet the anxiety; it only expands the list of things you have to monitor. Hyper-vigilance is not safety; it is just exhaustion. Decide what actually needs your intervention today, and let the situation breathe.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can be stung by something small and not be broken.",
-      "body_they": "You can be stung by something small and not be broken.",
+      "body_you": "Expecting someone to guess what you need won't tell you how much they care.",
+      "body_they": "Expecting someone to guess what you need won't tell you how much they care.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14297,8 +14297,8 @@
       "contentKey": "fallback-hook/daily-body/square/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Something minor today presses on something old. Stop scolding yourself for still being sensitive there. The size of your reaction points at the age of the bruise, not the size of the problem. Be gentler with yourself than the moment seems to require. That is the medicine.",
-      "body_they": "Something minor today presses on something old. Stop scolding yourself for still being sensitive there. The size of your reaction points at the age of the bruise, not the size of the problem. Be gentler with yourself than the moment seems to require. That is the medicine.",
+      "body_you": "Notice when you drop a hint, leave out the actual ask, and wait to see if they guess what you need. When you text that the milk is gone, delete the line asking them to stop at the store, and get a reply about dinner instead, it is easy to feel ignored, even though you never actually asked. Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail.",
+      "body_they": "Notice when you drop a hint, leave out the actual ask, and wait to see if they guess what you need. When you text that the milk is gone, delete the line asking them to stop at the store, and get a reply about dinner instead, it is easy to feel ignored, even though you never actually asked. Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14306,44 +14306,44 @@
       "contentKey": "fallback-hook/daily-headline/square/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to feel ready to take the next step.",
-      "body_they": "You don't have to feel ready to take the next step.",
+      "body_you": "Staying comfortable is costing you time.",
+      "body_they": "Staying comfortable is costing you time.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The thing you keep postponing gets louder on days like this. Stop waiting to feel ready - readiness rarely shows up on schedule. Take the next small step before confidence arrives; starting badly still counts.",
-      "body_they": "The thing you keep postponing gets louder on days like this. Stop waiting to feel ready - readiness rarely shows up on schedule. Take the next small step before confidence arrives; starting badly still counts.",
+      "body_you": "A familiar choice can feel safer because you already know how to survive it. That does not mean it still fits the life you are trying to build. Notice where you keep choosing the same role, relationship pattern, or work arrangement because change would require you to be inexperienced for a while. Being new at something is not proof that you made the wrong choice.",
+      "body_they": "A familiar choice can feel safer because you already know how to survive it. That does not mean it still fits the life you are trying to build. Notice where you keep choosing the same role, relationship pattern, or work arrangement because change would require you to be inexperienced for a while. Being new at something is not proof that you made the wrong choice.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can love your comfort zone and still notice it shrinking.",
-      "body_they": "You can love your comfort zone and still notice it shrinking.",
+      "body_you": "Doing it yourself is how the burden becomes yours again.",
+      "body_they": "Doing it yourself is how the burden becomes yours again.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/square/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the familiar option looks better than it is. Stop choosing the known thing just because you already know it. Comfort is a fine place to rest and a bad place to live. Do one thing the new way today. Just one.",
-      "body_they": "Today the familiar option looks better than it is. Stop choosing the known thing just because you already know it. Comfort is a fine place to rest and a bad place to live. Do one thing the new way today. Just one.",
+      "body_you": "Pressure pulls you straight into your oldest habit: retreat, take control, fix the mood, or handle the whole thing yourself. That impulse might protect you from temporary conflict, but it guarantees you end up carrying the exact burden you claim to be tired of. Pause before habit answers for you. You can draw on what past experience taught you without stepping back into the role that cost you so much.",
+      "body_they": "Pressure pulls you straight into your oldest habit: retreat, take control, fix the mood, or handle the whole thing yourself. That impulse might protect you from temporary conflict, but it guarantees you end up carrying the exact burden you claim to be tired of. Pause before habit answers for you. You can draw on what past experience taught you without stepping back into the role that cost you so much.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/square/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to swallow it to keep the peace.",
-      "body_they": "You don't have to swallow it to keep the peace.",
+      "body_you": "Comfort is a quick substitute for admitting what you actually want.",
+      "body_they": "Comfort is a quick substitute for admitting what you actually want.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14351,8 +14351,8 @@
       "contentKey": "fallback-hook/daily-body/square/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the things you don't say start leaking out sideways: the tone, the delay, the almost-joke. Stop editing yourself down to whatever the room can handle - unsaid doesn't mean gone. Say the true thing plainly, once, to the person it actually belongs to.",
-      "body_they": "Today the things you don't say start leaking out sideways: the tone, the delay, the almost-joke. Stop editing yourself down to whatever the room can handle - unsaid doesn't mean gone. Say the true thing plainly, once, to the person it actually belongs to.",
+      "body_you": "Pay attention to every trip to the kitchen today, because hunger is rarely the whole story. Before reaching for another snack, put a name on whatever desire you are trying to quiet down, even if it feels inconvenient, disruptive, or unlikely. If food is still what you want after that, enjoy it. Just stop using it to answer questions you are avoiding.",
+      "body_they": "Pay attention to every trip to the kitchen today, because hunger is rarely the whole story. Before reaching for another snack, put a name on whatever desire you are trying to quiet down, even if it feels inconvenient, disruptive, or unlikely. If food is still what you want after that, enjoy it. Just stop using it to answer questions you are avoiding.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14360,8 +14360,8 @@
       "contentKey": "fallback-hook/daily-headline/opposition/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to win today's argument to keep your place in the room.",
-      "body_they": "You don't have to win today's argument to keep your place in the room.",
+      "body_you": "You can say yes in public and regret it in private.",
+      "body_they": "You can say yes in public and regret it in private.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14369,8 +14369,8 @@
       "contentKey": "fallback-hook/daily-body/opposition/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone pushes back today and it lands like a challenge to who you are. Stop defending your whole self when only one opinion is under review - disagreement isn't disloyalty. Hold your ground on the point, not on your pride.",
-      "body_they": "Someone pushes back today and it lands like a challenge to who you are. Stop defending your whole self when only one opinion is under review - disagreement isn't disloyalty. Hold your ground on the point, not on your pride.",
+      "body_you": "Someone asks for more, and the answer that keeps the peace comes out before you check what it will cost you. An hour later, you are resentful about a commitment you never wanted. Correct the answer. Tell them you agreed too quickly and need to revise what you can take on.",
+      "body_they": "Someone asks for more, and the answer that keeps the peace comes out before you check what it will cost you. An hour later, you are resentful about a commitment you never wanted. Correct the answer. Tell them you agreed too quickly and need to revise what you can take on.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14378,62 +14378,62 @@
       "contentKey": "fallback-hook/daily-headline/opposition/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can care about someone and still find them exhausting today.",
-      "body_they": "You can care about someone and still find them exhausting today.",
+      "body_you": "Stop treating their urgency as proof that your plans can wait.",
+      "body_they": "Stop treating their urgency as proof that your plans can wait.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone's needs and yours come due at the same time today. Stop pretending you don't have any so theirs can go first - resentment starts right there and always collects later. Say what you need out loud, once and plainly.",
-      "body_they": "Someone's needs and yours come due at the same time today. Stop pretending you don't have any so theirs can go first - resentment starts right there and always collects later. Say what you need out loud, once and plainly.",
+      "body_you": "You started with a clear plan, but someone else's crisis just hijacked your schedule. They need more time, reassurance, or attention than you expected, and your first impulse is to put your life on hold to manage their reaction. Care is not the mistake here. The mistake is making their mood the emergency and your life the afterthought. Give what you can actually spare, not the energy you need to get through the rest of the day.",
+      "body_they": "You started with a clear plan, but someone else's crisis just hijacked your schedule. They need more time, reassurance, or attention than you expected, and your first impulse is to put your life on hold to manage their reaction. Care is not the mistake here. The mistake is making their mood the emergency and your life the afterthought. Give what you can actually spare, not the energy you need to get through the rest of the day.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can hear every word someone says and still miss what they meant.",
-      "body_they": "You can hear every word someone says and still miss what they meant.",
+      "body_you": "You're reading too much into it.",
+      "body_they": "You're reading too much into it.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today conversations run on two scripts: what got said and what got heard. Stop assuming your version is the recording. Repeat back what you think they meant before you answer, and half of today's fights die right there.",
-      "body_they": "Today conversations run on two scripts: what got said and what got heard. Stop assuming your version is the recording. Repeat back what you think they meant before you answer, and half of today's fights die right there.",
+      "body_you": "A blunt text, delayed reply, or clipped tone can feel loaded when you're already braced for friction. It's easy to spend twenty minutes dissecting two sentences and building an argument against a point the other person never made. Ask for clarification before you react to your worst-case assumption. Crossed wires only become a confrontation when you start fighting the story in your head instead of the words on the screen.",
+      "body_they": "A blunt text, delayed reply, or clipped tone can feel loaded when you're already braced for friction. It's easy to spend twenty minutes dissecting two sentences and building an argument against a point the other person never made. Ask for clarification before you react to your worst-case assumption. Crossed wires only become a confrontation when you start fighting the story in your head instead of the words on the screen.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to match someone's mood to stay close to them.",
-      "body_they": "You don't have to match someone's mood to stay close to them.",
+      "body_you": "Being loved and feeling it do not always match.",
+      "body_they": "Being loved and feeling it do not always match.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you want closeness and they want space, or the reverse - the timing's just off. Stop reading the gap as rejection; two people can love each other on different schedules. Say your version without a test attached.",
-      "body_they": "Today you want closeness and they want space, or the reverse - the timing's just off. Stop reading the gap as rejection; two people can love each other on different schedules. Say your version without a test attached.",
+      "body_you": "Someone can care about you and still miss what you actually need. Your reflex is to hide your disappointment, convinced that making noise will make you a burden or push them away. All this does is teach people to treat your limits as optional while keeping them blind to what you actually need. Tell them what you need. Then give them the room to meet you, or show you that they won't.",
+      "body_they": "Someone can care about you and still miss what you actually need. Your reflex is to hide your disappointment, convinced that making noise will make you a burden or push them away. All this does is teach people to treat your limits as optional while keeping them blind to what you actually need. Tell them what you need. Then give them the room to meet you, or show you that they won't.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can stand your ground without raising your voice.",
-      "body_they": "You can stand your ground without raising your voice.",
+      "body_you": "Someone else's pressure can easily bait you into overreacting.",
+      "body_they": "Someone else's pressure can easily bait you into overreacting.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14441,8 +14441,8 @@
       "contentKey": "fallback-hook/daily-body/opposition/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone pushes today and every instinct says push back harder. Stop treating volume as an argument. The person who stays specific wins the room and keeps the relationship. Name the actual issue in one sentence. Then let silence work.",
-      "body_they": "Someone pushes today and every instinct says push back harder. Stop treating volume as an argument. The person who stays specific wins the room and keeps the relationship. Name the actual issue in one sentence. Then let silence work.",
+      "body_you": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their edge can make instantaneous defense feel like self-preservation before you even hear them out. Ask one clear question, let them answer without interruption, and only then decide how much weight to give it.",
+      "body_they": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their edge can make instantaneous defense feel like self-preservation before you even hear them out. Ask one clear question, let them answer without interruption, and only then decide how much weight to give it.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14450,98 +14450,98 @@
       "contentKey": "fallback-hook/daily-headline/opposition/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to agree about everything to be on the same side.",
-      "body_they": "You don't have to agree about everything to be on the same side.",
+      "body_you": "More isn't the answer this time.",
+      "body_they": "More isn't the answer this time.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today somebody's certainty rubs against yours: beliefs, plans, whose version of better wins. Stop trying to convert people who only needed to be heard. Being right in a way nobody can live with is its own kind of wrong. Trade one honest question for one honest answer. That moves more than a speech.",
-      "body_they": "Today somebody's certainty rubs against yours: beliefs, plans, whose version of better wins. Stop trying to convert people who only needed to be heard. Being right in a way nobody can live with is its own kind of wrong. Trade one honest question for one honest answer. That moves more than a speech.",
+      "body_you": "Someone else's high energy and appetite for more can easily pull you into an overcommitment you never intended to make. A quick catch-up turns into an afternoon of extra stops, and the temptation will be to move quickly, to grasp at what is returning, and to say yes before you understand the consequences. Their enthusiasm makes your limit look stingy, so you agree while mentally panicking about the work waiting at home. If it costs your peace, it's overpriced. Enjoy the first part of the plan, say a clear no to the additions, and remember that you don't have to be available for every crisis.",
+      "body_they": "Someone else's high energy and appetite for more can easily pull you into an overcommitment you never intended to make. A quick catch-up turns into an afternoon of extra stops, and the temptation will be to move quickly, to grasp at what is returning, and to say yes before you understand the consequences. Their enthusiasm makes your limit look stingy, so you agree while mentally panicking about the work waiting at home. If it costs your peace, it's overpriced. Enjoy the first part of the plan, say a clear no to the additions, and remember that you don't have to be available for every crisis.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can owe someone a lot and still owe yourself something too.",
-      "body_they": "You can owe someone a lot and still owe yourself something too.",
+      "body_you": "Their approval should not become another job.",
+      "body_they": "Their approval should not become another job.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "An obligation to someone weighs extra today. Stop confusing being needed with being trapped. You said yes for reasons that still exist, and if they've stopped existing, that's a conversation, not a resentment. Have it in daylight.",
-      "body_they": "An obligation to someone weighs extra today. Stop confusing being needed with being trapped. You said yes for reasons that still exist, and if they've stopped existing, that's a conversation, not a resentment. Have it in daylight.",
+      "body_you": "You remember the details, show up when you said you would, and follow through, but still leave wondering what you did wrong. The other person stays distant or points to one more standard you have not met, so you keep working harder for a warmth they never promised to give. At some point, the problem is no longer your effort.",
+      "body_they": "You remember the details, show up when you said you would, and follow through, but still leave wondering what you did wrong. The other person stays distant or points to one more standard you have not met, so you keep working harder for a warmth they never promised to give. At some point, the problem is no longer your effort.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can need space from someone without needing an exit.",
-      "body_they": "You can need space from someone without needing an exit.",
+      "body_you": "They changed the plan. They do not get to ruin yours.",
+      "body_they": "They changed the plan. They do not get to ruin yours.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you want room and someone reads that as leaving. Stop apologizing for needing air, and don't make them guess what it means. Space asked for plainly is just space; space taken suddenly reads as escape. Say when you're coming back. Then actually come back.",
-      "body_they": "Today you want room and someone reads that as leaving. Stop apologizing for needing air, and don't make them guess what it means. Space asked for plainly is just space; space taken suddenly reads as escape. Say when you're coming back. Then actually come back.",
+      "body_you": "You reorganized your life to make room for someone who just canceled, shifted the time, or went quiet. The mistake now is staying suspended in frustration. Take back the hours you set aside and put them toward your own life. They get to change their mind; they don't get to manage what you do next.",
+      "body_they": "You reorganized your life to make room for someone who just canceled, shifted the time, or went quiet. The mistake now is staying suspended in frustration. Take back the hours you set aside and put them toward your own life. They get to change their mind; they don't get to manage what you do next.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to guess what someone is feeling to be close to them.",
-      "body_they": "You don't have to guess what someone is feeling to be close to them.",
+      "body_you": "Trust the pattern, not the promise.",
+      "body_they": "Trust the pattern, not the promise.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you're filling in someone's blanks with your own fears. Stop treating your guess about them as a fact you're being brave about. The story in your head is always more dramatic than the person in front of you. Ask the direct question. Believe the answer.",
-      "body_they": "Today you're filling in someone's blanks with your own fears. Stop treating your guess about them as a fact you're being brave about. The story in your head is always more dramatic than the person in front of you. Ask the direct question. Believe the answer.",
+      "body_you": "Someone gives you just enough soft reassurance to keep you from walking away or setting a boundary. You want to accept the explanation because accepting the pattern means making an uncomfortable decision. Stop evaluating their potential and start measuring their consistency. What people do after the discussion ends is the only data that matters.",
+      "body_they": "Someone gives you just enough soft reassurance to keep you from walking away or setting a boundary. You want to accept the explanation because accepting the pattern means making an uncomfortable decision. Stop evaluating their potential and start measuring their consistency. What people do after the discussion ends is the only data that matters.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can let someone matter to you without handing them the controls.",
-      "body_they": "You can let someone matter to you without handing them the controls.",
+      "body_you": "Some feelings just want to be felt, not fixed.",
+      "body_they": "Some feelings just want to be felt, not fixed.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "A power current runs through one of your connections today: who bends, who decides, who needs whom more. Stop playing chess with someone you actually want on your team. Influence hoarded turns into distance. Say the honest version first, even though going first feels like losing. It isn't.",
-      "body_they": "A power current runs through one of your connections today: who bends, who decides, who needs whom more. Stop playing chess with someone you actually want on your team. Influence hoarded turns into distance. Say the honest version first, even though going first feels like losing. It isn't.",
+      "body_you": "You bring a private need to the person who controls the money, the access, or the family decision, explaining what you need based on care and history while they point to ownership, rules, and consequences. Power dynamics in the relationship become obvious: who makes the decisions, who always gives in, and who holds the emotional cards. Are you the one who always compromises, always bends? The question is no longer \"What do I owe this person?\" but \"What do I owe myself?\" State the facts of what you need without letting them rewrite the exchange into a test of authority. Your vulnerability is not a weakness.",
+      "body_they": "You bring a private need to the person who controls the money, the access, or the family decision, explaining what you need based on care and history while they point to ownership, rules, and consequences. Power dynamics in the relationship become obvious: who makes the decisions, who always gives in, and who holds the emotional cards. Are you the one who always compromises, always bends? The question is no longer \"What do I owe this person?\" but \"What do I owe myself?\" State the facts of what you need without letting them rewrite the exchange into a test of authority. Your vulnerability is not a weakness.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can be hurt by someone who never meant to hurt you.",
-      "body_they": "You can be hurt by someone who never meant to hurt you.",
+      "body_you": "You can leave a need unsaid and still expect them to understand.",
+      "body_they": "You can leave a need unsaid and still expect them to understand.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14549,8 +14549,8 @@
       "contentKey": "fallback-hook/daily-body/opposition/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone bumps an old bruise today and the reaction outruns the crime. Stop deciding they did it on purpose before you've asked a single question - old pain borrows new faces. Tell them gently where it landed, without turning the conversation into a courtroom.",
-      "body_they": "Someone bumps an old bruise today and the reaction outruns the crime. Stop deciding they did it on purpose before you've asked a single question - old pain borrows new faces. Tell them gently where it landed, without turning the conversation into a courtroom.",
+      "body_you": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan.",
+      "body_they": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14558,26 +14558,26 @@
       "contentKey": "fallback-hook/daily-headline/opposition/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The people pulling you forward will not always feel comfortable.",
-      "body_they": "The people pulling you forward will not always feel comfortable.",
+      "body_you": "Growth requires losing your favorite excuses.",
+      "body_they": "Growth requires losing your favorite excuses.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone in your life asks more of you today than feels fair. Stop hearing every stretch as criticism. The relationships that grow you rarely feel relaxing while they're doing it. Say yes to the stretch and no to the guilt. Both fit.",
-      "body_they": "Someone in your life asks more of you today than feels fair. Stop hearing every stretch as criticism. The relationships that grow you rarely feel relaxing while they're doing it. Say yes to the stretch and no to the guilt. Both fit.",
+      "body_you": "The people who actually help you grow will not always feel comfortable to be around. When someone calls you out on a bad habit, your instinct might be to pull back. But predictable dynamics are not the same as healthy ones. Pay attention to who supports the person you are becoming, versus who only likes you when you remain useful in the old way.",
+      "body_they": "The people who actually help you grow will not always feel comfortable to be around. When someone calls you out on a bad habit, your instinct might be to pull back. But predictable dynamics are not the same as healthy ones. Pay attention to who supports the person you are becoming, versus who only likes you when you remain useful in the old way.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/opposition/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You can miss how things used to be without going back there.",
-      "body_they": "You can miss how things used to be without going back there.",
+      "body_you": "The automatic yes is getting harder to live with.",
+      "body_they": "The automatic yes is getting harder to live with.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14585,8 +14585,8 @@
       "contentKey": "fallback-hook/daily-body/opposition/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "An old dynamic knocks today: the familiar role, the familiar argument, the familiar person. Stop auditioning for a part you already outgrew - nostalgia edits out the reasons you left. Be the current version of yourself on purpose today.",
-      "body_they": "An old dynamic knocks today: the familiar role, the familiar argument, the familiar person. Stop auditioning for a part you already outgrew - nostalgia edits out the reasons you left. Be the current version of yourself on purpose today.",
+      "body_you": "Someone asks for one more favor, and you feel yourself agreeing before you check the time you saved for yourself. The yes may keep them happy and leave you resentful. You do not have to prove care by taking on every errand. Tell them you cannot do this one.",
+      "body_they": "Someone asks for one more favor, and you feel yourself agreeing before you check the time you saved for yourself. The yes may keep them happy and leave you resentful. You do not have to prove care by taking on every errand. Tell them you cannot do this one.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14594,44 +14594,44 @@
       "contentKey": "fallback-hook/daily-headline/opposition/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You don't have to shrink to keep someone comfortable.",
-      "body_they": "You don't have to shrink to keep someone comfortable.",
+      "body_you": "Staying silent only hides how much you've already given up.",
+      "body_they": "Staying silent only hides how much you've already given up.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/opposition/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Around someone today, you edit yourself without noticing: softer opinions, smaller wants, a laugh you don't mean. Stop paying for harmony with pieces of yourself. Say one unedited thing today; let the room meet the real version.",
-      "body_they": "Around someone today, you edit yourself without noticing: softer opinions, smaller wants, a laugh you don't mean. Stop paying for harmony with pieces of yourself. Say one unedited thing today; let the room meet the real version.",
+      "body_you": "You can't keep tiptoeing across a gap that is actively growing. Staying quiet only hides how much you've settled for routine over connection. Walking on eggshells doesn't prevent a mess; it just guarantees one. Staying polite isn't saving the relationship. It is just delaying the inevitable.",
+      "body_they": "You can't keep tiptoeing across a gap that is actively growing. Staying quiet only hides how much you've settled for routine over connection. Walking on eggshells doesn't prevent a mess; it just guarantees one. Staying polite isn't saving the relationship. It is just delaying the inevitable.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Anyone paying attention today is going to see the real you.",
-      "body_they": "Anyone paying attention today is going to see the real you.",
+      "body_you": "What you want is obvious today, especially when you try to pretend you do not care.",
+      "body_they": "What you want is obvious today, especially when you try to pretend you do not care.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today your own name is loud in your head: your plans, your pride, your unfinished business. Stop downplaying what you want just to seem easygoing. Clear desire is not arrogance. It gives people something honest to respond to. Ask for it directly. Today, it lands.",
-      "body_they": "Today your own name is loud in your head: your plans, your pride, your unfinished business. Stop downplaying what you want just to seem easygoing. Clear desire is not arrogance. It gives people something honest to respond to. Ask for it directly. Today, it lands.",
+      "body_you": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
+      "body_they": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Whatever you're feeling today, you're feeling all of it.",
-      "body_they": "Whatever you're feeling today, you're feeling all of it.",
+      "body_you": "A sudden change of plans can quickly wear down your patience.",
+      "body_they": "A sudden change of plans can quickly wear down your patience.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14639,8 +14639,8 @@
       "contentKey": "fallback-hook/daily-body/conjunction/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Everything lands closer to the skin today. Stop scheduling like it's a normal day - feelings this loud want witness, not fixing. Cancel one thing and actually feel it; that empties it faster than powering through.",
-      "body_they": "Everything lands closer to the skin today. Stop scheduling like it's a normal day - feelings this loud want witness, not fixing. Cancel one thing and actually feel it; that empties it faster than powering through.",
+      "body_you": "When someone asks to reschedule, you might catch yourself getting irritated or defensive before you even process the ask. Instead of listing every reason their idea is inconvenient, just say what you can and cannot do. You do not have to manage everyone else's feelings today. Give them a straight answer and let the rest go.",
+      "body_they": "When someone asks to reschedule, you might catch yourself getting irritated or defensive before you even process the ask. Instead of listing every reason their idea is inconvenient, just say what you can and cannot do. You do not have to manage everyone else's feelings today. Give them a straight answer and let the rest go.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14648,44 +14648,44 @@
       "contentKey": "fallback-hook/daily-headline/conjunction/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today your mind is running faster than everyone else's patience.",
-      "body_they": "Today your mind is running faster than everyone else's patience.",
+      "body_you": "Once you admit what you are worried about, the whole conversation can come out at once.",
+      "body_they": "Once you admit what you are worried about, the whole conversation can come out at once.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Thoughts arrive faster than sentences today. Stop firing off every draft that crosses your mind. Write the good ones down and let them sit until evening; the keepers survive, the clever ones quietly don't. Say less. Land more.",
-      "body_they": "Thoughts arrive faster than sentences today. Stop firing off every draft that crosses your mind. Write the good ones down and let them sit until evening; the keepers survive, the clever ones quietly don't. Say less. Land more.",
+      "body_you": "You are trying to decide who can take a family member to an appointment when you finally say that you do not think they should go alone. Then the rest spills out: the work you would miss, who else could help, and why this keeps becoming your responsibility. Decide who is going with them first. Then come back to why the responsibility keeps falling on you.",
+      "body_they": "You are trying to decide who can take a family member to an appointment when you finally say that you do not think they should go alone. Then the rest spills out: the work you would miss, who else could help, and why this keeps becoming your responsibility. Decide who is going with them first. Then come back to why the responsibility keeps falling on you.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you notice what you love and what you've only been tolerating.",
-      "body_they": "Today you notice what you love and what you've only been tolerating.",
+      "body_you": "Love can look low-key.",
+      "body_they": "Love can look low-key.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Your taste is turned all the way up today: people, rooms, plans, everything gets felt as beautiful or wrong. Stop calling it pickiness. Knowing what you actually enjoy is a skill most people never build. Choose one real pleasure on purpose today. Skip the obligatory one.",
-      "body_they": "Your taste is turned all the way up today: people, rooms, plans, everything gets felt as beautiful or wrong. Stop calling it pickiness. Knowing what you actually enjoy is a skill most people never build. Choose one real pleasure on purpose today. Skip the obligatory one.",
+      "body_you": "Love usually looks pretty ordinary: a saved seat, a remembered coffee order, a text that hits right when you need a lift. You don't need a grand, dramatic gesture to know who's in your corner. Pay attention to who shows up without making it about them, and let them know you saw it. Let the small things count.",
+      "body_they": "Love usually looks pretty ordinary: a saved seat, a remembered coffee order, a text that hits right when you need a lift. You don't need a grand, dramatic gesture to know who's in your corner. Pay attention to who shows up without making it about them, and let them know you saw it. Let the small things count.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the energy is real, and it is going somewhere with or without you.",
-      "body_they": "Today the energy is real, and it is going somewhere with or without you.",
+      "body_you": "The feeling hits, and you are already doing something about it.",
+      "body_they": "The feeling hits, and you are already doing something about it.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14693,8 +14693,8 @@
       "contentKey": "fallback-hook/daily-body/conjunction/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You wake up loaded today: drive, edge, momentum, all of it. Stop spending it on irritation and inbox skirmishes - energy this good deserves a real target. Hit the hardest thing on your list first; the rest rides that win.",
-      "body_they": "You wake up loaded today: drive, edge, momentum, all of it. Stop spending it on irritation and inbox skirmishes - energy this good deserves a real target. Hit the hardest thing on your list first; the rest rides that win.",
+      "body_you": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide whether you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
+      "body_they": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide whether you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14702,44 +14702,44 @@
       "contentKey": "fallback-hook/daily-headline/conjunction/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today everything looks possible, and some of it actually is.",
-      "body_they": "Today everything looks possible, and some of it actually is.",
+      "body_you": "Help becomes extra work when everyone shows up at the same time.",
+      "body_they": "Help becomes extra work when everyone shows up at the same time.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Optimism runs hot today and your yes comes easy. Stop signing future-you up for everything present-you finds exciting. Big feelings about a plan are not the same as a plan. Take the biggest idea and give it one concrete first step. That's how luck gets real.",
-      "body_they": "Optimism runs hot today and your yes comes easy. Stop signing future-you up for everything present-you finds exciting. Big feelings about a plan are not the same as a plan. Take the biggest idea and give it one concrete first step. That's how luck gets real.",
+      "body_you": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the single offer that makes your day simpler, say a polite no to the rest, and move on.",
+      "body_they": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the single offer that makes your day simpler, say a polite no to the rest, and move on.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you can see exactly what needs doing, and that is a gift.",
-      "body_they": "Today you can see exactly what needs doing, and that is a gift.",
+      "body_you": "Taking care of family is rarely just about the task itself.",
+      "body_they": "Taking care of family is rarely just about the task itself.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The sober eye is on today: you see the cracks, the debts, the postponed repairs of your own life. Stop reading clarity as doom - seeing plainly is the first half of fixing. Finish one overdue thing completely. Nothing else tastes like done.",
-      "body_they": "The sober eye is on today: you see the cracks, the debts, the postponed repairs of your own life. Stop reading clarity as doom - seeing plainly is the first half of fixing. Finish one overdue thing completely. Nothing else tastes like done.",
+      "body_you": "It is the energy spent rebuilding your whole day around it. A text confirms an appointment, so you reschedule a work call and squeeze your remaining hours into a tight corner. Then another ask comes in before you have even settled the first change. The weight does not just come from showing up. It comes from constantly tearing down and rearranging your life whenever someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
+      "body_they": "It is the energy spent rebuilding your whole day around it. A text confirms an appointment, so you reschedule a work call and squeeze your remaining hours into a tight corner. Then another ask comes in before you have even settled the first change. The weight does not just come from showing up. It comes from constantly tearing down and rearranging your life whenever someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the itch for something different is telling you something true.",
-      "body_they": "Today the itch for something different is telling you something true.",
+      "body_you": "You keep reconsidering the whole routine after one unwelcome change.",
+      "body_they": "You keep reconsidering the whole routine after one unwelcome change.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14747,8 +14747,8 @@
       "contentKey": "fallback-hook/daily-body/conjunction/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Routine chafes today and the odd idea keeps coming back. Stop dismissing the strange option before you've actually looked at it. The out-of-character move is sometimes the most accurate one you make all year. Try the different route, the different answer, the different room. Small experiments only.",
-      "body_they": "Routine chafes today and the odd idea keeps coming back. Stop dismissing the strange option before you've actually looked at it. The out-of-character move is sometimes the most accurate one you make all year. Try the different route, the different answer, the different room. Small experiments only.",
+      "body_you": "You open a familiar service, find a higher price, and lose time comparing replacements. You may feel too restless to accept the new terms. You start questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before changing the service.",
+      "body_they": "You open a familiar service, find a higher price, and lose time comparing replacements. You may feel too restless to accept the new terms. You start questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before changing the service.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14756,44 +14756,44 @@
       "contentKey": "fallback-hook/daily-headline/conjunction/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today runs on imagination, which is a skill if you aim it.",
-      "body_they": "Today runs on imagination, which is a skill if you aim it.",
+      "body_you": "Give yourself permission to turn the volume down on the world right now.",
+      "body_they": "Give yourself permission to turn the volume down on the world right now.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Focus goes soft today and the daydreams get vivid. Stop demanding sharp answers from a blurry day - some days are for making and wandering, not deciding. Leave the big calls for tomorrow and make something today instead.",
-      "body_they": "Focus goes soft today and the daydreams get vivid. Stop demanding sharp answers from a blurry day - some days are for making and wandering, not deciding. Leave the big calls for tomorrow and make something today instead.",
+      "body_you": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
+      "body_they": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you can see underneath things, including your own stories.",
-      "body_they": "Today you can see underneath things, including your own stories.",
+      "body_you": "Stop weaponizing control to keep from admitting you were hurt.",
+      "body_they": "Stop weaponizing control to keep from admitting you were hurt.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The deep read is on today: motives, patterns, the real reason under the stated one. Stop using it only on other people. The most useful thing you'll uncover today is your own hidden motive, and it will explain a lot. Look there first. Then decide what changes.",
-      "body_they": "The deep read is on today: motives, patterns, the real reason under the stated one. Stop using it only on other people. The most useful thing you'll uncover today is your own hidden motive, and it will explain a lot. Look there first. Then decide what changes.",
+      "body_you": "A small reaction may reveal a much larger need for control, recognition, or certainty. You may want to push, withhold, test, or win because admitting you are upset feels more exposing. Name the feeling before it turns into a power struggle. Intensity is useful when it tells the truth, not when it tries to force an outcome.",
+      "body_they": "A small reaction may reveal a much larger need for control, recognition, or certainty. You may want to push, withhold, test, or win because admitting you are upset feels more exposing. Name the feeling before it turns into a power struggle. Intensity is useful when it tells the truth, not when it tries to force an outcome.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The tender spot is close to the surface today, and that's workable.",
-      "body_they": "The tender spot is close to the surface today, and that's workable.",
+      "body_you": "The care is being offered, but the old hurt makes it hard to accept.",
+      "body_they": "The care is being offered, but the old hurt makes it hard to accept.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14801,8 +14801,8 @@
       "contentKey": "fallback-hook/daily-body/conjunction/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Old pain sits nearer the skin today than usual. Stop bracing like something's about to go wrong - an old reaction is not a new emergency. Be softer with yourself than feels productive; today the softness is the work.",
-      "body_they": "Old pain sits nearer the skin today than usual. Stop bracing like something's about to go wrong - an old reaction is not a new emergency. Be softer with yourself than feels productive; today the softness is the work.",
+      "body_you": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. The need for care and the fear of being disappointed arrive at the same time, so refusing can feel safer than asking. Replace \"I'm fine\" with a quick check-in.",
+      "body_they": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. The need for care and the fear of being disappointed arrive at the same time, so refusing can feel safer than asking. Replace \"I'm fine\" with a quick check-in.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14810,8 +14810,8 @@
       "contentKey": "fallback-hook/daily-headline/conjunction/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today points the way forward whether or not you feel ready.",
-      "body_they": "Today points the way forward whether or not you feel ready.",
+      "body_you": "You keep reopening the next step you said you were not ready for.",
+      "body_they": "You keep reopening the next step you said you were not ready for.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14819,8 +14819,8 @@
       "contentKey": "fallback-hook/daily-body/conjunction/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The next chapter taps you on the shoulder today: the skill, the place, the conversation you keep circling. Stop filing it under someday - days like this are the calendar's way of underlining. Take one visible step before midnight. Small counts.",
-      "body_they": "The next chapter taps you on the shoulder today: the skill, the place, the conversation you keep circling. Stop filing it under someday - days like this are the calendar's way of underlining. Take one visible step before midnight. Small counts.",
+      "body_you": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. It does mean the choice deserves more than another closed tab. Write one sentence naming why you want it.",
+      "body_they": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. It does mean the choice deserves more than another closed tab. Write one sentence naming why you want it.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14828,26 +14828,26 @@
       "contentKey": "fallback-hook/daily-headline/conjunction/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the past looks better than it ever actually was.",
-      "body_they": "Today the past looks better than it ever actually was.",
+      "body_you": "The past stops being memory and becomes an option.",
+      "body_they": "The past stops being memory and becomes an option.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/conjunction/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The familiar pulls hard today: old habits, old comforts, an old name floating up. Stop mistaking familiar for right - you left some of that behind for reasons. Visit the memory if you want; just come back.",
-      "body_they": "The familiar pulls hard today: old habits, old comforts, an old name floating up. Stop mistaking familiar for right - you left some of that behind for reasons. Visit the memory if you want; just come back.",
+      "body_you": "An old employer reaches out. An ex checks in. A plan you abandoned suddenly looks possible again. Because you recognize the pattern, your body may relax before your mind remembers what it cost you. Pause before you call it a second chance. Do you still want this, or do you simply know how to survive it? The unfamiliar can feel uncomfortable without being wrong. The familiar can feel easy without being good. Let your history help you choose differently, not return automatically.",
+      "body_they": "An old employer reaches out. An ex checks in. A plan you abandoned suddenly looks possible again. Because you recognize the pattern, your body may relax before your mind remembers what it cost you. Pause before you call it a second chance. Do you still want this, or do you simply know how to survive it? The unfamiliar can feel uncomfortable without being wrong. The familiar can feel easy without being good. Let your history help you choose differently, not return automatically.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/conjunction/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the unedited version of you is the accurate one.",
-      "body_they": "Today the unedited version of you is the accurate one.",
+      "body_you": "The want you keep explaining away is still there.",
+      "body_they": "The want you keep explaining away is still there.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14855,8 +14855,8 @@
       "contentKey": "fallback-hook/daily-body/conjunction/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The filters are thin today and the true opinions sit right behind your teeth. Stop deciding the honest version is too much before anyone's heard it. Say the real thing in your normal voice; no performance required.",
-      "body_they": "The filters are thin today and the true opinions sit right behind your teeth. Stop deciding the honest version is too much before anyone's heard it. Say the real thing in your normal voice; no performance required.",
+      "body_you": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is…\" and stop before the justification.",
+      "body_they": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is…\" and stop before the justification.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14864,80 +14864,80 @@
       "contentKey": "fallback-hook/daily-headline/soft/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you get to be yourself without negotiating for it.",
-      "body_they": "Today you get to be yourself without negotiating for it.",
+      "body_you": "Let it be simple.",
+      "body_they": "Let it be simple.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/sun",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The day meets you halfway: people cooperate, plans click, your presence lands. Stop saving your best requests for a harder day - ease isn't a trap, it's a window. Ask for the thing you've been sitting on; asking is the part you control.",
-      "body_they": "The day meets you halfway: people cooperate, plans click, your presence lands. Stop saving your best requests for a harder day - ease isn't a trap, it's a window. Ask for the thing you've been sitting on; asking is the part you control.",
+      "body_you": "You don't have to pre-screen your thoughts or edit your preferences just to avoid making waves. You know who you are and what you bring to the table. You don't need the buffer. This is a good day to ask for what you want directly, put your name on your accomplishments, and skip the defensive backstory. Let things be straightforward for once.",
+      "body_they": "You don't have to pre-screen your thoughts or edit your preferences just to avoid making waves. You know who you are and what you bring to the table. You don't need the buffer. This is a good day to ask for what you want directly, put your name on your accomplishments, and skip the defensive backstory. Let things be straightforward for once.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today your feelings and your life are on speaking terms.",
-      "body_they": "Today your feelings and your life are on speaking terms.",
+      "body_you": "Constantly bracing for trouble doesn't prevent it.",
+      "body_they": "Constantly bracing for trouble doesn't prevent it.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The mood underneath everything is quietly good today. Stop poking it to check if it's real. Some days you don't have to earn or analyze; they're just gentle. Spend an hour on something purely comforting. No project attached.",
-      "body_they": "The mood underneath everything is quietly good today. Stop poking it to check if it's real. Some days you don't have to earn or analyze; they're just gentle. Spend an hour on something purely comforting. No project attached.",
+      "body_you": "Things are running smoothly, which might ironically make you nervous. The friction comes when ease makes you suspicious. Your reflex might be to brace for impact, look for the hidden catch, or deflect a simple thank you by listing everything you could have done better. Constantly bracing for trouble doesn't prevent it; it just ruins any peace of mind you actually have right now. Drop the guard and let the momentum work for you.",
+      "body_they": "Things are running smoothly, which might ironically make you nervous. The friction comes when ease makes you suspicious. Your reflex might be to brace for impact, look for the hidden catch, or deflect a simple thank you by listing everything you could have done better. Constantly bracing for trouble doesn't prevent it; it just ruins any peace of mind you actually have right now. Drop the guard and let the momentum work for you.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the right words show up on the first try.",
-      "body_they": "Today the right words show up on the first try.",
+      "body_you": "Say the thing that's been living in your chest.",
+      "body_they": "Say the thing that's been living in your chest.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/mercury",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Thinking runs clean today: the email writes itself, the point lands, the joke works. Stop spending the clarity on small talk. This is the day for the conversation you've been drafting for weeks. Have it before the window closes. It goes better than rehearsal.",
-      "body_they": "Thinking runs clean today: the email writes itself, the point lands, the joke works. Stop spending the clarity on small talk. This is the day for the conversation you've been drafting for weeks. Have it before the window closes. It goes better than rehearsal.",
+      "body_you": "You finally reach the exact reason a conversation went off the rails, and the words to explain it arrive without friction. Whether through a private meeting, a voice note, or a direct reply, you can name what hurt, what changed, and what answer is needed without starting another argument. Being direct is not cruel. Write the truth you need to say in one sentence, speak it once, calmly, and let the chips fall where they teach you. Say what you mean, say it like it matters, and let the opening do its job.",
+      "body_they": "You finally reach the exact reason a conversation went off the rails, and the words to explain it arrive without friction. Whether through a private meeting, a voice note, or a direct reply, you can name what hurt, what changed, and what answer is needed without starting another argument. Being direct is not cruel. Write the truth you need to say in one sentence, speak it once, calmly, and let the chips fall where they teach you. Say what you mean, say it like it matters, and let the opening do its job.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today it's easy to love people and let them love you back.",
-      "body_they": "Today it's easy to love people and let them love you back.",
+      "body_you": "You don't get extra credit for doing life the hard way.",
+      "body_they": "You don't get extra credit for doing life the hard way.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Warmth moves easily today: compliments land, company feels good, small pleasures deliver. Stop rationing the kind word as if kindness runs out. Say the generous thing you usually keep to yourself; let it land without adding a joke.",
-      "body_they": "Warmth moves easily today: compliments land, company feels good, small pleasures deliver. Stop rationing the kind word as if kindness runs out. Say the generous thing you usually keep to yourself; let it land without adding a joke.",
+      "body_you": "A line clears out, a call gets canceled, or someone handles the exact errand you were dreading. Your instinct might be to wave off the ease or immediately find something else to stress over, as if comfort has to be bought with effort. Stop picking a fight with the flow. Let the break count in whatever form it takes.",
+      "body_they": "A line clears out, a call gets canceled, or someone handles the exact errand you were dreading. Your instinct might be to wave off the ease or immediately find something else to stress over, as if comfort has to be bought with effort. Stop picking a fight with the flow. Let the break count in whatever form it takes.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today effort and results are actually connected for once.",
-      "body_they": "Today effort and results are actually connected for once.",
+      "body_you": "It takes less energy to do the thing than to keep putting it off.",
+      "body_they": "It takes less energy to do the thing than to keep putting it off.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14945,8 +14945,8 @@
       "contentKey": "fallback-hook/daily-body/soft/mars",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Energy flows clean today: no friction, no drag, just capacity. Stop spending a day like this on maintenance and errands. Momentum this smooth is for the thing that scares you a little. Start it now, while starting is cheap. Future-you says thanks.",
-      "body_they": "Energy flows clean today: no friction, no drag, just capacity. Stop spending a day like this on maintenance and errands. Momentum this smooth is for the thing that scares you a little. Start it now, while starting is cheap. Future-you says thanks.",
+      "body_you": "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again.",
+      "body_they": "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -14954,80 +14954,80 @@
       "contentKey": "fallback-hook/daily-headline/soft/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today your luck is better than your plans deserve.",
-      "body_they": "Today your luck is better than your plans deserve.",
+      "body_you": "An opening just appeared.",
+      "body_they": "An opening just appeared.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Things break your way today - timing, moods, the small yes from the right person - and there's no catch to wait for. Take the meeting, send the ask, buy the ticket. Luck likes a moving target; give it one.",
-      "body_they": "Things break your way today - timing, moods, the small yes from the right person - and there's no catch to wait for. Take the meeting, send the ask, buy the ticket. Luck likes a moving target; give it one.",
+      "body_you": "You send the email expecting another delay, and the answer comes back yes. A meeting moves and gives you the hour you needed. The fee is lower than expected, or the right person offers an introduction without making you chase them for it. Use the opening while it is here. Send the application, make the appointment, or move the project forward.",
+      "body_they": "You send the email expecting another delay, and the answer comes back yes. A meeting moves and gives you the hour you needed. The fee is lower than expected, or the right person offers an introduction without making you chase them for it. Use the opening while it is here. Send the application, make the appointment, or move the project forward.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the work works, and that is its own kind of peace.",
-      "body_they": "Today the work works, and that is its own kind of peace.",
+      "body_you": "Quiet progress is still progress.",
+      "body_they": "Quiet progress is still progress.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Discipline comes easy today; the boring thing feels almost pleasant. Stop saving a productive mood for later - moods don't keep. Clear the overdue pile while it's light, then quit on time tonight. Both halves count.",
-      "body_they": "Discipline comes easy today; the boring thing feels almost pleasant. Stop saving a productive mood for later - moods don't keep. Clear the overdue pile while it's light, then quit on time tonight. Both halves count.",
+      "body_you": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Take advantage of the slower rhythm to clear just one loose end.",
+      "body_they": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Take advantage of the slower rhythm to clear just one loose end.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the surprises are on your side for a change.",
-      "body_they": "Today the surprises are on your side for a change.",
+      "body_you": "A small change gives you your day back.",
+      "body_they": "A small change gives you your day back.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The unexpected runs friendly today: the plan change helps, the stranger's interesting, the wrong turn works out. Stop gripping the original schedule - days like this reward whoever stays loose. Say yes to the odd invitation; the detour is the point today.",
-      "body_they": "The unexpected runs friendly today: the plan change helps, the stranger's interesting, the wrong turn works out. Stop gripping the original schedule - days like this reward whoever stays loose. Say yes to the odd invitation; the detour is the point today.",
+      "body_you": "An unexpected gap opens in your afternoon, offering a quick chance to shift an errand or rearrange your tasks without causing any rupture. You might hesitate because sticking to the default path feels safer than taking an unplanned detour, but small, steady reps of flexibility go a long way. Take the opening anyway: rearranging a minor detail costs nothing to try and gives you an hour of your day back. You're allowed to define success on your own terms.",
+      "body_they": "An unexpected gap opens in your afternoon, offering a quick chance to shift an errand or rearrange your tasks without causing any rupture. You might hesitate because sticking to the default path feels safer than taking an unplanned detour, but small, steady reps of flexibility go a long way. Take the opening anyway: rearranging a minor detail costs nothing to try and gives you an hour of your day back. You're allowed to define success on your own terms.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today your imagination is telling you the truth.",
-      "body_they": "Today your imagination is telling you the truth.",
+      "body_you": "Trust the impulse before you understand the purpose.",
+      "body_they": "Trust the impulse before you understand the purpose.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Imagination runs clearer today: the image sticks, the hunch is worth testing. Stop demanding proof before you make something - make the thing, write the thing, say the strange kind thing. Logic can check the work tomorrow.",
-      "body_they": "Imagination runs clearer today: the image sticks, the hunch is worth testing. Stop demanding proof before you make something - make the thing, write the thing, say the strange kind thing. Logic can check the work tomorrow.",
+      "body_you": "A sentence arrives while you are washing the dishes. An image keeps returning when your attention drifts, or a vague hunch pulls you toward something you cannot explain yet. Save it before you ask what it is for. Write the line, collect the image, or make the rough version without forcing it to mean something. The structure can come later, once there is enough material to shape.",
+      "body_they": "A sentence arrives while you are washing the dishes. An image keeps returning when your attention drifts, or a vague hunch pulls you toward something you cannot explain yet. Save it before you ask what it is for. Write the line, collect the image, or make the rough version without forcing it to mean something. The structure can come later, once there is enough material to shape.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you're strong enough for the honest version.",
-      "body_they": "Today you're strong enough for the honest version.",
+      "body_you": "It takes less effort to acknowledge a feeling than to keep minimizing it.",
+      "body_they": "It takes less effort to acknowledge a feeling than to keep minimizing it.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15035,8 +15035,8 @@
       "contentKey": "fallback-hook/daily-body/soft/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Depth comes easy today: the real conversation feels natural instead of risky. Stop keeping things light out of habit. The question you've been carrying will land gently if you ask it now. Ask it plainly. What surfaces today heals.",
-      "body_they": "Depth comes easy today: the real conversation feels natural instead of risky. Stop keeping things light out of habit. The question you've been carrying will land gently if you ask it now. Ask it plainly. What surfaces today heals.",
+      "body_you": "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
+      "body_they": "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15044,62 +15044,62 @@
       "contentKey": "fallback-hook/daily-headline/soft/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the old wound is quiet enough to learn from.",
-      "body_they": "Today the old wound is quiet enough to learn from.",
+      "body_you": "You're not weak for needing care.",
+      "body_they": "You're not weak for needing care.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/chiron",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The sore spot isn't sore today, just visible. Stop waiting for a crisis to look at it. On calm days you can trace where it came from without falling in. Name it to yourself, or to someone safe. Named things shrink.",
-      "body_they": "The sore spot isn't sore today, just visible. Stop waiting for a crisis to look at it. On calm days you can trace where it came from without falling in. Name it to yourself, or to someone safe. Named things shrink.",
+      "body_you": "You are struggling through a difficult task or a frustrating message when someone notices you're stressed and quietly offers to handle something that would overwhelm you. Your reflex is to turn it down, because being seen stuck may feel worse than staying stuck. You don't have to keep pretending it's all okay or minimize your own experience. Accepting help mid-struggle does not make you weak or take away your independence, it just gives you room to breathe. Let them take a look and let the care reach the sore spot without putting your defenses up.",
+      "body_they": "You are struggling through a difficult task or a frustrating message when someone notices you're stressed and quietly offers to handle something that would overwhelm you. Your reflex is to turn it down, because being seen stuck may feel worse than staying stuck. You don't have to keep pretending it's all okay or minimize your own experience. Accepting help mid-struggle does not make you weak or take away your independence, it just gives you room to breathe. Let them take a look and let the care reach the sore spot without putting your defenses up.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the next step is smaller than you thought it was.",
-      "body_they": "Today the next step is smaller than you thought it was.",
+      "body_you": "You're building muscle memory.",
+      "body_they": "You're building muscle memory.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The direction you've been overthinking looks plain today. Stop re-planning what you already planned. The first step has been the same for weeks; today it's cheap. Take it before the doubt refills. Go now.",
-      "body_they": "The direction you've been overthinking looks plain today. Stop re-planning what you already planned. The first step has been the same for weeks; today it's cheap. Take it before the doubt refills. Go now.",
+      "body_you": "It's the slow, quiet shift from bracing yourself to trusting your own response. You ask for help before you are overwhelmed. You choose the unfamiliar path without requiring a hundred-step guarantee that it will all work out. Each time you practice the boundary, it becomes a little less frightening and a little more familiar. Eventually, what once took all your courage becomes part of how you live.",
+      "body_they": "It's the slow, quiet shift from bracing yourself to trusting your own response. You ask for help before you are overwhelmed. You choose the unfamiliar path without requiring a hundred-step guarantee that it will all work out. Each time you practice the boundary, it becomes a little less frightening and a little more familiar. Eventually, what once took all your courage becomes part of how you live.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the old skill pays for the new plan.",
-      "body_they": "Today the old skill pays for the new plan.",
+      "body_you": "Use what you learned, but put down what you carried.",
+      "body_they": "Use what you learned, but put down what you carried.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/soft/south-node",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "What you already know how to do carries you today. Stop discounting the abilities that come easily - easy for you is rare for most. Use the old strength on the new problem. Comfort is a tool today, not a trap.",
-      "body_they": "What you already know how to do carries you today. Stop discounting the abilities that come easily - easy for you is rare for most. Use the old strength on the new problem. Comfort is a tool today, not a trap.",
+      "body_you": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before competence becomes another way to prove that you deserve your place. That instinct may have kept you useful. It may even have kept you safe. But usefulness is not the same as belonging. Keep the skill. Put down the job of holding everyone together.",
+      "body_they": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before competence becomes another way to prove that you deserve your place. That instinct may have kept you useful. It may even have kept you safe. But usefulness is not the same as belonging. Keep the skill. Put down the job of holding everyone together.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/soft/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today honesty and charm turn out to be the same thing.",
-      "body_they": "Today honesty and charm turn out to be the same thing.",
+      "body_you": "Saying nothing is not the same as wanting nothing.",
+      "body_they": "Saying nothing is not the same as wanting nothing.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15107,8 +15107,8 @@
       "contentKey": "fallback-hook/daily-body/soft/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The edge sits well today: the blunt joke lands, the true opinion refreshes the room. Stop assuming the filtered version is the safe one. Today people want the real take, and you're the one holding it. Give it warmly. Warm and honest beats polite.",
-      "body_they": "The edge sits well today: the blunt joke lands, the true opinion refreshes the room. Stop assuming the filtered version is the safe one. Today people want the real take, and you're the one holding it. Give it warmly. Warm and honest beats polite.",
+      "body_you": "When your partner opens the grocery order and asks what to add, you may worry that one extra snack will seem demanding. So you say \"nothing,\" which leaves the item on your phone instead of in the shared cart. You're allowed to want more. One snack does not turn the order into a crisis. Send the snack's name and price before they check out.",
+      "body_they": "When your partner opens the grocery order and asks what to add, you may worry that one extra snack will seem demanding. So you say \"nothing,\" which leaves the item on your phone instead of in the shared cart. You're allowed to want more. One snack does not turn the order into a crisis. Send the snack's name and price before they check out.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15116,8 +15116,8 @@
       "contentKey": "fallback-hook/daily-headline/house/1",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today is about you, and for once that is the whole assignment.",
-      "body_they": "Today is about you, and for once that is the whole assignment.",
+      "body_you": "Blending in is not worth a first impression you do not recognize.",
+      "body_they": "Blending in is not worth a first impression you do not recognize.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15125,8 +15125,8 @@
       "contentKey": "fallback-hook/daily-body/house/1",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Attention turns back to yourself today: your body, your wants, your own company. Stop treating self-focus like a guilty pleasure - nobody else can do the being-you part. Take yourself somewhere you like. Notice what you want next.",
-      "body_they": "Attention turns back to yourself today: your body, your wants, your own company. Stop treating self-focus like a guilty pleasure - nobody else can do the being-you part. Take yourself somewhere you like. Notice what you want next.",
+      "body_you": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. Nobody can know you from the version that never shows up. Tell one person the detail you almost kept to yourself.",
+      "body_they": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. Nobody can know you from the version that never shows up. Tell one person the detail you almost kept to yourself.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15134,170 +15134,170 @@
       "contentKey": "fallback-hook/daily-headline/house/2",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today you can tell the difference between what you have and what you need.",
-      "body_they": "Today you can tell the difference between what you have and what you need.",
+      "body_you": "Stop auditing your worth like it is a balance sheet.",
+      "body_they": "Stop auditing your worth like it is a balance sheet.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/2",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Money, comfort, and what things are worth sit front of mind today. Stop measuring your worth with someone else's ruler. Enough is a number you get to define. Handle one small money thing and then enjoy something you already own. Both are wealth.",
-      "body_they": "Money, comfort, and what things are worth sit front of mind today. Stop measuring your worth with someone else's ruler. Enough is a number you get to define. Handle one small money thing and then enjoy something you already own. Both are wealth.",
+      "body_you": "You check your balance and feel your whole body tighten. A bill is due. The workday ends with half the list unfinished. Suddenly, the number starts telling a story about who you are: not responsible enough, not productive enough, not doing enough. Money can show you what needs attention. It cannot tell you what you are worth. Before you take on more work out of guilt, deny yourself what you need, or spend just to quiet the panic, pause and ask what would actually help. Handle the practical details, but leave your character out of it.",
+      "body_they": "You check your balance and feel your whole body tighten. A bill is due. The workday ends with half the list unfinished. Suddenly, the number starts telling a story about who you are: not responsible enough, not productive enough, not doing enough. Money can show you what needs attention. It cannot tell you what you are worth. Before you take on more work out of guilt, deny yourself what you need, or spend just to quiet the panic, pause and ask what would actually help. Handle the practical details, but leave your character out of it.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/3",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the small conversations are the whole point.",
-      "body_they": "Today the small conversations are the whole point.",
+      "body_you": "Extra explanation can bury the point.",
+      "body_they": "Extra explanation can bury the point.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/3",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Words, errands, and quick connections fill today: the text, the sibling, the neighbor, the idea. Stop saving your voice for occasions. The passing conversation you almost skip is the one that matters today. Say the thing while it's easy. Small words do big work.",
-      "body_they": "Words, errands, and quick connections fill today: the text, the sibling, the neighbor, the idea. Stop saving your voice for occasions. The passing conversation you almost skip is the one that matters today. Say the thing while it's easy. Small words do big work.",
+      "body_you": "The group chat moves dinner from seven to eight, then back again. A quick email sprouts six replies. You get halfway through an errand before realizing one key detail changed; and suddenly your whole afternoon is swallowed by back-and-forth. Give the small exchanges your full attention today. Confirm the time. Answer the exact question in front of you. Put the important details somewhere everyone can actually find them. A little precision right now will save you from a much bigger problem later. Say what needs to be said, make it clear, and let that be enough.",
+      "body_they": "The group chat moves dinner from seven to eight, then back again. A quick email sprouts six replies. You get halfway through an errand before realizing one key detail changed; and suddenly your whole afternoon is swallowed by back-and-forth. Give the small exchanges your full attention today. Confirm the time. Answer the exact question in front of you. Put the important details somewhere everyone can actually find them. A little precision right now will save you from a much bigger problem later. Say what needs to be said, make it clear, and let that be enough.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/4",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the people at home need you more than the world does.",
-      "body_they": "Today the people at home need you more than the world does.",
+      "body_you": "Give your home the care it needs so it can carry you back.",
+      "body_they": "Give your home the care it needs so it can carry you back.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/4",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Family, home, and the private life pull at you today. Stop treating home as whatever is left over after work; today it's the main event. Someone under your roof, or in your roots, could use ten real minutes. Give them. Then take ten for yourself.",
-      "body_they": "Family, home, and the private life pull at you today. Stop treating home as whatever is left over after work; today it's the main event. Someone under your roof, or in your roots, could use ten real minutes. Give them. Then take ten for yourself.",
+      "body_you": "You walk through the door and feel your body tighten before you have even put your keys down. The cabinet still will not close. The chair is buried again. The conversation no one wants to have is waiting at the kitchen table. Tend to the part of your private life you keep postponing because you are too tired to deal with it. Fix the latch. Clear a place to sit. Say what has been following everyone from room to room. Comfort is not a luxury or a look. It is what allows your home to hold you when the rest of life asks too much.",
+      "body_they": "You walk through the door and feel your body tighten before you have even put your keys down. The cabinet still will not close. The chair is buried again. The conversation no one wants to have is waiting at the kitchen table. Tend to the part of your private life you keep postponing because you are too tired to deal with it. Fix the latch. Clear a place to sit. Say what has been following everyone from room to room. Comfort is not a luxury or a look. It is what allows your home to hold you when the rest of life asks too much.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/5",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today goes better the less you try to manage it.",
-      "body_they": "Today goes better the less you try to manage it.",
+      "body_you": "You don't have to turn everything you make into work.",
+      "body_they": "You don't have to turn everything you make into work.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/5",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Play, romance, and making things ask for room today. Stop postponing fun like it's a reward for a finished list - the list never finishes, and joy today is fuel, not dessert. Do one thing purely because you like it. Let it be unproductive.",
-      "body_they": "Play, romance, and making things ask for room today. Stop postponing fun like it's a reward for a finished list - the list never finishes, and joy today is fuel, not dessert. Do one thing purely because you like it. Let it be unproductive.",
+      "body_you": "You draft a playful text or start making something, then hesitate right before sharing it and edit out the exact line that sounds most like you. You've forgotten how to have fun without turning it into work or optimizing it for an audience. Scaling back your voice might protect you from feeling exposed, but it also strips out the creative spark that makes it yours. You're allowed to make things that don't impress anyone but you, and what you create doesn't need to be profitable to matter. Put your original spin back into it and let it be messy, imperfect, and yours.",
+      "body_they": "You draft a playful text or start making something, then hesitate right before sharing it and edit out the exact line that sounds most like you. You've forgotten how to have fun without turning it into work or optimizing it for an audience. Scaling back your voice might protect you from feeling exposed, but it also strips out the creative spark that makes it yours. You're allowed to make things that don't impress anyone but you, and what you create doesn't need to be profitable to matter. Put your original spin back into it and let it be messy, imperfect, and yours.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/6",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today runs on the small stuff done well and on time.",
-      "body_they": "Today runs on the small stuff done well and on time.",
+      "body_you": "Stop structuring your day around everyone else's priorities.",
+      "body_they": "Stop structuring your day around everyone else's priorities.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/6",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Routines, health, and the daily round want attention today. Stop despising the boring tasks - they're how a life stays standing, and your body notices being looked after. Fix one small routine today: the meal, the walk, the bedtime. Small fixes outlast big plans.",
-      "body_they": "Routines, health, and the daily round want attention today. Stop despising the boring tasks - they're how a life stays standing, and your body notices being looked after. Fix one small routine today: the meal, the walk, the bedtime. Small fixes outlast big plans.",
+      "body_you": "Pay attention to the exhaustion that does not lift after one good night of sleep. You may be building the entire day around other people's deadlines, then trying to fit food, medication, movement, or rest into whatever is left. Your health is not an extra task after the real work. Change one part of the schedule that keeps making basic care impossible.",
+      "body_they": "Pay attention to the exhaustion that does not lift after one good night of sleep. You may be building the entire day around other people's deadlines, then trying to fit food, medication, movement, or rest into whatever is left. Your health is not an extra task after the real work. Change one part of the schedule that keeps making basic care impossible.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/7",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today happens in twos, and the second person is waiting.",
-      "body_they": "Today happens in twos, and the second person is waiting.",
+      "body_you": "Resentment is the receipt for a boundary you didn't set.",
+      "body_they": "Resentment is the receipt for a boundary you didn't set.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/7",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Partners, close friends, and one-on-one dealings take the front seat today. Stop guessing what the other person thinks - today is built for asking, not mind-reading. Have the two-person conversation. Alone can wait.",
-      "body_they": "Partners, close friends, and one-on-one dealings take the front seat today. Stop guessing what the other person thinks - today is built for asking, not mind-reading. Have the two-person conversation. Alone can wait.",
+      "body_you": "You agree before you check in with yourself. You take on the favor, go along with the plan, or make your preference smaller so the moment stays easy. Then the resentment arrives after everyone else thinks the decision is settled. Catch yourself before the yes leaves your mouth. Ask for more notice. Name the limit while there is still room to adjust. Your needs may inconvenience someone, but that does not make them unreasonable. A connection that only works when you are easy to accommodate is not making space for all of you.",
+      "body_they": "You agree before you check in with yourself. You take on the favor, go along with the plan, or make your preference smaller so the moment stays easy. Then the resentment arrives after everyone else thinks the decision is settled. Catch yourself before the yes leaves your mouth. Ask for more notice. Name the limit while there is still room to adjust. Your needs may inconvenience someone, but that does not make them unreasonable. A connection that only works when you are easy to accommodate is not making space for all of you.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/8",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today goes deeper than you planned, and that is fine.",
-      "body_they": "Today goes deeper than you planned, and that is fine.",
+      "body_you": "Notice what you share and what you keep private.",
+      "body_they": "Notice what you share and what you keep private.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/8",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Shared money, trust, and the under-the-surface stuff come up today. Stop skating past the topic you both feel sitting there - avoidance is what keeps charging interest. Ask the private question, or answer one honestly.",
-      "body_they": "Shared money, trust, and the under-the-surface stuff come up today. Stop skating past the topic you both feel sitting there - avoidance is what keeps charging interest. Ask the private question, or answer one honestly.",
+      "body_you": "You split the check down the middle even though you barely ate, or keep quiet about a shared debt because bringing up money feels deeply uncomfortable. Someone else holds the password, the paperwork, or the final say, and you are left absorbing the friction. You don't have to stay in the dark to keep the peace. Bring the terms into the light. Ask who owes what, request the login, and get the exact numbers on paper. Asking for transparency does not make you weak or high maintenance. You are allowed to insist on clarity before you invest another dollar, hour, or ounce of faith.",
+      "body_they": "You split the check down the middle even though you barely ate, or keep quiet about a shared debt because bringing up money feels deeply uncomfortable. Someone else holds the password, the paperwork, or the final say, and you are left absorbing the friction. You don't have to stay in the dark to keep the peace. Bring the terms into the light. Ask who owes what, request the login, and get the exact numbers on paper. Asking for transparency does not make you weak or high maintenance. You are allowed to insist on clarity before you invest another dollar, hour, or ounce of faith.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/9",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today is bigger than your usual radius wants to admit.",
-      "body_they": "Today is bigger than your usual radius wants to admit.",
+      "body_you": "You do not have to have it all figured out to keep learning.",
+      "body_they": "You do not have to have it all figured out to keep learning.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/9",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The far-off calls today: the trip, the course, the idea from outside your circle. Stop shelving curiosity because the timing isn't practical - perspective is a physical thing you get by moving. Learn one new thing or make the plan to go; give curiosity somewhere real to lead.",
-      "body_they": "The far-off calls today: the trip, the course, the idea from outside your circle. Stop shelving curiosity because the timing isn't practical - perspective is a physical thing you get by moving. Learn one new thing or make the plan to go; give curiosity somewhere real to lead.",
+      "body_you": "You feel the awkward friction when old rules no longer explain your current reality. Maybe a philosophy that kept you safe in your twenties feels restrictive now, or new information is asking you to turn a corner. You do not have to double down on an outdated worldview just to prove you were right in the first place. You are allowed to revise the course, change your mind, and learn in public. Wisdom is not holding a rigid stance. It is letting your life expand past what you used to think you knew.",
+      "body_they": "You feel the awkward friction when old rules no longer explain your current reality. Maybe a philosophy that kept you safe in your twenties feels restrictive now, or new information is asking you to turn a corner. You do not have to double down on an outdated worldview just to prove you were right in the first place. You are allowed to revise the course, change your mind, and learn in public. Wisdom is not holding a rigid stance. It is letting your life expand past what you used to think you knew.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/10",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today the work you have done quietly becomes visible.",
-      "body_they": "Today the work you have done quietly becomes visible.",
+      "body_you": "Lead from presence, not perfection.",
+      "body_they": "Lead from presence, not perfection.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/10",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Career, reputation, and the long climb come into focus today. Stop waiting to be noticed and put the finished thing where people can see it - visibility is a task, not a personality trait. Send the work out today. Let it represent you.",
-      "body_they": "Career, reputation, and the long climb come into focus today. Stop waiting to be noticed and put the finished thing where people can see it - visibility is a task, not a personality trait. Send the work out today. Let it represent you.",
+      "body_you": "A promotion comes up. Your name gets mentioned in a meeting. Another project lands on your desk because everyone knows you can carry it. Before you say yes, notice what the opportunity is actually rewarding. Does it move you toward work you want your name attached to, or does it rely on your ability to stay late, absorb the pressure, and make someone else's vision happen? You do not need to become polished beyond recognition to be taken seriously. Let your public life reflect more than what you can endure. Choose the work, title, and responsibility that sound like your own definition of success.",
+      "body_they": "A promotion comes up. Your name gets mentioned in a meeting. Another project lands on your desk because everyone knows you can carry it. Before you say yes, notice what the opportunity is actually rewarding. Does it move you toward work you want your name attached to, or does it rely on your ability to stay late, absorb the pressure, and make someone else's vision happen? You do not need to become polished beyond recognition to be taken seriously. Let your public life reflect more than what you can endure. Choose the work, title, and responsibility that sound like your own definition of success.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
     },
     {
       "contentKey": "fallback-hook/daily-headline/house/11",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today your people are the plan, even the ones you postponed.",
-      "body_they": "Today your people are the plan, even the ones you postponed.",
+      "body_you": "Keeping the peace is not worth inheriting everyone else's priorities.",
+      "body_they": "Keeping the peace is not worth inheriting everyone else's priorities.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15305,8 +15305,8 @@
       "contentKey": "fallback-hook/daily-body/house/11",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Friends, groups, and the bigger circle pull today. Stop letting the group chat count as showing up - one real appearance beats a month of reactions. Reach out to the friend you keep meaning to. The future has people in it.",
-      "body_they": "Friends, groups, and the bigger circle pull today. Stop letting the group chat count as showing up - one real appearance beats a month of reactions. Reach out to the friend you keep meaning to. The future has people in it.",
+      "body_you": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
+      "body_they": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
     },
@@ -15314,19 +15314,19 @@
       "contentKey": "fallback-hook/daily-headline/house/12",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Today belongs to the parts of you nobody gets to see.",
-      "body_they": "Today belongs to the parts of you nobody gets to see.",
+      "body_you": "Answering messages too early gives away the only private part of your day.",
+      "body_they": "Answering messages too early gives away the only private part of your day.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/daily-body/house/12",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Rest, privacy, and the inner rooms ask for time today. Stop confusing invisible with unimportant - recovery is real work with no audience, and the world can run without you for an afternoon. Close the door and let it. You come back clearer.",
-      "body_they": "Rest, privacy, and the inner rooms ask for time today. Stop confusing invisible with unimportant - recovery is real work with no audience, and the world can run without you for an afternoon. Close the door and let it. You come back clearer.",
+      "body_you": "You wake up, reach for your phone, and start clearing requests before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and your mind is already multi-tasking the problems that could have waited. The cost is not only the time spent replying. It is how difficult it becomes to return to yourself. Send one message, put the phone down, and keep the morning you meant to have.",
+      "body_they": "You wake up, reach for your phone, and start clearing requests before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and your mind is already multi-tasking the problems that could have waited. The cost is not only the time spent replying. It is how difficult it becomes to return to yourself. Send one message, put the phone down, and keep the morning you meant to have.",
       "review_status": "approved",
-      "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
+      "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
     },
     {
       "contentKey": "fallback-hook/house-glossary/1",
