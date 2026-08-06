@@ -1,0 +1,39 @@
+{
+  "id": "sky-aspect-timing-register-v1",
+  "surface": "sky-aspect",
+  "lane": "engine",
+  "source": "AC",
+  "sourceUse": "Structural timing model only; paraphrase-only research. No source phrasing is generation evidence.",
+  "authority": "All dates, phases, pass counts, motion states, cycle years, and trigger relations come from the ephemeris engine in the reader's local timezone.",
+  "groups": [
+    "This week",
+    "This season",
+    "The undercurrent"
+  ],
+  "approvedVocabulary": [
+    "building",
+    "exact",
+    "fading",
+    "returns",
+    "completes",
+    "passes",
+    "cycle",
+    "the undercurrent",
+    "this week",
+    "this season"
+  ],
+  "bannedTimingVocabulary": [
+    "weather",
+    "forecast",
+    "climate",
+    "window",
+    "orb",
+    "applying",
+    "separating",
+    "degree",
+    "degrees",
+    "Right now"
+  ],
+  "omissionRule": "When exact-pass, cycle, or relation computation is unavailable or ambiguous, omit that computed line rather than approximate it.",
+  "editorialBoundary": "Timing strings are computed slots. They never modify or become part of approved editorial card bodies."
+}
