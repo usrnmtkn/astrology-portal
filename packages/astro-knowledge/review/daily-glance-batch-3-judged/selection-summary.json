@@ -1,0 +1,56 @@
+{
+ "schemaVersion": 1,
+ "mode": "judged-best-of-n",
+ "samplesPerKey": 4,
+ "keys": [
+  {
+   "key": "square/mars",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  },
+  {
+   "key": "square/uranus",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  },
+  {
+   "key": "opposition/jupiter",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  },
+  {
+   "key": "opposition/pluto",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  },
+  {
+   "key": "soft/mercury",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  },
+  {
+   "key": "soft/uranus",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  },
+  {
+   "key": "soft/chiron",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  },
+  {
+   "key": "house/5",
+   "winnerScore": 3,
+   "winnerDims": 7,
+   "samples": 4
+  }
+ ],
+ "note": "Winners are unapproved candidates for the owner sitting. GR-003: judge scores rank; they never approve."
+}
