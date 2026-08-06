@@ -1,6 +1,6 @@
 # Sky Placement V7 writer pass
 
-Status: owner review required. No article in this report is approved, canonical, promoted, or authorized as generation evidence.
+Status: superseded by August 3 owner feedback and the V8 source-derived review bundle. No article in this report is approved, canonical, promoted, or authorized as generation evidence.
 
 ## Saturn in Capricorn
 

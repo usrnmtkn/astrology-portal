@@ -1,0 +1,59 @@
+{
+  "schema": "tldrastro-sky-placement-review-bundle-v1",
+  "version": "9.0.0",
+  "created": "2026-08-03",
+  "status": "needs_review",
+  "editorialStatus": "owner_revised_candidate",
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generation": {
+    "method": "owner-provided-turn-revision",
+    "apiCalls": 0,
+    "sourceBundle": "review/sky-placement-voice-pass-v8-source-derived-candidates.json",
+    "writerPolicy": "config/marie-satori-writer-policy-v1.json"
+  },
+  "candidates": [
+    {
+      "candidateId": "sky-placement-v9-neptune-libra-owner-turn-candidate",
+      "supersedesCandidateId": "sky-placement-v8-neptune-libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "title": "Neptune in Libra",
+      "status": "needs_review",
+      "reviewStatus": "needs_review",
+      "editorialStatus": "owner_revised_candidate",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "meaningSource": "data/placements/sign/neptune-libra.json",
+      "article": {
+        "tagline": "Make room for no",
+        "hook": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable. Neptune in Libra makes disagreement easy to soften and hard to resolve.",
+        "lived": "Neptune stays in one sign for roughly fourteen years, long enough for a habit of avoiding disagreement to become normal. One person says yes to dinner, changes the time twice, and cancels an hour before because the real answer was no. Nobody argued, so the evening is still described as peaceful. After enough years, everyone knows which questions are safer not to ask, and decisions keep getting made around answers nobody gave.",
+        "turn": "The cancellation is only where the disagreement finally shows up. Saying yes avoids the discomfort of saying no, then everyone else has to change their plans later. After enough of this, no one trusts what is said anymore.",
+        "moves": [
+          "Say no when the answer is no, before someone else arranges their time around a yes.",
+          "Ask for each person's first choice before negotiating a compromise.",
+          "Reopen one agreement that looks peaceful only because disagreement keeps arriving as cancellation."
+        ]
+      },
+      "writerReview": {
+        "status": "pending_owner_review",
+        "changedSlots": ["turn"],
+        "ownerFeedbackApplied": "Replaced the abstract agreement and next-yes summary with the owner's direct sequence: avoided no, later cancellation, changed plans, and lost trust.",
+        "approvalInferred": false,
+        "deterministicLint": {
+          "score": 3,
+          "fails": 0,
+          "warns": 0
+        },
+        "authorshipStatus": "authorship_review_required",
+        "outstandingAudit": [
+          "The unchanged hook and lived section still repeat the generic subject 'One person'.",
+          "The unchanged second and third moves still use therapy-workbook or administrative language."
+        ],
+        "apiCalls": 0
+      }
+    }
+  ]
+}
