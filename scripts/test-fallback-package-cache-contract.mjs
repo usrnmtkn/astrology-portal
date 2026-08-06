@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-05f");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-06");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -94,6 +94,8 @@ const packageDir = "apps/web/src/content/fallbackArchitectureV3";
 const sourceRows = readJson(`${packageDir}/source-rows/fallback-source-rows-v3.json`);
 const transitRows = readJson(`${packageDir}/source-rows/transit-synastry-rows-v1.json`);
 const bondLanguagePass2 = readJson(`${packageDir}/source-rows/bond-language-pass-2.json`);
+const pairDailyFrames = readJson(`${packageDir}/source-rows/pair-daily-frames-v1.json`);
+const pairDailyClauses = readJson(`${packageDir}/source-rows/pair-daily-clauses-v1.json`);
 const lunationRows = readJson(`${packageDir}/source-rows/lunation-blend-units-v1.json`);
 const placementRows = readJson(`${packageDir}/source-rows/placement-interim-fixes-v1.json`);
 const skyArticleRows = readJson(`${packageDir}/source-rows/sky-article-v1.json`);
@@ -147,6 +149,8 @@ const expectedManifest = createPackageManifest({
   rowsFile: {
     hookRows: latestEligible([
       ...sourceRows.hookRows,
+      ...pairDailyFrames.rows,
+      ...pairDailyClauses.rows,
       ...lunationRows.hookRows,
       ...bondLanguagePass2.rows,
       ...skyArticleRows.hookRows,
@@ -198,6 +202,8 @@ const expectedCoreManifest = createPackageManifest({
   rowsFile: {
     hookRows: latestEligible([
       ...sourceRows.hookRows,
+      ...pairDailyFrames.rows,
+      ...pairDailyClauses.rows,
       ...lunationRows.hookRows,
       ...bondLanguagePass2.rows,
       ...skyArticleRows.hookRows,

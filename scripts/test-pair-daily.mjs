@@ -13,138 +13,203 @@ import { stablePairDailyVariant } from "../apps/web/src/services/pairDaily.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
-const sourceRows = JSON.parse(fs.readFileSync(path.join(packageDir, "source-rows/fallback-source-rows-v3.json"), "utf8"));
-const transitRows = JSON.parse(fs.readFileSync(path.join(packageDir, "source-rows/transit-synastry-rows-v1.json"), "utf8"));
-const templates = JSON.parse(fs.readFileSync(path.join(packageDir, "templates/fallback-templates-v3.json"), "utf8"));
+const readPackageJson = (relativePath) => JSON.parse(
+  fs.readFileSync(path.join(packageDir, relativePath), "utf8")
+);
+const sourceRows = readPackageJson("source-rows/fallback-source-rows-v3.json");
+const transitRows = readPackageJson("source-rows/transit-synastry-rows-v1.json");
+const templates = readPackageJson("templates/fallback-templates-v3.json");
+const pairFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
+const pairClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json");
 
+assert.equal(pairFrames.rows.length, 28);
+assert.equal(pairClauses.rows.length, 68);
+assert.ok([...pairFrames.rows, ...pairClauses.rows].every((row) => row.review_status === "approved"));
 assert.equal(
-  sourceRows.hookRows.some((row) => row.contentKey.startsWith("fallback-hook/pair-daily/")),
-  false,
-  "Production must stay dark until approved pair-daily rows land."
+  pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener")?.body_you,
+  "{readerHandle}, you are {readerClause}, while {friendHandle} is {friendClause}."
 );
-assert.throws(
-  () => renderNodePairDaily({
-    reader: { clauseKey: "fallback-hook/daily-headline/square/sun" },
-    friend: { handle: "nova", clauseKey: "fallback-hook/daily-headline/square/moon" },
-    shared: { kind: null },
-    variant: 1
-  }),
-  (error) => error?.constructor?.name === "SourceGapError" && /SOURCE_GAP/u.test(error.message),
-  "The Node reference resolver must SOURCE_GAP while production pair rows are absent."
+assert.equal(
+  pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/close/hard")?.body_you,
+  "Keep the plan you already made. Don't reschedule twice and pretend it's flexibility."
+);
+assert.equal(
+  pairClauses.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/clause/square/venus")?.body_you,
+  "letting a slow reply be a slow reply instead of assuming something is wrong"
 );
 
-const approved = (contentKey, body_you, body_they = body_you) => ({
-  contentKey,
-  content_role: "fallback_hook",
-  grammar_frame: "complete_sentence",
-  body_you,
-  body_they,
-  review_status: "approved"
-});
-const fixtureRows = {
+const approvedRows = {
+  ...sourceRows,
   hookRows: [
-    approved("fallback-hook/pair-daily/opener", "{{readerClause}}, while {{friendHandle}} {{friendClause}}."),
-    approved("fallback-hook/pair-daily/opener/variant-2", "Today, {{readerClause}}; meanwhile, {{friendHandle}} {{friendClause}}."),
-    approved("fallback-hook/pair-daily/opener/variant-3", "{{readerClause}} today, as {{friendHandle}} {{friendClause}}."),
-    approved("fallback-hook/daily-headline/square/sun", "you choose the direct route", "chooses the wrong voice"),
-    approved("fallback-hook/daily-headline/soft/moon", "you take the quick route", "takes the patient route"),
-    approved("fallback-hook/bond-effect-soft/venus", "the plan may feel easier"),
-    approved("fallback-hook/pair-daily/shared-bond/soft", "Together, {{bondClause}} today."),
-    approved("fallback-hook/pair-daily/shared-bond/soft/variant-2", "Between you, {{bondClause}} today."),
-    approved("fallback-hook/pair-daily/shared-bond/hard", "Together, {{bondClause}} needs care today."),
-    approved("fallback-hook/pair-daily/shared-bond/hard/variant-2", "Between you, {{bondClause}} needs care today."),
-    ...["fire", "earth", "air", "water"].map((element) => approved(
-      `fallback-hook/pair-daily/shared-moon/${element}`,
-      `You are both moving with ${element} emphasis today.`
-    ))
-  ],
-  vocabularyRows: []
+    ...sourceRows.hookRows,
+    ...pairFrames.rows,
+    ...pairClauses.rows
+  ]
 };
-const renderer = createTransitSynastryRenderer({ authoredCards: [] }, { templates: [] }, fixtureRows);
+const renderer = createTransitSynastryRenderer(transitRows, templates, approvedRows);
 const baseFacts = {
-  reader: { clauseKey: "fallback-hook/daily-headline/square/sun" },
-  friend: {
-    handle: "nova",
-    displayName: "Nova Lane",
-    clauseKey: "fallback-hook/daily-headline/soft/moon"
+  reader: {
+    handle: "mariesatori",
+    clauseKey: "fallback-hook/pair-daily/clause/square/venus"
   },
-  shared: {
-    kind: "bond",
-    family: "soft",
-    bondClauseKey: "fallback-hook/bond-effect-soft/venus"
-  }
+  friend: {
+    handle: "matthew_mezo",
+    displayName: "Matthew Mezo",
+    clauseKey: "fallback-hook/pair-daily/clause/house/4"
+  },
+  shared: { kind: "moon", element: "earth" }
 };
 
 const first = renderer.renderPairDaily({ ...baseFacts, variant: 1 });
+assert.match(
+  first.body,
+  /^@mariesatori, you are letting a slow reply be a slow reply instead of assuming something is wrong, while @matthew_mezo is fixing the thing at home that makes the day harder every single time\./u
+);
+assert.deepEqual(first.sourceKeys, [
+  "fallback-hook/pair-daily/opener",
+  baseFacts.reader.clauseKey,
+  baseFacts.friend.clauseKey,
+  "fallback-hook/pair-daily/shared-moon/earth"
+]);
+assert.doesNotMatch(first.body, /\{\{?[\w.]+\}?\}/u);
+
 const second = renderer.renderPairDaily({ ...baseFacts, variant: 2 });
 const third = renderer.renderPairDaily({ ...baseFacts, variant: 3 });
-assert.match(first.body, /while @nova takes the patient route/u);
-assert.doesNotMatch(first.body, /wrong voice/u, "Friend clauses must use body_they.");
-assert.match(second.body, /^Today,/u);
-assert.match(second.body, /Between you,/u);
-assert.match(third.body, / today, as @nova/u);
-assert.match(third.body, /Together,/u, "The third slot must wrap the two bond variants.");
-assert.notEqual(first.body, second.body, "Frame variants must select distinct approved rows.");
-const hard = renderer.renderPairDaily({
+assert.match(second.body, /^@mariesatori, your attention is on/u);
+assert.match(third.body, /^You are/u);
+
+const friendVoice = renderer.renderPairDaily({
   ...baseFacts,
-  shared: { ...baseFacts.shared, family: "hard" },
-  variant: 2
+  friend: {
+    ...baseFacts.friend,
+    clauseKey: "fallback-hook/pair-daily/clause/square/sun"
+  },
+  shared: { kind: null },
+  variant: 1
 });
-assert.match(hard.body, /Between you, the plan may feel easier needs care today\./u);
+assert.match(friendVoice.body, /@matthew_mezo is keeping up the version of themselves that looks like they have it handled/u);
+assert.doesNotMatch(friendVoice.body, /version of yourself/u);
+
+const readerHandleFallback = renderer.renderPairDaily({
+  ...baseFacts,
+  reader: { ...baseFacts.reader, handle: null },
+  shared: { kind: null },
+  variant: 1
+});
+assert.match(readerHandleFallback.body, /^You are/u);
+assert.equal(readerHandleFallback.sourceKeys[0], "fallback-hook/pair-daily/opener/variant-3");
+assert.doesNotMatch(readerHandleFallback.body, /Marie|@mariesatori/u);
 
 const displayNameFallback = renderer.renderPairDaily({
   ...baseFacts,
   friend: { ...baseFacts.friend, handle: "" },
-  shared: { kind: null }
+  shared: { kind: null },
+  variant: 1
 });
-assert.match(displayNameFallback.body, /Nova Lane takes the patient route/u);
+assert.match(displayNameFallback.body, /while Matthew Mezo is/u);
 const genericFallback = renderer.renderPairDaily({
   ...baseFacts,
   friend: { ...baseFacts.friend, handle: null, displayName: "" },
-  shared: { kind: null }
+  shared: { kind: null },
+  variant: 1
 });
-assert.match(genericFallback.body, /your friend takes the patient route/u);
+assert.match(genericFallback.body, /while your friend is/u);
 
-for (const element of ["fire", "earth", "air", "water"]) {
-  const moon = renderer.renderPairDaily({
+const bondClauseKey = "fallback-hook/bond-effect-square/saturn";
+const softTen = renderer.renderPairDaily({
+  ...baseFacts,
+  shared: { kind: "bond", family: "soft", bondClauseKey, transiting: "venus" },
+  variant: 10
+});
+assert.ok(softTen.sourceKeys.includes("fallback-hook/pair-daily/shared-bond/soft/variant-10"));
+const softWrap = renderer.renderPairDaily({
+  ...baseFacts,
+  shared: { kind: "bond", family: "soft", bondClauseKey, transiting: "venus" },
+  variant: 11
+});
+assert.ok(softWrap.sourceKeys.includes("fallback-hook/pair-daily/shared-bond/soft"));
+
+for (const [element, count] of [["fire", 3], ["earth", 3], ["air", 2], ["water", 4]]) {
+  const last = renderer.renderPairDaily({
     ...baseFacts,
     shared: { kind: "moon", element },
-    variant: 1
+    variant: count
   });
-  assert.match(moon.body, new RegExp(`${element} emphasis today`, "u"));
+  assert.ok(last.sourceKeys.includes(`fallback-hook/pair-daily/shared-moon/${element}/variant-${count}`));
+  const wrapped = renderer.renderPairDaily({
+    ...baseFacts,
+    shared: { kind: "moon", element },
+    variant: count + 1
+  });
+  assert.ok(wrapped.sourceKeys.includes(`fallback-hook/pair-daily/shared-moon/${element}`));
 }
 
-const darkRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
+for (const transiting of ["saturn", "mercury"]) {
+  const gatedClose = renderer.renderPairDaily({
+    ...baseFacts,
+    shared: { kind: "bond", family: "hard", bondClauseKey, transiting },
+    variant: 1
+  });
+  assert.ok(gatedClose.sourceKeys.includes("fallback-hook/pair-daily/close/hard"));
+  assert.match(gatedClose.body, /Don't reschedule twice and pretend it's flexibility\.$/u);
+}
+const ungatedClose = renderer.renderPairDaily({
+  ...baseFacts,
+  shared: { kind: "bond", family: "hard", bondClauseKey, transiting: "mars" },
+  variant: 2
+});
+assert.ok(ungatedClose.sourceKeys.includes("fallback-hook/pair-daily/shared-bond/hard/variant-2"));
+assert.ok(!ungatedClose.sourceKeys.includes("fallback-hook/pair-daily/close/hard"));
+
+assert.equal(renderNodePairDaily({ ...baseFacts, variant: 1 }).body, first.body);
+
 assert.throws(
-  () => darkRenderer.renderPairDaily(baseFacts),
-  (error) => error instanceof SourceGapError && /SOURCE_GAP/u.test(error.message),
-  "Missing approved pair frames must SOURCE_GAP."
+  () => renderer.renderPairDaily({
+    ...baseFacts,
+    reader: { ...baseFacts.reader, clauseKey: "fallback-hook/pair-daily/clause/square/missing" }
+  }),
+  (error) => error instanceof SourceGapError && /SOURCE_GAP/u.test(error.message)
 );
+const missingFamilyRenderer = createTransitSynastryRenderer(transitRows, templates, {
+  ...approvedRows,
+  hookRows: approvedRows.hookRows.filter((row) => !row.contentKey.startsWith("fallback-hook/pair-daily/shared-moon/water"))
+});
 assert.throws(
-  () => renderer.renderPairDaily({ ...baseFacts, reader: { clauseKey: "fallback-hook/daily-headline/missing" } }),
-  (error) => error instanceof SourceGapError && /SOURCE_GAP/u.test(error.message),
-  "Missing daily clauses must SOURCE_GAP."
+  () => missingFamilyRenderer.renderPairDaily({ ...baseFacts, shared: { kind: "moon", element: "water" } }),
+  (error) => error instanceof SourceGapError && /SOURCE_GAP/u.test(error.message)
+);
+const unresolvedRenderer = createTransitSynastryRenderer(transitRows, templates, {
+  ...approvedRows,
+  hookRows: [
+    ...approvedRows.hookRows,
+    {
+      ...pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener"),
+      body_you: "{readerHandle}, you are {readerClause}, while {friendHandle} is {friendClause}. {missingSlot}"
+    }
+  ]
+});
+assert.throws(
+  () => unresolvedRenderer.renderPairDaily({ ...baseFacts, shared: { kind: null }, variant: 1 }),
+  (error) => error instanceof SourceGapError && /missing slot/u.test(error.message)
+);
+const forbiddenWindowRenderer = createTransitSynastryRenderer(transitRows, templates, {
+  ...approvedRows,
+  hookRows: [
+    ...approvedRows.hookRows,
+    {
+      ...pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener"),
+      body_you: "{readerHandle}, you are {readerClause}, while {friendHandle} is {friendClause}. Until tomorrow."
+    }
+  ]
+});
+assert.throws(
+  () => forbiddenWindowRenderer.renderPairDaily({ ...baseFacts, shared: { kind: null }, variant: 1 }),
+  (error) => error instanceof SourceGapError && /today-only window/u.test(error.message)
 );
 
-const unresolvedRenderer = createTransitSynastryRenderer(
-  { authoredCards: [] },
-  { templates: [] },
-  {
-    ...fixtureRows,
-    hookRows: fixtureRows.hookRows.map((row) => row.contentKey === "fallback-hook/pair-daily/opener"
-      ? { ...row, body_you: `${row.body_you} {{missingSlot}}` }
-      : row)
-  }
-);
-assert.throws(
-  () => unresolvedRenderer.renderPairDaily({ ...baseFacts, shared: { kind: null } }),
-  (error) => error instanceof SourceGapError && /missing slot/u.test(error.message),
-  "Unresolved pair slots must SOURCE_GAP."
-);
-
-assert.equal(stablePairDailyVariant("reader-a", "friend-b", "2026-08-06"), stablePairDailyVariant("reader-a", "friend-b", "2026-08-06"));
-assert.notEqual(stablePairDailyVariant("reader-a", "friend-b", "2026-08-06"), stablePairDailyVariant("reader-a", "friend-b", "2026-08-07"));
 const sameDayVariant = stablePairDailyVariant("reader-a", "friend-b", "2026-08-06");
+assert.equal(sameDayVariant, stablePairDailyVariant("reader-a", "friend-b", "2026-08-06"));
+assert.notEqual(sameDayVariant, stablePairDailyVariant("reader-a", "friend-b", "2026-08-07"));
 assert.equal(
   renderer.renderPairDaily({ ...baseFacts, variant: sameDayVariant }).body,
   renderer.renderPairDaily({ ...baseFacts, variant: sameDayVariant }).body,
@@ -152,12 +217,14 @@ assert.equal(
 );
 
 const words = first.body.trim().split(/\s+/u);
-assert.ok(words.length <= 65, `Fixture output must stay within 65 words; got ${words.length}.`);
-assert.doesNotMatch(first.body, /\b(?:until|through)\b/iu);
-assert.match(first.body, /\btoday\b/iu);
+assert.ok(words.length <= 65, `Approved Pair Daily output must stay within 65 words; got ${words.length}.`);
+assert.doesNotMatch(
+  first.body,
+  /\b(?:until|through)\s+(?:today\b|tomorrow\b|(?:mon|tues|wednes|thurs|fri|satur|sun)day\b|(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b|\d)/iu
+);
 assert.doesNotMatch(first.body, / {2,}|\s+[,.!?;:]|\b(?:and|while|but|so)\s*[.!?]?$/iu);
 assert.doesNotMatch(displayNameFallback.body, / {2,}|\s+[,.!?;:]|\b(?:and|while|but|so)\s*[.!?]?$/iu);
 const hedgeCount = first.body.match(/\b(?:can|could|may|might|perhaps|possibly)\b/giu)?.length ?? 0;
 assert.ok(hedgeCount <= 1, `Assembled Pair Daily output has ${hedgeCount} hedges.`);
 
-console.log("pair daily resolver and rotation checks passed");
+console.log("pair daily approved-row resolver and rotation checks passed");

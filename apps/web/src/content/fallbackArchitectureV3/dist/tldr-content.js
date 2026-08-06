@@ -1558,11 +1558,20 @@ ${fogNote}`;
     const parts = [body, ...sections.map((s) => s.body), ...question ? [question] : []];
     return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
   }
-  const pairDailyVariantKey = (baseKey, variant, count) => {
-    const normalized = Number.isFinite(Number(variant)) ? (Math.abs(Math.trunc(Number(variant))) - 1) % count + 1 : 1;
-    return normalized === 1 ? baseKey : `${baseKey}/variant-${normalized}`;
-  };
   const pairDailyRow = (key) => hooks.get(key) ?? cards.get(key) ?? vocab.get(key) ?? null;
+  const pairDailyVariantKeys = (baseKey) => [...hooks.keys()].flatMap((key) => {
+    if (key === baseKey) return [{ key, variant: 1 }];
+    const prefix = `${baseKey}/variant-`;
+    if (!key.startsWith(prefix)) return [];
+    const variant = Number(key.slice(prefix.length));
+    return Number.isInteger(variant) && variant >= 2 ? [{ key, variant }] : [];
+  }).sort((first, second) => first.variant - second.variant);
+  const pairDailyVariantKey = (baseKey, variant) => {
+    const keys = pairDailyVariantKeys(baseKey);
+    if (!keys.length) throw new SourceGapError(`SOURCE_GAP: pair daily family ${baseKey}`);
+    const seed = Number.isFinite(Number(variant)) ? Math.max(1, Math.abs(Math.trunc(Number(variant)))) : 1;
+    return keys[(seed - 1) % keys.length].key;
+  };
   const pairDailyBody = (key, voice) => {
     const row = pairDailyRow(key);
     const body = voice === "they" ? row?.body_they : row?.body_you ?? row?.body;
@@ -1571,24 +1580,35 @@ ${fogNote}`;
     }
     return body.trim();
   };
+  const pairDailyFill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}|\{([\w.]+)\}/g, (_match, doubleKey, singleKey) => {
+    const key = doubleKey ?? singleKey;
+    return ctx[key] ?? `{{${key}}}`;
+  }).replace(/\s{2,}/g, " ").trim();
+  const pairDailyHandle = (handle) => {
+    const normalized = (handle ?? "").toString().trim().replace(/^@+/u, "");
+    return normalized ? `@${normalized}` : null;
+  };
   const pairDailyFriendReference = (friend) => {
-    const normalizedHandle = (friend.handle ?? "").toString().trim().replace(/^@+/u, "");
-    if (normalizedHandle) return `@${normalizedHandle}`;
+    const normalizedHandle = pairDailyHandle(friend.handle);
+    if (normalizedHandle) return normalizedHandle;
     const normalizedName = (friend.displayName ?? "").toString().trim();
     return normalizedName || "your friend";
   };
+  const PAIR_DAILY_WINDOW_RANGE = /\b(?:until|through)\s+(?:today\b|tomorrow\b|(?:mon|tues|wednes|thurs|fri|satur|sun)day\b|(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b|\d|the end of\b|next\s+(?:day|week|month|year)\b)/iu;
   function renderPairDaily({ reader, friend, shared = { kind: null }, variant = 1 }) {
     if (!reader?.clauseKey || !friend?.clauseKey) {
       throw new SourceGapError("SOURCE_GAP: pair daily requires both daily clause keys");
     }
-    const openerKey = pairDailyVariantKey("fallback-hook/pair-daily/opener", variant, 3);
+    const readerHandle = pairDailyHandle(reader.handle);
+    const openerKey = readerHandle ? pairDailyVariantKey("fallback-hook/pair-daily/opener", variant) : "fallback-hook/pair-daily/opener/variant-3";
     const opener = pairDailyBody(openerKey, "you");
     const ctx = {
+      readerHandle: readerHandle ?? "",
       readerClause: pairDailyBody(reader.clauseKey, "you"),
       friendHandle: pairDailyFriendReference(friend),
       friendClause: pairDailyBody(friend.clauseKey, "they")
     };
-    const parts = [fill(opener, ctx)];
+    const parts = [pairDailyFill(opener, ctx)];
     const sourceKeys = [openerKey, reader.clauseKey, friend.clauseKey];
     if (shared?.kind === "bond") {
       if (!shared.family || !shared.bondClauseKey) {
@@ -1596,25 +1616,33 @@ ${fogNote}`;
       }
       const frameKey = pairDailyVariantKey(
         `fallback-hook/pair-daily/shared-bond/${shared.family}`,
-        variant,
-        2
+        variant
       );
-      parts.push(fill(pairDailyBody(frameKey, "you"), {
+      parts.push(pairDailyFill(pairDailyBody(frameKey, "you"), {
         bondClause: pairDailyBody(shared.bondClauseKey, "you")
       }));
       sourceKeys.push(frameKey, shared.bondClauseKey);
+      const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+      if (shared.family === "hard" && ["saturn", "mercury"].includes(transiting)) {
+        const closeKey = "fallback-hook/pair-daily/close/hard";
+        parts.push(pairDailyBody(closeKey, "you"));
+        sourceKeys.push(closeKey);
+      }
     } else if (shared?.kind === "moon") {
       if (!shared.element) throw new SourceGapError("SOURCE_GAP: pair daily Moon element");
-      const frameKey = `fallback-hook/pair-daily/shared-moon/${shared.element}`;
+      const frameKey = pairDailyVariantKey(
+        `fallback-hook/pair-daily/shared-moon/${shared.element}`,
+        variant
+      );
       parts.push(pairDailyBody(frameKey, "you"));
       sourceKeys.push(frameKey);
     } else if (shared?.kind != null) {
       throw new SourceGapError(`SOURCE_GAP: pair daily shared kind ${shared.kind}`);
     }
     const body = parts.join(" ").replace(/\s{2,}/g, " ").trim();
-    const leftover = body.match(/\{\{([\w.]+)\}\}/u);
+    const leftover = body.match(/\{\{?([\w.]+)\}?\}/u);
     if (leftover) throw new SourceGapError(`SOURCE_GAP: pair daily missing slot ${leftover[1]}`);
-    if (/\b(?:until|through)\b/iu.test(body)) {
+    if (PAIR_DAILY_WINDOW_RANGE.test(body)) {
       throw new SourceGapError("SOURCE_GAP: pair daily must use today-only window wording");
     }
     return {
@@ -1895,8 +1923,8 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-05f";
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-08-06";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
