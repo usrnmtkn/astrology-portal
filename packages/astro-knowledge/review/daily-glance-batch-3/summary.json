@@ -1,0 +1,1714 @@
+{
+  "schemaVersion": 1,
+  "status": "owner-review-required",
+  "lintExistingOnly": false,
+  "immutableRawOutputs": true,
+  "revisionsMade": 0,
+  "callsMadeThisRun": 14,
+  "calls": {
+    "writer": 14,
+    "judge": 0,
+    "terra": 0,
+    "total": 14
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-3-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 14,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false,
+    "maxOutputTokens": 24000
+  },
+  "results": [
+    {
+      "key": "conjunction/jupiter",
+      "lintPassed": false,
+      "responseId": "resp_0b45d69b75ba17e9006a7338bf8a3c81a2a2d79fd6460f3b70",
+      "usage": {
+        "inputTokens": 2308,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2305,
+        "outputTokens": 3273,
+        "reasoningTokens": 3165,
+        "totalTokens": 5581
+      },
+      "estimatedCostUsd": 0.11261125,
+      "latencyMs": 48389
+    },
+    {
+      "key": "conjunction/mercury",
+      "lintPassed": false,
+      "responseId": "resp_094ff10b32e478bb006a7338efaef881929dff08347bd8b4de",
+      "usage": {
+        "inputTokens": 2329,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2326,
+        "outputTokens": 5280,
+        "reasoningTokens": 5178,
+        "totalTokens": 7609
+      },
+      "estimatedCostUsd": 0.1729525,
+      "latencyMs": 91631
+    },
+    {
+      "key": "conjunction/sun",
+      "lintPassed": false,
+      "responseId": "resp_0246dfcfb690871d006a73394b69ec81a193f2d6e97c7ba910",
+      "usage": {
+        "inputTokens": 2300,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2297,
+        "outputTokens": 3656,
+        "reasoningTokens": 3556,
+        "totalTokens": 5956
+      },
+      "estimatedCostUsd": 0.12405125,
+      "latencyMs": 69191
+    },
+    {
+      "key": "conjunction/saturn",
+      "lintPassed": false,
+      "responseId": "resp_0b90f0ac3a3bf32a006a733990886481a2bbad9655cfb12ade",
+      "usage": {
+        "inputTokens": 2327,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2324,
+        "outputTokens": 2918,
+        "reasoningTokens": 2817,
+        "totalTokens": 5245
+      },
+      "estimatedCostUsd": 0.10208,
+      "latencyMs": 47422
+    },
+    {
+      "key": "square/mars",
+      "lintPassed": false,
+      "responseId": "resp_09e9f7c816e4b9d5006a7339c042d0819f8486cc1bb8047cbb",
+      "usage": {
+        "inputTokens": 2358,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2355,
+        "outputTokens": 4243,
+        "reasoningTokens": 4142,
+        "totalTokens": 6601
+      },
+      "estimatedCostUsd": 0.14202375,
+      "latencyMs": 64090
+    },
+    {
+      "key": "square/venus",
+      "lintPassed": false,
+      "responseId": "resp_0a207a4d44c4d67f006a733a0029ec81a19fdb94c4a271c510",
+      "usage": {
+        "inputTokens": 2323,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2320,
+        "outputTokens": 4756,
+        "reasoningTokens": 4660,
+        "totalTokens": 7079
+      },
+      "estimatedCostUsd": 0.157195,
+      "latencyMs": 95056
+    },
+    {
+      "key": "square/uranus",
+      "lintPassed": false,
+      "responseId": "resp_01f870e875856e00006a733a5f1e4881a3bc3a9313357e8da5",
+      "usage": {
+        "inputTokens": 2329,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2326,
+        "outputTokens": 5377,
+        "reasoningTokens": 5276,
+        "totalTokens": 7706
+      },
+      "estimatedCostUsd": 0.1758625,
+      "latencyMs": 91073
+    },
+    {
+      "key": "opposition/jupiter",
+      "lintPassed": false,
+      "responseId": "resp_0fc31af4f5ad9c65006a733abc6e348192acf7ea59d1a530e3",
+      "usage": {
+        "inputTokens": 2206,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2203,
+        "outputTokens": 1781,
+        "reasoningTokens": 1680,
+        "totalTokens": 3987
+      },
+      "estimatedCostUsd": 0.06721375,
+      "latencyMs": 35043
+    },
+    {
+      "key": "opposition/pluto",
+      "lintPassed": false,
+      "responseId": "resp_0686c7acd5b5c8b3006a733add3c04819e8f7ce9f6c27fece6",
+      "usage": {
+        "inputTokens": 2346,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2343,
+        "outputTokens": 5278,
+        "reasoningTokens": 5178,
+        "totalTokens": 7624
+      },
+      "estimatedCostUsd": 0.17299875,
+      "latencyMs": 80296
+    },
+    {
+      "key": "soft/mercury",
+      "lintPassed": false,
+      "responseId": "resp_012c8cbedf18544f006a733b2d8aac81a2ad94addd78435015",
+      "usage": {
+        "inputTokens": 2317,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2314,
+        "outputTokens": 1138,
+        "reasoningTokens": 1034,
+        "totalTokens": 3455
+      },
+      "estimatedCostUsd": 0.0486175,
+      "latencyMs": 16345
+    },
+    {
+      "key": "soft/uranus",
+      "lintPassed": false,
+      "responseId": "resp_032e9354f9e20a99006a733b3de96881a3bce81ec06484cd65",
+      "usage": {
+        "inputTokens": 2283,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2280,
+        "outputTokens": 2157,
+        "reasoningTokens": 2070,
+        "totalTokens": 4440
+      },
+      "estimatedCostUsd": 0.078975,
+      "latencyMs": 36297
+    },
+    {
+      "key": "soft/chiron",
+      "lintPassed": false,
+      "responseId": "resp_0d18139700fade83006a733b623440819f98abd46fd74a95ed",
+      "usage": {
+        "inputTokens": 2291,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2288,
+        "outputTokens": 1384,
+        "reasoningTokens": 1280,
+        "totalTokens": 3675
+      },
+      "estimatedCostUsd": 0.055835,
+      "latencyMs": 27307
+    },
+    {
+      "key": "house/5",
+      "lintPassed": false,
+      "responseId": "resp_000629407ceaa245006a733b7d7d5c819d83a7103e473b8560",
+      "usage": {
+        "inputTokens": 2268,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2265,
+        "outputTokens": 1033,
+        "reasoningTokens": 949,
+        "totalTokens": 3301
+      },
+      "estimatedCostUsd": 0.04516125,
+      "latencyMs": 19351
+    },
+    {
+      "key": "house/12",
+      "lintPassed": false,
+      "responseId": "resp_0ec14a29d96f344a006a733b90dfc8819cbe9b6c7c2c934931",
+      "usage": {
+        "inputTokens": 2264,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2261,
+        "outputTokens": 1826,
+        "reasoningTokens": 1740,
+        "totalTokens": 4090
+      },
+      "estimatedCostUsd": 0.06892625,
+      "latencyMs": 35983
+    }
+  ],
+  "batchLint": {
+    "schemaVersion": 1,
+    "passed": false,
+    "rules": {
+      "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
+      "DG-R7": "No body opener construction may repeat within the batch.",
+      "OWNER-TEST-specificity": "Every body must match its key profile and fail non-advisory swap profiles; same-target sibling swaps are advisory where configured."
+    },
+    "checks": [
+      {
+        "id": "batch-output-count",
+        "passed": true,
+        "details": "14/14 outputs"
+      },
+      {
+        "id": "DG-R1-recurring-sentence-frame",
+        "passed": false,
+        "details": [
+          {
+            "frame": "you don’t have",
+            "keys": [
+              "conjunction/mercury",
+              "conjunction/saturn",
+              "square/mars",
+              "square/venus",
+              "soft/mercury",
+              "house/5"
+            ]
+          },
+          {
+            "frame": "for the next",
+            "keys": [
+              "conjunction/sun",
+              "square/mars",
+              "opposition/jupiter",
+              "house/5"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "DG-R7-opener-variety",
+        "passed": false,
+        "details": [
+          {
+            "frame": "you ask",
+            "keys": [
+              "conjunction/jupiter",
+              "opposition/pluto"
+            ]
+          },
+          {
+            "frame": "you open",
+            "keys": [
+              "conjunction/sun",
+              "soft/mercury",
+              "soft/uranus"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "OWNER-TEST-specificity-batch",
+        "passed": false,
+        "details": [
+          {
+            "key": "conjunction/jupiter",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "conjunction/jupiter",
+                "matches": [
+                  "optimism-generosity",
+                  "expansion"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "conjunction/mercury",
+                  "matches": [
+                    "feeling-thinking",
+                    "words"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "conjunction/sun",
+                  "matches": [
+                    "identity-presentation",
+                    "feeling-need"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "square/venus",
+                  "matches": [
+                    "pleasure-approval",
+                    "self-friction"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "square/uranus",
+                  "matches": [
+                    "disruption",
+                    "recoil"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "soft/chiron",
+                  "matches": [
+                    "care-old-hurt",
+                    "mild-ease"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "conjunction/mercury",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "conjunction/mercury",
+                "matches": [
+                  "feeling-thinking",
+                  "words"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "house/5",
+                  "matches": [
+                    "creativity-play"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "conjunction/sun",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "conjunction/sun",
+                "matches": [
+                  "feeling-need"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "house/5",
+                  "matches": [
+                    "creativity-play"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "house/12",
+                  "matches": [
+                    "rest-privacy"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "conjunction/saturn",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "conjunction/saturn",
+                "matches": [
+                  "duty-limit",
+                  "reserve-brace"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "conjunction/mercury",
+                  "matches": [
+                    "feeling-thinking",
+                    "words"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "square/mars",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "square/mars",
+                "matches": [
+                  "reactivity",
+                  "self-friction"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "opposition/jupiter",
+                  "matches": [
+                    "other-person",
+                    "excess"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "square/venus",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "square/venus",
+                "matches": [
+                  "pleasure-approval",
+                  "self-friction"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "conjunction/mercury",
+                  "matches": [
+                    "feeling-thinking",
+                    "words"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "conjunction/sun",
+                  "matches": [
+                    "identity-presentation",
+                    "feeling-need"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "square/uranus",
+                  "matches": [
+                    "disruption",
+                    "recoil"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "square/uranus",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "square/uranus",
+                "matches": [
+                  "disruption",
+                  "recoil"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "house/12",
+                  "matches": [
+                    "rest-privacy"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "opposition/jupiter",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "opposition/jupiter",
+                "matches": [
+                  "other-person",
+                  "excess"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "conjunction/mercury",
+                  "matches": [
+                    "feeling-thinking",
+                    "words"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "opposition/pluto",
+                  "matches": [
+                    "other-person",
+                    "power-control"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "house/5",
+                  "matches": [
+                    "creativity-play"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "opposition/pluto",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "opposition/pluto",
+                "matches": [
+                  "power-control"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "conjunction/sun",
+                  "matches": [
+                    "identity-presentation",
+                    "feeling-need"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "square/venus",
+                  "matches": [
+                    "pleasure-approval",
+                    "self-friction"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "soft/mercury",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "soft/mercury",
+                "matches": [
+                  "communication"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "conjunction/sun",
+                  "matches": [
+                    "identity-presentation",
+                    "feeling-need"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "square/mars",
+                  "matches": [
+                    "reactivity",
+                    "self-friction"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "soft/uranus",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "soft/uranus",
+                "matches": [
+                  "change-independence"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/chiron",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "soft/chiron",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "soft/chiron",
+                "matches": [
+                  "care-old-hurt"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "house/5",
+                "house/12"
+              ],
+              "swappableTo": [
+                {
+                  "key": "conjunction/mercury",
+                  "matches": [
+                    "feeling-thinking",
+                    "words"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "house/5",
+                  "matches": [
+                    "creativity-play"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "house/5",
+            "passed": true,
+            "details": {
+              "own": {
+                "key": "house/5",
+                "matches": [
+                  "creativity-play"
+                ],
+                "required": 1,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/12"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "key": "house/12",
+            "passed": false,
+            "details": {
+              "own": {
+                "key": "house/12",
+                "matches": [
+                  "rest-privacy"
+                ],
+                "required": 1,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/jupiter",
+                "conjunction/mercury",
+                "conjunction/sun",
+                "conjunction/saturn",
+                "square/mars",
+                "square/venus",
+                "square/uranus",
+                "opposition/jupiter",
+                "opposition/pluto",
+                "soft/mercury",
+                "soft/uranus",
+                "soft/chiron",
+                "house/5"
+              ],
+              "swappableTo": [
+                {
+                  "key": "soft/mercury",
+                  "matches": [
+                    "communication",
+                    "mild-ease"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          }
+        ]
+      }
+    ],
+    "openerConstructions": [
+      {
+        "key": "conjunction/jupiter",
+        "frame": "you ask"
+      },
+      {
+        "key": "conjunction/mercury",
+        "frame": "while deciding"
+      },
+      {
+        "key": "conjunction/sun",
+        "frame": "you open"
+      },
+      {
+        "key": "conjunction/saturn",
+        "frame": "you move"
+      },
+      {
+        "key": "square/mars",
+        "frame": "you are"
+      },
+      {
+        "key": "square/venus",
+        "frame": "you send"
+      },
+      {
+        "key": "square/uranus",
+        "frame": "as you"
+      },
+      {
+        "key": "opposition/jupiter",
+        "frame": "a friend"
+      },
+      {
+        "key": "opposition/pluto",
+        "frame": "you ask"
+      },
+      {
+        "key": "soft/mercury",
+        "frame": "you open"
+      },
+      {
+        "key": "soft/uranus",
+        "frame": "you open"
+      },
+      {
+        "key": "soft/chiron",
+        "frame": "you’re rewriting"
+      },
+      {
+        "key": "house/5",
+        "frame": "you type"
+      },
+      {
+        "key": "house/12",
+        "frame": "behind a"
+      }
+    ],
+    "repeatedFrames": [
+      {
+        "frame": "you don’t have",
+        "keys": [
+          "conjunction/mercury",
+          "conjunction/saturn",
+          "square/mars",
+          "square/venus",
+          "soft/mercury",
+          "house/5"
+        ]
+      },
+      {
+        "frame": "for the next",
+        "keys": [
+          "conjunction/sun",
+          "square/mars",
+          "opposition/jupiter",
+          "house/5"
+        ]
+      }
+    ],
+    "repeatedOpeners": [
+      {
+        "frame": "you ask",
+        "keys": [
+          "conjunction/jupiter",
+          "opposition/pluto"
+        ]
+      },
+      {
+        "frame": "you open",
+        "keys": [
+          "conjunction/sun",
+          "soft/mercury",
+          "soft/uranus"
+        ]
+      }
+    ],
+    "specificityResults": [
+      {
+        "key": "conjunction/jupiter",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "conjunction/jupiter",
+            "matches": [
+              "optimism-generosity",
+              "expansion"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "conjunction/mercury",
+              "matches": [
+                "feeling-thinking",
+                "words"
+              ],
+              "passed": true
+            },
+            {
+              "key": "conjunction/sun",
+              "matches": [
+                "identity-presentation",
+                "feeling-need"
+              ],
+              "passed": true
+            },
+            {
+              "key": "square/venus",
+              "matches": [
+                "pleasure-approval",
+                "self-friction"
+              ],
+              "passed": true
+            },
+            {
+              "key": "square/uranus",
+              "matches": [
+                "disruption",
+                "recoil"
+              ],
+              "passed": true
+            },
+            {
+              "key": "soft/chiron",
+              "matches": [
+                "care-old-hurt",
+                "mild-ease"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "conjunction/mercury",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "conjunction/mercury",
+            "matches": [
+              "feeling-thinking",
+              "words"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "house/5",
+              "matches": [
+                "creativity-play"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "conjunction/sun",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "conjunction/sun",
+            "matches": [
+              "feeling-need"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "house/5",
+              "matches": [
+                "creativity-play"
+              ],
+              "passed": true
+            },
+            {
+              "key": "house/12",
+              "matches": [
+                "rest-privacy"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "conjunction/saturn",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "conjunction/saturn",
+            "matches": [
+              "duty-limit",
+              "reserve-brace"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "conjunction/mercury",
+              "matches": [
+                "feeling-thinking",
+                "words"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "square/mars",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "square/mars",
+            "matches": [
+              "reactivity",
+              "self-friction"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "opposition/jupiter",
+              "matches": [
+                "other-person",
+                "excess"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "square/venus",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "square/venus",
+            "matches": [
+              "pleasure-approval",
+              "self-friction"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "conjunction/mercury",
+              "matches": [
+                "feeling-thinking",
+                "words"
+              ],
+              "passed": true
+            },
+            {
+              "key": "conjunction/sun",
+              "matches": [
+                "identity-presentation",
+                "feeling-need"
+              ],
+              "passed": true
+            },
+            {
+              "key": "square/uranus",
+              "matches": [
+                "disruption",
+                "recoil"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "square/uranus",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "square/uranus",
+            "matches": [
+              "disruption",
+              "recoil"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "house/12",
+              "matches": [
+                "rest-privacy"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "opposition/jupiter",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "opposition/jupiter",
+            "matches": [
+              "other-person",
+              "excess"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "conjunction/mercury",
+              "matches": [
+                "feeling-thinking",
+                "words"
+              ],
+              "passed": true
+            },
+            {
+              "key": "opposition/pluto",
+              "matches": [
+                "other-person",
+                "power-control"
+              ],
+              "passed": true
+            },
+            {
+              "key": "house/5",
+              "matches": [
+                "creativity-play"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "opposition/pluto",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "opposition/pluto",
+            "matches": [
+              "power-control"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "conjunction/sun",
+              "matches": [
+                "identity-presentation",
+                "feeling-need"
+              ],
+              "passed": true
+            },
+            {
+              "key": "square/venus",
+              "matches": [
+                "pleasure-approval",
+                "self-friction"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "soft/mercury",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "soft/mercury",
+            "matches": [
+              "communication"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "conjunction/sun",
+              "matches": [
+                "identity-presentation",
+                "feeling-need"
+              ],
+              "passed": true
+            },
+            {
+              "key": "square/mars",
+              "matches": [
+                "reactivity",
+                "self-friction"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "soft/uranus",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "soft/uranus",
+            "matches": [
+              "change-independence"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/chiron",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "soft/chiron",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "soft/chiron",
+            "matches": [
+              "care-old-hurt"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "house/5",
+            "house/12"
+          ],
+          "swappableTo": [
+            {
+              "key": "conjunction/mercury",
+              "matches": [
+                "feeling-thinking",
+                "words"
+              ],
+              "passed": true
+            },
+            {
+              "key": "house/5",
+              "matches": [
+                "creativity-play"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "house/5",
+        "passed": true,
+        "details": {
+          "own": {
+            "key": "house/5",
+            "matches": [
+              "creativity-play"
+            ],
+            "required": 1,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/12"
+          ],
+          "swappableTo": [],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "key": "house/12",
+        "passed": false,
+        "details": {
+          "own": {
+            "key": "house/12",
+            "matches": [
+              "rest-privacy"
+            ],
+            "required": 1,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/jupiter",
+            "conjunction/mercury",
+            "conjunction/sun",
+            "conjunction/saturn",
+            "square/mars",
+            "square/venus",
+            "square/uranus",
+            "opposition/jupiter",
+            "opposition/pluto",
+            "soft/mercury",
+            "soft/uranus",
+            "soft/chiron",
+            "house/5"
+          ],
+          "swappableTo": [
+            {
+              "key": "soft/mercury",
+              "matches": [
+                "communication",
+                "mild-ease"
+              ],
+              "passed": true
+            }
+          ],
+          "advisorySwappableTo": []
+        }
+      }
+    ]
+  },
+  "totals": {
+    "inputTokens": 32249,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 32207,
+    "outputTokens": 44100,
+    "reasoningTokens": 42725,
+    "totalTokens": 76349,
+    "estimatedCostUsd": 1.5245037500000003
+  },
+  "pricing": {
+    "currency": "USD",
+    "unit": "per_1m_tokens",
+    "retrievedAt": "2026-08-02",
+    "source": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+    "shortContextMaximumInputTokens": 272000,
+    "shortContext": {
+      "input": 5,
+      "cachedInput": 0.5,
+      "cacheWrite": 6.25,
+      "output": 30
+    },
+    "longContext": {
+      "input": 10,
+      "cachedInput": 1,
+      "cacheWrite": 12.5,
+      "output": 45
+    }
+  }
+}
