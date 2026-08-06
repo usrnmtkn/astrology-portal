@@ -1,0 +1,24 @@
+{
+  "id": "neptune-lilith",
+  "planetA": "neptune",
+  "planetB": "lilith",
+  "traditional": "Fog dresses the banished want as fantasy, longing, or somebody else's story.",
+  "modern": {
+    "blend": "The daydream with a repeating theme; follow it to its plain content.",
+    "harmonious": "Imagination gives the exiled want a safe first form: the art, the plan, the admission.",
+    "hard": "The parasocial pull; the escape that is an unmet want wearing a disguise.",
+    "business": "Vague dissatisfaction at work; the want underneath is usually ordinary and speakable."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The daydream with a repeating theme; follow it to its plain content.",
+  "harmonious": "Imagination gives the exiled want a safe first form: the art, the plan, the admission.",
+  "hard": "The parasocial pull; the escape that is an unmet want wearing a disguise.",
+  "business": "Vague dissatisfaction at work; the want underneath is usually ordinary and speakable."
+}

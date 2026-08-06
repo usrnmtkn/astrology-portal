@@ -1,0 +1,24 @@
+{
+  "id": "uranus-chiron",
+  "planetA": "uranus",
+  "planetB": "chiron",
+  "traditional": "Sudden change rips the familiar bandage off the crooked-healed place.",
+  "modern": {
+    "blend": "Disruption and release land at once; what got uncovered was waiting for exactly this.",
+    "harmonious": "The shock that frees something; healing arrives sideways and unscheduled.",
+    "hard": "The disruption exposes what the routine was protecting before anyone is ready.",
+    "business": "Reorgs and pivots hit old injuries; separate the change from the wound it touched."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Disruption and release land at once; what got uncovered was waiting for exactly this.",
+  "harmonious": "The shock that frees something; healing arrives sideways and unscheduled.",
+  "hard": "The disruption exposes what the routine was protecting before anyone is ready.",
+  "business": "Reorgs and pivots hit old injuries; separate the change from the wound it touched."
+}

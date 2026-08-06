@@ -58,8 +58,12 @@ place.
    every block through a generated-template order. Across the set, look for
    house or life-area specificity, lived patterns, and usable movement. Those
    elements may occur in any order and need not all appear in every block.
-9. **Recognizability.** Generated prose must not reproduce documented CHANI or
-   Spirit Daughter constructions. Owner-verbatim text is exempt from this one
+9. **Recognizability.** Generated prose must not reproduce documented CHANI,
+   Spirit Daughter, or AC phrasing constructions. AC timing devices
+   may be adapted structurally, but theatrical titles and dense stacked metaphor
+   remain out. Shared astrological knowledge and terminology are never flagged:
+   Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary
+   are common to astrologers. Owner-verbatim text is exempt from this one
    anti-imitation check only; provenance does not confer a score.
 
 ## Two non-semantic checks
@@ -69,7 +73,7 @@ place.
     timezone labels in owner articles are evaluation text only. This check is
     not sent to the voice model.
 11. **Mechanical lint.** The long-form linter owns banned words, trade
-    vocabulary, and literal CC/SD tics. It runs before semantic judging.
+    vocabulary, and literal adjacent-voice tics. It runs before semantic judging.
 
 ## Interpretation rules
 
