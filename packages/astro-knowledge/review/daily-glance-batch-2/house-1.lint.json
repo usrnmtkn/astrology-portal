@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "key": "house/1",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+    "required": false
+  },
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "12 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "4 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "58 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": true,
+      "details": "1 detected instruction(s); final sentence: Tell one person the detail you almost left out."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": true,
+      "details": "No prohibited match."
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": true,
+      "details": "House-11 topic cue present."
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "passed": true,
+      "details": "Body uses a non-fixed opener."
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "passed": true,
+      "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "passed": true,
+      "details": [
+        "For the next few hours"
+      ]
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "passed": true,
+      "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "passed": true,
+      "details": "No aspect-group headline grammar applies."
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    },
+    {
+      "id": "DG-R11-unhedged-headline",
+      "passed": true,
+      "details": "Headline makes an unhedged claim."
+    },
+    {
+      "id": "DG-R12-no-time-anchor-opener",
+      "passed": true,
+      "details": "Body opens inside the scene."
+    },
+    {
+      "id": "DG-R13-may-max-once",
+      "passed": true,
+      "details": "1 may usage(s)"
+    },
+    {
+      "id": "DG-R14-scene-not-biographical",
+      "passed": true,
+      "details": "No biographical anchor detected."
+    },
+    {
+      "id": "DG-R15-action-repairs-moment",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "OWNER-DIRECTIVE-short-blunt-line",
+      "passed": false,
+      "details": "No 2-8 word body sentence found."
+    },
+    {
+      "id": "OWNER-TEST-specificity",
+      "passed": true,
+      "details": {
+        "own": {
+          "key": "house/1",
+          "matches": [
+            "self-presentation"
+          ],
+          "required": 1,
+          "passed": true
+        },
+        "swappableTo": []
+      }
+    },
+    {
+      "id": "OWNER-TEST-morning-read",
+      "passed": true,
+      "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "passed": true,
+      "details": [
+        "For the next few hours, you can avoid standing out, but you may feel less like yourself before anyone responds."
+      ]
+    }
+  ],
+  "findings": [],
+  "counts": {
+    "headlineWords": 12,
+    "headlineSentences": 1,
+    "bodyWords": 58,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 1,
+    "screenshotCandidateLines": 1
+  }
+}

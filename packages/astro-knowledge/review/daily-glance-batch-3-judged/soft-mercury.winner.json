@@ -1,0 +1,241 @@
+{
+ "key": "soft/mercury",
+ "advisoryOnly": true,
+ "winner": {
+  "headline": "What hurt is easier to put into words.",
+  "body": "You can bring a strained conversation back to the part that caused the upset. When you defend every side detail, your reply gets longer and the main question remains unanswered. The side details can wait. Over the next few hours, you can say what hurt and what changed with less second-guessing. You are not restarting the argument by returning to its actual point. Send one direct reply that explains what hurt and ends with the question you need answered."
+ },
+ "judge": {
+  "key": "soft/mercury",
+  "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+  "judgeModel": "gpt-4.1-mini",
+  "score": 3,
+  "dimScore": 7,
+  "verdict": {
+   "score": 3,
+   "verdict": "This candidate matches the owner's voice well with plain, conversational truth and a clear, early statement of the main idea. It names the recognizable cost of prolonging conflict and second-guessing, and the structure leads with the key insight followed by supportive detail. Hedging is minimal and the formula avoids mechanical or templated phrasing. The line about not restarting the argument by returning to its actual point is a clear, relatable insight that someone might save or share. The specificity fits the soft/mercury key by focusing on communication and emotional clarity.",
+   "dimensions": {
+    "voice": true,
+    "stakes": true,
+    "structure": true,
+    "hedging": true,
+    "formula": true,
+    "screenshot_line": true,
+    "specificity": true
+   },
+   "best_line": "You are not restarting the argument by returning to its actual point.",
+   "why": "This sentence captures a common but unspoken fear in conflict—worrying that addressing the core issue will escalate the fight—while reassuring the reader that clarity is possible and necessary. It is concise, emotionally resonant, and directly supports the horoscope's main message, making it a strong takeaway that fits the owner's voice and the key's emotional register."
+  },
+  "usage": {
+   "input_tokens": 1200,
+   "input_tokens_details": {
+    "cache_write_tokens": 0,
+    "cached_tokens": 0
+   },
+   "output_tokens": 277,
+   "output_tokens_details": {
+    "reasoning_tokens": 0
+   },
+   "total_tokens": 1477
+  },
+  "advisoryOnly": true
+ },
+ "lint": {
+  "schemaVersion": 1,
+  "key": "soft/mercury",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+   "required": false
+  },
+  "checks": [
+   {
+    "id": "P4-headline-one-declarative-sentence",
+    "passed": true,
+    "details": "1 sentence(s)"
+   },
+   {
+    "id": "P4-headline-word-count",
+    "passed": true,
+    "details": "8 words"
+   },
+   {
+    "id": "P4-body-sentence-count",
+    "passed": true,
+    "details": "6 sentences"
+   },
+   {
+    "id": "P4-body-word-count",
+    "passed": true,
+    "details": "80 words"
+   },
+   {
+    "id": "P4-one-final-instruction",
+    "passed": true,
+    "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send one direct reply that explains what hurt and ends with the question you need answered."
+   },
+   {
+    "id": "P4-body-supports-without-repeating",
+    "passed": true,
+    "details": "Body does not repeat the full headline."
+   },
+   {
+    "id": "global+VC-016+DG+SM-output-bans",
+    "passed": true,
+    "details": "No prohibited match."
+   },
+   {
+    "id": "DG-R2-register",
+    "passed": true,
+    "details": {
+     "mildEaseCue": true,
+     "target": "mercury"
+    }
+   },
+   {
+    "id": "DG-R3-no-slogan-or-restatement-closer",
+    "passed": true,
+    "details": "No known slogan or full-headline restatement detected."
+   },
+   {
+    "id": "DG-R4-no-outcome-promise",
+    "passed": true,
+    "details": "No deterministic outcome promise detected."
+   },
+   {
+    "id": "DG-R7-varied-opener",
+    "passed": true,
+    "details": "Body uses a non-fixed opener."
+   },
+   {
+    "id": "DG-R9-enumerated-instruction-allowed",
+    "passed": true,
+    "details": "No enumerated one-X/one-Y instruction present."
+   },
+   {
+    "id": "B1-L1-time-anchor-max-once",
+    "passed": true,
+    "details": [
+     "Over the next few hours"
+    ]
+   },
+   {
+    "id": "B1-L2-may-inner-states-only",
+    "passed": true,
+    "details": "Every may clause is an inner state, or may is absent."
+   },
+   {
+    "id": "B1-L3+L4-headline-group-grammar",
+    "passed": true,
+    "details": {
+     "softGrammar": true,
+     "otherGrammar": false
+    }
+   },
+   {
+    "id": "SM-DG-2-no-diagnostic-history",
+    "passed": true,
+    "details": "No diagnostic reader-history frame detected."
+   },
+   {
+    "id": "DG-R11-unhedged-headline",
+    "passed": true,
+    "details": "Headline makes an unhedged claim."
+   },
+   {
+    "id": "DG-R12-no-time-anchor-opener",
+    "passed": true,
+    "details": "Body opens inside the scene."
+   },
+   {
+    "id": "DG-R13-may-max-once",
+    "passed": true,
+    "details": "0 may usage(s)"
+   },
+   {
+    "id": "DG-R14-scene-not-biographical",
+    "passed": true,
+    "details": "No biographical anchor detected."
+   },
+   {
+    "id": "DG-R15-action-repairs-moment",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R16-owner-reserved-construction",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-max-one",
+    "passed": true,
+    "details": "No quoted-dialogue line used."
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+    "passed": true,
+    "advisory": true,
+    "details": "No quoted-dialogue judgment needed."
+   },
+   {
+    "id": "OWNER-DIRECTIVE-short-blunt-line",
+    "passed": true,
+    "details": [
+     "The side details can wait."
+    ]
+   },
+   {
+    "id": "OWNER-TEST-specificity",
+    "passed": false,
+    "advisory": false,
+    "details": {
+     "own": {
+      "key": "soft/mercury",
+      "matches": [
+       "communication"
+      ],
+      "required": 2,
+      "passed": false
+     },
+     "comparisonScope": [
+      "square/mars",
+      "square/uranus",
+      "opposition/jupiter",
+      "opposition/pluto",
+      "soft/uranus",
+      "soft/chiron",
+      "house/5"
+     ],
+     "swappableTo": [],
+     "advisorySwappableTo": []
+    }
+   },
+   {
+    "id": "OWNER-TEST-morning-read",
+    "passed": true,
+    "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+   },
+   {
+    "id": "OWNER-TEST-screenshot",
+    "passed": true,
+    "details": [
+     "When you defend every side detail, your reply gets longer and the main question remains unanswered."
+    ]
+   }
+  ],
+  "findings": [],
+  "counts": {
+   "headlineWords": 8,
+   "headlineSentences": 1,
+   "bodyWords": 80,
+   "bodySentences": 6,
+   "instructions": 1,
+   "timeAnchors": 1,
+   "mayUsages": 0,
+   "quotedDialogueLines": 0,
+   "screenshotCandidateLines": 1
+  }
+ }
+}

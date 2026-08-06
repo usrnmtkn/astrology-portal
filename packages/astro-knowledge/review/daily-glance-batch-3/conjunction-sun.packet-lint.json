@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/sun",
+  "passed": true,
+  "selfLintScope": "Positive owner passages and verified facts; policy declarations are excluded so named prohibited terms do not self-collide.",
+  "checks": [
+    {
+      "id": "owner-passage-count",
+      "passed": true,
+      "details": "6 passages"
+    },
+    {
+      "id": "owner-source-diversity",
+      "passed": true,
+      "details": "5 source files"
+    },
+    {
+      "id": "positive-authority-only",
+      "passed": true,
+      "details": "Only owner-authored final or exact-owner-approved evidence is allowed."
+    },
+    {
+      "id": "fact-count",
+      "passed": true,
+      "details": "2 key facts"
+    },
+    {
+      "id": "format-gates",
+      "passed": true,
+      "details": "P4 headline/body gates present."
+    },
+    {
+      "id": "style-markers",
+      "passed": true,
+      "details": "SM-DG-1 through SM-DG-6 present."
+    },
+    {
+      "id": "daily-rules",
+      "passed": true,
+      "details": "DG-R1 through DG-R17 present."
+    },
+    {
+      "id": "batch-1-lint-guidance",
+      "passed": true,
+      "details": "Time-anchor, may, headline grammar, and conjunction-isolation lessons present."
+    },
+    {
+      "id": "warmth-source-search",
+      "passed": true,
+      "details": "Daily family, owner corpus, and Aphorism Library searched in order."
+    },
+    {
+      "id": "warmth-one-max",
+      "passed": true,
+      "details": "1 supplied line(s)"
+    },
+    {
+      "id": "warmth-mode",
+      "passed": true,
+      "details": "matched"
+    },
+    {
+      "id": "scene-evidence-lane",
+      "passed": true,
+      "details": "invented_allowed"
+    },
+    {
+      "id": "group-exemplar-policy",
+      "passed": true,
+      "details": "2 matching group exemplar passages included."
+    },
+    {
+      "id": "owner-prompt-core",
+      "passed": true,
+      "details": "Owner closing instruction is present verbatim as the writing instruction."
+    },
+    {
+      "id": "owner-nine-step-guidance",
+      "passed": true,
+      "details": "Nine owner steps present as guidance."
+    },
+    {
+      "id": "owner-three-final-tests",
+      "passed": true,
+      "details": "Specificity, morning-read, and screenshot tests present."
+    },
+    {
+      "id": "specificity-profile",
+      "passed": true,
+      "details": "Mechanical swap-test profile present."
+    },
+    {
+      "id": "routing",
+      "passed": true,
+      "details": "Sol xhigh writer-only route for 14 calls; Terra disabled."
+    },
+    {
+      "id": "first-call-exclusions",
+      "passed": true,
+      "details": "No candidates, judge reports, rejected copy, or negative examples."
+    },
+    {
+      "id": "positive-context-output-ban-self-lint",
+      "passed": true,
+      "details": "Owner passages and verified facts contain no output-ban collision."
+    },
+    {
+      "id": "model-input-shape",
+      "passed": true,
+      "details": "066937a1457fdaa3c206d928548a4fc505ccc10935cfad55f0f2dcdedb365f08"
+    }
+  ],
+  "findings": [],
+  "modelInputSha256": "066937a1457fdaa3c206d928548a4fc505ccc10935cfad55f0f2dcdedb365f08"
+}

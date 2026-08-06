@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "key": "house/11",
+  "passed": true,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "10 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "3 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "58 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": true,
+      "details": "1 detected instruction(s); final sentence: Message one friend with one part of the plan you support, and ask for one adjustment you prefer."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": true,
+      "details": "No prohibited match."
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": true,
+      "details": "House-11 topic cue present."
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    }
+  ],
+  "findings": [],
+  "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 58,
+    "bodySentences": 3,
+    "instructions": 1
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "key": "soft/chiron",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+    "required": false
+  },
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "10 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "4 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "60 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": true,
+      "details": "skeleton=permission-after-recognition; 1 detected instruction(s); final sentence: In the next few hours, ask them to stay while you write the first two lines."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": true,
+      "details": "No prohibited match."
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": false,
+      "details": {
+        "mildEaseCue": false,
+        "target": "chiron"
+      }
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "passed": true,
+      "details": "Body uses a non-fixed opener."
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "passed": true,
+      "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "passed": true,
+      "details": [
+        "In the next few hours"
+      ]
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "passed": true,
+      "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "passed": false,
+      "details": {
+        "softGrammar": false,
+        "otherGrammar": false
+      }
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    },
+    {
+      "id": "DG-R11-unhedged-headline",
+      "passed": true,
+      "details": "Headline makes an unhedged claim."
+    },
+    {
+      "id": "DG-R12-no-time-anchor-opener",
+      "passed": true,
+      "details": "Body opens inside the scene."
+    },
+    {
+      "id": "DG-R13-may-max-once",
+      "passed": true,
+      "details": "1 may usage(s)"
+    },
+    {
+      "id": "DG-R14-scene-not-biographical",
+      "passed": true,
+      "details": "No biographical anchor detected."
+    },
+    {
+      "id": "DG-R15-action-repairs-moment",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R16-owner-reserved-construction",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-max-one",
+      "passed": true,
+      "details": [
+        "You may feel less certain about saying your usual “I’m fine,” since it would leave you rewriting the response alone."
+      ]
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+      "passed": true,
+      "advisory": true,
+      "details": "One quoted-dialogue line used; owner review determines whether it earns its place."
+    },
+    {
+      "id": "OWNER-DIRECTIVE-short-blunt-line",
+      "passed": true,
+      "details": [
+        "You’re not weak for needing care."
+      ]
+    },
+    {
+      "id": "OWNER-TEST-specificity",
+      "passed": false,
+      "advisory": false,
+      "details": {
+        "own": {
+          "key": "soft/chiron",
+          "matches": [
+            "care-old-hurt"
+          ],
+          "required": 2,
+          "passed": false
+        },
+        "comparisonScope": [
+          "conjunction/jupiter",
+          "conjunction/mercury",
+          "conjunction/sun",
+          "conjunction/saturn",
+          "square/mars",
+          "square/venus",
+          "square/uranus",
+          "opposition/jupiter",
+          "opposition/pluto",
+          "soft/mercury",
+          "soft/uranus",
+          "house/5",
+          "house/12"
+        ],
+        "swappableTo": [
+          {
+            "key": "conjunction/mercury",
+            "matches": [
+              "feeling-thinking",
+              "words"
+            ],
+            "passed": true
+          },
+          {
+            "key": "house/12",
+            "matches": [
+              "rest-privacy"
+            ],
+            "passed": true
+          }
+        ],
+        "advisorySwappableTo": []
+      }
+    },
+    {
+      "id": "OWNER-TEST-morning-read",
+      "passed": true,
+      "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "passed": true,
+      "details": [
+        "You’re not weak for needing care."
+      ]
+    }
+  ],
+  "findings": [],
+  "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 60,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 1,
+    "quotedDialogueLines": 1,
+    "screenshotCandidateLines": 1
+  }
+}
