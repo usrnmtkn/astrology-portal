@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "key": "square/venus",
+  "responseId": "resp_0d870fdf040b943d006a73546aeca0819da61e79ab39c60465",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "requestedMaxOutputTokens": 24000,
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 54456,
+  "usage": {
+    "inputTokens": 2808,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 2805,
+    "outputTokens": 2913,
+    "reasoningTokens": 2813,
+    "totalTokens": 5721
+  },
+  "estimatedCostUsd": 0.10493625,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "bfa826dc86b9e0d967710dcfd17cf1eed20a88915fcd6abe9ab04408825d1b30",
+  "incompleteDetails": null
+}

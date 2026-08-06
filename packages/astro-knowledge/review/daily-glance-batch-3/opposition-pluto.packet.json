@@ -1,0 +1,418 @@
+{
+  "schemaVersion": 1,
+  "packetVersion": "daily-glance-writer-packet-v6:batch-3+owner-directive+warmth+scene+owner-six+key-facts+p4+sm-dg+dg-r1-r17+owner-tests",
+  "promptVersion": "daily-glance-writer-v6:owner-directive-batch-3",
+  "target": {
+    "key": "opposition/pluto",
+    "register": "other-friction",
+    "emotionalCore": "another person's control or intensity bringing the power struggle fully into view",
+    "groupGuidance": "Keep power, jealousy, or compulsion in one ordinary exchange with another person; do not promise transformation.",
+    "exemplarPolicy": "the approved opposition/chiron pair supplies opposition-register evidence only",
+    "matchingExemplarSourceIds": [
+      "daily-glance-opposition-chiron-owner-headline",
+      "daily-glance-opposition-chiron-owner-body"
+    ],
+    "axisEnd": null
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-3-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 14,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false,
+    "maxOutputTokens": 24000
+  },
+  "verifiedAstrology": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/pairs/moon-pluto.json",
+      "selector": "modern.hard",
+      "text": "Emotional power struggles, jealousy, and compulsion."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+      "selector": "F2.opposition",
+      "text": "the other side comes fully into view; awareness- and relationship-oriented; friction arrives through another person (other-friction register)."
+    }
+  ],
+  "format": {
+    "fields": [
+      "headline",
+      "body"
+    ],
+    "headline": {
+      "sentences": 1,
+      "minimumWords": 4,
+      "maximumWords": 16,
+      "terminal": "."
+    },
+    "body": {
+      "minimumSentences": 3,
+      "maximumSentences": 5,
+      "minimumWords": 40,
+      "maximumWords": 65,
+      "maximumInstructions": 1,
+      "instructionPosition": "final-sentence"
+    },
+    "engineHiddenTerms": [
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "lilith",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto",
+      "chiron",
+      "node",
+      "nodes",
+      "aries",
+      "taurus",
+      "gemini",
+      "cancer",
+      "leo",
+      "virgo",
+      "libra",
+      "scorpio",
+      "sagittarius",
+      "capricorn",
+      "aquarius",
+      "pisces",
+      "square",
+      "opposition",
+      "conjunction",
+      "trine",
+      "sextile",
+      "aspect",
+      "house",
+      "first house",
+      "1st",
+      "planet",
+      "natal",
+      "transit"
+    ]
+  },
+  "styleMarkers": [
+    {
+      "id": "SM-DG-1",
+      "rule": "The reader is the grammatical subject; abstractions do not act."
+    },
+    {
+      "id": "SM-DG-2",
+      "rule": "Inner states are offered with may, never asserted as diagnosis."
+    },
+    {
+      "id": "SM-DG-3",
+      "rule": "Alternatives are real options, not images; use no metaphor in this register."
+    },
+    {
+      "id": "SM-DG-4",
+      "rule": "Vary sentence length naturally and include one short, blunt sentence without turning the body into staccato fragments."
+    },
+    {
+      "id": "SM-DG-5",
+      "rule": "The word whether is not owner language and must not appear."
+    },
+    {
+      "id": "SM-DG-6",
+      "rule": "Ambient-force energy language is banned; ordinary effort-cost use remains allowed."
+    }
+  ],
+  "dailyRules": [
+    {
+      "id": "DG-R1",
+      "rule": "Vary sentence structures across the batch; each structural function must sound independently authored."
+    },
+    {
+      "id": "DG-R2",
+      "rule": "Keep conjunction saturated, square internally frictional, opposition frictional through another person, soft mildly easier, and house fallback topic-led."
+    },
+    {
+      "id": "DG-R3",
+      "rule": "Land the close on the single concrete instruction and keep it literal to the behavior already shown."
+    },
+    {
+      "id": "DG-R4",
+      "rule": "Describe a brief available condition or friction at hours scale; results remain open."
+    },
+    {
+      "id": "DG-R5",
+      "rule": "Address the reader with respect and treat their ordinary baseline as capable."
+    },
+    {
+      "id": "DG-R6",
+      "rule": "When a room appears, use it only as a concrete collective subject in motion."
+    },
+    {
+      "id": "DG-R7",
+      "rule": "Give the body a key-specific opener construction that does not repeat another batch opener."
+    },
+    {
+      "id": "DG-R8",
+      "rule": "A room may act collectively; audience comparisons must stay attached to a named ordinary behavior."
+    },
+    {
+      "id": "DG-R9",
+      "rule": "A single instruction may naturally enumerate one person, one action, or one change without being split into extra instructions."
+    },
+    {
+      "id": "DG-R10",
+      "rule": "House fallback copy begins from its life topic, names the pull plainly, and ends at speak-up scale."
+    },
+    {
+      "id": "DG-R11",
+      "rule": "The headline makes an unhedged claim; may never appears in a headline."
+    },
+    {
+      "id": "DG-R12",
+      "rule": "The body opens inside the scene, never with a time anchor; today may appear later, sparingly."
+    },
+    {
+      "id": "DG-R13",
+      "rule": "Use may at most once in the body, and only for an inner state."
+    },
+    {
+      "id": "DG-R14",
+      "rule": "Keep the scene concrete but non-biographical; use generic current props rather than invented personal history."
+    },
+    {
+      "id": "DG-R15",
+      "rule": "The final action repairs the exact moment; no somatic or generic-wellness micro-instruction."
+    },
+    {
+      "id": "DG-R16",
+      "rule": "The ‘It takes less X to A than to B’ construction is owner-reserved; do not use it."
+    },
+    {
+      "id": "DG-R17",
+      "rule": "Use at most one quoted-dialogue line in the body, and only if it earns its place."
+    }
+  ],
+  "batch1LintGuidance": [
+    {
+      "id": "B1-L1",
+      "rule": "Use at most one time-anchor phrase anywhere in the body, and never use it as the opener."
+    },
+    {
+      "id": "B1-L2",
+      "rule": "Use may only for a reader's inner state, never as padding on observable actions or every clause."
+    },
+    {
+      "id": "B1-L3",
+      "rule": "Match the headline grammar of the approved exemplar for this group, not only its topic or tone."
+    },
+    {
+      "id": "B1-L4",
+      "rule": "Conjunction now has approved owner exemplars; use their saturation grammar without copying their scene or phrasing."
+    }
+  ],
+  "ownerPromptCore": "Draft from the lived moment, not from the astrological concept. Name what the reader is doing, what happens next, and what the behavior costs them. Replace abstract summaries with ordinary decisions, errands, messages, work, plans, money, time, and relationships. Use one concrete scene instead of listing every possible manifestation. Limit hedging. Let the headline make a clear claim in language someone would actually say. Reassurance must answer the specific fear created by the scene, not offer generic emotional permission. End with one action that directly repairs or clarifies the moment described. Vary the sentence rhythm, including at least one short, blunt sentence. Before finalizing, reject any line that could fit almost any transit or sounds like therapy, corporate training, or generic productivity advice.",
+  "ownerGuidance": [
+    {
+      "id": "OWNER-STEP-1",
+      "rule": "Find the lived moment first: the action, what immediately precedes it, the realization afterward, and its cost."
+    },
+    {
+      "id": "OWNER-STEP-2",
+      "rule": "Write a headline someone would actually say: a contradiction, consequence, blunt truth, or moment already in motion."
+    },
+    {
+      "id": "OWNER-STEP-3",
+      "rule": "Use one concrete scene rather than category stacks; keep it portable without listing every manifestation."
+    },
+    {
+      "id": "OWNER-STEP-4",
+      "rule": "Name what becomes harder because of the pattern."
+    },
+    {
+      "id": "OWNER-STEP-5",
+      "rule": "Take a position; one may or can is usually enough."
+    },
+    {
+      "id": "OWNER-STEP-6",
+      "rule": "Place reassurance after recognition, and make it answer the exact shame or fear created by the scene."
+    },
+    {
+      "id": "OWNER-STEP-7",
+      "rule": "Make the instruction repair the exact moment, never general wellness."
+    },
+    {
+      "id": "OWNER-STEP-8",
+      "rule": "Vary sentence length and include one short, blunt turn."
+    },
+    {
+      "id": "OWNER-STEP-9",
+      "rule": "Apply specificity, morning-read, and screenshot tests before returning the final JSON."
+    }
+  ],
+  "ownerFinalTests": [
+    {
+      "id": "OWNER-TEST-specificity",
+      "rule": "The body must fail a mechanical swap against the other thirteen batch keys; same-target sibling swaps are advisory only."
+    },
+    {
+      "id": "OWNER-TEST-morning-read",
+      "rule": "Every sentence must parse half-awake; mechanical guard caps body sentences at 28 words and flags semicolons or parentheses."
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "rule": "At least one body sentence must be a candidate line worth saving because it names a recognizable experience clearly."
+    }
+  ],
+  "specificity": {
+    "minimumGroups": 2,
+    "cueGroups": [
+      {
+        "id": "other-person",
+        "pattern": "\\b(?:someone|another person|they|them|friend|partner|coworker|loved one|other side)\\b"
+      },
+      {
+        "id": "power-control",
+        "pattern": "\\b(?:power|control|jealous|compuls|own|access|withhold|pressure|rules)\\w*\\b"
+      }
+    ]
+  },
+  "warmthHarvest": {
+    "harvest_mode": "matched",
+    "emotionalCore": "another person's control or intensity bringing the power struggle fully into view",
+    "ownerFoundationLines": [
+      {
+        "lane": "owner-corpus",
+        "sourceId": "owner-article:mercury-retrograde-in-leo#vulnerability-not-weakness",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+        "selector": "exact-sentence",
+        "originalLine": "Your vulnerability is not a weakness.",
+        "suppliedLine": "Your vulnerability is not a weakness."
+      }
+    ],
+    "sourcesSearched": [
+      {
+        "lane": "daily-family-authored-clauses",
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/reviewed-clauses.json"
+      },
+      {
+        "lane": "owner-corpus",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform"
+      },
+      {
+        "lane": "aphorism-library-themes",
+        "sourcePath": "tldr-astro-phrasebank/copy/MARIE-VOICE-CALIBRATION.md",
+        "section": "A5"
+      }
+    ],
+    "insertInstruction": "Use at most one supplied feeling or permission line where it lands naturally. Preserve its meaning; verbatim is preferred when it fits.",
+    "placementInstruction": "A turn toward the reader, if present, must trace to this line; otherwise omit the turn."
+  },
+  "sceneEvidence": {
+    "mode": "owner-five-beat",
+    "sourceId": "sky.moon.opposition.pluto#humanMoment+developmentDetail",
+    "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json",
+    "recordId": "sky.moon.opposition.pluto",
+    "humanMoment": "A private need is brought before the person who controls the money, access, housing, or family decision.",
+    "developmentDetail": "One side describes fear, care, and the history attached to the request; the other points to ownership, rules, and the consequences of giving up control.",
+    "instruction": "Use this evidence to ground a recognizable daily-scale middle; do not copy its astrology or enlarge its stakes."
+  },
+  "aphorismHeadlineOption": {
+    "allowed": false
+  },
+  "outputPolicy": {
+    "ids": [
+      "global",
+      "VC-016-minus-pronouns",
+      "DG-R1",
+      "DG-R2",
+      "DG-R3",
+      "DG-R4",
+      "DG-R5",
+      "DG-R6",
+      "DG-R7",
+      "DG-R8",
+      "DG-R9",
+      "DG-R10",
+      "DG-R11",
+      "DG-R12",
+      "DG-R13",
+      "DG-R14",
+      "DG-R15",
+      "DG-R16",
+      "DG-R17",
+      "SM-DG-5",
+      "SM-DG-6",
+      "engine-hidden"
+    ],
+    "pronounsAllowed": [
+      "you",
+      "your",
+      "yours",
+      "yourself",
+      "yourselves"
+    ],
+    "noNegativeExamples": true,
+    "noJudgeReports": true,
+    "noRejectedCopy": true
+  },
+  "ownerPassages": [
+    {
+      "sourceId": "daily-glance-opposition-chiron-owner-headline",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "daily-glance-opposition-register-evidence",
+      "text": "You can leave a need unsaid and still expect them to understand.",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true
+    },
+    {
+      "sourceId": "daily-glance-opposition-chiron-owner-body",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "daily-glance-opposition-register-evidence",
+      "text": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan.",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true
+    },
+    {
+      "sourceId": "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "It’s exhausting to keep adapting just to get through a world that seems to demand you be everything to everyone. It takes real strength to keep choosing growth when staying the same would feel so much easier. Think about what your willingness to change has already asked you to let go of."
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "This kind of attention is a form of love that our culture barely recognizes. It's noticing that your partner always chooses the corner table at restaurants. It's remembering that your friend gets anxious in crowded spaces. It's seeing when someone is tired before they have to tell you."
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "And if someone’s trying to rush you? If there’s pressure to respond, to fix, to say yes before you’re ready? That’s your cue to pause."
+    },
+    {
+      "sourceId": "owner-article:virgo-season-2025:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/virgo-season-2025.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "Each of us needs to be recognized for the invisible labor of maintaining order in disorder. To be seen for the thousand micro-decisions that keep life functioning. It's human to want someone to notice that you remembered everyone's appointments, that you kept the bills paid while navigating your own storms. It's our responsibility to honor this in ourselves."
+    }
+  ]
+}
