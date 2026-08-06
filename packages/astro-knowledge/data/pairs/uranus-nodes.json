@@ -1,0 +1,24 @@
+{
+  "id": "uranus-nodes",
+  "planetA": "uranus",
+  "planetB": "nodes",
+  "traditional": "The sudden detour meets the set direction; the interruption may be the path correcting for lost time.",
+  "modern": {
+    "blend": "The disruption that ejects someone from the outgrown chapter all at once.",
+    "harmonious": "The shortcut nobody planned lands the future early.",
+    "hard": "The reroute that reads as catastrophe for a week and as rescue for a decade.",
+    "business": "The unexpected change mostly deletes what was already over; rebuild forward."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The disruption that ejects someone from the outgrown chapter all at once.",
+  "harmonious": "The shortcut nobody planned lands the future early.",
+  "hard": "The reroute that reads as catastrophe for a week and as rescue for a decade.",
+  "business": "The unexpected change mostly deletes what was already over; rebuild forward."
+}

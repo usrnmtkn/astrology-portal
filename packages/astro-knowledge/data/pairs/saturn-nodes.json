@@ -1,0 +1,24 @@
+{
+  "id": "saturn-nodes",
+  "planetA": "saturn",
+  "planetB": "nodes",
+  "traditional": "The deadline meets the assignment; the chapter's work stops being optional.",
+  "modern": {
+    "blend": "The postponed decision acquires a date; pressure as the assignment maturing.",
+    "harmonious": "Structure built for the future holds; the release finally completes because maintaining it got too expensive.",
+    "hard": "The obligation to the old chapter that now costs double; the delay that compounds.",
+    "business": "Commit the plan to writing with dates; the era stops accepting verbal intentions."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The postponed decision acquires a date; pressure as the assignment maturing.",
+  "harmonious": "Structure built for the future holds; the release finally completes because maintaining it got too expensive.",
+  "hard": "The obligation to the old chapter that now costs double; the delay that compounds.",
+  "business": "Commit the plan to writing with dates; the era stops accepting verbal intentions."
+}

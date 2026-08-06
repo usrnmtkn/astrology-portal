@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "status": "owner-review-required",
+  "authority": "packages/astro-knowledge/review/daily-glance-rebuild-plan-2026-08-04.md#batch-2-sitting-rulings",
+  "key": "square/chiron",
+  "immutableRawOutput": true,
+  "callsMadeThisRun": 1,
+  "revisionsMade": 0,
+  "retriesMade": 0,
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "xhigh",
+  "maxOutputTokens": 24000,
+  "responseId": "resp_0fc1b5c83e48fbc1006a72aade400c81a29b60a117697a7b05",
+  "providerStatus": "completed",
+  "usage": {
+    "inputTokens": 2304,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 2301,
+    "outputTokens": 3968,
+    "reasoningTokens": 3859,
+    "totalTokens": 6272
+  },
+  "estimatedCostUsd": 0.13343625,
+  "lintPassed": false,
+  "specificityAdvisory": {
+    "id": "OWNER-TEST-specificity",
+    "passed": true,
+    "advisory": true,
+    "details": {
+      "measuredPassed": false,
+      "own": {
+        "key": "square/chiron",
+        "matches": [
+          "care-old-hurt"
+        ],
+        "required": 2,
+        "passed": false
+      },
+      "comparisonScope": [
+        "conjunction/chiron",
+        "opposition/chiron"
+      ],
+      "swappableTo": [
+        {
+          "key": "opposition/chiron",
+          "matches": [
+            "care-old-hurt",
+            "other-person"
+          ],
+          "passed": true
+        }
+      ]
+    }
+  },
+  "priorProviderPreserved": "review/daily-glance-batch-2/square-chiron.provider.failed-max-output-8000.json"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "point-pair-ascendant-sources-v1-south-node-ascendant-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/hard",
+  "payloadSha256": "48b3a8e2321447adc848c03424bc2b0378521782714c6d2f7af6880207476112",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+    "body_they": "{{holder1}} may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

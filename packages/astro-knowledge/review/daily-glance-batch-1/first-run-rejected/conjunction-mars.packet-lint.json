@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/mars",
+  "passed": true,
+  "selfLintScope": "Positive owner passages and verified facts; policy declarations are excluded so named prohibited terms do not self-collide.",
+  "checks": [
+    {
+      "id": "owner-passage-count",
+      "passed": true,
+      "details": "6 passages"
+    },
+    {
+      "id": "owner-source-diversity",
+      "passed": true,
+      "details": "4 source files"
+    },
+    {
+      "id": "positive-authority-only",
+      "passed": true,
+      "details": "Only owner-authored final or exact-owner-approved evidence is allowed."
+    },
+    {
+      "id": "fact-count",
+      "passed": true,
+      "details": "2 key facts"
+    },
+    {
+      "id": "format-gates",
+      "passed": true,
+      "details": "P4 headline/body gates present."
+    },
+    {
+      "id": "style-markers",
+      "passed": true,
+      "details": "SM-DG-1 through SM-DG-6 present."
+    },
+    {
+      "id": "daily-rules",
+      "passed": true,
+      "details": "DG-R1 through DG-R10 present."
+    },
+    {
+      "id": "group-exemplar-policy",
+      "passed": true,
+      "details": "Conjunction packet contains no cross-group exemplar."
+    },
+    {
+      "id": "routing",
+      "passed": true,
+      "details": "Sol xhigh writer-only route for 7 calls; Terra disabled."
+    },
+    {
+      "id": "first-call-exclusions",
+      "passed": true,
+      "details": "No candidates, judge reports, rejected copy, or negative examples."
+    },
+    {
+      "id": "positive-context-output-ban-self-lint",
+      "passed": true,
+      "details": "Owner passages and verified facts contain no output-ban collision."
+    },
+    {
+      "id": "model-input-shape",
+      "passed": true,
+      "details": "721d222988f0cd53c3df8056011031f02d1a259790ac43bc20c9811256604dfc"
+    }
+  ],
+  "findings": [],
+  "modelInputSha256": "721d222988f0cd53c3df8056011031f02d1a259790ac43bc20c9811256604dfc"
+}

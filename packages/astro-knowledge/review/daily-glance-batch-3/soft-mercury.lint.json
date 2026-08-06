@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "key": "soft/mercury",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+    "required": false
+  },
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "11 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "5 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "64 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": true,
+      "details": "1 detected instruction(s); final sentence: Name what hurt, what changed, and the answer you need next before you send."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": true,
+      "details": "No prohibited match."
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": true,
+      "details": {
+        "mildEaseCue": true,
+        "target": "mercury"
+      }
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "passed": true,
+      "details": "Body uses a non-fixed opener."
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "passed": true,
+      "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "passed": true,
+      "details": [
+        "over the next few hours"
+      ]
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "passed": true,
+      "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "passed": false,
+      "details": {
+        "softGrammar": false,
+        "otherGrammar": false
+      }
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    },
+    {
+      "id": "DG-R11-unhedged-headline",
+      "passed": true,
+      "details": "Headline makes an unhedged claim."
+    },
+    {
+      "id": "DG-R12-no-time-anchor-opener",
+      "passed": true,
+      "details": "Body opens inside the scene."
+    },
+    {
+      "id": "DG-R13-may-max-once",
+      "passed": true,
+      "details": "0 may usage(s)"
+    },
+    {
+      "id": "DG-R14-scene-not-biographical",
+      "passed": true,
+      "details": "No biographical anchor detected."
+    },
+    {
+      "id": "DG-R15-action-repairs-moment",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R16-owner-reserved-construction",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-max-one",
+      "passed": true,
+      "details": "No quoted-dialogue line used."
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+      "passed": true,
+      "advisory": true,
+      "details": "No quoted-dialogue judgment needed."
+    },
+    {
+      "id": "OWNER-DIRECTIVE-short-blunt-line",
+      "passed": true,
+      "details": [
+        "Be specific."
+      ]
+    },
+    {
+      "id": "OWNER-TEST-specificity",
+      "passed": false,
+      "advisory": false,
+      "details": {
+        "own": {
+          "key": "soft/mercury",
+          "matches": [
+            "communication"
+          ],
+          "required": 2,
+          "passed": false
+        },
+        "comparisonScope": [
+          "conjunction/jupiter",
+          "conjunction/mercury",
+          "conjunction/sun",
+          "conjunction/saturn",
+          "square/mars",
+          "square/venus",
+          "square/uranus",
+          "opposition/jupiter",
+          "opposition/pluto",
+          "soft/uranus",
+          "soft/chiron",
+          "house/5",
+          "house/12"
+        ],
+        "swappableTo": [
+          {
+            "key": "conjunction/sun",
+            "matches": [
+              "identity-presentation",
+              "feeling-need"
+            ],
+            "passed": true
+          },
+          {
+            "key": "square/mars",
+            "matches": [
+              "reactivity",
+              "self-friction"
+            ],
+            "passed": true
+          }
+        ],
+        "advisorySwappableTo": []
+      }
+    },
+    {
+      "id": "OWNER-TEST-morning-read",
+      "passed": true,
+      "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "passed": false,
+      "details": "No candidate body line detected."
+    }
+  ],
+  "findings": [],
+  "counts": {
+    "headlineWords": 11,
+    "headlineSentences": 1,
+    "bodyWords": 64,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+  }
+}

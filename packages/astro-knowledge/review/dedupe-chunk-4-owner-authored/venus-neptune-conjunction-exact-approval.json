@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-neptune-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/neptune/conjunction",
+  "payloadSha256": "3f3b0d4d6b05d095ea6cbc05ee9dd1e25820dbc2540a1fb8d0fd5f6a0ed79d5e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} sees {{holder1}} through an idealized lens, and being admired that way can feel extraordinary. The problem begins when {{holder1}} has to compete with the version {{holder2}} imagined.",
+    "body_they": "{{holder2}} sees {{holder1}} through an idealized lens, and being admired that way can feel extraordinary. The problem begins when {{holder1}} has to compete with the version {{holder2}} imagined.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
