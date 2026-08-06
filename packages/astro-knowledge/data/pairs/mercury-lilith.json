@@ -1,0 +1,24 @@
+{
+  "id": "mercury-lilith",
+  "planetA": "mercury",
+  "planetB": "lilith",
+  "traditional": "Pleasant conversation meets the sentence nobody is supposed to say.",
+  "modern": {
+    "blend": "The unsayable reaches the tongue's edge; said plainly once, it costs less than the silence has.",
+    "harmonious": "The room exhales because someone finally names it; honesty clears years of static.",
+    "hard": "The meeting where everyone knows and nobody says; the message drafted and deleted.",
+    "business": "The elephant in the retro; name it once, factually, and watch the agenda unstick."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The unsayable reaches the tongue's edge; said plainly once, it costs less than the silence has.",
+  "harmonious": "The room exhales because someone finally names it; honesty clears years of static.",
+  "hard": "The meeting where everyone knows and nobody says; the message drafted and deleted.",
+  "business": "The elephant in the retro; name it once, factually, and watch the agenda unstick."
+}
