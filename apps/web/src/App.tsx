@@ -186,6 +186,7 @@ import {
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { stablePairDailyVariant } from "./services/pairDaily";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   angularDistance,
@@ -1824,6 +1825,33 @@ function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot): Dail
       : null;
 
   return house ? { kind: "house", house } : null;
+}
+
+const pairDailyAspectGroups: Record<string, string> = {
+  conjunction: "conjunction",
+  opposition: "opposition",
+  square: "square",
+  trine: "soft",
+  sextile: "soft"
+};
+
+function dailyGlanceClauseKey(driver: NonNullable<ReturnType<typeof dailyGlanceDriver>>) {
+  if (driver.kind === "house") {
+    return `fallback-hook/daily-headline/house/${driver.house}`;
+  }
+
+  const group = pairDailyAspectGroups[driver.aspect] ?? driver.aspect;
+  return `fallback-hook/daily-headline/${group}/${driver.natal}`;
+}
+
+function pairDailyMoonElement(sign: string): "fire" | "earth" | "air" | "water" | null {
+  const normalized = normalizeContentIdPart(sign);
+
+  if (["aries", "leo", "sagittarius"].includes(normalized)) return "fire";
+  if (["taurus", "virgo", "capricorn"].includes(normalized)) return "earth";
+  if (["gemini", "libra", "aquarius"].includes(normalized)) return "air";
+  if (["cancer", "scorpio", "pisces"].includes(normalized)) return "water";
+  return null;
 }
 
 function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapshot, natalSky: SkySnapshot, targetDate: string): LiveGeneratedContent | null {
@@ -7369,6 +7397,8 @@ function activeBondTransitCards(
       return [{
         activatedContacts: contactsForBondTransitGroup(group, contacts),
         id: `${group.key}-${group.activationId}`,
+        effectFamily: bondEffectFamily(group.transiting, group.aspect) as "soft" | "hard",
+        effectContentKey: rendered.contentKey,
         headline: rendered.headline,
         transitPlanet: group.activation.transitPlanet,
         transitSign: group.activation.transitSign ?? "",
@@ -16519,7 +16549,7 @@ function ManualChartsPanel({
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
   const selectedFriendTransits = useMemo(() => (
-    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
+    (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && !selectedChartIsEvent
       ? dedupeSameBeatPersonalTransits(
           rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
           currentSky.generatedAt
@@ -16527,6 +16557,7 @@ function ManualChartsPanel({
       : []
   ), [
     currentSky,
+    friendProfileWork.compatibility,
     friendProfileWork.transits,
     lifeAreaFocus,
     selectedChart,
@@ -16583,7 +16614,7 @@ function ManualChartsPanel({
     selectedFriendTransits
   ]);
   const selectedBondTransitCards = useMemo(() => (
-    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
+    (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && !selectedChartIsEvent
       ? activeBondTransitCards(
         selectedSynastryContacts,
         selectedFriendTransits,
@@ -16595,12 +16626,102 @@ function ManualChartsPanel({
       : []
   ), [
     currentSky?.generatedAt,
+    friendProfileWork.compatibility,
     friendProfileWork.transits,
     profileTransits,
     selectedChart,
     selectedChartIsEvent,
     selectedFriendTransits,
     selectedSynastryContacts
+  ]);
+  const selectedPairDailySelection = useMemo(() => {
+    if (
+      !friendProfileWork.compatibility
+      || !relationshipComparisonIsSelf
+      || !currentSky
+      || !profileNatalSky
+      || !selectedChart?.natalChart
+      || selectedChartIsEvent
+    ) {
+      return null;
+    }
+
+    // Pair Daily deliberately reuses the same Daily At-a-Glance driver for both
+    // charts. A missing half makes the pair framing false, so fail closed.
+    const readerDriver = dailyGlanceDriver(currentSky, profileNatalSky);
+    const friendDriver = dailyGlanceDriver(currentSky, selectedChart.natalChart);
+    if (!readerDriver || !friendDriver) return null;
+
+    const selectedBondTransit = selectedBondTransitCards[0];
+    if (selectedBondTransit?.effectContentKey) {
+      return {
+        readerDriver,
+        friendDriver,
+        shared: {
+          kind: "bond" as const,
+          family: selectedBondTransit.effectFamily,
+          bondClauseKey: selectedBondTransit.effectContentKey
+        }
+      };
+    }
+
+    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
+    const element = moon ? pairDailyMoonElement(moon.sign) : null;
+    if (readerDriver.kind === "aspect" && friendDriver.kind === "aspect" && element) {
+      return {
+        readerDriver,
+        friendDriver,
+        shared: { kind: "moon" as const, element }
+      };
+    }
+
+    return {
+      readerDriver,
+      friendDriver,
+      shared: { kind: null }
+    };
+  }, [
+    currentSky,
+    friendProfileWork.compatibility,
+    profileNatalSky,
+    relationshipComparisonIsSelf,
+    selectedBondTransitCards,
+    selectedChart,
+    selectedChartIsEvent
+  ]);
+  const selectedPairDaily = useMemo(() => {
+    if (!selectedPairDailySelection || !currentSky || !selectedChart) return null;
+
+    const isoDate = currentSky.generatedAt.slice(0, 10);
+    const readerChartId = profile.charts[0]?.id ?? profile.id;
+    const friendChartId = selectedChart.id;
+
+    try {
+      const rendered = transitSynastryFallbackRendererV3.renderPairDaily({
+        reader: { clauseKey: dailyGlanceClauseKey(selectedPairDailySelection.readerDriver) },
+        friend: {
+          handle: selectedSocialFriend?.handle ?? null,
+          displayName: selectedChart.displayName,
+          clauseKey: dailyGlanceClauseKey(selectedPairDailySelection.friendDriver)
+        },
+        shared: selectedPairDailySelection.shared,
+        variant: stablePairDailyVariant(readerChartId, friendChartId, isoDate)
+      });
+
+      return rendered.body
+        ? { body: rendered.body, dateLabel: formatSkyDate(isoDate) }
+        : null;
+    } catch (error) {
+      if (error instanceof FallbackV3SourceGapError) return null;
+      throw error;
+    }
+  }, [
+    currentSky,
+    profile.charts,
+    profile.id,
+    selectedChart,
+    selectedPairDailySelection,
+    selectedSocialFriend?.handle
   ]);
   const selectedFriendTransitAspectLines = useMemo(() => (
     friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
@@ -17585,6 +17706,7 @@ function ManualChartsPanel({
             selectedCompatibilityCards.length > 0 ? (
               <CompatibilityTab
                 cards={selectedCompatibilityCards}
+                daily={selectedPairDaily}
                 dynamics={selectedCompatibilityDynamics}
                 friendName={selectedChart.displayName}
                 onOpenCard={openFriendCompatibilityCardDetail}

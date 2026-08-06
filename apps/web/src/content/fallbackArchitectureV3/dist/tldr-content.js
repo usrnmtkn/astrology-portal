@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -303,7 +303,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -1539,6 +1539,74 @@ ${fogNote}`;
     const parts = [body, ...sections.map((s) => s.body), ...question ? [question] : []];
     return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
   }
+  const pairDailyVariantKey = (baseKey, variant, count) => {
+    const normalized = Number.isFinite(Number(variant)) ? (Math.abs(Math.trunc(Number(variant))) - 1) % count + 1 : 1;
+    return normalized === 1 ? baseKey : `${baseKey}/variant-${normalized}`;
+  };
+  const pairDailyRow = (key) => hooks.get(key) ?? cards.get(key) ?? vocab.get(key) ?? null;
+  const pairDailyBody = (key, voice) => {
+    const row = pairDailyRow(key);
+    const body = voice === "they" ? row?.body_they : row?.body_you ?? row?.body;
+    if (typeof body !== "string" || !body.trim()) {
+      throw new SourceGapError(`SOURCE_GAP: pair daily row ${key} (${voice})`);
+    }
+    return body.trim();
+  };
+  const pairDailyFriendReference = (friend) => {
+    const normalizedHandle = (friend.handle ?? "").toString().trim().replace(/^@+/u, "");
+    if (normalizedHandle) return `@${normalizedHandle}`;
+    const normalizedName = (friend.displayName ?? "").toString().trim();
+    return normalizedName || "your friend";
+  };
+  function renderPairDaily({ reader, friend, shared = { kind: null }, variant = 1 }) {
+    if (!reader?.clauseKey || !friend?.clauseKey) {
+      throw new SourceGapError("SOURCE_GAP: pair daily requires both daily clause keys");
+    }
+    const openerKey = pairDailyVariantKey("fallback-hook/pair-daily/opener", variant, 3);
+    const opener = pairDailyBody(openerKey, "you");
+    const ctx = {
+      readerClause: pairDailyBody(reader.clauseKey, "you"),
+      friendHandle: pairDailyFriendReference(friend),
+      friendClause: pairDailyBody(friend.clauseKey, "they")
+    };
+    const parts = [fill(opener, ctx)];
+    const sourceKeys = [openerKey, reader.clauseKey, friend.clauseKey];
+    if (shared?.kind === "bond") {
+      if (!shared.family || !shared.bondClauseKey) {
+        throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
+      }
+      const frameKey = pairDailyVariantKey(
+        `fallback-hook/pair-daily/shared-bond/${shared.family}`,
+        variant,
+        2
+      );
+      parts.push(fill(pairDailyBody(frameKey, "you"), {
+        bondClause: pairDailyBody(shared.bondClauseKey, "you")
+      }));
+      sourceKeys.push(frameKey, shared.bondClauseKey);
+    } else if (shared?.kind === "moon") {
+      if (!shared.element) throw new SourceGapError("SOURCE_GAP: pair daily Moon element");
+      const frameKey = `fallback-hook/pair-daily/shared-moon/${shared.element}`;
+      parts.push(pairDailyBody(frameKey, "you"));
+      sourceKeys.push(frameKey);
+    } else if (shared?.kind != null) {
+      throw new SourceGapError(`SOURCE_GAP: pair daily shared kind ${shared.kind}`);
+    }
+    const body = parts.join(" ").replace(/\s{2,}/g, " ").trim();
+    const leftover = body.match(/\{\{([\w.]+)\}\}/u);
+    if (leftover) throw new SourceGapError(`SOURCE_GAP: pair daily missing slot ${leftover[1]}`);
+    if (/\b(?:until|through)\b/iu.test(body)) {
+      throw new SourceGapError("SOURCE_GAP: pair daily must use today-only window wording");
+    }
+    return {
+      headline: "",
+      body,
+      parts,
+      templateKey: "fallback-template/pair.daily",
+      contentKey: openerKey,
+      sourceKeys
+    };
+  }
   function renderCalendarPhase({ phase, sign }) {
     const r = hooks.get(`fallback-hook/moon-phase/${phase}`);
     if (!r) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
@@ -1600,7 +1668,11 @@ ${fogNote}`;
     }
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || g === "conjunction" && !HEAVY.has(transiting) ? "soft" : "hard";
-    const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null) ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+    const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
+    const variantEffectKey = variant ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}` : null;
+    const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
+    const effectKey = hooks.get(exactEffectKey)?.body_you ? exactEffectKey : variantEffectKey && hooks.get(variantEffectKey)?.body_you ? variantEffectKey : familyEffectKey;
+    const effect = hooks.get(effectKey)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
@@ -1622,7 +1694,7 @@ ${fogNote}`;
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL = { conjunction: "conjunct", opposition: "opposite" };
     const headline = `${title2(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
-    return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit" };
+    return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit", contentKey: effectKey };
   }
   const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
   function renderLunationMacro({ kind, sign }) {
@@ -1757,10 +1829,10 @@ ${fogNote}`;
       templateKey: "fallback-template/daily.dodont"
     };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+// resolver/index.browser.ts
 var PACKAGE_VERSION = "v3-2026-08-04a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
