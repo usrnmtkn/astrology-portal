@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-saturn-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/saturn/conjunction",
+  "payloadSha256": "be1f608c042a002ccafe230dded185aaecc39c1a475c895647b8eefbc2d3bdd5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. You can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away.",
+    "body_they": "You may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. {{holder1}} can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

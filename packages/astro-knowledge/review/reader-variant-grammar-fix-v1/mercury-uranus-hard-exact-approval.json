@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-uranus-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/uranus/hard",
+  "payloadSha256": "a48a6732ed476db56ef665b7ba827e0f0d152eaa0c220ab5f325e22d3412d4c7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You tries to finish a thought and {{holder2}} jumps to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed.",
+    "body_they": "{{holder1}} tries to finish a thought and you jump to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

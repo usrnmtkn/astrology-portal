@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-mercury-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mercury/conjunction",
+  "payloadSha256": "355d0888b95965e0cb3adc866d90342ff1474e2763c71c517906bb6e6fbd61ed",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} tend to think at the same speed and follow the same jumps in conversation. They may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, you and {{holder2}} may assume they reached the same conclusion when neither person actually stopped to explain what they meant.",
+    "body_they": "{{holder1}} and you tend to think at the same speed and follow the same jumps in conversation. They may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, {{holder1}} and you may assume they reached the same conclusion when neither person actually stopped to explain what they meant.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

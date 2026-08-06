@@ -21,6 +21,9 @@ const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/",
   "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/",
   "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/",
+  "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/",
+  "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/",
+  "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/",
 ];
 const batchExactKeys = new Set(
   [
@@ -57,6 +60,21 @@ const batchExactKeys = new Set(
     ["moon", "uranus"],
     ["moon", "neptune"],
     ["moon", "pluto"],
+    ["mars", "saturn"],
+    ["mars", "uranus"],
+    ["mars", "neptune"],
+    ["mars", "pluto"],
+    ["mercury", "uranus"],
+    ["mercury", "neptune"],
+    ["mercury", "pluto"],
+    ["venus", "uranus"],
+    ["venus", "neptune"],
+    ["venus", "pluto"],
+    ["jupiter", "saturn"],
+    ["chiron", "ascendant"],
+    ["lilith", "ascendant"],
+    ["north-node", "ascendant"],
+    ["south-node", "ascendant"],
   ].flatMap(([planetA, planetB]) =>
     ["conjunction", "hard", "soft"].map(
       (group) => `${synastryPrefix}${planetA}/${planetB}/${group}`,

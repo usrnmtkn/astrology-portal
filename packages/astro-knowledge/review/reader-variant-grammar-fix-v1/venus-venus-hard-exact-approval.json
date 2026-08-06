@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-venus-venus-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/venus/hard",
+  "payloadSha256": "bac9ed46888e67fd7402e2a51de110adfc1b58d3d2253345fc546e193c568425",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. You keep offering the kind of care you would want, while {{holder2}} does the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. You may believe the effort is obvious, and {{holder2}} may be waiting for proof that never arrives in a form {{holder2}} recognizes.",
+    "body_they": "{{holder1}} and you may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. {{holder1}} keeps offering the kind of care {{holder1}} would want, while you do the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. {{holder1}} may believe the effort is obvious, and you may be waiting for proof that never arrives in a form you recognize.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

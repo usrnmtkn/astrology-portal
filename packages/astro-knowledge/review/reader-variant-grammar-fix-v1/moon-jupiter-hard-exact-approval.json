@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-jupiter-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/jupiter/hard",
+  "payloadSha256": "ed4730b29766e369d8516ae7240d5dbb47b2799d31270e2689289ea9a6278a4a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may feel cheered up before you feel understood. {{holder2}} offers optimism because they want to lift the mood, but you can hear that the worry is too gloomy, inconvenient, or excessive to keep discussing. Eventually you start trimming the feeling before sharing it, while {{holder2}} mistakes the smaller version for proof that the encouragement worked.",
+    "body_they": "{{holder1}} may feel cheered up before they feel understood. You offer optimism because you want to lift the mood, but {{holder1}} can hear that the worry is too gloomy, inconvenient, or excessive to keep discussing. Eventually {{holder1}} starts trimming the feeling before sharing it, while you mistake the smaller version for proof that the encouragement worked.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
