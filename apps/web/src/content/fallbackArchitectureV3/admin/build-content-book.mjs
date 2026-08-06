@@ -53,7 +53,12 @@ const EXAMPLES = {
     planet: "sun",
     sign: "leo",
     entryDate: "July 22, 2026",
-    exitDate: "August 23, 2026"
+    exitDate: "August 23, 2026",
+    priorSign: "cancer",
+    priorSignEntryDate: "June 21, 2026",
+    priorSignExitDate: "July 22, 2026",
+    previousResidencyEntryDate: "July 22, 2025",
+    previousResidencyExitDate: "August 22, 2025"
   })),
   "Sky page: seasons, lunations, eclipses": para(renderSkyLunation({ kind: "full-moon", sign: "aquarius", dateLine: "On July 29" })),
   "Calendar: phases, void, markers": para(renderCalendarPhase({ phase: "full-moon", sign: "cancer" })),

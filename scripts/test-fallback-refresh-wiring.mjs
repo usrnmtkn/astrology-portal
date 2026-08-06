@@ -81,6 +81,42 @@ assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => !/\b(?:yo
   ...(row.try_this ?? [])
 ].join("\n"))), "Legacy body_you storage must not introduce second-person Current Sky copy.");
 
+const moonTaurusEntry = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-hook/moon/taurus"
+));
+const moonTaurusLived = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-lived/moon/taurus"
+));
+const moonTaurusClose = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-turn/moon/taurus"
+));
+const moonTaurusMoves = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-moves/moon/taurus"
+));
+assert.equal(moonTaurusEntry?.render_policy, "sky-placement-moon-entry-v1");
+assert.equal(
+  moonTaurusEntry?.body_you,
+  "The Moon moves into Taurus on {{entryDate}}, and the collective pace slows. Answers take longer. Plans are less likely to change at the last minute. A feeling may need time to become clear before anyone is ready to talk about it."
+);
+assert.deepEqual(moonTaurusEntry?.moon_entry_aspect_units, [{
+  planets: ["moon", "jupiter"],
+  signs: { moon: "taurus", jupiter: "leo" },
+  aspect: "square",
+  body: "The Moon in Taurus squares Jupiter in Leo on {{aspectDate}}. Feelings run bigger, and one small need can quickly become a large promise, purchase, or plan. It may feel good to say yes in the moment and exhausting to carry all of it later. Choose one priority before agreeing to five."
+}]);
+assert.equal(
+  moonTaurusLived?.body_you,
+  "For the next two and a half days, what feels comfortable and manageable matters more than speed. We may want a familiar meal, a quieter room, or enough uninterrupted time to finish what is already in front of us. Work that produces a visible result can feel more satisfying than another round of discussion.\n\nThis can help us stop reacting to every update and return to what is already working. It can also make us hold on after the routine has stopped helping. A plan stays in place because changing it feels inconvenient. A decision gets delayed because the familiar answer feels easier than the honest one. Patience supports a better choice. Refusing to adjust keeps the same problem going."
+);
+assert.equal(
+  moonTaurusClose?.body_you,
+  "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong. By {{exitDate}}, the mood has moved on."
+);
+assert.equal(
+  moonTaurusMoves?.body_you,
+  "Eat one meal without working or scrolling.\nFinish one task before opening another.\nFix one small source of discomfort in the room you use most."
+);
+
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
 const counts = {
@@ -91,7 +127,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-05f");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-06g");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");

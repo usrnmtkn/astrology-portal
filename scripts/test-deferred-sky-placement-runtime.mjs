@@ -52,6 +52,21 @@ const facts = {
   previousResidencyEntryDate: "July 22, 2025",
   previousResidencyExitDate: "August 22, 2025"
 };
+const moonTaurusFacts = {
+  planet: "moon",
+  sign: "taurus",
+  entryDate: "August 4, 2026",
+  exitDate: "August 7, 2026",
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "square",
+    exactDate: "August 6, 2026"
+  }]
+};
 
 assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(placementRows.hookRows.length > 800, "The long-form placement package must stay in its deferred partition.");
@@ -61,6 +76,11 @@ const before = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(fact
 assert.equal(before.templateKey, "sky-placement-standalone-hook-v1");
 assert.equal(before.contentKey, "fallback-hook/sky-placement-sign/sun/leo");
 assert.doesNotMatch(before.body, /\{\{/u, "The eager reader-safety floor must always be renderable.");
+assert.throws(
+  () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(moonTaurusFacts),
+  /SOURCE_GAP/u,
+  "The exact Moon sign-entry unit must remain in the deferred placement partition."
+);
 
 const concurrentLoads = await Promise.all([
   runtime.loadSkyPlacementFallbackArchitectureV3Bundle(),
@@ -77,6 +97,11 @@ assert.match(after.body, /the Sun enters Leo on July 22/u);
 assert.match(after.body, /the work reaches the audience it was made for/u);
 assert.match(after.body, /Before August 23/u);
 assert.doesNotMatch(after.body, /\{\{/u, "Engine-owned local-time slots must resolve after the partition loads.");
+const moonTaurusAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(moonTaurusFacts);
+assert.equal(moonTaurusAfter.templateKey, "sky-placement-moon-entry-v1");
+assert.equal(moonTaurusAfter.contentKey, "fallback-hook/sky-placement-hook/moon/taurus");
+assert.match(moonTaurusAfter.body, /The Moon in Taurus squares Jupiter in Leo on August 6\./u);
+assert.doesNotMatch(moonTaurusAfter.body, /\{\{/u);
 assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), false);
 
 console.log("Deferred Sky Placement runtime parity passed.");

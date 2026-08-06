@@ -56,6 +56,12 @@ export interface HookRow {
     opportunity: string;
     check: string;
   }>;
+  moon_entry_aspect_units?: Array<{
+    planets: string[];
+    signs: Record<string, string>;
+    aspect: string;
+    body: string;
+  }>;
 }
 export interface TemplatesFile { templates: TemplateRow[] }
 export interface RowsFile { vocabularyRows: VocabRow[]; hookRows?: HookRow[] }
