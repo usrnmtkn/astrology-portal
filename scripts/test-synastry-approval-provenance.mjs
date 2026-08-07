@@ -21,6 +21,7 @@ const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/",
   "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/",
   "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/",
+  "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
 ];
 const batchExactKeys = new Set(
   [
@@ -66,6 +67,14 @@ const batchExactKeys = new Set(
 const allowedLevels = new Set(["exact_owner_approved", "owner_signoff_untraced"]);
 const datePattern = /^\d{4}-\d{2}-\d{2}$/u;
 const shaPattern = /^[a-f0-9]{64}$/u;
+const readerVariantV2Record = JSON.parse(fs.readFileSync(
+  path.join(
+    repoRoot,
+    "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+  ),
+  "utf8",
+));
+for (const row of readerVariantV2Record.rows) batchExactKeys.add(row.contentKey);
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -116,12 +125,16 @@ for (const row of rows) {
   if (approval.recordPath.endsWith(".json")) {
     const record = JSON.parse(fs.readFileSync(recordPath, "utf8"));
     assert.equal(record.approvalLevel, "exact_owner_approved", `${row.contentKey}: record level mismatch`);
-    assert.equal(record.contentKey, row.contentKey, `${row.contentKey}: record contentKey mismatch`);
     assert.equal(record.approvedAt, approval.approvedAt, `${row.contentKey}: record date mismatch`);
-    assert.equal(record.payloadSha256, approval.payloadSha256, `${row.contentKey}: record hash mismatch`);
-    assert.equal(sha256(JSON.stringify(record.payload)), approval.payloadSha256, `${row.contentKey}: record payload hash mismatch`);
-    assert.equal(record.payload.body_you, row.body_you, `${row.contentKey}: body_you differs from exact record`);
-    assert.equal(record.payload.body_they, row.body_they, `${row.contentKey}: body_they differs from exact record`);
+    const exactRecord = Array.isArray(record.rows)
+      ? record.rows.find((candidate) => candidate.contentKey === row.contentKey)
+      : record;
+    assert.ok(exactRecord, `${row.contentKey}: bulk approval record lacks contentKey`);
+    assert.equal(exactRecord.contentKey, row.contentKey, `${row.contentKey}: record contentKey mismatch`);
+    assert.equal(exactRecord.payloadSha256, approval.payloadSha256, `${row.contentKey}: record hash mismatch`);
+    assert.equal(sha256(JSON.stringify(exactRecord.payload)), approval.payloadSha256, `${row.contentKey}: record payload hash mismatch`);
+    assert.equal(exactRecord.payload.body_you, row.body_you, `${row.contentKey}: body_you differs from exact record`);
+    assert.equal(exactRecord.payload.body_they, row.body_they, `${row.contentKey}: body_they differs from exact record`);
   } else {
     assert.match(approval.recordPath, /^scripts\/test-(?:mars|uranus)-ascendant-.+-copy\.mjs$/u);
     assert.equal(

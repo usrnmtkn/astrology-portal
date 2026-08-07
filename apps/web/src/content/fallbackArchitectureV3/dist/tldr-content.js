@@ -1736,6 +1736,15 @@ ${fogNote}`;
     const seed = Number.isFinite(Number(variant)) ? Math.max(1, Math.abs(Math.trunc(Number(variant)))) : 1;
     return keys[(seed - 1) % keys.length].key;
   };
+  const pairDailyClauseVariantKey = (baseKey, variant) => {
+    if (!pairDailyRow(baseKey)) {
+      throw new SourceGapError(`SOURCE_GAP: pair daily base clause ${baseKey}`);
+    }
+    if (baseKey.startsWith("fallback-hook/pair-daily/clause/house/")) {
+      return baseKey;
+    }
+    return pairDailyVariantKey(baseKey, variant);
+  };
   const pairDailyBody = (key, voice) => {
     const row = pairDailyRow(key);
     const body = voice === "they" ? row?.body_they : row?.body_you ?? row?.body;
@@ -1765,15 +1774,17 @@ ${fogNote}`;
     }
     const readerHandle = pairDailyHandle(reader.handle);
     const openerKey = readerHandle ? pairDailyVariantKey("fallback-hook/pair-daily/opener", variant) : "fallback-hook/pair-daily/opener/variant-3";
+    const readerClauseKey = pairDailyClauseVariantKey(reader.clauseKey, variant);
+    const friendClauseKey = pairDailyClauseVariantKey(friend.clauseKey, variant);
     const opener = pairDailyBody(openerKey, "you");
     const ctx = {
       readerHandle: readerHandle ?? "",
-      readerClause: pairDailyBody(reader.clauseKey, "you"),
+      readerClause: pairDailyBody(readerClauseKey, "you"),
       friendHandle: pairDailyFriendReference(friend),
-      friendClause: pairDailyBody(friend.clauseKey, "they")
+      friendClause: pairDailyBody(friendClauseKey, "they")
     };
     const parts = [pairDailyFill(opener, ctx)];
-    const sourceKeys = [openerKey, reader.clauseKey, friend.clauseKey];
+    const sourceKeys = [openerKey, readerClauseKey, friendClauseKey];
     if (shared?.kind === "bond") {
       if (!shared.family || !shared.bondClauseKey) {
         throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
@@ -2087,7 +2098,7 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
 var PACKAGE_VERSION = "v3-2026-08-07b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
