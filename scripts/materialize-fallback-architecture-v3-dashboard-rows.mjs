@@ -464,6 +464,8 @@ function readPackageSources() {
   const bondLanguagePass2 = readJson("source-rows/bond-language-pass-2.json");
   const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
   const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
+  const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
+  const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
   const skyArticleRows = readJson("source-rows/sky-article-v1.json");
   const skyAspectPhrasebook = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
@@ -492,6 +494,8 @@ function readPackageSources() {
     bondLanguagePass2,
     lunationBlendRows,
     placementInterimRows,
+    pairDailyFrames,
+    pairDailyClauses,
     skyArticleRows,
     skyAspectPhrasebook,
     skyPlacementVoicePass,
@@ -553,6 +557,8 @@ function readerPackageBundle(sources) {
         ...sources.sourceRows.hookRows,
         ...sources.lunationBlendRows.hookRows,
         ...sources.bondLanguagePass2.rows,
+        ...sources.pairDailyFrames.rows,
+        ...sources.pairDailyClauses.rows,
         ...sources.skyArticleRows.hookRows,
         ...sources.skyAspectPhrasebook.hookRows,
         ...sources.skyPlanetFrames.rows,
@@ -585,6 +591,8 @@ function materializeRows(sources) {
     ...sources.sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.pairDailyFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.pairDailyClauses.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyAspectPhrasebook.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
