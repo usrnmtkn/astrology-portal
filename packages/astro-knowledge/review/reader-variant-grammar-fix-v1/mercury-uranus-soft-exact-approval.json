@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-uranus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/uranus/soft",
+  "payloadSha256": "bf494259751d23428ecd17fbbe162c20bf21712d116838351a87df60a66f8640",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} keeps your thinking from going stale, while you give {{holder2}}'s leaps somewhere to land. The conversation stays interesting without becoming impossible to follow.",
+    "body_they": "You keep {{holder1}}'s thinking from going stale, while {{holder1}} gives your leaps somewhere to land. The conversation stays interesting without becoming impossible to follow.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

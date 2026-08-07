@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-venus-saturn-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/saturn/soft",
+  "payloadSha256": "b31352b2b207aef182bbffd955750944409308369bfba83bf75f3be17d2d2d19",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You know what to expect from {{holder2}}, and {{holder2}} gives you something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. You and {{holder2}} can trust the commitment while still assuming that warmth does not need to be spoken or shown very often.",
+    "body_they": "{{holder1}} knows what to expect from you, and you give {{holder1}} something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. {{holder1}} and you can trust the commitment while still assuming that warmth does not need to be spoken or shown very often.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-neptune-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/neptune/soft",
+  "payloadSha256": "3056be9292c0c89faa4da315dc5eafcf6903dad479e064eb1c415217fbc078dd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} gives you the benefit of the doubt before reaching for the red pen. That kindness can make you feel accepted, especially when you are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them.",
+    "body_they": "You give {{holder1}} the benefit of the doubt before reaching for the red pen. That kindness can make {{holder1}} feel accepted, especially when they are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
