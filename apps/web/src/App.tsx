@@ -191,7 +191,7 @@ import {
 } from "./services/generatedContent";
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import { skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
-import { stablePairDailyVariant } from "./services/pairDaily";
+import { selectPairDailyDriver, stablePairDailyVariant } from "./services/pairDaily";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   angularDistance,
@@ -203,6 +203,7 @@ import {
   relationshipCompositeSky,
   samePlanetExactAspect,
   selectDailyGlanceDriver,
+  selectDailyGlanceDriverPool,
   synastryWheelAspectLines,
   transitAspectDefinitions,
   wholeSignHouseForSign,
@@ -1888,6 +1889,35 @@ function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot) {
   return driver?.kind === "aspect"
     ? { ...driver, natal: normalizeContentIdPart(driver.natal) }
     : driver;
+}
+
+function pairDailyDriver(
+  currentSky: SkySnapshot,
+  natalSky: SkySnapshot,
+  variant: number
+) {
+  const moon = currentSky.positions.find((position) => position.planet === "Moon");
+
+  if (!moon || typeof moon.longitude !== "number") {
+    return null;
+  }
+
+  const house = typeof moon.house === "number" && moon.house >= 1 && moon.house <= 12
+    ? moon.house
+    : natalSky.ascendant
+      ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+      : null;
+  const drivers = selectDailyGlanceDriverPool(
+    moon.longitude,
+    natalSky.positions,
+    house,
+    5,
+    3
+  ).map((driver) => driver.kind === "aspect"
+    ? { ...driver, natal: normalizeContentIdPart(driver.natal) }
+    : driver);
+
+  return selectPairDailyDriver(drivers, variant);
 }
 
 const pairDailyAspectGroups: Record<string, string> = {
@@ -16927,17 +16957,23 @@ function ManualChartsPanel({
       return null;
     }
 
-    // Pair Daily deliberately reuses the same Daily At-a-Glance driver for both
-    // charts. A missing half makes the pair framing false, so fail closed.
-    const readerDriver = dailyGlanceDriver(currentSky, profileNatalSky);
-    const friendDriver = dailyGlanceDriver(currentSky, selectedChart.natalChart);
+    const isoDate = currentSky.generatedAt.slice(0, 10);
+    const readerChartId = profile.charts[0]?.id ?? profile.id;
+    const pairVariant = stablePairDailyVariant(readerChartId, selectedChart.id, isoDate);
+
+    // Pair Daily reuses the Daily At-a-Glance applying-contact selector, then
+    // rotates only within its tightest three qualifying contacts. The canonical
+    // selector returns the unchanged single house fallback when no contact applies.
+    const readerDriver = pairDailyDriver(currentSky, profileNatalSky, pairVariant);
+    const friendDriver = pairDailyDriver(currentSky, selectedChart.natalChart, pairVariant);
     if (!readerDriver || !friendDriver) return null;
+
+    const driverSelection = { readerDriver, friendDriver, pairVariant };
 
     const selectedBondTransit = selectedBondTransitCards[0];
     if (selectedBondTransit?.effectContentKey) {
       return {
-        readerDriver,
-        friendDriver,
+        ...driverSelection,
         shared: {
           kind: "bond" as const,
           family: selectedBondTransit.effectFamily,
@@ -16951,20 +16987,20 @@ function ManualChartsPanel({
     const element = moon ? pairDailyMoonElement(moon.sign) : null;
     if (readerDriver.kind === "aspect" && friendDriver.kind === "aspect" && element) {
       return {
-        readerDriver,
-        friendDriver,
+        ...driverSelection,
         shared: { kind: "moon" as const, element }
       };
     }
 
     return {
-      readerDriver,
-      friendDriver,
+      ...driverSelection,
       shared: { kind: null }
     };
   }, [
     currentSky,
     friendProfileWork.compatibility,
+    profile.charts,
+    profile.id,
     profileNatalSky,
     relationshipComparisonIsSelf,
     selectedBondTransitCards,
@@ -16975,8 +17011,6 @@ function ManualChartsPanel({
     if (!selectedPairDailySelection || !currentSky || !selectedChart) return null;
 
     const isoDate = currentSky.generatedAt.slice(0, 10);
-    const readerChartId = profile.charts[0]?.id ?? profile.id;
-    const friendChartId = selectedChart.id;
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderPairDaily({
@@ -16990,7 +17024,7 @@ function ManualChartsPanel({
           clauseKey: pairDailyClauseKey(selectedPairDailySelection.friendDriver)
         },
         shared: selectedPairDailySelection.shared,
-        variant: stablePairDailyVariant(readerChartId, friendChartId, isoDate)
+        variant: selectedPairDailySelection.pairVariant
       });
 
       return rendered.body
@@ -17003,9 +17037,7 @@ function ManualChartsPanel({
   }, [
     currentSky,
     fallbackArchitectureV3Version,
-    profile.charts,
     profileHandle,
-    profile.id,
     selectedChart,
     selectedPairDailySelection,
     selectedSocialFriend?.handle
