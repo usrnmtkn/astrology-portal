@@ -40,6 +40,8 @@ const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFi
 )));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
+const pairDailyFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
+const pairDailyClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json");
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
@@ -429,8 +431,11 @@ const outerConnection = transitRenderer.renderSynastryAspect({
   otherName: "Sofia"
 });
 assert.equal(outerConnection.headline, "Your Venus trine Sofia's Pluto");
-assert.match(outerConnection.body, /The connection has real depth without the undertow\. You feel important to Sofia, not monitored or claimed\./u);
-assert.doesNotMatch(outerConnection.body, /\{\{holder/u);
+assert.equal(
+  outerConnection.body,
+  "The connection has real depth without the undertow. You feel important to Sofia, not monitored or claimed."
+);
+assert.doesNotMatch(outerConnection.body, /\byou (?:feels|is|has|does)\b/iu);
 
 const connectionTransit = transitRenderer.renderBondTransit({
   transiting: "saturn",
@@ -836,6 +841,8 @@ try {
         ...skyAspectPhrasebook.hookRows,
         ...skyPlanetFrames.rows,
         ...skySignCopySun.rows,
+        ...pairDailyFrames.rows,
+        ...pairDailyClauses.rows,
         ...skyPlacementOwnerApprovedReaderFallbacks.rows
       ],
       vocabularyRows: [
