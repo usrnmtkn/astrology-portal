@@ -216,7 +216,8 @@ function checkString({ filePath, source, fieldPath, value }) {
     });
   }
 
-  if (/\b(\w+)\s+\1\b/i.test(value)) {
+  // Do not classify contractions such as "you you're" as adjacent duplicates.
+  if (/\b(\w+)\s+\1\b(?!['’])/i.test(value)) {
     findings.push({
       severity: "WARNING",
       check: "repeated-word",

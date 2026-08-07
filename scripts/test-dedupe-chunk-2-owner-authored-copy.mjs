@@ -5,7 +5,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 
 import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
-import { renderSynastryAspect } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
+import { renderSynastryAspect, renderSynastryPairVoice } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
 
 const require = createRequire(import.meta.url);
 const { buildAspectWritingPacket } = require("../packages/astro-knowledge/scripts/build-aspect-writing-packet.js");
@@ -43,7 +43,7 @@ const pairBodies = new Map();
 let renderCount = 0;
 
 function fillHolders(body, holder1, holder2) {
-  return body.replaceAll("{{holder1}}", holder1).replaceAll("{{holder2}}", holder2);
+  return renderSynastryPairVoice(body, { holder1, holder2 });
 }
 
 assert.deepEqual(Object.keys(payloads), targets);
@@ -125,6 +125,7 @@ for (const target of targets) {
     assert.equal(nodeResult.body, render.expected, `${key}: Node render mismatch`);
     assert.equal(browserResult.body, render.expected, `${key}: browser render mismatch`);
     assert.doesNotMatch(`${nodeResult.body} ${browserResult.body}`, /\{\{|[—–]/u);
+    assert.doesNotMatch(`${nodeResult.body} ${browserResult.body}`, /\byou\s+(?:is|was|has|does|feels|gives|keeps|makes|helps|responds|reaches|brings|tends|wants|pushes|needs|starts|sees|shows|thinks|notices|knows|believes|hears|takes|begins|experiences|changes|gets|ends|acts|becomes|pays|offers|names|reacts|reads|supports|turns)\b/iu);
     renderCount += 2;
   }
 }

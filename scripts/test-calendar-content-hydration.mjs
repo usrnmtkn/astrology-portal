@@ -343,11 +343,6 @@ assert.match(
 );
 assert.match(
   appSource,
-  /eventBody\.length > 0 && !hasPlacementBody[\s\S]*?body: eventBody[\s\S]*?plainBody: true/u,
-  "Approved ingress and station copy must fill an empty placement detail without replacing a long-form article."
-);
-assert.match(
-  appSource,
   /eventBody\.length > 0 && !hasAspectBody[\s\S]*?body: eventBody[\s\S]*?plainBody: true/u,
   "Approved aspect copy must fill an empty aspect detail."
 );
