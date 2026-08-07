@@ -3,8 +3,8 @@
   "chunk": "reader-variant-grammar-fix-v2",
   "authorship": "derived_from_owner_approved_third_person",
   "provenanceNote": "Each payload is a grammatical person-conversion of the owner-approved third-person synastry-pair row that was serving at main e89c4a16. body_you addresses holder1 as the reader; body_they addresses holder2. No new content words were introduced; only pronouns, possessives, verb agreement, and pair-reference person were changed. Every one of the 204 texts was read individually by the editorial assistant (Claude) after mechanical conversion; ~60 defects present in the abandoned v1 attempt (branch fix/reader-variant-grammar, now superseded) were corrected, including wrong-direction pronoun swaps, You+3rd-person-verb agreement errors, compound-predicate verbs, and pair-\"They\" left in third person.",
-  "approvalLevel": "held_for_owner_approval",
-  "approvalSemantics": "Owner approval is given by her review of the reading sheet and her merge of the PR carrying this record; no approval is recorded in advance. On merge, approvalLevel becomes exact_owner_approved with the merge date.",
+  "approvalLevel": "exact_owner_approved",
+  "approvalSemantics": "Owner approval recorded above; the PR merge deploys the approved payloads.",
   "supersedes": "reader-variant-grammar-fix-v1 (branch fix/reader-variant-grammar, never merged)",
   "rows": [
     {
@@ -925,5 +925,8 @@
       "payloadSha256": "50b5fd69f1aa036b63bdb41b15ae22b62c65df5c5dc6be9d361b99746824f1be",
       "previousBodySha256": "e99d00b393071e1e7010c60f1336ae8e0013a0236f57bfdd67004b28c3e0cdd9"
     }
-  ]
+  ],
+  "ownerApproved": true,
+  "approvedAt": "2026-08-07",
+  "ownerStatement": "\"i sign off\" - owner (Marie Satori), chat with Claude, 2026-08-07, after reading TLDR-ReaderVariant-V2-Reading-Sheet.md covering the conversion rule, all defect-class corrections with examples, samples, and deliberate keeps."
 }
