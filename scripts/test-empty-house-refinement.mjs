@@ -64,7 +64,7 @@ const occurrences = (body, value) => body.split(value).length - 1;
 const vocabularyByKey = new Map(rows.vocabularyRows.map((row) => [row.contentKey, row]));
 const hooksByKey = new Map(rows.hookRows.map((row) => [row.contentKey, row]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-06g");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-07a");
 
 const expectedNote = "Everyone has all 12 houses, and an empty house is normal. It means no planet was there when you were born, not that this area is missing from your life. To understand it, look to the planet that rules the sign on the house and where that planet sits in your chart. A birth chart can name a pattern before it feels obvious.";
 const expectedAries = "With Aries on your 11th house, friends, community, and long-term hopes respond best to speed and directness. You may know quickly who you want around you and which future plans you are ready to pursue. Waiting too long can create more frustration than giving a direct answer. Because Aries is ruled by Mars, what happens here is guided by where your Mars sits: in Aquarius, in your 9th house of belief systems, spiritual direction, and long-term goals. You act on the principle and the plan, most freely when nobody is standing over you. Direct orders slow you down; a reason speeds you up. Because of this, friends and future plans may develop through the way you handle belief, study, travel, and the bigger picture. Timing: You may notice more activity here when a transit reaches your Mars or when a current planet moves through your 11th house.";
