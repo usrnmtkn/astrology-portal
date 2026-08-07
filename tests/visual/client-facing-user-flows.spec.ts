@@ -2014,7 +2014,9 @@ test.describe("client-facing user flow case studies", () => {
       await captureThemeSurface(page, theme, "sky");
 
       await expectClientRouteLoads(page, "/#you");
-      await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
+      await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
       await captureThemeSurface(page, theme, "you");
 
       await expectClientRouteLoads(page, "/#friends?tab=charts");
