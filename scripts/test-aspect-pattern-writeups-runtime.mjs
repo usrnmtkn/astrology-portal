@@ -308,7 +308,7 @@ async function loadProductionRecords(kind, vite) {
 
 async function resolveNatal(vite, context) {
   const records = await loadProductionRecords("natal", vite);
-  return engine.resolveAspectPatternCopy(context, { authoredRecords: records });
+  return engine.resolveAspectPatternCopy(context, { authoredRecords: records, useLegacyResolver: true });
 }
 
 async function resolveActivation(vite, context) {
@@ -461,11 +461,11 @@ async function main() {
     assert.equal(copyBytes(await resolveNatal(vite, natal)), originalNatalBytes, "Deleting temp Natal row must restore original byte-for-byte.");
     assert.equal(copyBytes(await resolveActivation(vite, activation)), originalActivationBytes, "Deleting temp activation row must restore original byte-for-byte.");
 
-    const natalFallback = engine.resolveAspectPatternCopy(natal, { authoredRecords: [] });
+    const natalFallback = engine.resolveAspectPatternCopy(natal, { authoredRecords: [], useLegacyResolver: true });
     const activationFallback = engine.resolveAspectPatternActivationCopy(activation, { authoredRecords: [] });
     assert.equal(natalFallback.source.contentLevel, "source_grounded_template");
     assert.equal(activationFallback.source.contentLevel, "source_grounded_template");
-    assert.equal(copyBytes(engine.resolveAspectPatternCopy(natal, { authoredRecords: [] })), copyBytes(natalFallback), "Natal fallback must remain byte-stable.");
+    assert.equal(copyBytes(engine.resolveAspectPatternCopy(natal, { authoredRecords: [], useLegacyResolver: true })), copyBytes(natalFallback), "Natal fallback must remain byte-stable.");
     assert.equal(copyBytes(engine.resolveAspectPatternActivationCopy(activation, { authoredRecords: [] })), copyBytes(activationFallback), "Activation fallback must remain byte-stable.");
   } finally {
     await deleteTempRows().catch(() => {});

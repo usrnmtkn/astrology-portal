@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -303,7 +303,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -318,6 +318,103 @@ var title2 = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).joi
 var NEEDS_ARTICLE = /* @__PURE__ */ new Set(["sun", "moon", "north-node", "south-node"]);
 var transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title2(planet)}${sign ? ` in ${title2(sign)}` : ""}`;
 var fill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
+var READER_HOLDER_VERBS = new Map(Object.entries({
+  is: "are",
+  was: "were",
+  has: "have",
+  does: "do",
+  feels: "feel",
+  gives: "give",
+  keeps: "keep",
+  makes: "make",
+  helps: "help",
+  responds: "respond",
+  reaches: "reach",
+  brings: "bring",
+  tends: "tend",
+  wants: "want",
+  pushes: "push",
+  needs: "need",
+  starts: "start",
+  sees: "see",
+  shows: "show",
+  thinks: "think",
+  notices: "notice",
+  knows: "know",
+  believes: "believe",
+  hears: "hear",
+  takes: "take",
+  begins: "begin",
+  experiences: "experience",
+  changes: "change",
+  gets: "get",
+  ends: "end",
+  acts: "act",
+  becomes: "become",
+  presses: "press",
+  pays: "pay",
+  offers: "offer",
+  presents: "present",
+  names: "name",
+  reacts: "react",
+  adds: "add",
+  recognizes: "recognize",
+  resents: "resent",
+  reads: "read",
+  resists: "resist",
+  supports: "support",
+  turns: "turn",
+  mistakes: "mistake",
+  says: "say",
+  guards: "guard",
+  looks: "look",
+  stays: "stay",
+  expands: "expand",
+  reminds: "remind",
+  corrects: "correct",
+  tries: "try",
+  jumps: "jump",
+  catches: "catch",
+  probes: "probe",
+  pulls: "pull",
+  means: "mean",
+  enjoys: "enjoy",
+  grounds: "ground",
+  commits: "commit",
+  drifts: "drift",
+  edits: "edit",
+  comes: "come",
+  explains: "explain",
+  adjusts: "adjust",
+  insists: "insist",
+  states: "state",
+  seems: "seem",
+  moves: "move",
+  decides: "decide",
+  softens: "soften",
+  likes: "like",
+  enters: "enter",
+  introduces: "introduce",
+  handles: "handle",
+  encourages: "encourage",
+  speaks: "speak",
+  appreciates: "appreciate"
+}));
+var READER_HOLDER_ADVERBS = "(?:usually|often|also|still|readily|completely|quickly|emotionally|actually|almost|naturally|only|then)";
+var READER_HOLDER_VERB_PATTERN = [...READER_HOLDER_VERBS.keys()].join("|");
+function renderSynastryPairVoice(body, holders) {
+  const readerHolder = holders.holder1 === "you" ? "holder1" : "holder2";
+  const marker = "__reader_holder__";
+  let rendered = fill(body, { ...holders, [readerHolder]: marker });
+  rendered = rendered.replace(new RegExp(`${marker}'s`, "g"), "your").replace(
+    new RegExp(`${marker}(\\s+(?:(?:${READER_HOLDER_ADVERBS})\\s+)*)(?:${READER_HOLDER_VERB_PATTERN})\\b`, "g"),
+    (match, spacing) => {
+      const verb = match.slice(marker.length + spacing.length);
+      return `you${spacing}${READER_HOLDER_VERBS.get(verb) ?? verb}`;
+    }
+  ).replaceAll(marker, "you").replace(/(^|[.!?]\s+)you\b/g, "$1You");
+  return rendered;
+}
 var inlineWindow = (w) => {
   if (!w) return null;
   if (w.startsWith("Until ")) return "through " + w.slice(6);
@@ -866,7 +963,7 @@ ${fogNote}`;
         askA: vocab.get(`fallback-vocab/planet-ask/${planetA}`)?.body,
         askB: vocab.get(`fallback-vocab/planet-ask/${planetB}`)?.body
       }) : null,
-      pairSentences: pairVoice ? fill(pairVoice, holders) : null,
+      pairSentences: pairVoice ? renderSynastryPairVoice(pairVoice, holders) : null,
       // signature closing formula for the assembled fallback (matches the natal-aspect close)
       closingLine: (() => {
         const coreA = vocab.get(`fallback-vocab/planet-core/${planetA}`)?.body;
@@ -1990,7 +2087,7 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// resolver/index.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
 var PACKAGE_VERSION = "v3-2026-08-07a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
