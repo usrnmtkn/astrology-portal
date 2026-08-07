@@ -12249,6 +12249,7 @@ export function App() {
     const pendingForm = readPendingSignupForm();
     const cachedLocalProfile = getInitialUserProfile();
     let persistedProfileId: string | null = null;
+    let accountProfile: UserProfile;
     const hydrateBootstrapSocialProfile = async (profile: UserProfile) => {
       try {
         const existingSocialProfile = await loadOwnSocialProfile();
@@ -12282,10 +12283,9 @@ export function App() {
         const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
         const remoteJournalPrompts = persistedProfile.preferences?.journalPromptsEnabled;
         const remoteLocation = persistedProfile.preferences?.selectedLocation;
-        const accountProfile = profileForAuthAccount(persistedProfile.profile, account);
+        accountProfile = profileForAuthAccount(persistedProfile.profile, account);
 
         setUserProfile(accountProfile);
-        void hydrateBootstrapSocialProfile(accountProfile);
         if (isCancelled()) {
           return;
         }
@@ -12309,10 +12309,9 @@ export function App() {
           setHasLocationPreference(true);
         }
       } else {
-        const accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
+        accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
 
         setUserProfile(accountProfile);
-        void hydrateBootstrapSocialProfile(accountProfile);
         if (isCancelled()) {
           return;
         }
@@ -12332,6 +12331,10 @@ export function App() {
       setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
       remoteProfileReadyRef.current = true;
       setRemoteProfileReady(true);
+      await hydrateBootstrapSocialProfile(accountProfile);
+      if (isCancelled()) {
+        return;
+      }
       setAuthAccountChecked(true);
     } catch (error) {
       if (isCancelled()) {
@@ -12342,7 +12345,6 @@ export function App() {
       const accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
 
       setUserProfile(accountProfile);
-      void hydrateBootstrapSocialProfile(accountProfile);
       if (isCancelled()) {
         return;
       }
@@ -12359,6 +12361,10 @@ export function App() {
       setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
       remoteProfileReadyRef.current = true;
       setRemoteProfileReady(true);
+      await hydrateBootstrapSocialProfile(accountProfile);
+      if (isCancelled()) {
+        return;
+      }
       setAuthAccountChecked(true);
     }
   }, []);
@@ -13444,7 +13450,7 @@ export function App() {
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
                     chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
-                    allowCachedChartsWhileLoading={!isAuthConfigured || authAccountChecked}
+                    allowCachedChartsWhileLoading={!isAuthConfigured || (remoteAccountId ? remoteProfileReady : authAccountChecked)}
                     onPendingRequestCountChange={setPendingFriendRequestCount}
                     onFriendProfileContentRequest={requestFriendProfileContent}
                     onOpenDetail={openSkyDetail}
