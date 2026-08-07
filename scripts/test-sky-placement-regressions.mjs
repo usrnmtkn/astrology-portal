@@ -104,6 +104,64 @@ const sunLeoMoonOpposition = renderer.renderSkyPlacement({
     applying: true
   }]
 });
+const moonTaurusFacts = {
+  planet: "moon",
+  sign: "taurus",
+  entryDate: "August 4, 2026",
+  exitDate: "August 7, 2026"
+};
+const moonTaurus = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: []
+});
+const moonTaurusSquareJupiter = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "square",
+    exactDate: "August 6, 2026"
+  }]
+});
+const moonTaurusUndatedSquare = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "square",
+    dateLine: "This week"
+  }]
+});
+const moonTaurusWrongSignSquare = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "virgo",
+    aspect: "square",
+    exactDate: "August 6, 2026"
+  }]
+});
+const moonTaurusReference = renderSkyPlacementReference({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "square",
+    exactDate: "August 6, 2026"
+  }]
+});
 const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
   sign: "aries"
@@ -394,6 +452,56 @@ assert.doesNotMatch(
   `${sunLeo.body}\n${sunLeoMoonOpposition.body}`,
   /\b(?:conjunction|square|trine|sextile|opposition|applying|separating|orb)\b/iu,
   "Sky placement bodies must not expose aspect jargon."
+);
+assert.equal(moonTaurus.templateKey, "sky-placement-moon-entry-v1");
+assert.equal(moonTaurus.contentKey, "fallback-hook/sky-placement-hook/moon/taurus");
+assert.equal(moonTaurus.tagline, null, "Moon sign entries must not render the retired tagline row.");
+assert.match(
+  moonTaurus.body,
+  /^The Moon moves into Taurus on August 4, and the collective pace slows\./u,
+  "Moon in Taurus must fill its entry date from the engine-owned slot."
+);
+assert.match(moonTaurus.body, /By August 7, the mood has moved on\.$/u);
+assert.doesNotMatch(
+  moonTaurus.body,
+  /squares Jupiter|August 6/u,
+  "The optional aspect paragraph must stay absent without a matching engine fact."
+);
+assert.match(
+  moonTaurusSquareJupiter.body,
+  /The Moon in Taurus squares Jupiter in Leo on August 6\./u,
+  "A matching exact engine aspect must activate the owner-approved insert."
+);
+assert.ok(
+  moonTaurusSquareJupiter.parts.indexOf("The Moon in Taurus squares Jupiter in Leo on August 6. Feelings run bigger, and one small need can quickly become a large promise, purchase, or plan. It may feel good to say yes in the moment and exhausting to carry all of it later. Choose one priority before agreeing to five.")
+    > moonTaurusSquareJupiter.parts.indexOf("This can help us stop reacting to every update and return to what is already working. It can also make us hold on after the routine has stopped helping. A plan stays in place because changing it feels inconvenient. A decision gets delayed because the familiar answer feels easier than the honest one. Patience supports a better choice. Refusing to adjust keeps the same problem going."),
+  "The aspect insert must follow the ordinary-reaction and distortion paragraphs."
+);
+assert.doesNotMatch(moonTaurusUndatedSquare.body, /squares Jupiter|This week/u);
+assert.doesNotMatch(moonTaurusWrongSignSquare.body, /squares Jupiter|August 6/u);
+assert.deepEqual(moonTaurus.moves, [
+  "Eat one meal without working or scrolling.",
+  "Finish one task before opening another.",
+  "Fix one small source of discomfort in the room you use most."
+]);
+assert.deepEqual(
+  {
+    articleSections: moonTaurusSquareJupiter.articleSections,
+    body: moonTaurusSquareJupiter.body,
+    contentKey: moonTaurusSquareJupiter.contentKey,
+    moves: moonTaurusSquareJupiter.moves,
+    parts: moonTaurusSquareJupiter.parts,
+    templateKey: moonTaurusSquareJupiter.templateKey
+  },
+  {
+    articleSections: moonTaurusReference.articleSections,
+    body: moonTaurusReference.body,
+    contentKey: moonTaurusReference.contentKey,
+    moves: moonTaurusReference.moves,
+    parts: moonTaurusReference.parts,
+    templateKey: moonTaurusReference.templateKey
+  },
+  "Browser and Node Moon sign-entry assembly must remain byte-identical."
 );
 const sunAries = renderer.renderSkyPlacement({
   planet: "sun",
