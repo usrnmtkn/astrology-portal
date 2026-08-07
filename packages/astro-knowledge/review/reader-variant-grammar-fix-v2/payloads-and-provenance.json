@@ -5,7 +5,7 @@
   "provenanceNote": "Each payload is a grammatical person-conversion of the owner-approved third-person synastry-pair row that was serving at main e89c4a16. body_you addresses holder1 as the reader; body_they addresses holder2. No new content words were introduced; only pronouns, possessives, verb agreement, and pair-reference person were changed. Every one of the 204 texts was read individually by the editorial assistant (Claude) after mechanical conversion; ~60 defects present in the abandoned v1 attempt (branch fix/reader-variant-grammar, now superseded) were corrected, including wrong-direction pronoun swaps, You+3rd-person-verb agreement errors, compound-predicate verbs, and pair-\"They\" left in third person.",
   "approvalLevel": "exact_owner_approved",
   "approvalSemantics": "Owner approval recorded above; the PR merge deploys the approved payloads.",
-  "supersedes": "reader-variant-grammar-fix-v1 (branch fix/reader-variant-grammar, never merged)",
+  "supersedes": "reader-variant-grammar-fix-v1 (briefly merged via PR #105, then removed by this v2 replacement)",
   "rows": [
     {
       "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",
