@@ -214,8 +214,10 @@ import {
   type CalculatedSynastryContact
 } from "./services/chartMath";
 import {
+  natalSkySnapshotCacheKey,
   readCachedSkySnapshot,
   skySnapshotCacheKey,
+  VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS,
   writeCachedSkySnapshot
 } from "./services/verifiedSkyCache";
 import {
@@ -11594,6 +11596,8 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    let detailedSkyFrame = 0;
+    let detailedSkyTimer = 0;
     const skyLocation = withTimeZone(location);
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation);
     const cacheKey = skySnapshotCacheKey(skyLocation, skyDate);
@@ -11607,28 +11611,56 @@ export function App() {
       setSkyStatus("loading");
     }
 
-    getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
+    const publishFreshSky = (
+      nextSky: SkySnapshot,
+      options: { preserveCachedDetails?: boolean } = {}
+    ) => {
+      if (cancelled) {
+        return false;
+      }
+
+      const validation = skyFactValidation(nextSky);
+
+      if (!validation.ok) {
+        logSkyFactDiagnostic("fresh-calculation", nextSky, validation.diagnostics);
+        setSky(cachedSky);
+        setSkyStatus(cachedSky ? "stale" : "error");
+        return false;
+      }
+
+      if (options.preserveCachedDetails && cachedSky) {
+        return true;
+      }
+
+      setSky(nextSky);
+      setSkyStatus("ready");
+      if (!writeCachedSkySnapshot(cacheKey, nextSky)) {
+        logSkyFactDiagnostic(
+          "cache-write",
+          nextSky,
+          ["Validated sky snapshot could not be persisted in the verified cache."]
+        );
+      }
+      return true;
+    };
+
+    getAstrodienstSky(skyLocation, selectedDateTime)
       .then((nextSky) => {
-        if (!cancelled) {
-          const validation = skyFactValidation(nextSky);
-
-          if (!validation.ok) {
-            logSkyFactDiagnostic("fresh-calculation", nextSky, validation.diagnostics);
-            setSky(cachedSky);
-            setSkyStatus(cachedSky ? "stale" : "error");
-            return;
-          }
-
-          setSky(nextSky);
-          setSkyStatus("ready");
-          if (!writeCachedSkySnapshot(cacheKey, nextSky)) {
-            logSkyFactDiagnostic(
-              "cache-write",
-              nextSky,
-              ["Validated sky snapshot could not be persisted in the verified cache."]
-            );
-          }
+        if (!publishFreshSky(nextSky, { preserveCachedDetails: true })) {
+          return;
         }
+
+        detailedSkyFrame = window.requestAnimationFrame(() => {
+          detailedSkyTimer = window.setTimeout(() => {
+            void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
+              .then((detailedSky) => {
+                publishFreshSky(detailedSky);
+              })
+              .catch((error) => {
+                console.warn("Swiss Ephemeris transit-window enrichment failed; keeping the verified core sky.", error);
+              });
+          }, 0);
+        });
       })
       .catch((error) => {
         console.warn("Swiss Ephemeris sky calculation failed; using only an exact-key verified cache entry when available.", error);
@@ -11640,8 +11672,10 @@ export function App() {
 
     return () => {
       cancelled = true;
+      window.cancelAnimationFrame(detailedSkyFrame);
+      window.clearTimeout(detailedSkyTimer);
     };
-  }, [location, mode, skyDate, skyRefreshKey]);
+  }, [location, skyDate, skyRefreshKey]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -11887,6 +11921,64 @@ export function App() {
       birthLocation.longitude,
       birthLocation.timeZone
     ].join("|");
+    const natalCacheKey = natalSkySnapshotCacheKey(birthLocation, birthDateTime);
+    const cachedNatalSky = readCachedSkySnapshot(natalCacheKey, {
+      maxAgeMs: VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS
+    });
+    const applyNatalSky = (natalSky: SkySnapshot) => {
+      const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
+      const nextTransits = sky
+        ? rankedProfileTransits(sky, natalSky, birthDate, activeSunriseOrbDegrees)
+        : [];
+
+      setProfileNatalSky(natalSky);
+      setProfileNatalAspectPatternStatus(
+        showNatalAspectPatterns
+          ? natalSky.aspectPatterns?.interpretationContexts ? "ready" : "loading"
+          : "idle"
+      );
+      setProfileTransits(nextTransits);
+      setTransitsDrawn(true);
+      setSelectedTransitId((currentId) => (
+        nextTransits.some((transit) => transit.id === currentId)
+          ? currentId
+          : nextTransits[0]?.id ?? sampleTransits[0].id
+      ));
+
+      setUserProfile((currentProfile) => {
+        if (!currentProfile || currentProfile.id !== userProfile.id) {
+          return currentProfile;
+        }
+
+        const currentChart = currentProfile.charts[0];
+        const shouldUpdateChartLocation = currentChart?.birthLocation?.timeZone !== birthLocation.timeZone;
+        const nextRising = natalBigThree.rising;
+
+        if (
+          currentProfile.sun === natalBigThree.sun
+          && currentProfile.moon === natalBigThree.moon
+          && currentProfile.rising === nextRising
+          && !shouldUpdateChartLocation
+        ) {
+          return currentProfile;
+        }
+
+        return {
+          ...currentProfile,
+          sun: natalBigThree.sun,
+          moon: natalBigThree.moon,
+          rising: nextRising,
+          charts: currentChart
+            ? [{ ...currentChart, birthLocation }, ...currentProfile.charts.slice(1)]
+            : currentProfile.charts
+        };
+      });
+    };
+
+    if (cachedNatalSky) {
+      applyNatalSky(cachedNatalSky);
+    }
+
     const natalSkyRequest = profileNatalSkyRequestRef.current?.key === natalSkyRequestKey
       ? profileNatalSkyRequestRef.current.request
       : getAstrodienstSky(birthLocation, birthDateTime);
@@ -11899,50 +11991,12 @@ export function App() {
           return;
         }
 
-        const natalSky = calculatedNatalSky;
-        const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
-        const nextTransits = sky
-          ? rankedProfileTransits(sky, natalSky, birthDate, activeSunriseOrbDegrees)
-          : [];
+        const natalSky = cachedNatalSky?.aspectPatterns && !calculatedNatalSky.aspectPatterns
+          ? { ...calculatedNatalSky, aspectPatterns: cachedNatalSky.aspectPatterns }
+          : calculatedNatalSky;
 
-        setProfileNatalSky(natalSky);
-        setProfileNatalAspectPatternStatus(showNatalAspectPatterns ? "loading" : "idle");
-        setProfileTransits(nextTransits);
-        setTransitsDrawn(true);
-        setSelectedTransitId((currentId) => (
-          nextTransits.some((transit) => transit.id === currentId)
-            ? currentId
-            : nextTransits[0]?.id ?? sampleTransits[0].id
-        ));
-
-        setUserProfile((currentProfile) => {
-          if (!currentProfile || currentProfile.id !== userProfile.id) {
-            return currentProfile;
-          }
-
-          const currentChart = currentProfile.charts[0];
-          const shouldUpdateChartLocation = currentChart?.birthLocation?.timeZone !== birthLocation.timeZone;
-          const nextRising = natalBigThree.rising;
-
-          if (
-            currentProfile.sun === natalBigThree.sun
-            && currentProfile.moon === natalBigThree.moon
-            && currentProfile.rising === nextRising
-            && !shouldUpdateChartLocation
-          ) {
-            return currentProfile;
-          }
-
-          return {
-            ...currentProfile,
-            sun: natalBigThree.sun,
-            moon: natalBigThree.moon,
-            rising: nextRising,
-            charts: currentChart
-              ? [{ ...currentChart, birthLocation }, ...currentProfile.charts.slice(1)]
-              : currentProfile.charts
-          };
-        });
+        applyNatalSky(natalSky);
+        writeCachedSkySnapshot(natalCacheKey, natalSky);
 
         if (showNatalAspectPatterns) {
           fetchNatalAspectPatternsWithCopy(birthLocation, birthDateTime, { includeActivationCopy: showNatalAspectPatternActivation, timeKnown: !unknownBirthTime })
@@ -11951,9 +12005,11 @@ export function App() {
                 return;
               }
 
+              const enrichedNatalSky = skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
+              writeCachedSkySnapshot(natalCacheKey, enrichedNatalSky);
               setProfileNatalSky((currentSky) => (
                 currentSky?.generatedAt === calculatedNatalSky.generatedAt
-                  ? skyWithNatalAspectPatternCopy(currentSky, aspectPatterns)
+                  ? enrichedNatalSky
                   : currentSky
               ));
               setProfileNatalAspectPatternStatus("ready");
@@ -12193,6 +12249,7 @@ export function App() {
     const pendingForm = readPendingSignupForm();
     const cachedLocalProfile = getInitialUserProfile();
     let persistedProfileId: string | null = null;
+    let accountProfile: UserProfile;
     const hydrateBootstrapSocialProfile = async (profile: UserProfile) => {
       try {
         const existingSocialProfile = await loadOwnSocialProfile();
@@ -12226,10 +12283,9 @@ export function App() {
         const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
         const remoteJournalPrompts = persistedProfile.preferences?.journalPromptsEnabled;
         const remoteLocation = persistedProfile.preferences?.selectedLocation;
-        const accountProfile = profileForAuthAccount(persistedProfile.profile, account);
+        accountProfile = profileForAuthAccount(persistedProfile.profile, account);
 
         setUserProfile(accountProfile);
-        await hydrateBootstrapSocialProfile(accountProfile);
         if (isCancelled()) {
           return;
         }
@@ -12253,10 +12309,9 @@ export function App() {
           setHasLocationPreference(true);
         }
       } else {
-        const accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
+        accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
 
         setUserProfile(accountProfile);
-        await hydrateBootstrapSocialProfile(accountProfile);
         if (isCancelled()) {
           return;
         }
@@ -12276,6 +12331,10 @@ export function App() {
       setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
       remoteProfileReadyRef.current = true;
       setRemoteProfileReady(true);
+      await hydrateBootstrapSocialProfile(accountProfile);
+      if (isCancelled()) {
+        return;
+      }
       setAuthAccountChecked(true);
     } catch (error) {
       if (isCancelled()) {
@@ -12286,7 +12345,6 @@ export function App() {
       const accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
 
       setUserProfile(accountProfile);
-      await hydrateBootstrapSocialProfile(accountProfile);
       if (isCancelled()) {
         return;
       }
@@ -12303,6 +12361,10 @@ export function App() {
       setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
       remoteProfileReadyRef.current = true;
       setRemoteProfileReady(true);
+      await hydrateBootstrapSocialProfile(accountProfile);
+      if (isCancelled()) {
+        return;
+      }
       setAuthAccountChecked(true);
     }
   }, []);
@@ -13388,7 +13450,7 @@ export function App() {
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
                     chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
-                    allowCachedChartsWhileLoading={!isAuthConfigured || authAccountChecked}
+                    allowCachedChartsWhileLoading={!isAuthConfigured || (remoteAccountId ? remoteProfileReady : authAccountChecked)}
                     onPendingRequestCountChange={setPendingFriendRequestCount}
                     onFriendProfileContentRequest={requestFriendProfileContent}
                     onOpenDetail={openSkyDetail}
@@ -15664,29 +15726,33 @@ function ProfileView({
         }
       : {};
 
-    const weeklyAssemblyTimer = window.setTimeout(() => {
-      buildWeeklyHoroscope({
-        userId: profile.id,
-        natalSky,
-        risingSign: displayRising,
-        location: currentLocation,
-        dailyServedUnitsByDate
-      })
-        .then((assembly) => {
-          if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+    let weeklyAssemblyTimer = 0;
+    const weeklyAssemblyFrame = window.requestAnimationFrame(() => {
+      weeklyAssemblyTimer = window.setTimeout(() => {
+        void buildWeeklyHoroscope({
+          userId: profile.id,
+          natalSky,
+          risingSign: displayRising,
+          location: currentLocation,
+          dailyServedUnitsByDate
         })
-        .catch((error) => {
-          console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
-          if (!cancelled) {
-            setWeeklyHoroscopeAssembly((current) => current
-              ? { ...current, status: "error" }
-              : null);
-          }
-        });
-    }, 1_000);
+          .then((assembly) => {
+            if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+          })
+          .catch((error) => {
+            console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
+            if (!cancelled) {
+              setWeeklyHoroscopeAssembly((current) => current
+                ? { ...current, status: "error" }
+                : null);
+            }
+          });
+      }, 0);
+    });
 
     return () => {
       cancelled = true;
+      window.cancelAnimationFrame(weeklyAssemblyFrame);
       window.clearTimeout(weeklyAssemblyTimer);
     };
   }, [

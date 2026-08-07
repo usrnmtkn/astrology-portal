@@ -142,8 +142,8 @@ assert.match(
 
 assert.match(
   appSource,
-  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
-  "Friends charts must paint their account-scoped cache after authentication resolves."
+  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| \(remoteAccountId \? remoteProfileReady : authAccountChecked\)\}/,
+  "Friends charts must paint their account-scoped cache after chart-account migration resolves."
 );
 assert.doesNotMatch(
   appSource,
@@ -203,6 +203,16 @@ assert.match(
   verifiedAuthUserMatch[0],
   /verifiedAuthUserRequest\?\.accessToken !== accessToken/,
   "Friends data loading must reuse authentication verification for the active access token."
+);
+assert.match(
+  authSource,
+  /export async function getAuthAccount\(\)[\s\S]*const user = await getVerifiedAuthUser\(supabase\);/,
+  "Account bootstrap must reuse the shared verified-user request instead of repeating auth verification."
+);
+assert.match(
+  appSource,
+  /setRemoteProfileReady\(true\);\s*await hydrateBootstrapSocialProfile\(accountProfile\);/,
+  "Friends chart readiness must publish before the security-gated social-profile header request completes."
 );
 assert.match(
   manualChartsSource,
