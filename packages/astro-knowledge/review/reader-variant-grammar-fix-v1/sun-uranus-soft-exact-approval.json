@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-uranus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/uranus/soft",
+  "payloadSha256": "f0793e287ba7f78bd7d02e13bf19b111b1d97b49a86167676ca9e7f09f3822d8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} gives you room to be unusual without turning the difference into a problem to solve. You can change your mind, question expectations, and keep the odd little details that make you recognizable. {{holder2}} gets freedom too, because closeness here does not require either person to become smaller or more predictable.",
+    "body_they": "You give {{holder1}} room to be unusual without turning the difference into a problem to solve. {{holder1}} can change their mind, question expectations, and keep the odd little details that make them recognizable. You get freedom too, because closeness here does not require either person to become smaller or more predictable.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

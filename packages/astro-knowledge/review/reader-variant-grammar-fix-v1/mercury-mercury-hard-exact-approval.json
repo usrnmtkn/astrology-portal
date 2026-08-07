@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-mercury-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mercury/hard",
+  "payloadSha256": "1322aff15cdebd9ee9e7f1bfc0acc3d47957eb5c4b2d5ceb7a66852f6734ee60",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. You may feel misunderstood by {{holder2}}, while {{holder2}} may feel that you are missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion.",
+    "body_they": "{{holder1}} and you process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. {{holder1}} may feel misunderstood by you, while you may feel that {{holder1}} is missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
