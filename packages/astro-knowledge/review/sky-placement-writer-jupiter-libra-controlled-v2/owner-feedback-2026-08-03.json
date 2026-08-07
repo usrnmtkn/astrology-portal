@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-jupiter-libra-controlled-v2",
+  "recordedAt": "2026-08-03",
+  "reviewStatus": "revision_required",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "terraRecommendationOverriddenByOwnerReview": true,
+  "rejectedWording": [
+    {
+      "text": "Jupiter widens our sense of what is possible, and in Libra that confidence grows between people through a fair counteroffer, a thoughtful compromise, or a choice that gives both sides a real say.",
+      "reasons": [
+        "not ordinary everyday language",
+        "generic noun people violates the Current Sky rule",
+        "fair counteroffer is negotiation language",
+        "thoughtful compromise labels the choice instead of showing it",
+        "both sides and real say summarize rather than name what happened"
+      ]
+    },
+    {
+      "text": "A dinner plan starts to tilt when the same person chooses the date, finds the place, and keeps adjusting so nobody else has to be uncomfortable.",
+      "reasons": [
+        "tilt is not owner language",
+        "the dressed-up verb replaces the direct change"
+      ]
+    }
+  ],
+  "ownerDirectionalCandidate": {
+    "text": "We keep saying “either is fine” until the loudest voice dominates and becomes the plan.",
+    "exactWordingApproved": false,
+    "useAsPositiveVoiceEvidence": false,
+    "note": "Preserved as directional owner feedback. It is not approved calibration or generation evidence."
+  }
+}

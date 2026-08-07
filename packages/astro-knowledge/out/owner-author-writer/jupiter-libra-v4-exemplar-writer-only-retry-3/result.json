@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "runId": "jupiter-libra-v4-exemplar-writer-only-retry-3",
+  "recordedAt": "2026-08-03T22:45:39.260Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "jupiter",
+    "sign": "libra"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v6:affinity-ov039-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+      "owner-article:libra-new-moon:p004:window-4-4",
+      "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e016:window-1-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:venus-retrograde-2025:p073:window-4-2"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": false,
+      "planetNamed": false,
+      "signNamed": false,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is long (73 words); the hook is the sendable line, not a paragraph",
+        "closer is long; end on a shorter line with bite"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "From {{entryDate}}, partnership may begin to widen the social world in ways that are easy to recognize: a friend’s introduction becomes a lasting connection, a new partner is included in family traditions, and two circles start sharing birthdays, meals, and favors. We say yes because the mix is generous and genuinely enjoyable. Over the months, the relationship grows through those exchanges, and choices about company and celebration become less private and more shared.",
+    "tension": "The pressure arrives when every invitation starts to feel like a test of fairness. We keep adding seats, attend both gatherings, or delay a reply while searching for the option that disappoints nobody. The same willingness that brought the circles together now leaves one partner doing most of the adjusting. Old friends stop asking, private time disappears, and a full calendar begins to carry resentment.",
+    "development": "The useful choice is not a perfect split. When two plans compete, we can say which one matters, decide whether to go together or separately, and let a clear answer stand. If one circle has received most of the yeses, the next month can make room for a neglected friendship without turning the decision into a scorecard. Some invitations will be declined, but the ones we accept will no longer depend on silent sacrifice.",
+    "close": "Before {{exitDate}}, we can stop carrying one recurring plan out of politeness and tell the partner or group what we will actually attend.",
+    "try_this": [
+      "We can answer one pending invitation with a clear yes or no instead of sending another maybe.",
+      "We can keep one date with an old friend without automatically making it a group plan.",
+      "We can tell a partner which shared tradition matters most to us and which one has begun to feel obligatory."
+    ]
+  }
+}

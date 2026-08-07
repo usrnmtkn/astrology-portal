@@ -104,6 +104,7 @@ const appItem = filesByName.get(manifest[appKey].file);
 const deferredFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-relationships-"));
 const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-manifest-"));
 const deferredCoreItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-deferred-core-"));
+const deferredSkyPlacementItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-sky-placement-"));
 const deferredPhoneAuthItem = javaScriptFiles.find((item) => item.file.includes("phone-auth-"));
 const deferredSignupItem = javaScriptFiles.find((item) => item.file.includes("SignupView-"));
 const deferredFriendsWorkspaceItem = javaScriptFiles.find((item) => item.file.includes("FriendsWorkspaceShell-"));
@@ -117,6 +118,7 @@ const measurements = {
   largestJavaScriptGzipBytes: largestJavaScript?.gzipBytes ?? 0,
   friendsWorkspaceChunkGzipBytes: deferredFriendsWorkspaceItem?.gzipBytes ?? 0,
   skyDetailChunkGzipBytes: deferredSkyDetailItem?.gzipBytes ?? 0,
+  skyPlacementFallbackChunkGzipBytes: deferredSkyPlacementItem?.gzipBytes ?? 0,
   signupChunkGzipBytes: deferredSignupItem?.gzipBytes ?? 0,
   totalCssGzipBytes: sum(publicCssFiles, "gzipBytes"),
   totalJavaScriptGzipBytes: sum(publicJavaScriptFiles, "gzipBytes")
@@ -138,6 +140,11 @@ if (deferredManifestItem && bootFiles.has(deferredManifestItem.file)) {
 if (deferredCoreItem && bootFiles.has(deferredCoreItem.file)) {
   failures.push("The natal/relationship fallback core re-entered the static App boot graph.");
 }
+if (!deferredSkyPlacementItem) {
+  failures.push("The on-demand Sky Placement fallback chunk is missing.");
+} else if (bootFiles.has(deferredSkyPlacementItem.file)) {
+  failures.push("The Sky Placement fallback article content re-entered the static App boot graph.");
+}
 if (deferredPhoneAuthItem && bootFiles.has(deferredPhoneAuthItem.file)) {
   failures.push("Phone validation metadata re-entered the static App boot graph.");
 }
@@ -158,6 +165,7 @@ console.log(`Reader startup CSS: ${formatBytes(measurements.readerInitialCssGzip
 console.log(`App code chunk: ${formatBytes(measurements.appChunkGzipBytes)} gzip`);
 console.log(`Deferred Friends workspace: ${formatBytes(measurements.friendsWorkspaceChunkGzipBytes)} gzip`);
 console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailChunkGzipBytes)} gzip`);
+console.log(`On-demand Sky Placement fallback: ${formatBytes(measurements.skyPlacementFallbackChunkGzipBytes)} gzip`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
 console.log(`Public-web JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${publicJavaScriptFiles.length} files`);

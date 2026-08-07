@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:48.233Z",
+  "id": "sky.jupiter.sextile.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "jupiter-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.sextile.lilith",
+    "planetA": "jupiter",
+    "planetB": "lilith",
+    "aspect": "sextile",
+    "title": "Jupiter sextile Lilith",
+    "humanMoment": "A late-night arts festival sells out after adding an uncensored program about taboo desire.",
+    "developmentDetail": "Rising ticket demand prompts talk of an extended run while performers press for clearer consent rules and better compensation.",
+    "planetaryDynamic": "Jupiter enlarges the appetite and audience, while Lilith brings the desire usually kept out of public view onto the stage.",
+    "aspectMechanic": "The sextile creates a usable opening to extend the uncensored program, but organizers still have to act on both the ticket demand and the performers' concerns.",
+    "conditionalConsequence": "If the extended run follows demand without resolving consent and compensation, wider exposure comes at the performers' expense.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The sextile creates a usable opening to extend the uncensored program, but organizers still have to act on both the ticket demand and the performers' concerns.",
+    "why": "This is slightly more procedural than the other fields, but it clearly applies the sextile as an actionable opening and remains specific to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:48.232Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "3bf96e6a360b94b0c2ff9e5ddbb2d18568d5c20a5191af780e2c2c635e94baa8",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "b272e9e0e0d33c2bcacbb1ef5355d063445047938c72096b78d365a9b589701f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "340eb6d8569b4617eee8de3ad56471ec151758785fb17c3e6c6ec477e9224a30"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.sextile.lilith",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

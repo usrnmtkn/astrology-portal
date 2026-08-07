@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:09.159Z",
+  "id": "sky.venus.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "venus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.sextile.chiron",
+    "planetA": "venus",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Venus sextile Chiron",
+    "humanMoment": "A customer offers the full asking price for an artist's work at a public market.",
+    "developmentDetail": "The artist suspects the praise is only polite, delays sending the payment link, and asks questions meant to prove the customer is serious.",
+    "planetaryDynamic": "Venus brings the wish to have the work genuinely wanted, while Chiron brings the standing expectation that the interest will be withdrawn.",
+    "aspectMechanic": "The sextile creates a usable opening through the full-price offer, but the artist still has to recognize it and send the payment link.",
+    "conditionalConsequence": "If the questions continue after the customer has already committed, the customer may buy from another stall and leave the original offer behind.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The sextile creates a usable opening through the full-price offer, but the artist still has to recognize it and send the payment link.",
+    "why": "The phrasing is slightly schematic, but it applies the sextile accurately and specifically to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:09.159Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "44380109331c6e5910891c06c415d51a6bb22067b6bffeb2668a9dc4f82d42b2",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "ea72db08944fbd53e620716a401f2fdf9d879200c0c8e1b0363ecb361818eb05",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9d10c56c49dba50161e58629a3430dcc72338183ac1d4600f9b3b8caebd620f5"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

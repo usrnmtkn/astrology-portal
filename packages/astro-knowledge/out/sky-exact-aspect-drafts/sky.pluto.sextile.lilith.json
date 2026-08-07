@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:06.547Z",
+  "id": "sky.pluto.sextile.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "pluto-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.sextile.lilith",
+    "planetA": "pluto",
+    "planetB": "lilith",
+    "aspect": "sextile",
+    "title": "Pluto sextile Lilith",
+    "humanMoment": "A theater restores a dancer to a production after rehearsal footage reveals how she was pushed out for refusing a producer's private demands.",
+    "developmentDetail": "Former cast members add their accounts, turning a long-rumored conflict into a documented pattern of exclusion.",
+    "planetaryDynamic": "Pluto exposes the control buried in the production's history, while Lilith represents the dancer whose refusal led to exile rather than submission.",
+    "aspectMechanic": "The sextile creates a usable opening through the footage and cast accounts, but the theater still has to restore the role and address the producer's power.",
+    "conditionalConsequence": "If the theater acts on the record, the dancer returns under terms that no longer require silence as the price of belonging.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry opens with a concrete restoration, develops the documented pattern, clearly distinguishes buried control from refusal and exile, and makes the sextile a usable opening that still requires institutional action.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:06.547Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "c85d8a3cb4ad0dc011fa0f956c619e536eec23aaa992ba9491d39b5dc8483997",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "aad7e065938e181b192fc3a68dc34666aa91b90075ea53e319fbfab19e4f43e8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c4c0581792e21ba7ea318e80db5cacc94b62f795156a2da69bd47324510e9f52"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.sextile.lilith",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

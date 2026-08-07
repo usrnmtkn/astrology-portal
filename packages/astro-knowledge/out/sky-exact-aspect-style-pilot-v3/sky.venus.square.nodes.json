@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:32:36.420Z",
+  "id": "sky.venus.square.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "venus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.square.nodes",
+    "planetA": "venus",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Venus square North Node",
+    "body": "What feels irresistible can still keep us facing the wrong way. With Venus square North Node, affection and pleasure press against the direction our lives are taking. An ex back in the inbox, a first date that fits without feeling familiar, a late-night purchase that pushes the real plan back. We reach for what already knows our name, then watch the same delay return in another form.\n\nWe feel the conflict when chemistry makes the past look convincing and the future offers no old proof. What attracts us can soothe the moment, yet leave the next step waiting. What belongs forward may feel quieter at first because it has no history to replay. Until we address what we are choosing, the consequence repeats: lost time, crossed priorities, another return to the same fork. Chemistry tells the truth about attraction. It does not decide the direction.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first tension, concrete fragments, active Venus-node conflict, natural collective deepening, and a clean truth-and-catch ending all match the voice model.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:32:36.420Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "983def1242a94a0a841cb7aed86c58f8f6561579bb5141402e4b921b4f5f93a2",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "38f28238e78979a565bcc869e8f3b9a650a7ce647210fb110dd4460c7b57f23a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "f949a7f6a1d26b4084847c2f026cdee65cdc86dbbd7741846ac4fc8c7ed2cc3c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

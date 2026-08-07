@@ -338,7 +338,9 @@ async function main() {
     assert.ok(jp.includes("[ED-001]") && jp.includes("ordinary, current language"), `judge prompt must enforce everyday language for tier ${tier}`);
     assert.ok(jp.includes("[ED-003]") && jp.includes("never uses you"), `judge prompt must enforce collective Current Sky for tier ${tier}`);
     assert.ok(jp.includes("[ED-005]") && jp.includes("second conclusion"), `judge prompt must reject stacked endings for tier ${tier}`);
-    assert.ok(jp.includes("Does every central sentence sound natural and literal on first read?"), `judge prompt must run a first-read natural-English review for tier ${tier}`);
+    assert.ok(jp.includes("Read-aloud rule: does every central sentence sound natural and literal when spoken?"), `judge prompt must run the read-aloud review for tier ${tier}`);
+    assert.ok(jp.includes("Morning-reader test: do the early sentences stay short"), `judge prompt must run the one-tired-read review for tier ${tier}`);
+    assert.ok(jp.includes("[OV-040] morning-reader test"), `judge prompt must carry OV-040 as a scored check for tier ${tier}`);
     assert.ok(jp.includes("A minor broad sentence may survive"), `judge prompt must preserve proportional score-3 tolerance for tier ${tier}`);
     assert.ok(jp.includes("DETERMINISTIC CHECK RESULTS") && jp.includes('"fails": 0'), `judge prompt must receive deterministic results for tier ${tier}`);
     assert.ok(!jp.includes("OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE"), `judge prompt must exclude directional evidence for tier ${tier}`);

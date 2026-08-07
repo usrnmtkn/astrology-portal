@@ -22,6 +22,8 @@ const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-placement.json"));
 const compiledJudgePolicy = readJson(path.join(root, "voice", "tldr-astro", "judge-policy.generated.json"));
+const { judgePolicyLines: ownerWarmthJudgePolicyLines } = require("./owner-corpus-warmth-policy.js");
+const PLACEMENT_PROMPT_VERSION = "tldr-astro.voice.sky-placement.v5:prompt-warmth-harvest-v1";
 
 const TIER_OF = {};
 for (const [tier, members] of Object.entries(spec.planetTierRegister.tiers)) {
@@ -62,7 +64,8 @@ const renderTrio = (e) => {
   return lines.join("\n");
 };
 
-function buildJudgePrompt(article, { tier = "", planet = "", sign = "", deterministicResults = null } = {}) {
+function buildJudgePrompt(article, options = {}) {
+  const { tier = "", planet = "", sign = "", deterministicResults = null } = options;
   const placementLabel = planet && sign ? ` for ${planet} in ${sign}` : "";
   const gold = goldStandard(tier, 2);
   const decisionRules = compiledJudgePolicy.decisions.map((entry) => `  [${entry.id}] ${entry.rule}`);
@@ -72,6 +75,11 @@ function buildJudgePrompt(article, { tier = "", planet = "", sign = "", determin
     ``,
     `COMPACT FINAL-ACCEPTABILITY RUBRIC`,
     ...compiledJudgePolicy.compactRubric.map((item, index) => `  ${index + 1}. ${item}`),
+    ``,
+    `SCORED OWNER READABILITY CHECKS`,
+    ...(spec.judgeScoredChecks || []).map((entry) => `  [${entry.id}] ${entry.name}: ${entry.rule}`),
+    ``,
+    ...ownerWarmthJudgePolicyLines(options),
     ``,
     `SCOPED ACTIVE OWNER DECISIONS`,
     ...decisionRules,
@@ -123,6 +131,7 @@ async function judgeArticle(article, opts = {}) {
   const result = await runJudgeSamples({
     content: JSON.stringify(article),
     prompt,
+    promptVersion: PLACEMENT_PROMPT_VERSION,
     rubric: JSON.stringify(spec),
     rubricVersion: spec.id || "sky-placement-voice-v1",
     samples: opts.samples,
@@ -135,7 +144,7 @@ async function judgeArticle(article, opts = {}) {
   return { ...result, ...editorialGate(result) };
 }
 
-module.exports = { buildJudgePrompt, judgeArticle, parseVerdict, TIER_OF, TIER_HINT };
+module.exports = { buildJudgePrompt, judgeArticle, parseVerdict, PLACEMENT_PROMPT_VERSION, TIER_OF, TIER_HINT };
 
 if (require.main === module) {
   const [mode, ...rest] = process.argv.slice(2);

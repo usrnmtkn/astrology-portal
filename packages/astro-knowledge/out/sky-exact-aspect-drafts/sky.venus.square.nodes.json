@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:54.972Z",
+  "id": "sky.venus.square.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "venus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.square.nodes",
+    "planetA": "venus",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Venus square North Node",
+    "humanMoment": "A clothing label reissues a beloved dress from its archive just as production begins on a new collection.",
+    "developmentDetail": "Preorders for the old design absorb factory time and push the newer pieces behind their retail window.",
+    "planetaryDynamic": "Venus brings the dress people already love, while the North Node marks the collection that fits the label’s path forward.",
+    "aspectMechanic": "The square forces the archived dress and new collection to compete for the same production schedule, so each surge of preorders recreates the delay until the label addresses which line takes priority.",
+    "conditionalConsequence": "If production keeps shifting back to the archived dress, its sales may rise while the new collection loses the launch conditions it needs.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Venus brings the dress people already love, while the North Node marks the collection that fits the label’s path forward.",
+    "why": "The South Node side remains implicit in the archived design, but the sentence still clearly distinguishes familiar attraction from forward direction without treating the axis as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:54.972Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "27aef992d114f6d9fa49d0de77b324a1bca018083bc1468cf08e53ad58d91753",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "cee736ac6b62d1281b764e3d16701b1191ccdc0c0e85984fe6477ffcb86b030a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "cd3fe4530fea20bdeef8557bcd82d26d4b44fc3fbdc67dd2ed69ae5d7ff971ea"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

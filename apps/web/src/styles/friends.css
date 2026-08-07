@@ -27,6 +27,30 @@
   margin: 0;
 }
 
+.friend-daily-forecast > .friend-section-label {
+  margin: 0;
+}
+
+.friend-transit-guidance {
+  display: grid;
+}
+
+.friend-transit-dodont {
+  border-color: var(--card-border);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.friend-transit-dodont > div {
+  padding: var(--space-5);
+}
+
+.friend-transit-dodont li {
+  color: var(--card-body-color);
+  font-size: var(--text-description);
+  line-height: var(--leading-body);
+}
+
 .friends-page:not(.friend-detail-page) .friends-page-heading,
 .friends-page:not(.friend-detail-page) .manual-chart-workspace-list-only,
 .friends-page:not(.friend-detail-page) .friends-feed-view {

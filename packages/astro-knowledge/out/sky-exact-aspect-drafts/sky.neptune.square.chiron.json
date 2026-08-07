@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:00.590Z",
+  "id": "sky.neptune.square.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "neptune-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.square.chiron",
+    "planetA": "neptune",
+    "planetB": "chiron",
+    "aspect": "square",
+    "title": "Neptune square Chiron",
+    "humanMoment": "During a hospital discharge, one relative starts arranging rides, meals, and overnight care for other patients' families after hearing their stories in the corridor.",
+    "developmentDetail": "The original patient's medication pickup is delayed while the relative takes calls and fills gaps for people they barely know.",
+    "planetaryDynamic": "Neptune blurs one family's distress into a corridor full of suffering, while Chiron keeps the original patient's specific wound in need of care.",
+    "aspectMechanic": "The square keeps the medication pickup colliding with new rides, meals, and overnight shifts until responsibility for each person's hurt is clearly assigned.",
+    "conditionalConsequence": "If the relative keeps accepting every request, the discharged patient may miss a dose while other families come to depend on care that cannot continue.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete, observable, and evergreen; the fields clearly distinguish Neptune from Chiron, express the square through recurring practical collisions, and end with a plausible conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:00.590Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "cb790672fc6dd54b7caef2d23f367563f77b3899c4bd2b316219000ce17e0035",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5650c0b8c9355816102ef8d2eb036dd6b51ed89887379eac13990625b386d685",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "76e1d427d5ab2389d50efe01a80a4ce595939ce65a4de838addb61cace01092b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.square.chiron",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

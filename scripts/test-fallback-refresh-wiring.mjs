@@ -46,7 +46,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-01b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-06");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -65,8 +65,8 @@ assert.deepEqual(
   ["authored/sky-lunation-macro/new-moon/aquarius"],
   "Only the explicitly staged Aquarius New Moon article may stay review-gated."
 );
-assert.equal(needsReviewHooks.length, 93, "The reconciled package must preserve all 93 explicitly staged, non-serving hooks.");
-assert.equal(needsReviewRows.length, 108, "The primary package must retain its 108 staged authored, hook, and template rows; interim overrides are gated separately.");
+assert.equal(needsReviewHooks.length, 96, "The reconciled package must preserve 93 staged hooks plus the three owner-rejected rows quarantined on 2026-08-03.");
+assert.equal(needsReviewRows.length, 111, "The primary package must retain staged rows and the three owner-rejected rows as non-serving provenance; interim overrides are gated separately.");
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,
@@ -370,9 +370,9 @@ assert.ok(
 );
 assert.match(
   connectionTransit.body,
-  /Saturn is square your Venus through November 13, activating the connection it makes with Sofia's Pluto\./u
+  /Saturn is square your Venus until November 13, activating the connection it makes with Sofia's Pluto\./u
 );
-assert.equal(connectionTransit.headline, "Saturn square your Venus");
+assert.equal(connectionTransit.headline, "Transiting Saturn square your Venus");
 assert.doesNotMatch(connectionTransit.body, /connection between/iu);
 assert.doesNotMatch(connectionTransit.body, /That underlying contact is/u);
 
@@ -400,6 +400,10 @@ assert.equal(
 );
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const compatibilityTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/CompatibilityTab.tsx"),
+  "utf8"
+);
 const bondGroupingSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/bondTransitGrouping.ts"),
   "utf8"
@@ -416,6 +420,39 @@ const runtimeSource = fs.readFileSync(
 const generatedContentSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
   "utf8"
+);
+const pairDailySelectionStart = appSource.indexOf("const selectedPairDailySelection = useMemo(");
+const pairDailySelectionEnd = appSource.indexOf("\n  const selectedPairDaily = useMemo(", pairDailySelectionStart);
+const pairDailySelectionSource = appSource.slice(pairDailySelectionStart, pairDailySelectionEnd);
+
+assert.ok(
+  pairDailySelectionStart >= 0 && pairDailySelectionEnd > pairDailySelectionStart,
+  "Pair Daily must have a dedicated friend-profile selection memo."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const readerDriver = dailyGlanceDriver\(currentSky, profileNatalSky\);[\s\S]*?const friendDriver = dailyGlanceDriver\(currentSky, selectedChart\.natalChart\);/u,
+  "Pair Daily must reuse the Daily At-a-Glance driver for both charts."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily/u,
+  "Pair Daily must reuse the first already-ranked bond card and its effect family."
+);
+assert.doesNotMatch(
+  pairDailySelectionSource,
+  /rank|sort\(|dailyTransitQualifies/u,
+  "Pair Daily must not introduce a parallel driver or shared-condition ranking system."
+);
+assert.match(
+  pairDailySelectionSource,
+  /if \(!readerDriver \|\| !friendDriver\) return null;/u,
+  "Pair Daily must hide when either person's daily driver is absent."
+);
+assert.match(
+  compatibilityTabSource,
+  /\{daily \? \([\s\S]*?Today between you two[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
+  "Compatibility must render no Pair Daily chrome when assembled copy is absent."
 );
 
 assert.match(
@@ -520,7 +557,7 @@ assert.match(
 );
 assert.match(
   friendTransitsTabSource,
-  /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u,
+  /onClick=\{\(\) => onOpen\(transit\.id\)\}/u,
   "Friend personal-transit cards must open a detail view."
 );
 assert.match(
@@ -532,6 +569,11 @@ assert.match(
   appSource,
   /const openFriendTransitDetail[\s\S]*?sections: normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
   "Friend personal-transit detail views must retain the full normalized write-up."
+);
+assert.match(
+  appSource,
+  /const openFriendTransitDetail[\s\S]*?duration: `\$\{timing\.durationLabel\} · \$\{timing\.rangeLabel\}`[\s\S]*?mechanicsCaption:/u,
+  "Friend personal-transit detail views must add visible timing and calculated aspect context."
 );
 assert.match(
   aspectStylesSource,
@@ -570,8 +612,18 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const groups = groupBondTransitActivations\(candidates\)/u,
-  "Bond transit contacts must group before rendering cards."
+  /const candidates = dedupeBondTransitEndpointCandidates\(/u,
+  "Bond transit candidates must dedupe both-endpoint activations of a single contact."
+);
+assert.match(
+  appSource,
+  /const groups = rankBondTransitGroups\(\s*groupBondTransitActivations\(candidates\)/u,
+  "Bond transit contacts must group and rank before the card cap."
+);
+assert.match(
+  appSource,
+  /renderBondTransit\(\{[\s\S]*?duplicateIndex,/u,
+  "Bond transits must pass duplicateIndex so same-aspect cards rotate effect copy."
 );
 assert.match(
   bondGroupingSource,
@@ -605,17 +657,17 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary\.contentHash/u,
+  /envelope\?\.bundledContentHash !== bundledPartition\.contentHash/u,
   "Dashboard cache payloads must be rejected when the bundled content hash changes."
 );
 assert.match(
   generatedContentSource,
-  /containsBundledManifest[\s\S]*?sameVersionMatchesBundled[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
+  /metadata\.packageVersion !== fallbackArchitectureV3BundledManifestSummary\.packageVersion[\s\S]*?manifest\.contentHash !== bundledManifest\.contentHash[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
   "Dashboard packages must be complete, same-or-newer, and hash-verified before installation."
 );
 assert.match(

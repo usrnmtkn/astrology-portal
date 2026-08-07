@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:15.828Z",
+  "id": "sky.chiron.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "chiron-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.conjunction.lilith",
+    "planetA": "chiron",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Chiron conjunct Lilith",
+    "humanMoment": "A family gathering turns tense when the relative long cast as difficult names the need everyone else has treated as the problem.",
+    "developmentDetail": "Past injuries surface beside evidence of how often that desire was mocked, denied, or used to justify exclusion.",
+    "planetaryDynamic": "Chiron carries the injury that still needs care, while Lilith carries the appetite that was banished with it.",
+    "aspectMechanic": "Under the conjunction, naming the need and exposing the injury become one disclosure, making its healing force difficult to separate from its power to reopen the conflict.",
+    "conditionalConsequence": "If the named need is treated as fresh misconduct, the family may repeat the exclusion that caused the injury.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete, each field performs its distinct function, and the conjunction accurately merges the exposed need with the reopened injury.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:15.828Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "684e489c5c6b3b3608b072e5183e09540d72d8369282c43b3f0280a8f5950895",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "1df20692807501de172d041bac9f96f2ea7acedf088ad350714c15d1c98cadea",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "384f9e9831c74e69b30075f99389ff4a34c5becd65003231d9c761550f2ca18b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:06.591Z",
+  "id": "sky.mars.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mars-pluto",
+    "path": "data/pairs/mars-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.quincunx.pluto",
+    "planetA": "mars",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Mars quincunx Pluto",
+    "humanMoment": "A restoration crew tears out a damaged section just as conservators are stabilizing the structure around it.",
+    "developmentDetail": "Each burst of demolition exposes another weakness, forcing the repair plan and work sequence to change on the spot.",
+    "planetaryDynamic": "Mars supplies the force to cut away damage, while Pluto pushes the removal deeper toward total transformation.",
+    "aspectMechanic": "In the quincunx, Mars keeps demolition moving while Pluto keeps exposing deeper weaknesses, so the repair plan shifts whenever one action changes the other's task.",
+    "conditionalConsequence": "If removal outruns stabilization, the crew can destroy sound work before the restoration is finished.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The restoration scene is concrete and coherent, the planets are clearly distinguished, and the quincunx is expressed through repeated task-changing adjustments with a plausible conditional risk.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:06.591Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "8b83755dbced60c33a005f616a8e521531bcf18ec902e165bff36201e690847c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c492e48fcc630bca3c94a865489bab29adddd3c95b28882b356dbe701e723cae",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "92a08b0d5f9a89f6b3d7065eadefa459f025d8c615c09fb75a45ef3d166aebcb"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:55.989Z",
+  "id": "sky.sun.quincunx.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "sun-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.sun.quincunx.nodes",
+    "planetA": "sun",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Sun quincunx North Node",
+    "humanMoment": "A chef is asked to revive the tasting menu that built a restaurant's reputation just as a small low-waste supper series begins selling out.",
+    "developmentDetail": "The old menu draws press requests and premium bookings, while the supper series exposes gaps in sourcing and technique that require changes each week.",
+    "planetaryDynamic": "The Sun wants the established identity recognized now, while the North Node points toward the emerging direction and the wider nodal axis shows the old act that may be ready to be set down.",
+    "aspectMechanic": "The Sun-North Node quincunx makes recognition and emerging direction solve different problems at once, requiring repeated adjustments because neither can fully absorb the other.",
+    "conditionalConsequence": "If both menus remain on the calendar, ingredient orders, pricing, and the restaurant's public description must be revised repeatedly because the established draw and the developing practice cannot run by the same logic.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "All fields are concrete, distinct, mechanically accurate, scene-specific, evergreen, and correctly structured as single sentences.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:55.988Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "09f297634cc3f8466d6d97dc86b0fdf690fa53cde7ef5e8a5429646982dd3f1a",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5fecdbdfb1c3b8d267c29aa9ed0e48f7253eb518bccdff043f362fd02be8ba91",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9f5443cde2f816fe02a2339d0c998ca0a57a93a540746f30af69537a4be446c6"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

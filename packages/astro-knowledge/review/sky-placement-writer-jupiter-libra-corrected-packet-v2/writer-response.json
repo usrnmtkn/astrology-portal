@@ -1,0 +1,42 @@
+{
+  "responseId": "resp_0d4bed461e1240b6006a71526215a0819d98d1952674398311",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+    "owner-article:libra-new-moon:p004:window-4-4",
+    "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e016:window-1-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p012:window-2-2",
+    "owner-article:cancer-full-moon-horoscopes-january-2025:p009:window-2-4"
+  ],
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 6445,
+    "input_tokens_details": {
+      "cache_write_tokens": 6442,
+      "cached_tokens": 0
+    },
+    "output_tokens": 8214,
+    "output_tokens_details": {
+      "reasoning_tokens": 7763
+    },
+    "total_tokens": 14659
+  },
+  "article": {
+    "opening": "After traveling through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}, and the next stretch favors growth through relationships, shared choices, and how we divide time. Jupiter takes about 12 years to circle the zodiac and stays about 1 year per sign, so this influence has time to shape more than one conversation. A couple begins spending more of the week together, accepts more invitations as a pair, and keeps returning to the same question: what kind of commitment do both partners actually want? Each talk begins with care. Both listen, adjust, and discover options neither would have considered alone.",
+    "tension": "The pressure is not the difference itself. It is the wish to find an answer so balanced that neither partner ever has to disappoint the other. The partner who needs more time alone keeps offering extra evenings together, while the partner who needs more consistency calls every arrangement acceptable. Temporary plans pile up. Soon the added evenings feel compulsory, the promised consistency still feels uncertain, and both start resenting plans they technically agreed to.",
+    "development": "Jupiter's previous residency in Libra ran from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. In this stretch, progress comes when the couple lets a real difference stay visible long enough to choose honestly. The partner asking for time alone stops adding substitute evenings, and the partner asking for consistency stops pretending irregular plans work. When a new invitation changes the week, each states a preference before either agrees. Sometimes the couple chooses more time together; sometimes they protect the time apart. The result may look less seamless, but neither partner has to guess what the agreement actually cost.",
+    "close": "Before {{exitDate}}, we can end one recurring relationship plan that works only because the same partner gives up the same need every week.",
+    "try_this": [
+      "We can ask for one night alone this week without adding three substitute plans.",
+      "We can accept a partner's no to one invitation without asking for a softer answer.",
+      "We can choose one piece of music for a shared evening because we genuinely like it, rather than picking whatever seems hardest to dislike."
+    ]
+  }
+}

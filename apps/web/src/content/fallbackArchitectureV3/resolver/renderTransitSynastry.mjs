@@ -66,9 +66,10 @@ const transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}
 
 
 // sentence-start window phrase -> mid-sentence ("Until Nov 13" -> "through Nov 13")
+// Owner ruling 2026-07-27: windows read "until", never "through".
 const inlineWindow = (w) => {
   if (!w) return null;
-  if (w.startsWith("Until ")) return "through " + w.slice(6);
+  if (w.startsWith("Until ")) return "until " + w.slice(6);
   if (w.startsWith("For the next")) return "over the next" + w.slice(12);
   if (w.startsWith("For about")) return "for about" + w.slice(9);
   return w.charAt(0).toLowerCase() + w.slice(1);
@@ -989,6 +990,86 @@ export function renderCircleStory(f) {
   return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
 }
 
+// ---- Today between you two (PAIR-DAILY-TODAY-SPEC.md) ----
+// The engine chooses both daily drivers and the shared condition. This renderer only
+// resolves approved clauses/frames and fills their declared slots. Missing pair-daily
+// rows intentionally keep the reader surface dark.
+const pairDailyVariantKey = (baseKey, variant, count) => {
+  const normalized = Number.isFinite(Number(variant))
+    ? ((Math.abs(Math.trunc(Number(variant))) - 1) % count) + 1
+    : 1;
+  return normalized === 1 ? baseKey : `${baseKey}/variant-${normalized}`;
+};
+const pairDailyRow = (key) => hooks.get(key) ?? cards.get(key) ?? vocab.get(key) ?? null;
+const pairDailyBody = (key, voice) => {
+  const row = pairDailyRow(key);
+  const body = voice === "they"
+    ? row?.body_they
+    : row?.body_you ?? row?.body;
+  if (typeof body !== "string" || !body.trim()) {
+    throw new SourceGapError(`SOURCE_GAP: pair daily row ${key} (${voice})`);
+  }
+  return body.trim();
+};
+const pairDailyFriendReference = ({ handle, displayName }) => {
+  const normalizedHandle = (handle ?? "").toString().trim().replace(/^@+/u, "");
+  if (normalizedHandle) return `@${normalizedHandle}`;
+  const normalizedName = (displayName ?? "").toString().trim();
+  return normalizedName || "your friend";
+};
+
+export function renderPairDaily({ reader, friend, shared = { kind: null }, variant = 1 }) {
+  if (!reader?.clauseKey || !friend?.clauseKey) {
+    throw new SourceGapError("SOURCE_GAP: pair daily requires both daily clause keys");
+  }
+  const openerKey = pairDailyVariantKey("fallback-hook/pair-daily/opener", variant, 3);
+  const opener = pairDailyBody(openerKey, "you");
+  const ctx = {
+    readerClause: pairDailyBody(reader.clauseKey, "you"),
+    friendHandle: pairDailyFriendReference(friend),
+    friendClause: pairDailyBody(friend.clauseKey, "they")
+  };
+  const parts = [fill(opener, ctx)];
+  const sourceKeys = [openerKey, reader.clauseKey, friend.clauseKey];
+
+  if (shared?.kind === "bond") {
+    if (!shared.family || !shared.bondClauseKey) {
+      throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
+    }
+    const frameKey = pairDailyVariantKey(
+      `fallback-hook/pair-daily/shared-bond/${shared.family}`,
+      variant,
+      2
+    );
+    parts.push(fill(pairDailyBody(frameKey, "you"), {
+      bondClause: pairDailyBody(shared.bondClauseKey, "you")
+    }));
+    sourceKeys.push(frameKey, shared.bondClauseKey);
+  } else if (shared?.kind === "moon") {
+    if (!shared.element) throw new SourceGapError("SOURCE_GAP: pair daily Moon element");
+    const frameKey = `fallback-hook/pair-daily/shared-moon/${shared.element}`;
+    parts.push(pairDailyBody(frameKey, "you"));
+    sourceKeys.push(frameKey);
+  } else if (shared?.kind != null) {
+    throw new SourceGapError(`SOURCE_GAP: pair daily shared kind ${shared.kind}`);
+  }
+
+  const body = parts.join(" ").replace(/\s{2,}/g, " ").trim();
+  const leftover = body.match(/\{\{([\w.]+)\}\}/u);
+  if (leftover) throw new SourceGapError(`SOURCE_GAP: pair daily missing slot ${leftover[1]}`);
+  if (/\b(?:until|through)\b/iu.test(body)) {
+    throw new SourceGapError("SOURCE_GAP: pair daily must use today-only window wording");
+  }
+  return {
+    headline: "",
+    body,
+    parts,
+    templateKey: "fallback-template/pair.daily",
+    contentKey: openerKey,
+    sourceKeys
+  };
+}
+
 const SKY_PLACEMENT_ASPECT_FRAME = {
   conjunction: (aRef, bRef, timing) => `${aRef} meets ${bRef}${timing.exact ? `, exact on ${timing.label}` : ` ${timing.label}`}.`,
   square: (aRef, bRef, timing) => `${aRef} and ${bRef} push against each other${timing.exact ? `, sharpest on ${timing.label}` : ` ${timing.label}`}.`,
@@ -1116,7 +1197,18 @@ function continuousSkyPlacementDateContext(entryDate, exitDate) {
   return { entry, exit, factLine };
 }
 
-function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDate, exitDate }) {
+function renderContinuousSkyPlacement(signCopy, {
+  planet,
+  sign,
+  events,
+  entryDate,
+  exitDate,
+  priorSign,
+  priorSignEntryDate,
+  priorSignExitDate,
+  previousResidencyEntryDate,
+  previousResidencyExitDate
+}) {
   if (!entryDate || !exitDate) {
     throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
   }
@@ -1126,7 +1218,16 @@ function renderContinuousSkyPlacement(signCopy, { planet, sign, events, entryDat
   }
 
   const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
-  const ctx = { entryDate: dates.entry.body, exitDate: dates.exit.body, signTitle: title(sign) };
+  const ctx = {
+    entryDate: dates.entry.body,
+    exitDate: dates.exit.body,
+    signTitle: title(sign),
+    priorSign: priorSign ? title(priorSign) : null,
+    priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
+    priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
+    previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
+    previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+  };
   const factLine = dates.factLine;
   const collective = [signCopy.opening, signCopy.tension, signCopy.development]
     .map((part) => fillKeep(part, ctx));
@@ -1224,6 +1325,11 @@ export function renderSkyPlacement({
   articleKey,
   entryDate,
   exitDate,
+  priorSign,
+  priorSignEntryDate,
+  priorSignExitDate,
+  previousResidencyEntryDate,
+  previousResidencyExitDate,
   hasPriorIngress = false,
   historyEligible,
   historyEntryDate,
@@ -1351,6 +1457,23 @@ export function renderSkyPlacement({
     ? signCopyRow
     : null;
   if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+    const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
+    if (!continuousSignCopy && standaloneHook?.body_you) {
+      const body = standaloneHook.body_you.trim();
+      if (!body || /\{\{/u.test(body)) {
+        throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
+      }
+      return {
+        headline: `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+        tagline: null,
+        moves: [],
+        keyDates: [],
+        body,
+        parts: [body],
+        templateKey: "sky-placement-standalone-hook-v1",
+        contentKey: standaloneHook.contentKey
+      };
+    }
     if (!continuousSignCopy) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
     }
@@ -1359,7 +1482,12 @@ export function renderSkyPlacement({
       sign,
       events,
       entryDate,
-      exitDate
+      exitDate,
+      priorSign,
+      priorSignEntryDate,
+      priorSignExitDate,
+      previousResidencyEntryDate,
+      previousResidencyExitDate
     });
   }
 
@@ -1491,15 +1619,52 @@ export function renderSkyPlacement({
 // markers, and the owner's weekly Moon-sign tone. Replaces the legacy phase sidebar copy. ----
 
 // phase: new-moon | waxing-crescent | first-quarter | waxing-gibbous | full-moon |
-// disseminating | last-quarter | balsamic. sign = the sign of the cycle's NEW MOON.
+// disseminating | last-quarter | balsamic. sign is always the Moon's current,
+// ephemeris-calculated sign. The generic phase row supplies phase metadata only;
+// reader copy must resolve through the exact phase x current-sign lane.
 export function renderCalendarPhase({ phase, sign }) {
-  const r = hooks.get(`fallback-hook/moon-phase/${phase}`);
-  if (!r) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
-  const body = fill(r.body_you, { signTitle: sign ? title(sign) : "" }).replace(/^in \. /, "");
-  if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} missing cycle sign`);
+  const normalizedSign = String(sign ?? "").trim().toLowerCase();
+  if (!normalizedSign) throw new SourceGapError(`SOURCE_GAP: current Moon sign required for phase ${phase}`);
+  const phaseRow = hooks.get(`fallback-hook/moon-phase/${phase}`);
+  if (!phaseRow) throw new SourceGapError(`SOURCE_GAP: no phase row for ${phase}`);
+  const exactKey = `fallback-hook/moon-phase/${phase}/${normalizedSign}`;
+  const exactRow = hooks.get(exactKey);
+  const compactLunationRow = phase === "new-moon" || phase === "full-moon"
+    ? hooks.get(`fallback-hook/lunation-sign-compact/${phase}/${normalizedSign}`)
+    : undefined;
+  const variantByPhase = {
+    "new-moon": 1,
+    "waxing-crescent": 2,
+    "first-quarter": 3,
+    "waxing-gibbous": 4,
+    "full-moon": 1,
+    "disseminating": 2,
+    "last-quarter": 3,
+    "balsamic": 4
+  };
+  const preferredVariant = variantByPhase[phase] ?? 1;
+  const variantSuffix = preferredVariant > 1 ? `/variant-${preferredVariant}` : "";
+  const signRow = card(`authored/calendar-weekly-moon/${normalizedSign}${variantSuffix}`)
+    ?? card(`authored/calendar-weekly-moon/${normalizedSign}`);
+  if (!exactRow && !compactLunationRow && !signRow) throw new SourceGapError(`SOURCE_GAP: no approved Moon-sign row for ${phase} in ${normalizedSign}`);
+  const selectedRow = exactRow ?? compactLunationRow ?? signRow;
+  const rawBody = exactRow?.body_you ?? compactLunationRow?.body_you ?? String(signRow?.body ?? "");
+  const body = fill(rawBody, { signTitle: title(normalizedSign) }).replace(/^in \. /, "");
+  if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} in ${normalizedSign} has an unfilled slot`);
   const PHASE_NAMES = { "new-moon": "New Moon", "waxing-crescent": "Waxing Crescent Moon", "first-quarter": "First Quarter Moon", "waxing-gibbous": "Waxing Gibbous Moon", "full-moon": "Full Moon", "disseminating": "Disseminating Moon", "last-quarter": "Last Quarter Moon", "balsamic": "Balsamic Moon" };
-  const plain = `${PHASE_NAMES[phase] ?? title(phase)}${sign ? ` in ${title(sign)}` : ""}`;
-  return { headline: plain, tagline: r.title ?? "", body, parts: [body], templateKey: "fallback-template/calendar.phase", contentKey: r.contentKey };
+  const plain = `${PHASE_NAMES[phase] ?? title(phase)} in ${title(normalizedSign)}`;
+  return {
+    headline: plain,
+    tagline: exactRow?.title ?? phaseRow.title ?? "",
+    body,
+    parts: [body],
+    templateKey: "fallback-template/calendar.phase-sign",
+    contentKey: selectedRow?.contentKey === exactKey
+      ? exactKey
+      : `fallback-hook/moon-phase-sign/${phase}/${normalizedSign}`,
+    sourceKeys: [phaseRow.contentKey, selectedRow?.contentKey].filter(Boolean),
+    phaseSignSpecificity: exactRow || compactLunationRow ? "exact-reviewed" : "sign-derived"
+  };
 }
 
 export function renderVoidOfCourse({ sign, nextSign }) {
@@ -1520,8 +1685,19 @@ export function renderSeasonMarker({ which }) {
 // Owner's weekly Moon-sign tone. variant rotates the authored alternates (suggested:
 // stable per ISO week, e.g. (isoWeek % variantCount) + 1; 1 or absent = base card).
 export function renderWeeklyMoon({ sign, variant }) {
-  const c = (variant && variant > 1 ? card(`authored/calendar-weekly-moon/${sign}/variant-${variant}`) : null)
-    ?? card(`authored/calendar-weekly-moon/${sign}`);
+  const rejectedOwnerFeedbackKeys = new Set([
+    // Owner rejection, 2026-08-03: contains “The Cancer Moon doesn't make you weak; it makes you aware.”
+    "authored/calendar-weekly-moon/cancer"
+  ]);
+  const candidateKeys = [
+    variant && variant > 1 ? `authored/calendar-weekly-moon/${sign}/variant-${variant}` : null,
+    `authored/calendar-weekly-moon/${sign}`,
+    ...[2, 3, 4].map((candidateVariant) => `authored/calendar-weekly-moon/${sign}/variant-${candidateVariant}`)
+  ].filter(Boolean);
+  const contentKey = [...new Set(candidateKeys)].find((key) => (
+    !rejectedOwnerFeedbackKeys.has(key) && Boolean(card(key))
+  ));
+  const c = contentKey ? card(contentKey) : null;
   if (!c) throw new SourceGapError(`SOURCE_GAP: no weekly moon card for ${sign}`);
   return { headline: `Weekly Moon: ${title(sign)}`, body: c.body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [c.body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
 }
@@ -1554,18 +1730,27 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
 // card by swapping perspective (never by editing this output). ----
 // facts: transiting, aspect (transit's aspect TO the contact), planetA (reader's), planetB
 // (friend's), natalAspect (the synastry aspect between A and B), otherName, sign?, window?
-export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, window: win }) {
+export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, duplicateIndex, window: win }) {
   if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
     throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
   }
   const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
   const g = GROUP[aspect] ?? aspect;
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-  // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
-  // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
-  const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you
-    ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
-    ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+  // Exact aspect copy wins the first card. Later cards on the same view sharing this
+  // transiting planet + exact aspect (duplicateIndex > 0) rotate to the family lane so
+  // no two cards repeat the same effect paragraph. Legacy soft/hard rows also remain
+  // the fallback lane for nodes, Lilith, missing exact rows, and their existing
+  // repeat-viewer variant rotation.
+  const exactEffect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`);
+  const familyVariantEffect = variant
+    ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)
+    : null;
+  const familyEffect = hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`);
+  const effectRow = duplicateIndex && duplicateIndex > 0
+    ? familyVariantEffect ?? familyEffect ?? exactEffect
+    : exactEffect ?? familyVariantEffect ?? familyEffect;
+  const effect = effectRow?.body_you;
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
   const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
@@ -1592,8 +1777,10 @@ export function renderBondTransit({ transiting, aspect, endpointPlanet, endpoint
   const body = paras.join("\n\n").trim();
   if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
   const HL = { conjunction: "conjunct", opposition: "opposite" };
-  const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
-  return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit" };
+  // "Transiting" disambiguates the sky planet from the identically-shaped synastry
+  // headlines ("Your Venus square X's Pluto") that render on the same profile.
+  const headline = `Transiting ${title(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
+  return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit", contentKey: effectRow.contentKey };
 }
 
 // ---- Per-rising lunation horoscope (owner weekly shape): recognizable situation

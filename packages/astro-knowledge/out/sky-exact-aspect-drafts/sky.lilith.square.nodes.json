@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:53.473Z",
+  "id": "sky.lilith.square.nodes",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "lilith-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.lilith.square.nodes",
+    "planetA": "lilith",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Lilith square North Node",
+    "humanMoment": "A trade union adds a four-day week to its contract demands after years of treating shorter hours as unserious.",
+    "developmentDetail": "Members keep refusing overtime shifts, exposing how heavily the existing schedule depends on a sacrifice they no longer accept.",
+    "planetaryDynamic": "Lilith brings the rejected desire for more time back into public view, while the North Node asks whether that desire can become part of the union’s next chapter.",
+    "aspectMechanic": "The square turns each refused overtime shift into the same contract conflict until the shorter week is either built into a workable staffing plan or abandoned.",
+    "conditionalConsequence": "If the demand carries no staffing or wage model, shortages can worsen while negotiators dismiss the shorter week as retaliation rather than a viable plan.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The entry opens on a recognizable collective event, develops it through observable labor consequences, distinguishes Lilith’s reclaimed desire from the North Node’s emerging chapter, and gives the square a recurring practical conflict with a scene-specific conditional cost.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:53.473Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "d6e3b9a5ea9791b91537a1cc169c4b9abd83c28f6396327498d12f727da3e294",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "0ccb90f972f00b827a7f5b2f8f06d5412b428f650aa1b22e6e9eace777815078",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3729addaca7f5282b50be11ad01a26127e8c604f31e093524045b15a5d1d2fe3"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.lilith.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

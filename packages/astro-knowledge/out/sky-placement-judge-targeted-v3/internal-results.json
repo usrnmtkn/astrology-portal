@@ -1,0 +1,623 @@
+{
+  "schemaVersion": 1,
+  "reportKind": "candidate-evaluation",
+  "evaluationId": "sky-placement-judge-targeted-provenance-v3",
+  "runId": "sky-placement-blind-2026-08-02T23-29-54-128Z",
+  "recordedAt": "2026-08-02T23:31:11.545Z",
+  "promotionAuthorized": false,
+  "promotionEligible": false,
+  "ownerReviewStatus": "pending",
+  "runtimeChanged": false,
+  "samplesPerFixture": 1,
+  "fixtureCount": 9,
+  "requestCount": 18,
+  "fixtureManifest": [
+    {
+      "caseId": "target-001",
+      "sourceCaseId": "target-001",
+      "classification": "positive_collective_control",
+      "expectedOutcome": "positive",
+      "expectedScore": 3,
+      "ruleUnderTest": "collective-current-sky-positive-control",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "Mechanical/editorial collective adaptation of historical owner-approved Sun-in-Leo copy; adapted wording has not been owner-approved.",
+      "planet": "sun",
+      "sign": "leo",
+      "tier": "luminary",
+      "articleSha256": "54bd46033679e1fc119d0859c91833bd41ccca87725e7f621ea693d28691ec6a"
+    },
+    {
+      "caseId": "target-002",
+      "sourceCaseId": "target-002",
+      "classification": "positive_collective_control",
+      "expectedOutcome": "positive",
+      "expectedScore": 3,
+      "ruleUnderTest": "preserve-clear-owner-writing",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "The lived paragraph is owner-approved beat evidence; the assembled full article is a new candidate and is not owner-approved.",
+      "planet": "uranus",
+      "sign": "cancer",
+      "tier": "generational",
+      "articleSha256": "6516b5c1660462f801007ff4294a3b171c7ed7bf065342cae272e0078f62eaa8"
+    },
+    {
+      "caseId": "target-003",
+      "sourceCaseId": "target-003",
+      "classification": "single_pronoun_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "single-second-person-move",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "planet": "moon",
+      "sign": "capricorn",
+      "tier": "luminary",
+      "articleSha256": "6082423f3a2b1f9d17f92c51da1bfc8f80429df13ae76e3c8bf0092ff03cea1d"
+    },
+    {
+      "caseId": "target-004",
+      "sourceCaseId": "target-004",
+      "classification": "single_pronoun_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "single-second-person-hook",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "planet": "mercury",
+      "sign": "cancer",
+      "tier": "personal",
+      "articleSha256": "abb64e546be6577590072418e4f653a949575772c2f8bcbd882b1afcc29cd062"
+    },
+    {
+      "caseId": "target-005",
+      "sourceCaseId": "target-005",
+      "classification": "domain_drift_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "astrological-domain-drift",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "planet": "chiron",
+      "sign": "taurus",
+      "tier": "generational",
+      "articleSha256": "3682719957f374bd152c0b43b013e8a7b77134bc31b2efa1a93ea27e44609ab7"
+    },
+    {
+      "caseId": "target-006",
+      "sourceCaseId": "target-006",
+      "classification": "natural_english_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 1,
+      "ruleUnderTest": "literal-english",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "planet": "venus",
+      "sign": "virgo",
+      "tier": "personal",
+      "articleSha256": "fec9a698c6fa603b50669ae251e6676974200c4a0770b02ea23d5b9e41c7cd43"
+    },
+    {
+      "caseId": "target-007",
+      "sourceCaseId": "target-007",
+      "classification": "overwriting_failure",
+      "expectedOutcome": "negative",
+      "expectedMaximumScore": 2,
+      "ruleUnderTest": "one-close-restraint",
+      "editorialStatus": "evaluation_failure_control",
+      "reviewStatus": "test_only",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "planet": "mars",
+      "sign": "capricorn",
+      "tier": "personal",
+      "articleSha256": "07112b0f97b2681771ced3ddf1ed228b480d4da86608cc251d943e89ef8ca458"
+    },
+    {
+      "caseId": "target-008",
+      "sourceCaseId": "target-008",
+      "classification": "editorial_restraint_control",
+      "expectedOutcome": "borderline",
+      "expectedScore": 2,
+      "ruleUnderTest": "proportional-editorial-restraint",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "Test-only adaptation with one intentionally generic sentence; neither the adaptation nor the injected weakness is owner-approved.",
+      "planet": "venus",
+      "sign": "virgo",
+      "tier": "personal",
+      "articleSha256": "713cc79d66a6c91408caad31c7f3b3359ec52669279e0d4236dea1be996decaf"
+    },
+    {
+      "caseId": "target-009",
+      "classification": "positive_collective_control",
+      "expectedOutcome": "positive",
+      "expectedScore": 3,
+      "ruleUnderTest": "collective-current-sky-positive-control",
+      "editorialStatus": "collective_adaptation_candidate",
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "provenanceNote": "Mechanical/editorial collective adaptation of historical owner-approved Moon-in-Scorpio copy; adapted wording has not been owner-approved.",
+      "planet": "moon",
+      "sign": "scorpio",
+      "tier": "luminary",
+      "articleSha256": "7af09bc1f9c6457ac189cd6318930bd94cf1cc9f2a41a84dcf3c14af0079e8a6"
+    }
+  ],
+  "treatments": {
+    "baseline": {
+      "sampleCount": 9,
+      "approvedMean": 2.3333333333333335,
+      "weakMean": 1.8333333333333333,
+      "separation": 0.5000000000000002,
+      "approvedFalsePositives": 2,
+      "weakMisses": 0,
+      "totalLatencyMs": 31205,
+      "totalInputTokens": 17629,
+      "totalOutputTokens": 2035,
+      "estimatedCostUsd": 0.06847900000000001
+    },
+    "candidate": {
+      "sampleCount": 9,
+      "approvedMean": 2.3333333333333335,
+      "weakMean": 1.8333333333333333,
+      "separation": 0.5000000000000002,
+      "approvedFalsePositives": 2,
+      "weakMisses": 0,
+      "totalLatencyMs": 77398,
+      "totalInputTokens": 17629,
+      "totalOutputTokens": 4028,
+      "estimatedCostUsd": 0.2309875
+    }
+  },
+  "results": [
+    {
+      "caseId": "target-001",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "aed77765eaec81f10725b6a3c1b540f2a8526cb11bbe27cff5e6c511c42375c5",
+      "latencyMs": 4526,
+      "usage": {
+        "inputTokens": 2006,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2003,
+        "outputTokens": 278,
+        "reasoningTokens": 214,
+        "totalTokens": 2284
+      },
+      "estimatedCostUsd": 0.0083495,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "Chase the clout directly and watch it land on somebody else.",
+        "why": "The ending turns the observable cost into a polished, nonliteral aphorism, then adds a second conclusion after the sharper behavioral warning."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"Chase the clout directly and watch it land on somebody else.\",\"why\":\"The ending turns the observable cost into a polished, nonliteral aphorism, then adds a second conclusion after the sharper behavioral warning.\"}"
+    },
+    {
+      "caseId": "target-001",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "aed77765eaec81f10725b6a3c1b540f2a8526cb11bbe27cff5e6c511c42375c5",
+      "latencyMs": 11989,
+      "usage": {
+        "inputTokens": 2006,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 2003,
+        "outputTokens": 457,
+        "reasoningTokens": 409,
+        "totalTokens": 2463
+      },
+      "estimatedCostUsd": 0.02624375,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "“Build from the inside out and people notice.”",
+        "why": "The generic, abstract line creates a stacked ending before the sharper consequence."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"“Build from the inside out and people notice.”\",\"why\":\"The generic, abstract line creates a stacked ending before the sharper consequence.\"}"
+    },
+    {
+      "caseId": "target-002",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "1b8087c0817ff505b35001c687d1e3f4ed673fdc042fed0bfed526671e6182d8",
+      "latencyMs": 2960,
+      "usage": {
+        "inputTokens": 1983,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1980,
+        "outputTokens": 215,
+        "reasoningTokens": 131,
+        "totalTokens": 2198
+      },
+      "estimatedCostUsd": 0.007536,
+      "verdict": {
+        "score": 3,
+        "verdict": "in-voice",
+        "weakest": "Uranus handles rupture and reinvention; in Cancer, it changes the rules around home, family, care, and belonging.",
+        "why": "The only slightly explanatory line still clearly distinguishes Uranus’s disruptive function from Cancer’s domestic and caregiving terrain; the rest is specific, collective, and behaviorally grounded."
+      },
+      "rawOutput": "{\"score\":3,\"verdict\":\"in-voice\",\"weakest\":\"Uranus handles rupture and reinvention; in Cancer, it changes the rules around home, family, care, and belonging.\",\"why\":\"The only slightly explanatory line still clearly distinguishes Uranus’s disruptive function from Cancer’s domestic and caregiving terrain; the rest is specific, collective, and behaviorally grounded.\"}"
+    },
+    {
+      "caseId": "target-002",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "1b8087c0817ff505b35001c687d1e3f4ed673fdc042fed0bfed526671e6182d8",
+      "latencyMs": 5938,
+      "usage": {
+        "inputTokens": 1983,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1980,
+        "outputTokens": 354,
+        "reasoningTokens": 280,
+        "totalTokens": 2337
+      },
+      "estimatedCostUsd": 0.02301,
+      "verdict": {
+        "score": 3,
+        "verdict": "in-voice",
+        "weakest": "“Uranus handles rupture and reinvention; in Cancer, it changes the rules around home, family, care, and belonging.”",
+        "why": "Slightly explanatory, but the concrete rupture, redistributed care, and observable cost make the placement unmistakable."
+      },
+      "rawOutput": "{\"score\":3,\"verdict\":\"in-voice\",\"weakest\":\"“Uranus handles rupture and reinvention; in Cancer, it changes the rules around home, family, care, and belonging.”\",\"why\":\"Slightly explanatory, but the concrete rupture, redistributed care, and observable cost make the placement unmistakable.\"}"
+    },
+    {
+      "caseId": "target-003",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "8264ee6ac752e2d1715e5b3791d84478d65ca5fe3e1ef98eb724557e565503c0",
+      "latencyMs": 3068,
+      "usage": {
+        "inputTokens": 1955,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1952,
+        "outputTokens": 200,
+        "reasoningTokens": 138,
+        "totalTokens": 2155
+      },
+      "estimatedCostUsd": 0.007286,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "\"The Moon gets serious here, and so do we.\"",
+        "why": "The Moon-to-Capricorn meaning is clear, but the hook leans generic and the turn softens after its strongest line."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"\\\"The Moon gets serious here, and so do we.\\\"\",\"why\":\"The Moon-to-Capricorn meaning is clear, but the hook leans generic and the turn softens after its strongest line.\"}"
+    },
+    {
+      "caseId": "target-003",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "8264ee6ac752e2d1715e5b3791d84478d65ca5fe3e1ef98eb724557e565503c0",
+      "latencyMs": 8185,
+      "usage": {
+        "inputTokens": 1955,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1952,
+        "outputTokens": 449,
+        "reasoningTokens": 392,
+        "totalTokens": 2404
+      },
+      "estimatedCostUsd": 0.025685,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "“The Moon gets serious here, and so do we.”",
+        "why": "The hook gives atmosphere but does not clearly distinguish the Moon’s emotional function from Capricorn’s task-focused expression."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"“The Moon gets serious here, and so do we.”\",\"why\":\"The hook gives atmosphere but does not clearly distinguish the Moon’s emotional function from Capricorn’s task-focused expression.\"}"
+    },
+    {
+      "caseId": "target-004",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "9ca9f9fd9a1e6519c8abbdf6c019fad5771d45e346e671e9db41af18f5da7fde",
+      "latencyMs": 3415,
+      "usage": {
+        "inputTokens": 1977,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1974,
+        "outputTokens": 233,
+        "reasoningTokens": 177,
+        "totalTokens": 2210
+      },
+      "estimatedCostUsd": 0.007737,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "You already know the conversation we have been avoiding.",
+        "why": "The opening is strong and placement-specific, but explicit second person disqualifies a 3 for Current Sky copy."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"You already know the conversation we have been avoiding.\",\"why\":\"The opening is strong and placement-specific, but explicit second person disqualifies a 3 for Current Sky copy.\"}"
+    },
+    {
+      "caseId": "target-004",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "9ca9f9fd9a1e6519c8abbdf6c019fad5771d45e346e671e9db41af18f5da7fde",
+      "latencyMs": 8737,
+      "usage": {
+        "inputTokens": 1977,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1974,
+        "outputTokens": 429,
+        "reasoningTokens": 381,
+        "totalTokens": 2406
+      },
+      "estimatedCostUsd": 0.0252225,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "“You already know the conversation we have been avoiding.”",
+        "why": "The vague opening uses prohibited second person in collective Current Sky copy."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"“You already know the conversation we have been avoiding.”\",\"why\":\"The vague opening uses prohibited second person in collective Current Sky copy.\"}"
+    },
+    {
+      "caseId": "target-005",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "d69c67e92b63c01372f02e53819eb4f243b6e509ed2214f30cbee24d14ce78c2",
+      "latencyMs": 1712,
+      "usage": {
+        "inputTokens": 1888,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1885,
+        "outputTokens": 108,
+        "reasoningTokens": 35,
+        "totalTokens": 1996
+      },
+      "estimatedCostUsd": 0.0060145,
+      "verdict": {
+        "score": 1,
+        "verdict": "off-voice",
+        "weakest": "Chiron in Taurus makes career, productivity, and professional success the center of the transit.",
+        "why": "It invents a career focus from Taurus alone, then treats achievement as a generic cure narrative; the moves reinforce proving rather than name a placement-specific repair."
+      },
+      "rawOutput": "{\"score\":1,\"verdict\":\"off-voice\",\"weakest\":\"Chiron in Taurus makes career, productivity, and professional success the center of the transit.\",\"why\":\"It invents a career focus from Taurus alone, then treats achievement as a generic cure narrative; the moves reinforce proving rather than name a placement-specific repair.\"}"
+    },
+    {
+      "caseId": "target-005",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "d69c67e92b63c01372f02e53819eb4f243b6e509ed2214f30cbee24d14ce78c2",
+      "latencyMs": 3034,
+      "usage": {
+        "inputTokens": 1888,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1885,
+        "outputTokens": 140,
+        "reasoningTokens": 78,
+        "totalTokens": 2028
+      },
+      "estimatedCostUsd": 0.01599625,
+      "verdict": {
+        "score": 1,
+        "verdict": "off-voice",
+        "weakest": "“Chiron in Taurus makes career, productivity, and professional success the center of the transit.”",
+        "why": "It wrongly turns Taurus into career symbolism, so the entire article invents an unsupported premise."
+      },
+      "rawOutput": "{\"score\":1,\"verdict\":\"off-voice\",\"weakest\":\"“Chiron in Taurus makes career, productivity, and professional success the center of the transit.”\",\"why\":\"It wrongly turns Taurus into career symbolism, so the entire article invents an unsupported premise.\"}"
+    },
+    {
+      "caseId": "target-006",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "f601e42766cb137acc3737ada21208aad13bc58d0dda75b547d48414a4cdc727",
+      "latencyMs": 2662,
+      "usage": {
+        "inputTokens": 1894,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1891,
+        "outputTokens": 174,
+        "reasoningTokens": 116,
+        "totalTokens": 2068
+      },
+      "estimatedCostUsd": 0.0068215,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "The banished want refuses to stay reasonable.",
+        "why": "The opening is polished abstraction rather than a recognizable lived pressure, and the lived beat stays generalized instead of moving through one charged sequence."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"The banished want refuses to stay reasonable.\",\"why\":\"The opening is polished abstraction rather than a recognizable lived pressure, and the lived beat stays generalized instead of moving through one charged sequence.\"}"
+    },
+    {
+      "caseId": "target-006",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "f601e42766cb137acc3737ada21208aad13bc58d0dda75b547d48414a4cdc727",
+      "latencyMs": 8921,
+      "usage": {
+        "inputTokens": 1894,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1891,
+        "outputTokens": 460,
+        "reasoningTokens": 410,
+        "totalTokens": 2354
+      },
+      "estimatedCostUsd": 0.02563375,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "“The banished want refuses to stay reasonable.”",
+        "why": "The hook is a polished abstraction rather than recognizable Venus-in-Virgo behavior."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"“The banished want refuses to stay reasonable.”\",\"why\":\"The hook is a polished abstraction rather than recognizable Venus-in-Virgo behavior.\"}"
+    },
+    {
+      "caseId": "target-007",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "eb9d6925745a6de76c20063cfa7692eafe86714645b0ce15d809d8c3790a5297",
+      "latencyMs": 3502,
+      "usage": {
+        "inputTokens": 1957,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1954,
+        "outputTokens": 224,
+        "reasoningTokens": 156,
+        "totalTokens": 2181
+      },
+      "estimatedCostUsd": 0.007579,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "The mountain will still be there tomorrow.",
+        "why": "The Mars-in-Capricorn premise is clear, but the turn stacks mountain metaphors, uses generic “People,” and ends after its strongest observable cost with a soft aphorism."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"The mountain will still be there tomorrow.\",\"why\":\"The Mars-in-Capricorn premise is clear, but the turn stacks mountain metaphors, uses generic “People,” and ends after its strongest observable cost with a soft aphorism.\"}"
+    },
+    {
+      "caseId": "target-007",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "eb9d6925745a6de76c20063cfa7692eafe86714645b0ce15d809d8c3790a5297",
+      "latencyMs": 7361,
+      "usage": {
+        "inputTokens": 1957,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1954,
+        "outputTokens": 387,
+        "reasoningTokens": 335,
+        "totalTokens": 2344
+      },
+      "estimatedCostUsd": 0.0238375,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "“The mountain will still be there tomorrow.”",
+        "why": "The turn names the behavior and cost, then weakens them with a second metaphorical conclusion."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"“The mountain will still be there tomorrow.”\",\"why\":\"The turn names the behavior and cost, then weakens them with a second metaphorical conclusion.\"}"
+    },
+    {
+      "caseId": "target-008",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "c6749c3adeb3efdcfc4993839a1f099f74a731c1c5b91267dd80f05c3528988e",
+      "latencyMs": 4608,
+      "usage": {
+        "inputTokens": 1980,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1977,
+        "outputTokens": 335,
+        "reasoningTokens": 277,
+        "totalTokens": 2315
+      },
+      "estimatedCostUsd": 0.0089685,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "This can make relationships feel complicated.",
+        "why": "The placement is clear and the shadow is observable, but the lived beat leans on broad contrasts and this generic coverage sentence breaks its momentum."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"This can make relationships feel complicated.\",\"why\":\"The placement is clear and the shadow is observable, but the lived beat leans on broad contrasts and this generic coverage sentence breaks its momentum.\"}"
+    },
+    {
+      "caseId": "target-008",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "c6749c3adeb3efdcfc4993839a1f099f74a731c1c5b91267dd80f05c3528988e",
+      "latencyMs": 15137,
+      "usage": {
+        "inputTokens": 1980,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1977,
+        "outputTokens": 907,
+        "reasoningTokens": 859,
+        "totalTokens": 2887
+      },
+      "estimatedCostUsd": 0.03958125,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "“This can make relationships feel complicated.”",
+        "why": "The lived beat stalls on a generic consequence that could fit nearly any Venus transit."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"“This can make relationships feel complicated.”\",\"why\":\"The lived beat stalls on a generic consequence that could fit nearly any Venus transit.\"}"
+    },
+    {
+      "caseId": "target-009",
+      "treatmentKey": "baseline",
+      "responseModel": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "promptSha256": "454468f6f7d6b8a57e104eb0e472b333ee0b334e2214412841fca2839314dd36",
+      "latencyMs": 4752,
+      "usage": {
+        "inputTokens": 1989,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1986,
+        "outputTokens": 268,
+        "reasoningTokens": 205,
+        "totalTokens": 2257
+      },
+      "estimatedCostUsd": 0.008187,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "The collective mood drops below the surface.",
+        "why": "The turn and moves are placement-specific, but the hook opens on an abstract summary rather than a recognizable lived pressure, and never clearly names what the Moon governs."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"The collective mood drops below the surface.\",\"why\":\"The turn and moves are placement-specific, but the hook opens on an abstract summary rather than a recognizable lived pressure, and never clearly names what the Moon governs.\"}"
+    },
+    {
+      "caseId": "target-009",
+      "treatmentKey": "candidate",
+      "responseModel": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "promptSha256": "454468f6f7d6b8a57e104eb0e472b333ee0b334e2214412841fca2839314dd36",
+      "latencyMs": 8096,
+      "usage": {
+        "inputTokens": 1989,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1986,
+        "outputTokens": 445,
+        "reasoningTokens": 389,
+        "totalTokens": 2434
+      },
+      "estimatedCostUsd": 0.0257775,
+      "verdict": {
+        "score": 2,
+        "verdict": "borderline",
+        "weakest": "“The collective mood drops below the surface.”",
+        "why": "The hook opens on an abstract metaphor, while LIVED explains duration instead of showing a useful pressure-to-choice sequence."
+      },
+      "rawOutput": "{\"score\":2,\"verdict\":\"borderline\",\"weakest\":\"“The collective mood drops below the surface.”\",\"why\":\"The hook opens on an abstract metaphor, while LIVED explains duration instead of showing a useful pressure-to-choice sequence.\"}"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:40:34.345Z",
+  "id": "sky.saturn.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "saturn-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.chiron",
+    "planetA": "saturn",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Chiron",
+    "body": "The requirement may be reasonable, and still our stomach drops when it arrives. A deadline moves closer, a correction lands in the inbox, someone’s clipped tone sounds too much like the voice that first taught us we were falling short. Saturn quincunx Chiron keeps pressing the standard against the place that healed unevenly. We tighten the schedule to prove we can handle it, then lose time recovering from the shame the schedule stirred up.\n\nNothing settles in one pass. We revise the plan, soften the wording, restore the boundary, then notice the work still needs doing. Saturn insists that the result hold up; Chiron refuses to let achievement become another excuse for punishment. The structure starts helping when it tells us what needs changing, not who we are.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "concreteness",
+    "weakest": "Chiron refuses to let achievement become another excuse for punishment.",
+    "why": "The least concrete sentence is still immediately legible and pair-specific. The draft otherwise delivers lived tension, contemporary details, active Saturn-Chiron pressure, repeated adjustment, collective intimacy, and a clean final turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:40:34.343Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "fb0db9f4aba028308da76962c6687228dd69d1d4038abddf581f406641d07ecc",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "5202a7b38e0778e91a71c1cc3ba9f8f7202cbb3a1a36a998c9ee8e5db14e16b6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e15747c3362ea0288d9867addf2d21939df7083be1a89083f994f00365ec1e0e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:27.158Z",
+  "id": "sky.saturn.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "saturn-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.opposition.nodes",
+    "planetA": "saturn",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Saturn opposite North Node",
+    "humanMoment": "A harbor authority sets a final clearance date for abandoned fishing sheds as a coastal apprenticeship program prepares to take over the site.",
+    "developmentDetail": "Former operators seek more time to preserve the sheds, while insurance and repair costs keep rising and the trainees remain without a workshop.",
+    "planetaryDynamic": "Saturn brings the clearance deadline and mounting costs, while the North Node marks the apprenticeship program as the assignment now demanding space.",
+    "aspectMechanic": "The opposition places former operators defending the sheds across from trainees waiting for a workshop, so neither the loss of the old site nor the need for its next use can be removed from the outcome.",
+    "conditionalConsequence": "If the clearance proceeds, the harbor can open the workshop, but preserving the fishing trade will depend on what can be salvaged before the sheds are released.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the clearance proceeds, the harbor can open the workshop, but preserving the fishing trade will depend on what can be salvaged before the sheds are released.",
+    "why": "The consequence is slightly more interpretive than the other fields, but it follows directly from the scene and preserves the tension between release and continuity.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:27.157Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "c7797e27f6240b260d4a1bfe4b297622b8f5e4cdf54df4c30efe2cbbf74cb9fb",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "1e2f91646f9e64612f156eed3f93dd739cbca880edaff47b9f3ba5f196c906c1",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "388f7c17b26f3b787ea331a4cc64d553e9db4fcef2c8522f50e658235eacdc1d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

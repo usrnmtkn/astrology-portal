@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:27.446Z",
+  "id": "sky.pluto.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "pluto-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.opposition.lilith",
+    "planetA": "pluto",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Pluto opposite Lilith",
+    "humanMoment": "A religious procession stops when women barred from officiating enter the route carrying an icon their predecessors were punished for touching.",
+    "developmentDetail": "Senior clergy block their passage while other participants refuse to continue unless the women remain.",
+    "planetaryDynamic": "Pluto brings the buried power behind the ritual to the surface, while Lilith carries the claim of those forced into exclusion.",
+    "aspectMechanic": "The opposition places the clergy blocking the route across from the women carrying the icon, so neither the old banishment nor the public reclamation can be edited out of the outcome.",
+    "conditionalConsequence": "If the procession resumes with the women included, excluding them again will require an open confrontation rather than quiet enforcement.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Pluto brings the buried power behind the ritual to the surface, while Lilith carries the claim of those forced into exclusion.",
+    "why": "This is the most interpretive field, but it still clearly distinguishes Pluto’s surfacing of buried power from Lilith’s exiled claim and fits the concrete scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:27.446Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "50a0569f0bd5276f177eefdf2b5c51f270b1f225a702be7718042f404ea0ebb6",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "7bb536296fa2627ae29b9d7c703fb9a161016ad957aec7968db60f68fde65499",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "bef340457418d9750181489f7e17f81b53aa04c901da9cde2e363ea761c79786"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

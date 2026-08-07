@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:44.367Z",
+  "id": "sky.neptune.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "neptune-pluto",
+    "path": "data/pairs/neptune-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.quincunx.pluto",
+    "planetA": "neptune",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Neptune quincunx Pluto",
+    "humanMoment": "A film festival pauses an immersive documentary after historians show that its dreamlike reconstruction blurs who ordered a campaign of violence.",
+    "developmentDetail": "Editors keep recutting the narration and archival footage, but each clearer account weakens the atmosphere that drew audiences in.",
+    "planetaryDynamic": "Neptune contributes the enveloping collective vision, while Pluto exposes the destructive power and buried responsibility beneath it.",
+    "aspectMechanic": "The quincunx keeps the narration, archival footage, and dreamlike reconstruction under revision because the atmosphere and the record of violence cannot perform the same function.",
+    "conditionalConsequence": "If the festival preserves the immersive effect by softening the evidence, the documentary may draw attention while deepening public confusion about responsibility.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete collective scene, distinct planetary functions, and repeated revisions clearly express the quincunx without drifting into advice or prophecy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:44.367Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "678d575cf7c101feaa4cdd25cf5e528536166aa4ff54fba812842a892141fc74",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5b53232694cef28cb69238e8fc35dff365209c083e801fcae1653749ca550d55",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8450367608851020770042b8d9a2afc536972d28bf6351d73fb5842a8d45b0b0"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

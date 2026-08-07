@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "sky-placement-fact-boundary-signoff-approval-2026-08-04",
+  "surface": "sky-placement",
+  "scope": "placement_fact_boundaries_only",
+  "ownerStatement": "I explicitly approve Decisions A, B, C, and D in the fact-boundary sign-off sheet exactly as written.",
+  "approvedSections": ["A", "B", "C", "D"],
+  "approvedUnitCount": 28,
+  "writtenFactRowCount": 29,
+  "reviewStatusApplied": "REVIEWED",
+  "source": "/Users/mprez/.codex/attachments/0ba84386-c117-4bbc-864b-1e3a189eff27/pasted-text.txt",
+  "approvedAt": "2026-08-04",
+  "writerCallsAuthorized": false,
+  "judgeCallsAuthorized": false,
+  "servingAuthorized": false,
+  "wiringAuthorized": false,
+  "importAuthorized": false,
+  "promotionAuthorized": false
+}

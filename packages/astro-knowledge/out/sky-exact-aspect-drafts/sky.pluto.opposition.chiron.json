@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:24.782Z",
+  "id": "sky.pluto.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "pluto-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.opposition.chiron",
+    "planetA": "pluto",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Pluto opposite Chiron",
+    "humanMoment": "A boxing club’s anniversary exhibition stalls when volunteer archivists uncover injury logs tied to the founder’s first cohort of trainees.",
+    "developmentDetail": "The archivists argue that the records belong in the display, while former trainees object to having their oldest complaints turned into public evidence without their consent.",
+    "planetaryDynamic": "Pluto excavates the concealed record, while Chiron marks the original injury preserved inside it.",
+    "aspectMechanic": "The opposition places the archivists uncovering the logs across from the former trainees carrying the complaints, so neither the evidence nor the injury can be edited out of the exhibition.",
+    "conditionalConsequence": "If the former trainees gain control over how the logs are used, the exhibition may expose the founding harm without repeating the original loss of agency.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Pluto excavates the concealed record, while Chiron marks the original injury preserved inside it.",
+    "why": "The body distinction is accurate and scene-specific, though slightly more literal than the other fields.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:24.782Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "41d5a6353b9bccc8a8b7efdc49389c2606ce88919f6190992d1f6b529dd53238",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "3df037ee8ed23dfda741d994a4aadb26aa1fbf9db5da2992810d8bb46dd6b8d3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "57f49eac1ea310e9c4f2c12ef5ed615cf9fcd6c18d5ae9dbb26c7c788b5c557c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

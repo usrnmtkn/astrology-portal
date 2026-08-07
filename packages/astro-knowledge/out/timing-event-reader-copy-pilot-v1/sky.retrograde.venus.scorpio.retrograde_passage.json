@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.retrograde.venus.scorpio.retrograde_passage",
+  "title": "Venus retrograde in Scorpio",
+  "status": "needs_review",
+  "serving": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "body": "An old partner may make contact, and we feel the pull before we know whether anything has truly changed. We pause before answering and check whether the old problem has changed, not only whether the attraction has returned. Venus is retrograde in Scorpio, bringing love, loyalty, money, and private agreements back under review. The pressure is to read intensity as certainty, protect vulnerability with secrecy, or test a bond instead of asking directly for the truth.\n\nWe return to the original arrangement and name what it has cost, what it has given, and which terms no longer reflect our values. A promise made years ago may still be worth keeping, but only after we assess trust, pleasure, and shared resources in the present. Once we say those terms aloud, we may revise the commitment instead of forcing the old version to fit. We make the clearest decision when we act on the terms we can honor now, not on the intensity of the returning desire.",
+  "preview": "An old partner may make contact, and we feel the pull before we know whether anything has truly changed. We pause before answering and check whether the old problem has changed, not only whether the attraction has returned.",
+  "sourceId": "src.timing.venus.retrograde-passage",
+  "writer": {
+    "responseId": "resp_0d10e77110e85cde006a70fa14699481a298a35618c790b081",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "packetVersion": "timing-event-writer-packet-v1:owner-six-minimal",
+    "promptVersion": "timing-event-writer-v1:owner-six+v8-meaning",
+    "retrievedOwnerSourceIds": [
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:monthly-overview-june-2025:p001:window-2-2",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:gemini-season-2025:p018:window-2-3"
+    ],
+    "usage": {
+      "input_tokens": 1420,
+      "input_tokens_details": {
+        "cache_write_tokens": 1417,
+        "cached_tokens": 0
+      },
+      "output_tokens": 3597,
+      "output_tokens_details": {
+        "reasoning_tokens": 3389
+      },
+      "total_tokens": 5017
+    }
+  },
+  "deterministicChecks": {
+    "passed": false,
+    "wordCount": 165,
+    "sentenceCount": 8,
+    "paragraphCount": 2,
+    "preview": "An old partner may make contact, and we feel the pull before we know whether anything has truly changed. We pause before answering and check whether the old problem has changed, not only whether the attraction has returned.",
+    "findings": [
+      {
+        "checkId": "batch-scaffold",
+        "detail": "Sentence scaffold is repeated across the batch: the pressure is.",
+        "sentence": "The pressure is to read intensity as certainty, protect vulnerability with secrecy, or test a bond instead of asking directly for the truth."
+      }
+    ]
+  },
+  "judge": {
+    "score": null,
+    "verdict": "not_run",
+    "failedChecks": [],
+    "evidence": [],
+    "rationale": "The first judge response was incomplete. The judge-only retry was blocked because the OpenAI account had no credits remaining.",
+    "evidenceStatus": "human_review_required",
+    "evidenceFailures": [
+      "no completed judge response"
+    ],
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "judge:sky-placement:sol-owner-authorized",
+    "responseId": null
+  }
+}

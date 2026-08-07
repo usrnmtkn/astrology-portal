@@ -13,6 +13,16 @@
     "body": { "type": "string" },
     "gift": { "type": "string" },
     "challenge": { "type": "string" },
+    "collectiveGift": { "type": "string" },
+    "supportedDomains": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "unsupportedDomainWarnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "scenarioPolicy": { "type": "string" },
     "note": { "type": "string" },
     "source": {
       "type": "object",

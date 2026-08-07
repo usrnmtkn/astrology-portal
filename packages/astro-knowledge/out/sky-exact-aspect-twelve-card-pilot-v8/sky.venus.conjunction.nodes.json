@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:55:47.469Z",
+  "id": "sky.venus.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "venus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A strong attraction may renew an old relationship or support a relationship that fits the future.",
+    "examples": [
+      "An ex returns while a promising new relationship begins.",
+      "A new partner supports an important long-term goal.",
+      "A pleasurable relationship delays a necessary commitment."
+    ],
+    "pairBehavior": "Venus contributes love, attraction, and pleasure, while the North Node distinguishes familiar attachments from relationships that support future development.",
+    "aspectBehavior": "The conjunction combines attraction and future direction in the same event, making their benefits and blind spots difficult to separate.",
+    "consequence": "A relationship or desire feels significant, but its direction becomes clear only through what it supports or delays."
+  },
+  "draft": {
+    "id": "sky.venus.conjunction.nodes",
+    "planetA": "venus",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Venus conjunct North Node",
+    "body": "An ex texts just as a promising new relationship begins, and both connections can feel important for completely different reasons. Venus conjunct North Node puts attraction right inside the choice between what is familiar and what could change our direction. The old relationship may return with instant chemistry and a shared history; the new person may fit the life we are actually building. Because desire and direction arrive together, it is easy to treat every strong feeling as a sign to continue.\n\nWhat matters becomes clearer through consequences. A partner who supports a long-term goal can make the next commitment easier, while a pleasurable relationship can keep us postponing work or decisions we already know we need to make. Chemistry tells us that something has our attention; what the relationship supports or delays tells us where it is taking us.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "aspect embodiment",
+    "weakest": "Venus conjunct North Node puts attraction right inside the choice between what is familiar and what could change our direction.",
+    "why": "This explains the astrology in abstract terms instead of letting the nodal choice emerge through concrete lived details, making the entry flatter and more instructional than the voice model.",
+    "failedChecks": [
+      "aspect felt rather than explained",
+      "concrete fragment beat"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:42.929Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "016b56a50873ce4dcaf0b333b823c04d0a69baa0bd78819bbded8b9da2947875",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "8383b747bc8a0369b0d77e5ef7564b558b54baa288b957f1012fc92a8f0641dc",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "aspect felt rather than explained",
+            "concrete fragment beat"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9d0698d95ab02ab63de83e7afd33686a8064df798b42e5a470268b517639ea4b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is natural, clear, and immediately understandable without paraphrasing.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is natural, clear, and immediately understandable without paraphrasing.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:47.469Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "31f058f87e58f40ad023f3a2e33d361b0d09985ef1aa8acfc3d56db79cc46ee8",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "8383b747bc8a0369b0d77e5ef7564b558b54baa288b957f1012fc92a8f0641dc",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ea5defd702bc653078d557b2312ee2f0a1b970d3293764be740b001890dde2b1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

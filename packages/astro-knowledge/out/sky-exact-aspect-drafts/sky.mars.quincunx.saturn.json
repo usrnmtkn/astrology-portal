@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:59.551Z",
+  "id": "sky.mars.quincunx.saturn",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mars-saturn",
+    "path": "data/pairs/mars-saturn.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.quincunx.saturn",
+    "planetA": "mars",
+    "planetB": "saturn",
+    "aspect": "quincunx",
+    "title": "Mars quincunx Saturn",
+    "humanMoment": "A theater crew pushes to finish a delayed opening, but each burst of set construction stops when weight checks expose another support that needs reinforcement.",
+    "developmentDetail": "Carpenters rebuild sections already painted while rehearsals shift around blocked parts of the stage.",
+    "planetaryDynamic": "Mars drives the construction forward, while Saturn imposes the weight limits and structural checks that slow it down.",
+    "aspectMechanic": "The quincunx keeps the building pace and safety checks out of sync, so each reinforced support changes which section can be finished or rehearsed next.",
+    "conditionalConsequence": "If finished sections keep failing later checks, costs increase through repeated rebuilding and lost rehearsal time.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "Carpenters rebuild sections already painted while rehearsals shift around blocked parts of the stage.",
+    "why": "The detail is slightly less vivid than the opening, but it adds observable consequences without repetition. All required checks pass.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:59.551Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "1a53c819ea8d31dd3fe160453aef36de0db538b91f53b03df05f38353a13ea8e",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "159ff47ea22752caf1901e029bea38f1cca4e4917fbc3a745153aa14ade8b583",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "186f9e59ce10742d3873c90696fb3f3b5da28c6fe62f7d26c16ff300ac8a687f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.quincunx.saturn",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

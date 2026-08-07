@@ -26,6 +26,11 @@ export type PlanetPosition = {
   transitEnd?: string | null;
   transitTimeZone?: string | null;
   transitRemainingLabel?: string | null;
+  priorTransitSign?: string | null;
+  priorTransitStart?: string | null;
+  priorTransitEnd?: string | null;
+  previousSignResidencyStart?: string | null;
+  previousSignResidencyEnd?: string | null;
   retrogradeStart?: string | null;
   retrogradeEnd?: string | null;
   retrogradeWindowSource?: "station" | "sign-transit" | null;
@@ -34,6 +39,7 @@ export type PlanetPosition = {
   retrogradeShadowEnd?: string | null;
   cazimi?: boolean | null;
   cazimiOrb?: number | null;
+  nearSun?: boolean | null;
 };
 
 export type SolarDaylight = {
@@ -113,6 +119,31 @@ export type SkySnapshot = {
     orb: number;
     exactAt?: string | null;
     applying?: boolean;
+    timing?: {
+      group: "this-week" | "this-season" | "undercurrent";
+      phase: "building" | "exact" | "fading";
+      engagementStart: string;
+      engagementEnd: string;
+      timeZone?: string;
+      buildsAllWeek?: boolean;
+      passIndex: number;
+      exactPasses: Array<{
+        exactAt: string;
+        firstMotion: "direct" | "retrograde";
+        secondMotion: "direct" | "retrograde";
+      }>;
+      cycleLocation?: {
+        previousYear?: number | null;
+        nextYear?: number | null;
+        cycleYears?: number | null;
+        ambiguous?: boolean;
+      } | null;
+      relation?: {
+        fastPlanet: string;
+        undercurrentA: string;
+        undercurrentB: string;
+      } | null;
+    } | null;
     series?: {
       index: number;
       count: number;

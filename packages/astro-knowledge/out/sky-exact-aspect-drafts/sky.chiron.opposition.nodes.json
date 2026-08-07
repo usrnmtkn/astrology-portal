@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:18:12.878Z",
+  "id": "sky.chiron.opposition.nodes",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "chiron-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.opposition.nodes",
+    "planetA": "chiron",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Chiron opposite North Node",
+    "humanMoment": "A museum returns a ceremonial object to an Indigenous community just as a descendant conservator is hired to repair damage caused during its removal.",
+    "developmentDetail": "Museum officials retain the conservation records while community custodians insist that the handover include a full account of what happened to the object.",
+    "planetaryDynamic": "Chiron brings the unresolved damage and the knowledge required to treat it, while the North Node brings the return and the next chapter of custody that depends on that repair.",
+    "aspectMechanic": "The opposition places museum officials holding the records across from community custodians directing the return, so neither the repair nor the transfer can be edited out of the outcome.",
+    "conditionalConsequence": "If the handover proceeds before the repair terms are settled, the object can be formally returned while its damage remains embedded in the dispute over its care.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the handover proceeds before the repair terms are settled, the object can be formally returned while its damage remains embedded in the dispute over its care.",
+    "why": "The consequence is slightly more abstract than the other fields, but it still follows concretely from the unsettled repair and custody conflict.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:18:12.877Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "1b3d4e9737332cd4eb5a32c27778cccfaebc8975070f81038adda501078e4221",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "812b30e7ef11e027842c92abf71539c1c81e739b90b2e23cd951680e0829bdd5",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ce0451e0bfc991fbe5c734a8184c95f89f1cd70cc4344b85a2c333dad557304a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

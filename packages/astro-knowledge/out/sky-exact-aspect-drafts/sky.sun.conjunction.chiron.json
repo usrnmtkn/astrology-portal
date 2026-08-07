@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:02:57.150Z",
+  "id": "sky.sun.conjunction.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "sun-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.conjunction.chiron",
+    "planetA": "sun",
+    "planetB": "chiron",
+    "aspect": "conjunction",
+    "title": "Sun conjunct Chiron",
+    "humanMoment": "An award recipient winces when the audience applauds and quickly redirects attention to everyone else.",
+    "developmentDetail": "After the ceremony, the recipient dismisses the praise, studies another honoree's easy confidence, and returns to work before the room has cleared.",
+    "planetaryDynamic": "The Sun draws attention toward visible talent, while Chiron brings forward the old ache of having been seen in ways that hurt.",
+    "aspectMechanic": "Under the conjunction, recognition and the bruise it touches arrive in the same moment, making genuine ability difficult to separate from the fear of not being enough.",
+    "conditionalConsequence": "If the applause feels more like an accusation than appreciation, the recipient may answer it with overwork while resenting the confidence that reflects an unclaimed gift.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the applause feels more like an accusation than appreciation, the recipient may answer it with overwork while resenting the confidence that reflects an unclaimed gift.",
+    "why": "The final phrase is slightly interpretive, but it follows directly from the scene and accurately preserves the Sun-Chiron dynamic.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:02:57.148Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "c158e55c57fc7e3bb754a0e598d9999e5ed7737c08dcb23ae45b779f7bb0ab3c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5815a28a00298e5ec95548a64635c03e17b0eb843f46a9cd494916d6b222ea75",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "523c0c1566faa8ced427d71876f2d50e9978952eb5bd5284a71364c436109c9d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.conjunction.chiron",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

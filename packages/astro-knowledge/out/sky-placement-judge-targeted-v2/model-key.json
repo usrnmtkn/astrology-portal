@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-blind-2026-08-02T23-01-53-509Z",
+  "warning": "Keep sealed until blinded owner scoring is complete.",
+  "mapping": {
+    "A": {
+      "treatmentKey": "baseline",
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "low"
+    },
+    "B": {
+      "treatmentKey": "candidate",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh"
+    }
+  }
+}

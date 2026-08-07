@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-jupiter-libra-corrected-packet-v2",
+  "recordedAt": "2026-08-04T02:48:33.745Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "jupiter",
+    "sign": "libra"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+      "owner-article:libra-new-moon:p004:window-4-4",
+      "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e016:window-1-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p012:window-2-2",
+      "owner-article:cancer-full-moon-horoscopes-january-2025:p009:window-2-4"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "sky-placement",
+          "term": "\\bzodiac\\b",
+          "match": "zodiac",
+          "reason": "encyclopedia register"
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close",
+        "hook is long (102 words); the hook is the sendable line, not a paragraph",
+        "closer is long; end on a shorter line with bite"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After traveling through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}, and the next stretch favors growth through relationships, shared choices, and how we divide time. Jupiter takes about 12 years to circle the zodiac and stays about 1 year per sign, so this influence has time to shape more than one conversation. A couple begins spending more of the week together, accepts more invitations as a pair, and keeps returning to the same question: what kind of commitment do both partners actually want? Each talk begins with care. Both listen, adjust, and discover options neither would have considered alone.",
+    "tension": "The pressure is not the difference itself. It is the wish to find an answer so balanced that neither partner ever has to disappoint the other. The partner who needs more time alone keeps offering extra evenings together, while the partner who needs more consistency calls every arrangement acceptable. Temporary plans pile up. Soon the added evenings feel compulsory, the promised consistency still feels uncertain, and both start resenting plans they technically agreed to.",
+    "development": "Jupiter's previous residency in Libra ran from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. In this stretch, progress comes when the couple lets a real difference stay visible long enough to choose honestly. The partner asking for time alone stops adding substitute evenings, and the partner asking for consistency stops pretending irregular plans work. When a new invitation changes the week, each states a preference before either agrees. Sometimes the couple chooses more time together; sometimes they protect the time apart. The result may look less seamless, but neither partner has to guess what the agreement actually cost.",
+    "close": "Before {{exitDate}}, we can end one recurring relationship plan that works only because the same partner gives up the same need every week.",
+    "try_this": [
+      "We can ask for one night alone this week without adding three substitute plans.",
+      "We can accept a partner's no to one invitation without asking for a softer answer.",
+      "We can choose one piece of music for a shared evening because we genuinely like it, rather than picking whatever seems hardest to dislike."
+    ]
+  }
+}

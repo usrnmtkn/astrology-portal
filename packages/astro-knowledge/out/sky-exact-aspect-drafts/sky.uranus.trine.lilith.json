@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:59.957Z",
+  "id": "sky.uranus.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "uranus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.trine.lilith",
+    "planetA": "uranus",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Uranus trine Lilith",
+    "humanMoment": "Several former pageant winners return their crowns during an anniversary gala and publicly reject the rules they once accepted in silence.",
+    "developmentDetail": "They leave the crowns onstage, read disputed contract clauses aloud, and release years of private correspondence before the event ends.",
+    "planetaryDynamic": "Uranus supplies the abrupt break from the pageant, while Lilith voices the refusal and testimony held back under its rules.",
+    "aspectMechanic": "The trine lets the crown return and the public account reinforce each other with little resistance, helping the boundary land while carrying the accusations farther before anyone questions them.",
+    "conditionalConsequence": "If sponsors suspend funding after the gala footage spreads, the pageant may lose its next season before every claim in the exit speech is examined.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If sponsors suspend funding after the gala footage spreads, the pageant may lose its next season before every claim in the exit speech is examined.",
+    "why": "The consequence is somewhat elaborate but remains conditional, scene-specific, and clearly tied to the rapid spread of a theatrical exit.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:59.957Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "75e1cfbf48f755a1572b92fb45cbc10341b35e063274ce03174b7b0c8a447b18",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "db2917caf38e0192040eeb4360d0a02f90b6b5c2996102a4e3238e04d4546e6e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "dd8b3208f81906b14f3e2162d5e0cc5f317fc4f908d3bd72add848a2290566af"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

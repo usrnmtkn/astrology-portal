@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:38.251Z",
+  "id": "sky.sun.quincunx.saturn",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-saturn",
+    "path": "data/pairs/sun-saturn.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.saturn",
+    "planetA": "sun",
+    "planetB": "saturn",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Saturn",
+    "humanMoment": "A neighborhood arts festival cuts its program after organizers realize the original schedule exceeds the venue's staffing and safety limits.",
+    "developmentDetail": "Featured performers keep their billing, while set lengths, access times, and technical rehearsals are revised more than once.",
+    "planetaryDynamic": "The Sun brings the event's identity and public purpose into view, while Saturn brings duty, limits, and consequences.",
+    "aspectMechanic": "The quincunx forces repeated adjustments between preserving that identity and meeting practical obligations because neither function can fully absorb the other.",
+    "conditionalConsequence": "If organizers protect every headline promise while trimming only the support structure, delays and preventable safety gaps can undermine the festival they are trying to preserve.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry uses a concrete collective event, develops observable revisions, clearly distinguishes the Sun from Saturn, applies repeated quincunx adjustment to the scene, and gives a plausible conditional consequence without advice or prediction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:38.251Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "861f547d876d0de53e8600d24a1b2392201d3bd4c167a00892377183dda902a3",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "64a40b3f135f14f913d9db85972daccd60e6d12852f9f4f9cd09b8052fcafea1",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "90851bbda16cf76b2fd6d8eb276ec0eaee313b614bff161e278625dbaac2b8cd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.saturn",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

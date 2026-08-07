@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/jupiter/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After traveling through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}, and the next stretch favors growth through relationships, shared choices, and how we divide time. Jupiter takes about 12 years to circle the zodiac and stays about 1 year per sign, so this influence has time to shape more than one conversation. A couple begins spending more of the week together, accepts more invitations as a pair, and keeps returning to the same question: what kind of commitment do both partners actually want? Each talk begins with care. Both listen, adjust, and discover options neither would have considered alone.",
+      "tension": "The pressure is not the difference itself. It is the wish to find an answer so balanced that neither partner ever has to disappoint the other. The partner who needs more time alone keeps offering extra evenings together, while the partner who needs more consistency calls every arrangement acceptable. Temporary plans pile up. Soon the added evenings feel compulsory, the promised consistency still feels uncertain, and both start resenting plans they technically agreed to.",
+      "development": "Jupiter's previous residency in Libra ran from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. In this stretch, progress comes when the couple lets a real difference stay visible long enough to choose honestly. The partner asking for time alone stops adding substitute evenings, and the partner asking for consistency stops pretending irregular plans work. When a new invitation changes the week, each states a preference before either agrees. Sometimes the couple chooses more time together; sometimes they protect the time apart. The result may look less seamless, but neither partner has to guess what the agreement actually cost.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can end one recurring relationship plan that works only because the same partner gives up the same need every week.",
+      "try_this": [
+        "We can ask for one night alone this week without adding three substitute plans.",
+        "We can accept a partner's no to one invitation without asking for a softer answer.",
+        "We can choose one piece of music for a shared evening because we genuinely like it, rather than picking whatever seems hardest to dislike."
+      ],
+      "aspect_units": [],
+      "body_you": "After traveling through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}, and the next stretch favors growth through relationships, shared choices, and how we divide time. Jupiter takes about 12 years to circle the zodiac and stays about 1 year per sign, so this influence has time to shape more than one conversation. A couple begins spending more of the week together, accepts more invitations as a pair, and keeps returning to the same question: what kind of commitment do both partners actually want? Each talk begins with care. Both listen, adjust, and discover options neither would have considered alone.\n\nThe pressure is not the difference itself. It is the wish to find an answer so balanced that neither partner ever has to disappoint the other. The partner who needs more time alone keeps offering extra evenings together, while the partner who needs more consistency calls every arrangement acceptable. Temporary plans pile up. Soon the added evenings feel compulsory, the promised consistency still feels uncertain, and both start resenting plans they technically agreed to.\n\nJupiter's previous residency in Libra ran from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. In this stretch, progress comes when the couple lets a real difference stay visible long enough to choose honestly. The partner asking for time alone stops adding substitute evenings, and the partner asking for consistency stops pretending irregular plans work. When a new invitation changes the week, each states a preference before either agrees. Sometimes the couple chooses more time together; sometimes they protect the time apart. The result may look less seamless, but neither partner has to guess what the agreement actually cost.\n\nBefore {{exitDate}}, we can end one recurring relationship plan that works only because the same partner gives up the same need every week.",
+      "body_they": "After traveling through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}, and the next stretch favors growth through relationships, shared choices, and how we divide time. Jupiter takes about 12 years to circle the zodiac and stays about 1 year per sign, so this influence has time to shape more than one conversation. A couple begins spending more of the week together, accepts more invitations as a pair, and keeps returning to the same question: what kind of commitment do both partners actually want? Each talk begins with care. Both listen, adjust, and discover options neither would have considered alone.\n\nThe pressure is not the difference itself. It is the wish to find an answer so balanced that neither partner ever has to disappoint the other. The partner who needs more time alone keeps offering extra evenings together, while the partner who needs more consistency calls every arrangement acceptable. Temporary plans pile up. Soon the added evenings feel compulsory, the promised consistency still feels uncertain, and both start resenting plans they technically agreed to.\n\nJupiter's previous residency in Libra ran from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. In this stretch, progress comes when the couple lets a real difference stay visible long enough to choose honestly. The partner asking for time alone stops adding substitute evenings, and the partner asking for consistency stops pretending irregular plans work. When a new invitation changes the week, each states a preference before either agrees. Sometimes the couple chooses more time together; sometimes they protect the time apart. The result may look less seamless, but neither partner has to guess what the agreement actually cost.\n\nBefore {{exitDate}}, we can end one recurring relationship plan that works only because the same partner gives up the same need every week.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-jupiter-libra-corrected-packet-v2"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

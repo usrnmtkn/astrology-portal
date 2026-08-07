@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:37.337Z",
+  "id": "sky.venus.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "venus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.venus.trine.lilith",
+    "planetA": "venus",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Venus trine Lilith",
+    "humanMoment": "At a wedding reception, the band plays a song the hosts had explicitly removed from the set list, and the dance floor fills.",
+    "developmentDetail": "Guests cheer the unplanned choice while one host crosses the room and tells the singer to stop before the final chorus.",
+    "planetaryDynamic": "Venus keeps the performance polished and eager to please the room, while Lilith brings the forbidden request forward without waiting for approval.",
+    "aspectMechanic": "Under the trine, the band's polish carries the forbidden song onto the packed dance floor with little resistance, pleasing the crowd while letting the broken agreement pass as part of the fun.",
+    "conditionalConsequence": "If the cheering crowd outweighs the hosts' refusal, the band may leave with new bookings while the hosts dispute the fee for ignoring the set list.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete, the bodies are clearly distinguished, and the trine lets polished appeal carry a prohibited choice farther before the broken agreement is challenged.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:37.336Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "fee0dd8c7df139f094972ba88cdef6bcffbc30b966249bc01128709093ed7dc5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "72842ca5c896af540beda2b008493444034ca9211c7ab9bdbd0f4a553017046d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "367e6573f79fe6975b42f02ede4487bdea809402e0f3fbed1bccbb141f402cbb"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

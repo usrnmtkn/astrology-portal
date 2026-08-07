@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:26.633Z",
+  "id": "sky.mars.square.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mars-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.square.nodes",
+    "planetA": "mars",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Mars square North Node",
+    "humanMoment": "A union spends its strike fund reopening a grievance from the last contract while a new warehouse organizing drive runs short of canvassers and legal support.",
+    "developmentDetail": "Veteran members pack the arbitration hearing, but sign-up shifts at the warehouse keep being canceled for lack of staff.",
+    "planetaryDynamic": "Mars supplies the fight and manpower, while the North Node identifies the organizing drive that can carry the union into its next chapter.",
+    "aspectMechanic": "The square turns each new push for the arbitration hearing into another canceled warehouse shift, and that consequence keeps returning until the union decides which campaign gets its force.",
+    "conditionalConsequence": "If the old grievance keeps receiving the union's best organizers, it may win the hearing while the warehouse drive loses enough momentum to fail.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mars supplies the fight and manpower, while the North Node identifies the organizing drive that can carry the union into its next chapter.",
+    "why": "The node axis is compressed to the North Node, but the sentence remains accurate and the release-side conflict is clearly established elsewhere.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:26.632Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "99a7cf3fefd5acae7f0e76bf31620e04dce8ff5b1fc6ece3f38a50802572c429",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "e81eb1503c946fdcad9d3c158baeeaaa9645700c170f246e02c97760deee4b95",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "42f2dc86fd0865ea4a47aa1c5d360d8b4a418b3b3ba22585eafc9a0510183e51"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

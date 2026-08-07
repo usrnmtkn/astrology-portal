@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:06:27.874Z",
+  "id": "sky.sun.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "sun-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.opposition.chiron",
+    "planetA": "sun",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Sun opposite Chiron",
+    "humanMoment": "At an open audition, a performer who earns a callback goes quiet while another candidate talks easily about belonging onstage.",
+    "developmentDetail": "The first performer stays behind to repeat the weakest section even after the panel says the original performance was strong.",
+    "planetaryDynamic": "The Sun seeks visible recognition, while Chiron carries the ache of earlier moments when being seen exposed a painful sense of not being enough.",
+    "aspectMechanic": "The opposition places one person's uneasy visibility across from another person's apparent confidence, so neither the recognition nor the old bruise can be edited out of the outcome.",
+    "conditionalConsequence": "If the callback becomes a reason to overwork rather than evidence that the performance already landed, the next round may look more polished while making the recognition harder to accept.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete, observable audition scene with accurate Sun-Chiron tension, clear opposition mechanics, and a conditional consequence that follows naturally without becoming advice or prophecy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:06:27.873Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "fdbb2baab06fab7a36810c8449a29939573179d2e41d317a14b391e5f4233b64",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "1fdd7766017d656edf15b8961c083212517bdaa59ec2c7c360118c6dd7c1e54d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8f2fbed2709bdcdaa5a332ca97ec3a3bc2c70f162006b43cc61dbd8f41e9a2c9"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:47.990Z",
+  "id": "sky.saturn.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "saturn-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.trine.nodes",
+    "planetA": "saturn",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Saturn trine North Node",
+    "humanMoment": "A food cooperative retires its failing delivery vans and sets a firm launch date for a shared electric fleet with nearby growers.",
+    "developmentDetail": "Charging bays replace unused loading space, drivers receive new routes, and repair money moves into the conversion budget.",
+    "planetaryDynamic": "Saturn supplies the deadline and durable infrastructure, while the North Node makes the fleet transition the chapter’s next assignment.",
+    "aspectMechanic": "Under the trine, the launch date and fleet conversion reinforce each other with little resistance, speeding the transition while letting weak route assumptions travel farther before anyone questions them.",
+    "conditionalConsequence": "If the new routes cannot support the charging schedule, the cooperative could lock scarce repair money into a system that looked settled before it was tested.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Saturn supplies the deadline and durable infrastructure, while the North Node makes the fleet transition the chapter’s next assignment.",
+    "why": "The phrase “chapter’s next assignment” is slightly abstract, but the sentence still clearly distinguishes Saturn’s structural deadline from the North Node’s forward developmental pull.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:47.989Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b97bb3f4354dbb27ea6ccab9d23a153984c16d5bbb30fbfbf4e9456daef8a5a8",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5be916ccab73241f0954ecf4b25789f3797690891b14829ae1f9eef4636b2a10",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3964c5790c06c7327cfbd9ad9444fa1a425bebcd88295d24d586025dca4b334d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

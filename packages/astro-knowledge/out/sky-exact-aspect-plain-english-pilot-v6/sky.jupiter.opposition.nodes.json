@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:58:07.131Z",
+  "id": "sky.jupiter.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "draft": {
+    "id": "sky.jupiter.opposition.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Jupiter opposite North Node",
+    "body": "The offer with more money can keep us doing work we have already outgrown, while a modest opening asks us to start over. With Jupiter opposite the North Node, one person pushes us to take on more, reach a bigger audience, or repeat what already succeeds, while someone else insists that we choose a direction. More orders, another booking, a renewed contract: growth is available, but it may lead straight back into the same life. The forward option may begin with less attention, less certainty, and no way to keep every possibility open.\n\nWe cannot dismiss the larger opportunity, and we cannot follow the smaller one without giving something up. Both positions shape the outcome, so trying to satisfy everyone only spreads our time and energy thinner. The useful break comes after we decide where we are going, not when we collect the most impressive yes.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first, concrete, and pair-specific. The copy clearly stages backward expansion against smaller forward movement, preserves the opposition through competing people and positions, and ends with a clean directional turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:58:03.001Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "b936266b59242b3db4c3918c4ff64f73231aa2136cdbe2dec18acdcdd1ffc45f",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "a084c9fc7ba741fefc938e2f6ed85d9e2abccafb1d2d19a9c40db39b9f5076e2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+      "registryVersion": "2026-08-01.10",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d416f2c3178908b8059d773af9ce7e05b942f3d434a1eacff2850ceff0b5067a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "rationale": "The ending relies on compressed strategy language and abstract phrasing that needs paraphrasing to sound natural.",
+    "failedChecks": [
+      "strategy-language",
+      "slogan-compression"
+    ],
+    "evidence": [
+      {
+        "checkId": "strategy-language",
+        "sentence": "Both positions shape the outcome, so trying to satisfy everyone only spreads our time and energy thinner."
+      },
+      {
+        "checkId": "slogan-compression",
+        "sentence": "The useful break comes after we decide where we are going, not when we collect the most impressive yes."
+      }
+    ],
+    "why": "The ending relies on compressed strategy language and abstract phrasing that needs paraphrasing to sound natural.",
+    "weakest": "Both positions shape the outcome, so trying to satisfy everyone only spreads our time and energy thinner.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:58:07.131Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "dbd7b74d352335ce6006b6f9f75eccce98952ff1685e78472d67fb4fc33aeb4d",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "a084c9fc7ba741fefc938e2f6ed85d9e2abccafb1d2d19a9c40db39b9f5076e2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+      "registryVersion": "2026-08-01.10",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "strategy-language",
+            "slogan-compression"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "05bc6e1d77015d9c1fd10e2ca4eb76b3b8d9d816cd5bb19fbd7157471e1afe3c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:44.481Z",
+  "id": "sky.saturn.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "saturn-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.trine.chiron",
+    "planetA": "saturn",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Saturn trine Chiron",
+    "humanMoment": "A vocational training center begins weekly skills checks for adults returning to work after long absences.",
+    "developmentDetail": "Assignments are completed on schedule, but several trainees stop volunteering after their scores are read aloud.",
+    "planetaryDynamic": "Saturn supplies the benchmark and steady practice, while Chiron carries the old inadequacy stirred when performance becomes a public verdict.",
+    "aspectMechanic": "Under the trine, the weekly checks and the trainees' old shame reinforce each other with little resistance, helping practice build competence while allowing public scoring to suppress participation before anyone questions it.",
+    "conditionalConsequence": "If the scores remain public, quiet withdrawal may be mistaken for poor discipline even as the same schedule helps trainees finish the course.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry is concrete, observable, evergreen, and specific, with accurate Saturn-Chiron distinctions and a trine mechanic that plausibly supports competence while allowing shame-driven withdrawal to continue unchecked.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:44.480Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "07872ef8edd4eb0edb8d15413d9fa2c0caf31511b01e2fe3c2b6a64de7b9a8e8",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "0aa2393b9aaebc530d1dab11a222231151312909c50c89751bafbedd53a36dc5",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "42674e7ed27eaf5a46e508580b947aa3279d3f82cc7c163081d9c27c332bbf76"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

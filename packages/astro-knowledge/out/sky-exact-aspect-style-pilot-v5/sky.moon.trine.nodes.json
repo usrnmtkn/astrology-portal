@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:44:53.320Z",
+  "id": "sky.moon.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "moon-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.moon.trine.nodes",
+    "planetA": "moon",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Moon trine North Node",
+    "body": "The next step opens up, and our first instinct is to reach for the life we already know. With Moon trine North Node, we bring familiar rhythms into new territory and settle faster than expected. The usual breakfast, the old playlist, the person we call when everything changes can give us enough comfort to keep moving. But ease also lets an old stress habit slip into a new plan without raising alarms.\n\nHomesickness can sound like a reason to turn back, especially when the future still feels awkward and unfinished. We may reopen a chapter that already ended simply because we know our lines, or mistake discomfort for proof that a new choice is wrong. Feeling at home in a choice does not prove that choice belongs to our future.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "none",
+    "why": "Clear, lived-first copy that shows familiar comfort helping forward movement while also allowing old habits to travel unnoticed. The examples are concrete, the node axis is not treated as fate, and the ending makes a precise pair-specific turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:44:53.320Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "b104cc822ecd802c088826e575f17a88605a7aef94a08d95fe145194f563c939",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "d07a07f88a1c82f113814d3b2da8b1fbde93240e8c12334949ff973c1b701206",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a0c0251b7f434d320b2413968fcc507aeda0a182efe32c87dfa859a41c53f5de"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

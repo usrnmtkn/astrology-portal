@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:44.016Z",
+  "id": "sky.uranus.square.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "uranus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.square.chiron",
+    "planetA": "uranus",
+    "planetB": "chiron",
+    "aspect": "square",
+    "title": "Uranus square Chiron",
+    "humanMoment": "An apartment elevator is shut down without warning, leaving several residents unable to reach the street.",
+    "developmentDetail": "Neighbors begin carrying groceries and collecting prescriptions, exposing how much daily life depended on one unreliable lift.",
+    "planetaryDynamic": "Uranus breaks the building’s familiar routine through sudden disruption, while Chiron reveals the mobility injuries and access needs that routine had been covering.",
+    "aspectMechanic": "The square makes every elevator shutdown produce the same practical conflict until the building addresses whether access is essential or merely improvised.",
+    "conditionalConsequence": "If each closure is treated as a separate repair, residents will keep missing appointments and deliveries whenever the lift fails.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Uranus breaks the building’s familiar routine through sudden disruption, while Chiron reveals the mobility injuries and access needs that routine had been covering.",
+    "why": "The phrase “mobility injuries” is slightly narrow, but the sentence still clearly distinguishes Uranus’s disruption from Chiron’s exposure of concealed vulnerability.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:44.016Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "2fc1c0365562b9b0f202d03bfc28d38f814d2c35021e55dacebcc88aa8178c8e",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "565e8eae35a6222d2e588b93abda2fa9b3f27eb44179d6cdef7c8d0fa5dcc4fd",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "352421d59afbf697c0ce6bccb2aca533eb7e505dc08471799cced3df520b7514"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.square.chiron",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

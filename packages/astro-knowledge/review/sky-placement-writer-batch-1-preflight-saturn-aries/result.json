@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-batch-1-preflight-saturn-aries",
+  "recordedAt": "2026-08-04T11:34:49.061Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "saturn",
+    "sign": "aries"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v10:cycle-word+placement-name+standalone-opening-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e123:window-2-2",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:gemini-new-moon-2025:p004:window-2-3"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "sky-placement",
+          "term": "\\bunsent\\b",
+          "match": "unsent",
+          "reason": "spec illustration leaked into 9/35 first-batch drafts; invent fresh evidence"
+        }
+      ],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "hook is long (104 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Saturn in Aries makes it obvious when we have waited so long to act that every next move comes out as a fight. From {{entryDate}}, a needed decision may sit untouched while we look for certainty, then become an abrupt declaration once waiting feels unbearable. We choose a direction, reject further input, and take the full weight ourselves; the decision is finally made, but now it has to be defended. Saturn takes about 29 years to move through all twelve signs and stays roughly 2.5 to 3 years in each sign. That pace gives us time to learn a less punishing way to begin.",
+    "tension": "Going first clears the standstill, so we use the same answer whenever uncertainty returns. We decide before we have enough patience, rule out assistance before asking for it, and treat a question as resistance. A simple limit arrives as a hard refusal only after too much has already been accepted. The immediate pressure drops, but every choice becomes another position to defend, and self-direction starts to require constant combat.",
+    "development": "The work is not to wait for perfect certainty or crush the first impulse. It is to give courage enough time to become deliberate. When a choice feels urgent, we can separate the part that must happen now from the part that can remain undecided. When a limit is reached, we can name it while our words are still plain instead of letting agreement harden into anger. When the full load is too much, accepting support keeps independence from becoming a test we never needed to pass.",
+    "close": "Before {{exitDate}}, we can stay with one chosen direction long enough to revise the pace instead of abandoning it or forcing it.",
+    "try_this": [
+      "We can let one sharp reply sit unsent until the exact boundary can be said plainly.",
+      "We can make the smallest useful start on something delayed and stop after that start is complete.",
+      "We can accept one concrete offer of assistance without taking the task back midway."
+    ]
+  }
+}

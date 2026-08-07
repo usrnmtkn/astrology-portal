@@ -32,6 +32,9 @@ assert.doesNotMatch(weeklyMoon.body, /—/u);
 const phase = renderer.renderCalendarPhase({ phase: "waxing-gibbous", sign: "scorpio" });
 assert.equal(phase.headline, "Waxing Gibbous Moon in Scorpio");
 assert.equal(phase.tagline, "The Refinement");
+assert.equal(phase.contentKey, "fallback-hook/moon-phase-sign/waxing-gibbous/scorpio");
+assert.ok(phase.sourceKeys.includes("fallback-hook/moon-phase/waxing-gibbous"));
+assert.ok(phase.sourceKeys.some((key) => key.startsWith("authored/calendar-weekly-moon/scorpio")));
 
 const calendarSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"),

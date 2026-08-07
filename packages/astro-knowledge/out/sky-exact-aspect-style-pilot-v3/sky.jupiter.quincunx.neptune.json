@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:34:02.748Z",
+  "id": "sky.jupiter.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "jupiter-neptune",
+    "path": "data/pairs/jupiter-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.jupiter.quincunx.neptune",
+    "planetA": "jupiter",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Jupiter quincunx Neptune",
+    "body": "Hope gets ahead of the facts, then redraws the facts to keep pace. With Jupiter quincunx Neptune, our appetite for more keeps enlarging whatever imagination puts on the horizon, even as the horizon drifts. A price rounded down, a promise repeated without a source, a bright idea fitted to three different uses. Each pass seems to settle the question, until one more detail forces the dream and the reasoning into another awkward arrangement.\n\nWe keep revising the route without admitting the destination has changed. Belief stretches to protect the vision; imagination softens the evidence that would give it shape, and practical value appears in flashes between the corrections. What inspires us can still work, but enthusiasm keeps changing the terms before logic has finished checking them. The vision may be real. The scale is still moving.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first tension, concrete fragments, active planetary behavior, repeated adjustment, collective deepening, and a clean truth-and-catch ending all match the required voice and format.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:34:02.748Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "bef1ce91bcaef4c68649d75d7e8c3b1c9c5a2fbd22c0a0a8b2c625236b3d2286",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "7830155bcac78d5fe47579661bdead9fa554e6cdb020a2298fa57a999f0f88bb",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c3fad892b907d59c26587e6afd4153334174f31dbc661d43a7c8818b2cbf88ef"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

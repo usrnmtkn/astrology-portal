@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:26.354Z",
+  "id": "sky.uranus.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "uranus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.sextile.chiron",
+    "planetA": "uranus",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Uranus sextile Chiron",
+    "humanMoment": "A community football club loses access to its usual pitch, and a relocated practice exposes a player’s long-concealed limp.",
+    "developmentDetail": "On unfamiliar ground, the player drops out of a routine drill that had quietly let one side of the body do most of the work.",
+    "planetaryDynamic": "Uranus breaks the familiar practice pattern, while Chiron reveals the injury that pattern had allowed the player to protect.",
+    "aspectMechanic": "The sextile makes the relocated practice a usable opening, but the club still has to notice what the altered drill exposed and act on it.",
+    "conditionalConsequence": "If the club adjusts the training load and secures an assessment, the player can stop relying on the compensation that kept the injury hidden.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the club adjusts the training load and secures an assessment, the player can stop relying on the compensation that kept the injury hidden.",
+    "why": "All fields are concrete, distinct, mechanically accurate, evergreen, and properly conditional; the consequence is slightly clinical but still follows naturally from the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:26.353Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7858a5d7fe1928666fe32e9cdb8b8a031e1c8bb86775befca2b2f0ac432482b7",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "8795a29babbcbcd4ca312b9bc5578e5a4dc5a357dd4a703969ceba906697a72a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "83093aef35b6e252471771bef9287d197b789d456560d4ea24c5b821dbf7e220"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

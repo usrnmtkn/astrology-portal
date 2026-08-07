@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:58:07.457Z",
+  "id": "sky.mars.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mars-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "draft": {
+    "id": "sky.mars.conjunction.nodes",
+    "planetA": "mars",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Mars conjunct North Node",
+    "body": "A problem we have already fought over demands another response just as a new project needs our full effort. With Mars conjunct North Node, action and forward direction arrive in the same moment, making urgency look like proof that we are headed somewhere useful. We fire off the correction, reopen the old dispute, spend the evening proving a point; meanwhile, the application stays unfinished and the first real step never gets taken. The same force can move a delayed plan forward: the call gets made, the deposit gets paid, the work finally begins.\n\nThis is not a shortage of drive. The difficulty is telling productive effort from the familiar rush of defending a chapter we are trying to leave behind, because both can feel equally necessary while we are inside them. Winning the argument can still keep us stuck in the same situation; the effort that matters now is the effort that moves the new plan forward.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "opening",
+    "weakest": "A problem we have already fought over demands another response just as a new project needs our full effort.",
+    "why": "The tension is accurate, but “a problem,” “another response,” and “a new project” are abstract placeholders rather than the sharp, recognizable lived detail required for the opening.",
+    "failedChecks": [
+      "sharp lived-first opening"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:58:02.666Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "58dbe38c0e4db67a000d5f62dbe52cea5c204a186aab69b5216c710c031abb86",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "492d5fb617f14b31ca009155032e3f39e01ae187640cb9fe908c8de157213331",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+      "registryVersion": "2026-08-01.10",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "sharp lived-first opening"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "92792f6ffc648d92da43d2a4d61448e732aab28be296390375ff93b76507cca0"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "rationale": "Two sentences rely on abstract or mixed imagery that takes extra effort to translate into ordinary speech.",
+    "failedChecks": [
+      "abstract-agent",
+      "mixed-metaphor"
+    ],
+    "evidence": [
+      {
+        "checkId": "abstract-agent",
+        "sentence": "With Mars conjunct North Node, action and forward direction arrive in the same moment, making urgency look like proof that we are headed somewhere useful."
+      },
+      {
+        "checkId": "mixed-metaphor",
+        "sentence": "The difficulty is telling productive effort from the familiar rush of defending a chapter we are trying to leave behind, because both can feel equally necessary while we are inside them."
+      }
+    ],
+    "why": "Two sentences rely on abstract or mixed imagery that takes extra effort to translate into ordinary speech.",
+    "weakest": "With Mars conjunct North Node, action and forward direction arrive in the same moment, making urgency look like proof that we are headed somewhere useful.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:58:07.457Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "2caa0a080aa599d76da3f2fd766514e0281d16fc9d764f17800a3f43a70f8878",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "492d5fb617f14b31ca009155032e3f39e01ae187640cb9fe908c8de157213331",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+      "registryVersion": "2026-08-01.10",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "abstract-agent",
+            "mixed-metaphor"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "7dc641e0fb48a091d75c0a2c5b95e6d5e81dca5546966c224f1c7d901b299d4c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

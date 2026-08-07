@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:55.028Z",
+  "id": "sky.lilith.opposition.nodes",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "lilith-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.lilith.opposition.nodes",
+    "planetA": "lilith",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Lilith opposite North Node",
+    "humanMoment": "A funeral home begins offering unconventional memorials after families repeatedly reject its formal service packages.",
+    "developmentDetail": "Younger directors build new ceremonies around those requests, while senior owners defend the restrained customs that established the business.",
+    "planetaryDynamic": "Lilith brings the once-dismissed desire into the open, while the North Node asks whether that desire can become the funeral home's next working chapter.",
+    "aspectMechanic": "The opposition places families requesting new ceremonies across from owners defending formal packages, so neither demand can be edited out of what the business offers.",
+    "conditionalConsequence": "If the new ceremonies earn lasting space, training, and resources, reclamation builds the business forward; if they exist only to rebuke the old customs, the dispute keeps the past in charge.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The opposition places families requesting new ceremonies across from owners defending formal packages, so neither demand can be edited out of what the business offers.",
+    "why": "All requirements pass; this sentence is the most structurally familiar, but it still applies the opposition clearly and specifically to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:55.028Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "02a647695a3887710500937a5c00fec56b43931e9f3a393f70e7883d18fbc724",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "453b671743f71baae2ba14b94a8d525320225c568dbb2eee76749e3b1e271612",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0844e42478889ad8864e4feb4d5c7ca72cd530b6567a2bfab89b89f4af23cabc"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.lilith.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

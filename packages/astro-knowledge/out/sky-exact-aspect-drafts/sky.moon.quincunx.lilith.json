@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:41.371Z",
+  "id": "sky.moon.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "moon-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.moon.quincunx.lilith",
+    "planetA": "moon",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Lilith",
+    "humanMoment": "At a library book club, readers set aside the assigned cozy mystery and begin passing around an erotic novel one member brought in a plain paper cover.",
+    "developmentDetail": "They keep returning to the discussion guide, then breaking off when someone reads another marked passage aloud.",
+    "planetaryDynamic": "The Moon holds to the comfort of the familiar book and orderly discussion, while Lilith brings forward the appetite that respectable conversation was meant to exclude.",
+    "aspectMechanic": "The quincunx keeps shifting the room between the discussion guide and the marked passages because the club's usual format cannot contain what readers want to hear.",
+    "conditionalConsequence": "If the switching continues, the club may finish neither book and leave its rules about acceptable reading openly unsettled.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The scene is concrete and recognizable, the Moon and Lilith are clearly distinguished, and the repeated switching between incompatible reading modes expresses the quincunx through observable action.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:41.370Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "781ba177b10c893f12d680988e3e1cb238f8d34abae2fcd8eb7a845e094c826f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "ff54b223355688bcc0547731626e28bb2b802aea2b38cb38d6ae5085f8026fc2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "dbf63d6fe3e3d306f6718ea0ee928d3d0329e132f1abc97cffa9746c40b237ea"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

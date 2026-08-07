@@ -10,9 +10,10 @@ const {
   readerEligibleOwnerCorpus
 } = require("./sky-exact-aspect-corpus.js");
 const { OWNER_STYLE_MODELS } = require("./sky-exact-aspect-style.js");
+const { judgePolicyLines: ownerWarmthJudgePolicyLines } = require("./owner-corpus-warmth-policy.js");
 
 const RUBRIC_VERSION = "sky-exact-aspect-voice-v5-owner-style";
-const PROMPT_VERSION = `${RUBRIC_VERSION}:prompt-v5`;
+const PROMPT_VERSION = `${RUBRIC_VERSION}:prompt-v6-warmth-harvest`;
 
 function sourceId(entry) {
   return entry.id || `sky.${entry.planetA}.${entry.aspect}.${entry.planetB}`;
@@ -26,7 +27,8 @@ function goldExamples(entry, count = 3) {
   return [...sameAspect.slice(offset), ...sameAspect.slice(0, offset)].slice(0, count);
 }
 
-function buildJudgePrompt(entry, { pairSource = "" } = {}) {
+function buildJudgePrompt(entry, options = {}) {
+  const { pairSource = "" } = options;
   const body = bodyFor(entry);
   const localLint = lintExactEntry(entry);
   return [
@@ -63,6 +65,8 @@ function buildJudgePrompt(entry, { pairSource = "" } = {}) {
     `- The entry is direct, natural, and specific. It does not read like generic horoscope copy, a strategy brief, or a template with nouns swapped.`,
     `- It stays collective or third-person and evergreen: no second person, signs, dates, degrees, houses, natal framing, or relationship compatibility framing.`,
     `- It preserves nuance: soft aspects are not automatically good, hard aspects are not automatically bad, and the node axis is not treated as fate.`,
+    `- It does not reproduce CC/SD/AC phrasing constructions from voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out. Shared astrological knowledge and terminology are never flagged: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
+    ...ownerWarmthJudgePolicyLines(options).map((rule) => `- ${rule}`),
     `- Exactly two paragraphs, 5-10 sentences, 90-180 words. No em dash.`,
     ``,
     `Score 2 for one specific repairable weakness. Score 1 for source drift, plainly wrong aspect mechanics, a wrong surface, generic fallback prose, mechanical planet definitions, an institutional case-study voice, flat competent explanation, forced cleverness, or multiple weak sections. Do not award 3 merely because the source meaning, grammar, and shape are correct; 3 requires clear natural writing with real movement.`,

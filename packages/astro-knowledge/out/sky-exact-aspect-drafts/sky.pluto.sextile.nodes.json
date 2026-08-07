@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:41.818Z",
+  "id": "sky.pluto.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "pluto-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.sextile.nodes",
+    "planetA": "pluto",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Pluto sextile North Node",
+    "humanMoment": "Residents facing the closure of their only dialysis center learn that the county health board can suspend the sale pending a care review.",
+    "developmentDetail": "Families and nurses assemble treatment records that give the board grounds to use its long-neglected authority.",
+    "planetaryDynamic": "Pluto brings buried authority to the surface, while the North Node makes the community’s next chapter depend on whether that power is reclaimed.",
+    "aspectMechanic": "The sextile creates a usable opening between the care review and the board’s neglected authority, but residents and officials still have to act on it.",
+    "conditionalConsequence": "If the board invokes its authority, the sale can pause long enough for the center’s closure to become a transfer into accountable local control rather than the loss of essential care.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The entry is concrete, specific, evergreen, and collectively framed; it distinguishes Pluto from the North Node, gives the sextile a usable but action-dependent opening, and follows through with a plausible conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:41.817Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "cfba82db29b554690819569f051665c3370fe2627d8db4316cc7b7485aa3e6fd",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "8fd22f4a1682b647fd4da2157129219b425adb2f1eb22da52f2789f319364272",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0ac701606e79ea282246b91a485c3efb72b65d2f461d93a7f93b534c01362007"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

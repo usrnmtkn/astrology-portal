@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:50.683Z",
+  "id": "sky.chiron.quincunx.nodes",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "chiron-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.quincunx.nodes",
+    "planetA": "chiron",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Chiron quincunx North Node",
+    "humanMoment": "A hospital asks a bereaved parent to help redesign its stillbirth intake just as newly released records expose failures in that parent's own case.",
+    "developmentDetail": "Review sessions are repeatedly moved around legal calls, fresh questions from clinicians, and moments when the parent cannot continue.",
+    "planetaryDynamic": "Chiron reopens the injury and the unfinished healing work, while the North Node brings a new assignment that needs the knowledge held inside that experience.",
+    "aspectMechanic": "The quincunx keeps the intake review and the records case altering each other's pace, as each new disclosure changes what can be discussed and when the sessions can proceed.",
+    "conditionalConsequence": "If the review can absorb those shifts, the reopened case may reveal gaps in the intake design, but if it cannot, the process may lose the experience it was meant to learn from.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry opens with a concrete event, develops observable disruptions, distinguishes Chiron from the North Node, and expresses the quincunx through repeated mutual adjustments with a scene-based consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:50.683Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "65c7e6dd428108fdb4061f00d6c4b709f67b359643dbcdc06a866b5593de8e7a",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "75b26e597d630ff72658c5340bbe60003f946b8b6ae35ebe177df9c1d9318b57",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a09a4c7c2be00ee4d0c10a226845212f5bddece74aa2186cfab26045a82932f0"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

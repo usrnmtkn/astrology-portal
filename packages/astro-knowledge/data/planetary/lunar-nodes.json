@@ -1,0 +1,117 @@
+{
+  "id": "lunar-nodes",
+  "planet": "lunar-nodes",
+  "title": "Lunar Nodes Meaning",
+  "overview": "The North Node marks the direction of growth: unfamiliar territory that development keeps pointing toward, where effort feels awkward at first and pays off anyway. The South Node marks the familiar ground already mastered, where real talent lives and where the work is release rather than more practice. Tradition calls them the Dragon's Head and the Dragon's Tail. They are calculated points, not bodies, always exactly opposite each other, so every step toward the North Node is also a letting-go at the South. Taking in the new is a deliberate choice; falling back on the old happens by itself.",
+  "cycle": "The nodes complete their cycle in about eighteen and a half years, spending about eighteen months in each sign pair and moving backward through the signs. Nodal returns near ages eighteen, thirty-seven, and fifty-five mark turning points in the growth story.",
+  "signs": [
+    {
+      "sign": "north-node-aries",
+      "body": "With the North Node in Aries, growth points toward independent action: wanting things directly and going first."
+    },
+    {
+      "sign": "south-node-libra",
+      "body": "The talent for harmony and considering the other is already developed. The release is deciding everything through someone else."
+    },
+    {
+      "sign": "north-node-taurus",
+      "body": "With the North Node in Taurus, growth points toward steadiness: building slowly, owning simply, and trusting the body's plain needs."
+    },
+    {
+      "sign": "south-node-scorpio",
+      "body": "The talent for depth and crisis is already developed. The release is needing intensity to feel alive."
+    },
+    {
+      "sign": "north-node-gemini",
+      "body": "With the North Node in Gemini, growth points toward curiosity: real questions, local facts, and both sides of the story."
+    },
+    {
+      "sign": "south-node-sagittarius",
+      "body": "The talent for conviction is already developed. The release is arriving with the answer already decided."
+    },
+    {
+      "sign": "north-node-cancer",
+      "body": "With the North Node in Cancer, growth points toward feeling: home, care, and letting need show."
+    },
+    {
+      "sign": "south-node-capricorn",
+      "body": "The talent for competence and control is already developed. The release is achievement standing in for worth."
+    },
+    {
+      "sign": "north-node-leo",
+      "body": "With the North Node in Leo, growth points toward personal creative expression: being seen by name and meaning it."
+    },
+    {
+      "sign": "south-node-aquarius",
+      "body": "The talent for the group view is already developed. The release is hiding inside the crowd's opinion."
+    },
+    {
+      "sign": "north-node-virgo",
+      "body": "With the North Node in Virgo, growth points toward craft and service: useful detail, daily practice, and work that helps."
+    },
+    {
+      "sign": "south-node-pisces",
+      "body": "The talent for imagination and empathy is already developed. The release is drifting instead of choosing."
+    },
+    {
+      "sign": "north-node-libra",
+      "body": "With the North Node in Libra, growth points toward partnership: considering the other, and letting cooperation count as strength."
+    },
+    {
+      "sign": "south-node-aries",
+      "body": "The talent for independence is already developed. The release is the fight-first reflex and doing everything alone."
+    },
+    {
+      "sign": "north-node-scorpio",
+      "body": "With the North Node in Scorpio, growth points toward depth: shared resources, real intimacy, and change that costs something."
+    },
+    {
+      "sign": "south-node-taurus",
+      "body": "The talent for stability is already developed. The release is comfort held so tightly it becomes a wall."
+    },
+    {
+      "sign": "north-node-sagittarius",
+      "body": "With the North Node in Sagittarius, growth points toward meaning: the long view, conviction, and saying what is believed."
+    },
+    {
+      "sign": "south-node-gemini",
+      "body": "The talent for information is already developed. The release is gathering one more fact instead of deciding."
+    },
+    {
+      "sign": "north-node-capricorn",
+      "body": "With the North Node in Capricorn, growth points toward responsibility: structure, authority, and carrying weight on purpose."
+    },
+    {
+      "sign": "south-node-cancer",
+      "body": "The talent for feeling and belonging is already developed. The release is mood as the reason and staying the one who is taken care of."
+    },
+    {
+      "sign": "north-node-aquarius",
+      "body": "With the North Node in Aquarius, development moves away from the personal spotlight and toward community, collaboration, and ideas bigger than one name."
+    },
+    {
+      "sign": "south-node-leo",
+      "body": "The talent for visibility and self-expression is already developed. The release is the need for applause to make anything feel real."
+    },
+    {
+      "sign": "north-node-pisces",
+      "body": "With the North Node in Pisces, growth points toward trust: intuition, surrender, and ideas shared while still forming."
+    },
+    {
+      "sign": "south-node-virgo",
+      "body": "The talent for analysis and precision is already developed. The release is perfectionism and control through fixing."
+    }
+  ],
+  "source": {
+    "title": "TLDR-Batch2-Blocker-SignOff-Sheet.md, Section C",
+    "pages": []
+  },
+  "provenance": "[Rudhyar:How-to-Interpret-the-Lunar-Nodes — Dragon's Head/Tail; North Node as conscious, deliberate intake requiring choice, South Node as automatic release; the 18-19 year nodal transit — supports Meaning and cycle; Dragon's Head/Tail is shared tradition vocabulary, free to use] [Spring:North-Node-Astrology — the North Node feels unfamiliar at first; growth means leaving comfort zones; the South Node as mastered past — supports Meaning] [CC:lunar-nodes guide — South Node as \"a point that represents shedding and letting go\" — supports the release framing, paraphrased] [Satori:2025-overview — her standing verb pair, the North Node \"asks\" and the South Node \"challenges you to release\" — supports the asks/release structure, owner voice] [data/modifiers/nodal-return-cycle.json — return ages — supports cycle] Consistent with TLDR-Article-Nodes-Aquarius-Leo-REVIEW and TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.",
+  "acAddendum": [
+    "Amplify/release polarity: a planet meeting the Dragon's Head gets intensified and fed; a planet meeting the Tail gets drained toward release - useful for the node-axis aspect entries as well as this record [AC:july-2017-fire-ceremony — Rahu framing, the Head as the hungry, amplifying point — supports Meaning; Rahu and Dragon's Head/Tail are shared tradition vocabulary].",
+    "Eclipse continuity device: eclipses at the nodes form question-and-answer pairs across eclipse seasons - one eclipse poses the question, a later one at the same axis answers it; fact-gated for Calendar copy on engine-supplied eclipse pairs [AC:astrology-of-tuesday-july-2nd-2019 — \"helps to answer the question posed by the last solar eclipse\" — supports the device].",
+    "Co-presence note: the South Node sharing a sign colors every transit through that sign toward depletion and letting-go [AC:astrology-of-monday-november-25th-2019 — Venus in Capricorn \"more difficult than usual\" for sharing the sign with the South Node — supports Meaning]."
+  ],
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

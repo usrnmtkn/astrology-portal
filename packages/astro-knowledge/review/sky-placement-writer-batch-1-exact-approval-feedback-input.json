@@ -1,0 +1,18 @@
+{
+  "id": "sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04-exact-approval",
+  "feedbackKind": "rejection",
+  "surface": "sky-placement-batch",
+  "articleBeat": "seven-full-articles",
+  "ownerStatement": "Revoke the batch-1 approval. The approval statement predates my rejection of the batch and does not apply; I rejected all seven as written.",
+  "before": "Superseded seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json#articles",
+  "beforeIsRejected": true,
+  "after": "[No approved replacement. Seven editorial revisions remain needs_review.]",
+  "whatChanged": "Revoked the approval record while preserving the group-chat warning, settle waivers, and OV-040 policy changes.",
+  "ownerReason": "The approval was recorded against the wrong editorial state; all seven articles were rejected as written.",
+  "failureTags": ["approval-recorded-in-error", "owner-rejected-as-written"],
+  "approvalScope": "none_superseded_record_only",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json",
+    "packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-re-lint-2026-08-04.json"
+  ]
+}

@@ -26,8 +26,10 @@ await build({
         fallbackV3DignityLine,
         fallbackV3PlacementSentence,
         isDeferredFallbackArchitectureV3BundleLoaded,
+        isSkyPlacementFallbackArchitectureV3BundleLoaded,
         loadFallbackArchitectureV3BundledManifest,
         loadDeferredFallbackArchitectureV3Bundle,
+        loadSkyPlacementFallbackArchitectureV3Bundle,
         transitSynastryFallbackRendererV3
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
     `
@@ -76,8 +78,14 @@ const bundledKeyCount = runtime.fallbackArchitectureV3BundledManifestSummary.key
 assert.ok(bundledKeyCount > 0, "The bundled fallback summary must report its generated key count.");
 assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.length, bundledKeyCount);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
+assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(skyBefore.body, "Sky fallback copy must be available before the transit bundle loads.");
 assert.ok(skyPlacementBefore.body && skySeasonBefore.body && skyLunationBefore.body);
+assert.notEqual(
+  skyPlacementBefore.contentKey,
+  "fallback-hook/sky-sign-copy/sun/leo",
+  "The route-owned continuous article must not be selectable before its partition loads."
+);
 assert.ok(dignityBefore, "Sky dignity copy must remain in the eager core.");
 assert.equal(placementBefore, "", "Natal and friend placement prose must remain deferred.");
 assert.ok(
@@ -89,7 +97,14 @@ assert.ok(
 );
 assert.ok(
   ![...skyCoreKeys].some((key) => key.startsWith("fallback-hook/synastry-pair/"))
-    && ![...skyCoreKeys].some((key) => key.startsWith("fallback-hook/placement-sentence/")),
+    && ![...skyCoreKeys].some((key) => key.startsWith("fallback-hook/placement-sentence/"))
+    && ![...skyCoreKeys].some((key) => (
+      key.startsWith("fallback-hook/sky-sign-copy/")
+      || (
+        key.startsWith("fallback-hook/sky-placement-")
+        && !key.startsWith("fallback-hook/sky-placement-sign/")
+      )
+    )),
   "Natal and relationship base rows must not remain in the eager Sky source slice."
 );
 assert.throws(
@@ -145,5 +160,23 @@ assert.match(
 );
 assert.equal(transitAfter.contentKey, "authored/transit-aspect/pluto/chiron/square");
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), false);
+
+assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), true);
+assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), true);
+const skyPlacementOnDemand = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement({
+  planet: "sun",
+  sign: "leo",
+  events: [],
+  asOfDate: "2026-08-01",
+  entryDate: "July 22, 2026",
+  exitDate: "August 23, 2026"
+});
+assert.equal(skyPlacementOnDemand.contentKey, "fallback-hook/sky-sign-copy/sun/leo");
+assert.notDeepEqual(
+  skyPlacementOnDemand,
+  skyPlacementBefore,
+  "The exact owner-approved route article must replace the standalone floor only after on-demand loading."
+);
+assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), false);
 
 console.log("Deferred fallback runtime parity passed.");

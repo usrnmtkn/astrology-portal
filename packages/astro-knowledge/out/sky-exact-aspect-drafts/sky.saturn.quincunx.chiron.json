@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:04.257Z",
+  "id": "sky.saturn.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "saturn-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.chiron",
+    "planetA": "saturn",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Chiron",
+    "humanMoment": "A food bank requires longtime volunteers to pass a new lifting check before returning to warehouse shifts.",
+    "developmentDetail": "Several postpone shifts, request another demonstration, or move to packing tables rather than perform the test in front of an assessor.",
+    "planetaryDynamic": "Saturn brings the safety standard, while Chiron carries the sting of being judged inadequate by an authority figure.",
+    "aspectMechanic": "The quincunx keeps the food bank revising the lifting check as volunteers change roles or request new demonstrations, with each adjustment protecting the standard without settling the old sting.",
+    "conditionalConsequence": "If the check continues to feel like a verdict on competence, experienced volunteers may leave warehouse shifts uncovered even when the safety requirement is reasonable.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The scene is concrete and collective, the Saturn-Chiron distinction is accurate, and the quincunx appears through repeated practical adjustments that preserve the standard without resolving the triggered inadequacy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:04.257Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b91a2c2aa5099ac5da7e0ba394d7c65110ccca9403edb2b645f102e7960a43a5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "216570df25085195e52389f893ec9440d9ad225d5bd6a8cde2a92fbee7678c88",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "97c5bbc2400ff6ba87075cdf14a5d6010df384504f72a712338cd5b9e41e2359"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

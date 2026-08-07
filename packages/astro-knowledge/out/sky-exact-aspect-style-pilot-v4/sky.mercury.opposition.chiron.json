@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:40:37.125Z",
+  "id": "sky.mercury.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mercury-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.opposition.chiron",
+    "planetA": "mercury",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Mercury opposite Chiron",
+    "body": "The words are ready until someone asks what we really mean, and then the answer either vanishes or comes out sharper than intended. Mercury opposite Chiron puts the need to speak across from the old hurt about not being heard: one person presses for clarity while another hears condescension in the question. The sentence rehearsed for days stalls at the first interruption; a bright “it’s fine” covers the real answer; a quick correction lands like an insult. Neither the message nor the tender place can be edited out of what happens next.\n\nWe may defend our intelligence when no attack was intended, or go quiet because taking longer still feels like failing. But the voice that doubts itself also listens below the obvious answer, and a conversation can reach further once the performance drops. The polished version may keep everyone comfortable. The imperfect sentence said out loud may finally let us hear each other.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Sharp lived tension, concrete contemporary examples, accurate opposition behavior, and a pair-specific ending that turns cleanly toward imperfect speech as repair.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:40:37.125Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "6fa44d558bd0f9d4e3842bddfb910b03d364bf3b3a4e5ea7dd5eb4562aa41261",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "2ca28d365ef6a62f66bbbd9fc904369f1226c07f943a6a4e24d9c20e04677c19",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "342034b4c3216e9a8c2f7650d4de32c858a40e27445868f0df566764e55356ec"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

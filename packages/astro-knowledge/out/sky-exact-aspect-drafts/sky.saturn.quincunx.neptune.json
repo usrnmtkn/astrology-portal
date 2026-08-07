@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:32.942Z",
+  "id": "sky.saturn.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "saturn-neptune",
+    "path": "data/pairs/saturn-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.neptune",
+    "planetA": "saturn",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Neptune",
+    "humanMoment": "An outdoor performance keeps changing its set as forecasts threaten rain and the budget cannot cover every contingency.",
+    "developmentDetail": "The crew removes effects, restores some after clearer forecasts, and shifts rehearsals around protections that may never be needed.",
+    "planetaryDynamic": "Saturn contributes budget limits and practical safeguards, while Neptune contributes the artistic vision and uncertainty about what is actually coming.",
+    "aspectMechanic": "The quincunx keeps the set, effects, and rehearsal plan in revision because each attempt to secure the performance alters the atmosphere it was built to create.",
+    "conditionalConsequence": "If worst-case forecasts continue to drive the cuts, the production can spend its limited funds defending against rain that never arrives while weakening the show itself.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The scene is concrete and observable, the Saturn-Neptune roles are distinct, and the quincunx is expressed through repeated practical revisions that compromise the artistic aim. The consequence follows naturally without becoming advice or prophecy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:32.942Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "964a96db80699ea0742d07efcb09757c60558c07f4ef20d3ea7c54a22547216f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "29954bc2f6afca6aa0f80bf0c727a3aeeabb50e35619288fa8702bf0215882d0",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ae9061d24e1eb0ce077188b0e0dd4658cf550f34ec3127e84d09396676e451b5"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

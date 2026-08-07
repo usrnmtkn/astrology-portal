@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:44.317Z",
+  "id": "sky.jupiter.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.trine.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Jupiter trine North Node",
+    "humanMoment": "A regional bus operator receives enough funding to restore a popular express line while a smaller fare guarantee makes a new hospital route viable.",
+    "developmentDetail": "Passenger counts surge on the familiar commute, but the hospital route steadily fills with shift workers and patients who previously needed two transfers.",
+    "planetaryDynamic": "Jupiter enlarges the available funding and ridership, while the North Node distinguishes the hospital connection as the growth that moves the network forward.",
+    "aspectMechanic": "Under the trine, funding and ridership reinforce the hospital route with little resistance, though the same easy surge can keep the familiar express line expanding before anyone questions it.",
+    "conditionalConsequence": "If most buses follow the larger passenger count, the operator can spend its windfall rebuilding an old pattern while the direct hospital connection remains too infrequent to serve the demand it revealed.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, funding and ridership reinforce the hospital route with little resistance, though the same easy surge can keep the familiar express line expanding before anyone questions it.",
+    "why": "The contrast is slightly dense, but it accurately shows the trine helping aligned growth while allowing an outdated pattern to expand unchecked.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:44.316Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "dacd4048c47a2e86f993b4af8ddecc6300ef698242f1d766983c5b191e091cfa",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "75d12044cd0a5ad5cd07c8208d091d43ae833e66a1295476f327a2a1d207eef3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "584f8cae62f42cbd3948b563447ef664e7431172a4cb53307def238fcf32144b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T02:22:51.245Z",
+  "status": "needs_review",
+  "serving": false,
+  "recordCount": 240,
+  "counts": {
+    "lilith": 72,
+    "chiron": 66,
+    "node-axis": 60,
+    "classical-quincunx": 42
+  },
+  "countFindings": [],
+  "lintFailures": [],
+  "judgeRepairs": [],
+  "repetition": {
+    "repeatedFiveGrams": [],
+    "repeatedOpenings": []
+  },
+  "settingSaturation": [],
+  "passed": true
+}

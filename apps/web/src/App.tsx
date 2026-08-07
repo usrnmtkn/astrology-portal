@@ -62,7 +62,9 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import {
   installFallbackArchitectureV3Bundle,
+  installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
+  loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
@@ -102,7 +104,12 @@ import type { CompatibilityDynamic, CompatibilityPlanetCard } from "./features/f
 import type { FriendCompositeAspectGroup } from "./features/friends/FriendCompositeTab";
 import type { FriendSynastryAspectGroup } from "./features/friends/FriendSynastryTab";
 import type { FriendNatalAspectGroup as FriendNatalViewAspectGroup, FriendNatalEmptyHouseRow } from "./features/friends/FriendNatalTab";
-import type { FriendBondTransitView, FriendHouseTransitView, FriendPersonalTransitGroup } from "./features/friends/FriendTransitsTab";
+import type {
+  FriendBondTransitView,
+  FriendDailyForecastView,
+  FriendHouseTransitView,
+  FriendPersonalTransitGroup
+} from "./features/friends/FriendTransitsTab";
 import {
   friendDetailRoutePath,
   friendsHashParts,
@@ -141,7 +148,8 @@ import {
   assertLunationBodyMatchesEventSky,
   buildWeeklyHoroscope,
   lunationBlendFacts,
-  type WeeklyHoroscopeAssembly
+  type WeeklyHoroscopeAssembly,
+  type WeeklyHoroscopeReading
 } from "./services/weeklyHoroscope";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -176,7 +184,9 @@ import {
   generatedContentSections,
   generatedContentParagraphs,
   generatedContentPreviewModeChangeEvent,
+  fallbackArchitectureV3AuthoredContentForKey,
   loadFallbackArchitectureV3DashboardBundle,
+  loadFallbackArchitectureV3SkyPlacementDashboardBundle,
   loadLiveGeneratedContentForKeys,
   loadLiveGeneratedContentForSurfaces,
   readGeneratedContentPreviewMode,
@@ -186,6 +196,7 @@ import {
   type LiveGeneratedContent
 } from "./services/generatedContent";
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
 import {
   angularDistance,
@@ -196,6 +207,7 @@ import {
   normalizedAngle,
   relationshipCompositeSky,
   samePlanetExactAspect,
+  selectDailyGlanceDriver,
   synastryWheelAspectLines,
   transitAspectDefinitions,
   wholeSignHouseForSign,
@@ -205,6 +217,7 @@ import {
   zodiacSigns,
   type CalculatedSynastryContact
 } from "./services/chartMath";
+import { stablePairDailyVariant } from "./services/pairDaily";
 import {
   readCachedSkySnapshot,
   skySnapshotCacheKey,
@@ -283,7 +296,9 @@ import {
 } from "./services/personReferences";
 import {
   contactsForBondTransitGroup,
-  groupBondTransitActivations
+  dedupeBondTransitEndpointCandidates,
+  groupBondTransitActivations,
+  rankBondTransitGroups
 } from "./services/bondTransitGrouping";
 import { hasMapboxToken, reverseGeocodeCity, searchCities, type CitySuggestion } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
@@ -1713,6 +1728,90 @@ function transitCardPreview(text: string) {
     : preview;
 }
 
+const weeklyTransitAspectPattern = /^(.+?)\s+(conjunct(?:ion)?|sextile|square|trine|opposite|opposition)\s+(?:your\s+)?(.+)$/iu;
+
+function normalizedTransitAspectName(value: string) {
+  const normalized = value.trim().toLowerCase();
+
+  if (normalized === "conjunct") return "conjunction";
+  if (normalized === "opposite") return "opposition";
+  return normalized;
+}
+
+function weeklyTransitAspectParts(label: string) {
+  const match = label.trim().match(weeklyTransitAspectPattern);
+
+  if (!match) return null;
+
+  return {
+    transiting: normalizeContentIdPart(match[1]),
+    aspect: normalizedTransitAspectName(match[2]),
+    natal: normalizeContentIdPart(match[3])
+  };
+}
+
+function transitAspectIdentity(transiting: string, aspect: string, natal: string) {
+  return [
+    normalizeContentIdPart(transiting),
+    normalizedTransitAspectName(aspect),
+    normalizeContentIdPart(natal)
+  ].join(":");
+}
+
+function weeklyTransitHouse(reading: WeeklyHoroscopeReading) {
+  if (typeof reading.house === "number" && reading.house >= 1 && reading.house <= 12) {
+    return reading.house;
+  }
+
+  const match = `${reading.headline} ${reading.driverLabel}`.match(/\byour\s+(\d{1,2})(?:st|nd|rd|th)\s+house\b/iu);
+  const house = Number.parseInt(match?.[1] ?? "", 10);
+
+  return house >= 1 && house <= 12 ? house : null;
+}
+
+function weeklyTransitDisplayTitle(reading: WeeklyHoroscopeReading, house: number | null) {
+  if (!house || /\bhouse\b/iu.test(reading.headline)) return reading.headline;
+
+  return `${reading.headline} in your ${ordinalHouse(house)} house`;
+}
+
+function weeklyTransitPlanet(reading: WeeklyHoroscopeReading) {
+  const knownBodies = [
+    "North Node",
+    "South Node",
+    "Ascendant",
+    "Chiron",
+    "Jupiter",
+    "Mercury",
+    "Neptune",
+    "Saturn",
+    "Uranus",
+    "Venus",
+    "Pluto",
+    "Mars",
+    "Moon",
+    "Sun"
+  ];
+  const copy = `${reading.driverLabel} ${reading.headline}`.trim();
+
+  return knownBodies.find((body) => copy.toLowerCase().startsWith(body.toLowerCase())) ?? "";
+}
+
+function weeklyTransitDurationLabel(timing?: string) {
+  if (!timing) return "This week";
+
+  const [startLabel, endLabel] = timing.split(/\s+[–-]\s+/u);
+  const start = new Date(startLabel);
+  const end = new Date(endLabel);
+  const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86_400_000));
+
+  if (!Number.isFinite(days)) return "This week";
+  if (days >= 330) return `${Math.max(1, Math.round(days / 365))}Y`;
+  if (days >= 45) return `${Math.max(1, Math.round(days / 30.44))}M`;
+  if (days >= 14) return `${Math.max(1, Math.round(days / 7))}W`;
+  return `${days}D`;
+}
+
 function normalizedArticleCopy(value: ReactNode) {
   return typeof value === "string"
     ? stripTldrPrefix(value).replace(/\s+/g, " ").trim().toLowerCase()
@@ -1780,41 +1879,11 @@ function normalizeDailyTimingSurface(generated: LiveGeneratedContent | null, sum
   };
 }
 
-type DailyGlanceDriver =
-  | { kind: "aspect"; natal: string; aspect: "conjunction" | "square" | "opposition" | "trine" | "sextile"; orb: number }
-  | { kind: "house"; house: number };
-
-function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot): DailyGlanceDriver | null {
+function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot) {
   const moon = currentSky.positions.find((position) => position.planet === "Moon");
 
   if (!moon || typeof moon.longitude !== "number") {
     return null;
-  }
-
-  const moonLongitude = moon.longitude;
-  const natalTargets = natalTransitTargets(natalSky)
-    .filter((target): target is PlanetPosition & { longitude: number } => typeof target.longitude === "number");
-  const tightestAspect = natalTargets
-    .flatMap((target) => transitAspectDefinitions.map((definition) => {
-      const separation = angularDistance(moonLongitude, target.longitude);
-      const orb = Math.abs(separation - definition.exact);
-
-      return {
-        natal: normalizeContentIdPart(target.planet),
-        aspect: definition.type,
-        orb
-      };
-    }))
-    .filter((candidate) => candidate.orb <= 5)
-    .sort((first, second) => first.orb - second.orb)[0];
-
-  if (tightestAspect) {
-    return {
-      kind: "aspect",
-      natal: tightestAspect.natal,
-      aspect: tightestAspect.aspect,
-      orb: tightestAspect.orb
-    };
   }
 
   const house = typeof moon.house === "number" && moon.house >= 1 && moon.house <= 12
@@ -1822,8 +1891,38 @@ function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot): Dail
     : natalSky.ascendant
       ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
       : null;
+  const driver = selectDailyGlanceDriver(moon.longitude, natalSky.positions, house);
 
-  return house ? { kind: "house", house } : null;
+  return driver?.kind === "aspect"
+    ? { ...driver, natal: normalizeContentIdPart(driver.natal) }
+    : driver;
+}
+
+const pairDailyAspectGroups: Record<string, string> = {
+  conjunction: "conjunction",
+  opposition: "opposition",
+  square: "square",
+  trine: "soft",
+  sextile: "soft"
+};
+
+function dailyGlanceClauseKey(driver: NonNullable<ReturnType<typeof dailyGlanceDriver>>) {
+  if (driver.kind === "house") {
+    return `fallback-hook/daily-headline/house/${driver.house}`;
+  }
+
+  const group = pairDailyAspectGroups[driver.aspect] ?? driver.aspect;
+  return `fallback-hook/daily-headline/${group}/${driver.natal}`;
+}
+
+function pairDailyMoonElement(sign: string): "fire" | "earth" | "air" | "water" | null {
+  const normalized = normalizeContentIdPart(sign);
+
+  if (["aries", "leo", "sagittarius"].includes(normalized)) return "fire";
+  if (["taurus", "virgo", "capricorn"].includes(normalized)) return "earth";
+  if (["gemini", "libra", "aquarius"].includes(normalized)) return "air";
+  if (["cancer", "scorpio", "pisces"].includes(normalized)) return "water";
+  return null;
 }
 
 function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapshot, natalSky: SkySnapshot, targetDate: string): LiveGeneratedContent | null {
@@ -1871,6 +1970,102 @@ function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapsh
     if (error instanceof FallbackV3SourceGapError) {
       console.warn("Daily At a Glance source gap; hiding surface.", {
         targetDate,
+        driver,
+        error
+      });
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+const dailyGlanceImperativeVerbs = [
+  "accept", "answer", "ask", "bring", "catch", "change", "check", "choose", "confirm", "correct",
+  "cross", "decide", "do", "drop", "enjoy", "finish", "fix", "give", "handle", "keep", "let", "make",
+  "name", "notice", "organize", "pause", "pay", "pick", "protect", "put", "remember", "remove", "replace",
+  "say", "send", "speak", "start", "state", "stop", "take", "tell", "use", "watch", "write"
+];
+
+const dailyGlancePresentVerbs = new Set([
+  "absorb", "aim", "answer", "ask", "belong", "bring", "build", "carry", "catch", "choose", "come",
+  "communicate", "decide", "do", "double", "draw", "earn", "ease", "escape", "expect", "explain", "fall",
+  "feel", "get", "give", "go", "ground", "grow", "handle", "heal", "hesitate", "hold", "imagine", "keep",
+  "know", "lead", "learn", "let", "live", "look", "love", "make", "meet", "move", "need", "notice", "open",
+  "pick", "process", "protect", "provoke", "push", "put", "reach", "read", "recognize", "respond", "run", "say",
+  "see", "send", "shine", "show", "soak", "speak", "spot", "start", "stop", "survive", "swing", "take", "talk",
+  "tend", "think", "translate", "transform", "try", "understand", "value", "walk", "want", "watch", "work"
+]);
+
+function directedDailyGlanceAdvice(value: string) {
+  const verbs = dailyGlanceImperativeVerbs.join("|");
+  const sentenceOpening = new RegExp(`(^|[.!?]\\s+)(?:(${verbs}))\\b`, "giu");
+
+  return value.replace(sentenceOpening, (_match, boundary: string, verb: string) => (
+    `${boundary}You should ${verb.toLowerCase()}`
+  ));
+}
+
+function thirdPersonPresentVerb(verb: string) {
+  if (verb === "do") return "does";
+  if (verb === "go") return "goes";
+  if (/[^aeiou]y$/u.test(verb)) return `${verb.slice(0, -1)}ies`;
+  if (/(?:s|x|z|ch|sh|o)$/u.test(verb)) return `${verb}es`;
+  return `${verb}s`;
+}
+
+function repairSingularOwnerVerbAgreement(value: string, ownerName: string, ownerPronouns?: PronounChoice | null) {
+  const pronouns = ownerDisplayPronouns(ownerName, ownerPronouns);
+  const singularSubjects = [ownerName, ...(pronouns.verbAgreement === "singular" ? [pronouns.subject] : [])]
+    .filter(Boolean)
+    .map(escapeRegExpLiteral);
+
+  if (singularSubjects.length === 0) return value;
+
+  const subjectPattern = singularSubjects.join("|");
+  const verbPattern = Array.from(dailyGlancePresentVerbs).join("|");
+  const presentTensePattern = new RegExp(`\\b(${subjectPattern})\\s+(${verbPattern})\\b`, "giu");
+  const negativePattern = new RegExp(`\\b(${subjectPattern})\\s+don't\\b`, "giu");
+
+  return value
+    .replace(presentTensePattern, (_match, subject: string, verb: string) => (
+      `${subject} ${thirdPersonPresentVerb(verb.toLowerCase())}`
+    ))
+    .replace(negativePattern, (_match, subject: string) => `${subject} doesn't`);
+}
+
+function friendDailyGlance(
+  currentSky: SkySnapshot,
+  natalSky: SkySnapshot,
+  ownerName: string,
+  ownerPronouns?: PronounChoice | null
+): FriendDailyForecastView | null {
+  const driver = dailyGlanceDriver(currentSky, natalSky);
+
+  if (!driver) return null;
+
+  try {
+    const rendered = driver.kind === "aspect"
+      ? transitSynastryFallbackRendererV3.renderDailyGlance({ natal: driver.natal, aspect: driver.aspect })
+      : transitSynastryFallbackRendererV3.renderDailyGlance({ house: driver.house });
+    const ownerAwareCopy = createNatalGeneratedCopyForOwnerConverter(ownerName, "person", ownerPronouns);
+    const headline = ownerAwareCopy(rendered.headline ?? "");
+    const body = repairSingularOwnerVerbAgreement(
+      ownerAwareCopy(directedDailyGlanceAdvice(rendered.body ?? "")),
+      ownerName,
+      ownerPronouns
+    );
+
+    // Follow-up after Friends daily parity ships: author 2–3 approved variants per
+    // driver and select one deterministically from chart id + date + driver.
+    return {
+      headline,
+      body
+    };
+  } catch (error) {
+    if (error instanceof FallbackV3SourceGapError) {
+      console.warn("Friend Daily At-a-Glance source gap; hiding surface.", {
+        ownerName,
         driver,
         error
       });
@@ -3090,16 +3285,14 @@ function formatEditorialDate(date: Date, includeYear = false) {
 }
 
 function formatPlacementTransitEndpoint(
-  position: Pick<PlanetPosition, "planet" | "transitTimeZone">,
+  position: Pick<PlanetPosition, "transitTimeZone">,
   date: Date,
   includeYear = false
 ) {
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
-    timeZone: isLunarNodePoint(position.planet)
-      ? position.transitTimeZone || "UTC"
-      : "UTC",
+    timeZone: position.transitTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
     ...(includeYear ? { year: "numeric" } : {})
   }).format(date);
 }
@@ -3461,6 +3654,22 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
 }
 
 function currentSkyAspectTransitWindow(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+  const engagementStart = aspect.timing?.engagementStart
+    ? new Date(aspect.timing.engagementStart)
+    : null;
+  const engagementEnd = aspect.timing?.engagementEnd
+    ? new Date(aspect.timing.engagementEnd)
+    : null;
+
+  if (
+    engagementStart
+    && engagementEnd
+    && !Number.isNaN(engagementStart.getTime())
+    && !Number.isNaN(engagementEnd.getTime())
+  ) {
+    return { start: engagementStart, end: engagementEnd };
+  }
+
   const fastestPlanet = fastestSkyAspectPlanet(aspect);
   const speed = fastestPlanet ? averageDailyMotion[fastestPlanet] ?? 1 : 1;
   const aspectWindowOrb = skyAspectWindowOrb(fastestPlanet);
@@ -3475,6 +3684,10 @@ function currentSkyAspectTransitWindow(aspect: SkySnapshot["aspects"][number], g
 
 function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
+
+  if (aspect.timing) {
+    return skyAspectDateRange(aspect, window.start, window.end);
+  }
 
   return formatSkyAspectDateRange(window.start, window.end, new Date(generatedAt));
 }
@@ -3569,6 +3782,12 @@ function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = ne
 
 function skyAspectTimingDisplay(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
   const window = currentSkyAspectTransitWindow(aspect, generatedAt);
+
+  if (aspect.timing) {
+    const durationLabel = timingGroupLabel(aspect.timing.group) ?? "Ongoing";
+    const rangeLabel = skyAspectDateRange(aspect, window.start, window.end);
+    return { durationLabel, rangeLabel, label: `${durationLabel} · ${rangeLabel}` };
+  }
 
   return aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt), true);
 }
@@ -4134,14 +4353,9 @@ function normalizeSkyAspectSurface(
   };
 }
 
-function skyAspectSeriesLine(aspect: SkySnapshot["aspects"][number]) {
-  const series = aspect.series;
-
-  if (!series || series.count < 2 || series.index < 1 || series.index > series.count || !series.throughLabel.trim()) {
-    return null;
-  }
-
-  return `The ${ordinalHouse(series.index)} of ${series.count} passes, running through ${series.throughLabel.trim()}.`;
+function skyAspectSeriesLine(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+  const lines = skyAspectNarrativeTimingLines(aspect, generatedAt);
+  return lines.length > 0 ? lines.join(" ") : null;
 }
 
 function skyAspectMechanicsCaption(
@@ -4186,7 +4400,7 @@ function currentSkyAspectDetailArticle(
     subtitle: "",
     suppressTldr: true,
     body,
-    seriesLine: skyAspectSeriesLine(aspect),
+    seriesLine: skyAspectSeriesLine(aspect, generatedAt),
     mechanicsCaption: skyAspectMechanicsCaption(aspect, positions),
     sections: [],
     historicalLookback,
@@ -4758,6 +4972,19 @@ function skyPlacementWritingSection(
       articleKey: articleOptions?.articleKey ?? null,
       entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
       exitDate: formatPlacementTransitEndpoint(position, transitEndpoints.end, true),
+      priorSign: position.priorTransitSign ? normalizeContentIdPart(position.priorTransitSign) : null,
+      priorSignEntryDate: position.priorTransitStart
+        ? formatPlacementTransitEndpoint(position, new Date(position.priorTransitStart), true)
+        : null,
+      priorSignExitDate: position.priorTransitEnd
+        ? formatPlacementTransitEndpoint(position, new Date(position.priorTransitEnd), true)
+        : null,
+      previousResidencyEntryDate: position.previousSignResidencyStart
+        ? formatPlacementTransitEndpoint(position, new Date(position.previousSignResidencyStart), true)
+        : null,
+      previousResidencyExitDate: position.previousSignResidencyEnd
+        ? formatPlacementTransitEndpoint(position, new Date(position.previousSignResidencyEnd), true)
+        : null,
       hasPriorIngress: articleOptions?.hasPriorIngress ?? false,
       risingHouseMap: Object.fromEntries(zodiacSigns.map((risingSign) => [
         normalizeContentIdPart(risingSign),
@@ -4793,6 +5020,7 @@ function skyPlacementWritingSection(
     || rendered.contentKey?.startsWith("authored/")
     || rendered.contentKey?.startsWith("sky-article/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-hook/")
+    || rendered.contentKey?.startsWith("fallback-hook/sky-placement-sign/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-sign-copy/")
   ) ? "authored" : "fallback";
   const keyDateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -5254,36 +5482,47 @@ const transitAxisPairs: Record<string, string> = {
   Ascendant: "Descendant",
   Descendant: "Ascendant",
   Midheaven: "Imum Coeli",
-  "Imum Coeli": "Midheaven"
+  "Imum Coeli": "Midheaven",
+  "North Node": "South Node",
+  "True Node": "South Node",
+  "South Node": "North Node"
 };
 
 const transitAxisPriority: Record<string, number> = {
   Ascendant: 0,
   Midheaven: 1,
   Descendant: 2,
-  "Imum Coeli": 3
+  "Imum Coeli": 3,
+  "North Node": 0,
+  "True Node": 0,
+  "South Node": 1
 };
 
 function transitAxisDuplicateKey(transit: TransitItem) {
-  const pairedAngle = transitAxisPairs[transit.natalPoint];
+  const axisPoint = transit.natalPoint === "True Node" ? "North Node" : transit.natalPoint;
+  const pairedAngle = transitAxisPairs[axisPoint];
 
   if (!pairedAngle) {
     return null;
   }
 
-  const axisName = ["Ascendant", "Descendant"].includes(transit.natalPoint) ? "horizon" : "meridian";
+  const axisName = ["Ascendant", "Descendant"].includes(axisPoint)
+    ? "horizon"
+    : ["Midheaven", "Imum Coeli"].includes(axisPoint)
+      ? "meridian"
+      : "nodes";
 
   if (transit.aspect === "square") {
     return `${transit.transitPlanet}-${axisName}-square`.toLowerCase().replace(/\s+/g, "-");
   }
 
   if (["conjunction", "opposition"].includes(transit.aspect)) {
-    const canonicalPoint = transit.aspect === "conjunction" ? transit.natalPoint : pairedAngle;
+    const canonicalPoint = transit.aspect === "conjunction" ? axisPoint : pairedAngle;
     return `${transit.transitPlanet}-${axisName}-conjunction-${canonicalPoint}`.toLowerCase().replace(/\s+/g, "-");
   }
 
   if (["trine", "sextile"].includes(transit.aspect)) {
-    const canonicalPoint = transit.aspect === "trine" ? transit.natalPoint : pairedAngle;
+    const canonicalPoint = transit.aspect === "trine" ? axisPoint : pairedAngle;
     return `${transit.transitPlanet}-${axisName}-soft-${canonicalPoint}`.toLowerCase().replace(/\s+/g, "-");
   }
 
@@ -6933,6 +7172,64 @@ function friendTransitSummary(
   return transitCardPreview(normalizedSurfacePreview(normalizePersonalTransitSurface(transit, generatedAt, ownerName)));
 }
 
+function friendDailyDoDont(
+  currentSky: SkySnapshot,
+  natalSky: SkySnapshot,
+  transits: TransitItem[]
+) {
+  const seededNatalPoints = new Set(["moon", "venus", "mars", "mercury", "saturn"]);
+  const transit = transits
+    .filter(dailyTransitQualifies)
+    .filter((candidate) => seededNatalPoints.has(normalizeContentIdPart(candidate.natalPoint)))
+    .sort((first, second) => transitOrbValue(first) - transitOrbValue(second))[0];
+
+  if (!transit) {
+    return null;
+  }
+
+  const natalPoint = normalizeContentIdPart(transit.natalPoint);
+  const natalPosition = natalSky.positions.find(
+    (position) => normalizeContentIdPart(position.planet) === natalPoint
+  );
+  const house = natalPosition?.house ?? transit.natalHouse ?? null;
+  const natalSign = normalizeContentIdPart(natalPosition?.sign ?? transit.natalSign);
+  const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
+  const moonHouse = moon && natalSky.ascendant
+    ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+    : null;
+
+  if (!house || !natalSign) {
+    return null;
+  }
+
+  try {
+    const targetDate = currentSky.generatedAt.slice(0, 10);
+    const rendered = transitSynastryFallbackRendererV3.renderDoDont({
+      planet: natalPoint,
+      sign: natalSign,
+      house,
+      transiting: normalizeContentIdPart(transit.transitPlanet),
+      moonSign: moon ? normalizeContentIdPart(moon.sign) : null,
+      moonHouse,
+      dayKey: Number.isFinite(Date.parse(`${targetDate}T00:00:00Z`))
+        ? Math.floor(Date.parse(`${targetDate}T00:00:00Z`) / 86400000)
+        : 0
+    });
+
+    return rendered.do.length === 3 && rendered.dont.length === 3 ? rendered : null;
+  } catch (error) {
+    if (!(error instanceof FallbackV3SourceGapError)) {
+      throw error;
+    }
+
+    console.warn("Friend daily Do/Don't source gap; hiding surface.", {
+      transitId: transit.id,
+      error
+    });
+    return null;
+  }
+}
+
 function personalTransitDisplayTitle(transit: TransitItem) {
   return `${transit.transitPlanet} ${titleCase(transit.aspect)} ${transit.natalPoint}`;
 }
@@ -7275,7 +7572,7 @@ function activeBondTransitCards(
   friendPronouns: PronounChoice | null | undefined,
   generatedAt: string
 ) {
-  const candidates = contacts.flatMap((contact) => {
+  const rawCandidates = contacts.flatMap((contact) => {
     const activations = [
       ...readerTransits.map((transit) => ({
         transit,
@@ -7324,17 +7621,30 @@ function activeBondTransitCards(
       }];
     });
   });
-  const groups = groupBondTransitActivations(candidates);
+  const candidates = dedupeBondTransitEndpointCandidates(
+    rawCandidates,
+    (activation) => transitOrbValue(activation)
+  );
+  const groups = rankBondTransitGroups(
+    groupBondTransitActivations(candidates),
+    (activation) => transitOrbValue(activation)
+  );
 
-  // Exact per-aspect rows ignore variants. Legacy soft/hard fallback rows keep their
-  // deterministic rotation for nodes, Lilith, and missing exact units.
+  // First card per transiting planet + exact aspect keeps the exact row; later cards
+  // rotate to the family lane via duplicateIndex so no two cards on one view repeat the
+  // same effect paragraph. Legacy soft/hard fallback rows keep their deterministic
+  // rotation for nodes, Lilith, and missing exact units.
   const groupCounts = new Map<string, number>();
+  const exactAspectCounts = new Map<string, number>();
   const friendPossessivePronoun = ownerDisplayPronouns(friendName, friendPronouns).possessiveAdjective;
 
   return groups.flatMap((group) => {
     const familyKey = `${group.transiting}:${bondEffectFamily(group.transiting, group.aspect)}`;
     const indexInGroup = groupCounts.get(familyKey) ?? 0;
     groupCounts.set(familyKey, indexInGroup + 1);
+    const exactAspectKey = `${group.transiting}:${group.aspect}`;
+    const duplicateIndex = exactAspectCounts.get(exactAspectKey) ?? 0;
+    exactAspectCounts.set(exactAspectKey, duplicateIndex + 1);
     const baseVariant = (stableTransitCopyVariant(friendName, familyKey) ?? 1) - 1;
     const variantSlot = ((baseVariant + indexInGroup) % 3) + 1;
     const timingRange = personalTransitPackageWindow(group.activation, generatedAt);
@@ -7352,12 +7662,15 @@ function activeBondTransitCards(
           ? normalizeContentIdPart(group.activation.transitSign)
           : undefined,
         variant: variantSlot === 1 ? undefined : variantSlot,
+        duplicateIndex,
         window: timingRange
       });
 
       return [{
         activatedContacts: contactsForBondTransitGroup(group, contacts),
         id: `${group.key}-${group.activationId}`,
+        effectFamily: bondEffectFamily(group.transiting, group.aspect) as "soft" | "hard",
+        effectContentKey: rendered.contentKey,
         headline: rendered.headline,
         transitPlanet: group.activation.transitPlanet,
         transitSign: group.activation.transitSign ?? "",
@@ -10414,6 +10727,8 @@ export function App() {
   const [friendNatalContentRequested, setFriendNatalContentRequested] = useState(false);
   const [friendRelationshipContentRequested, setFriendRelationshipContentRequested] = useState(false);
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
+  const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
   const [, setNatalCardTaglineVersion] = useState(0);
@@ -10576,7 +10891,10 @@ export function App() {
 
   function openCalendarTransitDetail(event: LunarCalendarEvent, description?: string) {
     const contentKeys = calendarTransitDetailContentKeys(event);
-    const missingKeys = contentKeys.filter((key) => !skyGeneratedContent.has(key));
+    const missingKeys = contentKeys.filter((key) => (
+      !fallbackArchitectureV3AuthoredContentForKey(key)
+      && !skyGeneratedContent.has(key)
+    ));
 
     openCalendarTransitDetailWithContent(event, skyGeneratedContent, description);
 
@@ -10629,7 +10947,8 @@ export function App() {
     description?: string
   ) {
     for (const contentKey of calendarEventGeneratedContentKeys(event)) {
-      const content = liveGeneratedContent(generatedContent, contentKey);
+      const content = fallbackArchitectureV3AuthoredContentForKey(contentKey)
+        ?? liveGeneratedContent(generatedContent, contentKey);
       const paragraphs = content
         ? readerFacingParagraphs(generatedContentParagraphs(content))
         : [];
@@ -10712,9 +11031,8 @@ export function App() {
       positions: sky.positions
     });
     const eventBody = calendarEventDetailBody(event, generatedContent, description);
-    const hasPlacementBody = skyDetailHasReaderFacingMainBody(detail);
 
-    return eventBody.length > 0 && !hasPlacementBody
+    return eventBody.length > 0
       ? {
           ...detail,
           body: eventBody,
@@ -10812,6 +11130,53 @@ export function App() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!skyDetailRoutePath || !/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)) {
+      setSkyPlacementFallbackStatus("idle");
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setSkyPlacementFallbackStatus("loading");
+    let available = false;
+    const markAvailable = () => {
+      if (!cancelled) {
+        available = true;
+        setFallbackArchitectureV3Version((version) => version + 1);
+        setSkyPlacementFallbackStatus("ready");
+      }
+    };
+    const localLoad = loadSkyPlacementFallbackArchitectureV3Bundle()
+      .then(() => {
+        markAvailable();
+        return true;
+      });
+    const dashboardLoad = loadFallbackArchitectureV3SkyPlacementDashboardBundle()
+      .then((dashboardBundle) => {
+        if (!dashboardBundle || cancelled) return false;
+        installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
+        markAvailable();
+        return true;
+      });
+
+    Promise.allSettled([localLoad, dashboardLoad]).then((results) => {
+      if (cancelled || available) return;
+
+      console.warn("Sky Placement fallback articles failed to load; the approved standalone floor remains active.", {
+        localError: results[0].status === "rejected" ? results[0].reason : null,
+        dashboardError: results[1].status === "rejected" ? results[1].reason : null
+      });
+      setSkyPlacementFallbackStatus("error");
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [skyDetailRoutePath, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
     function handlePortalUrlChange() {
@@ -12890,9 +13255,23 @@ export function App() {
       )}
 
       {selectedSkyDetail ? (
-        <Suspense fallback={<FeatureLoadingFallback />}>
-          <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
-        </Suspense>
+        <>
+          {skyPlacementFallbackStatus === "loading" ? (
+            <div className="feature-loading-fallback" role="status">Loading the full placement reading…</div>
+          ) : (
+            <>
+              {skyPlacementFallbackStatus === "error" ? (
+                <div className="feature-loading-fallback" role="status">
+                  <span>The full placement reading could not load. Approved available copy remains below.</span>
+                  <button type="button" onClick={() => setSkyPlacementFallbackRetryKey((key) => key + 1)}>Retry</button>
+                </div>
+              ) : null}
+              <Suspense fallback={<FeatureLoadingFallback />}>
+                <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
+              </Suspense>
+            </>
+          )}
+        </>
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
@@ -14722,6 +15101,8 @@ function ActiveAspects({
           {group.aspects.map(({ aspect, normalized }) => {
             const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
+            const narrativeTiming = skyAspectNarrativeTimingLines(aspect, generatedAt);
+            const exactChip = wholeDegreeOrb(aspect.orb) === "0°";
 
             const displaySummary = stripSkyAspectTimingPrefix(
               normalizedSurfacePreview(normalized),
@@ -14745,11 +15126,16 @@ function ActiveAspects({
                     </span>
                     <span>{timing.rangeLabel}</span>
                   </span>
+                  {narrativeTiming.length > 0 ? (
+                    <span className="aspect-row-narrative-timing">
+                      {narrativeTiming.map((line) => <span key={line}>{line}</span>)}
+                    </span>
+                  ) : null}
                   {displaySummary ? <p>{displaySummary}</p> : null}
                 </div>
-                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+                <span className="aspect-row-meta" aria-label={exactChip ? "exact aspect" : `${wholeDegreeOrb(aspect.orb)} orb`}>
                   <span className="aspect-row-dot" aria-hidden="true" />
-                  <span>{wholeDegreeOrb(aspect.orb)}</span>
+                  <span>{exactChip ? "exact" : wholeDegreeOrb(aspect.orb)}</span>
                 </span>
               </button>
             );
@@ -15983,6 +16369,112 @@ function ProfileView({
       )];
     })
     : [];
+  const activeTransitAspectIdentities = new Set(
+    aspectRows.map((transit) => transitAspectIdentity(
+      transit.transitPlanet,
+      transit.aspect,
+      transit.natalPoint
+    ))
+  );
+  const weeklyTransitRows = weeklyHoroscopeAssembly?.status === "ready"
+    ? [weeklyHoroscopeAssembly.horoscope, ...weeklyHoroscopeAssembly.aspects]
+      .filter((reading) => {
+        const aspectParts = weeklyTransitAspectParts(reading.driverLabel);
+
+        return !aspectParts || !activeTransitAspectIdentities.has(transitAspectIdentity(
+          aspectParts.transiting,
+          aspectParts.aspect,
+          aspectParts.natal
+        ));
+      })
+      .map((reading) => {
+        const aspectParts = weeklyTransitAspectParts(reading.driverLabel);
+        const house = weeklyTransitHouse(reading);
+        const displayTitle = weeklyTransitDisplayTitle(reading, house);
+        const planet = weeklyTransitPlanet(reading) || (aspectParts ? titleCase(aspectParts.transiting) : "");
+        const preview = transitCardPreview(reading.body);
+        const durationLabel = weeklyTransitDurationLabel(reading.timing);
+        const timingLabel = reading.timing ?? reading.dayLabel;
+        const articleId = `weekly-transit-${reading.sourceUnits.join("-") || normalizeContentIdPart(reading.headline)}`;
+        const openArticle = () => {
+          setActivePlacementRouteId(null);
+          setTransitArticle({
+            id: articleId,
+            title: displayTitle,
+            glyph: planet ? pointGlyph(planet) : "",
+            subtitle: "",
+            summary: "",
+            sections: [{
+              heading: displayTitle,
+              tldr: "",
+              body: reading.body
+            }],
+            meta: [
+              ...(timingLabel ? [{ label: reading.timing ? "Date range" : "Timing", value: timingLabel }] : []),
+              { label: "Based on", value: reading.driverLabel }
+            ]
+          });
+        };
+
+        return (
+          <button
+            type="button"
+            className="updates-aspect-row weekly-transit-row"
+            key={articleId}
+            onClick={openArticle}
+          >
+            <span className="updates-aspect-row__glyphs" aria-hidden="true">
+              {aspectParts ? (
+                <AspectGlyphs
+                  from={titleCase(aspectParts.transiting)}
+                  aspect={aspectParts.aspect}
+                  to={titleCase(aspectParts.natal)}
+                />
+              ) : (
+                <span className="planet-glyph">{planet ? pointGlyph(planet) : "○"}</span>
+              )}
+            </span>
+            <span className="updates-aspect-row__content">
+              <span className="updates-aspect-row__title">{displayTitle}</span>
+              <span className="updates-aspect-row__meta-line">
+                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
+                  <DurationLabelText label={durationLabel} />
+                </span>
+                {timingLabel ? <span>{timingLabel}</span> : null}
+              </span>
+              {preview ? <span className="updates-aspect-row__description transit-card-preview">{preview}</span> : null}
+              {house ? (
+                <span className="house-transit-keywords" aria-label="House keywords">
+                  <span className="ui-pill house-transit-term-tag">
+                    {longTransitPlanets.has(planet) ? "Long-term" : "Short-term"}
+                  </span>
+                  {houseLifeAreaKeywords(house).map((keyword) => (
+                    <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${articleId}-${keyword}`}>
+                      {keyword}
+                    </span>
+                  ))}
+                </span>
+              ) : reading.tag ? (
+                <span className="updates-aspect-row__life-areas">
+                  <span className="ui-pill house-transit-term-tag">{reading.tag}</span>
+                </span>
+              ) : null}
+            </span>
+            {house || typeof reading.orb === "number" ? (
+              <span
+                className="updates-aspect-row__meta"
+                aria-label={house ? `${ordinalHouse(house)} house` : `${wholeDegreeOrb(reading.orb ?? 0)} orb`}
+              >
+                <span className="updates-aspect-row__dot" aria-hidden="true" />
+                <span className="updates-aspect-row__orb">
+                  {house ?? wholeDegreeOrb(reading.orb ?? 0)}
+                </span>
+              </span>
+            ) : null}
+          </button>
+        );
+      })
+    : [];
   const dailyDoDont = (() => {
     const seeded = new Set(["moon", "venus", "mars", "mercury", "saturn"]);
     const transitCandidate = qualifyingDailyTransits
@@ -16187,6 +16679,7 @@ function ProfileView({
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}
         standaloneTransitRows={standaloneHouseTransitRows}
+        weeklyTransitRows={weeklyTransitRows}
         transitArticle={transitArticle}
       />
     </Suspense>
@@ -16505,7 +16998,7 @@ function ManualChartsPanel({
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
   const selectedFriendTransits = useMemo(() => (
-    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
+    (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && !selectedChartIsEvent
       ? dedupeSameBeatPersonalTransits(
           rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
           currentSky.generatedAt
@@ -16513,12 +17006,28 @@ function ManualChartsPanel({
       : []
   ), [
     currentSky,
+    friendProfileWork.compatibility,
     friendProfileWork.transits,
     lifeAreaFocus,
     selectedChart,
     selectedChartIsEvent,
     sunriseOrbDegrees
   ]);
+  const selectedFriendDailyForecast = useMemo(() => (
+    currentSky && selectedChart?.natalChart && !selectedChartIsEvent
+      ? friendDailyGlance(
+          currentSky,
+          selectedChart.natalChart,
+          selectedChart.displayName,
+          selectedChart.pronouns
+        )
+      : null
+  ), [currentSky, selectedChart, selectedChartIsEvent]);
+  const selectedFriendDailyDoDont = useMemo(() => (
+    currentSky && selectedChart?.natalChart && !selectedChartIsEvent
+      ? friendDailyDoDont(currentSky, selectedChart.natalChart, selectedFriendTransits)
+      : null
+  ), [currentSky, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
   const selectedFriendHouseTransitCards = useMemo(() => {
     if (!friendProfileWork.transits || !currentSky || !selectedChart?.natalChart || selectedChartIsEvent) {
       return [];
@@ -16557,7 +17066,7 @@ function ManualChartsPanel({
           ),
           durationLabel,
           timingRange: renderedWindow,
-          title: `${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
+          title: `Transiting ${transit.transitPlanet} through ${possessiveLabel(selectedChart.displayName)} ${ordinalHouse(activation.house)} house`,
           transit
         };
       });
@@ -16569,7 +17078,7 @@ function ManualChartsPanel({
     selectedFriendTransits
   ]);
   const selectedBondTransitCards = useMemo(() => (
-    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
+    (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && !selectedChartIsEvent
       ? activeBondTransitCards(
         selectedSynastryContacts,
         selectedFriendTransits,
@@ -16581,12 +17090,102 @@ function ManualChartsPanel({
       : []
   ), [
     currentSky?.generatedAt,
+    friendProfileWork.compatibility,
     friendProfileWork.transits,
     profileTransits,
     selectedChart,
     selectedChartIsEvent,
     selectedFriendTransits,
     selectedSynastryContacts
+  ]);
+  const selectedPairDailySelection = useMemo(() => {
+    if (
+      !friendProfileWork.compatibility
+      || !relationshipComparisonIsSelf
+      || !currentSky
+      || !profileNatalSky
+      || !selectedChart?.natalChart
+      || selectedChartIsEvent
+    ) {
+      return null;
+    }
+
+    // Pair Daily deliberately reuses the same Daily At-a-Glance driver for both
+    // charts. A missing half makes the pair framing false, so fail closed.
+    const readerDriver = dailyGlanceDriver(currentSky, profileNatalSky);
+    const friendDriver = dailyGlanceDriver(currentSky, selectedChart.natalChart);
+    if (!readerDriver || !friendDriver) return null;
+
+    const selectedBondTransit = selectedBondTransitCards[0];
+    if (selectedBondTransit?.effectContentKey) {
+      return {
+        readerDriver,
+        friendDriver,
+        shared: {
+          kind: "bond" as const,
+          family: selectedBondTransit.effectFamily,
+          bondClauseKey: selectedBondTransit.effectContentKey
+        }
+      };
+    }
+
+    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
+    const element = moon ? pairDailyMoonElement(moon.sign) : null;
+    if (readerDriver.kind === "aspect" && friendDriver.kind === "aspect" && element) {
+      return {
+        readerDriver,
+        friendDriver,
+        shared: { kind: "moon" as const, element }
+      };
+    }
+
+    return {
+      readerDriver,
+      friendDriver,
+      shared: { kind: null }
+    };
+  }, [
+    currentSky,
+    friendProfileWork.compatibility,
+    profileNatalSky,
+    relationshipComparisonIsSelf,
+    selectedBondTransitCards,
+    selectedChart,
+    selectedChartIsEvent
+  ]);
+  const selectedPairDaily = useMemo(() => {
+    if (!selectedPairDailySelection || !currentSky || !selectedChart) return null;
+
+    const isoDate = currentSky.generatedAt.slice(0, 10);
+    const readerChartId = profile.charts[0]?.id ?? profile.id;
+    const friendChartId = selectedChart.id;
+
+    try {
+      const rendered = transitSynastryFallbackRendererV3.renderPairDaily({
+        reader: { clauseKey: dailyGlanceClauseKey(selectedPairDailySelection.readerDriver) },
+        friend: {
+          handle: selectedSocialFriend?.handle ?? null,
+          displayName: selectedChart.displayName,
+          clauseKey: dailyGlanceClauseKey(selectedPairDailySelection.friendDriver)
+        },
+        shared: selectedPairDailySelection.shared,
+        variant: stablePairDailyVariant(readerChartId, friendChartId, isoDate)
+      });
+
+      return rendered.body
+        ? { body: rendered.body, dateLabel: formatSkyDate(isoDate) }
+        : null;
+    } catch (error) {
+      if (error instanceof FallbackV3SourceGapError) return null;
+      throw error;
+    }
+  }, [
+    currentSky,
+    profile.charts,
+    profile.id,
+    selectedChart,
+    selectedPairDailySelection,
+    selectedSocialFriend?.handle
   ]);
   const selectedFriendTransitAspectLines = useMemo(() => (
     friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
@@ -16597,6 +17196,8 @@ function ManualChartsPanel({
     selectedBondTransitCards.map((card) => ({
       id: card.id,
       headline: card.headline,
+      timingRange: card.timingRange,
+      effectFamily: card.effectFamily,
       effectBody: card.effectBody,
       activationBody: card.activationBody
     }))
@@ -16635,7 +17236,7 @@ function ManualChartsPanel({
 
           return {
             id: transit.id,
-            title: `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`,
+            title: `Transiting ${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`,
             durationLabel: timing.durationLabel,
             rangeLabel: timing.rangeLabel,
             timingLabel: timing.label,
@@ -17095,7 +17696,19 @@ function ManualChartsPanel({
       currentSky.generatedAt,
       selectedChart.displayName
     );
-    const title = `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`;
+    const title = `Transiting ${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`;
+    const orbLabel = wholeDegreeOrb(transitOrbValue(transit));
+    const transitPosition = transit.transitSign
+      ? `${transit.transitPlanet} in ${transit.transitSign}`
+      : transit.transitPlanet;
+    const natalPosition = [
+      `${possessiveLabel(selectedChart.displayName)} natal ${transit.natalPoint}`,
+      transit.natalSign ? `in ${transit.natalSign}` : "",
+      transit.natalHouse ? `in the ${ordinalHouse(transit.natalHouse)} house` : ""
+    ].filter(Boolean).join(" ");
+    const directionSentence = transit.direction
+      ? ` The aspect is ${transit.direction}.`
+      : "";
 
     onOpenDetail({
       routePath: friendDetailRoutePath(
@@ -17103,12 +17716,13 @@ function ManualChartsPanel({
         "transits",
         `transit-${normalizeContentIdPart(transit.id)}`
       ),
-      glyph: pointGlyph(transit.transitPlanet),
+      glyph: `${pointGlyph(transit.transitPlanet)} ${aspectGlyph(transit.aspect)} ${pointGlyph(transit.natalPoint)}`,
       kicker: "Transit",
       title,
+      duration: `${timing.durationLabel} · ${timing.rangeLabel}`,
       meta: [
         timing.rangeLabel,
-        `${wholeDegreeOrb(transitOrbValue(transit))} orb`,
+        `${orbLabel} orb`,
         transit.natalPoint
       ].filter(Boolean).join(" · "),
       body: [],
@@ -17116,7 +17730,8 @@ function ManualChartsPanel({
         heading: "",
         body: section.body,
         sourceKeys: section.sourceKeys
-      }))
+      })),
+      mechanicsCaption: `${transitPosition} is ${transitAspectTechnicalVerb(transit.aspect)} ${natalPosition} at a ${orbLabel} orb.${directionSentence}`
     });
   };
   const openFriendTransitById = (transitId: string) => {
@@ -17571,6 +18186,7 @@ function ManualChartsPanel({
             selectedCompatibilityCards.length > 0 ? (
               <CompatibilityTab
                 cards={selectedCompatibilityCards}
+                daily={selectedPairDaily}
                 dynamics={selectedCompatibilityDynamics}
                 friendName={selectedChart.displayName}
                 onOpenCard={openFriendCompatibilityCardDetail}
@@ -17611,6 +18227,9 @@ function ManualChartsPanel({
           {friendProfileTab === "transits" && (
             <FriendTransitsTab
               bondTransits={selectedBondTransitViewCards}
+              dailyForecast={selectedFriendDailyForecast}
+              dailyDoItems={selectedFriendDailyDoDont?.do ?? []}
+              dailyDontItems={selectedFriendDailyDoDont?.dont ?? []}
               friendName={selectedChart.displayName}
               houseTransits={selectedFriendHouseTransitViewCards}
               onOpenBondTransit={openBondTransitById}

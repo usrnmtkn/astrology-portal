@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:06.364Z",
+  "id": "sky.saturn.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Lilith",
+    "humanMoment": "Delivery drivers leave their vans parked when a new tracking system records their locations after paid routes end.",
+    "developmentDetail": "Dispatchers shorten the tracking window, then redraw routes each time the revised cutoff leaves late parcels unlogged.",
+    "planetaryDynamic": "Saturn enforces route accountability, while Lilith carries the drivers' refusal to make off-hours movement part of the job.",
+    "aspectMechanic": "The quincunx keeps the routes and tracking cutoff misaligned, so shortening the window forces another redraw and each redraw pushes some deliveries past the cutoff.",
+    "conditionalConsequence": "If dispatch cannot fit the routes inside the paid tracking window, the vans remain parked and parcels arrive late.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry opens on a recognizable labor dispute, develops its operational consequences, clearly distinguishes enforcement from refusal, and shows the quincunx through repeated route and cutoff adjustments.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:06.364Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "89e76a100947d762627af95562d824daf41f38de413d5798fcd3d6b21cbbaab9",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "3f87f73ced511cdf43f3513970697024d8eafb2d3ebbe09a2d45bd57bc55091d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e620e902f2d999cadccf08ef20ecf041bd726238f079748207f6157b49047d94"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

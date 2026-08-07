@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:50.074Z",
+  "id": "sky.neptune.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "neptune-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.conjunction.nodes",
+    "planetA": "neptune",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Neptune conjunct North Node",
+    "humanMoment": "A waterfront restoration campaign begins work before its long-term plan is settled.",
+    "developmentDetail": "Volunteers clear one damaged section while supporters circulate competing images of what the shoreline used to be and what it could become.",
+    "planetaryDynamic": "Neptune supplies the compelling vision and the haze around it, while the North Node presses for a readable direction forward.",
+    "aspectMechanic": "Under the conjunction, the shoreline vision and the first clearing effort become one event, making inspiration difficult to separate from uncertainty about the route.",
+    "conditionalConsequence": "If the cleared section exposes unstable ground, the campaign gains a concrete reason to revise the vision instead of continuing to debate competing images.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Neptune supplies the compelling vision and the haze around it, while the North Node presses for a readable direction forward.",
+    "why": "The node axis is narrowed to the North Node, but the surrounding scene still carries the release-side nostalgia and the sentence clearly distinguishes Neptune's vision and fog from directional pressure.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:50.073Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "349ec8c967e889ac3c89f7c717bf0e82be0a4248c4f620e5146e423ffdb059a1",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "4cfb44d22556977f1334c94ac14cf548e630f49ad0317d552f9f0681def5b935",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e752a91d35846d528ad37883f546284bfe3c7859e9bffbc78e1bae39b4494215"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

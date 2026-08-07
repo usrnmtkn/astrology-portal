@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:09.895Z",
+  "id": "sky.sun.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "sun-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.square.lilith",
+    "planetA": "sun",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Sun square Lilith",
+    "humanMoment": "At an awards ceremony, a respected winner abandons the prepared speech and names the desire the room was expected to keep respectable.",
+    "developmentDetail": "Applause breaks unevenly as organizers reach for the microphone and audience recordings begin circulating with the forbidden line intact.",
+    "planetaryDynamic": "The Sun seeks recognition through the public persona, while Lilith brings the want that persona was built to exclude onto the same stage.",
+    "aspectMechanic": "The square forces a practical conflict between approval and disclosure, and the disruption keeps returning until the underlying choice about what can be publicly owned is addressed.",
+    "conditionalConsequence": "If organizers remove the remark from the official footage, the unofficial clips may make the omission the event's most visible feature.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "All five fields are concrete, distinct, mechanically accurate, scene-specific, evergreen, and correctly constrained to one sentence each.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:09.894Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "da45a8e40ea81e133ff5608f3fdde2a8cbbac68b72780e52fc139770c5b96e22",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "67902f346b9413038737c4ae192393c25849a5f4deb906a63646b6932f99e467",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "7c33404e68a07bbb8ffd0e777547abdba4e47d6841f5b24bf5c4fd5dcccec675"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

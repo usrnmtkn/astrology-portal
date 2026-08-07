@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/jupiter",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+    "required": false
+  },
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "10 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "4 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "64 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": false,
+      "details": "skeleton=consequence-close; 0 detected instruction(s); final sentence: Reply with the kind of help you actually want before the group decides what happens next."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": false,
+      "details": [
+        {
+          "id": "VC-016-minus-pronouns",
+          "term": "\\bpeople\\b",
+          "reason": "owner rule for Current Sky; name the group, person, message, decision, or behavior",
+          "match": "people"
+        }
+      ]
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": true,
+      "details": {
+        "saturationCue": true,
+        "target": "jupiter"
+      }
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "passed": true,
+      "details": "Body uses a non-fixed opener."
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "passed": true,
+      "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "passed": true,
+      "details": "No time-anchor phrase used."
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "passed": true,
+      "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "passed": false,
+      "details": {
+        "originalConjunctionGrammar": false,
+        "otherGrammar": false,
+        "softGrammar": false,
+        "squareGrammar": true
+      }
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    },
+    {
+      "id": "DG-R11-unhedged-headline",
+      "passed": true,
+      "details": "Headline makes an unhedged claim."
+    },
+    {
+      "id": "DG-R12-no-time-anchor-opener",
+      "passed": true,
+      "details": "Body opens inside the scene."
+    },
+    {
+      "id": "DG-R13-may-max-once",
+      "passed": true,
+      "details": "1 may usage(s)"
+    },
+    {
+      "id": "DG-R14-scene-not-biographical",
+      "passed": true,
+      "details": "No biographical anchor detected."
+    },
+    {
+      "id": "DG-R15-action-repairs-moment",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R16-owner-reserved-construction",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-max-one",
+      "passed": true,
+      "details": "No quoted-dialogue line used."
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+      "passed": true,
+      "advisory": true,
+      "details": "No quoted-dialogue judgment needed."
+    },
+    {
+      "id": "OWNER-DIRECTIVE-short-blunt-line",
+      "passed": false,
+      "details": "No 2-8 word body sentence found."
+    },
+    {
+      "id": "OWNER-TEST-specificity",
+      "passed": false,
+      "advisory": false,
+      "details": {
+        "own": {
+          "key": "conjunction/jupiter",
+          "matches": [
+            "optimism-generosity"
+          ],
+          "required": 2,
+          "passed": false
+        },
+        "comparisonScope": [
+          "conjunction/mercury",
+          "conjunction/sun",
+          "conjunction/saturn",
+          "square/mars",
+          "square/venus",
+          "square/uranus",
+          "opposition/jupiter",
+          "opposition/pluto",
+          "soft/mercury",
+          "soft/uranus",
+          "soft/chiron",
+          "house/5",
+          "house/12"
+        ],
+        "swappableTo": [
+          {
+            "key": "conjunction/mercury",
+            "matches": [
+              "feeling-thinking",
+              "words"
+            ],
+            "passed": true
+          },
+          {
+            "key": "soft/chiron",
+            "matches": [
+              "care-old-hurt",
+              "mild-ease"
+            ],
+            "passed": true
+          }
+        ],
+        "advisorySwappableTo": []
+      }
+    },
+    {
+      "id": "OWNER-TEST-morning-read",
+      "passed": true,
+      "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "passed": true,
+      "details": [
+        "The response may feel so encouraging that you start saying yes and promise updates before deciding how much involvement you want."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "VC-016-minus-pronouns",
+      "term": "\\bpeople\\b",
+      "reason": "owner rule for Current Sky; name the group, person, message, decision, or behavior",
+      "match": "people"
+    }
+  ],
+  "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 64,
+    "bodySentences": 4,
+    "instructions": 0,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:10.715Z",
+  "id": "sky.moon.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "moon-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.opposition.chiron",
+    "planetA": "moon",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Moon opposite Chiron",
+    "humanMoment": "After a youth match, an injured player insists no one needs to wait while another player’s parent brings over an ice pack.",
+    "developmentDetail": "The player dismisses the bruise but starts crying when the adult offers a ride home.",
+    "planetaryDynamic": "The Moon carries the practical comfort of the ice pack and ride, while Chiron carries the player’s pain around needing either one.",
+    "aspectMechanic": "The opposition places the player’s refusal across from the adult’s offer, so neither the need for care nor the fear of asking can be edited out of the ride home.",
+    "conditionalConsequence": "If the player accepts the ride, the immediate problem is resolved, but the tears reveal what the refusal was trying to hide.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the player accepts the ride, the immediate problem is resolved, but the tears reveal what the refusal was trying to hide.",
+    "why": "The consequence is slightly broader than the scene establishes, but it remains concrete, conditional, and fully supported by the offered care and visible tears.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:10.715Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "943613449e1f2c06e12111c7256a53e13a473b0bd7c7745b666fdabe3027defb",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "329c3693702a405abf446ced4690031fea71e33a7e95f321ab09e72d392ccb01",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8b725c857c8871b26ba4e06fe00163713675ca0f7451e8a5a20d3997003677f3"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

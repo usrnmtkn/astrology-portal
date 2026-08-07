@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:25.902Z",
+  "id": "sky.neptune.conjunction.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "neptune-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.conjunction.chiron",
+    "planetA": "neptune",
+    "planetB": "chiron",
+    "aspect": "conjunction",
+    "title": "Neptune conjunct Chiron",
+    "humanMoment": "At a public vigil, one person’s loss expands into a roomful of grief that no one can clearly assign.",
+    "developmentDetail": "People light candles for strangers, absorb one another’s stories, and leave unable to say which sorrow they arrived carrying.",
+    "planetaryDynamic": "Neptune dissolves the boundaries between those sorrows, while Chiron needs the original wound to stay identifiable so it can be tended.",
+    "aspectMechanic": "Under the conjunction, lighting candles for strangers and tending the original loss become one act, making compassion difficult to separate from carrying pain with no clear owner.",
+    "conditionalConsequence": "If the original loss remains unnamed, care may scatter across the room while the bereaved person receives less direct support.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "People light candles for strangers, absorb one another’s stories, and leave unable to say which sorrow they arrived carrying.",
+    "why": "The phrasing is slightly lyrical, but it remains observable, scene-specific, and clearly develops the blurred ownership of grief without duplicating the opening.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:25.901Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4fe60c334757ba057497d88db1bf7eaa8a6a62f8b6a01f474a015c8d9c35b0ae",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "037ceb038bb7e3917d1af5e7fdd47881d852c0e3f6ce2d0d05df030823be835c",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3a06b139a6042fa14e74e9fc21f0055192e1868ac79e7b51926089230564dc6d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.conjunction.chiron",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

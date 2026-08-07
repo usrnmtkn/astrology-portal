@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:16.192Z",
+  "id": "sky.lilith.trine.nodes",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "lilith-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.lilith.trine.nodes",
+    "planetA": "lilith",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Lilith trine North Node",
+    "humanMoment": "A housing cooperative replaces several private amenity rooms with a large communal kitchen after residents openly ask for a place to cook and eat together.",
+    "developmentDetail": "The revised floor plan gives the kitchen central space, but the construction budget still leaves staffing and maintenance unresolved.",
+    "planetaryDynamic": "Lilith brings the once-dismissed appetite for shared meals into the open, while the North Node gives that want a place in the cooperative’s next chapter.",
+    "aspectMechanic": "The trine lets the demand for a communal kitchen and the revised floor plan reinforce each other with little resistance, helping construction advance or allowing the maintenance gap to travel farther without question.",
+    "conditionalConsequence": "If the kitchen is fully funded and maintained, shared meals become part of how the cooperative operates; if those costs remain absent, the redesign preserves the old limits behind a new image.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the kitchen is fully funded and maintained, shared meals become part of how the cooperative operates; if those costs remain absent, the redesign preserves the old limits behind a new image.",
+    "why": "The phrase \"old limits\" is slightly abstract, but the sentence still gives a concrete, scene-based contrast between an operating communal kitchen and an unfunded redesign.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:16.192Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ea5e299d67e8ecd8b765a194db10ed6659e6c670d832df12f59f0e2dc2db8b2c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "2b1637ef1f1d878db28c5702e82b0834a188391f25ad728e9a97f82e92fb0d2d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "32884a0d2bdb0a8857765e54dc760c36650234664f9aeb0f1447bfb4e1aa1bc1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.lilith.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

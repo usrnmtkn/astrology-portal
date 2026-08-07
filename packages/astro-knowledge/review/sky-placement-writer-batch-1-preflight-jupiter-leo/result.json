@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-batch-1-preflight-jupiter-leo",
+  "recordedAt": "2026-08-04T11:35:53.139Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "jupiter",
+    "sign": "leo"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v10:cycle-word+placement-name+standalone-opening-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:leo-season-2025:p092:window-1-3",
+      "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+      "owner-active:TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER:e016:window-1-2",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "hook is long (105 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Jupiter in Leo makes a creative idea harder to keep private. From {{entryDate}}, a half-finished story can leave a notes app and become an ongoing series shown to a small audience. Each installment gets clearer because making it visible brings feedback, confidence, and the nerve to try a larger version. As the series finds its voice, what began as a cautious test becomes a body of work we are willing to claim. Jupiter spends about one year in each sign and takes about twelve years to move through all twelve signs, so growth through visibility has time to build each time the work is shown.",
+    "tension": "The response is encouraging, then it becomes the measure. We promise a bigger installment before the current one is finished, add flourishes because they drew praise last time, and quietly drop the parts that received little notice. The same confidence that moved the idea out of private notes now makes it difficult to admit that something is not ready or that the pace is too much. A missed installment starts to feel like a loss of relevance, and the work begins serving the reaction instead of the idea.",
+    "development": "The next choice is whether to keep escalating or make the series at the size we can actually sustain. We can finish the piece already underway before announcing another, keep an unusual part even when the familiar part got more applause, and share less often rather than padding the series with work made only to hold attention. That slows the promise-making and gives each installment time to become distinct. The audience may grow more slowly, but response returns to being useful information instead of the only reason to continue.",
+    "close": "Before {{exitDate}}, we can withdraw one oversized promise about the series and finish the smaller version already underway.",
+    "try_this": [
+      "We can share one finished installment with a small audience before adding extra details meant only to win praise.",
+      "We can wait until the next day to read replies, and first write down what we want to make next."
+    ]
+  }
+}

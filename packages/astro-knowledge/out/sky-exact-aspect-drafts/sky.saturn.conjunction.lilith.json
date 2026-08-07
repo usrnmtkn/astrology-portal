@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:44.707Z",
+  "id": "sky.saturn.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.conjunction.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Saturn conjunct Lilith",
+    "humanMoment": "Performers refuse to take the stage until a restrictive contract clause is removed.",
+    "developmentDetail": "The audience waits while organizers and performers reopen terms that had previously been treated as nonnegotiable.",
+    "planetaryDynamic": "Saturn gives the contract its authority and obligation, while Lilith carries the objection those terms excluded and the refusal to comply.",
+    "aspectMechanic": "Under the conjunction, the contract dispute and the refusal to perform become one event, making a necessary boundary difficult to separate from the accumulated anger driving the standoff.",
+    "conditionalConsequence": "If the clause is rewritten to represent the performers' refusal, the show can proceed on firmer terms, but if old anger is directing the standoff, the cancellation may outlast the rule that triggered it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the conjunction, the contract dispute and the refusal to perform become one event, making a necessary boundary difficult to separate from the accumulated anger driving the standoff.",
+    "why": "The mechanic is slightly dense but correctly merges Saturnian structure with Lilithian refusal while preserving ambiguity about justified boundaries and old anger.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:44.707Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "24c16685308d9e0257980a7d173b1fbc06a1b852cce583003349eb981cf3bb5c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "4e04cd59c05baf580d92f32d7073b292a4c0e5936aa5b322e45f3acd563f00b0",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "93ae5c82b49fa1bfe6809fd09b429a65dcd88da3ad2b3cf43085d311ebed0d08"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

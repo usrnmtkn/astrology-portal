@@ -15,6 +15,18 @@ Reference implementation: `renderFallback.mjs` (natal placements). The app's res
 6. **Required-slot gate.** Any required slot without an eligible row → throw `SOURCE_GAP` (surface then shows its designated emergency copy). Never substitute a generic phrase.
 7. **Post-processing.** a/an agreement, whitespace collapse, unresolved-brace check (throw, never ship braces).
 
+### Continuous Sky Placement interim hook
+
+Resolution order for continuous Sky Placements is: exact authored article,
+eligible `sky-placement-continuous-v2` unit, eligible complete standalone
+`fallback-hook/sky-placement-sign/{planet}/{sign}`, then `SOURCE_GAP`. The
+standalone row renders whole as one paragraph. It must not be combined with the
+retired placement hook/lived/turn/moves stack, and `needs_review` rows remain
+ineligible. Continuous rows are also distribution-gated: only keys in a
+`serving` release with an exact owner-approved serving diff enter the reader
+partition. The on-demand partition may replace the eager standalone floor only
+after it loads and passes package-manifest validation.
+
 ## Hard runtime rules
 
 - A row with `content_role: fallback_source` reaching any render path is a thrown error, not a skipped row.

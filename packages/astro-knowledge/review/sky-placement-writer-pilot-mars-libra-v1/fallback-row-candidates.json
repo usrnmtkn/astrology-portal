@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "When Mars enters Libra on {{entryDate}}, the song we have been shaping with a collaborator has several endings and no final version. One cut has force; another better fits the rest, and we keep revising so neither preference is overruled. The care is useful: a choice made with attention to another response can become sharper than a solo decision. Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to circle the zodiac. A retrograde can extend one sign stay to about 7 months.",
+      "tension": "Before the next rehearsal, we send another edit, ask for another reaction, and soften the strongest moment before anyone can object. Neither of us says which ending we actually want. No argument happens, but the song stays unfinished, and each of us starts resenting the other for a delay both of us are creating. The same social awareness that protects the partnership now keeps either side from taking a clear position.",
+      "development": "At the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.",
+      "try_this": [
+        "We can replace one automatic “either is fine” with the option we actually prefer.",
+        "We can send one reply we have been softening, using a clear sentence without adding an apology.",
+        "We can make one visual or musical choice this week without collecting extra opinions."
+      ],
+      "aspect_units": [],
+      "body_you": "When Mars enters Libra on {{entryDate}}, the song we have been shaping with a collaborator has several endings and no final version. One cut has force; another better fits the rest, and we keep revising so neither preference is overruled. The care is useful: a choice made with attention to another response can become sharper than a solo decision. Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to circle the zodiac. A retrograde can extend one sign stay to about 7 months.\n\nBefore the next rehearsal, we send another edit, ask for another reaction, and soften the strongest moment before anyone can object. Neither of us says which ending we actually want. No argument happens, but the song stays unfinished, and each of us starts resenting the other for a delay both of us are creating. The same social awareness that protects the partnership now keeps either side from taking a clear position.\n\nAt the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.\n\nBefore {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.",
+      "body_they": "When Mars enters Libra on {{entryDate}}, the song we have been shaping with a collaborator has several endings and no final version. One cut has force; another better fits the rest, and we keep revising so neither preference is overruled. The care is useful: a choice made with attention to another response can become sharper than a solo decision. Mars usually spends roughly 6 to 7 weeks in each sign and takes about 2 years to circle the zodiac. A retrograde can extend one sign stay to about 7 months.\n\nBefore the next rehearsal, we send another edit, ask for another reaction, and soften the strongest moment before anyone can object. Neither of us says which ending we actually want. No argument happens, but the song stays unfinished, and each of us starts resenting the other for a delay both of us are creating. The same social awareness that protects the partnership now keeps either side from taking a clear position.\n\nAt the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.\n\nBefore {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-pilot-mars-libra-v1"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generatedAt": "2026-08-03T21:07:20.961Z",
+  "calls": {
+    "writer": 4,
+    "writerCallsThisRun": 0,
+    "judgeAttempts": 2,
+    "completedJudgeCalls": 0,
+    "totalApiAttempts": 6
+  },
+  "writer": {
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement"
+  },
+  "judge": {
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "judge:sky-placement:sol-owner-authorized",
+    "authorization": "owner-explicit-sol-generation-and-judging",
+    "status": "blocked_no_credits"
+  },
+  "cards": [
+    {
+      "id": "sky.station.mercury.pisces.retrograde",
+      "deterministicPassed": false,
+      "judgeScore": null,
+      "judgeVerdict": "not_run",
+      "judgeEvidenceStatus": "human_review_required"
+    },
+    {
+      "id": "sky.retrograde.venus.scorpio.retrograde_passage",
+      "deterministicPassed": false,
+      "judgeScore": null,
+      "judgeVerdict": "not_run",
+      "judgeEvidenceStatus": "human_review_required"
+    },
+    {
+      "id": "sky.station.chiron.taurus.retrograde",
+      "deterministicPassed": false,
+      "judgeScore": null,
+      "judgeVerdict": "not_run",
+      "judgeEvidenceStatus": "human_review_required"
+    },
+    {
+      "id": "sky.ingress.jupiter.leo",
+      "deterministicPassed": true,
+      "judgeScore": null,
+      "judgeVerdict": "not_run",
+      "judgeEvidenceStatus": "human_review_required"
+    }
+  ]
+}

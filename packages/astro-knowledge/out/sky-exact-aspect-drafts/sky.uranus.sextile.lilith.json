@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:28.184Z",
+  "id": "sky.uranus.sextile.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "uranus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.sextile.lilith",
+    "planetA": "uranus",
+    "planetB": "lilith",
+    "aspect": "sextile",
+    "title": "Uranus sextile Lilith",
+    "humanMoment": "A partner who has quietly carried the household’s care work packs a suitcase and leaves before breakfast.",
+    "developmentDetail": "Shared cards are canceled, spare keys are returned, and years of unspoken resentment are condensed into one blunt note.",
+    "planetaryDynamic": "Uranus supplies the sudden break for freedom, while Lilith voices the refusal that has waited beneath years of silence.",
+    "aspectMechanic": "The sextile opens a usable path from packed suitcase to real separation, but the partner still has to leave and establish the boundary.",
+    "conditionalConsequence": "If the departure holds, the household must quickly reorganize its care and bills, even if the blunt note makes later negotiations harder.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The sextile opens a usable path from packed suitcase to real separation, but the partner still has to leave and establish the boundary.",
+    "why": "All fields satisfy the contract; the aspect mechanic is slightly explicit but correctly shows an actionable opening that still requires follow-through.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:28.184Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "eb43d44ed3dd140826fdd9fdd6539c9b150f0ce0ba0520a6eabd0dae5ee3be5b",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "9b2a5bd664da2cc1d77409750911292aa27c5bb5ce12c1228cdb9937f9a02006",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "020bb6f9c97e4de2a4cab48fe14b9328d30e71731f5f2fd23bac69068df9c99c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.sextile.lilith",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

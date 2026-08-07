@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:44:45.862Z",
+  "id": "sky.mercury.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mercury-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "draft": {
+    "id": "sky.mercury.opposition.chiron",
+    "planetA": "mercury",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Mercury opposite Chiron",
+    "body": "We spend days rehearsing one honest sentence, then hear a trace of condescension and reply more sharply than we meant to. Mercury opposite Chiron puts the need to say it across from the old fear of sounding slow, confused, or easy to dismiss. A careful question meets a defensive joke, a cheerful \"I’m fine\" covers the real answer, or someone else names the hurt we were trying to avoid.\n\nThe roles can switch before the conversation is over: one person pushes for clarity, another goes quiet, and neither can pretend the missing words do not matter. Our doubt about being heard can make us unusually careful listeners, able to find the real issue beneath a clumsy explanation. Once the conversation starts, it may heal more than expected. The imperfect truth said aloud can do what the polished sentence still waiting cannot.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "The roles can switch before the conversation is over: one person pushes for clarity, another goes quiet, and neither can pretend the missing words do not matter.",
+    "why": "Lived-first, specific, and clear, with Mercury-Chiron tension expressed through recognizable speech patterns, shifting interpersonal roles, and a clean final turn toward imperfect truth.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:44:45.862Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "0fa03d2d2f581576fe7d5fd69604ebbe3e5e329dc6f8ddf19558b12825ce75ee",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "2941f49d78784742e7bbd937a4b01c0b8720f02953d7d426d172e17fd183b827",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "527451ace77e09d69e4c5733a34a2b3312218877d46e1ba92923371d4eb9ed39"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

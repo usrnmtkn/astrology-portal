@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "source": "packages/astro-knowledge/review/sky-placement-writer-batch-1-editorial-revisions-v3.json",
+  "billedCalls": 0,
+  "terraCalls": 0,
+  "results": [
+    {
+      "id": "sky-placement-batch-1-mercury-gemini-editorial-revision-v3",
+      "overallPassed": true,
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "warning": "group chat",
+      "notes": ["tension is five short sentences; structural guidance says two to four"]
+    },
+    {
+      "id": "sky-placement-batch-1-mercury-virgo-editorial-revision-v3",
+      "overallPassed": true,
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "notes": []
+    },
+    {
+      "id": "sky-placement-batch-1-mars-aries-editorial-revision-v3",
+      "overallPassed": true,
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "warning": "the situation",
+      "notes": ["The wording is preserved from the owner-selected benchmark and remains for owner review."]
+    },
+    {
+      "id": "sky-placement-batch-1-mars-scorpio-editorial-revision-v3",
+      "overallPassed": true,
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "notes": ["tension is five short sentences; structural guidance says two to four"]
+    },
+    {
+      "id": "sky-placement-batch-1-mars-capricorn-editorial-revision-v3",
+      "overallPassed": true,
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "notes": ["tension is five short sentences; structural guidance says two to four"]
+    },
+    {
+      "id": "sky-placement-batch-1-saturn-aries-editorial-revision-v3",
+      "overallPassed": true,
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "notes": ["tension is five short sentences; structural guidance says two to four"]
+    },
+    {
+      "id": "sky-placement-batch-1-jupiter-leo-editorial-revision-v3",
+      "overallPassed": true,
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "notes": ["tension is five short sentences; structural guidance says two to four"]
+    }
+  ],
+  "cycleFactInProse": {
+    "passed": true,
+    "violations": 0,
+    "rule": "Reviewed cycle facts render in the engine-owned fact line under the date range."
+  },
+  "batchRepetition": {
+    "passed": true,
+    "term": "group chat",
+    "maxOccurrences": 1,
+    "occurrenceCount": 1,
+    "articleId": "sky-placement-batch-1-mercury-gemini-editorial-revision-v3"
+  },
+  "governance": {
+    "allNeedsReview": true,
+    "allOwnerApprovedFalse": true,
+    "servingAuthorized": false,
+    "wiringAuthorized": false,
+    "promotionAuthorized": false,
+    "canonical": false
+  }
+}

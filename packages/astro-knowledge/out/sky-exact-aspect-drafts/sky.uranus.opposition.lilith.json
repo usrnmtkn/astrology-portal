@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:37.985Z",
+  "id": "sky.uranus.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "uranus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.opposition.lilith",
+    "planetA": "uranus",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Uranus opposite Lilith",
+    "humanMoment": "A model stops halfway down a runway, drops the designer’s coat at the edge of the stage, and walks out after years of silence about unpaid work.",
+    "developmentDetail": "The audience keeps filming as producers signal for the show to continue and several other models remain frozen backstage.",
+    "planetaryDynamic": "Uranus drives the abrupt break from the show, while Lilith carries the model’s long-excluded refusal to keep performing under those terms.",
+    "aspectMechanic": "The opposition places the producers trying to continue the runway across from the model walking out, so neither the production nor the unpaid work can be edited out of the scene.",
+    "conditionalConsequence": "If more models follow her offstage, the show may collapse before the payment dispute can be contained behind the spectacle.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The opposition places the producers trying to continue the runway across from the model walking out, so neither the production nor the unpaid work can be edited out of the scene.",
+    "why": "Slightly more explanatory than the other fields, but it clearly applies the opposition through visible opposing positions and remains specific to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:37.985Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "c80694fa7d68c3ed8810f789565c96b30deb2e8342773b7fd60c051eb1f58f38",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "13af45d97e22784fe62cb45cc766f6615cfbad5665cc68de3335c6757b3e2499",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6322d293576ff33540a37df8522296c2e26427fe5446c23f29f122c2563a28a4"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

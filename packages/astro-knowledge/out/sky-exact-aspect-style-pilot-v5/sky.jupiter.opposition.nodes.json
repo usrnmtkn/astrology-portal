@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:47:14.425Z",
+  "id": "sky.jupiter.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.jupiter.opposition.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Jupiter opposite North Node",
+    "body": "A generous offer solves an immediate problem and quietly pulls us back toward a direction we had already outgrown. More money, a wider audience, a calendar filled months ahead: the size is flattering, but the next step we actually need looks modest beside it. With Jupiter opposite North Node, one person is selling us on how large this could become while another keeps asking where all that growth would lead. Both positions have real value, and choosing one does not erase the consequences raised by the other.\n\nWe can accept every introduction, add another commitment, and call the increased activity progress while the work we mean to build keeps getting postponed. Refusing the oversized option may look ungrateful, especially to people who can see its benefits but not its detour. Once we choose a direction, luck becomes easier to recognize in the contact, opening, or resource that helps us continue. The right opportunity may ask us to grow less at once and go farther.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first, concrete, and pair-specific. The oversized backward opportunity versus the modest forward step clearly embodies Jupiter against the nodal direction, with natural collective cadence and a clean final turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:47:14.424Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "2ad4fe379946153a615d8d1efae8c05d6d026b09692a84795a8067ec0e8a7084",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "7b2eeb4d1ffa0b0a622e88f1d6e1be03f243146fac2589c1a8b9beed36f45c68",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0c350caf3f3702e26ca1bc55999cdffe6734d89546ec9e522cb65bb42b3c4632"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

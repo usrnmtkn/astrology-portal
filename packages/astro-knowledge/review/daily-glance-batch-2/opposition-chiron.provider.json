@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "key": "opposition/chiron",
+  "responseId": "resp_0b9599c87e11bea8006a72a4e7d1348192b6c2c916e8c717c2",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 80010,
+  "usage": {
+    "inputTokens": 2246,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 2243,
+    "outputTokens": 4769,
+    "reasoningTokens": 4660,
+    "totalTokens": 7015
+  },
+  "estimatedCostUsd": 0.15710375,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "51e7d148161ed30217db1fa4c93e7f1613215ca99e2f95b559eee5b022afdec5",
+  "incompleteDetails": null
+}

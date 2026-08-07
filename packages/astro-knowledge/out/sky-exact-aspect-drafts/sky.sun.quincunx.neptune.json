@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:07:15.028Z",
+  "id": "sky.sun.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-neptune",
+    "path": "data/pairs/sun-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.neptune",
+    "planetA": "sun",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Neptune",
+    "humanMoment": "A relief fundraiser launches with a stirring portrait of who needs help, but the people featured do not recognize themselves in it.",
+    "developmentDetail": "Organizers keep revising the stage script, images, and donation language as sympathy rises alongside questions about consent and where the money goes.",
+    "planetaryDynamic": "The Sun supplies the campaign's public identity and need to stand behind its message, while Neptune brings compassion, imagination, and the risk of a foggy rescuer narrative.",
+    "aspectMechanic": "The Sun-Neptune quincunx keeps the fundraiser shifting between a clear public identity and an idealized portrait of need, with each script revision exposing another mismatch in the images and donation language.",
+    "conditionalConsequence": "If the stirring images continue to outrun consent and financial clarity, donations may increase while trust in the campaign erodes.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "none",
+    "why": "The entry opens with a concrete collective event, develops observable tensions, distinguishes the Sun and Neptune clearly, and expresses the quincunx through repeated revisions and unresolved mismatches.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:07:15.027Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "3ec95c090762e61c07ec83f6d029d9a2d5ef913801576e5761446b0be0cadf78",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "03bd0e80457c19eca960c28a6c72bebddf4ab87d04575574a22eee07b1040bf0",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3466bdfc86f161aec4581d9467aef05bc29f7cd1a3b8caeec152a38bcf00ec38"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

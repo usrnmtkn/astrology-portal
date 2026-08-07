@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:24.492Z",
+  "id": "sky.mercury.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mercury-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.mercury.conjunction.nodes",
+    "planetA": "mercury",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Mercury conjunct North Node",
+    "humanMoment": "At a neighborhood benefit, several donors ask the same question about who will take over a long-running care program.",
+    "developmentDetail": "Veteran volunteers retell how the program began, while a newly introduced coordinator keeps returning to the unanswered handoff.",
+    "planetaryDynamic": "Mercury carries each story and question, while the North Node distinguishes the future-facing handoff from the familiar history that is easier to rehearse.",
+    "aspectMechanic": "Under the conjunction, the repeated question and the handoff become one conversation, making useful direction difficult to separate from another turn through the program's past.",
+    "conditionalConsequence": "If the benefit stays with the familiar stories, the coordinator's introduction may end without clarifying who will carry the program forward.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "All five fields are concrete, distinct, mechanically accurate, and evergreen. The node axis is presented as a tension between familiar history and a future-facing handoff without implying fate, and the conjunction clearly merges the repeated question with the directional conversation.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:24.491Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ad9276adb61e786a803a77155fe55b3939c340047d560292b6883af0ac96bf13",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c9ba48b64196bfe8e4abc78961011e0c24e5ceaa2444cf4cc22c6ce32b3635a0",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "bc54af7ac1da6a1a97fb128bcd444d6760d854c1987596145bd06d2dde1d8181"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

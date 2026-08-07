@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:57.245Z",
+  "id": "sky.jupiter.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "jupiter-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.opposition.lilith",
+    "planetA": "jupiter",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Jupiter opposite Lilith",
+    "humanMoment": "Elite athletes begin publicly pressing a sports federation to legalize a performance-enhancing drug long used in secret.",
+    "developmentDetail": "Sponsors embrace the promise of faster records while medical officials release evidence of health risks and unfair advantage.",
+    "planetaryDynamic": "Jupiter magnifies the demand for greater performance and public acceptance, while Lilith exposes the illicit appetite that the sport kept hidden.",
+    "aspectMechanic": "The opposition places athletes and sponsors pushing to lift the ban across from officials defending health and fair play, so neither position can be edited out of the decision.",
+    "conditionalConsequence": "If the federation relaxes the ban under commercial pressure, new records may arrive alongside a lasting dispute over whether bigger performance justified the cost.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry opens with a concrete collective conflict, clearly distinguishes Jupiter’s amplification from Lilith’s hidden appetite, applies the opposition through opposing institutional positions, and ends with a plausible conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:57.245Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "d787c2624b6b9b55b11496ae2b8477f082db27c114299056b8df2074f6d89d28",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "f4e14e89ed72bffa84e1db68640bc4df3bbe3b54476ed4eede47de998eb60675",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e0a34803751a0323381ed5aea00c901bbe4ee39bf197c6c79a9c30d22f7f1450"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

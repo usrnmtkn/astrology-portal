@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:25.740Z",
+  "id": "sky.pluto.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "pluto-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.pluto.conjunction.nodes",
+    "planetA": "pluto",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Pluto conjunct North Node",
+    "humanMoment": "A buried ownership record surfaces just as a community theater is being sold for redevelopment.",
+    "developmentDetail": "The sale is paused, former stewards file a claim, and what looked like a routine closure becomes a public dispute over who has the right to decide the building's future.",
+    "planetaryDynamic": "Pluto exposes the power buried in the ownership record, while the North Node makes that authority central to the theater's next chapter.",
+    "aspectMechanic": "Under the conjunction, surfacing the record and redirecting the sale become one event, making the recovery of control difficult to separate from the course that follows.",
+    "conditionalConsequence": "If the claim is upheld, the attempted closure becomes a transfer of control rather than the theater's final ending.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Pluto exposes the power buried in the ownership record, while the North Node makes that authority central to the theater's next chapter.",
+    "why": "No material weakness; this is the most interpretive field, but it still distinguishes buried power from the path-setting node function without treating the outcome as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:25.740Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "df8aa9f9def5de250819f178b8c0e7b07889452d11310e08bfd540260ed12a88",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "fc44829aa9bafbc0136885161dca3bb66b5ad70ede4a3190d16fae25a51112c8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "183ca8f293a420c8ea11e0b585851623aa59b4febc948e58c3d6843c5afc7a4f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

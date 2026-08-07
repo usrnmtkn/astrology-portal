@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:12.191Z",
+  "id": "sky.jupiter.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "jupiter-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.sextile.chiron",
+    "planetA": "jupiter",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Jupiter sextile Chiron",
+    "humanMoment": "A museum's expanded exhibition on a celebrated local industry brings former workers forward with accounts of injuries the original display left out.",
+    "developmentDetail": "Crowded listening sessions add testimony, medical records, and mutual-aid history to a story once told only through growth and civic pride.",
+    "planetaryDynamic": "Jupiter enlarges the exhibition's reach, while Chiron carries both the workers' injuries and the care that grew around them.",
+    "aspectMechanic": "The sextile creates an opening to turn the listening sessions into a fuller public record, but curators and former workers still have to recognize the chance and act on it.",
+    "conditionalConsequence": "If the testimony and records enter the permanent archive, future visitors encounter both the injuries and the support workers built in response.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Jupiter enlarges the exhibition's reach, while Chiron carries both the workers' injuries and the care that grew around them.",
+    "why": "Ready for owner review; this is the least vivid field, but it still clearly distinguishes Jupiter's expansion from Chiron's wound-and-medicine function.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:12.190Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "2a7b10fe0b598141ddaa695bfa960d4d15c7aeb7228825cf9fb12fc039420fbc",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "08fe717adf89cc4ea06cd58e0e9266f2d40a5f04d96b36f90db7963d73701812",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "2c0578df98aee9aa7cb32f6682985b891a6c9c4e3b3b3471a8e9b2249c683ece"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

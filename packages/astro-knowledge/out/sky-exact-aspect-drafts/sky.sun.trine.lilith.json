@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:10.852Z",
+  "id": "sky.sun.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "sun-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.trine.lilith",
+    "planetA": "sun",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Sun trine Lilith",
+    "humanMoment": "At a museum fundraiser, the featured artist abandons the polished introduction and names the desire everyone has been carefully avoiding.",
+    "developmentDetail": "The audience laughs, then applauds, while the evening’s respectable script suddenly looks more like a costume than a consensus.",
+    "planetaryDynamic": "The Sun brings the public persona and its need for approval, while Lilith brings the want that was ruled unacceptable.",
+    "aspectMechanic": "Under the trine, public recognition and the exiled desire reinforce each other with little resistance, making honesty easier to receive or harder to contain.",
+    "conditionalConsequence": "If the applause rewards the breach, later speakers may carry the same candor further before the organizers question what the event has opened.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "humanMoment",
+    "weakest": "At a museum fundraiser, the featured artist abandons the polished introduction and names the desire everyone has been carefully avoiding.",
+    "why": "The scene is concrete and recognizable, both bodies are clearly distinguished, and the trine enables candor while also allowing the breach to travel farther before being questioned. The opening's use of \"everyone\" is slightly broad but does not weaken the source.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:10.851Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "60e6393185313be0df4a81ea9263323c347272ea7ac0f86494a63d38f9b706fd",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "6523aca103d02dd764b9224bfb68bc6a6e1db0fdeca9c391810bece5e4439442",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ac6a38bbc40fe2d2f800b6a609607ab66b61ee26473136c10385d77819ea4ab7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

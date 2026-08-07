@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:10.536Z",
+  "id": "sky.moon.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "moon-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.moon.conjunction.lilith",
+    "planetA": "moon",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Moon conjunct Lilith",
+    "humanMoment": "A couple abandons its usual Friday dinner halfway through and spends the rest of the night searching for somewhere else to go.",
+    "developmentDetail": "The bill is paid, three new reservations are made and canceled, and neither person names what the evening is missing.",
+    "planetaryDynamic": "The Moon reaches for a familiar form of comfort, while Lilith presses the appetite that the routine was built to keep quiet.",
+    "aspectMechanic": "Under the conjunction, leaving the usual dinner and chasing the unspoken want become one event, making comfort difficult to separate from avoidance.",
+    "conditionalConsequence": "If another reservation replaces the missing conversation, the night may grow more expensive without becoming more satisfying.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete and evergreen, the Moon and Lilith are accurately distinguished, and the conjunction merges the search for comfort with pursuit of an unspoken appetite in a specific, natural consequence chain.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:10.536Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "a51794d1ead376edd17955c6d21014a4adb529b51d6ce30b38367a0baf5e00c3",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "ad2398a52c4feda22a8bf9f51990c3bea709007840a6bdecd6e64388da90ee31",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "5f8f66981026bc28ff03e10edafa0839aaef064733fbb0267b49c108c6f0c4fa"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

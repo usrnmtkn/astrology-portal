@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:35.260Z",
+  "id": "sky.sun.quincunx.jupiter",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-jupiter",
+    "path": "data/pairs/sun-jupiter.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.jupiter",
+    "planetA": "sun",
+    "planetB": "jupiter",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Jupiter",
+    "humanMoment": "A neighborhood fundraiser raises its target after early donations arrive faster than expected.",
+    "developmentDetail": "New attractions draw a larger crowd, but permits, supplies, and volunteer coverage keep falling out of step with the expanded plan.",
+    "planetaryDynamic": "The Sun supplies confidence and authority, while Jupiter enlarges the opportunity and the belief that luck will hold.",
+    "aspectMechanic": "The quincunx forces repeated adjustments because the Sun is trying to sustain a clear purpose while Jupiter keeps pursuing greater reach, and neither function can fully accommodate the other.",
+    "conditionalConsequence": "If the event keeps expanding on the strength of its early success, the added costs and logistical gaps can consume the gains that prompted the expansion.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx forces repeated adjustments because the Sun is trying to sustain a clear purpose while Jupiter keeps pursuing greater reach, and neither function can fully accommodate the other.",
+    "why": "The mechanic is slightly more formal than the scene language, but it clearly and accurately connects the quincunx tension to the fundraiser’s expanding scope.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:35.260Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "e28b678c8433474924d4a5ffeab76977844f2cbc37631cfa1d86c37f2aa7c030",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "65974355039fcc5c1c9cc1810ed503b02ffb36d0f0f46e2858d5ece0f6a6e997",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4309682161ce8be1a9b11a3058c618a71d45e397442cee5f7172c5632aea23a1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.jupiter",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

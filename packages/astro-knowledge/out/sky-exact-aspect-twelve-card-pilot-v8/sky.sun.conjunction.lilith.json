@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:54:53.090Z",
+  "id": "sky.sun.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "sun-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A person wants public approval while also wanting to express something that others may reject.",
+    "examples": [
+      "A manager raises a taboo concern during a formal meeting.",
+      "A respected volunteer admits to a desire that conflicts with the group's standards.",
+      "An employee feels relieved when a colleague voices the objection everyone avoided."
+    ],
+    "pairBehavior": "The Sun contributes the need for visible approval, while Lilith contributes a desire that has been treated as unacceptable.",
+    "aspectBehavior": "The conjunction combines both needs in the same event, making their strengths and blind spots hard to distinguish.",
+    "consequence": "The public identity can feel false when the rejected desire demands expression."
+  },
+  "draft": {
+    "id": "sky.sun.conjunction.lilith",
+    "planetA": "sun",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Sun conjunct Lilith",
+    "body": "The version of us that earns approval can suddenly feel like a costume when an unacceptable want needs words. With Sun conjunct Lilith, the need to be seen and respected joins the desire to say what people may reject, and both come through the same choice. A taboo concern gets raised in a formal meeting; a respected volunteer admits wanting something that clashes with the group’s standards. Sometimes the strongest reaction is relief when someone else finally voices the objection everyone avoided.\n\nBecause the wish for approval and the rejected desire are moving together, honest courage can be hard to separate from speaking without weighing the consequences. We may protect our public identity by editing out something real, then resent the life that identity helped us build. The rejected desire is not automatically right, but it may be useful information about what no longer fits. Being accepted should not require us to act like part of us does not exist.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "ending",
+    "weakest": "Being accepted should not require us to act like part of us does not exist.",
+    "why": "The final sentence turns a pair-specific observation into a generic self-acceptance maxim. Replace it with a sharper consequence of public approval and the banished want occupying the same stage.",
+    "failedChecks": [
+      "clean pair-specific ending"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:46.945Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "9f5bfba3ad5b9b694ecefb015c0f81606dfb2809e913a1766350d13b0ec0b8f4",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "64e973152d3cfe8f25d7bd01438c4850791d3c805d3bb74adc6950649aa64aff",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "clean pair-specific ending"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e9cbb42ae2452ffc8bb7377d7bc143c909afd11bea37fc1ffe308162225399cb"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 2,
+    "verdict": "borderline",
+    "rationale": "One sentence becomes vague at the end because it never identifies the choice through which both impulses supposedly emerge.",
+    "failedChecks": [
+      "unclear-referent"
+    ],
+    "evidence": [
+      {
+        "checkId": "unclear-referent",
+        "sentence": "With Sun conjunct Lilith, the need to be seen and respected joins the desire to say what people may reject, and both come through the same choice."
+      }
+    ],
+    "why": "One sentence becomes vague at the end because it never identifies the choice through which both impulses supposedly emerge.",
+    "weakest": "With Sun conjunct Lilith, the need to be seen and respected joins the desire to say what people may reject, and both come through the same choice.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:53.090Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "ad162e0d6fdf531ac92f169ceb04a4f9fca48d337e54c4cbe98a31c5a83de258",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "64e973152d3cfe8f25d7bd01438c4850791d3c805d3bb74adc6950649aa64aff",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "unclear-referent"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "49f4c764861dd79793566cb39b177be89764f1bcbbbf57377520f1f03816b4f4"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

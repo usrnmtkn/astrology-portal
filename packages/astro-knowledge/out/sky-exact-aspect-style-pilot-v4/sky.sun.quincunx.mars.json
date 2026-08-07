@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:41:23.732Z",
+  "id": "sky.sun.quincunx.mars",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-mars",
+    "path": "data/pairs/sun-mars.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.mars",
+    "planetA": "sun",
+    "planetB": "mars",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Mars",
+    "body": "We want to stand behind a decision, then our own urgency knocks it sideways. Sun quincunx Mars puts the self we are trying to be beside an impulse that has already hit send, cut in, or taken over the task. We act to prove we mean it, pull back when the force feels unlike us, then push again when someone else takes charge. The plan keeps changing around the heat: a careful answer becomes a sharp reply, a useful burst of effort turns into forcing the issue.\n\nBy the time we recognize ourselves in an action, Mars is ready for the next move; when we pause to recover our center, the unused energy finds someone to oppose. Authority becomes unusually irritating, especially when it exposes how uncertain we are about our own direction. Progress comes in revisions: act, check the force, change the angle, act again. The aim is not to become less forceful, but to make sure our actions still belong to us.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "clarity",
+    "weakest": "By the time we recognize ourselves in an action, Mars is ready for the next move; when we pause to recover our center, the unused energy finds someone to oppose.",
+    "why": "Slightly more abstract than the surrounding copy, but still clear, active, and accurate to the Sun-Mars tension and repeated adjustment.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:41:23.732Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "49396545aa0fea69170757591eed8e35a4a490361825c1a3e69fc7574ae04862",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "3d696743e93511e872ffb436714ec828cf462cf931e26c5b480ef34ccc0a916a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "5f0f3004322d6be057296aa6ad28d6263fdb5c305df08da1fb92dc400b82cd04"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.mars",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

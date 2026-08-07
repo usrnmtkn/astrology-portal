@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:32:40.384Z",
+  "id": "sky.mars.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mars-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.mars.opposition.lilith",
+    "planetA": "mars",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Mars opposite Lilith",
+    "body": "A small irritation lands, and suddenly the whole room is arguing with ten years of buried heat. With Mars opposite Lilith, the approved way to push forward meets the fury that never agreed to behave. A slammed cupboard, a joke sharpened past funny, the hand pulled away before anyone can soften it. One side insists on control, restraint, and a usable outcome; the other would rather break the terms than be domesticated by them. The split moves between people and positions, so casting one side as the problem only gives it another place to erupt.\n\nWe feel it as a battle of wills, but the real fight is over whose anger gets sanctioned and whose must disappear. Our reactions can outrun the present offense because the oldest exile has finally found a live wire. Force cannot make wildness consent, and refusal cannot keep force out of the outcome. The heat is older than the moment. The spark is not.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived-first opening, concrete fragments, active Mars-Lilith conflict, clear opposition behavior, natural collective deepening, and a clean truth-and-catch ending.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:32:40.383Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "225df647d5fbbec17daf579bf4e865aeb5979510f598b8b0e5809a621f6bb117",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "fad130b99a10dfebe2468b068f3b2d8d78a559c53a9d3d337b14d15328722ccb",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "188a9f1f4a67e971c0544955fc0a08e8b841a292d47060cccdfd09f4da9ee651"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:55:55.137Z",
+  "id": "sky.neptune.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "neptune-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A new direction feels meaningful but remains unclear, while familiarity makes the old direction seem better than it was.",
+    "examples": [
+      "An artist wants to begin a new project but has not chosen a subject.",
+      "A team considers ending an old program but remembers only its successes.",
+      "A job seeker takes a short course and identifies a specific role to pursue."
+    ],
+    "pairBehavior": "Neptune contributes an appealing but unclear vision, while the North Node contributes the need for a direction that can be followed.",
+    "aspectBehavior": "The sextile provides a practical opportunity for clarity, but it has an effect only when someone notices and uses it.",
+    "consequence": "One concrete action makes the next step clearer or shows that the plan is still too vague."
+  },
+  "draft": {
+    "id": "sky.neptune.sextile.nodes",
+    "planetA": "neptune",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Neptune sextile North Node",
+    "body": "A new direction can feel deeply meaningful and still be too vague to follow. With Neptune sextile the North Node, the calling is there, but the details arrive only when we give it something real to answer. An artist opens a blank document without choosing a subject; an old project reaches its end, and suddenly we remember only what worked. What we already know starts looking better than it was because the next step has not taken shape yet.\n\nThe opening becomes useful when we act on one part of the vision instead of waiting for certainty. We take the short course, test the idea, make the call, and a specific role or next move comes into view. That action may confirm the direction, or show us that the plan is still too foggy to carry forward. Clarity comes from trying the road, not staring at it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "ending",
+    "weakest": "Clarity comes from trying the road, not staring at it.",
+    "why": "The final metaphor is understandable but generic and slightly unnatural; it lacks the pair-specific precision of the preceding concrete action beat.",
+    "failedChecks": [
+      "pair-specific ending"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:50.626Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "dbd02f4602b235676a6356f7e76777d56dbc1bd8d61c4727827b33767fcae0f1",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "0aa70810698780b77fed187cd21cb272383560447c008fa9acbd327e2d56b91a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "pair-specific ending"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "29295f460615b6656fcd179b24af370b899abb15098d5c3f2f5ae76ef5874092"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "rationale": "Several lines rely on compressed abstractions or awkward metaphor, so the practical meaning is not immediately clear aloud.",
+    "failedChecks": [
+      "unclear-causality",
+      "unnatural-usage"
+    ],
+    "evidence": [
+      {
+        "checkId": "unclear-causality",
+        "sentence": "With Neptune sextile the North Node, the calling is there, but the details arrive only when we give it something real to answer."
+      },
+      {
+        "checkId": "unnatural-usage",
+        "sentence": "Clarity comes from trying the road, not staring at it."
+      }
+    ],
+    "why": "Several lines rely on compressed abstractions or awkward metaphor, so the practical meaning is not immediately clear aloud.",
+    "weakest": "With Neptune sextile the North Node, the calling is there, but the details arrive only when we give it something real to answer.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:55.137Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "bed460d59030a40f37f43cec41c9db74a13c5d2a736cdc2f795624f4bc212536",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "0aa70810698780b77fed187cd21cb272383560447c008fa9acbd327e2d56b91a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "unclear-causality",
+            "unnatural-usage"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "1900b6c68661f6ae737c72b6b95d130d21f5c90126f7b4bca553d4e3fc763bdd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

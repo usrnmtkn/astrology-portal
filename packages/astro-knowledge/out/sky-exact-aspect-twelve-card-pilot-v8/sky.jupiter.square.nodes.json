@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:55:39.971Z",
+  "id": "sky.jupiter.square.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A large opportunity conflicts with a smaller option that better supports long-term direction.",
+    "examples": [
+      "A high-paying job repeats an old career pattern, while a lower-paying role develops needed skills.",
+      "Several appealing projects consume time needed for one important commitment.",
+      "A familiar business offer delays work on a new professional goal."
+    ],
+    "pairBehavior": "Jupiter increases opportunities and ambition, while the North Node identifies the direction that supports future development.",
+    "aspectBehavior": "The square creates a practical conflict between broad expansion and focused progress that persists until a clear choice is made.",
+    "consequence": "Similar setbacks or competing offers keep occurring until growth is directed toward the intended path."
+  },
+  "draft": {
+    "id": "sky.jupiter.square.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Jupiter square North Node",
+    "body": "The biggest opportunity on the table may also pull us back into a life we already know. With Jupiter square North Node, options multiply faster than our sense of direction can sort them. A higher-paying job repeats an old career pattern; several exciting projects take time from one important commitment; a familiar business offer delays work on a new professional goal. Everything looks like growth, but only some choices develop what we will need next.\n\nWhen we avoid choosing, the same conflict returns in a different form. We take on more, lose time for the work that matters, and meet another appealing offer that recreates the same delay. Once we commit to a direction, the useful opportunity becomes easier to recognize and act on. The smaller option may pay less or impress fewer people, but it can build the skills and momentum our long-term direction requires.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "weakestField": "voice and movement",
+    "weakest": "Once we commit to a direction, the useful opportunity becomes easier to recognize and act on.",
+    "why": "The source meaning is accurate, but the second paragraph shifts into flat strategy language and resolves the tension through generic advice rather than a vivid, pair-specific observation. The example beat also reads as three summarized scenarios instead of quick concrete fragments.",
+    "failedChecks": [
+      "spoken cadence",
+      "compressed example beat",
+      "distinctive ending",
+      "strategy-brief tone"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:34.745Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "6220e2e7cf7cb38c2fcb41d58ce54140a755f7c95609cfa160409ec856a6147f",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "597a4b4ffee0d77a0667a87a835b32e65f81777b2c7b35f08898abb3f5dc73e3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "spoken cadence",
+            "compressed example beat",
+            "distinctive ending",
+            "strategy-brief tone"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a9fd0a5a7c5aa495290a530268f9c03e2e2d0bac481a8aef6d8d574e6b2f7a93"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 2,
+    "verdict": "borderline",
+    "rationale": "One sentence uses an awkward construction that makes the reader pause to interpret what the choices are developing.",
+    "failedChecks": [
+      "unnatural-usage"
+    ],
+    "evidence": [
+      {
+        "checkId": "unnatural-usage",
+        "sentence": "Everything looks like growth, but only some choices develop what we will need next."
+      }
+    ],
+    "why": "One sentence uses an awkward construction that makes the reader pause to interpret what the choices are developing.",
+    "weakest": "Everything looks like growth, but only some choices develop what we will need next.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:39.971Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "ae3c749042cfd8028fd639e459c8756faae2506612a5d6ea49ec7dbd0e8ae300",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "597a4b4ffee0d77a0667a87a835b32e65f81777b2c7b35f08898abb3f5dc73e3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "unnatural-usage"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a346c18877c35d9875c0bbf741ea6728e9a5cd0eec64a5339ea1c5f778e1a926"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

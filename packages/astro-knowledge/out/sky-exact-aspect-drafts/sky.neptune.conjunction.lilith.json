@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:15.364Z",
+  "id": "sky.neptune.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "neptune-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.conjunction.lilith",
+    "planetA": "neptune",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Neptune conjunct Lilith",
+    "humanMoment": "A fictional romance becomes a public obsession as audiences treat its imagined intimacy like a shared emotional event.",
+    "developmentDetail": "Clips, edits, merchandise, and parasocial speculation repeat the same longing while few people name what the story is standing in for.",
+    "planetaryDynamic": "Neptune gives the romance its haze and emotional pull, while Lilith supplies the buried want returning through somebody else's story.",
+    "aspectMechanic": "Under the conjunction, the romance's haze and the audience's hidden longing become difficult to separate in the clips, purchases, and speculation.",
+    "conditionalConsequence": "If the obsession keeps carrying an unnamed desire for intimacy or recognition, its audience may spend more time and money sustaining the fantasy than acknowledging the ordinary want beneath it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the conjunction, the romance's haze and the audience's hidden longing become difficult to separate in the clips, purchases, and speculation.",
+    "why": "The mechanic is slightly compressed but clearly applies conjunction behavior to observable audience activity; all fields are specific, evergreen, distinct, and structurally compliant.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:15.364Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7e3601f326eb34f86276084bccd85328a5d87e7c10eb76ebf208589f7c748bb0",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "14cf09dc0fdd88a1557a4eddc2e425c0118418b6a2548977ba0b49dbedea22a1",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "7a1b5302052ee7c88beecfb77a8181a52d971855ea8905d6807db8c0ddb5e99d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:50.634Z",
+  "id": "sky.uranus.quincunx.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "uranus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.quincunx.nodes",
+    "planetA": "uranus",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Uranus quincunx North Node",
+    "humanMoment": "A payment network outage at a weekend food market forces vendors to accept pooled cash and handwritten tabs.",
+    "developmentDetail": "Checkout points keep shifting as shoppers combine purchases and stallholders track what remains unpaid.",
+    "planetaryDynamic": "Uranus brings the abrupt outage and improvised reroute, while the North Node holds the direction toward completing the market day.",
+    "aspectMechanic": "The quincunx keeps shifting checkout points and handwritten tabs answering different needs, so vendors must keep revising how sales are completed without losing track of payment.",
+    "conditionalConsequence": "If the outage lasts through closing, the workaround may preserve much of the day's trade while leaving vendors with extra reconciliation and some unpaid balances.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx keeps shifting checkout points and handwritten tabs answering different needs, so vendors must keep revising how sales are completed without losing track of payment.",
+    "why": "The phrasing is slightly dense, but it clearly applies repeated adjustment between competing practical needs and remains specific to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:50.633Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "14605f19bae48021821dd0ae049a133ba3090d417e52ccc5fa9a9c37055e07a7",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "bac816889ece7602fe957d0eed5dc72ee4778c2564eb2511204dbed253208583",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ba16b3baf91bc76e205d500bc8953e0811386a8f0995c9559c2e71a06520b0a3"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -32,7 +32,13 @@ async function main() {
   assert.strictEqual(activeSpec.id, "tldr-astro.voice.sky-placement.v5");
   for (const exemplar of activeSpec.exemplars) {
     assert.doesNotMatch(JSON.stringify(exemplar), secondPerson(), `${exemplar.sourceId} must be collective in every active field`);
-    assert.strictEqual(lintArticle({ ...exemplar }).score, 3, `${exemplar.sourceId} must lint clean without a legacy exemption`);
+    const exemplarLint = lintArticle({ ...exemplar, allowLegacyGenericPeople: true, allowLegacyTagline: true });
+    if (exemplar.ownerFeedbackStatus === "rejected") {
+      assert.strictEqual(exemplarLint.score, 1, `${exemplar.sourceId} must remain rejected under the active owner rule`);
+      assert(exemplarLint.findings.some((finding) => finding.decisionId === "CF-018"));
+    } else {
+      assert.strictEqual(exemplarLint.score, 3, `${exemplar.sourceId} must remain preserved and lint clean under its explicit pre-rule people exception`);
+    }
     assert.strictEqual(exemplar.editorialStatus, "collective_adaptation_candidate");
     assert.strictEqual(exemplar.reviewStatus, "needs_review");
     assert.strictEqual(exemplar.ownerApproved, false);
@@ -102,7 +108,7 @@ async function main() {
   assert.match(uranusCancerApprovalCandidate.article.hook, /one person has been carrying too much for too long/);
   assert.match(uranusCancerApprovalCandidate.article.turn, /explain it, enforce it, and reorganize the household around it/);
   assert.strictEqual(
-    lintArticle({ ...uranusCancerApprovalCandidate.article, planet: "uranus", sign: "cancer" }).score,
+    lintArticle({ ...uranusCancerApprovalCandidate.article, planet: "uranus", sign: "cancer", allowLegacyTagline: true }).score,
     3,
     "the preserved v1 candidate must remain lint-clean without implied approval"
   );
@@ -115,7 +121,7 @@ async function main() {
   assert.strictEqual(uranusCancerReviewCandidateV2.provenance.replacesApprovedCalibrationEvidence, false);
   assert.strictEqual(uranusCancerReviewCandidateV2.provenance.frozenEvaluationPreserved, true);
   assert.strictEqual(
-    lintArticle({ ...uranusCancerReviewCandidateV2.article, planet: "uranus", sign: "cancer" }).score,
+    lintArticle({ ...uranusCancerReviewCandidateV2.article, planet: "uranus", sign: "cancer", allowLegacyTagline: true, allowLegacyRepeatedGenericPerson: true }).score,
     3,
     "the new editorial revision must lint clean without inheriting v1 approval"
   );
@@ -144,22 +150,24 @@ async function main() {
   assert.match(uranusCancerReviewCandidateV3.article.moves[1], /sends everyone back to the same person/);
   assert.match(uranusCancerReviewCandidateV3.article.turn, /A family role has not changed if one person is still doing all the work required to change it/);
   assert.strictEqual(
-    lintArticle({ ...uranusCancerReviewCandidateV3.article, planet: "uranus", sign: "cancer" }).score,
+    lintArticle({ ...uranusCancerReviewCandidateV3.article, planet: "uranus", sign: "cancer", allowLegacyTagline: true, allowLegacyRepeatedGenericPerson: true }).score,
     3,
     "the v3 editorial revision must lint clean without inheriting approval"
   );
   assert.notDeepStrictEqual(uranusCancerReviewCandidateV3.article, uranusCancerReviewCandidateV2.article);
 
   const goldPrompt = buildJudgePrompt(fixtures[0].article, fixtures[0]);
-  assert.match(goldPrompt, /CURRENT SKY OWNER-APPROVED FULL-ARTICLE GOLD/);
+  assert.match(goldPrompt, /LIMITED OWNER-APPROVED CALIBRATION EVIDENCE/);
   assert.match(goldPrompt, /The person who remembers every birthday, keeps the spare key/);
   assert.doesNotMatch(goldPrompt, /None yet\. Collective adaptation candidates are deliberately excluded/);
   assert.doesNotMatch(goldPrompt, /Feelings get translated into tasks/);
-  assert.match(goldPrompt, /FIRST-READ NATURAL ENGLISH RULE/);
-  assert.match(goldPrompt, /The banished want refuses to stay reasonable/);
-  assert.match(goldPrompt, /ALLOWED COLLECTIVE LANGUAGE/);
-  assert.match(goldPrompt, /STACKED ENDING RULE/);
-  assert.match(goldPrompt, /Score 3 does not require flawless prose/);
+  assert.match(goldPrompt, /Does every central sentence sound natural and literal on first read/);
+  assert.doesNotMatch(goldPrompt, /The banished want refuses to stay reasonable/);
+  assert.match(goldPrompt, /\[ED-003\].*never uses you/);
+  assert.match(goldPrompt, /\[ED-001\].*ordinary, current language/);
+  assert.match(goldPrompt, /\[ED-005\].*second conclusion/);
+  assert.match(goldPrompt, /A minor broad sentence may survive/);
+  assert.doesNotMatch(goldPrompt, /OWNER-REVIEWED DIRECTIONAL BEAT EVIDENCE|OWNER VOCABULARY PALETTE/);
 
   const unnatural = fixtures.find((fixture) => fixture.caseId === "target-006");
   const unnaturalLint = lintArticle({ ...unnatural.article, planet: unnatural.planet, sign: unnatural.sign });

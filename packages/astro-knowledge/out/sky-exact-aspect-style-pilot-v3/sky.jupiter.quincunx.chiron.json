@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:32:18.319Z",
+  "id": "sky.jupiter.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "jupiter-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.quincunx.chiron",
+    "planetA": "jupiter",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Jupiter quincunx Chiron",
+    "body": "Growth can press straight into the place we thought had stopped hurting. Under Jupiter quincunx Chiron, every opening seems to widen the ache and the way through it, but never at the same pace. An old photo found while packing, a kind offer that catches in the throat, a lesson that lands too close to home. We make room for more, then pull back to tend what the extra room exposed, then edge forward again with a different fit.\n\nWe feel the pattern as a series of corrections between hope and tenderness. Jupiter keeps enlarging the field; Chiron keeps locating the spot that cannot simply stretch along with it. Generosity reaches pain that used to stay hidden, yet even welcome care can make the sore place louder before it feels useful. The volume rises, and we can mistake access for injury or growth for proof that nothing healed. More feeling is not more damage. It may just be more access.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first, concrete, collective, and mechanically accurate, with repeated adjustment embodied in the action and a clean final truth-and-catch turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:32:18.317Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "eb2ff6be419718a8d9671d96802f93dcf4affdb2ab65f295103fb8d7df5b8d2b",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "0c2a0001dbf06b31587e356a4ad4c52b4061038e41218b9ea3037cffa66827bd",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "fbdd6b21abdd1395b8935dcbfb26d1296e437b816cf1f74bd8c643bb10e73840"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

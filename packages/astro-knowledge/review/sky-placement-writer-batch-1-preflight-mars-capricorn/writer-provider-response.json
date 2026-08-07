@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_07b810e9e79aaf95006a71ce09146c81a19be54db91f0c17a3",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 6419,
+    "input_tokens_details": {
+      "cache_write_tokens": 6416,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4299,
+    "output_tokens_details": {
+      "reasoning_tokens": 3874
+    },
+    "total_tokens": 10718
+  },
+  "outputText": "{\"opening\":\"Mars in Capricorn makes the stubborn unfinished goal feel workable again. When Mars enters Capricorn on {{entryDate}}, we choose a concrete result, put the necessary steps in order, and start with the part that has been avoided. The first hard section gets done, then the next, and visible progress replaces the argument about whether we feel ready. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each sign, so this stretch favors concentrated effort rather than endless preparation.\",\"tension\":\"Once the plan starts working, we can make it harsher. A necessary step is finished and immediately followed by an extra improvement, then another; the stopping point moves, breaks are treated as weakness, and an interruption gets a sharper answer than it deserves. Because taking over is faster than waiting, we may also grab work that was not ours to carry. The goal moves forward, but the cost is overwork, impatience, and a standard that keeps changing after the original need has been met.\",\"development\":\"Capricorn gives Mars enough patience to correct the course without abandoning the goal. We can return to the first definition of finished, separate what the result needs from what ambition keeps adding, and leave optional polish for later. When an obstacle appears, the practical move is to change the sequence or reduce the load, not push harder by reflex. When another part moves slowly, taking it over may be efficient in the moment, but it leaves us carrying more and resenting the delay. Keeping attention on the part we can actually finish preserves the energy required to complete it.\",\"close\":\"Before {{exitDate}}, we can leave one nonessential improvement undone and finish the version that answers the goal we set at the start.\",\"try_this\":[\"We can do the hardest necessary step before touching any optional improvement this week.\",\"We can end one work session at the time we planned, even if momentum says to add another task.\",\"We can stop doing one task we took over only because waiting felt inefficient.\"]}"
+}

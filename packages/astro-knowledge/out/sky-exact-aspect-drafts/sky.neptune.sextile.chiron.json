@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:42.588Z",
+  "id": "sky.neptune.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "neptune-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.sextile.chiron",
+    "planetA": "neptune",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Neptune sextile Chiron",
+    "humanMoment": "A neighborhood relief fund receives a wave of requests after one family's emergency brings many quieter hardships into view.",
+    "developmentDetail": "Organizers separate documented bills from general expressions of distress, clarifying which losses the fund can actually cover.",
+    "planetaryDynamic": "Neptune blurs one family's pain into the wider hardship, while Chiron keeps the original wound distinct enough to be tended.",
+    "aspectMechanic": "The sextile creates a usable opening to sort the wave of requests into specific bills, but the organizers still have to notice the distinction and act on it.",
+    "conditionalConsequence": "If the requests stay tied to documented losses, the fund can cover the emergency costs it was created for instead of dispersing money across needs it cannot meet.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry uses a concrete collective event, clearly distinguishes blurred shared pain from a specific tendable wound, applies the sextile as an opening requiring action, and ends with a scene-based consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:42.588Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "2e891ba890c3339ff041d04dfc293ff39f798cb1a110f7f5573d65baa0f1527d",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "7712db8d492b228694f8b69360da4abf10d9604a714cb7d9dd96b8eecbe282d6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a65abd5da7bcbef3493fd7206705804a36e0d8d0591a4adaf38cf938a4c54b1a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

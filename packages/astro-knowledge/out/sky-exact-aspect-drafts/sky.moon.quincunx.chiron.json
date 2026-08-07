@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:54.583Z",
+  "id": "sky.moon.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "moon-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.quincunx.chiron",
+    "planetA": "moon",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Chiron",
+    "humanMoment": "At a busy pharmacy, a customer waiting for a delayed prescription turns down the only chair, then watches to see whether the technician offers it again.",
+    "developmentDetail": "Each time the technician brings water or gives an update, the customer says they are fine while gripping the counter.",
+    "planetaryDynamic": "The Moon seeks the relief of a seat, water, and visible care, while Chiron exposes the wound that makes the customer deny needing any of it.",
+    "aspectMechanic": "The quincunx has the technician move the chair and water closer, then pull them back at each refusal, with care offered one way and need expressed another.",
+    "conditionalConsequence": "If the customer keeps refusing in hopes that the technician will insist, the technician may take the answer literally and give the chair to someone else.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The concrete pharmacy scene clearly distinguishes comfort from the wound around accepting it, while the repeated mismatches and adjustments express the quincunx naturally and lead to a plausible consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:54.583Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "801e76079877787719fd398af235d55f90650dc2e9cbdbda835b733413cfd27e",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "64ab42be517ec53fbe9eb612622503605468c51e797ef7c8a8d80683bf3b0a68",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3058a6029147567e73b042246181adf2e90a814c66faedf114b741e4cf98db1d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

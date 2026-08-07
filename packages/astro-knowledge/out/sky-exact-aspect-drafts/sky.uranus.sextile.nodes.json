@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:59.723Z",
+  "id": "sky.uranus.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "uranus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.sextile.nodes",
+    "planetA": "uranus",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Uranus sextile North Node",
+    "humanMoment": "An equipment failure forces a neighborhood clinic to move its vaccination service into a library courtyard.",
+    "developmentDetail": "The temporary setup draws walk-ins who had not used the clinic's appointment system.",
+    "planetaryDynamic": "Uranus reroutes the service without warning, while the North Node holds the destination of getting care to the people it was meant to reach.",
+    "aspectMechanic": "The sextile makes the courtyard move a usable opening, but clinic staff still have to notice the walk-in demand and act on it.",
+    "conditionalConsequence": "If the clinic keeps some courtyard hours after the equipment is repaired, residents excluded by the old appointment system gain a practical route to care.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Uranus reroutes the service without warning, while the North Node holds the destination of getting care to the people it was meant to reach.",
+    "why": "The phrasing is slightly more explanatory than the surrounding scene, but it clearly distinguishes the sudden reroute from the continuing direction without treating the node as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:59.722Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9c922f4febcb13d463a02799eeb95d587dbb598a1a8dbf333caec06801451223",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "88d496404e54dd853ccbca7b7caa2b68826cf72aa01b5bc46b42f2710d7606e3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3864902553d8348c55c46e49eda4290dab34dcb7cbd159aeeccf70ae1c312f40"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

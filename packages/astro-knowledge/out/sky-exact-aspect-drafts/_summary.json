@@ -1,0 +1,1711 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:22:36.318Z",
+  "targetCount": 4,
+  "recordCount": 240,
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judge": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "byBatch": {
+    "lilith": 72,
+    "chiron": 66,
+    "node-axis": 60,
+    "classical-quincunx": 42
+  },
+  "byGate": {
+    "owner-review": 240
+  },
+  "entries": [
+    {
+      "id": "sky.chiron.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.conjunction.nodes",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.opposition.nodes",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.quincunx.nodes",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.sextile.nodes",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.square.nodes",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.chiron.trine.nodes",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.jupiter.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.jupiter.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.quincunx.saturn",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.quincunx.uranus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.lilith.conjunction.nodes",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.lilith.opposition.nodes",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.lilith.quincunx.nodes",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.lilith.sextile.nodes",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.lilith.square.nodes",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.lilith.trine.nodes",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.quincunx.jupiter",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.mars.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.quincunx.saturn",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.quincunx.uranus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.mars.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.mercury.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.mercury.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.quincunx.jupiter",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.quincunx.mars",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.mercury.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.quincunx.saturn",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.quincunx.uranus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mercury.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.moon.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.jupiter",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.moon.quincunx.mars",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.mercury",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.saturn",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.uranus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.quincunx.venus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.moon.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.pluto.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.pluto.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.saturn.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.quincunx.uranus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.saturn.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.sun.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.quincunx.jupiter",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.quincunx.mars",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.sun.quincunx.moon",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.sun.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.quincunx.saturn",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.quincunx.uranus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.sun.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.sun.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.uranus.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.uranus.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.uranus.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.conjunction.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.conjunction.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.opposition.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.quincunx.jupiter",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.quincunx.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.quincunx.mars",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.quincunx.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.quincunx.pluto",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.quincunx.saturn",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.quincunx.uranus",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.sextile.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.sextile.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.venus.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.trine.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    }
+  ]
+}

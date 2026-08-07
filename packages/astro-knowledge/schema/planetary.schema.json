@@ -34,6 +34,11 @@
         }
       }
     },
+    "provenance": { "type": "string" },
+    "acAddendum": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "voiceNeutral": { "const": true },
     "status": { "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
   }

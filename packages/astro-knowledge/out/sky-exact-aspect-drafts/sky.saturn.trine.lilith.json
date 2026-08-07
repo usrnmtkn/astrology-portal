@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:47.889Z",
+  "id": "sky.saturn.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.trine.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Saturn trine Lilith",
+    "humanMoment": "Residents of an apartment complex keep their balcony food gardens after the landlord orders every planter removed.",
+    "developmentDetail": "A revised lease permits planters within weight and fire-access limits, and inspectors mark compliant balconies instead of clearing them.",
+    "planetaryDynamic": "Saturn supplies enforceable safety limits, while Lilith gives the residents' refusal of a blanket ban representation in the lease.",
+    "aspectMechanic": "Under the trine, the lease rules and the refusal to remove planters reinforce each other with little resistance, easing the revision while risking weak scrutiny of unsafe balconies.",
+    "conditionalConsequence": "The gardens can remain if inspections separate genuine fire risks from restrictions that only enforce uniformity.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, the lease rules and the refusal to remove planters reinforce each other with little resistance, easing the revision while risking weak scrutiny of unsafe balconies.",
+    "why": "Slightly more explanatory than the other fields, but it accurately applies the trine's ease and risk to the concrete scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:47.889Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b4521731c632e246abbf3fbb3aa8a392c4d35da2b419280e8b9a2fee435dedf5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "21ff252482145ee7f1aa79194ddc3456ef89450956307eaa313d3598b7e8208d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4adebd8ab449028798ac6037cae3fae45da97479c4982104001b09ff52745729"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

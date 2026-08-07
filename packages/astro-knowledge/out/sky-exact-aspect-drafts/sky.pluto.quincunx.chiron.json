@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:56.829Z",
+  "id": "sky.pluto.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "pluto-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.quincunx.chiron",
+    "planetA": "pluto",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Pluto quincunx Chiron",
+    "humanMoment": "A riverbank cleanup exposes sealed chemical drums beneath a former playground after residents report another cluster of illnesses.",
+    "developmentDetail": "Crews widen the excavation as clinic records place the earliest unexplained symptoms decades before the latest test results.",
+    "planetaryDynamic": "Pluto drives the dig into the buried waste, while Chiron marks the original exposure and the harm that persisted around it.",
+    "aspectMechanic": "The quincunx keeps crews changing the excavation boundary while clinicians revise the exposure timeline, since removing each cache does not settle how far back the injury began.",
+    "conditionalConsequence": "If each opened section reveals earlier dumping, the cleanup plan and health claims may need successive revisions even when current readings remain stable.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete collective event, distinct Pluto and Chiron functions, and repeated practical adjustments accurately express the quincunx without drifting into advice or prophecy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:56.828Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b53eba70b5b26d05ab8c2dc027c778723ebc449d6b27b32368f67068893e01e1",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "a2e74023756a68b586f9d7016d38a5d7a2f5e3be609b460fe64ee9c1a4e434dd",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c9e35c8b3e295bfa942dbfb13f5048acf4813982d098e5903d38ae1cfdce4fe6"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

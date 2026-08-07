@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:31.675Z",
+  "id": "sky.mars.sextile.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mars-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.sextile.lilith",
+    "planetA": "mars",
+    "planetB": "lilith",
+    "aspect": "sextile",
+    "title": "Mars sextile Lilith",
+    "humanMoment": "A restaurant owner asks a cook to make a family recipe milder for a catered event, and the cook refuses to send it out stripped of its heat.",
+    "developmentDetail": "The argument over one batch reveals a longer history of whose taste is treated as professional and whose is expected to adapt.",
+    "planetaryDynamic": "Mars carries the owner's sanctioned push to control the service, while Lilith carries the cook's banished rage and refusal to make the recipe tame.",
+    "aspectMechanic": "The sextile creates a usable opening to revise the catering order without erasing the recipe, but the owner or cook still has to notice that option and act on it.",
+    "conditionalConsequence": "If the order is revised, the event stays on track without turning one dish into another test of who must be domesticated.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The argument over one batch reveals a longer history of whose taste is treated as professional and whose is expected to adapt.",
+    "why": "The history is slightly interpretive rather than directly observable, but the sentence adds a specific power consequence and remains grounded in the dispute.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:31.674Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "0e927d8f44f9934775fc6efa1040f08dfeb40928040f09f1f0a7e8c0c7175b12",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "b19e2ac1f44a61f0541917a9d4de94f4f7a6dd4c3ce56043694cb0f738ddc1b6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "992305ed46a178ba7ae50611ab9b7b807a3e926886eadc7df6c3263a337931a2"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.sextile.lilith",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

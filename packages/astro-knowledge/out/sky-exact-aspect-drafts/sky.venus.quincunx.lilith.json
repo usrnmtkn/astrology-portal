@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:50.134Z",
+  "id": "sky.venus.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "venus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.quincunx.lilith",
+    "planetA": "venus",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Lilith",
+    "humanMoment": "A restaurant debuts a crowd-pleasing tasting menu, but diners keep asking for the fiery staff meal they can smell from the kitchen.",
+    "developmentDetail": "Servers relay each request as the cooks adjust portions and timing without officially adding the dish to the menu.",
+    "planetaryDynamic": "Venus favors the polished menu designed to please, while Lilith drives the appetite for what was never offered for approval.",
+    "aspectMechanic": "The quincunx keeps the tasting menu and staff meal from becoming one coherent offer, forcing the kitchen to revise portions, timing, and explanations with every request.",
+    "conditionalConsequence": "If the dish remains an exception, service slows while the unofficial meal becomes the one diners remember.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The concrete restaurant scene clearly distinguishes polished approval from unsanctioned appetite, while the repeated service adjustments accurately embody the quincunx mechanic and lead to a plausible consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:50.133Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ef550b5e27ad14a4d0cfd76054f91c2bc0fb4369c0a1eddf2483af0f42a7244f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "2a74c45b5cca6f0c94fffc4cc5869a8e3b53f25d83b7db0f47a972b7db8217aa",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d051a2f063059155a5cf6b93ea7382f562f15990b57796269fa19fdf3f3a81cd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

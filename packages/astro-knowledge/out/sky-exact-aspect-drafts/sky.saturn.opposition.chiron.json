@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:19.262Z",
+  "id": "sky.saturn.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "saturn-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.opposition.chiron",
+    "planetA": "saturn",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Saturn opposite Chiron",
+    "humanMoment": "A hospital discharge stalls when a rehabilitation specialist requires a patient to climb three steps before returning to a walk-up apartment.",
+    "developmentDetail": "Relatives argue that the test turns a temporary injury into a verdict on the patient’s ability, while the specialist records the fall risk and refuses to approve the release.",
+    "planetaryDynamic": "Saturn holds the discharge to a safety standard, while Chiron carries the ache of being judged incapable by a requirement.",
+    "aspectMechanic": "The opposition places the specialist’s refusal across from the relatives’ challenge, so neither the three-step test nor the old sting attached to it can be removed from the discharge decision.",
+    "conditionalConsequence": "If no safer route or successful retest is found, the patient may remain in care longer even though the requirement is reasonable and the delay revives an older humiliation.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Saturn holds the discharge to a safety standard, while Chiron carries the ache of being judged incapable by a requirement.",
+    "why": "Slightly more interpretive than the surrounding fields, but it clearly and accurately distinguishes Saturn’s standard from Chiron’s triggered wound.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:19.262Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4776e48e364c8852569ed286df4330e4be95f201b1a472e8fa541e78af617261",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "509613c8570293b91144b02fedd1dce9b0e185c36ba2c682325efc179c05fe3b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "838e8268604fc0112011f8bceba6ac415eb51325218d994970367dd96eabb19f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

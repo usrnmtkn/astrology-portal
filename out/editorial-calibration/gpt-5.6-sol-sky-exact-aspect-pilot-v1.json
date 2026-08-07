@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T01:54:59.411Z",
+  "laneId": "judge:sky-exact-aspect",
+  "registryVersion": "2026-08-01.4",
+  "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v1",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-exact-aspect-voice-v1:prompt-v1",
+  "rubricVersion": "sky-exact-aspect-voice-v1",
+  "evaluationSetVersion": "sky-exact-aspect-owner-225-v1",
+  "policyVersion": "editorial-judge-policy-v1",
+  "reportKind": "pilot-smoke",
+  "sampleCount": 1,
+  "promotionEligible": false,
+  "status": "failed",
+  "approvedMean": 1.375,
+  "weakMean": 1,
+  "separation": 0.375,
+  "minimumSeparation": 1,
+  "disagreement": false,
+  "approved": [
+    {
+      "cohort": "approved",
+      "id": "sky.sun.conjunction.moon",
+      "sourceSha256": "c9fba0a61655488c0eb8834f1c023ce733d4474e8c6fbeb705157cad196a9362",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "“Part of the same story” does not express the conjunction’s inseparable merge and could also describe an opposition or square; the scene further splits the Sun into leadership and the Moon into workers instead of showing both functions fused in one event.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.opposition.moon",
+      "sourceSha256": "3f7e904f11a16cb5e645c8a15938b2fb2dce6ec96b9b17da3b885e167b94ad75",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "Simultaneous visibility is not opposition-specific; it omits the required placement across different people or positions and does not show that neither side can be excluded from the outcome. The opening is also too abstract to establish a concrete event.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.sextile.mercury",
+      "sourceSha256": "9c23f93553cd2d2e8959c7b6793843b073e02537e45ce87e4cd71429df676d68",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "Mercury cannot form a sextile with the Sun, and the described handoff is generic rather than uniquely sextile-specific.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.sextile.moon",
+      "sourceSha256": "6a97f48f8ed0fb88254b913ceca99ba666b590aa76491e6d81e1f4af45436879",
+      "score": 2,
+      "verdict": "off-voice",
+      "weakestField": "conditionalConsequence",
+      "why": "The outcome follows from the scene, but “preventable mess” is vague and drops the specific childcare, transit, and scheduling consequences established earlier.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.square.mercury",
+      "sourceSha256": "68b6edddf10311f28fdcd9a664ba76af296ecc16e111b70a92efda1d20a7c2ae",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "A Sun-Mercury square cannot occur because Mercury never travels far enough from the Sun; the sentence also substitutes evidence of ambiguity for a recurring practical consequence driven by an unresolved choice.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.square.moon",
+      "sourceSha256": "05b0645dc1d4672cfe393e99ab6978d92fe5bc3c1828df42f8590ce89c991ac1",
+      "score": 2,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "It establishes recurring consequences, but resolves them through an explanation rather than confronting the underlying conflict between leadership’s decision and people’s basic needs.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.trine.mercury",
+      "sourceSha256": "52cc26ccdd33ee748b87dc6c4c3af0a35804a31ff618d728100892081f6f1c3a",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "A Sun–Mercury trine is astronomically impossible because Mercury never travels far enough from the Sun; the mechanic is therefore invalid and also omits the trine’s risk of letting an unchallenged problem travel farther.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.trine.moon",
+      "sourceSha256": "d9661da65c787ec6b3bf5b7d69bcee3651cb61bf1564d163c3ec23655ae0483a",
+      "score": 2,
+      "verdict": "off-voice",
+      "weakestField": "planetaryDynamic",
+      "why": "The Sun is specific, but the Moon is reduced to a vague concern with impact rather than clearly representing people’s felt needs, daily conditions, or embodied response.",
+      "disagreement": false,
+      "contractViolation": false
+    }
+  ],
+  "weakControls": [
+    {
+      "cohort": "weak",
+      "id": "weak.astrology-first",
+      "sourceSha256": "b78c1eea80557c2e1949b1dbf5a60f41135e65db199baf9da74af51dda0d8354",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "The draft uses a Sun-Uranus square instead of the required Sun-Mercury sextile and relies on generic astrology claims rather than a recognizable collective event.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.generic-fallback",
+      "sourceSha256": "7a5487da709ab30b1e2eaad7d1ab3192bb1349ceef4e3cda4189c4ce44ed4bcb",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "Generic fallback prose replaces lived specificity with vague benefits, and the mechanic omits the sextile's usable opening that must be noticed and acted on.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.moralizing-advice",
+      "sourceSha256": "cbcdd776aa6679c36b0ac43054370fd9b7f61423984ea99cd4accf5dee79304b",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "The draft uses Sun-Neptune square dynamics despite the supplied Sun-Mercury conjunction knowledge and required trine mechanic; the consequence is also generic moralizing advice in second person.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.natal-second-person",
+      "sourceSha256": "14fc85d8301f77dc09ff0e7d5021d1178408a320eec8c36303cbdfbb0a6b9360",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "planetaryDynamic",
+      "why": "The draft uses second person throughout, substitutes generic natal-style keywords for an accurate Sun-Mercury dynamic, and gives an incomplete trine mechanic that omits mutual reinforcement and the risk of unchecked momentum.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.repetitive-template",
+      "sourceSha256": "216103524da044ff7355c5da402dddb4d2e358a116503f33a5be7ff8fb96428e",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "planetaryDynamic",
+      "why": "It replaces Mercury with Pluto, ignores the supplied pair knowledge, and reduces both bodies to the same vague keyword.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.sign-specific-live-card",
+      "sourceSha256": "210a51e2c13a00cac15d7b26a7c0d2caa44a14f48b03e8e4ad9fef15cb630cdd",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "developmentDetail",
+      "why": "The draft uses signs, a date, and trine mechanics instead of the required evergreen Sun-Moon opposition dynamic; several fields are generic horoscope copy rather than a concrete two-sided scene.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.strategy-brief",
+      "sourceSha256": "4f8d150a3cb6c698218abc0345b1221d82a4012ee8c67f0afac168bf0e95ecaa",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "humanMoment",
+      "why": "The draft reads entirely like an abstract strategy brief, lacks a recognizable lived event or observable consequences, misidentifies the Sun-Saturn dynamic, and gives a generic conjunction mechanic instead of showing how authority and limits become difficult to separate.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.wrong-aspect-mechanic",
+      "sourceSha256": "ca6126b71777b7aa39683b0759c1eb9c4d7044b96d15840df131550a1edac5fd",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "This describes a harmonious Sun-Mars dynamic rather than the required opposition between Sun and Moon functions expressed through different people, groups, or positions.",
+      "disagreement": false,
+      "contractViolation": false
+    }
+  ]
+}

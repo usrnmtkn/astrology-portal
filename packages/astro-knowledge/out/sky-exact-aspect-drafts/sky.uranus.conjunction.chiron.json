@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:23.419Z",
+  "id": "sky.uranus.conjunction.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "uranus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.conjunction.chiron",
+    "planetA": "uranus",
+    "planetB": "chiron",
+    "aspect": "conjunction",
+    "title": "Uranus conjunct Chiron",
+    "humanMoment": "An old workplace workaround collapses when a new machine arrives, revealing that an entire shift has been organized around one worker’s untreated injury.",
+    "developmentDetail": "Tasks are reassigned on the spot, and an improvised method reduces the strain everyone had accepted as normal.",
+    "planetaryDynamic": "Uranus breaks the established routine, while Chiron exposes the injury that routine had formed around.",
+    "aspectMechanic": "In the Uranus-Chiron conjunction, replacing the machine, uncovering the injury, and finding a less painful method become one event, making disruption and repair difficult to separate.",
+    "conditionalConsequence": "If the improvised method keeps production moving, the old workaround may disappear while its hidden cost remains visible in injury reports and reassigned tasks.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the improvised method keeps production moving, the old workaround may disappear while its hidden cost remains visible in injury reports and reassigned tasks.",
+    "why": "Ready for owner review; the consequence is slightly denser than the other fields but remains conditional, observable, and grounded in the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:23.418Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9b4a1eae86f34e75ac0f11d050c5b2e2cc34dfad805f800a64572aa78ff28749",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "dd99d114414b8750e9623af2e63979c6e523270fa254827001777a35c1fb99b6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "38ba7a0a40478a5f16fd61ce15edbec56ee95a920cce612a0e77c5d75c66b8dc"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.conjunction.chiron",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

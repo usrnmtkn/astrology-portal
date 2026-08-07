@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:25.043Z",
+  "id": "sky.mercury.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-pluto",
+    "path": "data/pairs/mercury-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.pluto",
+    "planetA": "mercury",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Pluto",
+    "humanMoment": "A witness reveals a buried fact after a lawyer presses hard on one carefully chosen phrase.",
+    "developmentDetail": "As the transcript circulates, each clarification shifts attention between the disclosure and the pressure used to obtain it.",
+    "planetaryDynamic": "Mercury shapes the question and its wording, while Pluto brings force, scrutiny, and hidden information to the surface.",
+    "aspectMechanic": "The quincunx keeps the phrase, the buried fact, and the pressure out of step, so each clarification changes how the disclosure is understood without resolving how it was obtained.",
+    "conditionalConsequence": "If the questioning becomes more forceful, the disclosure may be remembered less for what it revealed than for the tactics behind it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "All five fields are concrete, distinct, accurate, and evergreen, with the quincunx expressed through repeated clarification that shifts understanding without resolving the mismatch between disclosure and pressure.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:25.043Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "8f49acfb1c1caafb8d3aa3e3676dbb3b939681feebae261e3a8c9913f4d71349",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c044f7bf72555c2b1b4adda3f207959e7fdc544bf882d542333ba3f4c17e8451",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "f116cac0af666dbb26e977db8a01ab41dc709e5946f1ea9ef5ee5aa198988abf"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

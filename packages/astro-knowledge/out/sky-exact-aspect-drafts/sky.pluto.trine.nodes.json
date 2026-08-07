@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:31.859Z",
+  "id": "sky.pluto.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "pluto-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.trine.nodes",
+    "planetA": "pluto",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Pluto trine North Node",
+    "humanMoment": "Drivers at a bankrupt bus cooperative uncover dormant member shares that carry enough votes to decide how its remaining routes and vehicles are transferred.",
+    "developmentDetail": "Retired operators submit old certificates, and the liquidation shifts toward a handoff that preserves service instead of an auction that breaks the network apart.",
+    "planetaryDynamic": "Pluto brings the cooperative’s buried voting power into use, while the North Node sets the direction the closure now has to serve.",
+    "aspectMechanic": "Under the trine, the recovered shares and the planned handoff reinforce each other with little resistance, allowing the liquidation to become a transfer rather than a simple ending.",
+    "conditionalConsequence": "If the certificates pass verification, the operators can keep the remaining routes intact under new ownership.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, the recovered shares and the planned handoff reinforce each other with little resistance, allowing the liquidation to become a transfer rather than a simple ending.",
+    "why": "The mechanic is slightly more explanatory than the other fields, but it clearly applies the trine’s low-resistance reinforcement to the concrete outcome.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:31.858Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b9143704e68785d93a40bd6216cc65691b7487d9626264cf4b5aeafda48cb227",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "6d54489002e9c937549483f95295c4cafc741ca98a01c275e9c27197f01052f6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "72e3a2edaec421895a6aefa770994d5eaec94c3904b51a972bc5ba79af9d16ab"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

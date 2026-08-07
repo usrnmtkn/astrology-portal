@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:23.062Z",
+  "id": "sky.venus.square.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "venus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.square.chiron",
+    "planetA": "venus",
+    "planetB": "chiron",
+    "aspect": "square",
+    "title": "Venus square Chiron",
+    "humanMoment": "A partner books a special dinner, and the gesture is met with questions about what mistake it is meant to cover.",
+    "developmentDetail": "The recipient checks the reservation, asks who else knew about it, and searches recent messages for a hidden reason behind the effort.",
+    "planetaryDynamic": "Venus brings the affectionate gesture and the wish for it to be welcomed, while Chiron supplies the expectation that accepting it may lead to rejection.",
+    "aspectMechanic": "The square makes each reassurance about the dinner produce another question until the choice between receiving the care and testing it is addressed.",
+    "conditionalConsequence": "If the questions continue after every reassurance, the partner may cancel the reservation, making the withdrawal look like proof that the care was never secure.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The recipient checks the reservation, asks who else knew about it, and searches recent messages for a hidden reason behind the effort.",
+    "why": "All fields meet the contract; this sentence is the least essential but still adds distinct, observable escalation without repeating the opening.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:23.062Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ca30dee35b03e0b8c0e1fa521e62bb74a62fdd05b9e1d3b3c4279dad7a56daee",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "35c9be7d880bfff9a84fbb6eb6a01c7ce9d1d1f1804cecfb9b31ad984b5bf2c3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9a55a7462da403313b88ca60d39eaf66ceb9911bf8dc1c1a57f941bbffbf86d8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.square.chiron",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

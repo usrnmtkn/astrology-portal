@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:24.154Z",
+  "id": "sky.sun.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "sun-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.sextile.nodes",
+    "planetA": "sun",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Sun sextile North Node",
+    "humanMoment": "A performer praised for reviving a familiar role is also offered a small part in an untested production.",
+    "developmentDetail": "The revival draws the larger audience, while the new work asks for skills not yet visible in the performer’s credits.",
+    "planetaryDynamic": "The Sun seeks recognition for an established identity, while the North Node points toward the role this chapter is asking to develop.",
+    "aspectMechanic": "The sextile between the Sun and North Node creates a usable opening toward that direction, but the performer still has to notice its value and accept the part.",
+    "conditionalConsequence": "If the performer makes room for the untested production, the smaller role provides experience that the familiar success cannot.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "The Sun seeks recognition for an established identity, while the North Node points toward the role this chapter is asking to develop.",
+    "why": "The node-axis tension is compressed to the North Node, but the sentence still clearly distinguishes present recognition from the emerging developmental direction, and the surrounding scene supplies the contrast with the familiar role.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:24.154Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "be78370c1d1071dff8abc9b5901ae32d779f9929c3e919dd0553f10e89b72a3b",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "b76046826563b618aa03df63a00ba8320b5fbea51867786fbaea208a90496364",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "7a16b510748c867a93232a0e306a0db8015d879ec6198a143c6530b7654c1544"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

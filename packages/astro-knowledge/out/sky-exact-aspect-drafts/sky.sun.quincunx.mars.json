@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:50.226Z",
+  "id": "sky.sun.quincunx.mars",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-mars",
+    "path": "data/pairs/sun-mars.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.sun.quincunx.mars",
+    "planetA": "sun",
+    "planetB": "mars",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Mars",
+    "humanMoment": "At an overcrowded community clinic, the person directing arrivals repeatedly pulls workers from treatment stations to break up a jam at the door.",
+    "developmentDetail": "The entrance clears, but the waiting-room backlog grows, and the workers are sent back again.",
+    "planetaryDynamic": "The Sun brings visible authority and the need to set the course, while Mars brings the urgency to act and push through resistance.",
+    "aspectMechanic": "In their quincunx, directing the whole operation and attacking the immediate blockage keep taking capacity from each other, so every fix requires another adjustment.",
+    "conditionalConsequence": "If the reshuffling continues, the clinic may look more controlled at the entrance while treatment falls further behind.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The concrete clinic scene clearly distinguishes visible direction from urgent action, shows the quincunx through repeated capacity-shifting adjustments, and ends with a plausible conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:50.226Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "e1d926f2c72330cfe094827272d55ea792754bd6a09deb7640208a93bea418b5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d8da4606640de445f6b32cf53f6b1e7132e0e33c72990b1355719cbffef43c04",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4b4d35fe39f5686b9bd6b2da4585759b662779226b0b650c5e7d965757e6627b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.mars",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

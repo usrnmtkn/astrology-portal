@@ -63,9 +63,11 @@ async function main() {
     now: () => new Date("2026-08-02T18:00:00.000Z")
   });
   assert.strictEqual(calls.length, 9);
-  assert(calls.every((call) => call.prompt.includes("FIRST-READ NATURAL ENGLISH RULE")));
-  assert(calls.every((call) => call.prompt.includes("ALLOWED COLLECTIVE LANGUAGE")));
-  assert(calls.every((call) => call.prompt.includes("STACKED ENDING RULE")));
+  assert(calls.every((call) => call.prompt.includes("COMPACT FINAL-ACCEPTABILITY RUBRIC")));
+  assert(calls.every((call) => call.prompt.includes("[ED-001]") && call.prompt.includes("ordinary, current language")));
+  assert(calls.every((call) => call.prompt.includes("[ED-003]") && call.prompt.includes("never uses you")));
+  assert(calls.every((call) => call.prompt.includes("[ED-005]") && call.prompt.includes("second conclusion")));
+  assert(calls.every((call) => !call.prompt.includes("OWNER VOCABULARY PALETTE")));
   assert.strictEqual(run.runtimeChanged, false);
   assert.strictEqual(run.promotionAuthorized, false);
   assert.strictEqual(run.summary.expectedEffectiveMatches, 9);

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Mars in Capricorn makes the stubborn unfinished goal feel workable again. When Mars enters Capricorn on {{entryDate}}, we choose a concrete result, put the necessary steps in order, and start with the part that has been avoided. The first hard section gets done, then the next, and visible progress replaces the argument about whether we feel ready. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each sign, so this stretch favors concentrated effort rather than endless preparation.",
+      "tension": "Once the plan starts working, we can make it harsher. A necessary step is finished and immediately followed by an extra improvement, then another; the stopping point moves, breaks are treated as weakness, and an interruption gets a sharper answer than it deserves. Because taking over is faster than waiting, we may also grab work that was not ours to carry. The goal moves forward, but the cost is overwork, impatience, and a standard that keeps changing after the original need has been met.",
+      "development": "Capricorn gives Mars enough patience to correct the course without abandoning the goal. We can return to the first definition of finished, separate what the result needs from what ambition keeps adding, and leave optional polish for later. When an obstacle appears, the practical move is to change the sequence or reduce the load, not push harder by reflex. When another part moves slowly, taking it over may be efficient in the moment, but it leaves us carrying more and resenting the delay. Keeping attention on the part we can actually finish preserves the energy required to complete it.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can leave one nonessential improvement undone and finish the version that answers the goal we set at the start.",
+      "try_this": [
+        "We can do the hardest necessary step before touching any optional improvement this week.",
+        "We can end one work session at the time we planned, even if momentum says to add another task.",
+        "We can stop doing one task we took over only because waiting felt inefficient."
+      ],
+      "aspect_units": [],
+      "body_you": "Mars in Capricorn makes the stubborn unfinished goal feel workable again. When Mars enters Capricorn on {{entryDate}}, we choose a concrete result, put the necessary steps in order, and start with the part that has been avoided. The first hard section gets done, then the next, and visible progress replaces the argument about whether we feel ready. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each sign, so this stretch favors concentrated effort rather than endless preparation.\n\nOnce the plan starts working, we can make it harsher. A necessary step is finished and immediately followed by an extra improvement, then another; the stopping point moves, breaks are treated as weakness, and an interruption gets a sharper answer than it deserves. Because taking over is faster than waiting, we may also grab work that was not ours to carry. The goal moves forward, but the cost is overwork, impatience, and a standard that keeps changing after the original need has been met.\n\nCapricorn gives Mars enough patience to correct the course without abandoning the goal. We can return to the first definition of finished, separate what the result needs from what ambition keeps adding, and leave optional polish for later. When an obstacle appears, the practical move is to change the sequence or reduce the load, not push harder by reflex. When another part moves slowly, taking it over may be efficient in the moment, but it leaves us carrying more and resenting the delay. Keeping attention on the part we can actually finish preserves the energy required to complete it.\n\nBefore {{exitDate}}, we can leave one nonessential improvement undone and finish the version that answers the goal we set at the start.",
+      "body_they": "Mars in Capricorn makes the stubborn unfinished goal feel workable again. When Mars enters Capricorn on {{entryDate}}, we choose a concrete result, put the necessary steps in order, and start with the part that has been avoided. The first hard section gets done, then the next, and visible progress replaces the argument about whether we feel ready. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each sign, so this stretch favors concentrated effort rather than endless preparation.\n\nOnce the plan starts working, we can make it harsher. A necessary step is finished and immediately followed by an extra improvement, then another; the stopping point moves, breaks are treated as weakness, and an interruption gets a sharper answer than it deserves. Because taking over is faster than waiting, we may also grab work that was not ours to carry. The goal moves forward, but the cost is overwork, impatience, and a standard that keeps changing after the original need has been met.\n\nCapricorn gives Mars enough patience to correct the course without abandoning the goal. We can return to the first definition of finished, separate what the result needs from what ambition keeps adding, and leave optional polish for later. When an obstacle appears, the practical move is to change the sequence or reduce the load, not push harder by reflex. When another part moves slowly, taking it over may be efficient in the moment, but it leaves us carrying more and resenting the delay. Keeping attention on the part we can actually finish preserves the energy required to complete it.\n\nBefore {{exitDate}}, we can leave one nonessential improvement undone and finish the version that answers the goal we set at the start.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-batch-1-preflight-mars-capricorn"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

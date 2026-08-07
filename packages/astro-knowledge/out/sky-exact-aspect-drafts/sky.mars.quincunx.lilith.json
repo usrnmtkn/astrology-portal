@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:46.749Z",
+  "id": "sky.mars.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mars-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.quincunx.lilith",
+    "planetA": "mars",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Mars quincunx Lilith",
+    "humanMoment": "At a youth football match, a referee orders a parent off the sideline after one insult, and the parent moves behind the fence but keeps shouting.",
+    "developmentDetail": "Each attempt to restart play brings another dispute over where the parent may stand, while the original call disappears beneath accusations about years of being singled out.",
+    "planetaryDynamic": "Mars carries the referee's sanctioned authority to keep the game moving, while Lilith carries the parent's banished rage and refusal to be contained.",
+    "aspectMechanic": "The quincunx turns each restart into another adjustment of the fence line and the terms of removal, as enforcing the match and resisting exclusion keep pulling the scene in different directions.",
+    "conditionalConsequence": "If the boundary keeps changing without settling the removal, play remains suspended and the other families begin to leave.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete and observable, the planetary roles are clearly distinguished, and the repeated boundary adjustments accurately embody the quincunx without drifting into advice or abstraction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:46.749Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9ea613e1a99a77ea686d00a50bda8ac549131ee2b94f4fd7e37f6127ffc7785c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "fbb191241eb29b9c078b4952e0b75726f0235befc52843fe97ed5de5b13d2abd",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "19e72e7245e546fe72053473c2df2c63f407606248abb67810f90d9ab34d4bd2"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

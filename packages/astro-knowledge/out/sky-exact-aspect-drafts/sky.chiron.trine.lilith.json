@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:02.105Z",
+  "id": "sky.chiron.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "chiron-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.trine.lilith",
+    "planetA": "chiron",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Chiron trine Lilith",
+    "humanMoment": "A couple’s recurring budget fight shifts when one partner admits that secret purchases answer an old history of having every want denied.",
+    "developmentDetail": "Receipts are laid out, the deprivation is named, and the argument moves from whether the spending is shameful to what it has been trying to restore.",
+    "planetaryDynamic": "Chiron identifies the denial that still hurts, while Lilith names the appetite that went underground rather than disappearing.",
+    "aspectMechanic": "Under the trine, the old denial and the secret purchases reinforce each other with little resistance, helping the budget argument reach the real issue or allowing the debt to grow before it is questioned.",
+    "conditionalConsequence": "If the wound and the want remain part of the same discussion, the couple can set terms that address both, but if the purchases are treated as proof of repair, the financial damage can continue.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the wound and the want remain part of the same discussion, the couple can set terms that address both, but if the purchases are treated as proof of repair, the financial damage can continue.",
+    "why": "The final clause is slightly compressed, but the consequence remains concrete, conditional, non-prescriptive, and fully grounded in the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:02.105Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "6a97bd0bfd03c6683a2bab223367bce86faa57ad65feead9da4a865eff40b75f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "7f6267d237fa64c2c38289ced99ac3213d94f357bfec7d88ed1a2ce16a83fe36",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e59a8291d9570bd0c308c3f82834c703c74683648fb0deb98aea7befcf5051ca"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

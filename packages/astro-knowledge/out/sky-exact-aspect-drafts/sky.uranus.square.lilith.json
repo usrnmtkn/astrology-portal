@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:40.768Z",
+  "id": "sky.uranus.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "uranus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.square.lilith",
+    "planetA": "uranus",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Uranus square Lilith",
+    "humanMoment": "An independent artist removes years of work from a subscription platform overnight and closes every paid tier.",
+    "developmentDetail": "Subscribers find broken links, automatic charges, and a final post describing restrictions the artist had accepted in silence.",
+    "planetaryDynamic": "Uranus drives the abrupt escape, while Lilith turns years of exclusion and restraint into a public refusal.",
+    "aspectMechanic": "The square makes every disputed charge and restored link return to the same unresolved choice about whether the work remains under the platform’s terms.",
+    "conditionalConsequence": "If the platform treats the removal as a technical problem rather than a deliberate exit, refunds and access disputes could keep escalating.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The square makes every disputed charge and restored link return to the same unresolved choice about whether the work remains under the platform’s terms.",
+    "why": "All checks pass; this is the densest sentence, but it clearly applies the square’s recurring conflict to the concrete platform dispute.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:40.767Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "a759eb88de44f96b4eb91bfeeec78722b4dfdaea5dbbfc7d593581f591fdb6a2",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c826f6bf576489b8da3ec838c6fcfe2b146ea1017cf0f09ef517a9ff380d8fdc",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d63b64dce0fb8c88bd34f683b22264e4c63082c698ec04cd4e3ff5fafa283411"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

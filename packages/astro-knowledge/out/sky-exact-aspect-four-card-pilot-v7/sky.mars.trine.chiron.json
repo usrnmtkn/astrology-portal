@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:43:24.014Z",
+  "id": "sky.mars.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mars-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "Assertion comes easily, but an old fear of taking up space can shape when and for whom it is used.",
+    "examples": [
+      "An angry response ends with an immediate apology.",
+      "A firm boundary is followed by an unnecessary exception.",
+      "Someone confronts unfair treatment of a colleague but ignores the same treatment toward themselves."
+    ],
+    "pairBehavior": "Mars contributes the drive to act, while Chiron contributes the wound around taking up space and using force.",
+    "aspectBehavior": "The trine allows action and the old wound to reinforce each other with little resistance, supporting effective assertion or extending self-silencing habits.",
+    "consequence": "Action happens readily, but personal needs may remain unspoken while effort is directed elsewhere."
+  },
+  "draft": {
+    "id": "sky.mars.trine.chiron",
+    "planetA": "mars",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Mars trine Chiron",
+    "body": "We can find the nerve to confront unfairness for someone else, then go quiet when the same thing happens to us. With Mars trine Chiron, the words come quickly: stop speaking to them that way, correct the bill, give the credit where it belongs. But our own anger ends with an apology, and a firm boundary gets followed by an exception nobody asked for. Action comes easily; taking up space for our own needs is where the old hesitation slips in.\n\nBecause nothing slows this pattern down, it can keep working well enough to escape notice. We solve the problem, defend the person, handle the conflict, and leave our own request unsaid. The same readiness can support a clean no or a direct ask once we stop reserving our courage for everyone else. Asking clearly may cost less than another year of making ourselves smaller.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "cadence",
+    "weakest": "Because nothing slows this pattern down, it can keep working well enough to escape notice.",
+    "why": "Slightly more explanatory than the surrounding lived detail, but still clear and accurate. The piece strongly captures effortless action reinforcing self-erasure, then turns cleanly toward direct self-advocacy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:43:19.804Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "d3d51055b078a08878d9880531fac575ab2d11ae66c057a7157bd3ada94cfe51",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "41d08b4cef73dac81f0cbb79bf8083a55e698cd7b0f2743d8d8787191c02eefb",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8d130f88d18314da7896a553d16bfc3858f6aa521a8a37ab0c7cce6647bbe046"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is natural, clear aloud, and immediately understandable, with coherent imagery and no forced compression.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is natural, clear aloud, and immediately understandable, with coherent imagery and no forced compression.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:43:24.014Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "fe846206197baa1a874824eb1e4bd068ef438c53b006a937f5613a3ccac9898c",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "41d08b4cef73dac81f0cbb79bf8083a55e698cd7b0f2743d8d8787191c02eefb",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "86d5b2dff5c20110a64aa10637ff69ed674e3a9a7f7b97f56f3e8c46e9f202f8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

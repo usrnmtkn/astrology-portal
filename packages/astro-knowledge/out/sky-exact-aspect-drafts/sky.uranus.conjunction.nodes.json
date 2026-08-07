@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:45.264Z",
+  "id": "sky.uranus.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "uranus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.conjunction.nodes",
+    "planetA": "uranus",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Uranus conjunct North Node",
+    "humanMoment": "A rail closure sends commuters through a neglected commercial strip, giving several storefronts their first steady foot traffic in years.",
+    "developmentDetail": "Pop-up stalls, extended hours, and new delivery routes appear before transit officials can restore the old pattern.",
+    "planetaryDynamic": "Uranus forces the sudden reroute, while the North Node holds the destination and reveals where movement was already overdue.",
+    "aspectMechanic": "Under the conjunction, the rail closure and the new route become one event, making disruption and correction difficult to separate.",
+    "conditionalConsequence": "If commuters keep using the shortcut after service returns, businesses along the neglected strip may reorganize around traffic they never expected to receive.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Uranus forces the sudden reroute, while the North Node holds the destination and reveals where movement was already overdue.",
+    "why": "The wording is slightly declarative, but it clearly distinguishes Uranus as the disruption from the Node as the directional correction without treating the outcome as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:45.264Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7cbd7b1d43c9d31497b429925617a10f87885821cf1bf5be87aefa2d5eccaf16",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "9f17afbb6c0cb7df1d72fe4a3e38e4788567f60f9e44487f513ca3824c04f725",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "459dd1f9745b69191118f5f175c26df469bafaf8d89e2c0221408067f40d6e9d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

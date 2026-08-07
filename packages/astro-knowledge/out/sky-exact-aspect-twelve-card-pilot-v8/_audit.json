@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T03:56:45.530Z",
+  "status": "needs_review",
+  "serving": false,
+  "recordCount": 12,
+  "counts": {
+    "node-axis": 3,
+    "chiron": 3,
+    "lilith": 3,
+    "classical-quincunx": 3
+  },
+  "countFindings": [
+    {
+      "batch": "lilith",
+      "expected": 72,
+      "actual": 3
+    },
+    {
+      "batch": "chiron",
+      "expected": 66,
+      "actual": 3
+    },
+    {
+      "batch": "node-axis",
+      "expected": 60,
+      "actual": 3
+    },
+    {
+      "batch": "classical-quincunx",
+      "expected": 42,
+      "actual": 3
+    }
+  ],
+  "lintFailures": [],
+  "judgeRepairs": [
+    {
+      "id": "sky.jupiter.square.nodes",
+      "score": 1,
+      "naturalnessScore": 2,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "voice and movement",
+      "why": "One sentence uses an awkward construction that makes the reader pause to interpret what the choices are developing."
+    },
+    {
+      "id": "sky.mars.trine.chiron",
+      "score": 2,
+      "naturalnessScore": 1,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "compressedExampleBeat",
+      "why": "Two sentences rely on compressed abstractions that obscure the straightforward pattern of asserting a need and then backing away from it."
+    },
+    {
+      "id": "sky.moon.opposition.chiron",
+      "score": 2,
+      "naturalnessScore": 3,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "aspect embodiment",
+      "why": "Every sentence is natural, clear aloud, and immediately understandable; the metaphors remain coherent and concrete."
+    },
+    {
+      "id": "sky.neptune.sextile.nodes",
+      "score": 2,
+      "naturalnessScore": 1,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "ending",
+      "why": "Several lines rely on compressed abstractions or awkward metaphor, so the practical meaning is not immediately clear aloud."
+    },
+    {
+      "id": "sky.sun.conjunction.lilith",
+      "score": 2,
+      "naturalnessScore": 2,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "ending",
+      "why": "One sentence becomes vague at the end because it never identifies the choice through which both impulses supposedly emerge."
+    },
+    {
+      "id": "sky.sun.quincunx.moon",
+      "score": 2,
+      "naturalnessScore": 2,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "ending",
+      "why": "One sentence combines abstract phrasing with the unnatural idea that decisions can “stay finished,” though the rest is immediately clear."
+    },
+    {
+      "id": "sky.uranus.quincunx.neptune",
+      "score": 1,
+      "naturalnessScore": 2,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "compressedExampleBeat",
+      "why": "The final sentence uses an unnatural ellipsis that makes the reader pause to supply what the route cannot do."
+    },
+    {
+      "id": "sky.venus.conjunction.nodes",
+      "score": 2,
+      "naturalnessScore": 3,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "aspect embodiment",
+      "why": "Every sentence is natural, clear, and immediately understandable without paraphrasing."
+    }
+  ],
+  "repetition": {
+    "repeatedFiveGrams": [],
+    "repeatedOpenings": []
+  },
+  "settingSaturation": [
+    {
+      "term": "meeting",
+      "count": 3,
+      "share": 0.25,
+      "ids": [
+        "sky.mercury.square.lilith",
+        "sky.sun.conjunction.lilith",
+        "sky.sun.quincunx.moon"
+      ]
+    }
+  ],
+  "passed": false
+}

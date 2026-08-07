@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:58:07.458Z",
+  "targetCount": 3,
+  "recordCount": 3,
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judge": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "byBatch": {
+    "node-axis": 2,
+    "chiron": 1
+  },
+  "byGate": {
+    "editorial-repair": 3
+  },
+  "entries": [
+    {
+      "id": "sky.jupiter.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "editorial-repair",
+      "judgeScore": 3,
+      "naturalnessScore": 1,
+      "naturalnessEvidenceValid": true,
+      "attempts": 3
+    },
+    {
+      "id": "sky.mars.conjunction.nodes",
+      "batch": "node-axis",
+      "reviewGate": "editorial-repair",
+      "judgeScore": 2,
+      "naturalnessScore": 1,
+      "naturalnessEvidenceValid": true,
+      "attempts": 3
+    },
+    {
+      "id": "sky.venus.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "editorial-repair",
+      "judgeScore": 2,
+      "naturalnessScore": 1,
+      "naturalnessEvidenceValid": true,
+      "attempts": 3
+    }
+  ]
+}

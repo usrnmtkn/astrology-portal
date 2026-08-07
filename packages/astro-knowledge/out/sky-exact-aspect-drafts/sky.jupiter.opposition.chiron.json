@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:33.583Z",
+  "id": "sky.jupiter.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "jupiter-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.jupiter.opposition.chiron",
+    "planetA": "jupiter",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Jupiter opposite Chiron",
+    "humanMoment": "At a packed retirement dinner, a former apprentice praises the chef who trained her, and another worker interrupts with an account of the kitchen injury that ended his career.",
+    "developmentDetail": "As more former staff stand to speak, tributes and accounts of harm gather around the same teacher.",
+    "planetaryDynamic": "Jupiter enlarges the reach of the praise and testimony, while Chiron holds both the injury and the recognition that may begin to answer it.",
+    "aspectMechanic": "The opposition places apprentices offering tributes across from workers naming injuries, so neither account can be edited out of the chef's legacy.",
+    "conditionalConsequence": "If the microphone stays open, the celebration becomes a fuller record of both the careers this teacher helped build and the pain left behind.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Jupiter enlarges the reach of the praise and testimony, while Chiron holds both the injury and the recognition that may begin to answer it.",
+    "why": "Chiron's role is slightly abstract, but the sentence still accurately distinguishes expansion from wound and healing within the concrete scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:33.583Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "540f663199d3b98ebade5b68e969c7ada6f1629f316cf677b4ade50d45ae664f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "694e10169cf15118091f2e3d54d72e64cbf57a01c4268f3ba5ce94be07712693",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "7786cdf871ff54e36d0695ba16753477f45e93ba19169488134f6927b68e3877"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

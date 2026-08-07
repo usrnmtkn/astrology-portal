@@ -124,6 +124,14 @@ const deferredFallbackSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3DeferredBundle.ts"),
   "utf8"
 );
+const deferredSkyPlacementSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts"),
+  "utf8"
+);
+const skyPlacementFallbackSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts"),
+  "utf8"
+);
 const appImportIndex = mainSource.indexOf('const appModulePromise = import("./App")');
 const styleWaitIndex = mainSource.indexOf('await import("./styles.css")');
 
@@ -137,6 +145,8 @@ assert.match(viteSource, /fallback-content-relationships/u, "Relationship fallba
 assert.match(viteSource, /fallback-content-sky/u, "Sky fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-sky-core/u, "The eager Sky source partition must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-deferred-core/u, "The deferred natal and relationship source partition must have a stable cache chunk.");
+assert.match(viteSource, /fallback-content-sky-placement/u, "The on-demand Sky Placement source partition must have a stable cache chunk.");
+assert.match(viteSource, /fallback-content-sky-placement/u, "The on-demand Sky Placement article partition must have a stable cache chunk.");
 assert.match(viteSource, /phone-auth/u, "Phone metadata must have a stable deferred cache chunk.");
 assert.doesNotMatch(phoneAuthSource, /libphonenumber-js/u, "Reader boot phone helpers must not import global phone metadata.");
 assert.match(
@@ -148,6 +158,36 @@ assert.match(
   fallbackRuntimeSource,
   /import\("\.\/fallbackArchitectureV3DeferredBundle"\)/u,
   "Transit and relationship content must remain behind a dynamic runtime boundary."
+);
+assert.match(
+  fallbackRuntimeSource,
+  /import\("\.\/fallbackArchitectureV3SkyPlacementBundle"\)/u,
+  "Sky Placement article content must remain behind a dynamic runtime boundary."
+);
+assert.doesNotMatch(
+  fallbackRuntimeSource,
+  /^import .*source-rows\/sky-(?:planet-frames|placement-inventories|sign-copy).*\.json/mu,
+  "Long-form Sky Placement rows must not re-enter the eager reader runtime."
+);
+assert.match(
+  deferredSkyPlacementSource,
+  /bundled-sky-placement-rows-v3\.json/u,
+  "The Sky Placement route partition must use its generated package slice."
+);
+assert.match(
+  fallbackRuntimeSource,
+  /import\("\.\/fallbackArchitectureV3SkyPlacementBundle"\)/u,
+  "Sky Placement fallback articles must remain behind a route-owned dynamic runtime boundary."
+);
+assert.doesNotMatch(
+  fallbackRuntimeSource,
+  /source-rows\/sky-(?:planet-frames|placement-inventories|sign-copy)-/u,
+  "Sky Placement article inventories must not be static reader-runtime dependencies."
+);
+assert.match(
+  skyPlacementFallbackSource,
+  /bundled-sky-placement-rows-v3\.json/u,
+  "The route-owned boundary must load the generated, governed Sky Placement partition."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:23.152Z",
+  "id": "sky.saturn.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.opposition.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Saturn opposite Lilith",
+    "humanMoment": "A food pantry check-in line stops when coordinators require proof of address and several households refuse to hand over documents.",
+    "developmentDetail": "Crates remain behind the counter as volunteers test other ways to confirm eligibility without turning people away.",
+    "planetaryDynamic": "Saturn enforces the eligibility rule, while Lilith represents the households that rule excludes and their refusal to comply.",
+    "aspectMechanic": "The opposition places coordinators and refusing households across the check-in table, so neither the proof requirement nor the blocked access can be edited out of how the food is distributed.",
+    "conditionalConsequence": "If another form of verification is accepted, distribution resumes, but if the document demand holds, eligible households may leave while food remains inside.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "Crates remain behind the counter as volunteers test other ways to confirm eligibility without turning people away.",
+    "why": "All checks pass; this field is slightly less immediate than the others but still adds a distinct, observable consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:23.152Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "962205864dbcfc3a89379ffb49d85f45c30cbb6cc90bae9f69d4f699b36a9e6f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "333e7635467808049a346a760bdc7c1abed203690d6d53f8b0cb18bf06322f02",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e2e543f78de0a7034c8690564c0300976ceb17379544c31b501d18f7705e798e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:33.311Z",
+  "id": "sky.mercury.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mercury-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.mercury.opposition.nodes",
+    "planetA": "mercury",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Mercury opposite North Node",
+    "humanMoment": "At a public library’s oral-history recording day, older residents recount the neighborhood’s vanished shops while teenage volunteers ask the director whether the interviews will be available in translation.",
+    "developmentDetail": "The draft exhibit budget covers recording and editing but includes no interpreters, translated transcripts, or multilingual captions.",
+    "planetaryDynamic": "Mercury carries the interviews and follow-up questions, while the North Node marks language access as the conversation that belongs to the archive’s next chapter.",
+    "aspectMechanic": "The opposition places the residents’ recollections across from the volunteers’ translation requests, so neither the stories nor the question of who can understand them can be edited out of the exhibit.",
+    "conditionalConsequence": "If translation remains outside the budget, the recordings can be completed while staying inaccessible to part of the neighborhood they document.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mercury carries the interviews and follow-up questions, while the North Node marks language access as the conversation that belongs to the archive’s next chapter.",
+    "why": "All fields satisfy the contract; this is the least concrete sentence, but it still clearly distinguishes Mercury’s communications from the Node’s chapter-setting function.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:33.311Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "71e7947da543a76cf985cf508e4a06b86d5c92155aea45982b4fb8246c995cf3",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "01a34384e4d1ba0f5b3ce73c6eb28568bbbea1c3aa2426f5215090dff6ed4c07",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "98053d7f49d52bb52d7748ff66003246b2c0f14fc4af912752235b9327ccf291"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

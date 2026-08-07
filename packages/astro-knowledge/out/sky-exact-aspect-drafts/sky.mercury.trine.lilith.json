@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:39.830Z",
+  "id": "sky.mercury.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mercury-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.trine.lilith",
+    "planetA": "mercury",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Mercury trine Lilith",
+    "humanMoment": "During a live charity telethon, a volunteer says that last year's donations never reached the families named on air.",
+    "developmentDetail": "The hosts stop their banter, the producer leaves the camera running, and callers begin asking where the money went.",
+    "planetaryDynamic": "Mercury keeps the broadcast pleasant and moving, while Lilith names the discrepancy everyone was expected to leave alone.",
+    "aspectMechanic": "The trine lets the volunteer's plain sentence pass through the polished broadcast with little resistance, either opening the accounts to scrutiny or carrying an unverified claim farther than expected.",
+    "conditionalConsequence": "If the records show missing transfers, sponsors may withhold new funds until the charity accounts for them.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the records show missing transfers, sponsors may withhold new funds until the charity accounts for them.",
+    "why": "The consequence is narrower than the mechanic's two possible outcomes, but it remains conditional, concrete, and fully grounded in the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:39.830Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ee2e64b6271540c2a3f899b537c463423acd7ba21d484b5d7c1e137aff49e166",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "ea770c188797b1e869fb6a744e2cd7f747df0baaaa1d5a17221574177eabef8b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "78acada40cae97336befdbc3f3efe324a4b3124f3012c6f7d641038ea99131c3"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

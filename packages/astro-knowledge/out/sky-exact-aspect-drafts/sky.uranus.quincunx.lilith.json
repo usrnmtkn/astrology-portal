@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:16.811Z",
+  "id": "sky.uranus.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "uranus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.quincunx.lilith",
+    "planetA": "uranus",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Uranus quincunx Lilith",
+    "humanMoment": "Longtime volunteers halt a neighborhood meal route on the morning the city expands it into another district.",
+    "developmentDetail": "They leave stocked coolers at the depot, publish years of unanswered requests for support, and refuse to make the added deliveries.",
+    "planetaryDynamic": "Uranus drives the abrupt break, while Lilith gives public force to a refusal held back through years of silence.",
+    "aspectMechanic": "The quincunx keeps the meal route being redrawn to preserve deliveries while the volunteers keep revising the terms of their refusal, with each change creating another mismatch.",
+    "conditionalConsequence": "If replacement drivers are not found quickly, residents may miss deliveries even as the city confronts the labor it treated as limitless.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx keeps the meal route being redrawn to preserve deliveries while the volunteers keep revising the terms of their refusal, with each change creating another mismatch.",
+    "why": "The scene is concrete and coherent, both planetary functions are distinct, and the mechanic clearly shows repeated incompatible adjustments with practical consequences.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:16.811Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "1d9b606209d08ae504f3ec68de97d76a79c0fa5df12fffb1ea6c05640d49ca91",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "8b848d2c93c0868a63110b4fe40e3c4ec38a9bb1cb7707118d855df69f46a6e2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ffca235a1d96b0483ef59ab562e8be72f779390976b2433c2a26834e353285ca"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

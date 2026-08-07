@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:54:33.253Z",
+  "id": "sky.moon.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "moon-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "Someone needs comfort but struggles to ask for or accept it.",
+    "examples": [
+      "A friend offers a hug, and the other person starts crying.",
+      "Someone begins to ask for support, then changes the subject.",
+      "A person stays quiet to see whether a partner notices the distress."
+    ],
+    "pairBehavior": "The Moon contributes the need for comfort, while Chiron contributes pain and hesitation around needing it.",
+    "aspectBehavior": "The need for care and the difficulty accepting it appear through different people, groups, or positions, and both affect the outcome.",
+    "consequence": "Care is offered, but the person who needs it may withdraw, become upset, or wait to be noticed without asking."
+  },
+  "draft": {
+    "id": "sky.moon.opposition.chiron",
+    "planetA": "moon",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Moon opposite Chiron",
+    "body": "Someone offers a hug, and the person who needed it most starts crying. With the Moon opposite Chiron, one person moves closer with care while another changes the subject, stiffens, or insists everything is fine. A request for support begins and disappears mid-sentence; later, silence becomes a test of whether a partner will notice without being told. The comfort is real, but so is the old pain around having to need it.\n\nAcross our relationships, both positions shape what happens: some of us keep reaching out, while others pull back and wait to be noticed. Care can land as relief and exposure at once, which is why a gentle gesture can bring a reaction larger than anyone expected. The work today may be accepting what is already being offered instead of making someone pass an exam they never knew they were taking.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "aspect embodiment",
+    "weakest": "Across our relationships, both positions shape what happens: some of us keep reaching out, while others pull back and wait to be noticed.",
+    "why": "This sentence steps out of the lived scene to explain the opposition through abstract “positions,” creating an astrology-lesson bridge in an otherwise specific, natural entry.",
+    "failedChecks": [
+      "aspect felt rather than explained"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:30.899Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "49a939839868222c99aaf009c03ddda92e0e636a7b2b7192273bf60f4bee776c",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "b5a4c8de7c948d073080ad01e881152c8f00e54c44273beee62d997d83b27c5e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "aspect felt rather than explained"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "447745fcf6854d676d84c70e34b56eec0d3390dad147d79de15b99d2aadd1535"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is natural, clear aloud, and immediately understandable; the metaphors remain coherent and concrete.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is natural, clear aloud, and immediately understandable; the metaphors remain coherent and concrete.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:33.253Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "1add5c8c40459c2790e4dfa870c0ac73d9f82280c6e1ba41c2b27e7586f6f673",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "b5a4c8de7c948d073080ad01e881152c8f00e54c44273beee62d997d83b27c5e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a85a41e19016199b4ababf958af644a31f06eaf61030e9fb88c7d91f94f40dcd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

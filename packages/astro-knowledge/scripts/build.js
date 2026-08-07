@@ -324,6 +324,7 @@ function build() {
   const chartRulers = loadEntries("chart-rulers");
   const composite = loadEntries("composite");
   const lunations = loadEntries("lunations");
+  const timingEventSources = loadEntries("timing");
   const guides = loadEntries("guides");
   const frameworks = loadEntries("frameworks");
   const templates = loadEntries("templates");
@@ -356,6 +357,7 @@ function build() {
     chartRulers,
     composite,
     lunations,
+    timingEventSources,
     guides,
     frameworks,
     templates,
@@ -537,6 +539,7 @@ function build() {
   for (const entry of chartRulers) addEntry(index, entry, `chart-ruler/${entry.kind}`);
   for (const entry of composite) addEntry(index, entry, `composite/${entry.placementType}`);
   for (const entry of lunations) addEntry(index, entry, `lunation/${entry.kind}`);
+  for (const entry of timingEventSources) addEntry(index, entry, "timing/source");
   for (const entry of guides) addEntry(index, entry, "guide");
   for (const entry of frameworks) addEntry(index, entry, "framework");
   for (const entry of templates) addEntry(index, entry, "template");
@@ -581,6 +584,7 @@ function build() {
     chartRulers: chartRulers.length,
     composite: composite.length,
     lunations: lunations.length,
+    timingEventSources: timingEventSources.length,
     guides: guides.length,
     frameworks: frameworks.length,
     templates: templates.length,
@@ -598,7 +602,7 @@ function build() {
 
   console.log("Validation passed: all data files match their schemas.");
   console.log(`Built dist/knowledge.json version ${packageJson.version}.`);
-  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, voiceProfiles=${counts.voiceProfiles}, voiceContent=${counts.voiceContent}, rewriteCorpora=${counts.rewriteCorpora}, indexedEntries=${counts.indexedEntries}`);
+  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, timingEventSources=${counts.timingEventSources}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, voiceProfiles=${counts.voiceProfiles}, voiceContent=${counts.voiceContent}, rewriteCorpora=${counts.rewriteCorpora}, indexedEntries=${counts.indexedEntries}`);
 }
 
 build();

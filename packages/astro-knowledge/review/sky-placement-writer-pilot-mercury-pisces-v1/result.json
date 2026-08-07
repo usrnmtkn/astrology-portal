@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-pilot-mercury-pisces-v1",
+  "recordedAt": "2026-08-04T04:25:07.185Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "mercury",
+    "sign": "pisces"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:pisces-season-2025:p043:window-2-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+      "owner-article:mercury-in-virgo-2025:p006:window-2-4",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "sky-placement",
+          "term": "\\bzodiac\\b",
+          "match": "zodiac",
+          "reason": "encyclopedia register"
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "hook is long (97 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Someone reads a reply twice and says the tone does not match the words; after we sit with that feeling, a half-finished thought becomes the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury circles the zodiac in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.",
+    "tension": "The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.",
+    "development": "Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, name the impression separately, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.",
+    "close": "Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.",
+    "try_this": [
+      "We can reread one confusing message and copy the exact sentence that is shaping our interpretation.",
+      "We can send “Still deciding” instead of another maybe that could be read as yes or no."
+    ]
+  }
+}

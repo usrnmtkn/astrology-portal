@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:44.374Z",
+  "id": "sky.chiron.conjunction.nodes",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "chiron-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.conjunction.nodes",
+    "planetA": "chiron",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Chiron conjunct North Node",
+    "humanMoment": "A concert pianist's hand injury flares on the day a conservatory asks her to lead an adaptive technique workshop.",
+    "developmentDetail": "The class depends on methods she learned in rehabilitation, but demonstrating them sends her back into treatment and forces the program to change.",
+    "planetaryDynamic": "Chiron brings the old injury and its hard-won medicine, while the North Node brings the next assignment that needs both.",
+    "aspectMechanic": "Under the conjunction, the workshop and the flare become one event, making the pianist's expertise difficult to separate from the injury interrupting its delivery.",
+    "conditionalConsequence": "If the class continues on a revised schedule, the interruption may become part of what participants learn about adapting technique in real time.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Chiron brings the old injury and its hard-won medicine, while the North Node brings the next assignment that needs both.",
+    "why": "All fields meet the contract; this sentence is the most compressed, but it still clearly distinguishes Chiron’s wound medicine from the North Node’s developmental direction without treating the node as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:44.374Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "0faec4a1814d41a66eeea5d6de4c68e71fc0095249785ef92f4da458bba813e2",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d0071a1d50e4e7a84aa1186eac08b51f1834cf804660ad81b28f802c3e855a93",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9c3d84d5067a02744498a33e71eb0a14154c4c4a836036a82d71d134b6f3d554"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

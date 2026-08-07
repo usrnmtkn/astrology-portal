@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_09d6afb9cbd0a2fa006a71cdbc69f4819dad7836d8c9d73600",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 6436,
+    "input_tokens_details": {
+      "cache_write_tokens": 6433,
+      "cached_tokens": 0
+    },
+    "output_tokens": 7009,
+    "output_tokens_details": {
+      "reasoning_tokens": 6569
+    },
+    "total_tokens": 13445
+  },
+  "outputText": "{\"opening\":\"Mars in Scorpio brings the nerve to question a story that no longer adds up. As Mars enters Scorpio on {{entryDate}}, the evidence may be ordinary: a shared commitment changes without warning, one reply says the change was sudden, another makes clear it had been decided earlier, and a direct question gets silence. We compare what was said, name the contradiction, and stay in the uncomfortable exchange until the avoided issue is finally addressed. With the facts exposed, scattered frustration turns into a precise decision about whether the commitment can continue and under what terms. Mars takes about 2 years to move through all twelve signs, usually spending roughly 6 to 7 weeks in each one, though a retrograde can extend one sign residency to about 7 months.\",\"tension\":\"Once the contradiction is confirmed, stopping can feel like giving up control. We reread every response for a second betrayal, ask the same question in new forms, and withhold what we know to see whether someone lies again. Silence becomes a test instead of a pause. The other side starts guarding every word, useful details disappear, and the confrontation meant to restore trust creates a fresh reason not to speak plainly.\",\"development\":\"The next move depends on separating what happened from what we suspect it means. We can name the broken promise, ask directly for the missing fact, and say what decision depends on the answer. If the story keeps shifting, a confession is not required before we change the terms or step away. If the answer is direct and matches what happened, continuing to investigate only keeps the conflict hot. Either way, saying what changes now ends the private tests and puts the real issue in the open.\",\"close\":\"Before {{exitDate}}, we can leave a commitment whose basic terms were broken and never honestly explained.\",\"try_this\":[\"We can reread a tense message thread and write down what was said separately from what we suspect it means.\",\"We can say what we already know instead of waiting in silence to see whether someone admits it.\",\"We can delete a hostile draft instead of sending it just to make someone feel the same anger.\"]}"
+}

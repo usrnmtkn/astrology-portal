@@ -1,0 +1,16 @@
+{
+  "id": "timing-event-v2-mercury-pisces-station-retrograde-owner-approved",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "current-sky-timing-event",
+  "planet": "mercury",
+  "sign": "pisces",
+  "articleBeat": "body",
+  "after": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision. Mercury slows to a stop in Pisces and starts moving backward. In this sensitive water sign, we can catch tone, imagery, and feeling faster than facts, which makes intuition vivid and certainty less reliable.\n\nWhen the same conversation circles back, the repeated wording may expose an assumption that kept us talking past one another. We can restate the agreement and confirm the times before anything gets booked. Not every plan falls apart here. Some decisions made during the pause hold. The useful change is knowing which part was an impression and which part was confirmed.",
+  "whatChanged": "Owner explicitly approved the complete V2 timing-event body after source-overlap, instruction-list, repeated-ending, and plain-English revisions.",
+  "ownerStatement": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+  "approvalScope": "exact_timing_event_body_only",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+    "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.station.mercury.pisces.retrograde.json"
+  ]
+}

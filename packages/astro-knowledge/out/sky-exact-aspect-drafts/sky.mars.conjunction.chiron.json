@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:07:51.449Z",
+  "id": "sky.mars.conjunction.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mars-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.conjunction.chiron",
+    "planetA": "mars",
+    "planetB": "chiron",
+    "aspect": "conjunction",
+    "title": "Mars conjunct Chiron",
+    "humanMoment": "A tenant disputes an unexplained fee, then softens the demand before the landlord answers.",
+    "developmentDetail": "The receipts are on the table, but the tenant spends more time defending neighbors facing the same charge than naming the repayment owed personally.",
+    "planetaryDynamic": "Mars drives the dispute and direct demand, while Chiron carries the old wound around taking up enough space to make that demand without apology.",
+    "aspectMechanic": "Under the conjunction, the disputed fee, softened demand, and apology land in one exchange, making assertion difficult to separate from the fear that it was never allowed.",
+    "conditionalConsequence": "If the demand keeps shifting toward the neighbors' losses, the landlord may answer the broader complaint while leaving the tenant's repayment unresolved.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mars drives the dispute and direct demand, while Chiron carries the old wound around taking up enough space to make that demand without apology.",
+    "why": "The scene is concrete, the bodies are clearly distinguished, the conjunction merges assertion with the wound around asserting, and the consequence follows naturally; the planetary dynamic is only slightly more explanatory than the other fields.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:07:51.448Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "737f2087e136a49a489cab0a06d44d47ecd6b7e733ba6b37f2f580a79752329f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "e3f01f778b394354ccd4c1a84a61b31c01df592fa2c89273251287fef115384d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "023cc4961d3bec0855f9846dd019f146c305e2efb08cb57c0b7f0bcc53154ecd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.conjunction.chiron",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

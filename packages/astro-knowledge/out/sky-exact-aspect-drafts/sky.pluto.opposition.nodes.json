@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:18:22.712Z",
+  "id": "sky.pluto.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "pluto-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.opposition.nodes",
+    "planetA": "pluto",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Pluto opposite North Node",
+    "humanMoment": "Demolition begins on a damaged levee before a century-old operating agreement surfaces giving downstream farmers control of the gates planned for replacement.",
+    "developmentDetail": "Contractors pause the work as the farmers appoint representatives and demand that crop-season releases be built into the repair.",
+    "planetaryDynamic": "Pluto brings the buried gate authority to the surface, while the North Node makes flood recovery the assignment that now has to move through it.",
+    "aspectMechanic": "The opposition places the contractors rebuilding the levee across from the farmers controlling the gates, so neither construction deadlines nor release terms can be edited out of the repair.",
+    "conditionalConsequence": "If the gate terms remain unsettled, the new flood controls cannot open on schedule and downstream planting decisions remain on hold.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The opposition places the contractors rebuilding the levee across from the farmers controlling the gates, so neither construction deadlines nor release terms can be edited out of the repair.",
+    "why": "Ready for owner review. The mechanic is slightly schematic but clearly stages opposing positions whose demands must both shape the outcome.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:18:22.712Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "006764f7a9c0f5c8b6fa2d0394cb3c0bad6dea908f8d2de860ff501565b7e86b",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "42724dd004a230bc07c3ca41476412012ea31323cfc97a1f4de5c851f9616788",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9ebbc450180f60429afbe3167b6c9486f6ebf8c61ac71d5ad1c137d6887c0f0d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

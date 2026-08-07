@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:01.800Z",
+  "id": "sky.mercury.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mercury-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.chiron",
+    "planetA": "mercury",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Chiron",
+    "humanMoment": "During a live radio advice show, a caller laughs off months of unpaid overtime, then turns sharp when the host asks how often the hours went unrecorded.",
+    "developmentDetail": "The host rephrases the question, the caller starts over twice, and a halting account finally replaces the practiced joke.",
+    "planetaryDynamic": "Mercury pushes for a clear account, while Chiron guards the old hurt of sounding slow, uncertain, or easy to dismiss.",
+    "aspectMechanic": "The Mercury-Chiron quincunx keeps shifting the caller between answering the host and protecting the sore place behind the joke, so each rephrased question opens one path while disrupting the other.",
+    "conditionalConsequence": "If the halting account stays on air, the unpaid hours become specific enough to address, but renewed pressure for a polished answer could send the exchange back into humor or sharp replies.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The Mercury-Chiron quincunx keeps shifting the caller between answering the host and protecting the sore place behind the joke, so each rephrased question opens one path while disrupting the other.",
+    "why": "Slightly explanatory, but it clearly applies the quincunx's repeated adjustment to the specific scene without losing naturalness.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:01.800Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "604ee06a1beaf35b46db3cdd553710973586a2b42930d54e669b4e8de44459b5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "885c168df68950e6c0b58a252a109cc77db9353cb0558b877b057b83e463dc55",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d67a007fe07a2913d984561f363c376c07d72719ae803447aa8f152ea970643a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

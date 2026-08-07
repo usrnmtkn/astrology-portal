@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:01.502Z",
+  "id": "sky.sun.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "sun-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.sextile.chiron",
+    "planetA": "sun",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Sun sextile Chiron",
+    "humanMoment": "At a community exhibition, praise for one contributor lands awkwardly just as another artist's easy confidence draws the room.",
+    "developmentDetail": "The praised person laughs off the compliment, stays late fixing details no one requested, and keeps watching the more visible artist with envy.",
+    "planetaryDynamic": "The Sun brings the wish to be seen, while Chiron brings the old ache from times when visibility caused pain.",
+    "aspectMechanic": "The sextile creates a usable opening to recognize that the discomfort is old information and the envy marks an unclaimed gift, but someone still has to act on that recognition.",
+    "conditionalConsequence": "If the contributor accepts the public credit instead of burying the discomfort in extra work, the exhibition reveals a talent that would otherwise remain hidden.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the contributor accepts the public credit instead of burying the discomfort in extra work, the exhibition reveals a talent that would otherwise remain hidden.",
+    "why": "The consequence is slightly less observable than the preceding details, but it follows directly from the scene and remains conditional rather than advisory.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:01.501Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "96c0643c7d2f2dd8563d8f359c9a3755c3bd1cb1eb48fedaf04cbf269bd39676",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "267e5e443c4d8a4678a5f83e3c42a6ea55cd056c47774d625d4ceb41a45acef2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9433f572ff7420dd279f03bc3ae03b430cd059e1668938479bc7b80de5e423c8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

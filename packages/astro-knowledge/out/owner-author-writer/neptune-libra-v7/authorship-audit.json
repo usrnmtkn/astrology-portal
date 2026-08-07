@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "sky-placement-v7-neptune-libra",
+  "gate": "authorship_pass",
+  "deterministicLint": {
+    "score": 3,
+    "fails": 0,
+    "warns": 0,
+    "findings": [],
+    "notes": [
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  "deterministicFindings": [],
+  "sentenceAuditTemplate": [
+    {
+      "slot": "tagline",
+      "index": 0,
+      "text": "Stop calling silence peace",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "hook",
+      "index": 0,
+      "text": "An evening can go well and still leave something important unsaid.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "hook",
+      "index": 1,
+      "text": "One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "hook",
+      "index": 2,
+      "text": "Neptune in Libra makes disagreement easy to soften and hard to resolve.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "lived",
+      "index": 0,
+      "text": "Neptune stays in one sign for roughly fourteen years, long enough for a habit of avoiding disagreement to become normal.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "lived",
+      "index": 1,
+      "text": "One person says yes to dinner, changes the time twice, and cancels an hour before because the real answer was no.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "lived",
+      "index": 2,
+      "text": "Nobody argued, so the evening is still described as peaceful.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "lived",
+      "index": 3,
+      "text": "After enough years, everyone knows which questions are safer not to ask, and decisions keep getting made around answers nobody gave.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "turn",
+      "index": 0,
+      "text": "The problem is not only the cancellation.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "turn",
+      "index": 1,
+      "text": "It is the agreement that was never real.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "turn",
+      "index": 2,
+      "text": "One person avoids discomfort in the moment; everyone else reorganizes later and learns not to trust the next yes.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "turn",
+      "index": 3,
+      "text": "A plan is not shared when someone has to agree, cancel, and take the blame for being unreliable just to keep the peace.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "moves",
+      "index": 0,
+      "text": "Say no when the answer is no, before someone else arranges their time around a yes.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "moves",
+      "index": 1,
+      "text": "Ask for each person's first choice before negotiating a compromise.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    },
+    {
+      "slot": "moves",
+      "index": 2,
+      "text": "Reopen one agreement that looks peaceful only because disagreement keeps arriving as cancellation.",
+      "questions": [
+        "Does the sentence make literal sense on first read?",
+        "Does it name observable behavior, a real decision, or a concrete consequence?",
+        "Is an abstraction being made to act like a person?",
+        "Is the sentence merely explaining the placement?",
+        "Does it sound like a content writer imitating Marie?",
+        "Does it repeat an idea already established?",
+        "Does it require the reader to translate polished shorthand?",
+        "Could it move to another placement with minimal changes?",
+        "Does it continue the article's sequence?",
+        "Is the cost named specifically?",
+        "Is the sentence needed, or is it filling paragraph length?"
+      ]
+    }
+  ],
+  "articleAuditTemplate": [
+    "The hook begins with recognizable pressure, behavior, a decision, or a contradiction.",
+    "Astrology follows or accompanies the lived observation rather than replacing it.",
+    "Every beat advances one sequence.",
+    "The lived section is not an inventory.",
+    "The turn names behavior and consequence.",
+    "The ending does not stack another metaphor, slogan, or conclusion.",
+    "Moves carry pressure, choice, or consequence instead of administration.",
+    "Current Sky contains no second person.",
+    "The article did not become more polished at the expense of natural English."
+  ],
+  "semanticAttestation": {
+    "present": true,
+    "passed": true,
+    "failures": []
+  },
+  "rule": "A failing deterministic or semantic authorship check requires rewritten candidate wording, not a warning-only handoff."
+}

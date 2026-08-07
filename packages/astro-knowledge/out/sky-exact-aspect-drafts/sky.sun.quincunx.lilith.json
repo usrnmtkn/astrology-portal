@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:20.324Z",
+  "id": "sky.sun.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "sun-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.lilith",
+    "planetA": "sun",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Lilith",
+    "humanMoment": "At a museum fundraiser, a polished host abandons the scripted introduction when an artist names the donor controversy everyone has avoided.",
+    "developmentDetail": "The room goes quiet, then several guests exhale and applaud while the host struggles to recover the approved tone.",
+    "planetaryDynamic": "The Sun maintains the publicly approved persona, while Lilith brings forward the want that persona was built to exclude.",
+    "aspectMechanic": "The quincunx requires repeated adjustments between preserving public approval and making room for the banished want because neither function can fully absorb the other.",
+    "conditionalConsequence": "If the host returns to the script without acknowledging the disclosure, each polished transition draws fresh attention to what was left out.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The scene is concrete and observable, both bodies are clearly distinguished, the quincunx mechanic drives repeated social adjustments, and the consequence follows directly without becoming advice or prophecy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:20.324Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "836527a29f359ccc9b11aa99674044a8112b42b3aabfa031c61cee8796c484f9",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "acfa0cd6efcb311b713f9008f35e39c833e08bedae10f49db27a231756b5977a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a0e506f4ca47453b9f49acc6193c21fc54c7c75e96205280518475276d4e084b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

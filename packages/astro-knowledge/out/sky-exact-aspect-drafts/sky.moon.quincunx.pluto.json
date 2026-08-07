@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:18:20.610Z",
+  "id": "sky.moon.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "moon-pluto",
+    "path": "data/pairs/moon-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.quincunx.pluto",
+    "planetA": "moon",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Pluto",
+    "humanMoment": "A household revises an elder's care schedule after one relative questions who controls the account paying for it.",
+    "developmentDetail": "Coverage shifts repeatedly as receipts are checked, old resentments surface, and each new arrangement leaves someone feeling overruled.",
+    "planetaryDynamic": "The Moon brings changing feelings and care needs, while Pluto brings intensity and a struggle over who holds power.",
+    "aspectMechanic": "The Moon-Pluto quincunx keeps changing the care schedule because each attempt to settle coverage reopens control of the account, and each attempt to secure control disrupts coverage again.",
+    "conditionalConsequence": "If the account dispute continues to drive each revision, gaps in care may widen as the household becomes more emotionally divided.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete household stakes, distinct Moon and Pluto functions, and a clear reciprocal adjustment mechanic support a conditional consequence without drifting into advice or prophecy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:18:20.610Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b250bcd1984da1f916474707dd7682f3080166d67c0c0e80aba23c67f6ac6f0e",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "b5e0f9fc4b2eae6793976f950ca877589a75f1b57cc62e4de39e83d8995a6e74",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "7cafac0ad5a5d630fa0aea4795f88fbb77a5ba9912afe91b0f83ea8437f9f1e2"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

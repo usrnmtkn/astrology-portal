@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:01.391Z",
+  "id": "sky.pluto.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "pluto-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.quincunx.lilith",
+    "planetA": "pluto",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Pluto quincunx Lilith",
+    "humanMoment": "A hospital postpones the dedication of a maternity wing after former patients reveal that its namesake once confined unmarried mothers and arranged adoptions without their consent.",
+    "developmentDetail": "As birth records and testimony accumulate, donors defend the benefactor while affected families demand that erased names and histories be added to the site.",
+    "planetaryDynamic": "Pluto exposes the institution's buried machinery of control, while Lilith carries the authority of those punished and excluded by it.",
+    "aspectMechanic": "The quincunx keeps the dedication plans, donor agreements, and historical display changing because containing the hospital's liability and restoring the families' erased histories call for fixes that do not fit together.",
+    "conditionalConsequence": "If the hospital keeps the benefactor's name while excluding the records and testimony, affected families remain outside the official history and the dedication dispute stays open.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry is concrete, observable, evergreen, and accurately distinguishes buried institutional control from excluded authority while expressing the quincunx through repeated, incompatible adjustments.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:01.390Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "037928083c179a35dfe7086ae37274fa93cb3c85b95ed98415f742aef48bcd7e",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "3041fae957f4c9aa466c95470d19a77080560daa4e06be7c02d2f180f69abf9f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "5051a95f2cb0034c4da327c11b292e659803de30fb507ebb6e3a9aa193a403e5"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

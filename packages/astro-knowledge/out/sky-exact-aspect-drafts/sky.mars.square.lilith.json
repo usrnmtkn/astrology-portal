@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:46.203Z",
+  "id": "sky.mars.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mars-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.square.lilith",
+    "planetA": "mars",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Mars square Lilith",
+    "humanMoment": "A landlord removes a long-standing memorial from a shared courtyard, and residents put it back before the trash has been collected.",
+    "developmentDetail": "Each new removal brings louder protests, damaged locks, and anger far larger than the original cleanup dispute.",
+    "planetaryDynamic": "Mars carries the landlord's sanctioned effort to control the property, while Lilith carries the residents' banished rage and refusal to let the memorial be tamed into compliance.",
+    "aspectMechanic": "The square forces the courtyard into the same cycle of removal, protest, and reinstallation until the fight over who controls the space is addressed.",
+    "conditionalConsequence": "If both sides keep repeating their claim through the memorial, access to the courtyard may be restricted while the underlying dispute remains untouched.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mars carries the landlord's sanctioned effort to control the property, while Lilith carries the residents' banished rage and refusal to let the memorial be tamed into compliance.",
+    "why": "The dynamic is accurate and specific, though the phrase about taming the memorial is slightly less natural than the surrounding copy. All required field functions and aspect mechanics are present.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:46.202Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4774b775a387927f597d7610fbffa6eccf89a1f0479ba9df5d8ba013f4b215f3",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "188e2886c987d3550bee3b590737da63db76068cac4f8e883fb34553e465a15f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6e6fb0fd25215d6ef2de3a8aac073e16d8251b9cbe3be9101fc3326e14a90a59"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

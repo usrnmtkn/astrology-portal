@@ -27,7 +27,8 @@ const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-article-longform.json"));
 const { buildReferenceFactContext } = require("./reference-fact-bank.js");
-const ARTICLE_PROMPT_VERSION = "sky-article-longform-v6:prompt-v1";
+const { judgePolicyLines: ownerWarmthJudgePolicyLines } = require("./owner-corpus-warmth-policy.js");
+const ARTICLE_PROMPT_VERSION = "sky-article-longform-v6:prompt-v2-warmth-harvest";
 
 function furnitureFor(planet) {
   const key = String(planet || "").toLowerCase();
@@ -38,7 +39,8 @@ function furnitureFor(planet) {
   return "";
 }
 
-function buildJudgePrompt(articleText, { planet = "", edition = "", ownerVerbatim = false } = {}) {
+function buildJudgePrompt(articleText, options = {}) {
+  const { planet = "", edition = "", ownerVerbatim = false } = options;
   const furniture = furnitureFor(planet);
   const judged = spec.checks.filter((c) => c.id !== "lint-clean" && c.judge !== false);
   const referenceFactContext = buildReferenceFactContext(articleText);
@@ -47,7 +49,7 @@ function buildJudgePrompt(articleText, { planet = "", edition = "", ownerVerbati
     ``,
     `You are scoring a LONG-FORM sky placement article${planet ? ` (${planet}${edition ? `, ${edition}` : ""})` : ""}. Template slots in double braces ({{entryDate}}, {{aspectHits...}}) are filled by the app; do not penalize their presence, but do judge the prose around them.`,
     ownerVerbatim
-      ? `OWNER-VERBATIM PROVENANCE: This is owner-published text. Apply the spec's exemption only to recognizability and mechanical CC/SD tic matches; judge every other voice check normally and do not assign a score from provenance alone.`
+      ? `OWNER-VERBATIM PROVENANCE: This is owner-published text. Apply the spec's exemption only to recognizability and mechanical adjacent-voice tic matches; judge every other voice check normally and do not assign a score from provenance alone.`
       : `OWNER-VERBATIM PROVENANCE: No exemption is asserted.`,
     ``,
     `The voice: ${spec.voiceDescription}`,
@@ -56,6 +58,7 @@ function buildJudgePrompt(articleText, { planet = "", edition = "", ownerVerbati
     furniture ? `This planet's structural family (a menu across its corpus, not a checklist for every edition): ${furniture}` : ``,
     `Interpretation rules (mandatory):`,
     ...spec.judgeGuidance.map((rule) => `  - ${rule}`),
+    ...ownerWarmthJudgePolicyLines(options).map((rule) => `  - ${rule}`),
     referenceFactContext,
     ``,
     `Score 1-3 against these checks:`,

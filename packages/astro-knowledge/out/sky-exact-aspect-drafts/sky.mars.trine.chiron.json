@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:31.627Z",
+  "id": "sky.mars.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mars-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.trine.chiron",
+    "planetA": "mars",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Mars trine Chiron",
+    "humanMoment": "A restaurant worker stops a customer from berating a new server, then laughs off the same customer's insult when it turns toward them.",
+    "developmentDetail": "Security is called for the coworker, but the worker leaves their own treatment out of the incident report.",
+    "planetaryDynamic": "Mars drives the worker to intervene, while Chiron carries the old lesson that taking up space for their own sake is harder to justify.",
+    "aspectMechanic": "Under the trine, calling security and omitting the second insult happen with little resistance, allowing decisive protection and self-erasure to reinforce each other.",
+    "conditionalConsequence": "If the worker's insult stays out of the report, the customer may be removed for one incident while the broader pattern of harassment goes unrecorded.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the worker's insult stays out of the report, the customer may be removed for one incident while the broader pattern of harassment goes unrecorded.",
+    "why": "The consequence is slightly more procedural than the other fields, but it follows directly from the omission and preserves the scene's nuance.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:31.627Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4f64705807f9bdf9ba550310910e27cfd1016acecce4ba78c8201e4a28a0b37a",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "91ad3cf2cefcec526033f061d4abda77623ec513afa0a49825f895a57c36b35b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "33003f210eea98860de43c44b9a02b9138149ebcbf67f483131e046efaf8bd61"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

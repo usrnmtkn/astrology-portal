@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:07.790Z",
+  "id": "sky.jupiter.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "jupiter-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.square.lilith",
+    "planetA": "jupiter",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Jupiter square Lilith",
+    "humanMoment": "A members-only supper club turns a secret menu featuring prohibited ingredients into its main attraction after demand surges.",
+    "developmentDetail": "Inspectors issue fines, suppliers pull out, and sold-out seatings are cited as proof that the dinners should continue.",
+    "planetaryDynamic": "Jupiter magnifies the appetite and confidence behind the expansion, while Lilith brings the forbidden want into public view.",
+    "aspectMechanic": "The square makes fines and supplier losses keep returning until the supper club decides whether sold-out demand justifies serving the prohibited menu.",
+    "conditionalConsequence": "If strong sales are treated as ethical permission, repeated penalties could close the venue and leave its workers without shifts.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If strong sales are treated as ethical permission, repeated penalties could close the venue and leave its workers without shifts.",
+    "why": "All fields satisfy their functions; this sentence is the least distinctive but still gives a concrete, conditional consequence rooted in the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:07.790Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "6920e530dc2c87c5b24ce7eb4c92e3840dc3d3795bc13d08dba59cf1e9dbd172",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "f427144e490d5ab08ca9b0edc7a9ecd31c37f442ebb57dd51184d92aae42d43e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "52c78e3026aa473eaa9373482b6dba88b00b38bbc38afda6dde64594dd34982e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

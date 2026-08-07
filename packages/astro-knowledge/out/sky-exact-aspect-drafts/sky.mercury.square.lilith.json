@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:22.831Z",
+  "id": "sky.mercury.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mercury-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.square.lilith",
+    "planetA": "mercury",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Mercury square Lilith",
+    "humanMoment": "At a gallery opening, an artist tells the crowd that several displayed works were produced by unpaid assistants.",
+    "developmentDetail": "The curator redirects the conversation, but questions about the wall labels and sales keep returning to who did the work.",
+    "planetaryDynamic": "Mercury tries to preserve the opening’s pleasant tone, while Lilith names the unpaid labor everyone was expected to ignore.",
+    "aspectMechanic": "The square forces a practical choice over credit and payment, with every redirected question returning through the wall labels and sales until that choice is addressed.",
+    "conditionalConsequence": "If the gallery leaves the assistants uncredited and unpaid, each purchase inquiry can reopen the dispute and delay a sale.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the gallery leaves the assistants uncredited and unpaid, each purchase inquiry can reopen the dispute and delay a sale.",
+    "why": "No material weakness; the conditional consequence follows directly from the unresolved conflict over labor, credit, and sales.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:22.831Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "d9faece94368727b2a273c4823582242f26b0125eadb28046bc2f87ce3af65eb",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "16714bd48bd8a1e889e8823fd330d89ef69219abc57581171f5f84bf088c6a66",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3c49fcf092f84084f12d3e0b36e22e9a2c5d66b7ae7e331af2441c673d984a74"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

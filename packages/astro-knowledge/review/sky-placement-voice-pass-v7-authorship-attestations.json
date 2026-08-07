@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
   "created": "2026-08-02",
+  "status": "superseded_by_owner_feedback_2026-08-03",
   "reviewer": "Codex editorial writer",
   "governance": {
     "ownerApprovalEffect": false,
     "promotionEffect": false,
     "canonicalEffect": false,
-    "note": "These records attest that the local authorship rewrite was performed. They are not owner review or Terra judgment."
+    "note": "These records attest that the August 2 local authorship rewrite was performed under the rules then active. August 3 owner feedback invalidated the V7 pass: all three taglines were rejected, generic People openers are banned, harm should be softened when possible, and current communication scenes should use messages rather than letters. They are not current pass authority, owner review, or Terra judgment."
   },
   "attestations": {
     "sky-placement-v7-saturn-capricorn": {

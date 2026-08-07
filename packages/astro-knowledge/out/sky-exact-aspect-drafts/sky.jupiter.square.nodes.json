@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:24.910Z",
+  "id": "sky.jupiter.square.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.square.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Jupiter square North Node",
+    "humanMoment": "A farm cooperative receives a lucrative contract to expand a familiar export crop just as a smaller buyer offers steady orders for a new drought-tolerant harvest.",
+    "developmentDetail": "The same acreage, water, and equipment cannot fully supply both orders, so each planting cycle reopens the allocation fight.",
+    "planetaryDynamic": "Jupiter enlarges the scale and appeal of the export contract, while the North Node marks the smaller drought-tolerant order as the growth that moves the cooperative forward.",
+    "aspectMechanic": "The square keeps putting acreage, water, and equipment back into conflict each planting cycle until the cooperative chooses which contract defines the next harvest.",
+    "conditionalConsequence": "If most acreage stays with the familiar export crop while the new order remains underfunded, missed deliveries can cost the cooperative its foothold with the smaller buyer.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The same acreage, water, and equipment cannot fully supply both orders, so each planting cycle reopens the allocation fight.",
+    "why": "The phrase \"allocation fight\" is slightly administrative, but the sentence still gives a concrete recurring consequence and clearly develops the opening.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:24.910Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "400db9e3b0d0d7c95fff455c463ba97df8df5947233b754bba59213d79009787",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "1dac1fdfae39bcffa7bc9a73d97f14f5d1a27ae4a7ca8572e70b8a8746ba2c85",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "45520e5006401074f5451d177743762b1d77d91c1a727abd475ef66827afffe7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

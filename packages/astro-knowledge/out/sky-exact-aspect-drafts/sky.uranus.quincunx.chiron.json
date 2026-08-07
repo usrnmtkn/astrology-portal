@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:46.394Z",
+  "id": "sky.uranus.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "uranus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.quincunx.chiron",
+    "planetA": "uranus",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Uranus quincunx Chiron",
+    "humanMoment": "A home-care agency cancels an evening visit without warning, exposing how a household’s dinner and bathing routine has been arranged around one partner’s old back injury.",
+    "developmentDetail": "Meals move to the bedroom, the bath is postponed, and each improvised handoff reveals another task the absent carer had been making possible.",
+    "planetaryDynamic": "Uranus contributes the abrupt break in care, while Chiron reveals the injury the settled routine had been protecting.",
+    "aspectMechanic": "In the quincunx, Uranus keeps shifting meals and handoffs while Chiron pulls the back injury into each new arrangement, so every practical fix creates another point of strain.",
+    "conditionalConsequence": "If the visit cannot be restored, the household may develop a less physically demanding routine that still leaves the timing of care unsettled.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the visit cannot be restored, the household may develop a less physically demanding routine that still leaves the timing of care unsettled.",
+    "why": "The consequence follows plausibly from the disruption while preserving the quincunx's unresolved adjustment.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:46.393Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7e989e939cf10a8ae3ea780ba6b01db8e98578ee4565ee24b54cdcdce38967c3",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "931d0762f2f7d344d9b55fc3560e56e826e48d807c499cd988a78280338be6a4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "67df94dcd9ab350df5039d81a4579d2113f41f4b0065ffc709f17be9af19d250"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

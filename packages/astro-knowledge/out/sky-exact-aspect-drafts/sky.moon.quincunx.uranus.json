@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:18:06.397Z",
+  "id": "sky.moon.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "moon-uranus",
+    "path": "data/pairs/moon-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.quincunx.uranus",
+    "planetA": "moon",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Uranus",
+    "humanMoment": "A rehearsal stalls when performers react sharply to a last-minute change in the running order.",
+    "developmentDetail": "The original sequence returns, shifts again, and gives way to improvisation as the room alternates between relief and restlessness.",
+    "planetaryDynamic": "The Moon brings the need for emotional steadiness, while Uranus disrupts the routine and pushes for a freer response.",
+    "aspectMechanic": "The quincunx keeps the running order under revision because restoring the sequence settles the room, but each improvisation revives the urge to break from it.",
+    "conditionalConsequence": "If the sequence keeps changing through the final run, cues may remain uneven even as an inventive transition emerges.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "The Moon brings the need for emotional steadiness, while Uranus disrupts the routine and pushes for a freer response.",
+    "why": "The dynamic is slightly more explanatory than the scene-based fields, but it accurately distinguishes both bodies and supports the quincunx mechanic.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:18:06.396Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "aefba16011bd2eb996c4968f088c84d2a2a36c47bbc64bc480bb6af2846ce7de",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "f81982a28c8bb5eabcd7d4c14798f26f83129e04c5b2eb54daa03ce96e47097a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ae0ad376b3212cd3663bd3b53678f984409a80aad7ddda1044fca1a0fd7a5f7d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:21:35.517Z",
+  "id": "sky.neptune.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "neptune-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.opposition.lilith",
+    "planetA": "neptune",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Neptune opposite Lilith",
+    "humanMoment": "A record lottery jackpot sends ticket lines around city blocks while a rent-relief hearing across town fills with tenants asking for one month without arrears.",
+    "developmentDetail": "News interviews dwell on mansions and resignations, but repeated comments return to clearing bills, reducing shifts, and caring for relatives.",
+    "planetaryDynamic": "Neptune supplies the fantasy of sudden escape, while Lilith carries the ordinary want for security that hides inside it.",
+    "aspectMechanic": "The opposition places jackpot fantasies in the ticket lines across from plain demands at the rent-relief hearing, so neither the dream of escape nor the unmet need behind it can be edited out of the public response.",
+    "conditionalConsequence": "If the surge is treated as entertainment alone, the hearing may expose how much of the spending came from ordinary needs with no other visible outlet.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the surge is treated as entertainment alone, the hearing may expose how much of the spending came from ordinary needs with no other visible outlet.",
+    "why": "The consequence is slightly interpretive about spending motives, but it remains conditional, scene-based, collective, and consistent with the concealed ordinary want beneath the fantasy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:21:35.517Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ca526182f83dd0c2841884ce86ddf4b89dcabb1cc098d6647b6656ffb2290c3f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "af1ea6adc44361e258bbf6a36ffad976d3c71f66259ad2edf90f74647f2b07b1",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "1bd2df5c9a1703f8d70bbd2768ceae2043a502c5c2962ac776406fce62db3f3b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

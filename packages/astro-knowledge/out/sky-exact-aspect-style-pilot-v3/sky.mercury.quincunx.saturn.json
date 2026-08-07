@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:33:17.625Z",
+  "id": "sky.mercury.quincunx.saturn",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-saturn",
+    "path": "data/pairs/mercury-saturn.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.saturn",
+    "planetA": "mercury",
+    "planetB": "saturn",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Saturn",
+    "body": "The thought feels ready until it has to pass inspection. With Mercury quincunx Saturn, words move toward the world while caution keeps pulling them back for another test. A text rewritten three times, a total checked after the receipt prints, a question held until the moment has passed. Fixing the wording throws off the timing; fixing the timing makes the wording feel wrong. We can sound clipped or slow when the real work is exacting, serious, and still unfinished.\n\nWe keep adjusting the sentence, the schedule, the number, hoping precision will finally quiet the doubt. Instead, concentration deepens as ease thins out, and small talk starts to feel like static around the one useful thing we are trying to finish. The mind can brood when it has nowhere solid to put its weight, so practical work becomes the cleanest channel for all that scrutiny. Careful thinking takes time. The catch is that time keeps changing the thought.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first, concrete, and collective, with both Mercury and Saturn active in repeated adjustment. The examples stay compressed, the second paragraph deepens the tension, and the final truth-and-catch turn lands cleanly.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:33:17.624Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "b5f9fd9b2b27a5089632a92aeb7c258a92031d639a8dbfb8aeb7d558375e0992",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "1b9c0c0064da00642a0e1c094ff0a4784906e3b2a1438a65da3b9bd541d76405",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c66cb8554d625d57d81223127fdf99700d7addca739cf0999839248eed2ea75f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.saturn",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

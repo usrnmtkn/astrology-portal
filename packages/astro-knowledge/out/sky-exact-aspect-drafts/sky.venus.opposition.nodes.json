@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:58.610Z",
+  "id": "sky.venus.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "venus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.opposition.nodes",
+    "planetA": "venus",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Venus opposite North Node",
+    "humanMoment": "A neighborhood cinema receives rival bids from a former owner who wants to revive its popular repertory nights and a local cooperative proposing new films, lower ticket prices, and community ownership.",
+    "developmentDetail": "Longtime patrons rally around the familiar program, while younger residents raise money for the cooperative bid and its broader access plan.",
+    "planetaryDynamic": "Venus carries the cinema's affection, pleasure, and financial appeal, while the North Node marks the bid that fits its emerging direction rather than its history.",
+    "aspectMechanic": "The opposition places the former owner's repertory revival across from the cooperative's new films and ownership model, so neither the loyal audience nor the future constituency can be edited out of the sale.",
+    "conditionalConsequence": "If nostalgia determines the winning bid, the cinema may regain familiar crowds while postponing the access and ownership changes that brought new backers forward.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Venus carries the cinema's affection, pleasure, and financial appeal, while the North Node marks the bid that fits its emerging direction rather than its history.",
+    "why": "Ready for owner review; this is accurate but slightly more explanatory than the otherwise strongly dramatized fields.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:58.609Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "402f506d4b50fed1aa7415d14c4a2160c3f71ff62f373da473a34f97f89c9e8c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "bbb200d8c9a97dfd7cd6594aa44b562fd1a66c830d42b62e2c9f0d819e438355",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "64aca6bcd35df253c47d62ffbc20eb5a37dac6870f26137cb330e2b83734c30c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

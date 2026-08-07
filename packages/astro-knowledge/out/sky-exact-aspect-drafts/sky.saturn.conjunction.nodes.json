@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:01.302Z",
+  "id": "sky.saturn.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "saturn-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.saturn.conjunction.nodes",
+    "planetA": "saturn",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Saturn conjunct North Node",
+    "humanMoment": "A long-running city festival is given a final season after security, permits, and temporary staging become too expensive to carry.",
+    "developmentDetail": "Vendor bookings stop, and the remaining funds go toward permanent rehearsal rooms that can be used throughout the year.",
+    "planetaryDynamic": "Saturn sets the closing date and enforces the cost limit, while the North Node makes the rehearsal rooms the future work that can no longer stay postponed.",
+    "aspectMechanic": "Under the Saturn-North Node conjunction, ending the festival and building the rehearsal rooms become one move, making financial necessity and future direction difficult to separate.",
+    "conditionalConsequence": "If the funds remain tied to construction, the city gains lasting arts space while vendors and performers lose a recurring source of seasonal income.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the funds remain tied to construction, the city gains lasting arts space while vendors and performers lose a recurring source of seasonal income.",
+    "why": "Ready for owner review; the consequence is concrete and nuanced, though slightly more administrative in tone than the other fields.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:01.302Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4d52c75d2a5fca1fcacaccc6ad7faf030fc6dabaa3ea3680d20b751d640ce6d2",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "f92f2f87d80070ca82932328b3deb949132ef1103d1b187ff2cd84af035bb47e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "2052b993f8f85575fb47b26cbd06c2da289819f2f35a6eb20c8aa57917dcfd50"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

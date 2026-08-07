@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:07:52.609Z",
+  "id": "sky.moon.conjunction.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "moon-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.conjunction.chiron",
+    "planetA": "moon",
+    "planetB": "chiron",
+    "aspect": "conjunction",
+    "title": "Moon conjunct Chiron",
+    "humanMoment": "A relative arrives with groceries after a difficult week, and the person receiving them starts crying at the kitchen counter.",
+    "developmentDetail": "They insist everything is fine but leave an empty cupboard open to see whether the shortage is noticed without being named.",
+    "planetaryDynamic": "The Moon seeks comfort through the offered food, while Chiron exposes the wound around admitting that such care is needed.",
+    "aspectMechanic": "Under the conjunction, the groceries and tears make receiving care inseparable from the pain of needing it, while the open cupboard turns that need into a test.",
+    "conditionalConsequence": "If the shortage remains an unspoken test, the relative may respond to the tears without understanding what practical help is being asked for.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the shortage remains an unspoken test, the relative may respond to the tears without understanding what practical help is being asked for.",
+    "why": "The consequence is slightly more explanatory than the other fields, but it follows directly from the scene and remains specific, conditional, and non-prescriptive.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:07:52.609Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "429121f3d2f32212a153a7369ceee070c319f66b4377e652788150ebe57a46f2",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "b6aa1a5d9f089aa90bba3372ff046d603151d54c45416f4f5fda0cd16f510525",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "fddebc6cf9f0b6667b7bf01e27f6e039a00151d4f7c092e35609eb1a85e986e8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.conjunction.chiron",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

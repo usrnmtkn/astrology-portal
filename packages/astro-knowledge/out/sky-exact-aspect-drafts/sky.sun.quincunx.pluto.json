@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:13.816Z",
+  "id": "sky.sun.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-pluto",
+    "path": "data/pairs/sun-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.pluto",
+    "planetA": "sun",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Pluto",
+    "humanMoment": "At a benefit concert, the featured performer draws a charged public response while the backers press to control how the cause is represented.",
+    "developmentDetail": "Billing, remarks, and images are revised several times as applause for the performer increases scrutiny of the people behind the event.",
+    "planetaryDynamic": "The Sun concentrates visibility and identity around the performer, while Pluto brings the backers' leverage, intensity, and appetite for control into view.",
+    "aspectMechanic": "The quincunx keeps changing the billing, remarks, and images because the performer's need to be clearly seen does not coordinate with the backers' effort to contain the event's power.",
+    "conditionalConsequence": "If each revision protects one side at the other's expense, the concert may succeed while leaving the cause associated with a control struggle.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry opens with a recognizable public event, develops it through observable revisions, clearly distinguishes solar visibility from Plutonian leverage, and expresses the quincunx through repeated adjustments between incompatible aims. The consequence follows conditionally from the scene, and all fields meet the sentence, tone, and evergreen requirements.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:13.815Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "6a9c41363eab12d5dd3b903a853102ef5030dfb065a93c9782b971e3ffeb0e81",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d3f619e70f2201526fa55d7880ff551f1e724d66959c6f8d3800e85e34732dd9",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "dbd573c03d34ee8559da174beb9e72cfea03157065a5821fee7a8835fbe498fa"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

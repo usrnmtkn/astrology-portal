@@ -1,0 +1,85 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "mars",
+  "sign": "libra",
+  "outDir": "/Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-pilot-mars-libra-v1",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+    "owner-article:libra-new-moon:p004:window-4-4",
+    "owner-article:mars-direct-in-cancer:p057:window-3-2",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4"
+  ],
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/mars-libra.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With Mars in Libra, drive moves through negotiation, partnership, and social awareness. Mars is in detriment here, so direct action may get delayed by the need to keep balance."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/mars.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Mars describes action, drive, heat, conflict, courage, desire, and the instinct to move toward what is wanted. It shows how someone fights, initiates, protects, reacts, and uses energy when something needs to happen. Mars takes close to two years to move through all twelve signs, with retrograde periods that slow or redirect momentum. Its sign describes the style of action; its house shows where pressure, effort, and courage become active. Your actions are characterized by your desire for balance and harmony. You are motivated to act fairly, and you might find yourself in the role of a mediator. You may also have a knack for artistic pursuits."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "cycle-line",
+        "rule": "In the meaning beat, use one or two sentences teaching the planet's rhythm. Every number must come from planet-cycle-facts.json. Do not write this slot for the Moon.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 2 years",
+          "typicalSignStay": "roughly 6 to 7 weeks per sign",
+          "variabilityNote": "A retrograde can extend one sign residency to about 7 months."
+        }
+      }
+    ],
+    "inactive": [
+      {
+        "id": "prior-sign-handoff",
+        "reason": "required backing fact was not supplied"
+      },
+      {
+        "id": "concurrent-events",
+        "reason": "eventsDuringTransit was empty"
+      },
+      {
+        "id": "cycle-location",
+        "reason": "previous residency entry and exit dates were not both supplied"
+      }
+    ]
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet mars --sign libra --out /Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-pilot-mars-libra-v1"
+}

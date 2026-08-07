@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:12.944Z",
+  "id": "sky.sun.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "sun-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.conjunction.lilith",
+    "planetA": "sun",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Sun conjunct Lilith",
+    "humanMoment": "At a televised awards ceremony, a respected winner abandons the prepared thanks and names the desire everyone had agreed to keep offstage.",
+    "developmentDetail": "The applause begins unevenly, then grows when another honoree admits that the same polished persona has started to feel like a costume.",
+    "planetaryDynamic": "The Sun seeks approval through a visible public identity, while Lilith brings forward the want that identity was built to exclude.",
+    "aspectMechanic": "Under the conjunction, the public self and the banished want act through the same moment, making candor difficult to separate from the need to be seen.",
+    "conditionalConsequence": "If organizers punish the departure from script, attention may shift from the award to which desires the institution allows its public figures to name.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The applause begins unevenly, then grows when another honoree admits that the same polished persona has started to feel like a costume.",
+    "why": "The second admission is slightly arranged for thematic symmetry, but it remains observable, specific, and distinct from the opening.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:12.944Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "5ef567f321d35334e3c0c58643d5118e6cfe7375814da9008942badf21e6f772",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "b0bdedf0d8a0ac9b3455eb22f601a13819e31610def22695c0324d80a3f50241",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4d5c3eb92a756c5f585927441bdb275cda1e925a19ec088896b96ac0c04ee59b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

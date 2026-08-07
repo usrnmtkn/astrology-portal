@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:25.051Z",
+  "id": "sky.venus.quincunx.mars",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "venus-mars",
+    "path": "data/pairs/venus-mars.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.quincunx.mars",
+    "planetA": "venus",
+    "planetB": "mars",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Mars",
+    "humanMoment": "A benefit concert draws an eager crowd, but last-minute efforts to add more acts disrupt ticket sales and the evening's atmosphere.",
+    "developmentDetail": "Prices, set times, and stage cues keep changing as organizers try to preserve both momentum and appeal.",
+    "planetaryDynamic": "Venus carries the event's pleasure, attraction, and money, while Mars supplies the heat and initiative that keep it moving.",
+    "aspectMechanic": "The Venus-Mars quincunx means each change to set times that boosts momentum forces another change to prices or stage cues to preserve appeal.",
+    "conditionalConsequence": "If revisions continue through the opening, purchases and performances may land at awkward moments despite the crowd's enthusiasm.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Concrete collective event, distinct Venus and Mars functions, and a clear quincunx pattern of repeated adjustments with an observable conditional result.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:25.051Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "8c3bcd2efb10a56429ec723569584fd0e8ac5a35d67424fe5e913f032c2befaa",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "42381ae48bd59e97683d4ce0c1ae6028723a130001232d292238d6b454385555",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8a1025187511654b884f8ab9d4be55a62e0fd8973e6165c0b52720eb4967f5a7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.mars",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

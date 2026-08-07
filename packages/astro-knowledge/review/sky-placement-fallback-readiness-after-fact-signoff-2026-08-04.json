@@ -1,0 +1,1195 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-04T04:57:04.640Z",
+  "policy": {
+    "runtimeRows": "Only approved, approved_reuse, or reviewed rows are reader-eligible.",
+    "writerFacts": "Sol writing packets require a REVIEWED, LIVE, or APPROVED placement fact file and a complete verified astrology boundary.",
+    "publication": "Writer output remains needs_review and render-ineligible until exact owner review and separate promotion."
+  },
+  "totals": {
+    "placements": 168,
+    "runtimeRenderReady": 59,
+    "continuousRowsReady": 1,
+    "standaloneHookRowsReady": 36,
+    "retiredPairCoreAvailable": 167,
+    "retiredPairFullFiveAvailable": 166,
+    "writerReady": 36,
+    "writerBlocked": 132
+  },
+  "runtime": {
+    "renderReady": [
+      "sun-aries",
+      "sun-taurus",
+      "sun-gemini",
+      "sun-cancer",
+      "sun-leo",
+      "sun-virgo",
+      "sun-libra",
+      "sun-scorpio",
+      "sun-sagittarius",
+      "sun-capricorn",
+      "sun-aquarius",
+      "sun-pisces",
+      "moon-aries",
+      "moon-taurus",
+      "moon-gemini",
+      "moon-cancer",
+      "moon-leo",
+      "moon-virgo",
+      "moon-libra",
+      "moon-sagittarius",
+      "moon-capricorn",
+      "moon-aquarius",
+      "moon-pisces",
+      "venus-aries",
+      "venus-taurus",
+      "venus-gemini",
+      "venus-cancer",
+      "venus-leo",
+      "venus-virgo",
+      "venus-libra",
+      "venus-scorpio",
+      "venus-sagittarius",
+      "venus-capricorn",
+      "venus-aquarius",
+      "venus-pisces",
+      "saturn-aries",
+      "saturn-taurus",
+      "saturn-gemini",
+      "saturn-cancer",
+      "saturn-leo",
+      "saturn-virgo",
+      "saturn-libra",
+      "saturn-scorpio",
+      "saturn-sagittarius",
+      "saturn-capricorn",
+      "saturn-aquarius",
+      "saturn-pisces",
+      "lilith-aries",
+      "lilith-taurus",
+      "lilith-gemini",
+      "lilith-cancer",
+      "lilith-leo",
+      "lilith-virgo",
+      "lilith-libra",
+      "lilith-scorpio",
+      "lilith-sagittarius",
+      "lilith-capricorn",
+      "lilith-aquarius",
+      "lilith-pisces"
+    ],
+    "continuousRowsReady": [
+      "sun-leo"
+    ],
+    "standaloneHookRowsReady": [
+      "sun-aries",
+      "sun-taurus",
+      "sun-gemini",
+      "sun-cancer",
+      "sun-leo",
+      "sun-virgo",
+      "sun-libra",
+      "sun-scorpio",
+      "sun-sagittarius",
+      "sun-capricorn",
+      "sun-aquarius",
+      "sun-pisces",
+      "venus-aries",
+      "venus-taurus",
+      "venus-gemini",
+      "venus-cancer",
+      "venus-leo",
+      "venus-virgo",
+      "venus-libra",
+      "venus-scorpio",
+      "venus-sagittarius",
+      "venus-capricorn",
+      "venus-aquarius",
+      "venus-pisces",
+      "saturn-aries",
+      "saturn-taurus",
+      "saturn-gemini",
+      "saturn-cancer",
+      "saturn-leo",
+      "saturn-virgo",
+      "saturn-libra",
+      "saturn-scorpio",
+      "saturn-sagittarius",
+      "saturn-capricorn",
+      "saturn-aquarius",
+      "saturn-pisces"
+    ],
+    "retiredPairRows": {
+      "note": "Preserved for provenance and non-continuous Moon/Lilith fallback only. Continuous planets do not render these rows.",
+      "coreAvailable": [
+        "sun-aries",
+        "sun-taurus",
+        "sun-gemini",
+        "sun-cancer",
+        "sun-leo",
+        "sun-virgo",
+        "sun-libra",
+        "sun-scorpio",
+        "sun-sagittarius",
+        "sun-capricorn",
+        "sun-aquarius",
+        "sun-pisces",
+        "moon-aries",
+        "moon-taurus",
+        "moon-gemini",
+        "moon-cancer",
+        "moon-leo",
+        "moon-virgo",
+        "moon-libra",
+        "moon-sagittarius",
+        "moon-capricorn",
+        "moon-aquarius",
+        "moon-pisces",
+        "mercury-aries",
+        "mercury-taurus",
+        "mercury-gemini",
+        "mercury-cancer",
+        "mercury-leo",
+        "mercury-virgo",
+        "mercury-libra",
+        "mercury-scorpio",
+        "mercury-sagittarius",
+        "mercury-capricorn",
+        "mercury-aquarius",
+        "mercury-pisces",
+        "venus-aries",
+        "venus-taurus",
+        "venus-gemini",
+        "venus-cancer",
+        "venus-leo",
+        "venus-virgo",
+        "venus-libra",
+        "venus-scorpio",
+        "venus-sagittarius",
+        "venus-capricorn",
+        "venus-aquarius",
+        "venus-pisces",
+        "mars-aries",
+        "mars-taurus",
+        "mars-gemini",
+        "mars-cancer",
+        "mars-leo",
+        "mars-virgo",
+        "mars-libra",
+        "mars-scorpio",
+        "mars-sagittarius",
+        "mars-capricorn",
+        "mars-aquarius",
+        "mars-pisces",
+        "jupiter-aries",
+        "jupiter-taurus",
+        "jupiter-gemini",
+        "jupiter-cancer",
+        "jupiter-leo",
+        "jupiter-virgo",
+        "jupiter-libra",
+        "jupiter-scorpio",
+        "jupiter-sagittarius",
+        "jupiter-capricorn",
+        "jupiter-aquarius",
+        "jupiter-pisces",
+        "saturn-aries",
+        "saturn-taurus",
+        "saturn-gemini",
+        "saturn-cancer",
+        "saturn-leo",
+        "saturn-virgo",
+        "saturn-libra",
+        "saturn-scorpio",
+        "saturn-sagittarius",
+        "saturn-capricorn",
+        "saturn-aquarius",
+        "saturn-pisces",
+        "uranus-aries",
+        "uranus-taurus",
+        "uranus-gemini",
+        "uranus-cancer",
+        "uranus-leo",
+        "uranus-virgo",
+        "uranus-libra",
+        "uranus-scorpio",
+        "uranus-sagittarius",
+        "uranus-capricorn",
+        "uranus-aquarius",
+        "uranus-pisces",
+        "neptune-aries",
+        "neptune-taurus",
+        "neptune-gemini",
+        "neptune-cancer",
+        "neptune-leo",
+        "neptune-virgo",
+        "neptune-libra",
+        "neptune-scorpio",
+        "neptune-sagittarius",
+        "neptune-capricorn",
+        "neptune-aquarius",
+        "neptune-pisces",
+        "pluto-aries",
+        "pluto-taurus",
+        "pluto-gemini",
+        "pluto-cancer",
+        "pluto-leo",
+        "pluto-virgo",
+        "pluto-libra",
+        "pluto-scorpio",
+        "pluto-sagittarius",
+        "pluto-capricorn",
+        "pluto-aquarius",
+        "pluto-pisces",
+        "chiron-aries",
+        "chiron-taurus",
+        "chiron-gemini",
+        "chiron-cancer",
+        "chiron-leo",
+        "chiron-virgo",
+        "chiron-libra",
+        "chiron-scorpio",
+        "chiron-sagittarius",
+        "chiron-capricorn",
+        "chiron-aquarius",
+        "chiron-pisces",
+        "north-node-aries",
+        "north-node-taurus",
+        "north-node-gemini",
+        "north-node-cancer",
+        "north-node-leo",
+        "north-node-virgo",
+        "north-node-libra",
+        "north-node-scorpio",
+        "north-node-sagittarius",
+        "north-node-capricorn",
+        "north-node-aquarius",
+        "north-node-pisces",
+        "south-node-aries",
+        "south-node-taurus",
+        "south-node-gemini",
+        "south-node-cancer",
+        "south-node-leo",
+        "south-node-virgo",
+        "south-node-libra",
+        "south-node-scorpio",
+        "south-node-sagittarius",
+        "south-node-capricorn",
+        "south-node-aquarius",
+        "south-node-pisces",
+        "lilith-aries",
+        "lilith-taurus",
+        "lilith-gemini",
+        "lilith-cancer",
+        "lilith-leo",
+        "lilith-virgo",
+        "lilith-libra",
+        "lilith-scorpio",
+        "lilith-sagittarius",
+        "lilith-capricorn",
+        "lilith-aquarius",
+        "lilith-pisces"
+      ],
+      "fullFiveAvailable": [
+        "sun-aries",
+        "sun-taurus",
+        "sun-gemini",
+        "sun-cancer",
+        "sun-leo",
+        "sun-virgo",
+        "sun-libra",
+        "sun-scorpio",
+        "sun-sagittarius",
+        "sun-capricorn",
+        "sun-aquarius",
+        "sun-pisces",
+        "moon-aries",
+        "moon-taurus",
+        "moon-gemini",
+        "moon-cancer",
+        "moon-leo",
+        "moon-virgo",
+        "moon-libra",
+        "moon-sagittarius",
+        "moon-capricorn",
+        "moon-aquarius",
+        "moon-pisces",
+        "mercury-aries",
+        "mercury-taurus",
+        "mercury-gemini",
+        "mercury-cancer",
+        "mercury-leo",
+        "mercury-virgo",
+        "mercury-libra",
+        "mercury-scorpio",
+        "mercury-sagittarius",
+        "mercury-capricorn",
+        "mercury-aquarius",
+        "mercury-pisces",
+        "venus-aries",
+        "venus-taurus",
+        "venus-gemini",
+        "venus-cancer",
+        "venus-leo",
+        "venus-libra",
+        "venus-scorpio",
+        "venus-sagittarius",
+        "venus-capricorn",
+        "venus-aquarius",
+        "venus-pisces",
+        "mars-aries",
+        "mars-taurus",
+        "mars-gemini",
+        "mars-cancer",
+        "mars-leo",
+        "mars-virgo",
+        "mars-libra",
+        "mars-scorpio",
+        "mars-sagittarius",
+        "mars-capricorn",
+        "mars-aquarius",
+        "mars-pisces",
+        "jupiter-aries",
+        "jupiter-taurus",
+        "jupiter-gemini",
+        "jupiter-cancer",
+        "jupiter-leo",
+        "jupiter-virgo",
+        "jupiter-libra",
+        "jupiter-scorpio",
+        "jupiter-sagittarius",
+        "jupiter-capricorn",
+        "jupiter-aquarius",
+        "jupiter-pisces",
+        "saturn-aries",
+        "saturn-taurus",
+        "saturn-gemini",
+        "saturn-cancer",
+        "saturn-leo",
+        "saturn-virgo",
+        "saturn-libra",
+        "saturn-scorpio",
+        "saturn-sagittarius",
+        "saturn-capricorn",
+        "saturn-aquarius",
+        "saturn-pisces",
+        "uranus-aries",
+        "uranus-taurus",
+        "uranus-gemini",
+        "uranus-cancer",
+        "uranus-leo",
+        "uranus-virgo",
+        "uranus-libra",
+        "uranus-scorpio",
+        "uranus-sagittarius",
+        "uranus-capricorn",
+        "uranus-aquarius",
+        "uranus-pisces",
+        "neptune-aries",
+        "neptune-taurus",
+        "neptune-gemini",
+        "neptune-cancer",
+        "neptune-leo",
+        "neptune-virgo",
+        "neptune-libra",
+        "neptune-scorpio",
+        "neptune-sagittarius",
+        "neptune-capricorn",
+        "neptune-aquarius",
+        "neptune-pisces",
+        "pluto-aries",
+        "pluto-taurus",
+        "pluto-gemini",
+        "pluto-cancer",
+        "pluto-leo",
+        "pluto-virgo",
+        "pluto-libra",
+        "pluto-scorpio",
+        "pluto-sagittarius",
+        "pluto-capricorn",
+        "pluto-aquarius",
+        "pluto-pisces",
+        "chiron-aries",
+        "chiron-taurus",
+        "chiron-gemini",
+        "chiron-cancer",
+        "chiron-leo",
+        "chiron-virgo",
+        "chiron-libra",
+        "chiron-scorpio",
+        "chiron-sagittarius",
+        "chiron-capricorn",
+        "chiron-aquarius",
+        "chiron-pisces",
+        "north-node-aries",
+        "north-node-taurus",
+        "north-node-gemini",
+        "north-node-cancer",
+        "north-node-leo",
+        "north-node-virgo",
+        "north-node-libra",
+        "north-node-scorpio",
+        "north-node-sagittarius",
+        "north-node-capricorn",
+        "north-node-aquarius",
+        "north-node-pisces",
+        "south-node-aries",
+        "south-node-taurus",
+        "south-node-gemini",
+        "south-node-cancer",
+        "south-node-leo",
+        "south-node-virgo",
+        "south-node-libra",
+        "south-node-scorpio",
+        "south-node-sagittarius",
+        "south-node-capricorn",
+        "south-node-aquarius",
+        "south-node-pisces",
+        "lilith-aries",
+        "lilith-taurus",
+        "lilith-gemini",
+        "lilith-cancer",
+        "lilith-leo",
+        "lilith-virgo",
+        "lilith-libra",
+        "lilith-scorpio",
+        "lilith-sagittarius",
+        "lilith-capricorn",
+        "lilith-aquarius",
+        "lilith-pisces"
+      ]
+    },
+    "quarantinedRows": [
+      {
+        "placement": "moon-scorpio",
+        "family": "tagline",
+        "contentKey": "fallback-hook/sky-placement-tagline/moon/scorpio",
+        "reviewStatus": "needs_review"
+      },
+      {
+        "placement": "moon-scorpio",
+        "family": "turn",
+        "contentKey": "fallback-hook/sky-placement-turn/moon/scorpio",
+        "reviewStatus": "needs_review"
+      },
+      {
+        "placement": "venus-virgo",
+        "family": "moves",
+        "contentKey": "fallback-hook/sky-placement-moves/venus/virgo",
+        "reviewStatus": "needs_review"
+      }
+    ]
+  },
+  "writer": {
+    "ready": [
+      "mercury-aries",
+      "mercury-gemini",
+      "mercury-cancer",
+      "mercury-leo",
+      "mercury-virgo",
+      "mercury-libra",
+      "mercury-sagittarius",
+      "mercury-capricorn",
+      "mercury-aquarius",
+      "mercury-pisces",
+      "mars-aries",
+      "mars-gemini",
+      "mars-cancer",
+      "mars-leo",
+      "mars-virgo",
+      "mars-libra",
+      "mars-scorpio",
+      "mars-sagittarius",
+      "mars-capricorn",
+      "mars-aquarius",
+      "mars-pisces",
+      "jupiter-aries",
+      "jupiter-taurus",
+      "jupiter-gemini",
+      "jupiter-cancer",
+      "jupiter-leo",
+      "jupiter-virgo",
+      "jupiter-libra",
+      "jupiter-scorpio",
+      "jupiter-sagittarius",
+      "jupiter-capricorn",
+      "jupiter-aquarius",
+      "jupiter-pisces",
+      "saturn-aries",
+      "uranus-gemini",
+      "neptune-aries"
+    ],
+    "blockedByReason": {
+      "unverified_fact_file": [
+        "sun-aries",
+        "sun-taurus",
+        "sun-gemini",
+        "sun-cancer",
+        "sun-leo",
+        "sun-virgo",
+        "sun-libra",
+        "sun-scorpio",
+        "sun-sagittarius",
+        "sun-capricorn",
+        "sun-aquarius",
+        "sun-pisces",
+        "moon-aries",
+        "moon-taurus",
+        "moon-gemini",
+        "moon-cancer",
+        "moon-leo",
+        "moon-virgo",
+        "moon-libra",
+        "moon-scorpio",
+        "moon-sagittarius",
+        "moon-capricorn",
+        "moon-aquarius",
+        "moon-pisces",
+        "venus-aries",
+        "venus-taurus",
+        "venus-gemini",
+        "venus-cancer",
+        "venus-leo",
+        "venus-virgo",
+        "venus-libra",
+        "venus-scorpio",
+        "venus-sagittarius",
+        "venus-capricorn",
+        "venus-aquarius",
+        "venus-pisces",
+        "saturn-taurus",
+        "saturn-gemini",
+        "saturn-cancer",
+        "saturn-leo",
+        "saturn-virgo",
+        "saturn-libra",
+        "saturn-scorpio",
+        "saturn-sagittarius",
+        "saturn-capricorn",
+        "saturn-aquarius",
+        "saturn-pisces",
+        "uranus-aries",
+        "uranus-taurus",
+        "uranus-cancer",
+        "uranus-leo",
+        "uranus-virgo",
+        "uranus-libra",
+        "uranus-scorpio",
+        "uranus-sagittarius",
+        "uranus-capricorn",
+        "uranus-aquarius",
+        "uranus-pisces",
+        "neptune-taurus",
+        "neptune-gemini",
+        "neptune-cancer",
+        "neptune-leo",
+        "neptune-virgo",
+        "neptune-libra",
+        "neptune-scorpio",
+        "neptune-sagittarius",
+        "neptune-capricorn",
+        "neptune-aquarius",
+        "neptune-pisces",
+        "pluto-aries",
+        "pluto-taurus",
+        "pluto-gemini",
+        "pluto-cancer",
+        "pluto-leo",
+        "pluto-virgo",
+        "pluto-libra",
+        "pluto-scorpio",
+        "pluto-sagittarius",
+        "pluto-capricorn",
+        "pluto-pisces"
+      ],
+      "other": [
+        "mercury-taurus",
+        "mercury-scorpio",
+        "mars-taurus",
+        "pluto-aquarius"
+      ],
+      "incomplete_verified_astrology": [
+        "chiron-aries",
+        "north-node-aquarius",
+        "south-node-leo",
+        "lilith-aries",
+        "lilith-taurus",
+        "lilith-gemini",
+        "lilith-cancer",
+        "lilith-leo",
+        "lilith-virgo",
+        "lilith-libra",
+        "lilith-scorpio",
+        "lilith-sagittarius",
+        "lilith-capricorn",
+        "lilith-aquarius",
+        "lilith-pisces"
+      ],
+      "missing_fact_file": [
+        "chiron-taurus",
+        "chiron-gemini",
+        "chiron-cancer",
+        "chiron-leo",
+        "chiron-virgo",
+        "chiron-libra",
+        "chiron-scorpio",
+        "chiron-sagittarius",
+        "chiron-capricorn",
+        "chiron-aquarius",
+        "chiron-pisces",
+        "north-node-aries",
+        "north-node-taurus",
+        "north-node-gemini",
+        "north-node-cancer",
+        "north-node-leo",
+        "north-node-virgo",
+        "north-node-libra",
+        "north-node-scorpio",
+        "north-node-sagittarius",
+        "north-node-capricorn",
+        "north-node-pisces",
+        "south-node-aries",
+        "south-node-taurus",
+        "south-node-gemini",
+        "south-node-cancer",
+        "south-node-virgo",
+        "south-node-libra",
+        "south-node-scorpio",
+        "south-node-sagittarius",
+        "south-node-capricorn",
+        "south-node-aquarius",
+        "south-node-pisces"
+      ]
+    },
+    "blocked": [
+      {
+        "placement": "sun-aries",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-taurus",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-gemini",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-cancer",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-leo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-virgo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-libra",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-scorpio",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-sagittarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-capricorn",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-aquarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "sun-pisces",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-aries",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-taurus",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-gemini",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-cancer",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-leo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-virgo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-libra",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-scorpio",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-sagittarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-capricorn",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-aquarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "moon-pisces",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "mercury-taurus",
+        "reason": "Packet self-lint failed before prompt render: verifiedAstrology.combinedMeaning matched warn outputBan \"\\\\bsettl(e|es|ing)\\\\b(?! for)\" with \"settle\"; verifiedAstrology.sourcePassages.0.text matched warn outputBan \"\\\\bsettl(e|es|ing)\\\\b(?! for)\" with \"settle\"."
+      },
+      {
+        "placement": "mercury-scorpio",
+        "reason": "Packet self-lint failed before prompt render: verifiedAstrology.signExpression matched fail outputBan \"delve\" with \"delve\"; verifiedAstrology.sourcePassages.1.text matched fail outputBan \"delve\" with \"delve\"."
+      },
+      {
+        "placement": "venus-aries",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-taurus",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-gemini",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-cancer",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-leo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-virgo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-libra",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-scorpio",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-sagittarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-capricorn",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-aquarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "venus-pisces",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "mars-taurus",
+        "reason": "Packet self-lint failed before prompt render: verifiedAstrology.signExpression matched warn outputBan \"journey\" with \"journey\"; verifiedAstrology.sourcePassages.1.text matched warn outputBan \"journey\" with \"journey\"."
+      },
+      {
+        "placement": "saturn-taurus",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-gemini",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-cancer",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-leo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-virgo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-libra",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-scorpio",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-sagittarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-capricorn",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-aquarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "saturn-pisces",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-aries",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-taurus",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-cancer",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-leo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-virgo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-libra",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-scorpio",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-sagittarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-capricorn",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-aquarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "uranus-pisces",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-taurus",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-gemini",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-cancer",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-leo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-virgo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-libra",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-scorpio",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-sagittarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-capricorn",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-aquarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "neptune-pisces",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-aries",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-taurus",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-gemini",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-cancer",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-leo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-virgo",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-libra",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-scorpio",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-sagittarius",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-capricorn",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "pluto-aquarius",
+        "reason": "Packet self-lint failed before prompt render: structuralSlots.active.0.facts.variabilityNote matched fail outputBan \"engine\" with \"engine\"."
+      },
+      {
+        "placement": "pluto-pisces",
+        "reason": "Placement facts are not verified: DRAFT."
+      },
+      {
+        "placement": "chiron-aries",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "chiron-taurus",
+        "reason": "Missing placement fact boundary: chiron-taurus.json"
+      },
+      {
+        "placement": "chiron-gemini",
+        "reason": "Missing placement fact boundary: chiron-gemini.json"
+      },
+      {
+        "placement": "chiron-cancer",
+        "reason": "Missing placement fact boundary: chiron-cancer.json"
+      },
+      {
+        "placement": "chiron-leo",
+        "reason": "Missing placement fact boundary: chiron-leo.json"
+      },
+      {
+        "placement": "chiron-virgo",
+        "reason": "Missing placement fact boundary: chiron-virgo.json"
+      },
+      {
+        "placement": "chiron-libra",
+        "reason": "Missing placement fact boundary: chiron-libra.json"
+      },
+      {
+        "placement": "chiron-scorpio",
+        "reason": "Missing placement fact boundary: chiron-scorpio.json"
+      },
+      {
+        "placement": "chiron-sagittarius",
+        "reason": "Missing placement fact boundary: chiron-sagittarius.json"
+      },
+      {
+        "placement": "chiron-capricorn",
+        "reason": "Missing placement fact boundary: chiron-capricorn.json"
+      },
+      {
+        "placement": "chiron-aquarius",
+        "reason": "Missing placement fact boundary: chiron-aquarius.json"
+      },
+      {
+        "placement": "chiron-pisces",
+        "reason": "Missing placement fact boundary: chiron-pisces.json"
+      },
+      {
+        "placement": "north-node-aries",
+        "reason": "Missing placement fact boundary: north-node-aries.json"
+      },
+      {
+        "placement": "north-node-taurus",
+        "reason": "Missing placement fact boundary: north-node-taurus.json"
+      },
+      {
+        "placement": "north-node-gemini",
+        "reason": "Missing placement fact boundary: north-node-gemini.json"
+      },
+      {
+        "placement": "north-node-cancer",
+        "reason": "Missing placement fact boundary: north-node-cancer.json"
+      },
+      {
+        "placement": "north-node-leo",
+        "reason": "Missing placement fact boundary: north-node-leo.json"
+      },
+      {
+        "placement": "north-node-virgo",
+        "reason": "Missing placement fact boundary: north-node-virgo.json"
+      },
+      {
+        "placement": "north-node-libra",
+        "reason": "Missing placement fact boundary: north-node-libra.json"
+      },
+      {
+        "placement": "north-node-scorpio",
+        "reason": "Missing placement fact boundary: north-node-scorpio.json"
+      },
+      {
+        "placement": "north-node-sagittarius",
+        "reason": "Missing placement fact boundary: north-node-sagittarius.json"
+      },
+      {
+        "placement": "north-node-capricorn",
+        "reason": "Missing placement fact boundary: north-node-capricorn.json"
+      },
+      {
+        "placement": "north-node-aquarius",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "north-node-pisces",
+        "reason": "Missing placement fact boundary: north-node-pisces.json"
+      },
+      {
+        "placement": "south-node-aries",
+        "reason": "Missing placement fact boundary: south-node-aries.json"
+      },
+      {
+        "placement": "south-node-taurus",
+        "reason": "Missing placement fact boundary: south-node-taurus.json"
+      },
+      {
+        "placement": "south-node-gemini",
+        "reason": "Missing placement fact boundary: south-node-gemini.json"
+      },
+      {
+        "placement": "south-node-cancer",
+        "reason": "Missing placement fact boundary: south-node-cancer.json"
+      },
+      {
+        "placement": "south-node-leo",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "south-node-virgo",
+        "reason": "Missing placement fact boundary: south-node-virgo.json"
+      },
+      {
+        "placement": "south-node-libra",
+        "reason": "Missing placement fact boundary: south-node-libra.json"
+      },
+      {
+        "placement": "south-node-scorpio",
+        "reason": "Missing placement fact boundary: south-node-scorpio.json"
+      },
+      {
+        "placement": "south-node-sagittarius",
+        "reason": "Missing placement fact boundary: south-node-sagittarius.json"
+      },
+      {
+        "placement": "south-node-capricorn",
+        "reason": "Missing placement fact boundary: south-node-capricorn.json"
+      },
+      {
+        "placement": "south-node-aquarius",
+        "reason": "Missing placement fact boundary: south-node-aquarius.json"
+      },
+      {
+        "placement": "south-node-pisces",
+        "reason": "Missing placement fact boundary: south-node-pisces.json"
+      },
+      {
+        "placement": "lilith-aries",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-taurus",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-gemini",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-cancer",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-leo",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-virgo",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-libra",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-scorpio",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-sagittarius",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-capricorn",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-aquarius",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      },
+      {
+        "placement": "lilith-pisces",
+        "reason": "Verified astrology is incomplete: planet function is missing; sign expression is missing."
+      }
+    ]
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:55:21.305Z",
+  "id": "sky.uranus.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "uranus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A person suddenly asserts a long-delayed need for freedom but struggles to manage the timing and delivery.",
+    "examples": [
+      "An employee quits without notice after years of staying silent.",
+      "A partner ends a relationship during an argument and later revises the terms.",
+      "A family member sets a strict boundary and repeatedly adjusts how it is enforced."
+    ],
+    "pairBehavior": "Uranus contributes sudden liberation, while Lilith contributes a long-suppressed refusal to remain excluded or controlled.",
+    "aspectBehavior": "The quincunx keeps these functions focused on different problems, so their expression requires repeated adjustments.",
+    "consequence": "The person gains freedom through an abrupt decision but may need to revise the timing, wording, or practical terms."
+  },
+  "draft": {
+    "id": "sky.uranus.quincunx.lilith",
+    "planetA": "uranus",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Uranus quincunx Lilith",
+    "body": "A decision that took years to reach can come out in the middle of an argument. With Uranus quincunx Lilith, we stop accepting exclusion or control and claim freedom fast, but the way we leave may not account for what happens next. We quit without notice, end a relationship in the heat of a fight, or set a family boundary so strict that no one knows how it will work. The need is real, and the delivery can still turn a long-delayed refusal into a fresh problem.\n\nUranus wants the exit open now; Lilith wants everything that was silenced named before we go. We may revise the breakup terms, explain the resignation differently, or change a boundary each time it meets real life. None of this means the freedom was a mistake. It means the timing, wording, and practical terms need another pass after the first rush of release.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "sentence 6",
+    "weakest": "None of this means the freedom was a mistake.",
+    "why": "Slightly more explanatory than the surrounding lines, but it preserves the essential distinction between justified liberation and a poorly handled exit.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:18.314Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "656fea61803bf9591f472e6e8a9029de8df6c4241a7728fbc8b4d934373a2549",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "2dd2cbf3c9a0a17e1641638bf0890b5ef5da572ae77bc56c9f494ad1c81a79a0",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "5fc6628dd78b1c787c4e80b98c85bf9c5f2173658d12e8377c778ac04599f901"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is natural, clear aloud, and immediately understandable.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is natural, clear aloud, and immediately understandable.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:21.305Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "a2b871134e526d46079a43f468f7576ba1f73a522352dc50a4e83b69076adb4a",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "2dd2cbf3c9a0a17e1641638bf0890b5ef5da572ae77bc56c9f494ad1c81a79a0",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "849c8de915f6fddd7eb69248cdf961d6d2fb55b78c7af9fbd1925024a2fea3cd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

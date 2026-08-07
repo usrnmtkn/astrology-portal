@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:39.768Z",
+  "id": "sky.neptune.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "neptune-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.trine.nodes",
+    "planetA": "neptune",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Neptune trine North Node",
+    "humanMoment": "A rural bus cooperative starts a trial route after months of public demand, even though rider estimates and stop locations remain uncertain.",
+    "developmentDetail": "Drivers record actual pickups and missed connections, gradually showing which hoped-for journeys translate into regular use.",
+    "planetaryDynamic": "Neptune supplies the vision of wider access and the fog around demand, while the North Node presses that vision toward a route people can actually follow.",
+    "aspectMechanic": "The trine lets the trial route and its hopeful story reinforce each other with little resistance, helping the pickup records clarify the service or allowing uncertain estimates to carry it farther without scrutiny.",
+    "conditionalConsequence": "If the records reveal steady use at different stops than expected, the cooperative can redirect the route before its original assumptions become expensive to maintain.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the records reveal steady use at different stops than expected, the cooperative can redirect the route before its original assumptions become expensive to maintain.",
+    "why": "The consequence is slightly procedural, but it follows directly from the observed route data and remains concrete, conditional, and non-prescriptive.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:39.768Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "574c866d11d719e5c7d87d593863eeffd4b222bae3d152f7f1ba7a778326d650",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "88f06c9611dac9f5ec347de75e16d8350b2b0a2be1d6958e2c879b821a0bd9ba",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0250b169ba942f57791bbd721d1e4af042f277e3cea12b1b339943affef370a8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:41:23.295Z",
+  "id": "sky.saturn.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "draft": {
+    "id": "sky.saturn.square.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Saturn square Lilith",
+    "body": "The obligation we handled without complaint now feels impossible to touch, but refusing it creates the same mess again. Saturn square Lilith sharpens the conflict between the rule and everything the rule pushed aside: the automatic renewal canceled too late, the required box we cannot honestly check, the commitment that gets a sharp no after months of dutiful yeses. We comply until resentment takes over, then break the arrangement without deciding what should replace it. The consequence returns because we have not chosen whether to renegotiate or leave.\n\nSome rules deserve to lose our consent; some refusals are old anger aimed at the nearest limit. Sorting those apart changes what happens next. We can keep the obligation with new terms, or say no and accept the practical cost, but another resentful yes only resets the cycle.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first, specific, and clear, with active Saturn-Lilith conflict, concrete contemporary fragments, collective pressure, and a clean ending that preserves the required nuance.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:41:23.295Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "5912aa0548885bac1fed61c7287fa5f728db442d1bed132811d246cfb38e54b2",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "f4f8b61d4f363be4cbe6c3e181991abd760430bf8c07e60408152b5fc4cca83c",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "190edc7863ef9e03895d39402983faa5e21fc7df4ac8ab784ae9ae6066bc7237"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

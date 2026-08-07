@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:25.987Z",
+  "id": "sky.mercury.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-neptune",
+    "path": "data/pairs/mercury-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.neptune",
+    "planetA": "mercury",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Neptune",
+    "humanMoment": "A community fundraiser draws support with a moving story while different posts circulate conflicting cost estimates.",
+    "developmentDetail": "Donors share vivid summaries as receipts, dates, and quoted totals keep being corrected.",
+    "planetaryDynamic": "Mercury handles the wording and figures, while Neptune supplies the emotional narrative and imaginative pull.",
+    "aspectMechanic": "The quincunx keeps the vivid summaries and corrected receipts out of step, so each new total changes the story and each revision changes how the figures are understood.",
+    "conditionalConsequence": "If donations follow an earlier estimate, one expense may be covered while another remains short.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If donations follow an earlier estimate, one expense may be covered while another remains short.",
+    "why": "The consequence is plausible and scene-specific, though less vivid than the preceding fields. All requirements are satisfied.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:25.987Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "215a98f9fae9e56accedfa56676b3ecc840502d4aed3ecddd1894e472f3edbad",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "cfad892c97c7b622fb2fa41bec10a56ecf4918c6e790a3ca2239c8c32ca16fc4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c29de73850380d9ec65ffeade3030398eb3ad537e92532a14e411d143aab8f44"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

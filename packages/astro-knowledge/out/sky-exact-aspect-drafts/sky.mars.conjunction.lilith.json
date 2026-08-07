@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:13.829Z",
+  "id": "sky.mars.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mars-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.conjunction.lilith",
+    "planetA": "mars",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Mars conjunct Lilith",
+    "humanMoment": "A routine costume check at a dance competition becomes a standoff when a performer refuses to cover up before going onstage.",
+    "developmentDetail": "The director blocks the stage entrance, and the performer removes the required cover-up while accusing the event of policing bodies.",
+    "planetaryDynamic": "Mars supplies the force used to enforce the competition rule, while Lilith carries the rage that refuses its demand for taming.",
+    "aspectMechanic": "In the conjunction, blocking the stage and refusing the cover-up become one confrontation, making sanctioned force and banished rage difficult to separate.",
+    "conditionalConsequence": "If the director removes the performer, the schedule may resume while the ejection turns a costume dispute into a wider protest among the cast.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The director blocks the stage entrance, and the performer removes the required cover-up while accusing the event of policing bodies.",
+    "why": "The sequence around refusing and then removing the cover-up is slightly compressed, but the scene remains concrete, coherent, and observably developed; all field functions and conjunction mechanics are satisfied.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:13.829Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "2d858a11888b436675f0548d444576137d63de9f08af1dff4d3689f57d860f8f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "8e885d5ac1148cd4a38539d70e48e73b82d132d40049467b2d3c081aa9f3790b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "02e5b4b12e4a0b35e06e65f3875518d3b4062fd67c54965c00f7027ce2500a87"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

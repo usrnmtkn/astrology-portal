@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:10.696Z",
+  "id": "sky.moon.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "moon-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.sextile.chiron",
+    "planetA": "moon",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Moon sextile Chiron",
+    "humanMoment": "At an evacuation center, a volunteer saves a cot and a cup of tea for the person who has spent the evening helping everyone else settle in.",
+    "developmentDetail": "The helper has declined every offer of rest but keeps hovering near the supply table, waiting to see whether anyone will ask again.",
+    "planetaryDynamic": "The Moon seeks the comfort of the cot, tea, and rest, while Chiron carries the hurt that makes the helper refuse care and still hope to be noticed.",
+    "aspectMechanic": "The sextile creates a usable opening when the volunteer asks again, but the hovering still has to be noticed and the helper still has to accept the cot.",
+    "conditionalConsequence": "If the helper accepts the offer, the volunteer can arrange coverage instead of continuing to guess whether rest is wanted.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the helper accepts the offer, the volunteer can arrange coverage instead of continuing to guess whether rest is wanted.",
+    "why": "The consequence is slightly procedural, but it follows concretely from the helper accepting care and remains conditional rather than advisory.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:10.695Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7b1b3418609f0717656061c0514419e092e3b27801adf654880485deff613b34",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "abaef999a17c2e95ccc1549cfe7a91753638f154dc4b4927e6eb8f24c08083b6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4d80f1d0200794d1a8f554e0a7c44471776148adfcd39cf33543a558acbe6c4f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

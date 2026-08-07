@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:10.044Z",
+  "id": "sky.saturn.quincunx.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "saturn-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.nodes",
+    "planetA": "saturn",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx North Node",
+    "humanMoment": "A century-old dairy schedules its final milk pickup after feed bills and machinery repairs make another season too expensive.",
+    "developmentDetail": "Barn renovations, loan schedules, and planting plans are revised week by week as the operation prepares to grow drought-resistant grain.",
+    "planetaryDynamic": "Saturn brings the final pickup date and firm cost limits, while the North Node brings the assignment of building the farm's next chapter.",
+    "aspectMechanic": "The quincunx keeps barn renovations, loan schedules, and planting plans changing as the last dairy obligations and the grain conversion compete for the same money and season.",
+    "conditionalConsequence": "If the remaining dairy costs consume the renovation budget, the first grain planting will be smaller and the conversion will take another season.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The entry opens with a recognizable closure, develops observable operational changes, clearly separates Saturn’s limits from the node assignment, and expresses the quincunx through repeated resource adjustments with a grounded conditional outcome.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:10.043Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7c7a5d2facc187dd29519754c8acc1a9aaedcc65c3f2f2284bc7f92157c85b15",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "33a9133ab376c1e764ffd2075d4cadbdce07dabfbe4e7955725a33aa6ec28305",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a9bec532cd105148ba9a43843d1fbbbf96cfc785d14699ed80f57af120b526c1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

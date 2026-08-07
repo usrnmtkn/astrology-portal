@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:37.999Z",
+  "id": "sky.pluto.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "pluto-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.trine.lilith",
+    "planetA": "pluto",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Pluto trine Lilith",
+    "humanMoment": "A hit song loses a major advertising deal after an uncredited vocalist identifies the chorus she recorded before being blacklisted by the label.",
+    "developmentDetail": "Studio logs, contracts, and royalty statements show that each reissue preserved both her voice and her exclusion from payment.",
+    "planetaryDynamic": "Pluto brings the buried machinery of control to the surface, while Lilith marks the vocalist kept outside the credit by sentence rather than choice.",
+    "aspectMechanic": "Under the trine, the studio records and the vocalist's claim reinforce each other with little resistance, helping credit and payment move together while showing how easily the exclusion traveled through every reissue.",
+    "conditionalConsequence": "If the distributor restores her credit and royalties, future licenses must account for the contribution the catalog had treated as disposable.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete, observable, and evergreen; it clearly distinguishes Pluto from Lilith, applies the trine as mutual reinforcement that aids repair while extending harm, and ends with a scene-based consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:37.999Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "24f2ed38aa9f0b24551e20315e05b6d5139c1d9999ab8defe39caa16685fcc4d",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "a7417f2a3ce64852987385b6604665d7776cb24fa12552153f5b663b9e963d49",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0d47656b8f0595c3592b654f00be1300a5d7dcd681958439df00136cabfc25b5"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

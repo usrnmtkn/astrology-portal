@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:35:54.050Z",
+  "id": "sky.chiron.sextile.nodes",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "chiron-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.chiron.sextile.nodes",
+    "planetA": "chiron",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Chiron sextile North Node",
+    "body": "The old injury surfaces just as the next chapter asks for the skill it has been blocking. Chiron sextile North Node puts the next step within reach, but it only becomes real when we make the call or take the role while the bruise is still tender. An old voicemail answered, a box of letters finally cleared, the right words offered in a still-shaky voice. The helper role arrives before the helper feels finished, and the release doubles as treatment. What looks badly timed becomes useful once the ache has somewhere to go.\n\nWe feel the pull to postpone the chapter until the wound is closed, then notice the chapter itself is giving the wound somewhere to complete its work. The opening is easy to miss because it does not look like rescue; it looks like participation while something still hurts. The timing is not cruel. The assignment needed the wound opened to finish closing it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived tension, concrete fragments, active Chiron-Node behavior, a usable but nonautomatic opening, natural collective deepening, and a clean truth-and-catch ending.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:35:54.050Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "f6eea35c79683e739d245ae8fdcd55380cd28d498b72e9808707819efa0f4c24",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "d336dcdde830cd3544cb8daabd473ac4501d5ac6e238dd9f30f1ef2a20be2a6e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "57a9cc65dd98fffd8b0e2435f485d81d1e020d377dbdb1b614adbf65214faefe"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

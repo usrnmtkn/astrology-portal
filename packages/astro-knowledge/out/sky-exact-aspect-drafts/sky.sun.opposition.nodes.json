@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:58.365Z",
+  "id": "sky.sun.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "sun-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.sun.opposition.nodes",
+    "planetA": "sun",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Sun opposite North Node",
+    "humanMoment": "An actor accepts an award for a familiar role while a small independent production offers a part unlike anything on the résumé.",
+    "developmentDetail": "The award brings press and better offers for more of the same, while the unfamiliar part carries little status and requires skills not yet proven.",
+    "planetaryDynamic": "The Sun centers the established identity receiving recognition now, while the North Node marks the less familiar direction asking to be developed.",
+    "aspectMechanic": "The opposition places the applauded role and the developing direction across different corners of the industry, so neither can be edited out of the outcome.",
+    "conditionalConsequence": "If the familiar offers fill the schedule, the independent production may move on, turning recognition for the old act into a concrete limit on the next role.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "The Sun centers the established identity receiving recognition now, while the North Node marks the less familiar direction asking to be developed.",
+    "why": "Ready for owner review. The planetary distinction is accurate, though this sentence is slightly more explanatory than the lived specificity of the other fields.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:58.365Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "f833e3c32035dc559a301fa1dd72e287d1bb572fc40c64519c54fa8006cc4b17",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "a5c99358ad4eaa2fffdc7426910785c9fec322b983e9af9b91a407b9342b24e0",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0176605098d44ff0c9d07e45eb3131cccb9dee6cd1c60f9fad73eb5ee1b73c7f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

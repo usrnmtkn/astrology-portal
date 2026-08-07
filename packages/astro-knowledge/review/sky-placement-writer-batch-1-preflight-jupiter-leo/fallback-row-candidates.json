@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/jupiter/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Jupiter in Leo makes a creative idea harder to keep private. From {{entryDate}}, a half-finished story can leave a notes app and become an ongoing series shown to a small audience. Each installment gets clearer because making it visible brings feedback, confidence, and the nerve to try a larger version. As the series finds its voice, what began as a cautious test becomes a body of work we are willing to claim. Jupiter spends about one year in each sign and takes about twelve years to move through all twelve signs, so growth through visibility has time to build each time the work is shown.",
+      "tension": "The response is encouraging, then it becomes the measure. We promise a bigger installment before the current one is finished, add flourishes because they drew praise last time, and quietly drop the parts that received little notice. The same confidence that moved the idea out of private notes now makes it difficult to admit that something is not ready or that the pace is too much. A missed installment starts to feel like a loss of relevance, and the work begins serving the reaction instead of the idea.",
+      "development": "The next choice is whether to keep escalating or make the series at the size we can actually sustain. We can finish the piece already underway before announcing another, keep an unusual part even when the familiar part got more applause, and share less often rather than padding the series with work made only to hold attention. That slows the promise-making and gives each installment time to become distinct. The audience may grow more slowly, but response returns to being useful information instead of the only reason to continue.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can withdraw one oversized promise about the series and finish the smaller version already underway.",
+      "try_this": [
+        "We can share one finished installment with a small audience before adding extra details meant only to win praise.",
+        "We can wait until the next day to read replies, and first write down what we want to make next."
+      ],
+      "aspect_units": [],
+      "body_you": "Jupiter in Leo makes a creative idea harder to keep private. From {{entryDate}}, a half-finished story can leave a notes app and become an ongoing series shown to a small audience. Each installment gets clearer because making it visible brings feedback, confidence, and the nerve to try a larger version. As the series finds its voice, what began as a cautious test becomes a body of work we are willing to claim. Jupiter spends about one year in each sign and takes about twelve years to move through all twelve signs, so growth through visibility has time to build each time the work is shown.\n\nThe response is encouraging, then it becomes the measure. We promise a bigger installment before the current one is finished, add flourishes because they drew praise last time, and quietly drop the parts that received little notice. The same confidence that moved the idea out of private notes now makes it difficult to admit that something is not ready or that the pace is too much. A missed installment starts to feel like a loss of relevance, and the work begins serving the reaction instead of the idea.\n\nThe next choice is whether to keep escalating or make the series at the size we can actually sustain. We can finish the piece already underway before announcing another, keep an unusual part even when the familiar part got more applause, and share less often rather than padding the series with work made only to hold attention. That slows the promise-making and gives each installment time to become distinct. The audience may grow more slowly, but response returns to being useful information instead of the only reason to continue.\n\nBefore {{exitDate}}, we can withdraw one oversized promise about the series and finish the smaller version already underway.",
+      "body_they": "Jupiter in Leo makes a creative idea harder to keep private. From {{entryDate}}, a half-finished story can leave a notes app and become an ongoing series shown to a small audience. Each installment gets clearer because making it visible brings feedback, confidence, and the nerve to try a larger version. As the series finds its voice, what began as a cautious test becomes a body of work we are willing to claim. Jupiter spends about one year in each sign and takes about twelve years to move through all twelve signs, so growth through visibility has time to build each time the work is shown.\n\nThe response is encouraging, then it becomes the measure. We promise a bigger installment before the current one is finished, add flourishes because they drew praise last time, and quietly drop the parts that received little notice. The same confidence that moved the idea out of private notes now makes it difficult to admit that something is not ready or that the pace is too much. A missed installment starts to feel like a loss of relevance, and the work begins serving the reaction instead of the idea.\n\nThe next choice is whether to keep escalating or make the series at the size we can actually sustain. We can finish the piece already underway before announcing another, keep an unusual part even when the familiar part got more applause, and share less often rather than padding the series with work made only to hold attention. That slows the promise-making and gives each installment time to become distinct. The audience may grow more slowly, but response returns to being useful information instead of the only reason to continue.\n\nBefore {{exitDate}}, we can withdraw one oversized promise about the series and finish the smaller version already underway.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-batch-1-preflight-jupiter-leo"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

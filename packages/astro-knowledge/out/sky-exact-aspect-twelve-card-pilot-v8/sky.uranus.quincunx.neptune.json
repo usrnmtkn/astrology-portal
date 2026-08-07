@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:56:28.046Z",
+  "id": "sky.uranus.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "uranus-neptune",
+    "path": "data/pairs/uranus-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "Efforts to make radical changes repeatedly conflict with efforts to preserve an inspiring ideal.",
+    "examples": [
+      "A reform movement changes its policies while trying to keep its original vision.",
+      "A technology program expands access but repeatedly revises its social goals.",
+      "An organization restructures its services while adjusting an ambitious public mission."
+    ],
+    "pairBehavior": "Uranus contributes disruption and radical change, while Neptune contributes imagination and visionary ideals.",
+    "aspectBehavior": "The quincunx makes disruption and imagination address different problems, so neither fully accommodates the other and repeated adjustments are required.",
+    "consequence": "Visionary changes proceed unevenly because practical revisions and idealistic aims remain difficult to coordinate."
+  },
+  "draft": {
+    "id": "sky.uranus.quincunx.neptune",
+    "planetA": "uranus",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Uranus quincunx Neptune",
+    "body": "We want the future to change without losing the vision that made change worth pursuing. With Uranus quincunx Neptune, radical moves keep forcing revisions to the ideals meant to guide them. A reform movement changes what it will support, a new technology reaches more people but misses its social goal, and services get rebuilt around a public promise that keeps shifting.\n\nEach practical fix answers one need and exposes another. Uranus pushes for disruption when the current structure no longer works; Neptune keeps asking whether the result still reflects the larger dream. We adjust the plan, restate the purpose, then discover that the two have drifted apart again. Visionary change can still move forward, but not in a straight line. The vision may hold, even when the route to it cannot.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "weakestField": "compressedExampleBeat",
+    "weakest": "A reform movement changes what it will support, a new technology reaches more people but misses its social goal, and services get rebuilt around a public promise that keeps shifting.",
+    "why": "The example beat reads like three institutional mini-case studies, and the following planet-by-planet explanation turns the entry into a strategy brief rather than lived, collective copy.",
+    "failedChecks": [
+      "concrete fragment beat",
+      "lived-first voice",
+      "non-mechanical planet behavior",
+      "direct natural specificity"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:56:25.170Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "bd369aa817ee7ce37037ebf0212f6e9754771a4d64524948112e9508f364fac5",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "90cfe3dfa11658380b453d601934f8a64d5b08ec2cc82244e723493afff044e8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "concrete fragment beat",
+            "lived-first voice",
+            "non-mechanical planet behavior",
+            "direct natural specificity"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a3c156aa62a5114c8b66afe5675aead905d6756e659e3aa733b539cc2878f120"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 2,
+    "verdict": "borderline",
+    "rationale": "The final sentence uses an unnatural ellipsis that makes the reader pause to supply what the route cannot do.",
+    "failedChecks": [
+      "unnatural-usage"
+    ],
+    "evidence": [
+      {
+        "checkId": "unnatural-usage",
+        "sentence": "The vision may hold, even when the route to it cannot."
+      }
+    ],
+    "why": "The final sentence uses an unnatural ellipsis that makes the reader pause to supply what the route cannot do.",
+    "weakest": "The vision may hold, even when the route to it cannot.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:56:28.046Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "b2bcfab0f16c6295ca14aab953e461a992e4032e935213a5077a97fc45a0531c",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "90cfe3dfa11658380b453d601934f8a64d5b08ec2cc82244e723493afff044e8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "unnatural-usage"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "97d1d11fe4b8c86061d517c702c52dffa61107ab15f850fe4096b23787b4b27b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

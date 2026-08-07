@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:07:16.971Z",
+  "id": "sky.sun.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "sun-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.chiron",
+    "planetA": "sun",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Chiron",
+    "humanMoment": "A neighborhood organizer opens a flattering local profile, then quietly removes the link after seeing another advocate share similar coverage with ease.",
+    "developmentDetail": "They spend the afternoon rewriting an approved campaign page while the original praise goes unanswered.",
+    "planetaryDynamic": "The Sun draws the organizer into view, while Chiron makes that attention press on the place where being seen went wrong before.",
+    "aspectMechanic": "The quincunx keeps the profile and the old bruise out of step, so the link comes down and the campaign page keeps changing without making the recognition feel safer.",
+    "conditionalConsequence": "If the sting is treated as evidence that the profile was a mistake, the campaign loses useful reach and finished work is held back for another revision.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx keeps the profile and the old bruise out of step, so the link comes down and the campaign page keeps changing without making the recognition feel safer.",
+    "why": "Slightly dense, but it clearly applies the quincunx’s repeated adjustment and unresolved mismatch to the specific scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:07:16.971Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "85127b379ee998fa1e49885f34eea5eef7cb1bd289bf4038a4b94b0b48613ead",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "e81cfda6ce13542a7d153c15ef862713b10c8c1bf07801d4b83a299a175fa460",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e1e351abecef72f9699dced498f835acb88559c13486719145afdacd7c307aa4"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:18.958Z",
+  "id": "sky.lilith.conjunction.nodes",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "lilith-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.lilith.conjunction.nodes",
+    "planetA": "lilith",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Lilith conjunct North Node",
+    "humanMoment": "An arts festival gives its main stage to performers the venue once kept at the margins.",
+    "developmentDetail": "Tickets sell out, the conventional headline act is dropped, and the formerly excluded work becomes the basis for next season’s program.",
+    "planetaryDynamic": "Lilith brings the banished appetite back into public view, while the North Node turns that appetite toward what the next chapter could build.",
+    "aspectMechanic": "Under the conjunction, restoring the performers and setting the venue’s future direction become one booking decision, making reclamation and retaliation difficult to separate.",
+    "conditionalConsequence": "If the sold-out program leads to sustained funding and future bookings, the return builds a new audience, but if it ends with one defiant spectacle, the venue remains organized around the exclusion it opposed.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "none",
+    "why": "All five fields are concrete, distinct, mechanically accurate, scene-specific, evergreen, and collectively framed; the consequence clearly tests whether reclamation builds the next chapter or remains organized around past exclusion.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:18.957Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "843fc910ff4f28ae179c8e604dc00ee3359704942d47ae00e4fc14558754cac5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "464b150cbbc4bcf467823e4dd42bb95e339d0a84bd0d5a18fa15ecbfbd9ea86e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "1ab8b6158b3b9ce252730f16988fd740c136b43ffcd0787d143cdc1f84acfe52"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.lilith.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

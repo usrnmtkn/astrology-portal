@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:04.250Z",
+  "id": "sky.mars.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mars-uranus",
+    "path": "data/pairs/mars-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.quincunx.uranus",
+    "planetA": "mars",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Mars quincunx Uranus",
+    "humanMoment": "At a distribution depot, a rushed switch to automated loading sends carts into the wrong bays and brings the line to an abrupt stop.",
+    "developmentDetail": "Drivers press to get moving while technicians keep changing the sensors, timing, and route.",
+    "planetaryDynamic": "Mars supplies the push for immediate action, while Uranus introduces unstable technology and sudden departures from the plan.",
+    "aspectMechanic": "The quincunx keeps the drivers' pace and the automated route out of sync, so each sensor change forces another stop, restart, or bay change.",
+    "conditionalConsequence": "If the line restarts before the new routing holds, the shortcut can lead to damaged stock, missed deliveries, or an avoidable injury.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete collective scene, distinct planetary functions, repeated quincunx adjustments, and a conditional consequence that follows naturally from the operational failure.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:04.250Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "cd0ed196cada20176dee4f728608349ea0332fac20f685fe92b2ee02f54e433e",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "952cfbda0a9aeb5bec5b508fb0148b0aa6a7c1aee387956d5bcd392224cefe8f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "50b3586f051004ff0190c1361de1bec6c428a88bf0682dadd2aebecce1c0cfd2"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

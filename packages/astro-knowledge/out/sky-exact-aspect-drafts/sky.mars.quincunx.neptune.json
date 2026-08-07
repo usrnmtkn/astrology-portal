@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:03.598Z",
+  "id": "sky.mars.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mars-neptune",
+    "path": "data/pairs/mars-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.quincunx.neptune",
+    "planetA": "mars",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Mars quincunx Neptune",
+    "humanMoment": "A community arts fundraiser attracts a large audience with a moving short film but struggles to turn the response into steady donations.",
+    "developmentDetail": "Volunteers keep redirecting resources as viewers rally around different needs highlighted in the film.",
+    "planetaryDynamic": "Mars supplies the drive to raise money, while Neptune gives the film its emotional pull and diffuse focus.",
+    "aspectMechanic": "The quincunx keeps shifting volunteers between the donation target and the film's expanding causes because the fundraising push and the emotional response do not coordinate naturally.",
+    "conditionalConsequence": "If each new wave of interest redirects the available effort, the fundraiser can gain attention while falling short of its original target.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The concrete fundraiser scene clearly distinguishes Mars-driven action from Neptune's emotional diffusion, applies the quincunx through repeated redirection, and reaches a specific conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:03.597Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "70bcbf714aeac0243b1ccfe1181ec0eb1015066ac98f004676dbc93f72accade",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "069cc8047e78da1971708dd384bf52eed67c4646a2bbdf090de4c0a9779a0bc9",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "5ab4cba8cb1ce49dfd384166999e0bd412b3ff5a7ad30dc8165b5a590fa128b8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

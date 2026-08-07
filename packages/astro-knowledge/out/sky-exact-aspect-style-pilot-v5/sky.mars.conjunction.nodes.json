@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:46:30.471Z",
+  "id": "sky.mars.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mars-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.conjunction.nodes",
+    "planetA": "mars",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Mars conjunct North Node",
+    "body": "A fight we know how to win can still keep us tied to a chapter that is already ending. We reopen the old argument, answer the bait, spend another night proving a point, and call the surge of energy progress. With Mars conjunct North Node, effort and direction arrive as one urgent impulse, making it hard to tell whether we are advancing or simply reacting faster. The drive finally has an address, but not every familiar battle belongs there.\n\nThe same force can push us to send the application, start the build, make the call, or commit to work that feeds a growing hunger. Once action meets the direction that can build on itself, momentum stops scattering and begins to accumulate. We may win the old fight and still lose the next chapter.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "clarity",
+    "weakest": "The drive finally has an address, but not every familiar battle belongs there.",
+    "why": "The metaphor is slightly compressed, but remains immediately understandable and pair-specific. The piece otherwise delivers concrete lived detail, accurate nodal tension, natural collective voice, and a clean final turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:46:30.471Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "adaf0870730092c3e91e69d69a315ecbbe91c08942b55dc5925602e1f3b8941a",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "0ba6f41244d467e875ca50842dd010138c00cfe43eef4f2112c6c81eff84c58b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "fb2069ac048a2eb1317d376dbd6d315f876b55b88540e6e5d096cdd719c3ae01"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

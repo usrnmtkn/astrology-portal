@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:43:43.184Z",
+  "id": "sky.mercury.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mercury-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "meaningBrief": {
+    "tension": "A person avoids stating an uncomfortable truth to keep a conversation pleasant.",
+    "examples": [
+      "A manager avoids discussing a problem that everyone in the meeting recognizes.",
+      "A person writes an honest message and deletes it before sending.",
+      "A family continues a polite conversation while avoiding a known conflict."
+    ],
+    "pairBehavior": "Mercury supports polite communication, while Lilith brings forward the statement that others consider unacceptable.",
+    "aspectBehavior": "The square creates a practical conflict between staying polite and speaking plainly, and the same problem returns until one is chosen.",
+    "consequence": "Repeated silence allows the unresolved issue and its costs to continue."
+  },
+  "draft": {
+    "id": "sky.mercury.square.lilith",
+    "planetA": "mercury",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Mercury square Lilith",
+    "body": "A pleasant conversation starts to feel expensive when everyone is working around the one thing that needs to be said. At dinner, a known conflict gets covered with small talk; an honest message is drafted, reread, and deleted; at work, a problem everyone recognizes keeps sliding to the next conversation. Mercury square Lilith puts our careful wording up against the sentence that sounds rude, risky, or unacceptable but may also be true.\n\nWe may soften the point, change the subject, or wait for a better moment, only to meet the same problem again in a different form. Mercury keeps looking for language that preserves the exchange, and Lilith refuses to make the truth more acceptable than it is. Silence can keep the surface calm, but the unresolved issue keeps taking time, trust, and room from everything around it. Saying the uncomfortable sentence plainly once may cost less than continuing to organize our lives around not saying it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "pair embodiment",
+    "weakest": "Mercury square Lilith puts our careful wording up against the sentence that sounds rude, risky, or unacceptable but may also be true.",
+    "why": "This is the most explanatory sentence, but it remains clear, pair-specific, and supported by active behavior throughout the piece.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:43:40.086Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "1b8988ce3f3c3bbd7a7d1b40b1ee8bfdb5c8e27ea45d7d43a63df2eb52eb121d",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "84ac7c6daf2978d7c1520bb191c93bb300279cff672189fa1b7adb4bfe5bc664",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b85ae9a0fabf8f8dddc7d3d5a61284acb44aa13b164107e3034c03efdd8f1cee"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is natural, immediately clear, and uses coherent metaphor and personification without obscuring the meaning.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is natural, immediately clear, and uses coherent metaphor and personification without obscuring the meaning.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:43:43.184Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "b09c24f8c2780e9e151c16abccf292dc94b3c47566a8f4314a1f68fb27d37c6c",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "84ac7c6daf2978d7c1520bb191c93bb300279cff672189fa1b7adb4bfe5bc664",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "91e731e70e664e0ccd263edd4cc72cf95fa43cc2fe47184d0ea23a1ff12750b7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

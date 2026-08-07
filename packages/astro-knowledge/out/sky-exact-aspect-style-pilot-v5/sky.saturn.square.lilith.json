@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:46:30.748Z",
+  "id": "sky.saturn.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.square.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Saturn square Lilith",
+    "body": "The obligation we agreed to keeps taking more than we meant to give, and the next small demand is where compliance finally breaks. A recurring charge, a family expectation, the shift no one else will cover: Saturn square Lilith puts the rule and the refusal in direct conflict. We follow the arrangement to avoid consequences, then resent it enough to miss the payment, cancel late, or say no with more force than the moment requires. The practical fallout returns because the real choice has not been named.\n\nSome structures are holding life together; others survive because nobody has challenged them. Our anger can tell the difference only after we stop treating every limit as oppression and every duty as sacred. Renegotiation becomes possible when the refusal gets representation before it turns into sabotage. The rule may need to change, but the no still has to answer for what happens next.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived tension, concrete contemporary fragments, accurate Saturn-Lilith conflict, natural collective voice, and a clear consequence-aware ending. The refusal gaining representation before becoming sabotage is especially specific and memorable.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:46:30.747Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "28efd7f2e33aa39e528b6fe50fe3fa46c01cdbfda9ab0c478d17a6243b9f6e82",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "efbf1949c904a8213cf018718d6ccee65a187291cf3ac2a40dd03f68d03fdb75",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3170d349ac0b48676a39d6732e9007732d6690d83183af37c51e262abf0edde1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

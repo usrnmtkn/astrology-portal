@@ -1,0 +1,26 @@
+{
+  "astrology": {
+    "passed": true,
+    "planetNamed": true,
+    "signNamed": true,
+    "supportedDomainHits": [
+      "relationships",
+      "fairness",
+      "diplomacy",
+      "social settings"
+    ],
+    "unsupportedDomainHits": []
+  },
+  "pronouns": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "surfaceLint": {
+    "score": 3,
+    "fails": 0,
+    "warns": 0,
+    "findings": [],
+    "notes": []
+  },
+  "overallPassed": true
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:40.774Z",
+  "id": "sky.moon.quincunx.mars",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "moon-mars",
+    "path": "data/pairs/moon-mars.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.quincunx.mars",
+    "planetA": "moon",
+    "planetB": "mars",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Mars",
+    "humanMoment": "At a crowded pharmacy counter, a delayed prescription turns a routine pickup into a sharp exchange.",
+    "developmentDetail": "The customer presses for immediate action while the pharmacist keeps revising the pickup time as stock and authorization details change.",
+    "planetaryDynamic": "The Moon carries the immediate need and frustration, while Mars supplies the pressure to act now.",
+    "aspectMechanic": "The Moon-Mars quincunx keeps the need for medication and the push for immediate action out of step, so the exchange shifts each time the pickup time changes.",
+    "conditionalConsequence": "If urgency keeps setting the tone, a solvable delay can become a conflict at the counter.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The concrete pharmacy delay clearly distinguishes emotional need from pressure to act and shows the quincunx through repeated timing adjustments and escalating friction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:40.773Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "25f1278531ee0f8a700f5140471469c211751b197ac61719a8a20d6a8d158a14",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "1971780c25f0117300dd8337a36b9cb798df6f6a12aed9dfcf09088d1d38093d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "de02aeb9df6c72d326da5a31b9e1a4f36a432bee489c81f2e9ab938f04c5093f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.mars",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

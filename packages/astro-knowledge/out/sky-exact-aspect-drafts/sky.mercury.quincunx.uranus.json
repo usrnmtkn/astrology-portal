@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:13.350Z",
+  "id": "sky.mercury.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-uranus",
+    "path": "data/pairs/mercury-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.uranus",
+    "planetA": "mercury",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Uranus",
+    "humanMoment": "At a sold-out festival, new wristband scanners speed some guests through the gates while unexpectedly rejecting others.",
+    "developmentDetail": "Staff keep revising the entry instructions as each software fix produces a different error at another checkpoint.",
+    "planetaryDynamic": "Mercury handles instructions and rapid interpretation, while Uranus drives the new technology and its unpredictable disruptions.",
+    "aspectMechanic": "The quincunx keeps the wristband scanners and entry instructions out of step, with each rewritten direction answering one error while a software change creates another.",
+    "conditionalConsequence": "If the fixes continue to outpace clear explanations, gate lines may move quickly in bursts but remain uneven and confusing.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mercury handles instructions and rapid interpretation, while Uranus drives the new technology and its unpredictable disruptions.",
+    "why": "The distinction is accurate and scene-specific, though slightly more explanatory than the surrounding copy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:13.350Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "1b27de8bb7db9778359b8781ed4bb9600b19fa2641027002871ade558bbc1e5c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "df84be5c15429402ee6879f08b5d677affdb12b930cd11bc3ae9a1b04996ba11",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "f5c381d190de80ebdc080347c50c5b7a4672cb23cc6bc8d1a351495bbd5ae471"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

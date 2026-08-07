@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:41.244Z",
+  "id": "sky.uranus.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "uranus-pluto",
+    "path": "data/pairs/uranus-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.quincunx.pluto",
+    "planetA": "uranus",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Uranus quincunx Pluto",
+    "humanMoment": "A city rolls out app-only transit fares just as a sweeping route overhaul cuts service to several neighborhoods.",
+    "developmentDetail": "Riders adapt quickly, but validators, refund desks, and access rules are revised as displaced demand moves across the network.",
+    "planetaryDynamic": "Uranus accelerates the shift to new fare technology, while Pluto drives the deeper restructuring of routes and control over access.",
+    "aspectMechanic": "The quincunx keeps the app rollout and route cuts out of step, so validators and access rules change repeatedly as each overhaul creates problems the other cannot address.",
+    "conditionalConsequence": "If those revisions lag behind shifting ridership, fare failures and overcrowding will concentrate along the remaining routes serving the affected neighborhoods.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete, observable transit disruption clearly distinguishes technological acceleration from structural control and applies the quincunx through repeated, mismatched adjustments with a plausible conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:41.244Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "baabd3b0c4d679320b6187fbcf024df4c10aca5061a159dba703a616d13d2275",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5516d8d5a5f874a0da3c8c0ff4f12f0af9692ce088bee5107d83481dfa85f9ce",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "04074c1fcc7ccd1dfbad6850428349108bdcb6a092118d1dcb5cd6e2896948e8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

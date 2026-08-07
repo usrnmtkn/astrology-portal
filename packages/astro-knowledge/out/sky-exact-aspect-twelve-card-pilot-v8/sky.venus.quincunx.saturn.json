@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:56:07.327Z",
+  "id": "sky.venus.quincunx.saturn",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "venus-saturn",
+    "path": "data/pairs/venus-saturn.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "meaningBrief": {
+    "tension": "Affection, pleasure, and reward are wanted, but duty, caution, or fear of loss makes them difficult to accept or enjoy.",
+    "examples": [
+      "A worker saves a bonus instead of celebrating because future expenses feel uncertain.",
+      "A partner remains loyal but has trouble relaxing during a planned evening together.",
+      "A business owner reaches a goal but continues working and delays taking any reward."
+    ],
+    "pairBehavior": "Venus contributes affection, pleasure, and value, while Saturn contributes loyalty, restraint, structure, and obligation.",
+    "aspectBehavior": "The quincunx makes enjoyment and connection address different needs from security and duty, requiring repeated adjustments because neither side can fully accommodate the other.",
+    "consequence": "Commitments are maintained, while pleasure and rewards are repeatedly limited, delayed, or accepted with guilt."
+  },
+  "draft": {
+    "id": "sky.venus.quincunx.saturn",
+    "planetA": "venus",
+    "planetB": "saturn",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Saturn",
+    "body": "A bonus lands, and instead of celebrating, we move it straight to savings because future expenses already feel too close. A planned evening together stays on the calendar, but neither person fully relaxes. With Venus quincunx Saturn, affection and reward keep running into duty, caution, and the fear that enjoying something now will cost us later. We stay loyal, keep the promise, reach the goal, then postpone the pleasure that was supposed to come with it.\n\nThis takes constant adjustment. When we loosen up, obligation quickly returns; when we tighten the rules, warmth and connection start to thin out. Commitments hold, but rewards get limited, delayed, or accepted with guilt. Security matters, but it starts costing too much when every pleasure has to justify itself.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "ending",
+    "weakest": "Security matters, but it starts costing too much when every pleasure has to justify itself.",
+    "why": "Slightly more generalized than the concrete opening, but still clear, pair-specific, and effective as a clean final turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:56:04.586Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "70c9c92897195dbdbc2913d802f7fd70b3160718c16fd9ddd38ed8749b2fa075",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "9bef86eb95f6627b1872e3012640f1e39d6ed82cee78b292fbb85906050e9153",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "f4ea44fba912399af1b1782077ae20e9fdf7aabd500905692842807e310bdfbc"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.saturn",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence reads naturally and is immediately clear, with coherent metaphors and no compressed or confusing phrasing.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence reads naturally and is immediately clear, with coherent metaphors and no compressed or confusing phrasing.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:56:07.327Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "c408cb6775638d0aee407276a9c48a399d26955ca9984c2a2b63cb587588b3ad",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "9bef86eb95f6627b1872e3012640f1e39d6ed82cee78b292fbb85906050e9153",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6f36fc22ff7f867bc48baa0ed427bcdc40a189b2edd3a7cb9db4dc88e1807b56"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

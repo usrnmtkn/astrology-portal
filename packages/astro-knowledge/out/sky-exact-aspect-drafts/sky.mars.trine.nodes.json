@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:45.073Z",
+  "id": "sky.mars.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mars-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.trine.nodes",
+    "planetA": "mars",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Mars trine North Node",
+    "humanMoment": "A theater company redirects the labor spent reviving a canceled production into a touring program for new playwrights.",
+    "developmentDetail": "Rehearsal hours, transport money, and venue bookings now support work that can continue beyond one disputed show.",
+    "planetaryDynamic": "Mars supplies the labor and push to keep producing, while the North Node marks which use of that effort can build into the next chapter.",
+    "aspectMechanic": "Under the trine, rehearsal labor and the touring direction reinforce each other with little resistance, though the same momentum could keep the canceled production consuming resources before anyone questions it.",
+    "conditionalConsequence": "If the bookings and transport money remain with the tour, the company gains a repeatable circuit instead of winning attention for a show that still cannot open.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mars supplies the labor and push to keep producing, while the North Node marks which use of that effort can build into the next chapter.",
+    "why": "The node-axis tension is expressed more fully through the surrounding scene than in this sentence alone, but the field still distinguishes Mars from the directional function of the North Node accurately. All fields are concrete, coherent, evergreen, and mechanically specific.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:45.072Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "3a50041b78484acef911da18591fc30037e4e7dbef57aad325ef771c417251a1",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "9b8d1a2b4c5089865b17b05d591c56a61fcc86d0e6c91a024101959faf56580f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "229c5f55e43b97f6777f4b974d7c827e9bd7f033c0f1e2b2182665bd70d3b110"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}
