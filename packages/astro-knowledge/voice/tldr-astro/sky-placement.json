@@ -25,6 +25,37 @@
     ]
   },
 
+  "moonSignEntryPolicy": {
+    "id": "OV-045",
+    "status": "owner-permanent",
+    "source": "review/moon-template-package-2026-08-05.md",
+    "structure": [
+      "dates and immediate collective mood",
+      "ordinary reactions and decisions",
+      "what the sign supports",
+      "the behavior that distorts it",
+      "an exact engine-fact-gated aspect when available",
+      "one brief reminder that the mood is temporary",
+      "concrete actions"
+    ],
+    "rules": [
+      "Establish the collective mood once through observable effects rather than a uniform inner state.",
+      "Do not include a generic Moon explainer or repeat the mood in the close.",
+      "Keep entry, exit, and aspect dates in resolver slots supplied by the engine.",
+      "Do not use keyword-stack adjectives, poetic-sensory imagery, or astrology cliches.",
+      "Name the behavior that distorts the sign's support in ordinary current language.",
+      "Render an aspect paragraph only for a matching engine-supplied aspect with an exact date."
+    ],
+    "styleEvidence": [
+      "The pace slows, and people become less willing to be rushed.",
+      "You may need more time to decide how you feel before responding.",
+      "Comfort becomes practical.",
+      "A routine may still feel familiar even after it stops helping.",
+      "Choose one priority before agreeing to five.",
+      "By August 7, the mood has moved on."
+    ]
+  },
+
   "person": "collective-current-sky",
   "secondPersonAllowed": false,
   "firstPersonPluralAllowed": true,
