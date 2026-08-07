@@ -9,7 +9,8 @@ import {
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { renderPairDaily as renderNodePairDaily } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
-import { stablePairDailyVariant } from "../apps/web/src/services/pairDaily.ts";
+import { selectDailyGlanceDriverPool } from "../apps/web/src/services/chartMath.ts";
+import { selectPairDailyDriver, stablePairDailyVariant } from "../apps/web/src/services/pairDaily.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -23,7 +24,7 @@ const pairFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
 const pairClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json");
 
 assert.equal(pairFrames.rows.length, 28);
-assert.equal(pairClauses.rows.length, 68);
+assert.equal(pairClauses.rows.length, 82);
 assert.ok([...pairFrames.rows, ...pairClauses.rows].every((row) => row.review_status === "approved"));
 assert.equal(
   pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener")?.body_you,
@@ -76,6 +77,7 @@ assert.doesNotMatch(first.body, /\{\{?[\w.]+\}?\}/u);
 const second = renderer.renderPairDaily({ ...baseFacts, variant: 2 });
 const third = renderer.renderPairDaily({ ...baseFacts, variant: 3 });
 assert.match(second.body, /^@mariesatori, your attention is on/u);
+assert.ok(second.sourceKeys.includes("fallback-hook/pair-daily/clause/square/venus/variant-2"));
 assert.match(third.body, /^You are/u);
 
 const friendVoice = renderer.renderPairDaily({
@@ -114,6 +116,18 @@ const genericFallback = renderer.renderPairDaily({
   variant: 1
 });
 assert.match(genericFallback.body, /while your friend is/u);
+
+const houseFallback = renderer.renderPairDaily({
+  ...baseFacts,
+  reader: {
+    ...baseFacts.reader,
+    clauseKey: "fallback-hook/pair-daily/clause/house/4"
+  },
+  shared: { kind: null },
+  variant: 2
+});
+assert.equal(houseFallback.sourceKeys[1], "fallback-hook/pair-daily/clause/house/4");
+assert.match(houseFallback.body, /fixing the thing at home that makes the day harder every single time/u);
 
 const bondClauseKey = "fallback-hook/bond-effect-square/saturn";
 const softTen = renderer.renderPairDaily({
@@ -170,6 +184,17 @@ assert.throws(
   }),
   (error) => error instanceof SourceGapError && /SOURCE_GAP/u.test(error.message)
 );
+const missingBaseClauseRenderer = createTransitSynastryRenderer(transitRows, templates, {
+  ...approvedRows,
+  hookRows: approvedRows.hookRows.filter((row) => (
+    row.contentKey !== "fallback-hook/pair-daily/clause/square/venus"
+  ))
+});
+assert.throws(
+  () => missingBaseClauseRenderer.renderPairDaily({ ...baseFacts, variant: 2 }),
+  (error) => error instanceof SourceGapError && /base clause/u.test(error.message),
+  "An approved variant must never conceal a missing base clause."
+);
 const missingFamilyRenderer = createTransitSynastryRenderer(transitRows, templates, {
   ...approvedRows,
   hookRows: approvedRows.hookRows.filter((row) => !row.contentKey.startsWith("fallback-hook/pair-daily/shared-moon/water"))
@@ -214,6 +239,97 @@ assert.equal(
   renderer.renderPairDaily({ ...baseFacts, variant: sameDayVariant }).body,
   renderer.renderPairDaily({ ...baseFacts, variant: sameDayVariant }).body,
   "Same-day refreshes must be byte-identical."
+);
+
+const applyingPool = selectDailyGlanceDriverPool(86, [
+  { planet: "Jupiter", longitude: 177 },
+  { planet: "Venus", longitude: 178 },
+  { planet: "Mars", longitude: 179 },
+  { planet: "Sun", longitude: 180 },
+  { planet: "Saturn", longitude: 174 }
+], 6, 5, 3);
+assert.deepEqual(applyingPool, [
+  { kind: "aspect", natal: "Jupiter", aspect: "square", orb: 1 },
+  { kind: "aspect", natal: "Venus", aspect: "square", orb: 2 },
+  { kind: "aspect", natal: "Mars", aspect: "square", orb: 3 }
+]);
+assert.ok(
+  applyingPool.every((driver) => driver.kind !== "aspect" || driver.natal !== "Saturn"),
+  "The separating Saturn contact must never enter the Pair Daily driver pool."
+);
+assert.ok(
+  applyingPool.every((driver) => driver.kind !== "aspect" || driver.natal !== "Sun"),
+  "Pair Daily must cap its valid applying-contact pool at the tightest three."
+);
+
+const pairSeeds = Array.from({ length: 12 }, (_, index) => ({
+  friendId: `friend-${index}`,
+  seed: stablePairDailyVariant("reader-a", `friend-${index}`, "2026-08-07")
+}));
+const firstThreeSeed = pairSeeds[0];
+const differentThreeSeed = pairSeeds.find(({ seed }) => (
+  (seed - 1) % applyingPool.length !== (firstThreeSeed.seed - 1) % applyingPool.length
+));
+assert.ok(differentThreeSeed, "Fixture pairs must cover different top-three driver slots.");
+const firstPairDriver = selectPairDailyDriver(applyingPool, firstThreeSeed.seed);
+const secondPairDriver = selectPairDailyDriver(applyingPool, differentThreeSeed.seed);
+assert.notDeepEqual(firstPairDriver, secondPairDriver);
+const pairDriverClauseKey = (driver) => (
+  `fallback-hook/pair-daily/clause/square/${driver.natal.toLowerCase()}`
+);
+const firstPairOutput = renderer.renderPairDaily({
+  ...baseFacts,
+  reader: { ...baseFacts.reader, clauseKey: pairDriverClauseKey(firstPairDriver) },
+  shared: { kind: null },
+  variant: firstThreeSeed.seed
+});
+const secondPairOutput = renderer.renderPairDaily({
+  ...baseFacts,
+  reader: { ...baseFacts.reader, clauseKey: pairDriverClauseKey(secondPairDriver) },
+  shared: { kind: null },
+  variant: differentThreeSeed.seed
+});
+assert.notEqual(
+  firstPairOutput.sourceKeys[1].replace(/\/variant-\d+$/u, ""),
+  secondPairOutput.sourceKeys[1].replace(/\/variant-\d+$/u, ""),
+  "Two friend pairs with three qualifying contacts can select different slot-A drivers."
+);
+
+const oppositeParitySeed = pairSeeds.find(({ seed }) => seed % 2 !== firstThreeSeed.seed % 2);
+assert.ok(oppositeParitySeed, "Fixture pairs must cover both clause-variant lanes.");
+const singleDriver = [
+  { kind: "aspect", natal: "sun", aspect: "square", orb: 1 }
+];
+assert.deepEqual(
+  selectPairDailyDriver(singleDriver, firstThreeSeed.seed),
+  selectPairDailyDriver(singleDriver, oppositeParitySeed.seed),
+  "A one-contact day must keep the same driver across friend pairs."
+);
+const firstClauseLane = renderer.renderPairDaily({
+  ...baseFacts,
+  reader: { ...baseFacts.reader, clauseKey: "fallback-hook/pair-daily/clause/square/sun" },
+  shared: { kind: null },
+  variant: firstThreeSeed.seed
+});
+const secondClauseLane = renderer.renderPairDaily({
+  ...baseFacts,
+  reader: { ...baseFacts.reader, clauseKey: "fallback-hook/pair-daily/clause/square/sun" },
+  shared: { kind: null },
+  variant: oppositeParitySeed.seed
+});
+assert.notEqual(firstClauseLane.sourceKeys[1], secondClauseLane.sourceKeys[1]);
+assert.notEqual(
+  firstClauseLane.parts[0],
+  secondClauseLane.parts[0],
+  "Two friend pairs with one qualifying driver can still vary slot A through approved clause lanes."
+);
+
+const housePool = selectDailyGlanceDriverPool(30, [{ planet: "Mars", longitude: 0 }], 9, 5, 3);
+assert.deepEqual(housePool, [{ kind: "house", house: 9 }]);
+assert.deepEqual(
+  selectPairDailyDriver(housePool, firstThreeSeed.seed),
+  selectPairDailyDriver(housePool, oppositeParitySeed.seed),
+  "House fallback days remain a single non-rotating truth."
 );
 
 const words = first.body.trim().split(/\s+/u);

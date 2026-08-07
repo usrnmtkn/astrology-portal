@@ -8628,9 +8628,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mercury/conjunction/exact-approval.json",
-        "payloadSha256": "8e1319382da4d38bf52b87fbc024a3fb41d8a8e54d1ab3de5ec44800d463ac05",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "d2404eee08c569f85de2901b36f8d8106ec4e9e48d4b079ec0291d996770020c",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8646,9 +8646,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mercury/hard/exact-approval.json",
-        "payloadSha256": "62698e84d5ca8c8ed7eac83c2924da093b6b34f0c9afce0daf5f3562c1046d42",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "93d33be1fdf89298af830b74ae34b64b737bc1227d1ce0771f34c21e597e9caf",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8664,9 +8664,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mercury/soft/exact-approval.json",
-        "payloadSha256": "0edf9ff39622f26ce41a1098ae17feab3c56562f026cf2ad3392807692eea5ef",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "6362d8421b188bde40c0cb30965961f50a955c2dc6d8fb4600c0e940691b1d22",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8736,9 +8736,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mars/conjunction/exact-approval.json",
-        "payloadSha256": "86afdcc3c32d75d1d7d9b591012f537697c63ecd681fb92eadb2ff45bfc430cd",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "3428afa318de45184dddb7e82095d361b3a65e8b8f089a7c30bc11107800be4d",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8754,9 +8754,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mars/hard/exact-approval.json",
-        "payloadSha256": "d25a5a489f0e76dcd31da53d9ac782a4c85fe579fc1ea3fa7768d4c51c621f89",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "e134d0f8315ff06c9b675d19c933937c7cd45892af15a255aeb4e1c47618e792",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8772,9 +8772,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-mars/soft/exact-approval.json",
-        "payloadSha256": "26219a839056002edbd1d7266b8d83a4c5338ca094053e7548703fa712e59631",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "57e796e75e527549e92455c80a311546af0ba30347df47b932471716498df108",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8790,9 +8790,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-venus/conjunction/exact-approval.json",
-        "payloadSha256": "8ba710783daa5428d9a46facd2032570972befcea12e72658b95b24baa592f3e",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "b2917e1ee99cccb0d9f936265f6b64f9c9c1a989db406eeabf0afae0f16a1c74",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8808,9 +8808,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-venus/hard/exact-approval.json",
-        "payloadSha256": "582d397c060c73cabd1dee63987306b4c24586b333ff4fa897cd64ce0512ee2e",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ad2124747654ddc1940c2f6a066b8f2929ecfe327f8384a266efd77efbc41d2b",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8826,9 +8826,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-venus/soft/exact-approval.json",
-        "payloadSha256": "ed4540e74da32f2c0b252db6f878f177814690b0f861c2692812a3b7060e68fd",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "50b5fd69f1aa036b63bdb41b15ae22b62c65df5c5dc6be9d361b99746824f1be",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8844,9 +8844,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-mars/conjunction/exact-approval.json",
-        "payloadSha256": "a5423e22ecfda632f4a4cd60eed0234914d1a3ccf807c4a633485d0589e73440",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ed1d5f16cef1d56d394c8eee052f909b56453d71c67af64dd31740d8d8412447",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8862,9 +8862,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-mars/hard/exact-approval.json",
-        "payloadSha256": "45c00cbb35352193200d046b6e5f21f575601984c61989299b3007635a726d10",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "a4b71d1c4ef225611ea61466a9ff4322317ee56e5fb3aac4ff10cab7b4b87921",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8880,9 +8880,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-mars/soft/exact-approval.json",
-        "payloadSha256": "ade57a5ddbd8595067e788735ddb5a9d8cc9576820296e8669fc8559f787ec0b",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "770167ae317b4c2db2a8dc0f8d07f7d8213130a91ee442bb112993644ffee8e4",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8898,9 +8898,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-mars/conjunction/exact-approval.json",
-        "payloadSha256": "8077f2b79323c41c211341a6263489b2b6ceb8100f0c53968a0d96ea0e4b1674",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "5e52e312307da004740b6258fc855641dc54b8e68e24c9fb9983f20722de0a5f",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8916,9 +8916,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-mars/hard/exact-approval.json",
-        "payloadSha256": "59e912fedf9bc8ca49154829d8733a922b85b5be3343f5c0ecbf94219b4a2ee2",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "d488176c592114f6d80bc5ff1eae13f30c21dd1a8c89f9e8013a067be57b1eda",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -8934,9 +8934,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-mars/soft/exact-approval.json",
-        "payloadSha256": "6d45d6c3ace0668965303dcd1f61aed723b0c363c894e6507144ac383bb8c864",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "29d9b37ce17a9c8e327852388c89e53c5a38f2dcf66e82378c7e871dc4b52fd1",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -12911,9 +12911,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/conjunction/exact-approval.json",
-        "payloadSha256": "97a389e9f17bec1a68bb71dae1c23c686dbeff7b115b8955220bb9ae59ff0672",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "87925e49207dd422e398d3ae492b0e585422bbcaae7064b0baae39795bfe528d",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -12926,9 +12926,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/hard/exact-approval.json",
-        "payloadSha256": "66c48c4ed2da783a7ac824bacd6e079fbfb9178e411f299290895c15a9a61f22",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "6c90557e104aefff8753722e73d107631a49e3c4c9f907157adb5cd4c99201f3",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -12941,9 +12941,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/soft/exact-approval.json",
-        "payloadSha256": "e3d8f34bba1c0259a42c24ce7579642a5d5198d2810542c4807163516ccaa70f",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "f94678a6758250da156d01281e1718885bcc41d52fe7dc7c76ff6b7b1c081f7c",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -12956,9 +12956,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/conjunction/exact-approval.json",
-        "payloadSha256": "fa13448ac628e4e158e2fa5867feaf27be1ea97fbc6fbdd7090a1636b02aafea",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "0ac927f66e8d478445af290d3c4048390ea97cd422d87c3fa91b4a797f5d65fa",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -12971,9 +12971,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/hard/exact-approval.json",
-        "payloadSha256": "4e449ddb4a44ff7042a804726867301be45d32f915b8cdfb3fe30ebb80c3657c",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2e309a894b49fb2b9ef8989c76c54a69d58930aead24fd87e27be4639d018c2b",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -12986,9 +12986,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/soft/exact-approval.json",
-        "payloadSha256": "42948128a16fdc54b1822a7834d2a212da1127ad5f91c4db8da7bd26f21f88ed",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "118297c758a3b6438a3a4c97670b1a367546d45f5308f1285761c064cc3b0b45",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13001,9 +13001,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/conjunction/exact-approval.json",
-        "payloadSha256": "528bcc753fb6db53318f8bbb7fee295bd85b8a0e06adf7c8c19aafac8fcc540f",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ccdee3153228ee6e5e192129b3a13f45753e691201af6aa6a26395cf9b5d51c2",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13016,9 +13016,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/hard/exact-approval.json",
-        "payloadSha256": "cb8a377c4f3283f7c35c6db82dbe84abe752827a6a84ddd519ebcc2fae789571",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2f6cf16a857c30c634545794493331506d34c04f474304af2018eae06b025180",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13031,9 +13031,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/soft/exact-approval.json",
-        "payloadSha256": "ee9bdaf28b3d513fce37875e530660de41148263340cc0b71328362b024d7828",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "936f9ab082aacbeafaa085704ef757bb0df5637b6970235372fc3291246b7be0",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13046,9 +13046,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/conjunction/exact-approval.json",
-        "payloadSha256": "ca5ca31adbd70795d3f09c29586f19ed89e6b3aad4c44b6cad51b011f3373eda",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "14bd3a1bdc903f5b2b701360c7a03b0e645db9b8c63e3ff0ebd7a46862978398",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13061,9 +13061,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/hard/exact-approval.json",
-        "payloadSha256": "b6297295dcb6934ad776e2dfea554ad1904dedb77df440c4988ba27ff55e249c",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2ccd370e56087c2dac7eb2a8d4867ee99c42535fbc0c39386c82bb2cb59ca26e",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13076,9 +13076,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/soft/exact-approval.json",
-        "payloadSha256": "fd4b84005ee55792d765de36cc5313c90afa838945b24b8f56bbfe629a3fce72",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2d6cb396a9f4c5a11785b047ebb3454b182945c24428ea63e3cc2ecf6d32a444",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13091,9 +13091,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/conjunction/exact-approval.json",
-        "payloadSha256": "7dba2ffba30d95cd2d80993cf85d2dcd11d8aaff9b2509c36bb89ca6fb455aa3",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "a04cad06aeb07dd6052bd89471cbee1b29a061a824a155d9923cceaf435d5b14",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13106,9 +13106,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/hard/exact-approval.json",
-        "payloadSha256": "f9bb9b2182e0b919a71b7057c7dccc51cdbefd179275b52b7156d2337a3f9ef1",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "a234e561627cd9bc4048d2c1770cc5935089576f7d98e92f56f05e9d6edd841b",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13121,9 +13121,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/soft/exact-approval.json",
-        "payloadSha256": "0b59b1cbebf31babb68fc1a40b462fac0218826d4c9431b95be0506a371125dc",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2c1ea9ccf32ed3f353a2a1770d9e951d65de27bb60f822694cffd8193b619879",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13136,9 +13136,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/conjunction/exact-approval.json",
-        "payloadSha256": "d3e8133d96174be80dc2262ad83d25bded343bbc35b30b57814b7e0d5fc91f71",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "890e7824438f12745c941a78d91b14e7a0708e641ea3041dff1fc663d742344e",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13151,9 +13151,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/hard/exact-approval.json",
-        "payloadSha256": "f7bf273b22ff681a500a359661d679109034ff1abe5118d7ff212b596d26f95d",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "f2d4b9e64b0cec59134f930d6a6ca5f3caa909faaee3452f19662a1623697b42",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13166,9 +13166,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/soft/exact-approval.json",
-        "payloadSha256": "a829d59caacc3d21694b8616f1fea6d60e79621a08306cc8e45a6907a38e159f",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "8679c85b29f43d8166dae020a3415b11f41002f3359ed69250ad45a51cfd5437",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13181,9 +13181,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/conjunction/exact-approval.json",
-        "payloadSha256": "450661628394f5f3a1e8b3ea58fd54516b517d7e5074639da74dc4396e6dc3cd",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "cbf028df2a0d1c33856334d779a4b1c61758e115ca148efd81065763daff6500",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13196,9 +13196,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/hard/exact-approval.json",
-        "payloadSha256": "1200105974cb160cd805435541a741aa700fd81f0dc8bc8637bf1a4d81a3e76d",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2906015d3c51ff1e2052a53886d3887811ca65f83f42b9e0391b30b46edf4fd3",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13211,9 +13211,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/soft/exact-approval.json",
-        "payloadSha256": "8b12268605e666678c828ac99456e4f4d46c6a82576e1eb7f3bc2c85d81225ec",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "784c9de343d7a030723484f0e28a9fbed30b35af9bb84b554d727b5c0f460ab4",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13226,9 +13226,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/conjunction/exact-approval.json",
-        "payloadSha256": "6ad3522fbf60622bc23af0b5e6f27311b05086fadcab027b6d039f76b9f71488",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "b57c10cd87a3058b2879cfd852f1d198cecbe32d986000e14b26913d58050ac4",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13241,9 +13241,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/hard/exact-approval.json",
-        "payloadSha256": "d160d2ac68d339257f39a056b769248cbb79a305b15aef202002b67c56f066ab",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "a8f59a3a8a1b5ca3837abb46a41e9f519e0cdea6f971917e657bc13379dd0d97",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13256,9 +13256,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/soft/exact-approval.json",
-        "payloadSha256": "313869f97c272b6a22dd854eaa72775c5ddfc0d6afb95c218b60b55d7332d315",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "11a4bbf28984c600b50f9656ee46a0bb30d1b593b0873e078d074aaa7d773cbf",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13271,9 +13271,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/conjunction/exact-approval.json",
-        "payloadSha256": "b98f428a2c07383ebac4d77a00c666d3227dc7859794cce68a7e4160d712ec85",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "4f997876576b20c262492756e9213a3f1e76808a9b914eb975bfeb1991f85eaa",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13286,9 +13286,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/hard/exact-approval.json",
-        "payloadSha256": "c93d252b2ba036312f1efd794a7d3fed81dc6b3b57394c71372023da47722cf4",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "e2ab29273ea6994a2f2ba617586daefedfa8495aa0b958f8f7e9443d510b9997",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13301,9 +13301,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/soft/exact-approval.json",
-        "payloadSha256": "1af998fe2fd653219ae48930332d08b55d1331c306d52b33c69029a1d1d0ad43",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2a729702bb4a1261dfc4a45f1af16863d9a50159a6e7a7c39ce99dfb2ef328b4",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13316,9 +13316,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/conjunction/exact-approval.json",
-        "payloadSha256": "1f90934fed886643710b7ef062985a9e775fc77348fe67b211c605784ae885da",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2c233983838a0258608f243bc511ebc546a06bb86b39ec933539ed4cfd79c9bd",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13331,9 +13331,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/hard/exact-approval.json",
-        "payloadSha256": "500de93b0c4788a0cb26f4c99cbcfc6f581fc8c65ac9243cdaec0bbaefc06840",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "aa2f5d9327b82675b9e9ee68cf9ed88d0e42f5f808600d21fbc90936811fd45f",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13346,9 +13346,9 @@
       "notes": "Connections page: per-pair enrichment for outer-planet synastry contacts (chat 2026-07-22). Same body across groups, holder slots carry direction. Single voice by design (reader-directed).",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/soft/exact-approval.json",
-        "payloadSha256": "02a1e4f8b36f1041ddda9921ed158433ebe980033d9c8c8dfad1ed663c5f776d",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "b835b1b9e0313786e113321b316241182d1250c9639d1a0442ec2192187b8581",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13361,9 +13361,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-jupiter/conjunction/exact-approval.json",
-        "payloadSha256": "6138d4d231347974bc4af9a9ad145dac134daf2a6544eb860127a91730ebacc0",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "fabc31f02b2c194577dfa59306a2cbfa35ce93bfdd9307f38c3ae691b2cbb12c",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13376,9 +13376,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-jupiter/hard/exact-approval.json",
-        "payloadSha256": "69e1f2ec5baa550fd95c3c735045fd1d517a860cb9feb286d169077a0ec4a1c5",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "667416923558f5c7b8dd77a28868aa9442fc30c01db5c5559e45f5f021293140",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13391,9 +13391,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-jupiter/soft/exact-approval.json",
-        "payloadSha256": "140b7db1fa36eba0bba5c75d1109d03d2fb6958158923d7df7faeb604a92eb11",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "0430b2e8e0cea5d6ba066d4336dd9cea563ea76d6ab2345f3a3f75f7c7da0432",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13406,9 +13406,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-saturn/conjunction/exact-approval.json",
-        "payloadSha256": "634933f771a5c97548bc6d1385dd71d011d814b58f358f52753c6d1b03c46fd7",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "7ae041111897c7351435677ced311c350e819ca889d1af5339c4e97ae9745c1f",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13421,9 +13421,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-saturn/hard/exact-approval.json",
-        "payloadSha256": "24af389a92b035895429dafc64cedbedffaa2458eb8466841258965164220a55",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "802b9693bed5d95b8e0099e4d1e863554dd691305db3ffb313636b20a9b6fb11",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13436,9 +13436,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mercury-saturn/soft/exact-approval.json",
-        "payloadSha256": "28776667c583a8905ad0037f8b13678ac5332b2e55820ce4dd913c0e8e9b93ac",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "a95e83829f07304ab7f6b8a0c1bdfb3aff1a379226bbe5d68c660302bde0e751",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13452,9 +13452,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-uranus-conjunction-exact-approval.json",
-        "payloadSha256": "b9040b948eeedc0dc072756c27abcb86c6a48a8ede2c2b4305943c2e0c3244f5",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "cbca36be2478a3c4aa79c65adbc706573757749d19ff48ab189de94c6da0300a",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13468,9 +13468,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-uranus-hard-exact-approval.json",
-        "payloadSha256": "50631e1aa8ac2bf35dc267162edd62d70e76e0ab558c0838230f516b3929bddf",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "4da4a4142d59c558a6df78d2926852ed5deac688138bd7a9b191bea8eeeeb979",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13484,9 +13484,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-uranus-soft-exact-approval.json",
-        "payloadSha256": "8eaa7eeda69174d2581ad19423ee01a1e45ef70bf04a32a93ad8bb458a12ab89",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "732ee70fce61bc9a7339cd73218b73ab0065c9214493f268cfb6faa7590beeb6",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13500,9 +13500,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-neptune-conjunction-exact-approval.json",
-        "payloadSha256": "938fd334f291a4777018552180ae9a6cb0c442c9abfb3d9bd1ba3daaaf50f8df",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "02cc740ce97342e83104ee49e823534ffc571aeefc26375b641529c184407ddd",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13516,9 +13516,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-neptune-hard-exact-approval.json",
-        "payloadSha256": "13812764ac69ac1ef65eedd71ff46dda34f306d68013673d82aa026f238f880a",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "1b9bf7a4d9ab6664a28a7d5b3df346c1eb395302653660f45c0f82c1e05957f9",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13532,9 +13532,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-neptune-soft-exact-approval.json",
-        "payloadSha256": "658e27bbbb7cf498008c80ab6353f336750c8ff71a16cd64b5c4469ae686ca21",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "e7b40d7f04c5118fe674740a7b846bd2aaff23da68d5cec44e59b20454543237",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13548,9 +13548,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-pluto-conjunction-exact-approval.json",
-        "payloadSha256": "644235e1a2276eddacd11f00962577703f0ac336817b0a6fd5deb6f03a931cea",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "476718c331785e5022f414bdba1082898e2ea32287de9d1ac1b733c9998c2e54",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13564,9 +13564,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-pluto-hard-exact-approval.json",
-        "payloadSha256": "832f41496f37f3655ec87690d90250682367735a04540aa93396baf7a2eef7a4",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ea8e11d656aa501b3bef4ee5097cc7cc3b50596ee8e317b31c3de361114f11f1",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13580,9 +13580,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mercury-pluto-soft-exact-approval.json",
-        "payloadSha256": "b8a28fb896f1bd0025349e2241689f7d37275bf6e302837c0f0e9fe93883703a",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "57e631cc80049e0b2d5649f8acd716a982cd65581cd01e8e5184a505076d3f9b",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13595,9 +13595,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-jupiter/conjunction/exact-approval.json",
-        "payloadSha256": "c4e75fb66e437cdd01678fbd19312364fab1882b7c392bf66459edd9186d0073",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "1981b2cd9bee2e74069c09a3c900f13b0245e9065a09b756951d1f9bc89cf0a2",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13610,9 +13610,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-jupiter/hard/exact-approval.json",
-        "payloadSha256": "5258f3cec5736ef6f711e28867ce7c2c345fa3b612160b0d6c77f9dcf09d9d7f",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "c777a8dc8b8f40b1dcd5368bccee6ad034aa159da4c6675e2db2370172d8f801",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13625,9 +13625,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-jupiter/soft/exact-approval.json",
-        "payloadSha256": "b293aa954f33b4a180bb969380b6fc28aa6c1104a179cda71dd3b2c86f1d2fe7",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "514d51ad5881be59ee104dbbb62030f485476475bb44bcb2f151e9dca88a059d",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13640,9 +13640,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-saturn/conjunction/exact-approval.json",
-        "payloadSha256": "15820d33d615cbe564a26a1bb3332e8e1409fdefbb5f48fa8a7614810a09dad4",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "000cfc9ba4c4f67ec3160fd74a7de2643557b6afb33ffb918587510d674c5471",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13655,9 +13655,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-saturn/hard/exact-approval.json",
-        "payloadSha256": "e9d3d95d84aa312c81dcc1a32b2de1b61df93045a293edefd34f2f12368ab5ed",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "d1cec4098ad396181d58693c1bc2fd211d1fe812c8a12cbf112c25a7adfdad59",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13670,9 +13670,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/venus-saturn/soft/exact-approval.json",
-        "payloadSha256": "42a25f1402e0ff43d5cced564129a16709b715053e28c7797e04740282fba46f",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ec2ff26fe1f47eaa2465f2f8fe17a1a870768902ff766575a8649d737e075e40",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13702,9 +13702,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-uranus-hard-exact-approval.json",
-        "payloadSha256": "29ebda46c480ceea39be05e8632b7df36af27597dcadbbc100d3e97e6a9f457b",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ba25ded028dfa65b36effc0e844a2915ad1aa4b46b3ea23aee1f8e07f3e60764",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13718,9 +13718,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-uranus-soft-exact-approval.json",
-        "payloadSha256": "f978014f8ca9cd952f14e79230050f1a784cf54f0b100a7460ef8e5a71649ea9",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "bcc6713e5a2f21961002a1633c79da5ccf515bac4fd102bcaf93ab3a5cb099b6",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13734,9 +13734,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-neptune-conjunction-exact-approval.json",
-        "payloadSha256": "3f3b0d4d6b05d095ea6cbc05ee9dd1e25820dbc2540a1fb8d0fd5f6a0ed79d5e",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "243dacb5a016d295aab8d540958ab2fea1f99fd6b54c1d4ad7f3df376c676a2c",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13750,9 +13750,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-neptune-hard-exact-approval.json",
-        "payloadSha256": "573bfc7f139d6a6dd1bc9bd890ba0565334aecfbee7080f70e3ab184c6d2cf7f",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "bb8e9aa1ea7be48e8431bebf30cdf03fdce1bbcb53b8ec6ac015dec57fd2e713",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13782,9 +13782,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-pluto-conjunction-exact-approval.json",
-        "payloadSha256": "f31949ac4fdf3d9c2ed495325ea6a92fbbbd990526b9a0eae772285f5f2d39ac",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "251e57546d8ed9252ad8060f68a1ce27c11c7c764978d6d06c988bb1a4941a48",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13814,9 +13814,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/venus-pluto-soft-exact-approval.json",
-        "payloadSha256": "1841cb7f59ad5b3d82640f628f1906a27e75232281fd8332454078acaf9095c4",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "d9471a64035bd52cda6456564b98deaaadddf72a5b4aaef25db97dfdee12f657",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13829,9 +13829,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-jupiter/conjunction/exact-approval.json",
-        "payloadSha256": "74a307e00ae6ce195350dc0a393227e7858b27486648ee80213efc0b3a19bcad",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ea5b36fe1c8a13bdc0b479858a7b3f53608c85554f1e6695c2695ba2f72c0b55",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13844,9 +13844,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-jupiter/hard/exact-approval.json",
-        "payloadSha256": "3f42b8b7c4c4001ee14bce3c2e858b7ca5183c4bb4c4cfc9a844027a2638f779",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "e81cabce6edeb0468a2b339e97a733fce9fe4980dad56cdf9a89c1aee9073ad9",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13859,9 +13859,9 @@
       "notes": "Exact owner-authored dedupe chunk 2 resolver copy; payload and approval provenance are stored in the referenced review record.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/mars-jupiter/soft/exact-approval.json",
-        "payloadSha256": "81508c5a80ed589a2f4b1fab0e9b1895550fc4fa9c522d3aae321e4eaa6c262b",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "5d76df02331c4fc2b0b49a7eb1a776755207e772d55ad1a806cb3a89080049a2",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13875,9 +13875,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-saturn-conjunction-exact-approval.json",
-        "payloadSha256": "4e6a27b7524d46e736eb1128570dc4b2f6dcf3b4131fda5650321827c61c43e8",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "bccea41c207f162b52b3dfd3bf58db2745d7ed8ec982f866aaa14d8babf9e6aa",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13891,9 +13891,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-saturn-hard-exact-approval.json",
-        "payloadSha256": "3c962deaa34c1a33b32b9462669e1143f4226df213a79441784dc7d880c9b536",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "d20ff8798d7911bc1f27fe1bd9b60872e0e89506c1a89289deae7a5a236f0c96",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13907,9 +13907,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-saturn-soft-exact-approval.json",
-        "payloadSha256": "de50b4e4cfc153f8368927cff7175723d760f18aa52f0eeca24458661865233b",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "4bafc13b953f100a830a240a90e4e6600b0da2e8a35b12c46a15a2b3bc1c2a48",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13923,9 +13923,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-uranus-conjunction-exact-approval.json",
-        "payloadSha256": "06f6497477bf981d6b36a6436efbe68267f1d12d1cf839e38c1bff1bc95d9060",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "3aa3d86e340ca5ea08136cdb55614f5939a2b10331ba29e56871e4523e77d5b1",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13939,9 +13939,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-uranus-hard-exact-approval.json",
-        "payloadSha256": "9c3d296e88c2163b694ae96872a0afe4dd136b437f2f5534d6c5ce2cf4df1449",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "e60ba2cd23f047b0fcc421d4485c1d4ec3b763e2cf137f1bd6a31e58b9b6dad7",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13955,9 +13955,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-uranus-soft-exact-approval.json",
-        "payloadSha256": "9ab53eacb41bf782388ed77717a0a28bc9522f63e88cbf1ee387a7a60a8aa862",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "7e5df596370ed707798423048b581bb293afa3ce44977ddce7cab2608e24d818",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13971,9 +13971,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-neptune-conjunction-exact-approval.json",
-        "payloadSha256": "3b1914a5421826ff2f027085a5faa7de898a0049f8737d63ec14c1a6ba3a5f47",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "35271c78baf21080d9bab26612ddcbb8f843b44ab61a50b5a96ead1a744342b8",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -13987,9 +13987,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-neptune-hard-exact-approval.json",
-        "payloadSha256": "75dfdc1b6ea563803f6dc10752277e257eccd13ef68a1ca8eb2e4433b9e6b5c0",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "72452a3c8769d386474b731fd0c05c6919ca7076b2d96de4556fd1f776d5ac22",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -14003,9 +14003,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-neptune-soft-exact-approval.json",
-        "payloadSha256": "e8157639b168b10ad1a52a3cc5ccb13c4afe9fc349b054f70266180892486a75",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "a27b54d4e89b3b8a928f7be865a32cb52ca7d1b2849afa5d60470895462869b3",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -14019,9 +14019,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-pluto-conjunction-exact-approval.json",
-        "payloadSha256": "15c258a7afb92ce76fc6c98bd54208a488e406cbd8b49c3007b9871037fa1b0c",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "1a709db296dfa512db9d085a004f10f2e5a2d462c3f5b6e9a93748f38ef4e9bf",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -14035,9 +14035,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-pluto-hard-exact-approval.json",
-        "payloadSha256": "612002cae674fe87798b5e69974336e627274954d8107b6dd00fa2e7eedd6e58",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "e5db6067ec554e94a85be7a73db0269f180d517a7b4024edf91ea27a1b9761c1",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -14051,9 +14051,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/mars-pluto-soft-exact-approval.json",
-        "payloadSha256": "1d456472f38f92ca6dc00a0c809b327c40141ae919ed81de99470457c2ece637",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "4e2c5316a15fe45e57eab0bedf35bcdfcce8d12621d61bbef569f3a3bef6032c",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -14067,9 +14067,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/jupiter-saturn-conjunction-exact-approval.json",
-        "payloadSha256": "2d4d92ff071b4c3c1dcb75e75b347952f1d015087e597de9a6b3787938a8c443",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "1ed9ec736f34fd05163ad1f57aa34e98c0d59a5ef3734749560995e91b6f4dc5",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -14083,9 +14083,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/jupiter-saturn-hard-exact-approval.json",
-        "payloadSha256": "ae38aca18c29e11ea76d33d69fb2e94e562625477e9153b5b58ac0aebc8de4d3",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "ce68ab3cc81176dcafd9911851dba1c79ecc340440d2b26b1d62180ea86d7fcd",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -14099,9 +14099,9 @@
       "approved_via": "owner sign-off, chat 2026-07-22 | owner-authored exact approval, 2026-08-05",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/dedupe-chunk-4-owner-authored/jupiter-saturn-soft-exact-approval.json",
-        "payloadSha256": "e80ad6c0430966413c4bb670b0bf03eb6f8cc74ded39e2fa0eed515a423ef294",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "110c3a5d24a33841d5e93051b6ecd658e69dfcf6828df4a92bb2e6c314e15412",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16810,9 +16810,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-conjunction-exact-approval.json",
-        "payloadSha256": "5f274820f90ae57b07966661b7ed4e9125e491f8b9efd00aef7f11a79b24890e",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "b1826d4a1784e658deda49ccb4cd7937e2ea2fbb3a4ff39654f6c3b58cfc8d63",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16829,9 +16829,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-hard-exact-approval.json",
-        "payloadSha256": "c4564353174a6f043db892b99c7005f21fe7db69ef5158d3b9de7c2243469651",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "18ebef2eccea603056d07baaca2b6d1738495bd15108797eef4f365f2c3d408a",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16848,9 +16848,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-soft-exact-approval.json",
-        "payloadSha256": "71f671345b303d467c040babdfc1d35860c6c5b5b2f1f5fbb71f35c721dd8ac2",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "2a03b0cb4bf00a2ceb9f757bb9de48af7ae81a394a6717ed2881fc8a03b4aa19",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16867,9 +16867,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-conjunction-exact-approval.json",
-        "payloadSha256": "a5e01957e67a07f2f8e91d1040160f38d9132881e0442ff6d09cce738221304f",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "dbf3a5a9b40ae3d16d9adee874eeb62b060aca292785043f830a5f48165f80a9",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16886,9 +16886,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-hard-exact-approval.json",
-        "payloadSha256": "64af9ef0789fde12d578754493f82bf93e5cbc71089bc22752cdd8d2c69920f0",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "46bd536e38d4f57fdb6187a51dde99abce515596bd6137b83c5d582f7db195cc",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16905,9 +16905,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-soft-exact-approval.json",
-        "payloadSha256": "389a534bb3d15214104504b7b58bad897266381373e6122392cff5f7d238d2c1",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "8081e3805f863d59a8fef4b5a37652342162bc6fea2b997bce9912ffb253569f",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16924,9 +16924,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-conjunction-exact-approval.json",
-        "payloadSha256": "c2d968934235ba68e05b44d5a94a129203a42e70b4081bea51e8afdcd677eb4d",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "d8fd9bdbf20da3e452535e8a68e36e55f51d5d8c7d24fbd19000000535bd1975",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16943,9 +16943,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-hard-exact-approval.json",
-        "payloadSha256": "48b3a8e2321447adc848c03424bc2b0378521782714c6d2f7af6880207476112",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "6b1182670fd3a51eb1c6c97cb45f019b1d2c2e79f7eaabe0c563191abe932867",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16962,9 +16962,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-soft-exact-approval.json",
-        "payloadSha256": "7d1e909cdb20bd1bb3cfbc28e713a6645d134c16d77907dbbd06f9a2a760caf4",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "7a12289ac2f0644ea777c34a8e56d851d70ae6bf101eb7ed77a76ce9441bfe56",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -16981,9 +16981,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-conjunction-exact-approval.json",
-        "payloadSha256": "e263b48f61e0e9d2d1eefcef989e9263fc01d85e53879dae4ce16ada230d4ec3",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "c07dcb1ba2f4c3862b3861c2fb93bdc3d10e4a9a4a1d286ad239353b8201775b",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -17000,9 +17000,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-hard-exact-approval.json",
-        "payloadSha256": "836fde498d8a7cf958f8a5b34101f78dbb359d6536f232881dbada8bdfbfabd7",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "11e4c7d71ddb02f6cbb76e17387643b594f8326c1bbf79e4c63b3ffaae16d275",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -17019,9 +17019,9 @@
       "notes": "Synastry pair copy: planet to Ascendant (both directions via holder slots). Written in the natal-aspect register per owner feedback; replaces Lego fallback for angle contacts.",
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-soft-exact-approval.json",
-        "payloadSha256": "6e2512bb4078d47a1a2e4b89c6c6dd97d18b1ad7685d63f9523ae0e0b349a21e",
-        "approvedAt": "2026-08-05"
+        "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+        "payloadSha256": "b58771062bdf786f639939f126586a69f18b37481f23ceb378e26846f1d8aa8f",
+        "approvedAt": "2026-08-07"
       }
     },
     {
@@ -26883,6 +26883,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/sun/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/sun",
+      "body_you": "saying what you want before you start shaping it into something everyone else will approve of",
+      "body_they": "saying what they want before they start shaping it into something everyone else will approve of",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26893,6 +26905,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/moon/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/moon",
+      "body_you": "taking one thing off your plate before being needed starts to make you angry",
+      "body_they": "taking one thing off their plate before being needed starts to make them angry",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/mercury",
@@ -26907,6 +26931,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/mercury/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/mercury",
+      "body_you": "leaving the decision open until the information catches up",
+      "body_they": "leaving the decision open until the information catches up",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26917,6 +26953,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/venus/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/venus",
+      "body_you": "putting the credit card away before disappointment starts shopping for you",
+      "body_they": "putting the credit card away before disappointment starts shopping for them",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/mars",
@@ -26932,6 +26980,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/mars/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/mars",
+      "body_you": "telling them when you can do it instead of letting their urgency set your schedule",
+      "body_they": "telling people when they can do it instead of letting someone else's urgency set their schedule",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26942,6 +27002,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/jupiter/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/jupiter",
+      "body_you": "finishing the commitment you already made before excitement adds another one",
+      "body_they": "finishing the commitment they already made before excitement adds another one",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/saturn",
@@ -26956,6 +27028,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/saturn/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/saturn",
+      "body_you": "doing the work that matters without making exhaustion the measure of a productive day",
+      "body_they": "doing the work that matters without making exhaustion the measure of a productive day",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26966,6 +27050,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/uranus/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/uranus",
+      "body_you": "changing the part that is actually broken instead of blowing up the whole routine",
+      "body_they": "changing the part that is actually broken instead of blowing up the whole routine",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/neptune",
@@ -26980,6 +27076,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/neptune/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/neptune",
+      "body_you": "letting the first message stand instead of sending another one to manage how it was received",
+      "body_they": "letting the first message stand instead of sending another one to manage how it was received",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26990,6 +27098,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/pluto/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/pluto",
+      "body_you": "stopping the checking, refreshing, and rereading long enough to see what happens without your interference",
+      "body_they": "stopping the checking, refreshing, and rereading long enough to see what happens without their interference",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/chiron",
@@ -27004,6 +27124,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/chiron/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/chiron",
+      "body_you": "putting the actual need in the message instead of hoping they can hear it underneath everything else",
+      "body_they": "putting the actual need in the message instead of hoping someone can hear it underneath everything else",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -27014,6 +27146,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/north-node/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/north-node",
+      "body_you": "staying with the unfamiliar choice long enough to get past being bad at it",
+      "body_they": "staying with the unfamiliar choice long enough to get past being bad at it",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/south-node",
@@ -27028,6 +27172,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/south-node/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/south-node",
+      "body_you": "catching the old response before familiarity makes the decision for you",
+      "body_they": "catching the old response before familiarity makes the decision for them",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -27038,6 +27194,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/lilith/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/lilith",
+      "body_you": "saying what you want before you turn it into the version least likely to bother anyone",
+      "body_they": "saying what they want before they turn it into the version least likely to bother anyone",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/conjunction/sun",

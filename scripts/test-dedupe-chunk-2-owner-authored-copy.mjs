@@ -17,6 +17,9 @@ const bundled = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchite
 const templates = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json", "utf8"));
 const transitLib = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8"));
 const payloads = JSON.parse(fs.readFileSync(payloadPath, "utf8"));
+const readerVariantRecordPath = "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json";
+const readerVariantRecord = JSON.parse(fs.readFileSync(readerVariantRecordPath, "utf8"));
+const readerVariants = new Map(readerVariantRecord.rows.map((row) => [row.contentKey, row]));
 const rows = new Map(source.hookRows.map((row) => [row.contentKey, row]));
 const bundledRows = new Map(bundled.hookRows.map((row) => [row.contentKey, row]));
 const browserRenderer = createTransitSynastryRenderer(transitLib, templates, source);
@@ -55,6 +58,8 @@ for (const target of targets) {
   const approvalPath = `${reviewRoot}/${pair}/${group}/exact-approval.json`;
   const approval = JSON.parse(fs.readFileSync(approvalPath, "utf8"));
   const row = rows.get(key);
+  const readerVariant = readerVariants.get(key);
+  const servingPayload = readerVariant?.payload ?? payloadEntry.payload;
   const calculatedHash = crypto.createHash("sha256").update(JSON.stringify(payloadEntry.payload)).digest("hex");
   const governedAspect = aspects[group][2];
   const governedPath = `packages/astro-knowledge/data/synastry/aspects/A-${planetA}_B-${planetB}_${governedAspect}.json`;
@@ -93,9 +98,14 @@ for (const target of targets) {
   assert.deepEqual(bundledRows.get(key), row, `stale bundled row ${key}`);
   assert.equal(row.review_status, "approved");
   assert.equal(row.approved_via, undefined);
-  assert.equal(row.body_you, payloadEntry.payload.body_you);
-  assert.equal(row.body_they, payloadEntry.payload.body_they);
-  assert.deepEqual(row.approval, {
+  assert.equal(row.body_you, servingPayload.body_you);
+  assert.equal(row.body_they, servingPayload.body_they);
+  assert.deepEqual(row.approval, readerVariant ? {
+    approvalLevel: "exact_owner_approved",
+    recordPath: readerVariantRecordPath,
+    payloadSha256: readerVariant.payloadSha256,
+    approvedAt: readerVariantRecord.approvedAt,
+  } : {
     approvalLevel: "exact_owner_approved",
     recordPath: approvalPath,
     payloadSha256: payloadEntry.sha256,
@@ -110,12 +120,12 @@ for (const target of targets) {
   const [forwardAspect, reverseAspect] = aspects[group];
   const renders = [{
     input: { planetA, planetB, aspect: forwardAspect, otherName: "Sofia" },
-    expected: fillHolders(approval.payload.body_you, "you", "Sofia"),
+    expected: fillHolders(servingPayload.body_you, "you", "Sofia"),
   }];
   if (planetA !== planetB) {
     renders.push({
       input: { planetA: planetB, planetB: planetA, aspect: reverseAspect, otherName: "Sofia" },
-      expected: fillHolders(approval.payload.body_they, "Sofia", "you"),
+      expected: fillHolders(servingPayload.body_they, "Sofia", "you"),
     });
   }
 

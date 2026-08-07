@@ -1923,6 +1923,15 @@ export function createTransitSynastryRenderer(
       : 1;
     return keys[(seed - 1) % keys.length].key;
   };
+  const pairDailyClauseVariantKey = (baseKey: string, variant: number | null | undefined) => {
+    if (!pairDailyRow(baseKey)) {
+      throw new SourceGapError(`SOURCE_GAP: pair daily base clause ${baseKey}`);
+    }
+    if (baseKey.startsWith("fallback-hook/pair-daily/clause/house/")) {
+      return baseKey;
+    }
+    return pairDailyVariantKey(baseKey, variant);
+  };
   const pairDailyBody = (key: string, voice: "you" | "they") => {
     const row = pairDailyRow(key);
     const body = voice === "they"
@@ -1960,15 +1969,17 @@ export function createTransitSynastryRenderer(
     const openerKey = readerHandle
       ? pairDailyVariantKey("fallback-hook/pair-daily/opener", variant)
       : "fallback-hook/pair-daily/opener/variant-3";
+    const readerClauseKey = pairDailyClauseVariantKey(reader.clauseKey, variant);
+    const friendClauseKey = pairDailyClauseVariantKey(friend.clauseKey, variant);
     const opener = pairDailyBody(openerKey, "you");
     const ctx: Ctx = {
       readerHandle: readerHandle ?? "",
-      readerClause: pairDailyBody(reader.clauseKey, "you"),
+      readerClause: pairDailyBody(readerClauseKey, "you"),
       friendHandle: pairDailyFriendReference(friend),
-      friendClause: pairDailyBody(friend.clauseKey, "they")
+      friendClause: pairDailyBody(friendClauseKey, "they")
     };
     const parts = [pairDailyFill(opener, ctx)];
-    const sourceKeys = [openerKey, reader.clauseKey, friend.clauseKey];
+    const sourceKeys = [openerKey, readerClauseKey, friendClauseKey];
 
     if (shared?.kind === "bond") {
       if (!shared.family || !shared.bondClauseKey) {
