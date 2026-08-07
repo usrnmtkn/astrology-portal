@@ -127,7 +127,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-07a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-07b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -429,8 +429,8 @@ const outerConnection = transitRenderer.renderSynastryAspect({
   otherName: "Sofia"
 });
 assert.equal(outerConnection.headline, "Your Venus trine Sofia's Pluto");
-assert.match(outerConnection.body, /the attraction between you runs hotter and deeper than either expected/u);
-assert.match(outerConnection.body, /Build the trust to match the heat/u);
+assert.match(outerConnection.body, /The connection has real depth without the undertow\. You feel important to Sofia, not monitored or claimed\./u);
+assert.doesNotMatch(outerConnection.body, /\{\{holder/u);
 
 const connectionTransit = transitRenderer.renderBondTransit({
   transiting: "saturn",
