@@ -26883,6 +26883,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/sun/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/sun",
+      "body_you": "saying what you want before you start shaping it into something everyone else will approve of",
+      "body_they": "saying what they want before they start shaping it into something everyone else will approve of",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/moon",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26893,6 +26905,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/moon/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/moon",
+      "body_you": "taking one thing off your plate before being needed starts to make you angry",
+      "body_they": "taking one thing off their plate before being needed starts to make them angry",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/mercury",
@@ -26907,6 +26931,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/mercury/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/mercury",
+      "body_you": "leaving the decision open until the information catches up",
+      "body_they": "leaving the decision open until the information catches up",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/venus",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26917,6 +26953,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/venus/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/venus",
+      "body_you": "putting the credit card away before disappointment starts shopping for you",
+      "body_they": "putting the credit card away before disappointment starts shopping for them",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/mars",
@@ -26932,6 +26980,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/mars/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/mars",
+      "body_you": "telling them when you can do it instead of letting their urgency set your schedule",
+      "body_they": "telling people when they can do it instead of letting someone else's urgency set their schedule",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/jupiter",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26942,6 +27002,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/jupiter/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/jupiter",
+      "body_you": "finishing the commitment you already made before excitement adds another one",
+      "body_they": "finishing the commitment they already made before excitement adds another one",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/saturn",
@@ -26956,6 +27028,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/saturn/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/saturn",
+      "body_you": "doing the work that matters without making exhaustion the measure of a productive day",
+      "body_they": "doing the work that matters without making exhaustion the measure of a productive day",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/uranus",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26966,6 +27050,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/uranus/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/uranus",
+      "body_you": "changing the part that is actually broken instead of blowing up the whole routine",
+      "body_they": "changing the part that is actually broken instead of blowing up the whole routine",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/neptune",
@@ -26980,6 +27076,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/neptune/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/neptune",
+      "body_you": "letting the first message stand instead of sending another one to manage how it was received",
+      "body_they": "letting the first message stand instead of sending another one to manage how it was received",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/pluto",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -26990,6 +27098,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/pluto/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/pluto",
+      "body_you": "stopping the checking, refreshing, and rereading long enough to see what happens without your interference",
+      "body_they": "stopping the checking, refreshing, and rereading long enough to see what happens without their interference",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/chiron",
@@ -27004,6 +27124,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/chiron/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/chiron",
+      "body_you": "putting the actual need in the message instead of hoping they can hear it underneath everything else",
+      "body_they": "putting the actual need in the message instead of hoping someone can hear it underneath everything else",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/north-node",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -27014,6 +27146,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/north-node/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/north-node",
+      "body_you": "staying with the unfamiliar choice long enough to get past being bad at it",
+      "body_they": "staying with the unfamiliar choice long enough to get past being bad at it",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/square/south-node",
@@ -27028,6 +27172,18 @@
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
     },
     {
+      "contentKey": "fallback-hook/pair-daily/clause/square/south-node/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/south-node",
+      "body_you": "catching the old response before familiarity makes the decision for you",
+      "body_they": "catching the old response before familiarity makes the decision for them",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
+    },
+    {
       "contentKey": "fallback-hook/pair-daily/clause/square/lilith",
       "content_role": "fallback_hook",
       "grammar_frame": "gerund_clause",
@@ -27038,6 +27194,18 @@
       "drafted_via": "owner rewrite 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: explicit approval of all 14 square-group clauses as staged; Uranus observational stance confirmed by owner"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/clause/square/lilith/variant-2",
+      "content_role": "fallback_hook",
+      "grammar_frame": "gerund_clause",
+      "source_key": "fallback-hook/daily-body/square/lilith",
+      "body_you": "saying what you want before you turn it into the version least likely to bother anyone",
+      "body_they": "saying what they want before they turn it into the version least likely to bother anyone",
+      "review_status": "approved",
+      "drafted_via": "owner-authored variant-2, 2026-08-07 (cross-profile repeat-day rotation; mines a different image of the same source body); needs explicit approval",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approved' given for the 14 owner-authored square variant-2 clauses as staged"
     },
     {
       "contentKey": "fallback-hook/pair-daily/clause/conjunction/sun",

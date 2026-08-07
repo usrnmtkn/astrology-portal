@@ -58,6 +58,20 @@ Assembly shape: `{A-frame with readerClause}, while {friendHandle} {friendClause
 - Novelty: the same (A-driver, B-driver, C-condition) triple must not render the same
   frame variant two days running; rotate variants before repeating.
 
+### Ratified top-3 contact rotation (owner review, 2026-08-07)
+
+Pair Daily extends the applying policy in
+`packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md`
+F1. For each profile, the rotation pool contains only applying contacts inside the
+existing 5° daily contact gate, ordered tightest-first, and is capped at the top
+three qualifying contacts. Separating contacts never enter the pool, and Pair Daily
+never widens the orb to fill it. Rotation deliberately trades strict-tightest
+selection for cross-profile variety among equally valid applying contacts, per owner
+review feedback on 2026-08-07.
+
+House-fallback days are unchanged: the existing house fallback remains the single
+truth for that profile and does not rotate.
+
 ## Voice and copy rules
 
 - Reader in you-voice; friend referenced by @handle with they-voice clauses via the
