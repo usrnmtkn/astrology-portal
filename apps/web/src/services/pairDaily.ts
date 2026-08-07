@@ -1,5 +1,20 @@
 export type PairDailyVariantSeed = number;
 
+function normalizedPairDailySeed(variant: PairDailyVariantSeed) {
+  return Number.isFinite(variant)
+    ? Math.max(1, Math.abs(Math.trunc(variant)))
+    : 1;
+}
+
+export function selectPairDailyDriver<T>(
+  drivers: readonly T[],
+  variant: PairDailyVariantSeed
+): T | null {
+  if (drivers.length === 0) return null;
+
+  return drivers[(normalizedPairDailySeed(variant) - 1) % drivers.length] ?? null;
+}
+
 function stablePairIdentityHash(readerChartId: string, friendChartId: string) {
   const seed = `${readerChartId}:${friendChartId}`;
   let hash = 0;
