@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-venus-venus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/venus/soft",
+  "payloadSha256": "e7f442793c9d2eeaf3671eb3d3cf91847fd612f69b9f453907f4bfbb2d9b6a22",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} tend to enjoy the same pace and understand what the other person finds pleasant. Affection feels easy to give and easy to receive because neither person has to translate every preference. The ease can make the relationship feel naturally comfortable. It can also allow both people to assume that closeness will continue without much attention, because so little friction forces the connection to change.",
+    "body_they": "{{holder1}} and you tend to enjoy the same pace and understand what the other person finds pleasant. Affection feels easy to give and easy to receive because neither person has to translate every preference. The ease can make the relationship feel naturally comfortable. It can also allow both people to assume that closeness will continue without much attention, because so little friction forces the connection to change.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

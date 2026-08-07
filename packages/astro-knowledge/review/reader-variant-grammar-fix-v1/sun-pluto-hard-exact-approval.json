@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-pluto-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/pluto/hard",
+  "payloadSha256": "7f6e75cb7e99c2add3be6cc5753d2ca3fe97198f81a713e8cd6a182fd0be14b0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "A disagreement between you and {{holder2}} can become a struggle over who gets the final word, the last move, or the key to the locked drawer. You resist being reshaped, while {{holder2}} pushes harder because resistance feels like a loss of influence. The original issue disappears beneath silence, testing, jealousy, or the need to prove who holds the power.",
+    "body_they": "A disagreement between {{holder1}} and you can become a struggle over who gets the final word, the last move, or the key to the locked drawer. {{holder1}} resists being reshaped, while you push harder because resistance feels like a loss of influence. The original issue disappears beneath silence, testing, jealousy, or the need to prove who holds the power.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

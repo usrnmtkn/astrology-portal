@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-chiron-ascendant-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/soft",
+  "payloadSha256": "ff7d8e52c7f30f1c859a5be623a184e3a6fd85743379d5a1579687e6fae3a3b0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You tend to understand where {{holder2}} is more vulnerable without making it the center of the relationship. {{holder2}} can relax around them and does not have to explain every reaction. Care shows up in the way you adjust without drawing unnecessary attention to it.",
+    "body_they": "{{holder1}} tends to understand where you are more vulnerable without making it the center of the relationship. You can relax around you and does not have to explain every reaction. Care shows up in the way {{holder1}} adjusts without drawing unnecessary attention to it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
