@@ -229,6 +229,9 @@
   --tracking-nav: 0;
   --tracking-label: 0.12em;
   --tracking-pill: 0.04em;
+  --tracking-compact-label: 0.08em;
+  --tracking-compact-pill: 0.02em;
+  --tracking-verification-code: 0.24em;
   --tracking-number: 0;
   --tracking-tiny: var(--tracking-label);
 
@@ -433,6 +436,7 @@
   --text-compact-meta: var(--type-hint-size);
   --text-compact-label: var(--type-label-size);
   --text-compact-caption: var(--type-label-size);
+  --text-verification-code-size: 1.25rem;
   --label-eyebrow-font-family: var(--google-sans);
   --label-eyebrow-font-size: var(--text-section-label-size);
   --label-eyebrow-font-weight: var(--weight-semibold);
