@@ -1,0 +1,932 @@
+{
+  "schemaVersion": 1,
+  "chunk": "reader-variant-grammar-fix-v2",
+  "authorship": "derived_from_owner_approved_third_person",
+  "provenanceNote": "Each payload is a grammatical person-conversion of the owner-approved third-person synastry-pair row that was serving at main e89c4a16. body_you addresses holder1 as the reader; body_they addresses holder2. No new content words were introduced; only pronouns, possessives, verb agreement, and pair-reference person were changed. Every one of the 204 texts was read individually by the editorial assistant (Claude) after mechanical conversion; ~60 defects present in the abandoned v1 attempt (branch fix/reader-variant-grammar, now superseded) were corrected, including wrong-direction pronoun swaps, You+3rd-person-verb agreement errors, compound-predicate verbs, and pair-\"They\" left in third person.",
+  "approvalLevel": "exact_owner_approved",
+  "approvalSemantics": "Owner approval recorded above; the PR merge deploys the approved payloads.",
+  "supersedes": "reader-variant-grammar-fix-v1 (briefly merged via PR #105, then removed by this v2 replacement)",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",
+      "payload": {
+        "body_you": "You notice where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while you may also know when to ease up without making {{holder2}} explain every reaction.",
+        "body_they": "{{holder1}} notices where you are more sensitive than you appear. That attention can feel comforting, but it can also leave you feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making you explain every reaction."
+      },
+      "payloadSha256": "b1826d4a1784e658deda49ccb4cd7937e2ea2fbb3a4ff39654f6c3b58cfc8d63",
+      "previousBodySha256": "c880e731fa429ff94df38ce8b08de03f3427aa9569bc5162d62ad5bbf983d8ed"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/hard",
+      "payload": {
+        "body_you": "{{holder2}}'s natural way of speaking or reacting can touch a sensitive place for you. You may pull back, become defensive, or take the reaction personally. In turn, {{holder2}} can feel criticized for simply being themselves, and both may become unusually cautious around each other.",
+        "body_they": "Your natural way of speaking or reacting can touch a sensitive place for {{holder1}}. {{holder1}} may pull back, become defensive, or take the reaction personally. In turn, you can feel criticized for simply being yourself, and both may become unusually cautious around each other."
+      },
+      "payloadSha256": "18ebef2eccea603056d07baaca2b6d1738495bd15108797eef4f365f2c3d408a",
+      "previousBodySha256": "c3c832d944f10f01f17c8611e11a38d5b18d15c9dc6e5a723389a1444ac7ec27"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/soft",
+      "payload": {
+        "body_you": "You tend to understand where {{holder2}} is more vulnerable without making it the center of the relationship. {{holder2}} can relax around you and does not have to explain every reaction. Care shows up in the way you adjust without drawing unnecessary attention to it.",
+        "body_they": "{{holder1}} tends to understand where you are more vulnerable without making it the center of the relationship. You can relax around them and do not have to explain every reaction. Care shows up in the way {{holder1}} adjusts without drawing unnecessary attention to it."
+      },
+      "payloadSha256": "2a03b0cb4bf00a2ceb9f757bb9de48af7ae81a394a6717ed2881fc8a03b4aa19",
+      "previousBodySha256": "ec7867445f4dfb92e65379a251cf81dd9858ca87cd8fa55f955b8f11c5982574"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/conjunction",
+      "payload": {
+        "body_you": "You want to expand, and {{holder2}} wants proof that the plan can hold. Pushing for more and cutting back happen in the same conversation.",
+        "body_they": "{{holder1}} wants to expand, and you want proof that the plan can hold. Pushing for more and cutting back happen in the same conversation."
+      },
+      "payloadSha256": "1ed9ec736f34fd05163ad1f57aa34e98c0d59a5ef3734749560995e91b6f4dc5",
+      "previousBodySha256": "c898fc1d7d3852bd81bd1c60a0b6dedbca12b554ce2f73da0f1eca9f867be8d1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/hard",
+      "payload": {
+        "body_you": "Every idea you bring to the table, {{holder2}} edits down. Optimism starts feeling policed, while caution gets treated like an obstacle.",
+        "body_they": "Every idea {{holder1}} brings to the table, you edit down. Optimism starts feeling policed, while caution gets treated like an obstacle."
+      },
+      "payloadSha256": "ce68ab3cc81176dcafd9911851dba1c79ecc340440d2b26b1d62180ea86d7fcd",
+      "previousBodySha256": "0e6cee93f7d9c1ed4b1fef413a3abf3bb4c9a8899a4a0bd1c32067fce8e312a8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/soft",
+      "payload": {
+        "body_you": "You bring the larger possibility, and {{holder2}} helps give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail.",
+        "body_they": "{{holder1}} brings the larger possibility, and you help give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail."
+      },
+      "payloadSha256": "110c3a5d24a33841d5e93051b6ecd658e69dfcf6828df4a92bb2e6c314e15412",
+      "previousBodySha256": "ede4c4716eaa7787e0d4266e3554c95a56dfc4119ff7eba4295ab16da0bda2a8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/conjunction",
+      "payload": {
+        "body_you": "You bring out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+        "body_they": "{{holder1}} brings out the side of you that is less interested in keeping the peace at your own expense. You may speak more bluntly, admit what you want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly."
+      },
+      "payloadSha256": "c07dcb1ba2f4c3862b3861c2fb93bdc3d10e4a9a4a1d286ad239353b8201775b",
+      "previousBodySha256": "fa6dd57c9e262ac3a166a82f983c33b5c5facc2659e3ba424e801e86c891627f"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/hard",
+      "payload": {
+        "body_you": "You may see {{holder2}}'s composure as avoidance or an attempt to keep everyone comfortable. {{holder2}} may experience your directness as judgment or pressure. You keep pushing for the full truth, while {{holder2}} wants more care in how that truth is delivered.",
+        "body_they": "{{holder1}} may see your composure as avoidance or an attempt to keep everyone comfortable. You may experience {{holder1}}'s directness as judgment or pressure. {{holder1}} keeps pushing for the full truth, while you want more care in how that truth is delivered."
+      },
+      "payloadSha256": "11e4c7d71ddb02f6cbb76e17387643b594f8326c1bbf79e4c63b3ffaae16d275",
+      "previousBodySha256": "de76a7c8cf337a5c8a219a3290a6909c97a0385b99b04adeb6733588cfa45419"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/soft",
+      "payload": {
+        "body_you": "You make it easier for {{holder2}} to be direct about what they want and what they will not accept. {{holder2}} does not have to make their preferences easier for you to hear. There is more room for honesty here without every difference turning into a fight.",
+        "body_they": "{{holder1}} makes it easier for you to be direct about what you want and what you will not accept. You do not have to make your preferences easier for {{holder1}} to hear. There is more room for honesty here without every difference turning into a fight."
+      },
+      "payloadSha256": "b58771062bdf786f639939f126586a69f18b37481f23ceb378e26846f1d8aa8f",
+      "previousBodySha256": "10f580c6dbd17b898fb89e3e4b2a604238267168789fd77b9807c9741e610f82"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/jupiter/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} makes you feel more capable, more confident, and more justified in acting now. Together, you can turn a modest plan into something larger before either person has checked the time, money, or responsibility involved. You feel encouraged by {{holder2}}, and {{holder2}} enjoys giving the push. Second thoughts tend to arrive after the commitment has already been made.",
+        "body_they": "You make {{holder1}} feel more capable, more confident, and more justified in acting now. Together, you can turn a modest plan into something larger before either person has checked the time, money, or responsibility involved. {{holder1}} feels encouraged by you, and you enjoy giving the push. Second thoughts tend to arrive after the commitment has already been made."
+      },
+      "payloadSha256": "ea5b36fe1c8a13bdc0b479858a7b3f53608c85554f1e6695c2695ba2f72c0b55",
+      "previousBodySha256": "18b0da698f0eb3f6c11e31564f038e5c04aad8ae1f5a143b8782ee15ee7d379e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/jupiter/hard",
+      "payload": {
+        "body_you": "{{holder2}} keeps raising the stakes on what you are trying to do. What begins as encouragement can leave you feeling pressured to prove more, spend more, risk more, or move faster than originally intended. {{holder2}} may believe you need confidence. You may experience the same push as dissatisfaction with what you are already doing.",
+        "body_they": "You keep raising the stakes on what {{holder1}} is trying to do. What begins as encouragement can leave {{holder1}} feeling pressured to prove more, spend more, risk more, or move faster than originally intended. You may believe {{holder1}} needs confidence. {{holder1}} may experience the same push as dissatisfaction with what {{holder1}} is already doing."
+      },
+      "payloadSha256": "e81cabce6edeb0468a2b339e97a733fce9fe4980dad56cdf9a89c1aee9073ad9",
+      "previousBodySha256": "36d8b5306ebd1ce2a6f7a81a5d23df1193eb1a34006f90a915b75fe83a005476"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/jupiter/soft",
+      "payload": {
+        "body_you": "{{holder2}} gives you more confidence to act, while you give {{holder2}}'s optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. You and {{holder2}} may not notice how much larger the plan has become until you are already responsible for carrying it.",
+        "body_they": "You give {{holder1}} more confidence to act, while {{holder1}} gives your optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. {{holder1}} and you may not notice how much larger the plan has become until you are already responsible for carrying it."
+      },
+      "payloadSha256": "5d76df02331c4fc2b0b49a7eb1a776755207e772d55ad1a806cb3a89080049a2",
+      "previousBodySha256": "6eebdc2032a8e3f0dd3f29e87c14667717f952365718f9dbbbe0db92786206c1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/mars/conjunction",
+      "payload": {
+        "body_you": "You and {{holder2}} move with the same urgency. When you want the same outcome, plans happen quickly, and neither person has to convince the other to act. When you disagree, both push. You do not want to follow {{holder2}}'s pace, and {{holder2}} does not want to yield to you. The argument becomes a contest over who gets to decide what happens next.",
+        "body_they": "{{holder1}} and you move with the same urgency. When you want the same outcome, plans happen quickly, and neither person has to convince the other to act. When you disagree, both push. {{holder1}} does not want to follow your pace, and you do not want to yield to {{holder1}}. The argument becomes a contest over who gets to decide what happens next."
+      },
+      "payloadSha256": "5e52e312307da004740b6258fc855641dc54b8e68e24c9fb9983f20722de0a5f",
+      "previousBodySha256": "32329d7e0fac247722d964c253f3a2ca452127b7c4fdfa0b4e5ee9c7e4efa5dd"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/mars/hard",
+      "payload": {
+        "body_you": "You and {{holder2}} can provoke each other almost immediately. Irritation sits close to attraction, competition, or admiration, which can make conflict feel charged even when the original issue is small. Once the disagreement starts, winning can become more important than solving the problem. You push because {{holder2}} will not move, and {{holder2}} pushes harder for the same reason.",
+        "body_they": "{{holder1}} and you can provoke each other almost immediately. Irritation sits close to attraction, competition, or admiration, which can make conflict feel charged even when the original issue is small. Once the disagreement starts, winning can become more important than solving the problem. {{holder1}} pushes because you will not move, and you push harder for the same reason."
+      },
+      "payloadSha256": "d488176c592114f6d80bc5ff1eae13f30c21dd1a8c89f9e8013a067be57b1eda",
+      "previousBodySha256": "23af845bdbc667bda3233e7de857bef934702edb5f47fc5fbf44c6ec2cfd791f"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/mars/soft",
+      "payload": {
+        "body_you": "You and {{holder2}} usually move at a similar pace and understand how the other person takes action. You can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until your priorities finally split, and then both discover that agreement had been doing more work than you realized.",
+        "body_they": "{{holder1}} and you usually move at a similar pace and understand how the other person takes action. You can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until your priorities finally split, and then both discover that agreement had been doing more work than you realized."
+      },
+      "payloadSha256": "29d9b37ce17a9c8e327852388c89e53c5a38f2dcf66e82378c7e871dc4b52fd1",
+      "previousBodySha256": "4afae5f1a2601beab08763782906cd65fb0d728798c6d42093185f5f1c6dce88"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} gives your drive an ideal to chase, but the target keeps shifting. Energy gets spent, though rarely on the original plan.",
+        "body_they": "You give {{holder1}}'s drive an ideal to chase, but the target keeps shifting. Energy gets spent, though rarely on the original plan."
+      },
+      "payloadSha256": "35271c78baf21080d9bab26612ddcbb8f843b44ab61a50b5a96ead1a744342b8",
+      "previousBodySha256": "e510132366befb9ae6b8bbae451c266b053e30b53c775501c72c2cec55860991"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/hard",
+      "payload": {
+        "body_you": "You push for a straight answer and {{holder2}} drifts or goes vague. The harder you press, the harder it gets to pin down what is actually happening.",
+        "body_they": "{{holder1}} pushes for a straight answer and you drift or go vague. The harder {{holder1}} presses, the harder it gets to pin down what is actually happening."
+      },
+      "payloadSha256": "72452a3c8769d386474b731fd0c05c6919ca7076b2d96de4556fd1f776d5ac22",
+      "previousBodySha256": "10e03b13f15f64453e61e79b928c1b21baf1e049da6eee2472251171e81ebc7d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/soft",
+      "payload": {
+        "body_you": "{{holder2}} gives you a reason to care about the work, and you help turn the idea into something that can actually be started. The vision no longer has to remain private or unfinished.",
+        "body_they": "You give {{holder1}} a reason to care about the work, and {{holder1}} helps turn the idea into something that can actually be started. The vision no longer has to remain private or unfinished."
+      },
+      "payloadSha256": "a27b54d4e89b3b8a928f7be865a32cb52ca7d1b2849afa5d60470895462869b3",
+      "previousBodySha256": "30bfb9d94b50e420952c8229a71603cfeb16200a19da5b7cd1f2c86b71be9671"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/conjunction",
+      "payload": {
+        "body_you": "Your drive and {{holder2}}'s intensity combine into concentrated force. Directed at a shared goal, you are difficult to stop. Turned against each other, neither person knows how to back down.",
+        "body_they": "{{holder1}}'s drive and your intensity combine into concentrated force. Directed at a shared goal, you are difficult to stop. Turned against each other, neither person knows how to back down."
+      },
+      "payloadSha256": "1a709db296dfa512db9d085a004f10f2e5a2d462c3f5b6e9a93748f38ef4e9bf",
+      "previousBodySha256": "84387f9c9d975eb6c89329af715080b3cfe3b4500f1b0fd6e33d525d4bd3415b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/hard",
+      "payload": {
+        "body_you": "Your determination meets {{holder2}}'s need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome you originally wanted.",
+        "body_they": "{{holder1}}'s determination meets your need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome you originally wanted."
+      },
+      "payloadSha256": "e5db6067ec554e94a85be7a73db0269f180d517a7b4024edf91ea27a1b9761c1",
+      "previousBodySha256": "ae815da37cfb5f11e6937fab6be77ebd36d27ed0fc6a210b3dc56c4fd9c2b213"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/soft",
+      "payload": {
+        "body_you": "{{holder2}}'s depth gives your effort real traction. The work does not burn out. It compounds over time.",
+        "body_they": "Your depth gives {{holder1}}'s effort real traction. The work does not burn out. It compounds over time."
+      },
+      "payloadSha256": "4e2c5316a15fe45e57eab0bedf35bcdfcce8d12621d61bbef569f3a3bef6032c",
+      "previousBodySha256": "af7cf1c273538edd676ddca4d07debb5e879d4f8d0d2385688075cecd47dfba0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} grounds your momentum into discipline, or brakes it to a full stop. The tension comes when moving fast and moving carefully start treating each other like the enemy.",
+        "body_they": "You ground {{holder1}}'s momentum into discipline, or brake it to a full stop. The tension comes when moving fast and moving carefully start treating each other like the enemy."
+      },
+      "payloadSha256": "bccea41c207f162b52b3dfd3bf58db2745d7ed8ec982f866aaa14d8babf9e6aa",
+      "previousBodySha256": "300e4df2a13ecc90dda4a9a5a6c68540b2f30fe53a07ec314ed482453ffbf7ea"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/hard",
+      "payload": {
+        "body_you": "You feel blocked or judged, while {{holder2}} sees a reckless drive that needs reining in. Every decision devolves into an argument over timing.",
+        "body_they": "{{holder1}} feels blocked or judged, while you see a reckless drive that needs reining in. Every decision devolves into an argument over timing."
+      },
+      "payloadSha256": "d20ff8798d7911bc1f27fe1bd9b60872e0e89506c1a89289deae7a5a236f0c96",
+      "previousBodySha256": "66c56a0428d6769a920cf1e4e4618c2237ef360b7dc9df26af083c7ce399afef"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/soft",
+      "payload": {
+        "body_you": "You bring the drive, and {{holder2}} helps turn it into a plan that can survive delays, frustration, and the point where motivation usually drops. The ambition becomes achievable because the work does not depend on speed alone.",
+        "body_they": "{{holder1}} brings the drive, and you help turn it into a plan that can survive delays, frustration, and the point where motivation usually drops. The ambition becomes achievable because the work does not depend on speed alone."
+      },
+      "payloadSha256": "4bafc13b953f100a830a240a90e4e6600b0da2e8a35b12c46a15a2b3bc1c2a48",
+      "previousBodySha256": "9dab70babb2033e23412079cafe27d64febc324a726911bcbb967a13148b38d1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/conjunction",
+      "payload": {
+        "body_you": "Your drive meets {{holder2}}'s unpredictability, making plans happen instantly or not at all. They start fast and switch direction even faster.",
+        "body_they": "{{holder1}}'s drive meets your unpredictability, making plans happen instantly or not at all. They start fast and switch direction even faster."
+      },
+      "payloadSha256": "3aa3d86e340ca5ea08136cdb55614f5939a2b10331ba29e56871e4523e77d5b1",
+      "previousBodySha256": "1239d4503c32fafabb9462e587f582dbf1c4f5300013d756b29885f0d7da7bdf"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/hard",
+      "payload": {
+        "body_you": "Just as you commit to a direction, {{holder2}} changes course, or {{holder2}} needs immediate space right when you reach for backup. Both start acting independently just to avoid the collision.",
+        "body_they": "Just as {{holder1}} commits to a direction, you change course, or you need immediate space right when {{holder1}} reaches for backup. Both start acting independently just to avoid the collision."
+      },
+      "payloadSha256": "e60ba2cd23f047b0fcc421d4485c1d4ec3b763e2cf137f1bd6a31e58b9b6dad7",
+      "previousBodySha256": "72ba462e85e6c3ff3bc504830f2136f9f55ec1cb835b33752261be986ef7f1fc"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/soft",
+      "payload": {
+        "body_you": "You can act without making {{holder2}} feel crowded, and {{holder2}} can change direction without leaving you stranded. Neither person has to disappear or take over to keep the plan moving.",
+        "body_they": "{{holder1}} can act without making you feel crowded, and you can change direction without leaving {{holder1}} stranded. Neither person has to disappear or take over to keep the plan moving."
+      },
+      "payloadSha256": "7e5df596370ed707798423048b581bb293afa3ce44977ddce7cab2608e24d818",
+      "previousBodySha256": "0c4c874a319a0771a9809a72a79dc03b28559e339060ce68c7fae8ad36d669de"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} makes you feel that an idea deserves more attention, more confidence, and a larger audience. Around {{holder2}}, you may speak more freely, take intellectual risks, or finally say something that had previously felt too ambitious. The excitement can make every idea sound important before it has been tested. {{holder2}} expands the possibility, and you may start speaking from the size of that possibility rather than the information already available.",
+        "body_they": "You make {{holder1}} feel that an idea deserves more attention, more confidence, and a larger audience. Around you, {{holder1}} may speak more freely, take intellectual risks, or finally say something that had previously felt too ambitious. The excitement can make every idea sound important before it has been tested. You expand the possibility, and {{holder1}} may start speaking from the size of that possibility rather than the information already available."
+      },
+      "payloadSha256": "fabc31f02b2c194577dfa59306a2cbfa35ce93bfdd9307f38c3ae691b2cbb12c",
+      "previousBodySha256": "4fdea01d7d53c4887d0fffb3470def7a233286fddad38a2d5e9bfbc5d0160e5a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/hard",
+      "payload": {
+        "body_you": "{{holder2}} tends to enlarge the conversation, while you are trying to keep the point precise. You may offer one fact or concern, and {{holder2}} responds with a larger theory, a bigger plan, or a reason the detail should not matter so much. You can leave these conversations feeling talked past. {{holder2}} may feel that you are focusing on limitations. More gets discussed, but the point you were trying to make becomes harder to find.",
+        "body_they": "You tend to enlarge the conversation, while {{holder1}} is trying to keep the point precise. {{holder1}} may offer one fact or concern, and you respond with a larger theory, a bigger plan, or a reason the detail should not matter so much. {{holder1}} can leave these conversations feeling talked past. You may feel that {{holder1}} is focusing on limitations. More gets discussed, but the point {{holder1}} was trying to make becomes harder to find."
+      },
+      "payloadSha256": "667416923558f5c7b8dd77a28868aa9442fc30c01db5c5559e45f5f021293140",
+      "previousBodySha256": "2632a5a5cb1a776813eabab128f5a86a2df1e610c7e7540f607769ac382947f9"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/soft",
+      "payload": {
+        "body_you": "{{holder2}} helps you see beyond the immediate question, while you give {{holder2}} the facts and distinctions that keep the larger idea useful. Conversation between you can feel hopeful without becoming empty. {{holder2}} reminds you that the idea could go further, and you help explain how that growth might actually work.",
+        "body_they": "You help {{holder1}} see beyond the immediate question, while {{holder1}} gives you the facts and distinctions that keep the larger idea useful. Conversation between you can feel hopeful without becoming empty. You remind {{holder1}} that the idea could go further, and {{holder1}} helps explain how that growth might actually work."
+      },
+      "payloadSha256": "0430b2e8e0cea5d6ba066d4336dd9cea563ea76d6ab2345f3a3f75f7c7da0432",
+      "previousBodySha256": "1e02053c6197e99d88c792ac4c6c673385a4cb3d08c83787bb1cff508a75c73a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mars/conjunction",
+      "payload": {
+        "body_you": "When you have an idea, {{holder2}} is ready to do something with it. You give language to the plan, and {{holder2}} adds speed, urgency, and the willingness to act before the moment passes. This can make you feel sharper and more decisive around {{holder2}}. It can also make disagreements escalate quickly. {{holder2}} reacts while you are still explaining, and a conversation that began with one idea can end with both defending how they spoke.",
+        "body_they": "When {{holder1}} has an idea, you are ready to do something with it. {{holder1}} gives language to the plan, and you add speed, urgency, and the willingness to act before the moment passes. This can make {{holder1}} feel sharper and more decisive around you. It can also make disagreements escalate quickly. You react while {{holder1}} is still explaining, and a conversation that began with one idea can end with both defending how they spoke."
+      },
+      "payloadSha256": "3428afa318de45184dddb7e82095d361b3a65e8b8f089a7c30bc11107800be4d",
+      "previousBodySha256": "facfab9c200158f15b418be09bb7970634ed5c57feb2783f9a0ccbb7b8e03063"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mars/hard",
+      "payload": {
+        "body_you": "You may feel rushed, interrupted, or pushed into answering before the thought is finished. {{holder2}} may experience your need to explain as delay, avoidance, or an attempt to keep the conversation going long after the point seems clear. The frustration becomes personal quickly. You start defending the right to finish, while {{holder2}} starts defending the right to react. Soon the argument is no longer about the original decision.",
+        "body_they": "{{holder1}} may feel rushed, interrupted, or pushed into answering before the thought is finished. You may experience {{holder1}}'s need to explain as delay, avoidance, or an attempt to keep the conversation going long after the point seems clear. The frustration becomes personal quickly. {{holder1}} starts defending the right to finish, while you start defending the right to react. Soon the argument is no longer about the original decision."
+      },
+      "payloadSha256": "e134d0f8315ff06c9b675d19c933937c7cd45892af15a255aeb4e1c47618e792",
+      "previousBodySha256": "9e4e4f85aed58fb0879893dde7d1b542a2b4690d93ef6f414c38ffa0cca7f669"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mars/soft",
+      "payload": {
+        "body_you": "You and {{holder2}} can move from discussion to action with very little delay. You name the problem clearly, and {{holder2}} knows what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. You help {{holder2}} act with a clearer purpose, while {{holder2}} keeps you from thinking past the moment when action would help.",
+        "body_they": "{{holder1}} and you can move from discussion to action with very little delay. {{holder1}} names the problem clearly, and you know what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. {{holder1}} helps you act with a clearer purpose, while you keep {{holder1}} from thinking past the moment when action would help."
+      },
+      "payloadSha256": "57e796e75e527549e92455c80a311546af0ba30347df47b932471716498df108",
+      "previousBodySha256": "9fab2509376e5a7e4764814d65ebdc1e708605618623436427de769e0c30a622"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mercury/conjunction",
+      "payload": {
+        "body_you": "You and {{holder2}} tend to think at the same speed and follow the same jumps in conversation. You may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, you and {{holder2}} may assume you reached the same conclusion when neither person actually stopped to explain what they meant.",
+        "body_they": "{{holder1}} and you tend to think at the same speed and follow the same jumps in conversation. You may finish each other's sentences, pick up an old discussion without needing context, or build an idea together so quickly that neither remembers where it began. That familiarity can feel deeply validating. It can also blur the difference between agreement and shared habit. After enough time, {{holder1}} and you may assume you reached the same conclusion when neither person actually stopped to explain what they meant."
+      },
+      "payloadSha256": "d2404eee08c569f85de2901b36f8d8106ec4e9e48d4b079ec0291d996770020c",
+      "previousBodySha256": "41c390cbb749b76c0e56df7833ff9db83319da23316ffe622edc3bc7cee9deb5"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mercury/hard",
+      "payload": {
+        "body_you": "You and {{holder2}} process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. You may feel misunderstood by {{holder2}}, while {{holder2}} may feel that you are missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion.",
+        "body_they": "{{holder1}} and you process information differently, and both may feel that the conversation keeps moving in the wrong direction. A simple comment turns into a correction, the correction needs defending, and the original point disappears underneath the argument about wording. {{holder1}} may feel misunderstood by you, while you may feel that {{holder1}} is missing something obvious. Both start listening for mistakes instead of trying to understand how the other person reached the conclusion."
+      },
+      "payloadSha256": "93d33be1fdf89298af830b74ae34b64b737bc1227d1ce0771f34c21e597e9caf",
+      "previousBodySha256": "4c5a5e414da51ff3e5108f91cd98d0dfe0807facbed381dac4e7064d08d47a1d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mercury/soft",
+      "payload": {
+        "body_you": "Conversation tends to move easily between you and {{holder2}}. You can follow each other's reasoning, return to unfinished discussions, and explain complicated ideas without spending half the conversation correcting misunderstandings. That ease can make you and {{holder2}} feel mentally close, even when you have not spoken for a while. The connection often resumes exactly where it stopped.",
+        "body_they": "Conversation tends to move easily between {{holder1}} and you. You can follow each other's reasoning, return to unfinished discussions, and explain complicated ideas without spending half the conversation correcting misunderstandings. That ease can make {{holder1}} and you feel mentally close, even when you have not spoken for a while. The connection often resumes exactly where it stopped."
+      },
+      "payloadSha256": "6362d8421b188bde40c0cb30965961f50a955c2dc6d8fb4600c0e940691b1d22",
+      "previousBodySha256": "bf31a32841db71c6aa42e96fa188d228fa84f3e1be69ef19a009fa2fe7a742bd"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/conjunction",
+      "payload": {
+        "body_you": "Your words and {{holder2}}'s imagination blend until facts and feelings blur together. Conversations feel effortless, but actual agreements remain slippery.",
+        "body_they": "{{holder1}}'s words and your imagination blend until facts and feelings blur together. Conversations feel effortless, but actual agreements remain slippery."
+      },
+      "payloadSha256": "02cc740ce97342e83104ee49e823534ffc571aeefc26375b641529c184407ddd",
+      "previousBodySha256": "b9039ffa4cd179187af1237edca4f917a21bae674ee5783ed58a527db9eb5e75"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/hard",
+      "payload": {
+        "body_you": "You hear what you hoped {{holder2}} meant instead of what {{holder2}} actually said. The plan quietly changes shape, and neither person can point to the sentence where the agreement disappeared.",
+        "body_they": "{{holder1}} hears what they hoped you meant instead of what you actually said. The plan quietly changes shape, and neither person can point to the sentence where the agreement disappeared."
+      },
+      "payloadSha256": "1b9bf7a4d9ab6664a28a7d5b3df346c1eb395302653660f45c0f82c1e05957f9",
+      "previousBodySha256": "da0758c343a0e0666e7c8eb226f28e07b94bc0db442171c9b450821405d1ee9a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/soft",
+      "payload": {
+        "body_you": "{{holder2}} catches the meaning beneath your words, and you give shape to what {{holder2}} can only hint at. You understand each other before every detail has been explained.",
+        "body_they": "You catch the meaning beneath {{holder1}}'s words, and {{holder1}} gives shape to what you can only hint at. You understand each other before every detail has been explained."
+      },
+      "payloadSha256": "e7b40d7f04c5118fe674740a7b846bd2aaff23da68d5cec44e59b20454543237",
+      "previousBodySha256": "c6a1121ccd5146da3c0a9677616cdb786eeedf6a8ee3986cdb1fca5309e2f30c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/conjunction",
+      "payload": {
+        "body_you": "Conversations with {{holder2}} skip the pleasantries and go deep immediately. You can feel recognized or thoroughly interrogated, often in the same breath.",
+        "body_they": "Conversations with you skip the pleasantries and go deep immediately. {{holder1}} can feel recognized or thoroughly interrogated, often in the same breath."
+      },
+      "payloadSha256": "476718c331785e5022f414bdba1082898e2ea32287de9d1ac1b733c9998c2e54",
+      "previousBodySha256": "f718b506e68e29ee9dbc73f2c668a1539d42559e1b18ede791dba73946def841"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/hard",
+      "payload": {
+        "body_you": "{{holder2}} probes, and your words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition.",
+        "body_they": "You probe, and {{holder1}}'s words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition."
+      },
+      "payloadSha256": "ea8e11d656aa501b3bef4ee5097cc7cc3b50596ee8e317b31c3de361114f11f1",
+      "previousBodySha256": "9b5084367aaf6feea7c4eb794eb2956d07a0b1599bb1d84b1877c7caf8669c96"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/soft",
+      "payload": {
+        "body_you": "You can state the plain truth to {{holder2}} without it being turned into a case file. The depth stays welcome because {{holder2}} does not keep digging after you are done.",
+        "body_they": "{{holder1}} can state the plain truth to you without it being turned into a case file. The depth stays welcome because you do not keep digging after {{holder1}} is done."
+      },
+      "payloadSha256": "57e631cc80049e0b2d5649f8acd716a982cd65581cd01e8e5184a505076d3f9b",
+      "previousBodySha256": "61776614e02c540f1fd404c1345266bd253c35c66e0e6d4fed1a0ac48ebc1593"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/saturn/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} takes your ideas seriously. Instead of treating the conversation as temporary, {{holder2}} may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when {{holder2}} corrects every unfinished thought. You may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized.",
+        "body_they": "You take {{holder1}}'s ideas seriously. Instead of treating the conversation as temporary, you may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when you correct every unfinished thought. {{holder1}} may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized."
+      },
+      "payloadSha256": "7ae041111897c7351435677ced311c350e819ca889d1af5339c4e97ae9745c1f",
+      "previousBodySha256": "40d9595ae2b61178a452ef2059f5666a18b7b657a04c5a653d3085daf9828c02"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/saturn/hard",
+      "payload": {
+        "body_you": "{{holder2}}'s questions and doubts can sound final to you. A concern that {{holder2}} sees as practical may land as proof that the idea is foolish, unrealistic, or not worth explaining. Over time, you may say less around {{holder2}} or begin preparing for disagreement before the conversation starts. {{holder2}} may then see the silence as a lack of clarity, while you experience the same silence as protection from another discouraging response.",
+        "body_they": "Your questions and doubts can sound final to {{holder1}}. A concern that you see as practical may land as proof that the idea is foolish, unrealistic, or not worth explaining. Over time, {{holder1}} may say less around you or begin preparing for disagreement before the conversation starts. You may then see the silence as a lack of clarity, while {{holder1}} experiences the same silence as protection from another discouraging response."
+      },
+      "payloadSha256": "802b9693bed5d95b8e0099e4d1e863554dd691305db3ffb313636b20a9b6fb11",
+      "previousBodySha256": "9154d50a44c29c1e066c25a35e069c049a34c79685b276c3eb910dafe55e17b4"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/saturn/soft",
+      "payload": {
+        "body_you": "{{holder2}} helps you slow down long enough to make the idea useful, while you keep {{holder2}} from relying on an answer simply because it has worked before. Your conversations tend to produce something concrete. You bring the current information, and {{holder2}} gives the idea enough structure to be finished rather than endlessly discussed.",
+        "body_they": "You help {{holder1}} slow down long enough to make the idea useful, while {{holder1}} keeps you from relying on an answer simply because it has worked before. Your conversations tend to produce something concrete. {{holder1}} brings the current information, and you give the idea enough structure to be finished rather than endlessly discussed."
+      },
+      "payloadSha256": "a95e83829f07304ab7f6b8a0c1bdfb3aff1a379226bbe5d68c660302bde0e751",
+      "previousBodySha256": "8e1824c4894b4bd7fbe0e468c12d56d0e0bc9c6161532aa8711689ca7d11ab89"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} completely shakes up how you think. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning.",
+        "body_they": "You completely shake up how {{holder1}} thinks. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning."
+      },
+      "payloadSha256": "cbca36be2478a3c4aa79c65adbc706573757749d19ff48ab189de94c6da0300a",
+      "previousBodySha256": "4b90f73d2f0cb95d5556512bf968d206271dfec303954d9c4f25611f13cecfaa"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/hard",
+      "payload": {
+        "body_you": "You try to finish a thought and {{holder2}} jumps to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed.",
+        "body_they": "{{holder1}} tries to finish a thought and you jump to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed."
+      },
+      "payloadSha256": "4da4a4142d59c558a6df78d2926852ed5deac688138bd7a9b191bea8eeeeb979",
+      "previousBodySha256": "f337a124c5478710b043da1a0f598c8535be5e3c4e2a686a1ef7408c36abb989"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/soft",
+      "payload": {
+        "body_you": "{{holder2}} keeps your thinking from going stale, while you give {{holder2}}'s leaps somewhere to land. The conversation stays interesting without becoming impossible to follow.",
+        "body_they": "You keep {{holder1}}'s thinking from going stale, while {{holder1}} gives your leaps somewhere to land. The conversation stays interesting without becoming impossible to follow."
+      },
+      "payloadSha256": "732ee70fce61bc9a7339cd73218b73ab0065c9214493f268cfb6faa7590beeb6",
+      "previousBodySha256": "66bcda2aefb462f6c4720c7bafe90309bcc444149e16ec831e03156c90700503"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} makes you feel that every emotion is welcome at the table. You may become more open, expressive, and hopeful around them, especially after keeping a feeling packed away for too long. The trouble begins when {{holder2}} turns one difficult afternoon into a motivational seminar and you only wanted someone to stay for the weather.",
+        "body_they": "You make {{holder1}} feel that every emotion is welcome at the table. {{holder1}} may become more open, expressive, and hopeful around you, especially after keeping a feeling packed away for too long. The trouble begins when you turn one difficult afternoon into a motivational seminar and {{holder1}} only wanted someone to stay for the weather."
+      },
+      "payloadSha256": "890e7824438f12745c941a78d91b14e7a0708e641ea3041dff1fc663d742344e",
+      "previousBodySha256": "d9d42d112321b2e58c4ae66c56e41672f27e28551301af72e98c4367079fc034"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/hard",
+      "payload": {
+        "body_you": "You may feel cheered up before you feel understood. {{holder2}} offers optimism because they want to lift the mood, but you can hear that the worry is too gloomy, inconvenient, or excessive to keep discussing. Eventually you start trimming the feeling before sharing it, while {{holder2}} mistakes the smaller version for proof that the encouragement worked.",
+        "body_they": "{{holder1}} may feel cheered up before they feel understood. You offer optimism because you want to lift the mood, but {{holder1}} can hear that the worry is too gloomy, inconvenient, or excessive to keep discussing. Eventually {{holder1}} starts trimming the feeling before sharing it, while you mistake the smaller version for proof that the encouragement worked."
+      },
+      "payloadSha256": "f2d4b9e64b0cec59134f930d6a6ca5f3caa909faaee3452f19662a1623697b42",
+      "previousBodySha256": "b997525d0fc8a3db9ebcbfbdd66ab020cd05d54496a11fa171e37b7412814d79"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/soft",
+      "payload": {
+        "body_you": "You tend to feel lighter around {{holder2}} without having to paste on a smile first. {{holder2}} brings hope into difficult moments without turning every feeling into an emergency or a lesson. Comfort and optimism work together here, more like an open window than a demand to leave the room.",
+        "body_they": "{{holder1}} tends to feel lighter around you without having to paste on a smile first. You bring hope into difficult moments without turning every feeling into an emergency or a lesson. Comfort and optimism work together here, more like an open window than a demand to leave the room."
+      },
+      "payloadSha256": "8679c85b29f43d8166dae020a3415b11f41002f3359ed69250ad45a51cfd5437",
+      "previousBodySha256": "3806c2080d793c6cce4729dbb0f72628ed46e552ce92f3fb3c95053fd25d833e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/conjunction",
+      "payload": {
+        "body_you": "Your feelings and {{holder2}}'s imagination blend easily, like two songs playing through the same wall. {{holder2}} may sense a shift before you say anything, while you feel understood without having to provide a full transcript. The tenderness is real, though neither may be entirely certain which emotion entered the room first.",
+        "body_they": "{{holder1}}'s feelings and your imagination blend easily, like two songs playing through the same wall. You may sense a shift before {{holder1}} says anything, while {{holder1}} feels understood without having to provide a full transcript. The tenderness is real, though neither may be entirely certain which emotion entered the room first."
+      },
+      "payloadSha256": "4f997876576b20c262492756e9213a3f1e76808a9b914eb975bfeb1991f85eaa",
+      "previousBodySha256": "53027438c898e55ef7b100a0908e338b84f0f921bf9bbf0ebdcd4608957ef7c0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/hard",
+      "payload": {
+        "body_you": "{{holder2}} may comfort you for a feeling you are not actually having. {{holder2}} becomes convinced that you are sad, distant, disappointed, or quietly asking to be rescued, then treats the correction as part of the mystery. You end up managing the actual emotion and the elaborate bouquet sent to the wrong address.",
+        "body_they": "You may comfort {{holder1}} for a feeling {{holder1}} is not actually having. You become convinced that {{holder1}} is sad, distant, disappointed, or quietly asking to be rescued, then treat the correction as part of the mystery. {{holder1}} ends up managing the actual emotion and the elaborate bouquet sent to the wrong address."
+      },
+      "payloadSha256": "e2ab29273ea6994a2f2ba617586daefedfa8495aa0b958f8f7e9443d510b9997",
+      "previousBodySha256": "57d5ef05d27d88e64dae36bc44144a74fa130ec591ce93f31305c648d9f2ea72"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
+      "payload": {
+        "body_you": "{{holder2}} often knows when you need gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves you feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+        "body_they": "You often know when {{holder1}} needs gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves {{holder1}} feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth."
+      },
+      "payloadSha256": "2a729702bb4a1261dfc4a45f1af16863d9a50159a6e7a7c39ce99dfb2ef328b4",
+      "previousBodySha256": "701be423fcaf620c64f122d61e688a2f3453d785ca7552e29fca40557cb1cd8c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} reaches feelings you usually keep behind several locked doors. You may feel exposed, understood, and intensely attached in very little time because {{holder2}} notices emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins.",
+        "body_they": "You reach feelings {{holder1}} usually keeps behind several locked doors. {{holder1}} may feel exposed, understood, and intensely attached in very little time because you notice emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins."
+      },
+      "payloadSha256": "2c233983838a0258608f243bc511ebc546a06bb86b39ec933539ed4cfd79c9bd",
+      "previousBodySha256": "46098009a6bcf2d0f37ec83e4a42469b2bf12f192587f5beacc95bccf3fca155"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/hard",
+      "payload": {
+        "body_you": "You may feel watched even when nobody is speaking. {{holder2}} notices the changed tone, delayed reply, or private reaction and wants an answer before you are ready to give one. You guard more because {{holder2}} keeps looking, and {{holder2}} looks harder because the door keeps closing.",
+        "body_they": "{{holder1}} may feel watched even when nobody is speaking. You notice the changed tone, delayed reply, or private reaction and want an answer before {{holder1}} is ready to give one. {{holder1}} guards more because you keep looking, and you look harder because the door keeps closing."
+      },
+      "payloadSha256": "aa2f5d9327b82675b9e9ee68cf9ed88d0e42f5f808600d21fbc90936811fd45f",
+      "previousBodySha256": "0013adf83e2f92d70ae976d2cbd62c48f3df6960d24b1d037599695cf4ef2068"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/soft",
+      "payload": {
+        "body_you": "You can tell {{holder2}} the difficult truth without changing it to make the conversation easier. {{holder2}} stays present with feelings you usually hide, but does not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because you can go deeper without losing track of what still belongs to you.",
+        "body_they": "{{holder1}} can tell you the difficult truth without changing it to make the conversation easier. You stay present with feelings {{holder1}} usually hides, but do not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because {{holder1}} can go deeper without losing track of what still belongs to them."
+      },
+      "payloadSha256": "b835b1b9e0313786e113321b316241182d1250c9639d1a0442ec2192187b8581",
+      "previousBodySha256": "d24b1c0e02c66ecd44483fa47cbba01c71a794894cee8f7b61f3f150adc73fcb"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. You can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away.",
+        "body_they": "You may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. {{holder1}} can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away."
+      },
+      "payloadSha256": "cbf028df2a0d1c33856334d779a4b1c61758e115ca148efd81065763daff6500",
+      "previousBodySha256": "ff308addbe8b987fcf4cc3df361c86f798b9bc507ffab6f28c294dab63b7203a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/hard",
+      "payload": {
+        "body_you": "You reach for warmth, reassurance, or a little softness, and {{holder2}} responds with caution, practical help, silence, or the next responsibility on the list. {{holder2}} believes reliability should make the care obvious, while you begin feeling guilty for needing something less useful and more human. The relationship can become excellent in an emergency and strangely lonely on an ordinary Tuesday.",
+        "body_they": "{{holder1}} reaches for warmth, reassurance, or a little softness, and you respond with caution, practical help, silence, or the next responsibility on the list. You believe reliability should make the care obvious, while {{holder1}} begins feeling guilty for needing something less useful and more human. The relationship can become excellent in an emergency and strangely lonely on an ordinary Tuesday."
+      },
+      "payloadSha256": "2906015d3c51ff1e2052a53886d3887811ca65f83f42b9e0391b30b46edf4fd3",
+      "previousBodySha256": "1a2673a9295284b71b96f6d281a2d2fa98d7d0a9d6acc1f144e409da81033b38"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/soft",
+      "payload": {
+        "body_you": "You know {{holder2}} will still be there tomorrow. {{holder2}} does not panic over every mood, and you can rely on their patience through difficult periods. The quiet can feel safe, though affection may sit unopened for too long when both assume the commitment already says enough.",
+        "body_they": "{{holder1}} knows you will still be there tomorrow. You do not panic over every mood, and {{holder1}} can rely on your patience through difficult periods. The quiet can feel safe, though affection may sit unopened for too long when both assume the commitment already says enough."
+      },
+      "payloadSha256": "784c9de343d7a030723484f0e28a9fbed30b35af9bb84b554d727b5c0f460ab4",
+      "previousBodySha256": "65765b61ff0c048158e17af05d536c45a1ee07494dd0a3ed020bee2995ed6f60"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} keeps you emotionally awake. Around them, you may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make you wonder which version of the closeness will be waiting at the door.",
+        "body_they": "You keep {{holder1}} emotionally awake. Around you, {{holder1}} may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make {{holder1}} wonder which version of the closeness will be waiting at the door."
+      },
+      "payloadSha256": "b57c10cd87a3058b2879cfd852f1d198cecbe32d986000e14b26913d58050ac4",
+      "previousBodySha256": "e9fb5b6fd4a49f9a76412b66f90f07b47a208ecf8751d4215fe4c37fab05df2b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/hard",
+      "payload": {
+        "body_you": "What feels like breathing room to {{holder2}} can feel like sudden disappearance to you. Whenever you begin trusting the rhythm, {{holder2}} needs more space, a different plan, or an unexpected change of scene. You reach for reassurance, {{holder2}} reaches for the exit, and both end up protecting the need that already feels most threatened.",
+        "body_they": "What feels like breathing room to you can feel like sudden disappearance to {{holder1}}. Whenever {{holder1}} begins trusting the rhythm, you need more space, a different plan, or an unexpected change of scene. {{holder1}} reaches for reassurance, you reach for the exit, and both end up protecting the need that already feels most threatened."
+      },
+      "payloadSha256": "a8f59a3a8a1b5ca3837abb46a41e9f519e0cdea6f971917e657bc13379dd0d97",
+      "previousBodySha256": "dbb7acce569d6b5fe75c6d165d29114b312fc7aee7d45e4b1ee699e3a549d011"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/soft",
+      "payload": {
+        "body_you": "{{holder2}} can take space without making you feel unwanted, and you can have feelings without making {{holder2}} feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair.",
+        "body_they": "You can take space without making {{holder1}} feel unwanted, and {{holder1}} can have feelings without making you feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair."
+      },
+      "payloadSha256": "11a4bbf28984c600b50f9656ee46a0bb30d1b593b0873e078d074aaa7d773cbf",
+      "previousBodySha256": "5bc9b77f97f4da3aa792edabfa024a70a9764861e03f139da4a72e5c188a37c6"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/conjunction",
+      "payload": {
+        "body_you": "Around you, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. You can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+        "body_they": "Around {{holder1}}, you may act more boldly than usual. You may take the lead, try a new role, or make a choice you would normally overthink. {{holder1}} can make change feel exciting, though you may also feel exposed while you are still finding your footing."
+      },
+      "payloadSha256": "dbf3a5a9b40ae3d16d9adee874eeb62b060aca292785043f830a5f48165f80a9",
+      "previousBodySha256": "eb568353957357c1e9996e8031b5328423466cef821bbc04ad4f403dcd1529a5"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/hard",
+      "payload": {
+        "body_you": "You keep challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+        "body_they": "{{holder1}} keeps challenging the way you usually handle new people and situations. You may feel pushed to move faster, speak up, or take a risk before you feel ready. The connection can be motivating, but it can also leave you feeling that your natural pace is never enough."
+      },
+      "payloadSha256": "46bd536e38d4f57fdb6187a51dde99abce515596bd6137b83c5d582f7db195cc",
+      "previousBodySha256": "04602495d8d822c471a3712ad040db64675c18e52157982cb364c0d986dec3fe"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/soft",
+      "payload": {
+        "body_you": "You make unfamiliar choices feel easier for {{holder2}} to try. {{holder2}} may speak up sooner, take a chance, or step into a new role without feeling like they are forcing themselves. Change tends to happen more naturally around you.",
+        "body_they": "{{holder1}} makes unfamiliar choices feel easier for you to try. You may speak up sooner, take a chance, or step into a new role without feeling like you are forcing yourself. Change tends to happen more naturally around {{holder1}}."
+      },
+      "payloadSha256": "8081e3805f863d59a8fef4b5a37652342162bc6fea2b997bce9912ffb253569f",
+      "previousBodySha256": "9cf4f77bdc239d1af6fda27800bad64d57f191feb8ccccbf3d702406a0c6ab29"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/conjunction",
+      "payload": {
+        "body_you": "You feel familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+        "body_they": "{{holder1}} feels familiar to you almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull you back into habits or roles you have been trying to leave behind."
+      },
+      "payloadSha256": "d8fd9bdbf20da3e452535e8a68e36e55f51d5d8c7d24fbd19000000535bd1975",
+      "previousBodySha256": "7b4397931922f977670f354857e929f6f999ce292d1bbfda33f653d1aac3a421"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/hard",
+      "payload": {
+        "body_you": "You may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+        "body_they": "{{holder1}} may keep responding to an older version of you, even while you are trying to act differently. You can feel misunderstood or boxed into a role you no longer want. The connection may feel warm and familiar while still making change more difficult."
+      },
+      "payloadSha256": "6b1182670fd3a51eb1c6c97cb45f019b1d2c2e79f7eaabe0c563191abe932867",
+      "previousBodySha256": "4c1e0d1681842483dd17bcd915c4d12180f3db003d3204e721c8b98f16718709"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/soft",
+      "payload": {
+        "body_you": "You and {{holder2}} understand each other's habits quickly. You know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new.",
+        "body_they": "{{holder1}} and you understand each other's habits quickly. You know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new."
+      },
+      "payloadSha256": "7a12289ac2f0644ea777c34a8e56d851d70ae6bf101eb7ed77a76ce9441bfe56",
+      "previousBodySha256": "f82b5cc81227c8ce96e0e551076cfb3452ed1c730211e459c57edaf7c33c96ff"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
+      "payload": {
+        "body_you": "Around {{holder2}}, you feel invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. You may agree to the bigger role, expense, or commitment because {{holder2}} believes in it, then realize the plan arrived with considerably more luggage than expected.",
+        "body_they": "Around you, {{holder1}} feels invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. {{holder1}} may agree to the bigger role, expense, or commitment because you believe in it, then realize the plan arrived with considerably more luggage than expected."
+      },
+      "payloadSha256": "87925e49207dd422e398d3ae492b0e585422bbcaae7064b0baae39795bfe528d",
+      "previousBodySha256": "ba330d8f3d19c05340868744570602d64b72ebc37b53113a828fa0335642244d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
+      "payload": {
+        "body_you": "You may feel as though the current version of you is never quite exciting enough for {{holder2}}. {{holder2}} thinks they are waving you toward a larger life, but you hear disappointment with the life already being lived. Soon you are chasing the brighter title, louder entrance, or more impressive answer, wondering when who you are now will finally receive a standing ovation.",
+        "body_they": "{{holder1}} may feel as though the current version of them is never quite exciting enough for you. You think you are waving {{holder1}} toward a larger life, but {{holder1}} hears disappointment with the life already being lived. Soon {{holder1}} is chasing the brighter title, louder entrance, or more impressive answer, wondering when who they are now will finally receive a standing ovation."
+      },
+      "payloadSha256": "6c90557e104aefff8753722e73d107631a49e3c4c9f907157adb5cd4c99201f3",
+      "previousBodySha256": "bbb7706437ef3e593350b34231f36ec4dec4c091ed31f4e154e60ccbdb76745c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/soft",
+      "payload": {
+        "body_you": "{{holder2}} believes in you without treating you like a renovation project. The support opens doors without shoving you through them. {{holder2}} can celebrate the future taking shape while still appreciating the person already here.",
+        "body_they": "You believe in {{holder1}} without treating them like a renovation project. The support opens doors without shoving {{holder1}} through them. You can celebrate the future taking shape while still appreciating the person already here."
+      },
+      "payloadSha256": "f94678a6758250da156d01281e1718885bcc41d52fe7dc7c76ff6b7b1c081f7c",
+      "previousBodySha256": "81fed000e586ed5a42e68e5944c447d203763cb9c11e0fa6b9d80a90ce765475"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} sees something luminous in you, and you may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn you into the lead character of a story {{holder2}} started writing before learning all the facts.",
+        "body_they": "You see something luminous in {{holder1}}, and {{holder1}} may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn {{holder1}} into the lead character of a story you started writing before learning all the facts."
+      },
+      "payloadSha256": "14bd3a1bdc903f5b2b701360c7a03b0e645db9b8c63e3ff0ebd7a46862978398",
+      "previousBodySha256": "84fdbdecbc3d9b498e4e98c48eb8fe3b48ec883e0f38f0b742a7cede4b4c032e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/hard",
+      "payload": {
+        "body_you": "You may keep meeting a version of yourself that exists mainly in {{holder2}}'s imagination. {{holder2}} reads motives, qualities, or feelings into you, then treats the correction like an unexpected plot twist. You end up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit.",
+        "body_they": "{{holder1}} may keep meeting a version of themselves that exists mainly in your imagination. You read motives, qualities, or feelings into {{holder1}}, then treat the correction like an unexpected plot twist. {{holder1}} ends up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit."
+      },
+      "payloadSha256": "2ccd370e56087c2dac7eb2a8d4867ee99c42535fbc0c39386c82bb2cb59ca26e",
+      "previousBodySha256": "d3f8d8f6d947a57fbfcd5c2ab1a6a543236975a01509e16266e229f153fc47e8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/soft",
+      "payload": {
+        "body_you": "{{holder2}} gives you the benefit of the doubt before reaching for the red pen. That kindness can make you feel accepted, especially when you are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them.",
+        "body_they": "You give {{holder1}} the benefit of the doubt before reaching for the red pen. That kindness can make {{holder1}} feel accepted, especially when they are used to having every inconsistency examined under bright light. The softer reading feels lovely, though some assumptions may stay wrapped in tissue paper because neither person feels much urgency to open them."
+      },
+      "payloadSha256": "2d6cb396a9f4c5a11785b047ebb3454b182945c24428ea63e3cc2ecf6d32a444",
+      "previousBodySha256": "31191782e6eb2c461b035fb72b6a2970965e13f604853625f5a5761e935120cb"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} pays close attention to who you are, what drives you, and what you might become. At first, that focus can feel magnetic, like you have finally entered a room where nothing important goes unnoticed. Over time, being unforgettable to {{holder2}} can begin to feel less like devotion and more like having someone else's name written across the deed.",
+        "body_they": "You pay close attention to who {{holder1}} is, what drives them, and what they might become. At first, that focus can feel magnetic, like {{holder1}} has finally entered a room where nothing important goes unnoticed. Over time, being unforgettable to you can begin to feel less like devotion and more like having someone else's name written across the deed."
+      },
+      "payloadSha256": "a04cad06aeb07dd6052bd89471cbee1b29a061a824a155d9923cceaf435d5b14",
+      "previousBodySha256": "3c4894f2cd174731ab891c0bf71854f4995fd747a63e5481809a4622ea19fa15"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/hard",
+      "payload": {
+        "body_you": "A disagreement between you and {{holder2}} can become a struggle over who gets the final word, the last move, or the key to the locked drawer. You resist being reshaped, while {{holder2}} pushes harder because resistance feels like a loss of influence. The original issue disappears beneath silence, testing, jealousy, or the need to prove who holds the power.",
+        "body_they": "A disagreement between {{holder1}} and you can become a struggle over who gets the final word, the last move, or the key to the locked drawer. {{holder1}} resists being reshaped, while you push harder because resistance feels like a loss of influence. The original issue disappears beneath silence, testing, jealousy, or the need to prove who holds the power."
+      },
+      "payloadSha256": "a234e561627cd9bc4048d2c1770cc5935089576f7d98e92f56f05e9d6edd841b",
+      "previousBodySha256": "89d3fbecf8908056327e345de549d349bb61d73fcd6c8d8978c9741345c90daf"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/soft",
+      "payload": {
+        "body_you": "{{holder2}} takes you seriously without trying to edit the person standing in front of them. You can feel stronger under that attention because the depth does not come with a takeover plan. The intensity reads as loyalty, not pressure, because {{holder2}} supports what matters without trying to own it.",
+        "body_they": "You take {{holder1}} seriously without trying to edit the person standing in front of them. {{holder1}} can feel stronger under that attention because the depth does not come with a takeover plan. The intensity reads as loyalty, not pressure, because you support what matters without trying to own it."
+      },
+      "payloadSha256": "2c1ea9ccf32ed3f353a2a1770d9e951d65de27bb60f822694cffd8193b619879",
+      "previousBodySha256": "b549b8ac71aeb07cb2fd171fbe8dabd016f0ce7f84dabdddf7acb7af92f6d92a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} takes your direction seriously and helps turn a rough idea into a plan that can actually be followed. That support can feel reassuring, especially when you need help staying with the work after the excitement wears off. It can also make {{holder2}}'s approval feel like the gate every decision has to pass through.",
+        "body_they": "You take {{holder1}}'s direction seriously and help turn a rough idea into a plan that can actually be followed. That support can feel reassuring, especially when {{holder1}} needs help staying with the work after the excitement wears off. It can also make your approval feel like the gate every decision has to pass through."
+      },
+      "payloadSha256": "0ac927f66e8d478445af290d3c4048390ea97cd422d87c3fa91b4a797f5d65fa",
+      "previousBodySha256": "63b3bcb7eb171c093fe3e8317522086363763f7ac1a771d0061b1870cf3b8375"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/hard",
+      "payload": {
+        "body_you": "You may feel judged before you have had the chance to show what you can do. {{holder2}} thinks they are pointing out the loose floorboard before anyone steps on it, while you hear another reason the whole idea should stay in the basement. You resent being stopped, and {{holder2}} feels like they have to intervene before the decision creates a problem neither wants to clean up.",
+        "body_they": "{{holder1}} may feel judged before they have had the chance to show what they can do. You think you are pointing out the loose floorboard before anyone steps on it, while {{holder1}} hears another reason the whole idea should stay in the basement. {{holder1}} resents being stopped, and you feel like you have to intervene before the decision creates a problem neither wants to clean up."
+      },
+      "payloadSha256": "2e309a894b49fb2b9ef8989c76c54a69d58930aead24fd87e27be4639d018c2b",
+      "previousBodySha256": "3b69b845e2eeb4f5c6d02a9213c39991bc53072e2a0ede5e483a90f33e9f4bd3"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/soft",
+      "payload": {
+        "body_you": "{{holder2}} helps you stay with the plan after the first rush of motivation fades. When progress slows or the work becomes repetitive, {{holder2}} does not vanish or take over. The support is easy to miss because it looks less like applause and more like someone still showing up when the glamorous part is over.",
+        "body_they": "You help {{holder1}} stay with the plan after the first rush of motivation fades. When progress slows or the work becomes repetitive, you do not vanish or take over. The support is easy to miss because it looks less like applause and more like someone still showing up when the glamorous part is over."
+      },
+      "payloadSha256": "118297c758a3b6438a3a4c97670b1a367546d45f5308f1285761c064cc3b0b45",
+      "previousBodySha256": "ef45f5f74ce34d05a0f405a51f9795942864f899c7f1ad7ab3358fcb59382572"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/conjunction",
+      "payload": {
+        "body_you": "Around {{holder2}}, you may feel freer to admit the preference, idea, or version of yourself that usually stays backstage. {{holder2}} makes detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script.",
+        "body_they": "Around you, {{holder1}} may feel freer to admit the preference, idea, or version of themselves that usually stays backstage. You make detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script."
+      },
+      "payloadSha256": "ccdee3153228ee6e5e192129b3a13f45753e691201af6aa6a26395cf9b5d51c2",
+      "previousBodySha256": "a13b838c5f21b0dd6eb78a27f5423111507150beafb7d2e578edd306181e14ee"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/hard",
+      "payload": {
+        "body_you": "Just as you begin trusting the arrangement, {{holder2}} changes the rhythm, questions the plan, or needs a different amount of space. {{holder2}} experiences the shift as necessary freedom, while you experience it as the chair being pulled away the moment you sat down. After enough sudden changes, you start bracing before anything has even happened.",
+        "body_they": "Just as {{holder1}} begins trusting the arrangement, you change the rhythm, question the plan, or need a different amount of space. You experience the shift as necessary freedom, while {{holder1}} experiences it as the chair being pulled away the moment they sat down. After enough sudden changes, {{holder1}} starts bracing before anything has even happened."
+      },
+      "payloadSha256": "2f6cf16a857c30c634545794493331506d34c04f474304af2018eae06b025180",
+      "previousBodySha256": "fb50cf5091e562188bae915db43489dd86466a521c08764d7d107ea92c1df245"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/soft",
+      "payload": {
+        "body_you": "{{holder2}} gives you room to be unusual without turning the difference into a problem to solve. You can change your mind, question expectations, and keep the odd little details that make you recognizable. {{holder2}} gets freedom too, because closeness here does not require either person to become smaller or more predictable.",
+        "body_they": "You give {{holder1}} room to be unusual without turning the difference into a problem to solve. {{holder1}} can change their mind, question expectations, and keep the odd little details that make them recognizable. You get freedom too, because closeness here does not require either person to become smaller or more predictable."
+      },
+      "payloadSha256": "936f9ab082aacbeafaa085704ef757bb0df5637b6970235372fc3291246b7be0",
+      "previousBodySha256": "4118ff0d761fcf514707b61c74e2db66e8d1fdf8e7a3f439e7c5c6c295547d8b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/jupiter/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} makes pleasure, affection, and generosity feel larger around you. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after you and {{holder2}} have stopped checking what you can realistically sustain.",
+        "body_they": "You make pleasure, affection, and generosity feel larger around {{holder1}}. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after {{holder1}} and you have stopped checking what you can realistically sustain."
+      },
+      "payloadSha256": "1981b2cd9bee2e74069c09a3c900f13b0245e9065a09b756951d1f9bc89cf0a2",
+      "previousBodySha256": "dd757f65bcf77e078e1871095114f28d0b095fcd5ea4a893e1bba302103c9042"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/jupiter/hard",
+      "payload": {
+        "body_you": "{{holder2}} keeps reaching for more while you are trying to protect what already matters. {{holder2}} may see you as cautious, withholding, or unwilling to enjoy the moment. You may see {{holder2}} as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. {{holder2}} wants it to grow, while you want to know that the existing care will not be lost in the push for more.",
+        "body_they": "You keep reaching for more while {{holder1}} is trying to protect what already matters. You may see {{holder1}} as cautious, withholding, or unwilling to enjoy the moment. {{holder1}} may see you as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. You want it to grow, while {{holder1}} wants to know that the existing care will not be lost in the push for more."
+      },
+      "payloadSha256": "c777a8dc8b8f40b1dcd5368bccee6ad034aa159da4c6675e2db2370172d8f801",
+      "previousBodySha256": "e34017842629d04822e8ed118a0fad3d86b77116f2776dad35b3b38e267d7980"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/jupiter/soft",
+      "payload": {
+        "body_you": "Your affection gives {{holder2}} more confidence in the relationship, while {{holder2}} makes it easier for you to express warmth openly. Time together often feels generous and encouraging. You feel appreciated, and {{holder2}} feels that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive.",
+        "body_they": "{{holder1}}'s affection gives you more confidence in the relationship, while you make it easier for {{holder1}} to express warmth openly. Time together often feels generous and encouraging. {{holder1}} feels appreciated, and you feel that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive."
+      },
+      "payloadSha256": "514d51ad5881be59ee104dbbb62030f485476475bb44bcb2f151e9dca88a059d",
+      "previousBodySha256": "052e1300d7c619bd64d835e9ccb9976176ec97d264f52bb08829767a5af6ea6c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/mars/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} makes you feel wanted, noticed, and difficult to ignore. You respond quickly to {{holder2}}'s attention, and the attraction or creative charge between you can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. You and {{holder2}} may feel strongly pulled toward each other before you know how well your daily lives, values, or expectations fit.",
+        "body_they": "You make {{holder1}} feel wanted, noticed, and difficult to ignore. {{holder1}} responds quickly to your attention, and the attraction or creative charge between you can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. {{holder1}} and you may feel strongly pulled toward each other before you know how well your daily lives, values, or expectations fit."
+      },
+      "payloadSha256": "ed1d5f16cef1d56d394c8eee052f909b56453d71c67af64dd31740d8d8412447",
+      "previousBodySha256": "7da6bc23ef4ccd8307ec81d096ca02380a3dc5ed83cde92bc7427fa89e65db8d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/mars/hard",
+      "payload": {
+        "body_you": "You and {{holder2}} may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. You and {{holder2}} can start using intensity as proof of connection even when neither person feels fully understood.",
+        "body_they": "{{holder1}} and you may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. {{holder1}} and you can start using intensity as proof of connection even when neither person feels fully understood."
+      },
+      "payloadSha256": "a4b71d1c4ef225611ea61466a9ff4322317ee56e5fb3aac4ff10cab7b4b87921",
+      "previousBodySha256": "18b5d56826ff450f7c921c7b64ddaaebc2885a1d16ca0f476ee7778d865e76a8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/mars/soft",
+      "payload": {
+        "body_you": "Your affection and {{holder2}}'s desire tend to move in the same direction. {{holder2}} feels encouraged to approach, while you are usually receptive to the attention. The connection can feel warm and uncomplicated. Because the pull requires so little negotiation, you and {{holder2}} may stop noticing the small choices that keep desire from becoming automatic.",
+        "body_they": "{{holder1}}'s affection and your desire tend to move in the same direction. You feel encouraged to approach, while {{holder1}} is usually receptive to the attention. The connection can feel warm and uncomplicated. Because the pull requires so little negotiation, {{holder1}} and you may stop noticing the small choices that keep desire from becoming automatic."
+      },
+      "payloadSha256": "770167ae317b4c2db2a8dc0f8d07f7d8213130a91ee442bb112993644ffee8e4",
+      "previousBodySha256": "2d1961e4b0c98701905c03660511038b8493344dcc8b9c98e3e284adf49d595a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/neptune/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} sees you through an idealized lens, and being admired that way can feel extraordinary. The problem begins when you have to compete with the version {{holder2}} imagined.",
+        "body_they": "You see {{holder1}} through an idealized lens, and being admired that way can feel extraordinary. The problem begins when {{holder1}} has to compete with the version you imagined."
+      },
+      "payloadSha256": "243dacb5a016d295aab8d540958ab2fea1f99fd6b54c1d4ad7f3df376c676a2c",
+      "previousBodySha256": "f5bcb3b0184fc1ff721d032b5d339688f335c69341049a592c49ac4731b38b06"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/neptune/hard",
+      "payload": {
+        "body_you": "You keep trying to connect with someone who is never fully present. What {{holder2}} means sincerely in the moment does not always become something they can follow through on later.",
+        "body_they": "{{holder1}} keeps trying to connect with someone who is never fully present. What you mean sincerely in the moment does not always become something you can follow through on later."
+      },
+      "payloadSha256": "bb8e9aa1ea7be48e8431bebf30cdf03fdce1bbcb53b8ec6ac015dec57fd2e713",
+      "previousBodySha256": "e8b96d076578c39201b0986e49d95f91f4d2475b702b6e0a48be18a8439cb795"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/pluto/conjunction",
+      "payload": {
+        "body_you": "{{holder2}}'s interest in you is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access.",
+        "body_they": "Your interest in {{holder1}} is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access."
+      },
+      "payloadSha256": "251e57546d8ed9252ad8060f68a1ce27c11c7c764978d6d06c988bb1a4941a48",
+      "previousBodySha256": "a757694c1a88cfa711cee53bcbd7901b1245e60f6b44482a5d8d73adb9da2405"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/pluto/soft",
+      "payload": {
+        "body_you": "The connection has real depth without the undertow. You feel important to {{holder2}}, not monitored or claimed.",
+        "body_they": "The connection has real depth without the undertow. {{holder1}} feels important to you, not monitored or claimed."
+      },
+      "payloadSha256": "d9471a64035bd52cda6456564b98deaaadddf72a5b4aaef25db97dfdee12f657",
+      "previousBodySha256": "5c309db4d349f989f144cd5fede01082794da9742d84b829cded1595f2579c4a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/conjunction",
+      "payload": {
+        "body_you": "{{holder2}} shows up, keeps promises, and gives you something reliable. You may trust that {{holder2}} will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. You may know that {{holder2}} is committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience.",
+        "body_they": "You show up, keep promises, and give {{holder1}} something reliable. {{holder1}} may trust that you will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. {{holder1}} may know that you are committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience."
+      },
+      "payloadSha256": "000cfc9ba4c4f67ec3160fd74a7de2643557b6afb33ffb918587510d674c5471",
+      "previousBodySha256": "c6fa09d1e2b74785b4509c041ac3387404cf02f5d0b476757c2eedd5f815f0f2"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/hard",
+      "payload": {
+        "body_you": "You reach for warmth and keep meeting {{holder2}}'s caution, responsibilities, or emotional distance. {{holder2}} may believe that loyalty should speak for itself, while you keep waiting for affection that feels easier to recognize. After enough time, both may describe the relationship as mature or realistic when it has actually become lonely. You feel denied, and {{holder2}} feels unfairly judged for the care that has already been shown through responsibility.",
+        "body_they": "{{holder1}} reaches for warmth and keeps meeting your caution, responsibilities, or emotional distance. You may believe that loyalty should speak for itself, while {{holder1}} keeps waiting for affection that feels easier to recognize. After enough time, both may describe the relationship as mature or realistic when it has actually become lonely. {{holder1}} feels denied, and you feel unfairly judged for the care that has already been shown through responsibility."
+      },
+      "payloadSha256": "d1cec4098ad396181d58693c1bc2fd211d1fe812c8a12cbf112c25a7adfdad59",
+      "previousBodySha256": "d9449f1271e5955c3c5aec41811dd6cc9d9ccc139e20725e2561e191562c7c30"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/soft",
+      "payload": {
+        "body_you": "You know what to expect from {{holder2}}, and {{holder2}} gives you something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. You and {{holder2}} can trust the commitment while still assuming that warmth does not need to be spoken or shown very often.",
+        "body_they": "{{holder1}} knows what to expect from you, and you give {{holder1}} something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. {{holder1}} and you can trust the commitment while still assuming that warmth does not need to be spoken or shown very often."
+      },
+      "payloadSha256": "ec2ff26fe1f47eaa2465f2f8fe17a1a870768902ff766575a8649d737e075e40",
+      "previousBodySha256": "315c02236d1095a2beac978433ca898962b1a9c3887a79d3de63318d8f6446ca"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/hard",
+      "payload": {
+        "body_you": "You reach for consistency, and {{holder2}} pulls back at that exact moment. Asking for certainty is the quickest way to get less of it.",
+        "body_they": "{{holder1}} reaches for consistency, and you pull back at that exact moment. Asking for certainty is the quickest way to get less of it."
+      },
+      "payloadSha256": "ba25ded028dfa65b36effc0e844a2915ad1aa4b46b3ea23aee1f8e07f3e60764",
+      "previousBodySha256": "578b077b6910a5c82a9fe976d569f430623a8411dbc32c3061b0f7973100acb1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/soft",
+      "payload": {
+        "body_you": "You can rely on {{holder2}}'s affection without requiring constant reassurance, and {{holder2}} can keep their independence without disappearing whenever the connection becomes familiar.",
+        "body_they": "{{holder1}} can rely on your affection without requiring constant reassurance, and you can keep your independence without disappearing whenever the connection becomes familiar."
+      },
+      "payloadSha256": "bcc6713e5a2f21961002a1633c79da5ccf515bac4fd102bcaf93ab3a5cb099b6",
+      "previousBodySha256": "d16d690e679fba7f880deb795f30bfe1db30248da32a3cd8f2f7e2ec4bd1130e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/venus/conjunction",
+      "payload": {
+        "body_you": "You and {{holder2}} usually recognize the same forms of affection, pleasure, and consideration. You may enjoy similar places, notice the same details, or understand without much explanation what makes the other person feel appreciated. That similarity can make the relationship feel immediately familiar. It can also give you and {{holder2}} the same blind spots. If both avoid the same uncomfortable conversation or expect care to arrive in the same unspoken way, neither person notices what is missing.",
+        "body_they": "{{holder1}} and you usually recognize the same forms of affection, pleasure, and consideration. You may enjoy similar places, notice the same details, or understand without much explanation what makes the other person feel appreciated. That similarity can make the relationship feel immediately familiar. It can also give {{holder1}} and you the same blind spots. If both avoid the same uncomfortable conversation or expect care to arrive in the same unspoken way, neither person notices what is missing."
+      },
+      "payloadSha256": "b2917e1ee99cccb0d9f936265f6b64f9c9c1a989db406eeabf0afae0f16a1c74",
+      "previousBodySha256": "749846f051553a151ff532dcb876349a7309c4776f5e122bdbfaf5f0dbaea49b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/venus/hard",
+      "payload": {
+        "body_you": "You and {{holder2}} may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. You keep offering the kind of care you would want, while {{holder2}} does the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. You may believe the effort is obvious, and {{holder2}} may be waiting for proof that never arrives in a form {{holder2}} recognizes.",
+        "body_they": "{{holder1}} and you may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. {{holder1}} keeps offering the kind of care {{holder1}} would want, while you do the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. {{holder1}} may believe the effort is obvious, and you may be waiting for proof that never arrives in a form you recognize."
+      },
+      "payloadSha256": "ad2124747654ddc1940c2f6a066b8f2929ecfe327f8384a266efd77efbc41d2b",
+      "previousBodySha256": "ecebe6eaeafa9c93abd18de37ecd6b654f29aa0fbbbc9d1f6379fa294885900b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/venus/soft",
+      "payload": {
+        "body_you": "You and {{holder2}} tend to enjoy the same pace and understand what the other person finds pleasant. Affection feels easy to give and easy to receive because neither person has to translate every preference. The ease can make the relationship feel naturally comfortable. It can also allow both people to assume that closeness will continue without much attention, because so little friction forces the connection to change.",
+        "body_they": "{{holder1}} and you tend to enjoy the same pace and understand what the other person finds pleasant. Affection feels easy to give and easy to receive because neither person has to translate every preference. The ease can make the relationship feel naturally comfortable. It can also allow both people to assume that closeness will continue without much attention, because so little friction forces the connection to change."
+      },
+      "payloadSha256": "50b5fd69f1aa036b63bdb41b15ae22b62c65df5c5dc6be9d361b99746824f1be",
+      "previousBodySha256": "e99d00b393071e1e7010c60f1336ae8e0013a0236f57bfdd67004b28c3e0cdd9"
+    }
+  ],
+  "ownerApproved": true,
+  "approvedAt": "2026-08-07",
+  "ownerStatement": "\"i sign off\" - owner (Marie Satori), chat with Claude, 2026-08-07, after reading TLDR-ReaderVariant-V2-Reading-Sheet.md covering the conversion rule, all defect-class corrections with examples, samples, and deliberate keeps."
+}
