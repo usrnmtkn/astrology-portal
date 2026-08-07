@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-north-node-ascendant-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/hard",
+  "payloadSha256": "724e292ef2ee7423b79ff76e0ad204fcbf81483281a86cb68a29370b2f475ad1",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You keep challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+    "body_they": "{{holder1}} keeps challenging the way you usually handles new people and situations. You may feel pushed to move faster, speak up, or take a risk before you feel ready. The connection can be motivating, but it can also leave you feeling that your natural pace is never enough.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

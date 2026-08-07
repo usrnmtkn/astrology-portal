@@ -1,0 +1,624 @@
+{
+  "chunk": "reader-variant-grammar-fix-v1",
+  "approvedAt": "2026-08-06",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/chiron-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "a342549fa45cf32b1602fb138f4cb4fe379f0b2fa178e6bce1bb1d0ebe318cbf",
+      "previousBodySha256": "c880e731fa429ff94df38ce8b08de03f3427aa9569bc5162d62ad5bbf983d8ed"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/chiron-ascendant-hard-exact-approval.json",
+      "payloadSha256": "2c865bc9e31b35b87053574cebb4d04c41c5ade8b806599638135deee86b37f9",
+      "previousBodySha256": "c3c832d944f10f01f17c8611e11a38d5b18d15c9dc6e5a723389a1444ac7ec27"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/chiron-ascendant-soft-exact-approval.json",
+      "payloadSha256": "ff7d8e52c7f30f1c859a5be623a184e3a6fd85743379d5a1579687e6fae3a3b0",
+      "previousBodySha256": "ec7867445f4dfb92e65379a251cf81dd9858ca87cd8fa55f955b8f11c5982574"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/jupiter-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "1a625a482d4cf6b4fe2c4ea2539497d202c30aca72e9d627673903be9c7e5f3b",
+      "previousBodySha256": "c898fc1d7d3852bd81bd1c60a0b6dedbca12b554ce2f73da0f1eca9f867be8d1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/jupiter-saturn-hard-exact-approval.json",
+      "payloadSha256": "751ad02821e9d551be6db591a995b771d9f0e677300e457ead7d6398e4a8db57",
+      "previousBodySha256": "0e6cee93f7d9c1ed4b1fef413a3abf3bb4c9a8899a4a0bd1c32067fce8e312a8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/jupiter-saturn-soft-exact-approval.json",
+      "payloadSha256": "02923cebf3270710b0847f6decd0a7d01a1ffda1390a4a7fbeed6b79702e6803",
+      "previousBodySha256": "ede4c4716eaa7787e0d4266e3554c95a56dfc4119ff7eba4295ab16da0bda2a8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/lilith-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "bc7c007ed33424cba7d0b5e1fb30300276476c2c89f07835007670ef35f6b4d7",
+      "previousBodySha256": "fa6dd57c9e262ac3a166a82f983c33b5c5facc2659e3ba424e801e86c891627f"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/lilith-ascendant-hard-exact-approval.json",
+      "payloadSha256": "12a28251f9e65ea284390204e74a05c3aa990a0b33489fdacff274b300dbc176",
+      "previousBodySha256": "de76a7c8cf337a5c8a219a3290a6909c97a0385b99b04adeb6733588cfa45419"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/lilith-ascendant-soft-exact-approval.json",
+      "payloadSha256": "3832551b22748adf63b7fff784c99ed65882f3f0a36eb1aabfa7bd5dc6652962",
+      "previousBodySha256": "10f580c6dbd17b898fb89e3e4b2a604238267168789fd77b9807c9741e610f82"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/jupiter/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-jupiter-conjunction-exact-approval.json",
+      "payloadSha256": "9d23f9502339823eda2a01a2432586c5e2f3c9b7477c172764b4324d64492b8f",
+      "previousBodySha256": "18b0da698f0eb3f6c11e31564f038e5c04aad8ae1f5a143b8782ee15ee7d379e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/jupiter/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-jupiter-hard-exact-approval.json",
+      "payloadSha256": "e3d2116e0a6a790e1cd1a012657ebc3fabe73824640aeca11a17c21b0a2194f9",
+      "previousBodySha256": "36d8b5306ebd1ce2a6f7a81a5d23df1193eb1a34006f90a915b75fe83a005476"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/jupiter/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-jupiter-soft-exact-approval.json",
+      "payloadSha256": "4219f108a0bb87e9fcec8997556d39022d5ddc9279082373574c75550f73d087",
+      "previousBodySha256": "6eebdc2032a8e3f0dd3f29e87c14667717f952365718f9dbbbe0db92786206c1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/mars/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-mars-conjunction-exact-approval.json",
+      "payloadSha256": "f1c90f32557864be0648e8248a76d5918998cfd8a297ee84da400a56aac8d4a7",
+      "previousBodySha256": "32329d7e0fac247722d964c253f3a2ca452127b7c4fdfa0b4e5ee9c7e4efa5dd"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/mars/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-mars-hard-exact-approval.json",
+      "payloadSha256": "a136c6299483aa01a75f29e387cf77d82821a94e41f6e4834e21b2ba58ff714e",
+      "previousBodySha256": "23af845bdbc667bda3233e7de857bef934702edb5f47fc5fbf44c6ec2cfd791f"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/mars/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-mars-soft-exact-approval.json",
+      "payloadSha256": "4a6d769da3e6c5c8ee44a9adebdffdabb1bd40501eaf61226da675b3226723e3",
+      "previousBodySha256": "4afae5f1a2601beab08763782906cd65fb0d728798c6d42093185f5f1c6dce88"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "fd82b250478028f43eeaf4e1173b79cdb9b0f324c2c127f59d28e81c63c09115",
+      "previousBodySha256": "e510132366befb9ae6b8bbae451c266b053e30b53c775501c72c2cec55860991"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-neptune-hard-exact-approval.json",
+      "payloadSha256": "eb7c8b1dd0b76bc377c7f366cd0e3416d9ff021825e27f8e3ebcd921db8e03b5",
+      "previousBodySha256": "10e03b13f15f64453e61e79b928c1b21baf1e049da6eee2472251171e81ebc7d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/neptune/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-neptune-soft-exact-approval.json",
+      "payloadSha256": "53d0f8fd3556f0267cd684c8bbb86e910a76fb3346df558444cf39f22734279f",
+      "previousBodySha256": "30bfb9d94b50e420952c8229a71603cfeb16200a19da5b7cd1f2c86b71be9671"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "3cebbc32dd5c6b1d92e243ffb8f8eef2e1cb8cbe37028f1f822c9d8c92ab3cc4",
+      "previousBodySha256": "84387f9c9d975eb6c89329af715080b3cfe3b4500f1b0fd6e33d525d4bd3415b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-pluto-hard-exact-approval.json",
+      "payloadSha256": "dc9d2b954fb4febe8d7dfb519d5e26bbb544703b72e51329aa819c1d58c31341",
+      "previousBodySha256": "ae815da37cfb5f11e6937fab6be77ebd36d27ed0fc6a210b3dc56c4fd9c2b213"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-pluto-soft-exact-approval.json",
+      "payloadSha256": "4812ef28cb2cae828adf48b021c10f7e175fe2cbd9f2dab0fb0be5b37f91bdda",
+      "previousBodySha256": "af7cf1c273538edd676ddca4d07debb5e879d4f8d0d2385688075cecd47dfba0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "3ff1466f4e44169c80bd4ed879220f47b69777664959f793146a731aaa50ff3a",
+      "previousBodySha256": "300e4df2a13ecc90dda4a9a5a6c68540b2f30fe53a07ec314ed482453ffbf7ea"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-saturn-hard-exact-approval.json",
+      "payloadSha256": "764cb09014cb0ed9d790fb4ddbeb6b226fedcacf4c92ce242a9e90f0a3b7b371",
+      "previousBodySha256": "66c56a0428d6769a920cf1e4e4618c2237ef360b7dc9df26af083c7ce399afef"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-saturn-soft-exact-approval.json",
+      "payloadSha256": "42b7897d066510e73a58caf798c369a8429f7663c64f44b47ca060c3dfecc3df",
+      "previousBodySha256": "9dab70babb2033e23412079cafe27d64febc324a726911bcbb967a13148b38d1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "ef28b9f87943472a01a4d64af1f2463f833ee0e9c4efc04a9b8d1a4697595378",
+      "previousBodySha256": "1239d4503c32fafabb9462e587f582dbf1c4f5300013d756b29885f0d7da7bdf"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-uranus-hard-exact-approval.json",
+      "payloadSha256": "4b341e253dcef0f1c8c84754e200afa2e4a89a49371ef30e2b90417974a8f8ba",
+      "previousBodySha256": "72ba462e85e6c3ff3bc504830f2136f9f55ec1cb835b33752261be986ef7f1fc"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mars/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mars-uranus-soft-exact-approval.json",
+      "payloadSha256": "68da270512df9cbb3fa463d28ec8beb642933938177fd3a243385f7377e4f93c",
+      "previousBodySha256": "0c4c874a319a0771a9809a72a79dc03b28559e339060ce68c7fae8ad36d669de"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-jupiter-conjunction-exact-approval.json",
+      "payloadSha256": "b3d4b617fc52e3fa62e98d9740247fb11e28593a301a61c8970050243a090b39",
+      "previousBodySha256": "4fdea01d7d53c4887d0fffb3470def7a233286fddad38a2d5e9bfbc5d0160e5a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-jupiter-hard-exact-approval.json",
+      "payloadSha256": "20dbd72a82ac361379fdc3b9d04933b7600c9b178c4bcf0fd6815c1be2bfbbad",
+      "previousBodySha256": "2632a5a5cb1a776813eabab128f5a86a2df1e610c7e7540f607769ac382947f9"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-jupiter-soft-exact-approval.json",
+      "payloadSha256": "b480063da69cdf740ad1715d1a3cb5e01a89d27871dd9bdb93063c0d7124f7a2",
+      "previousBodySha256": "1e02053c6197e99d88c792ac4c6c673385a4cb3d08c83787bb1cff508a75c73a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mars/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-mars-conjunction-exact-approval.json",
+      "payloadSha256": "d29f96491cbd8fc56a8dff0d48cd2a8684ed17f405084b083b26b50dd7e952c1",
+      "previousBodySha256": "facfab9c200158f15b418be09bb7970634ed5c57feb2783f9a0ccbb7b8e03063"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mars/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-mars-hard-exact-approval.json",
+      "payloadSha256": "b43e6fa17abe65ff6c5559a26f98688c66c1d6d1dbbfeaa29af20ea504b6393a",
+      "previousBodySha256": "9e4e4f85aed58fb0879893dde7d1b542a2b4690d93ef6f414c38ffa0cca7f669"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mars/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-mars-soft-exact-approval.json",
+      "payloadSha256": "68188c57e4e7a8121832fc0a55b051a9205ad60dc911d61af9cdaa75e7d84a7a",
+      "previousBodySha256": "9fab2509376e5a7e4764814d65ebdc1e708605618623436427de769e0c30a622"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mercury/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-mercury-conjunction-exact-approval.json",
+      "payloadSha256": "355d0888b95965e0cb3adc866d90342ff1474e2763c71c517906bb6e6fbd61ed",
+      "previousBodySha256": "41c390cbb749b76c0e56df7833ff9db83319da23316ffe622edc3bc7cee9deb5"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mercury/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-mercury-hard-exact-approval.json",
+      "payloadSha256": "1322aff15cdebd9ee9e7f1bfc0acc3d47957eb5c4b2d5ceb7a66852f6734ee60",
+      "previousBodySha256": "4c5a5e414da51ff3e5108f91cd98d0dfe0807facbed381dac4e7064d08d47a1d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/mercury/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-mercury-soft-exact-approval.json",
+      "payloadSha256": "bd1e84c397430ee97da369f3e6f86fee85b89ae5d2eb64bb2827b64ca22e7c4a",
+      "previousBodySha256": "bf31a32841db71c6aa42e96fa188d228fa84f3e1be69ef19a009fa2fe7a742bd"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "c6d2ca3092951437d3d3485bcfb33c3ff9aab7ecb519fe44d472db7e28d13f1d",
+      "previousBodySha256": "b9039ffa4cd179187af1237edca4f917a21bae674ee5783ed58a527db9eb5e75"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-neptune-hard-exact-approval.json",
+      "payloadSha256": "8da05cce425478bc190698c88c4b73266920668219f7942405d68d168f19e10c",
+      "previousBodySha256": "da0758c343a0e0666e7c8eb226f28e07b94bc0db442171c9b450821405d1ee9a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/neptune/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-neptune-soft-exact-approval.json",
+      "payloadSha256": "f9d94ae8a0f99e8302e9e25a754da116797c68d4eadff0656a7edd5c00d50c36",
+      "previousBodySha256": "c6a1121ccd5146da3c0a9677616cdb786eeedf6a8ee3986cdb1fca5309e2f30c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "df8e35bfcfec2d25efa25f701c696d4df4432c998d9b8c0e601e5ce8fec24f09",
+      "previousBodySha256": "f718b506e68e29ee9dbc73f2c668a1539d42559e1b18ede791dba73946def841"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-pluto-hard-exact-approval.json",
+      "payloadSha256": "ed16d332d50cf712803dbdb1f248c0f2545ada06faa300f29acbee6b01536ae3",
+      "previousBodySha256": "9b5084367aaf6feea7c4eb794eb2956d07a0b1599bb1d84b1877c7caf8669c96"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-pluto-soft-exact-approval.json",
+      "payloadSha256": "68d146d2835105abee976bceb8c34bc494357718e0e2696d901574115e4807ad",
+      "previousBodySha256": "61776614e02c540f1fd404c1345266bd253c35c66e0e6d4fed1a0ac48ebc1593"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "9f9a9b89b77a6f39c0cba9702f123efe247bc70dcf827aca39e6a289d5c3a1bc",
+      "previousBodySha256": "40d9595ae2b61178a452ef2059f5666a18b7b657a04c5a653d3085daf9828c02"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-saturn-hard-exact-approval.json",
+      "payloadSha256": "87f76e14daa8aa504566d2df2f0c70e1fcb10647b18ee0350652707702cf4736",
+      "previousBodySha256": "9154d50a44c29c1e066c25a35e069c049a34c79685b276c3eb910dafe55e17b4"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-saturn-soft-exact-approval.json",
+      "payloadSha256": "642550820a17a203398345f6546137ffe43906f6e870d157717a839a597ab9ed",
+      "previousBodySha256": "8e1824c4894b4bd7fbe0e468c12d56d0e0bc9c6161532aa8711689ca7d11ab89"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "c822dd3a9656d623c3cacd04a1c00f11b1f13a3a34c092b075878c2c7054f912",
+      "previousBodySha256": "4b90f73d2f0cb95d5556512bf968d206271dfec303954d9c4f25611f13cecfaa"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-uranus-hard-exact-approval.json",
+      "payloadSha256": "a48a6732ed476db56ef665b7ba827e0f0d152eaa0c220ab5f325e22d3412d4c7",
+      "previousBodySha256": "f337a124c5478710b043da1a0f598c8535be5e3c4e2a686a1ef7408c36abb989"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/mercury-uranus-soft-exact-approval.json",
+      "payloadSha256": "bf494259751d23428ecd17fbbe162c20bf21712d116838351a87df60a66f8640",
+      "previousBodySha256": "66bcda2aefb462f6c4720c7bafe90309bcc444149e16ec831e03156c90700503"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-jupiter-conjunction-exact-approval.json",
+      "payloadSha256": "6f0eee721a1fc84060643d71718c83aad05378a0bacec0d958c28cfce54a2500",
+      "previousBodySha256": "d9d42d112321b2e58c4ae66c56e41672f27e28551301af72e98c4367079fc034"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-jupiter-hard-exact-approval.json",
+      "payloadSha256": "ed4730b29766e369d8516ae7240d5dbb47b2799d31270e2689289ea9a6278a4a",
+      "previousBodySha256": "b997525d0fc8a3db9ebcbfbdd66ab020cd05d54496a11fa171e37b7412814d79"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-jupiter-soft-exact-approval.json",
+      "payloadSha256": "d62d0091dec8dec8a9236362e2af4eca98d93892c156fbd4cbc5ac61f3946f2e",
+      "previousBodySha256": "3806c2080d793c6cce4729dbb0f72628ed46e552ce92f3fb3c95053fd25d833e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "4914e84feb763e98dcbfa9aff95ea59e555ddadf2286b9d59c3565719df67eda",
+      "previousBodySha256": "53027438c898e55ef7b100a0908e338b84f0f921bf9bbf0ebdcd4608957ef7c0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-neptune-hard-exact-approval.json",
+      "payloadSha256": "f01c343f85960b20a2741f08fae946587d4a60fd505738c385a4c1666b14cfab",
+      "previousBodySha256": "57d5ef05d27d88e64dae36bc44144a74fa130ec591ce93f31305c648d9f2ea72"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-neptune-soft-exact-approval.json",
+      "payloadSha256": "db421585ba8ce8a251008d94e429cffb8e23bf41f27ff30695ecf447b99cd96d",
+      "previousBodySha256": "701be423fcaf620c64f122d61e688a2f3453d785ca7552e29fca40557cb1cd8c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "96a259db8952b947198fdf8270a956910af7b939ca1e0a388d97d3330477676e",
+      "previousBodySha256": "46098009a6bcf2d0f37ec83e4a42469b2bf12f192587f5beacc95bccf3fca155"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-pluto-hard-exact-approval.json",
+      "payloadSha256": "3d628a5771e88f349f115a769d51dd7f71a07507a4d8c62d3a8cf083b86a6263",
+      "previousBodySha256": "0013adf83e2f92d70ae976d2cbd62c48f3df6960d24b1d037599695cf4ef2068"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-pluto-soft-exact-approval.json",
+      "payloadSha256": "f440b6ccd8a6320b4ef9e22dd56c5859ce0c2e275b77fb17569d60c6ae92fc26",
+      "previousBodySha256": "d24b1c0e02c66ecd44483fa47cbba01c71a794894cee8f7b61f3f150adc73fcb"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "be1f608c042a002ccafe230dded185aaecc39c1a475c895647b8eefbc2d3bdd5",
+      "previousBodySha256": "ff308addbe8b987fcf4cc3df361c86f798b9bc507ffab6f28c294dab63b7203a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-saturn-hard-exact-approval.json",
+      "payloadSha256": "8e9de68bc34bde50456e41480d9480b39e846980a1f25bd83d74fcf1013a4444",
+      "previousBodySha256": "1a2673a9295284b71b96f6d281a2d2fa98d7d0a9d6acc1f144e409da81033b38"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-saturn-soft-exact-approval.json",
+      "payloadSha256": "baa882b9cef5d69bb51da2f7bd1e331279ccbe7427edeb76ad7843c9b1eea9bc",
+      "previousBodySha256": "65765b61ff0c048158e17af05d536c45a1ee07494dd0a3ed020bee2995ed6f60"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "d195f82820978a499dcb10ec199869a556bac04cdfaa434e649cc970d62019b0",
+      "previousBodySha256": "e9fb5b6fd4a49f9a76412b66f90f07b47a208ecf8751d4215fe4c37fab05df2b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-uranus-hard-exact-approval.json",
+      "payloadSha256": "75b3e97ef6575359b940872ad3058f51a0583249eb04cc741626c19a6654377a",
+      "previousBodySha256": "dbb7acce569d6b5fe75c6d165d29114b312fc7aee7d45e4b1ee699e3a549d011"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/moon-uranus-soft-exact-approval.json",
+      "payloadSha256": "9c8961eae32f3c86a30204c113c65edc3374d68011c4d7b565e48a5b92d8f3a4",
+      "previousBodySha256": "5bc9b77f97f4da3aa792edabfa024a70a9764861e03f139da4a72e5c188a37c6"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/north-node-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "d0dfec1d7dccc98f9ea95d9c83744c5c8324ceab07b4dab6149a2d6b5cd72bff",
+      "previousBodySha256": "eb568353957357c1e9996e8031b5328423466cef821bbc04ad4f403dcd1529a5"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/north-node-ascendant-hard-exact-approval.json",
+      "payloadSha256": "724e292ef2ee7423b79ff76e0ad204fcbf81483281a86cb68a29370b2f475ad1",
+      "previousBodySha256": "04602495d8d822c471a3712ad040db64675c18e52157982cb364c0d986dec3fe"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/north-node-ascendant-soft-exact-approval.json",
+      "payloadSha256": "307fc6fa39d33f7ad4ba944aff429fd3654ce98086a3a84344ea2581030760db",
+      "previousBodySha256": "9cf4f77bdc239d1af6fda27800bad64d57f191feb8ccccbf3d702406a0c6ab29"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/south-node-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "573988f4600e7da51fff3eea41c32e26c7b194cbb2a29509f7a4272e670d4d0d",
+      "previousBodySha256": "7b4397931922f977670f354857e929f6f999ce292d1bbfda33f653d1aac3a421"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/south-node-ascendant-hard-exact-approval.json",
+      "payloadSha256": "e2f9ce57d98ee7d2b3f56475e083ba4cf475a3c5e9e84e69f0f077d0ac3b85cd",
+      "previousBodySha256": "4c1e0d1681842483dd17bcd915c4d12180f3db003d3204e721c8b98f16718709"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/south-node-ascendant-soft-exact-approval.json",
+      "payloadSha256": "deb68a379c43277757c819816ab859386435bb85e6f7cf142799e04c31edb975",
+      "previousBodySha256": "f82b5cc81227c8ce96e0e551076cfb3452ed1c730211e459c57edaf7c33c96ff"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-jupiter-conjunction-exact-approval.json",
+      "payloadSha256": "de5c8564e22eed3aca742e3c41bca9c38f300d71fe2fb5a0e3e871bf46c9dc21",
+      "previousBodySha256": "ba330d8f3d19c05340868744570602d64b72ebc37b53113a828fa0335642244d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-jupiter-hard-exact-approval.json",
+      "payloadSha256": "7dc8e870a1781ebcb4ca4922a4e607c5c31c29d480ed156a636297d43fe334e3",
+      "previousBodySha256": "bbb7706437ef3e593350b34231f36ec4dec4c091ed31f4e154e60ccbdb76745c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-jupiter-soft-exact-approval.json",
+      "payloadSha256": "67a7ddb53cf29407968659eeb9da71cb28ef0fb3209b4e5efec4c447eac43697",
+      "previousBodySha256": "81fed000e586ed5a42e68e5944c447d203763cb9c11e0fa6b9d80a90ce765475"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "84294cf8d883d7bd28b2b6c7d4c7fe854b822e2dae30c6e3537c7e7982a2a7b2",
+      "previousBodySha256": "84fdbdecbc3d9b498e4e98c48eb8fe3b48ec883e0f38f0b742a7cede4b4c032e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-neptune-hard-exact-approval.json",
+      "payloadSha256": "975736efd38ef6f3bb59b2c7baaf7eea86f808493c9fc51d18402580e548e61f",
+      "previousBodySha256": "d3f8d8f6d947a57fbfcd5c2ab1a6a543236975a01509e16266e229f153fc47e8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-neptune-soft-exact-approval.json",
+      "payloadSha256": "3056be9292c0c89faa4da315dc5eafcf6903dad479e064eb1c415217fbc078dd",
+      "previousBodySha256": "31191782e6eb2c461b035fb72b6a2970965e13f604853625f5a5761e935120cb"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "9fc6f67273ca7ac34e5f835d4695987d3621f869f36a5208e5f04a99184d43d9",
+      "previousBodySha256": "3c4894f2cd174731ab891c0bf71854f4995fd747a63e5481809a4622ea19fa15"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-pluto-hard-exact-approval.json",
+      "payloadSha256": "7f6e75cb7e99c2add3be6cc5753d2ca3fe97198f81a713e8cd6a182fd0be14b0",
+      "previousBodySha256": "89d3fbecf8908056327e345de549d349bb61d73fcd6c8d8978c9741345c90daf"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-pluto-soft-exact-approval.json",
+      "payloadSha256": "8f435c55198f5f9ecf8c13b29fa51619857b149cbb8b64e23a088d75008911f2",
+      "previousBodySha256": "b549b8ac71aeb07cb2fd171fbe8dabd016f0ce7f84dabdddf7acb7af92f6d92a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "df22b4f94a50e33292dcef14765f667eaef0f7f7c70fd215f88038af99cac107",
+      "previousBodySha256": "63b3bcb7eb171c093fe3e8317522086363763f7ac1a771d0061b1870cf3b8375"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-saturn-hard-exact-approval.json",
+      "payloadSha256": "d25d7b685f58c98d1a0f79837e0e52371874900a1861d96ad4125f59dbcb64ce",
+      "previousBodySha256": "3b69b845e2eeb4f5c6d02a9213c39991bc53072e2a0ede5e483a90f33e9f4bd3"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-saturn-soft-exact-approval.json",
+      "payloadSha256": "19c7ad64a0aa64161d86147638408eeb2b10069e535ff615e57e569d41b52cf6",
+      "previousBodySha256": "ef45f5f74ce34d05a0f405a51f9795942864f899c7f1ad7ab3358fcb59382572"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "5e7aad9a8d6fd5c505f678853ee257aa57626a36938696c5ec10367578db1e91",
+      "previousBodySha256": "a13b838c5f21b0dd6eb78a27f5423111507150beafb7d2e578edd306181e14ee"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-uranus-hard-exact-approval.json",
+      "payloadSha256": "7a0cde89a6b0eea35a2e4e9320f02309bbc4e1148beb81e47c1d883a3a53c0b5",
+      "previousBodySha256": "fb50cf5091e562188bae915db43489dd86466a521c08764d7d107ea92c1df245"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/sun-uranus-soft-exact-approval.json",
+      "payloadSha256": "f0793e287ba7f78bd7d02e13bf19b111b1d97b49a86167676ca9e7f09f3822d8",
+      "previousBodySha256": "4118ff0d761fcf514707b61c74e2db66e8d1fdf8e7a3f439e7c5c6c295547d8b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/jupiter/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-jupiter-conjunction-exact-approval.json",
+      "payloadSha256": "1712c2ad83943884d2dff7600248f81e153157824afacbbeab9014e0a617d8a5",
+      "previousBodySha256": "dd757f65bcf77e078e1871095114f28d0b095fcd5ea4a893e1bba302103c9042"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/jupiter/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-jupiter-hard-exact-approval.json",
+      "payloadSha256": "88dc516b4411b0a61e7a8ce8049a611314a0440a52b6ee39fc9d3c6d8a73df01",
+      "previousBodySha256": "e34017842629d04822e8ed118a0fad3d86b77116f2776dad35b3b38e267d7980"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/jupiter/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-jupiter-soft-exact-approval.json",
+      "payloadSha256": "76c013d6fcbd97c15d6ee21108cb362e33a97272dcbf87a7f4bd19ed610ed2ff",
+      "previousBodySha256": "052e1300d7c619bd64d835e9ccb9976176ec97d264f52bb08829767a5af6ea6c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/mars/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-mars-conjunction-exact-approval.json",
+      "payloadSha256": "7f4b01eaabdd3a04bff2100bdd064798b7876880979079ee5f6e60ccfa896cc7",
+      "previousBodySha256": "7da6bc23ef4ccd8307ec81d096ca02380a3dc5ed83cde92bc7427fa89e65db8d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/mars/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-mars-hard-exact-approval.json",
+      "payloadSha256": "6353f24461e8722fcace7f3a89770e4b34cb7066284465158d4eb7e03d078a0f",
+      "previousBodySha256": "18b5d56826ff450f7c921c7b64ddaaebc2885a1d16ca0f476ee7778d865e76a8"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/mars/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-mars-soft-exact-approval.json",
+      "payloadSha256": "9988d0f4e379d2421249bdba4ec46995e2965515100d224fb3b65dadc6f727d1",
+      "previousBodySha256": "2d1961e4b0c98701905c03660511038b8493344dcc8b9c98e3e284adf49d595a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/neptune/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-neptune-conjunction-exact-approval.json",
+      "payloadSha256": "8051e20a73e7a38571c358706571221192927e1d7f0123b020505d45887f09ee",
+      "previousBodySha256": "f5bcb3b0184fc1ff721d032b5d339688f335c69341049a592c49ac4731b38b06"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/neptune/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-neptune-hard-exact-approval.json",
+      "payloadSha256": "19028e06fda4f1c3fd157e54dfa98b541fab6d1865161bf5166a2ce3f4387108",
+      "previousBodySha256": "e8b96d076578c39201b0986e49d95f91f4d2475b702b6e0a48be18a8439cb795"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/pluto/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-pluto-conjunction-exact-approval.json",
+      "payloadSha256": "faeca106f089cca3287b349635bc7651444aa8d561cb19a0d7a2393226254304",
+      "previousBodySha256": "a757694c1a88cfa711cee53bcbd7901b1245e60f6b44482a5d8d73adb9da2405"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/pluto/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-pluto-soft-exact-approval.json",
+      "payloadSha256": "b124df0597fbc3be0a58fda706e09997eb0ec1149fc73246ff89af5939e02edd",
+      "previousBodySha256": "5c309db4d349f989f144cd5fede01082794da9742d84b829cded1595f2579c4a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-saturn-conjunction-exact-approval.json",
+      "payloadSha256": "1f8ffac09da52f5e537d2d8764b754ac1d9903a7d803a632f4c9bf8c10f8b79b",
+      "previousBodySha256": "c6fa09d1e2b74785b4509c041ac3387404cf02f5d0b476757c2eedd5f815f0f2"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-saturn-hard-exact-approval.json",
+      "payloadSha256": "b37f42073b4ee774f3a8e189d0cd4cf540aaf9de442e56969b7c37bcd9e6e124",
+      "previousBodySha256": "d9449f1271e5955c3c5aec41811dd6cc9d9ccc139e20725e2561e191562c7c30"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-saturn-soft-exact-approval.json",
+      "payloadSha256": "b31352b2b207aef182bbffd955750944409308369bfba83bf75f3be17d2d2d19",
+      "previousBodySha256": "315c02236d1095a2beac978433ca898962b1a9c3887a79d3de63318d8f6446ca"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-uranus-conjunction-exact-approval.json",
+      "payloadSha256": "d141a8aebf774a8fe98ffc39f6de0ca827d4c730679435bd41b5b9252fdd05f9",
+      "previousBodySha256": "d2835783b1fbcc214c680e1146d523aae45fcb9b0e6c9188f282b80589c75f6f"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-uranus-hard-exact-approval.json",
+      "payloadSha256": "04b4bd7cca660e8275f6bab01b6d54d15a0caef2cd2e1677a02873f0bc017dda",
+      "previousBodySha256": "578b077b6910a5c82a9fe976d569f430623a8411dbc32c3061b0f7973100acb1"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/uranus/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-uranus-soft-exact-approval.json",
+      "payloadSha256": "3516c5a8a560dbb42ce0de38e8734abbf28b2fbae69c3d3a8a293aafea98b727",
+      "previousBodySha256": "d16d690e679fba7f880deb795f30bfe1db30248da32a3cd8f2f7e2ec4bd1130e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/venus/conjunction",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-venus-conjunction-exact-approval.json",
+      "payloadSha256": "2b06ccc184660f30f7712b066693d53771024f3634fc6208e44d73df85b62a6d",
+      "previousBodySha256": "749846f051553a151ff532dcb876349a7309c4776f5e122bdbfaf5f0dbaea49b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/venus/hard",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-venus-hard-exact-approval.json",
+      "payloadSha256": "bac9ed46888e67fd7402e2a51de110adfc1b58d3d2253345fc546e193c568425",
+      "previousBodySha256": "ecebe6eaeafa9c93abd18de37ecd6b654f29aa0fbbbc9d1f6379fa294885900b"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/venus/soft",
+      "recordPath": "packages/astro-knowledge/review/reader-variant-grammar-fix-v1/venus-venus-soft-exact-approval.json",
+      "payloadSha256": "e7f442793c9d2eeaf3671eb3d3cf91847fd612f69b9f453907f4bfbb2d9b6a22",
+      "previousBodySha256": "e99d00b393071e1e7010c60f1336ae8e0013a0236f57bfdd67004b28c3e0cdd9"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-venus-pluto-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/pluto/soft",
+  "payloadSha256": "b124df0597fbc3be0a58fda706e09997eb0ec1149fc73246ff89af5939e02edd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "The connection has real depth without the undertow. You feel important to {{holder2}}, not monitored or claimed.",
+    "body_they": "The connection has real depth without the undertow. {{holder1}} feels important to you, not monitored or claimed.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mars-pluto-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/pluto/soft",
+  "payloadSha256": "4812ef28cb2cae828adf48b021c10f7e175fe2cbd9f2dab0fb0be5b37f91bdda",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}}'s depth gives your effort real traction. The work does not burn out. It compounds over time.",
+    "body_they": "Your depth gives {{holder1}}'s effort real traction. The work does not burn out. It compounds over time.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

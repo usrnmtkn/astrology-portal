@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-neptune-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/neptune/hard",
+  "payloadSha256": "975736efd38ef6f3bb59b2c7baaf7eea86f808493c9fc51d18402580e548e61f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may keep meeting a version of yourself that exists mainly in {{holder2}}'s imagination. {{holder2}} reads motives, qualities, or feelings into you, then treats the correction like an unexpected plot twist. You ends up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit.",
+    "body_they": "{{holder1}} may keep meeting a version of themselves that exists mainly in your imagination. You reads motives, qualities, or feelings into {{holder1}}, then treats the correction like an unexpected plot twist. {{holder1}} ends up defending ordinary limits and real preferences against a fantasy that may be beautiful but still does not fit.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
