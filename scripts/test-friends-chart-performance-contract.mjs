@@ -205,6 +205,16 @@ assert.match(
   "Friends data loading must reuse authentication verification for the active access token."
 );
 assert.match(
+  authSource,
+  /export async function getAuthAccount\(\)[\s\S]*const user = await getVerifiedAuthUser\(supabase\);/,
+  "Account bootstrap must reuse the shared verified-user request instead of repeating auth verification."
+);
+assert.doesNotMatch(
+  appSource,
+  /await hydrateBootstrapSocialProfile\(accountProfile\);/,
+  "Friends chart readiness must not wait for the unrelated social-profile header request."
+);
+assert.match(
   manualChartsSource,
   /const user = await getVerifiedAuthUser\(supabase\);/,
   "Manual charts must share the verified-user request instead of starting another auth network call."

@@ -406,8 +406,23 @@ assert.match(
 );
 assert.match(
   profileViewSource,
-  /const weeklyAssemblyTimer = window\.setTimeout\([\s\S]*buildWeeklyHoroscope\(\{[\s\S]*\}, 1_000\);[\s\S]*window\.clearTimeout\(weeklyAssemblyTimer\)/u,
-  "Weekly assembly must yield to the primary chart render and cancel before starting after navigation."
+  /const weeklyAssemblyFrame = window\.requestAnimationFrame\(\(\) => \{[\s\S]*weeklyAssemblyTimer = window\.setTimeout\(\(\) => \{[\s\S]*void buildWeeklyHoroscope\(\{[\s\S]*if \(!cancelled\) setWeeklyHoroscopeAssembly\(assembly\);[\s\S]*\}, 0\);[\s\S]*window\.cancelAnimationFrame\(weeklyAssemblyFrame\);[\s\S]*window\.clearTimeout\(weeklyAssemblyTimer\);/u,
+  "Weekly horoscope assembly must yield a browser paint, then start and ignore results after navigation."
+);
+assert.doesNotMatch(
+  profileViewSource,
+  /\}, 1_000\);/u,
+  "The Horoscope tab must not add an artificial one-second delay before assembly starts."
+);
+assert.doesNotMatch(
+  appSource,
+  /\}, \[location, mode, skyDate, skyRefreshKey\]\);/u,
+  "Switching app sections must not restart the same current-sky calculation."
+);
+assert.match(
+  appSource,
+  /getAstrodienstSky\(skyLocation, selectedDateTime\)[\s\S]*requestAnimationFrame[\s\S]*getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: true \}\)/u,
+  "Core sky data must paint before expensive transit-window enrichment starts."
 );
 assert.doesNotMatch(
   appSource,
