@@ -167,6 +167,8 @@ function fullReaderBundle() {
   const bondLanguage = readJson("source-rows/bond-language-pass-2.json");
   const lunationRows = readJson("source-rows/lunation-blend-units-v1.json");
   const placementRows = readJson("source-rows/placement-interim-fixes-v1.json");
+  const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
+  const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
   const skyArticleRows = readJson("source-rows/sky-article-v1.json");
   const skyAspectRows = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlanetRows = readJson("source-rows/sky-planet-frames-v1.json");
@@ -192,6 +194,8 @@ function fullReaderBundle() {
         ...sourceRows.hookRows,
         ...lunationRows.hookRows,
         ...bondLanguage.rows,
+        ...pairDailyFrames.rows,
+        ...pairDailyClauses.rows,
         ...skyArticleRows.hookRows,
         ...skyAspectRows.hookRows,
         ...skyPlanetRows.rows,
@@ -217,6 +221,8 @@ function fullReaderBundle() {
 const manifest = createPackageManifest(fullReaderBundle(), PACKAGE_VERSION);
 const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
 const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
+const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
+const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
 const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
 const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
@@ -229,7 +235,11 @@ const skyCoreRows = {
   vocabularyRows: sourceRows.vocabularyRows
 };
 const deferredCoreRows = {
-  hookRows: sourceRows.hookRows.filter((row) => !isSkyCoreHook(row)),
+  hookRows: [
+    ...sourceRows.hookRows.filter((row) => !isSkyCoreHook(row)),
+    ...pairDailyFrames.rows,
+    ...pairDailyClauses.rows
+  ],
   vocabularyRows: []
 };
 const skyAuthoredCards = {

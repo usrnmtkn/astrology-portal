@@ -14,6 +14,8 @@ const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows
 const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
 const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
 const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-aspect-phrasebook-v1.json"), "utf8"));
+const pairDailyFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/pair-daily-frames-v1.json"), "utf8"));
+const pairDailyClausesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/pair-daily-clauses-v1.json"), "utf8"));
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const skyPlacementOwnerApprovedReaderV1 = JSON.parse(fs.readFileSync(path.join(here, "../bundled-sky-placement-owner-approved-reader-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
@@ -24,6 +26,8 @@ rowsFile.hookRows.push(...lunationBlend.hookRows);
 rowsFile.hookRows.push(...bondLanguagePass2.rows);
 rowsFile.hookRows.push(...skyArticleV1.hookRows);
 rowsFile.hookRows.push(...skyAspectPhrasebookV1.hookRows);
+rowsFile.hookRows.push(...pairDailyFramesV1.rows);
+rowsFile.hookRows.push(...pairDailyClausesV1.rows);
 rowsFile.hookRows.push(...skySignCopySunV1.rows);
 rowsFile.hookRows.push(...skyPlacementOwnerApprovedReaderV1.rows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
@@ -992,6 +996,121 @@ export function renderCircleStory(f) {
   return { headline, subtitle: `${subtitle} - ${namesLine}`, names: namesLine, body, sections, question, parts, templateKey: "fallback-template/circle.story", contentKey: r.contentKey };
 }
 
+// ---- Today between you two (PAIR-DAILY-TODAY-SPEC.md) ----
+// The engine chooses both daily drivers and the shared condition. This renderer only
+// resolves approved clauses/frames and fills their declared slots. Missing pair-daily
+// rows intentionally keep the reader surface dark.
+const pairDailyRow = (key) => hooks.get(key) ?? cards.get(key) ?? vocab.get(key) ?? null;
+const pairDailyVariantKeys = (baseKey) => [...hooks.keys()]
+  .flatMap((key) => {
+    if (key === baseKey) return [{ key, variant: 1 }];
+    const prefix = `${baseKey}/variant-`;
+    if (!key.startsWith(prefix)) return [];
+    const variant = Number(key.slice(prefix.length));
+    return Number.isInteger(variant) && variant >= 2 ? [{ key, variant }] : [];
+  })
+  .sort((a, b) => a.variant - b.variant);
+const pairDailyVariantKey = (baseKey, variant) => {
+  const keys = pairDailyVariantKeys(baseKey);
+  if (!keys.length) throw new SourceGapError(`SOURCE_GAP: pair daily family ${baseKey}`);
+  const seed = Number.isFinite(Number(variant))
+    ? Math.max(1, Math.abs(Math.trunc(Number(variant))))
+    : 1;
+  return keys[(seed - 1) % keys.length].key;
+};
+const pairDailyBody = (key, voice) => {
+  const row = pairDailyRow(key);
+  const body = voice === "they"
+    ? row?.body_they
+    : row?.body_you ?? row?.body;
+  if (typeof body !== "string" || !body.trim()) {
+    throw new SourceGapError(`SOURCE_GAP: pair daily row ${key} (${voice})`);
+  }
+  return body.trim();
+};
+const pairDailyFill = (body, ctx) => body
+  .replace(/\{\{([\w.]+)\}\}|\{([\w.]+)\}/g, (_match, doubleKey, singleKey) => {
+    const key = doubleKey ?? singleKey;
+    return ctx[key] ?? `{{${key}}}`;
+  })
+  .replace(/\s{2,}/g, " ")
+  .trim();
+const pairDailyHandle = (handle) => {
+  const normalized = (handle ?? "").toString().trim().replace(/^@+/u, "");
+  return normalized ? `@${normalized}` : null;
+};
+const pairDailyFriendReference = ({ handle, displayName }) => {
+  const normalizedHandle = pairDailyHandle(handle);
+  if (normalizedHandle) return normalizedHandle;
+  const normalizedName = (displayName ?? "").toString().trim();
+  return normalizedName || "your friend";
+};
+const PAIR_DAILY_WINDOW_RANGE = /\b(?:until|through)\s+(?:today\b|tomorrow\b|(?:mon|tues|wednes|thurs|fri|satur|sun)day\b|(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b|\d|the end of\b|next\s+(?:day|week|month|year)\b)/iu;
+
+export function renderPairDaily({ reader, friend, shared = { kind: null }, variant = 1 }) {
+  if (!reader?.clauseKey || !friend?.clauseKey) {
+    throw new SourceGapError("SOURCE_GAP: pair daily requires both daily clause keys");
+  }
+  const readerHandle = pairDailyHandle(reader.handle);
+  const openerKey = readerHandle
+    ? pairDailyVariantKey("fallback-hook/pair-daily/opener", variant)
+    : "fallback-hook/pair-daily/opener/variant-3";
+  const opener = pairDailyBody(openerKey, "you");
+  const ctx = {
+    readerHandle: readerHandle ?? "",
+    readerClause: pairDailyBody(reader.clauseKey, "you"),
+    friendHandle: pairDailyFriendReference(friend),
+    friendClause: pairDailyBody(friend.clauseKey, "they")
+  };
+  const parts = [pairDailyFill(opener, ctx)];
+  const sourceKeys = [openerKey, reader.clauseKey, friend.clauseKey];
+
+  if (shared?.kind === "bond") {
+    if (!shared.family || !shared.bondClauseKey) {
+      throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
+    }
+    const frameKey = pairDailyVariantKey(
+      `fallback-hook/pair-daily/shared-bond/${shared.family}`,
+      variant
+    );
+    parts.push(pairDailyFill(pairDailyBody(frameKey, "you"), {
+      bondClause: pairDailyBody(shared.bondClauseKey, "you")
+    }));
+    sourceKeys.push(frameKey, shared.bondClauseKey);
+    const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+    if (shared.family === "hard" && ["saturn", "mercury"].includes(transiting)) {
+      const closeKey = "fallback-hook/pair-daily/close/hard";
+      parts.push(pairDailyBody(closeKey, "you"));
+      sourceKeys.push(closeKey);
+    }
+  } else if (shared?.kind === "moon") {
+    if (!shared.element) throw new SourceGapError("SOURCE_GAP: pair daily Moon element");
+    const frameKey = pairDailyVariantKey(
+      `fallback-hook/pair-daily/shared-moon/${shared.element}`,
+      variant
+    );
+    parts.push(pairDailyBody(frameKey, "you"));
+    sourceKeys.push(frameKey);
+  } else if (shared?.kind != null) {
+    throw new SourceGapError(`SOURCE_GAP: pair daily shared kind ${shared.kind}`);
+  }
+
+  const body = parts.join(" ").replace(/\s{2,}/g, " ").trim();
+  const leftover = body.match(/\{\{?([\w.]+)\}?\}/u);
+  if (leftover) throw new SourceGapError(`SOURCE_GAP: pair daily missing slot ${leftover[1]}`);
+  if (PAIR_DAILY_WINDOW_RANGE.test(body)) {
+    throw new SourceGapError("SOURCE_GAP: pair daily must use today-only window wording");
+  }
+  return {
+    headline: "",
+    body,
+    parts,
+    templateKey: "fallback-template/pair.daily",
+    contentKey: openerKey,
+    sourceKeys
+  };
+}
+
 const SKY_PLACEMENT_ASPECT_FRAME = {
   conjunction: (aRef, bRef, timing) => `${aRef} meets ${bRef}${timing.exact ? `, exact on ${timing.label}` : ` ${timing.label}`}.`,
   square: (aRef, bRef, timing) => `${aRef} and ${bRef} push against each other${timing.exact ? `, sharpest on ${timing.label}` : ` ${timing.label}`}.`,
@@ -1670,9 +1789,17 @@ export function renderBondTransit({ transiting, aspect, endpointPlanet, endpoint
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
   // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
   // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
-  const effect = hooks.get(`fallback-hook/bond-effect-${aspect}/${transiting}`)?.body_you
-    ?? (variant ? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`)?.body_you : null)
-    ?? hooks.get(`fallback-hook/bond-effect-${family}/${transiting}`)?.body_you;
+  const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
+  const variantEffectKey = variant
+    ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`
+    : null;
+  const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
+  const effectKey = hooks.get(exactEffectKey)?.body_you
+    ? exactEffectKey
+    : variantEffectKey && hooks.get(variantEffectKey)?.body_you
+      ? variantEffectKey
+      : familyEffectKey;
+  const effect = hooks.get(effectKey)?.body_you;
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
   const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
@@ -1700,7 +1827,7 @@ export function renderBondTransit({ transiting, aspect, endpointPlanet, endpoint
   if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
   const HL = { conjunction: "conjunct", opposition: "opposite" };
   const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
-  return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit" };
+  return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit", contentKey: effectKey };
 }
 
 // ---- Per-rising lunation horoscope (owner weekly shape): recognizable situation

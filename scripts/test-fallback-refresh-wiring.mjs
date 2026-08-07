@@ -91,7 +91,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-05f");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-06");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -445,6 +445,10 @@ assert.equal(
 );
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const compatibilityTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/CompatibilityTab.tsx"),
+  "utf8"
+);
 const bondGroupingSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/bondTransitGrouping.ts"),
   "utf8"
@@ -461,6 +465,63 @@ const runtimeSource = fs.readFileSync(
 const generatedContentSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
   "utf8"
+);
+const fallbackManifestGeneratorSource = fs.readFileSync(
+  path.join(repoRoot, "scripts/generate-fallback-package-manifest.mjs"),
+  "utf8"
+);
+const pairDailySelectionStart = appSource.indexOf("const selectedPairDailySelection = useMemo(");
+const pairDailySelectionEnd = appSource.indexOf("\n  const selectedPairDaily = useMemo(", pairDailySelectionStart);
+const pairDailySelectionSource = appSource.slice(pairDailySelectionStart, pairDailySelectionEnd);
+
+assert.ok(
+  pairDailySelectionStart >= 0 && pairDailySelectionEnd > pairDailySelectionStart,
+  "Pair Daily must have a dedicated friend-profile selection memo."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const readerDriver = dailyGlanceDriver\(currentSky, profileNatalSky\);[\s\S]*?const friendDriver = dailyGlanceDriver\(currentSky, selectedChart\.natalChart\);/u,
+  "Pair Daily must reuse the Daily At-a-Glance driver for both charts."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily/u,
+  "Pair Daily must reuse the first already-ranked bond card and its effect family."
+);
+assert.doesNotMatch(
+  pairDailySelectionSource,
+  /rank|sort\(|dailyTransitQualifies/u,
+  "Pair Daily must not introduce a parallel driver or shared-condition ranking system."
+);
+assert.match(
+  pairDailySelectionSource,
+  /if \(!readerDriver \|\| !friendDriver\) return null;/u,
+  "Pair Daily must hide when either person's daily driver is absent."
+);
+assert.match(
+  compatibilityTabSource,
+  /\{daily \? \([\s\S]*?Today between you two[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
+  "Compatibility must render no Pair Daily chrome when assembled copy is absent."
+);
+assert.match(
+  appSource,
+  /reader:\s*\{[\s\S]*?handle:\s*profileHandle,[\s\S]*?clauseKey:\s*pairDailyClauseKey\(selectedPairDailySelection\.readerDriver\)/u,
+  "Pair Daily must pass the reader handle directly while keeping the reader clause in second-person voice."
+);
+assert.match(
+  appSource,
+  /const selectedPairDaily = useMemo\([\s\S]*?fallbackArchitectureV3Version,[\s\S]*?profileHandle,/u,
+  "Pair Daily must retry assembly after the deferred approved-row bundle is installed."
+);
+assert.match(
+  fallbackManifestGeneratorSource,
+  /pair-daily-frames-v1\.json[\s\S]*?pair-daily-clauses-v1\.json[\s\S]*?deferredCoreRows/u,
+  "The generated deferred runtime bundle must include both approved Pair Daily row files."
+);
+assert.match(
+  dashboardImportSource,
+  /pair-daily-frames-v1\.json[\s\S]*?pair-daily-clauses-v1\.json[\s\S]*?pairDailyFrames[\s\S]*?pairDailyClauses/u,
+  "Dashboard materialization must carry both approved Pair Daily row files."
 );
 
 assert.match(
