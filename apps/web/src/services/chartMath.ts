@@ -115,20 +115,22 @@ function forwardAngularDistance(from: number, to: number) {
 }
 
 /**
- * Selects the Moon's tightest applying natal contact for Daily At-a-Glance.
+ * Returns the Moon's tightest applying natal contacts inside the daily gate.
  *
  * The transiting Moon moves forward through the zodiac. A contact is applying
- * only when one of the aspect's exact longitudes is still ahead of the Moon
- * within the daily gate. Separating contacts are intentionally ignored; when
- * none are applying, the caller receives the whole-sign house fallback.
+ * only when one of the aspect's exact longitudes is still ahead of the Moon.
+ * Separating contacts are intentionally ignored. The house fallback is the
+ * single result only when no applying contact qualifies.
  */
-export function selectDailyGlanceDriver(
+export function selectDailyGlanceDriverPool(
   moonLongitude: number,
   natalTargets: Array<{ planet: string; longitude?: number }>,
   fallbackHouse: number | null,
-  maxOrb = 5
-): DailyGlanceSelection | null {
-  let tightest: Extract<DailyGlanceSelection, { kind: "aspect" }> | null = null;
+  maxOrb = 5,
+  limit = 3
+): DailyGlanceSelection[] {
+  const applying: Array<Extract<DailyGlanceSelection, { kind: "aspect" }> & { order: number }> = [];
+  let order = 0;
 
   for (const target of natalTargets) {
     const normalizedTarget = target.planet.trim().toLowerCase();
@@ -151,24 +153,46 @@ export function selectDailyGlanceDriver(
         ...exactLongitudes.map((exactLongitude) => forwardAngularDistance(moonLongitude, exactLongitude))
       );
 
-      if (applyingOrb <= maxOrb && (!tightest || applyingOrb < tightest.orb)) {
-        tightest = {
+      if (applyingOrb <= maxOrb) {
+        applying.push({
           kind: "aspect",
           natal: target.planet,
           aspect: definition.type,
-          orb: applyingOrb
-        };
+          orb: applyingOrb,
+          order
+        });
+        order += 1;
       }
     }
   }
 
-  if (tightest) {
-    return tightest;
+  if (applying.length > 0) {
+    const cappedLimit = Math.max(1, Math.trunc(limit));
+    return applying
+      .sort((first, second) => first.orb - second.orb || first.order - second.order)
+      .slice(0, cappedLimit)
+      .map(({ order: _order, ...driver }) => driver);
   }
 
   return fallbackHouse && fallbackHouse >= 1 && fallbackHouse <= 12
-    ? { kind: "house", house: fallbackHouse }
-    : null;
+    ? [{ kind: "house", house: fallbackHouse }]
+    : [];
+}
+
+/** Selects the single tightest driver used by Daily At-a-Glance. */
+export function selectDailyGlanceDriver(
+  moonLongitude: number,
+  natalTargets: Array<{ planet: string; longitude?: number }>,
+  fallbackHouse: number | null,
+  maxOrb = 5
+): DailyGlanceSelection | null {
+  return selectDailyGlanceDriverPool(
+    moonLongitude,
+    natalTargets,
+    fallbackHouse,
+    maxOrb,
+    1
+  )[0] ?? null;
 }
 
 export function zodiacSignForLongitude(longitude: number) {

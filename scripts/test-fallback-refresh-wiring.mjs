@@ -129,7 +129,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-07a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-07b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -521,8 +521,13 @@ assert.ok(
 );
 assert.match(
   pairDailySelectionSource,
-  /const readerDriver = dailyGlanceDriver\(currentSky, profileNatalSky\);[\s\S]*?const friendDriver = dailyGlanceDriver\(currentSky, selectedChart\.natalChart\);/u,
-  "Pair Daily must reuse the Daily At-a-Glance driver for both charts."
+  /const pairVariant = stablePairDailyVariant\([\s\S]*?const readerDriver = pairDailyDriver\(currentSky, profileNatalSky, pairVariant\);[\s\S]*?const friendDriver = pairDailyDriver\(currentSky, selectedChart\.natalChart, pairVariant\);/u,
+  "Pair Daily must use one stable pair seed for both chart-driver rotations."
+);
+assert.match(
+  appSource,
+  /function pairDailyDriver\([\s\S]*?selectDailyGlanceDriverPool\([\s\S]*?house,[\s\S]*?5,[\s\S]*?3[\s\S]*?selectPairDailyDriver\(drivers, variant\)/u,
+  "Pair Daily must reuse the Daily At-a-Glance applying selector and cap its pool at three."
 );
 assert.match(
   pairDailySelectionSource,
