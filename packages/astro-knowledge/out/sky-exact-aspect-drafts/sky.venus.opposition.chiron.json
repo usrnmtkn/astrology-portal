@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:40.485Z",
+  "id": "sky.venus.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "venus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.opposition.chiron",
+    "planetA": "venus",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Venus opposite Chiron",
+    "humanMoment": "Residents organize a courtyard breakfast to thank a longtime building caretaker, who immediately asks whether the landlord told them to attend.",
+    "developmentDetail": "As guests offer cards and food, the caretaker keeps pressing them to prove the celebration was their own idea.",
+    "planetaryDynamic": "Venus carries the residents' wish to show affection, while Chiron supplies the caretaker's expectation that the warmth is not safe to trust.",
+    "aspectMechanic": "The opposition places the residents offering cards and food across from the caretaker demanding proof, so neither the affection nor the suspicion can be edited out of the breakfast.",
+    "conditionalConsequence": "If guests leave after repeated questions about their motives, the shrinking celebration may appear to confirm the rejection the tests helped create.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Venus carries the residents' wish to show affection, while Chiron supplies the caretaker's expectation that the warmth is not safe to trust.",
+    "why": "All fields satisfy their functions with a concrete collective scene, accurate planetary distinction, clear opposition mechanics, and a conditional consequence arising directly from the caretaker's tests.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:40.485Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b750688eb2be20a9f3f8432c3fb85daef693cdd2118a11258aede31afcb5c5bb",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "034f56f7fcadc9d0d12834f2e6f1f380b3d1310fb8000b5aee364f24e1836bac",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "968b9a751a4b5432ee665b7dedf94fe74826ae28c9bb6d0a3b05527c2956201b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

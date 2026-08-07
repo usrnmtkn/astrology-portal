@@ -1,0 +1,32 @@
+{
+  "archivalStatus": "superseded",
+  "supersededReason": "The approval was recorded in error and revoked by the owner. The positive evidence effect in this historical artifact is void.",
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "owner_rejected",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04-exact-approval",
+    "surface": "sky-placement-batch",
+    "articleBeat": "seven-full-articles",
+    "before": "The seven Sol-xhigh batch-1 writer candidates before the owner-directed Saturn replacement and lint-policy clarifications.",
+    "beforeIsRejected": true,
+    "after": "Exact approved seven-article payload: packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json#articles",
+    "whatChanged": "Preserved six Sol drafts unchanged, replaced the Saturn in Aries unsent action with the exact owner-directed sentence, treated the two settle uses as literal resolution, and retained the literal Mercury in Gemini group-chat scene under the one-use-per-batch policy.",
+    "ownerReason": "The owner explicitly approved all seven exact stored fallback articles after the directed edit and lint-policy clarifications.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "owner_rejected",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json",
+      "packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-re-lint-2026-08-04.json"
+    ],
+    "provenance": "exact_wording_approval: With these changes I explicitly approve all seven batch-1 drafts as owner-approved fallback articles for their placement pages, serving and wiring separate.",
+    "feedbackKind": "rejection",
+    "exactApprovalScope": "none_superseded_record_only"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

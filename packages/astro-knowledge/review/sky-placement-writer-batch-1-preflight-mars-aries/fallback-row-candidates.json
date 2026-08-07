@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mars/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Mars in Aries makes a clean move feel better than another round of waiting. From {{entryDate}}, a matter we have been circling gets a direct question and immediate action. The delay breaks: the reply arrives, the stuck part moves, and someone finally goes first. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each, making this a concentrated stretch for acting on what is clear.",
+      "tension": "Then speed starts answering questions that have not been asked. A short reply is read as resistance, so we send a sharper reply; a fix begins before the real problem is clear; an ordinary objection becomes something to defeat. The brave first move gives way to the relief of not having to wait. By the time the facts catch up, we have spent energy on the wrong target and made the original issue harder to settle. What are we trying to change? What are we only trying to win?",
+      "development": "The correction is not passivity. It is deciding what must change before the nearest objection becomes a fight. When a response raises the heat, we can ask whether we need an answer, need to say no, or need to change what happens next. That means asking the direct question, saying no plainly, or trying the smallest fix before committing more energy. If none of those is the actual aim, the impulse may be about getting rid of the heat rather than changing anything.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can end a fight that is consuming energy without changing the thing that started it.",
+      "try_this": [
+        "We can make the call we have been avoiding and ask the direct question before explaining our position.",
+        "We can leave a heated reply in drafts, take a walk, and send only the part that says what needs to change.",
+        "We can stop a rushed fix once it becomes clear that it is solving the wrong problem."
+      ],
+      "aspect_units": [],
+      "body_you": "Mars in Aries makes a clean move feel better than another round of waiting. From {{entryDate}}, a matter we have been circling gets a direct question and immediate action. The delay breaks: the reply arrives, the stuck part moves, and someone finally goes first. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each, making this a concentrated stretch for acting on what is clear.\n\nThen speed starts answering questions that have not been asked. A short reply is read as resistance, so we send a sharper reply; a fix begins before the real problem is clear; an ordinary objection becomes something to defeat. The brave first move gives way to the relief of not having to wait. By the time the facts catch up, we have spent energy on the wrong target and made the original issue harder to settle. What are we trying to change? What are we only trying to win?\n\nThe correction is not passivity. It is deciding what must change before the nearest objection becomes a fight. When a response raises the heat, we can ask whether we need an answer, need to say no, or need to change what happens next. That means asking the direct question, saying no plainly, or trying the smallest fix before committing more energy. If none of those is the actual aim, the impulse may be about getting rid of the heat rather than changing anything.\n\nBefore {{exitDate}}, we can end a fight that is consuming energy without changing the thing that started it.",
+      "body_they": "Mars in Aries makes a clean move feel better than another round of waiting. From {{entryDate}}, a matter we have been circling gets a direct question and immediate action. The delay breaks: the reply arrives, the stuck part moves, and someone finally goes first. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each, making this a concentrated stretch for acting on what is clear.\n\nThen speed starts answering questions that have not been asked. A short reply is read as resistance, so we send a sharper reply; a fix begins before the real problem is clear; an ordinary objection becomes something to defeat. The brave first move gives way to the relief of not having to wait. By the time the facts catch up, we have spent energy on the wrong target and made the original issue harder to settle. What are we trying to change? What are we only trying to win?\n\nThe correction is not passivity. It is deciding what must change before the nearest objection becomes a fight. When a response raises the heat, we can ask whether we need an answer, need to say no, or need to change what happens next. That means asking the direct question, saying no plainly, or trying the smallest fix before committing more energy. If none of those is the actual aim, the impulse may be about getting rid of the heat rather than changing anything.\n\nBefore {{exitDate}}, we can end a fight that is consuming energy without changing the thing that started it.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-batch-1-preflight-mars-aries"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:35.385Z",
+  "id": "sky.lilith.sextile.nodes",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "lilith-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.lilith.sextile.nodes",
+    "planetA": "lilith",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Lilith sextile North Node",
+    "humanMoment": "A neighborhood bookstore sees a surge of advance orders for romance titles it once kept on a back shelf.",
+    "developmentDetail": "Readers fill a launch event, and the staff begins planning a permanent section with a regular reading series.",
+    "planetaryDynamic": "Lilith brings the once-disowned appetite into public view, while the North Node tests whether it can become part of the store’s next chapter.",
+    "aspectMechanic": "The sextile creates a usable opening through the advance orders and packed launch, but the staff still has to build the permanent section and reading series.",
+    "conditionalConsequence": "If the new section earns sustained sales and attendance, the store can grow beyond the respectable image that kept those readers at the margins.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the new section earns sustained sales and attendance, the store can grow beyond the respectable image that kept those readers at the margins.",
+    "why": "All fields satisfy the contract; the consequence is slightly more interpretive than the others but remains conditional, scene-based, and specific.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:35.384Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "3dae0c0e8162927cb74f82608ebe53da7ef2ce8b4083fcdad24de6995f5f6019",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "4f94721db4cf1ab22dda982efcd21466a13d76e3cd6e338f5f60d14a063b4c90",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4a75f0b274e39d59b2e7ab71b266caa4a77c3d74dfefbbcfd6a98c762283cd32"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.lilith.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

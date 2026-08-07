@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-pilot-uranus-gemini-v1",
+  "recordedAt": "2026-08-04T04:27:42.658Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "uranus",
+    "sign": "gemini"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:gemini-season-2025:p018:window-2-3",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:venus-in-virgo-2025:p012:window-3-2",
+      "owner-article:gemini-new-moon-2025:p004:window-2-3"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": false,
+      "planetNamed": true,
+      "signNamed": false,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "sky-placement",
+          "term": "\\bzodiac\\b",
+          "match": "zodiac",
+          "reason": "encyclopedia register"
+        }
+      ],
+      "notes": [
+        "hook is long (90 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus takes about 84 years to circle the zodiac and stays about 7 years in each sign.",
+    "tension": "The pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.",
+    "development": "We do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.",
+    "close": "Before {{exitDate}}, we can choose one new way of communicating that deserves to last and let one distracting format go.",
+    "try_this": [
+      "We can finish one saved article or lesson before opening another tab on the same subject.",
+      "We can return to one message thread and answer the question we skipped when the subject changed.",
+      "We can compare one summary with its original source and correct one claim we repeated too quickly."
+    ]
+  }
+}

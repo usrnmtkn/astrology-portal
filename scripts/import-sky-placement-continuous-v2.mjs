@@ -17,7 +17,7 @@ const outPath = args.find((argument) => argument.startsWith("--out="))?.slice("-
 
 assert.ok(
   sourcePath,
-  "Usage: node scripts/import-sky-placement-continuous-v2.mjs /absolute/path/to/TLDR-Sky-SignCopy-*-V2-REVIEW.md [--approve --out=/absolute/path/output.json]"
+  "Usage: node scripts/import-sky-placement-continuous-v2.mjs /absolute/path/to/TLDR-Sky-SignCopy-*-V2-REVIEW.md [--approve --batch=2 --out=/absolute/path/output.json]"
 );
 assert.ok(path.isAbsolute(sourcePath), "The review source path must be absolute.");
 assert.ok(fs.existsSync(sourcePath), `Review source does not exist: ${sourcePath}`);
@@ -25,6 +25,8 @@ assert.ok(fs.existsSync(sourcePath), `Review source does not exist: ${sourcePath
 const sourceName = path.basename(sourcePath);
 const sourceEntry = manifest.sources.find((candidate) => candidate.file === sourceName);
 assert.ok(sourceEntry, `${sourceName} is not present in the review-gated import manifest.`);
+const releaseBatch = args.find((argument) => argument.startsWith("--batch="))?.slice("--batch=".length)
+  ?? sourceEntry.release_batch;
 
 function slug(value) {
   return value
@@ -89,8 +91,11 @@ function parseUnit(block) {
     body_they: body,
     review_status: approve ? "approved" : "needs_review",
     ...(approve ? { approved_via: "owner approval required at import time" } : {}),
+    release_batch: String(releaseBatch ?? "unassigned"),
+    distribution_state: "staged",
+    distribution_partition: "sky-placement-on-demand-v1",
     source_keys: [sourceName],
-    note: "Canonical continuous planet-in-sign fallback unit. Active aspect inserts are joined from the approved aspect library."
+    note: "Canonical continuous planet-in-sign fallback unit. Editorial approval does not authorize serving; a separate owner-approved serving-manifest diff is required. Active aspect inserts are joined from the approved aspect library."
   };
 }
 
@@ -105,12 +110,13 @@ assert.equal(rows.length, sourceEntry.expected_units, `${sourceName} unit count 
 assert.equal(new Set(rows.map((row) => row.contentKey)).size, rows.length, `${sourceName} contains duplicate placement keys.`);
 
 if (!approve) {
-  console.log(`Validated ${rows.length} needs_review units from ${sourceName}. No content was imported.`);
+  console.log(`Validated ${rows.length} staged needs_review units from ${sourceName}. No content was imported.`);
   process.exit(0);
 }
 
 assert.ok(outPath, "Approved imports require an explicit --out=/absolute/path/output.json target.");
 assert.ok(path.isAbsolute(outPath), "The approved import output path must be absolute.");
+assert.ok(releaseBatch, "Editorially approved imports require an explicit --batch=<serving-manifest release_batch>.");
 
 fs.writeFileSync(outPath, `${JSON.stringify({
   schema: "tldrastro-sky-sign-copy-v2",
@@ -118,4 +124,4 @@ fs.writeFileSync(outPath, `${JSON.stringify({
   source: sourceName,
   rows
 }, null, 2)}\n`);
-console.log(`Imported ${rows.length} approved units from ${sourceName} to ${outPath}.`);
+console.log(`Imported ${rows.length} editorially approved, staged units from ${sourceName} to ${outPath}.`);

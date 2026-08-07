@@ -1,0 +1,24 @@
+{
+  "id": "chiron-lilith",
+  "planetA": "chiron",
+  "planetB": "lilith",
+  "traditional": "The wound and the exile are one story told twice: what was hurt and what was banished are often the same want.",
+  "modern": {
+    "blend": "The healing stalls until the forbidden want is admitted; then both move.",
+    "harmonious": "The reclaimed desire turns out to be medicine; shame dissolves when the stories are told together.",
+    "hard": "Treating the want and the wound as separate cases keeps both open.",
+    "business": "The blocked ambition and the old injury share a root; address them as one case."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The healing stalls until the forbidden want is admitted; then both move.",
+  "harmonious": "The reclaimed desire turns out to be medicine; shame dissolves when the stories are told together.",
+  "hard": "Treating the want and the wound as separate cases keeps both open.",
+  "business": "The blocked ambition and the old injury share a root; address them as one case."
+}

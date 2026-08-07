@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:22.442Z",
+  "id": "sky.jupiter.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "jupiter-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.trine.lilith",
+    "planetA": "jupiter",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Jupiter trine Lilith",
+    "humanMoment": "Residents pack a licensing hearing to support an after-hours dance venue that has operated illegally for years.",
+    "developmentDetail": "Speakers openly defend the demand for more nightlife and revenue, while safety objections begin to sound needlessly restrictive.",
+    "planetaryDynamic": "Jupiter enlarges the venue's appeal and public backing, while Lilith brings the previously hidden appetite for transgressive nightlife into the open.",
+    "aspectMechanic": "Under the trine, packed attendance and candid testimony reinforce each other so easily that the licensing proposal can travel farther before its risks are questioned.",
+    "conditionalConsequence": "If officials approve the expansion on enthusiasm alone, larger crowds could arrive before the venue's exits, security, and noise controls are ready.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "Speakers openly defend the demand for more nightlife and revenue, while safety objections begin to sound needlessly restrictive.",
+    "why": "The safety objections are framed somewhat impressionistically, but the sentence still adds an observable shift in the hearing and supports the ethical blur central to the pairing.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:22.441Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9d807d3e83ef6d0e9d6968ed3478310a1b0577a7b94d83775744fa7ad2ab4214",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "6926812e3abba160324587fb62b7ca58db8dd1eae754fd9fd3de3dd1fbaae7d1",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d9e8e71f9f8e947a9ae9511715be1bd4187d52f988d7d4d04330349445b6c0ca"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

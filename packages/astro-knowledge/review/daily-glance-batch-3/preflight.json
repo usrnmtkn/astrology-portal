@@ -1,0 +1,372 @@
+{
+  "schemaVersion": 1,
+  "status": "packet-self-lint-passed",
+  "calls": {
+    "plannedWriter": 14,
+    "plannedJudge": 0,
+    "billedMade": 0
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-3-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 14,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false,
+    "maxOutputTokens": 24000
+  },
+  "keys": [
+    {
+      "key": "conjunction/jupiter",
+      "ownerSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-jupiter.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md#owner-article:venus-in-cancer#let-yourself-enjoy-it"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.conjunction.jupiter"
+      ],
+      "modelInputSha256": "cabf6e1db39318359eaf7913505b2fbde4d20efa12783e76dab89a40b28154f1",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/mercury",
+      "ownerSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-mercury.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md#owner-article:chiron-retrograde-in-aries#heard-and-understood"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.conjunction.mercury"
+      ],
+      "modelInputSha256": "42abbd5e165af93f2c04896fda1cbf64f07bfdb4e60ec7144e9c4ebdac736639",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/sun",
+      "ownerSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/sun-moon.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/adjacent-formats/leo-season-2025.md#owner-article:leo-season-2025#individuality-strength"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "066937a1457fdaa3c206d928548a4fc505ccc10935cfad55f0f2dcdedb365f08",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/saturn",
+      "ownerSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-saturn.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md#owner-article:chiron-retrograde-in-aries#prove-strong"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.conjunction.saturn"
+      ],
+      "modelInputSha256": "186e0906c9cfbbc72fec462a07c8719f207361deff36fe6fd4c64ab167a7320b",
+      "packetLintPassed": true
+    },
+    {
+      "key": "square/mars",
+      "ownerSourceIds": [
+        "daily-glance-square-chiron-owner-headline",
+        "daily-glance-square-chiron-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-mars.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.square"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md#owner-article:mars-direct-in-cancer#carry-every-fight"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.square.mars"
+      ],
+      "modelInputSha256": "aec1de5a655b26e12c61499c470331413b95d478a81e67dc8852c3f549ddbe4c",
+      "packetLintPassed": true
+    },
+    {
+      "key": "square/venus",
+      "ownerSourceIds": [
+        "daily-glance-square-chiron-owner-headline",
+        "daily-glance-square-chiron-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-venus.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.square"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md#owner-article:venus-in-cancer#simple-to-be-loved"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "792293509077de911f3df0bd9ad379ebcf43b6c36e6752e43d09156f769ef023",
+      "packetLintPassed": true
+    },
+    {
+      "key": "square/uranus",
+      "ownerSourceIds": [
+        "daily-glance-square-chiron-owner-headline",
+        "daily-glance-square-chiron-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-uranus.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.square"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md#owner-article:chiron-retrograde-in-aries#change-direction"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "af712f6565151161f625833037e6cfe809c1222a18fb5864ced21cd18e9a2231",
+      "packetLintPassed": true
+    },
+    {
+      "key": "opposition/jupiter",
+      "ownerSourceIds": [
+        "daily-glance-opposition-chiron-owner-headline",
+        "daily-glance-opposition-chiron-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-jupiter.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.opposition"
+      ],
+      "harvestMode": "none_found",
+      "warmthSources": [],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "0712ef28fd77f2863dfe1f56a7acbc61b06e39bd61aa177a919d75fa27ade8f6",
+      "packetLintPassed": true
+    },
+    {
+      "key": "opposition/pluto",
+      "ownerSourceIds": [
+        "daily-glance-opposition-chiron-owner-headline",
+        "daily-glance-opposition-chiron-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-pluto.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.opposition"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md#owner-article:mercury-retrograde-in-leo#vulnerability-not-weakness"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.opposition.pluto"
+      ],
+      "modelInputSha256": "76ef69d04fbbe2d7bb063ccc6c97dadd21ce40f23c23b829dab0435b83ebf16d",
+      "packetLintPassed": true
+    },
+    {
+      "key": "soft/mercury",
+      "ownerSourceIds": [
+        "daily-glance-soft-lilith-owner-headline",
+        "daily-glance-soft-lilith-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-mercury.json#modern.harmonious",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.soft"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md#owner-article:chiron-retrograde-in-aries#heard-and-understood"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.trine.mercury"
+      ],
+      "modelInputSha256": "97b8884352f33c72311c7f22698f7e132320e35e2ffe275ed5d8cbe2d3989b21",
+      "packetLintPassed": true
+    },
+    {
+      "key": "soft/uranus",
+      "ownerSourceIds": [
+        "daily-glance-soft-lilith-owner-headline",
+        "daily-glance-soft-lilith-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-uranus.json#modern.harmonious",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.soft"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md#owner-article:chiron-retrograde-in-aries#change-direction"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "f7139d60dd9cc24970d48c33cba4d0401eb65dc075b7b38ae24be2d6059b89b5",
+      "packetLintPassed": true
+    },
+    {
+      "key": "soft/chiron",
+      "ownerSourceIds": [
+        "daily-glance-soft-lilith-owner-headline",
+        "daily-glance-soft-lilith-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-chiron.json#modern.harmonious",
+        "packages/astro-knowledge/data/planetary/chiron.json#overview",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.soft"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md#owner-article:venus-in-cancer#not-weak-for-needing-care"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "f7317aa6845a665e5549cb8a4d5c5dffc9f0f2084fe27e70109669081e46cd7e",
+      "packetLintPassed": true
+    },
+    {
+      "key": "house/5",
+      "ownerSourceIds": [
+        "daily-glance-house-1-owner-headline",
+        "daily-glance-house-1-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/primitives/houses.json#entries.4.plainTranslation"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md#owner-article:chiron-retrograde-in-aries#earn-joy"
+      ],
+      "sceneMode": "house-context",
+      "sceneSources": [
+        "tldr-astro-phrasebank/phrasebank/houses.json#cc/house/5"
+      ],
+      "modelInputSha256": "c1056c663d503819dd3fbe8ddad5a17e4e709fac669d66c93aa8b5ba844b66bf",
+      "packetLintPassed": true
+    },
+    {
+      "key": "house/12",
+      "ownerSourceIds": [
+        "daily-glance-house-1-owner-headline",
+        "daily-glance-house-1-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/primitives/houses.json#entries.11.plainTranslation"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/sagittarius-full-moon-2025.md#owner-reference:sagittarius-full-moon-2025#silence-not-weakness"
+      ],
+      "sceneMode": "house-context",
+      "sceneSources": [
+        "tldr-astro-phrasebank/phrasebank/houses.json#cc/house/12"
+      ],
+      "modelInputSha256": "33811d28975e3e8e3b0b0d9923208f90dd3dde7f07584a6add5dfe39d763adfc",
+      "packetLintPassed": true
+    }
+  ]
+}

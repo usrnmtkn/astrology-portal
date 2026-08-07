@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "passed": false,
+  "rules": {
+    "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
+    "DG-R7": "No body opener construction may repeat within the batch.",
+    "OWNER-TEST-specificity": "Every body must match its key profile and fail all six swap profiles."
+  },
+  "checks": [
+    {
+      "id": "batch-output-count",
+      "passed": false,
+      "details": "6/7 outputs"
+    },
+    {
+      "id": "DG-R1-recurring-sentence-frame",
+      "passed": true,
+      "details": "No three-word sentence frame appears in more than two outputs."
+    },
+    {
+      "id": "DG-R7-opener-variety",
+      "passed": true,
+      "details": "6 distinct opener constructions."
+    },
+    {
+      "id": "OWNER-TEST-specificity-batch",
+      "passed": false,
+      "details": [
+        {
+          "key": "conjunction/chiron",
+          "passed": false,
+          "details": {
+            "own": {
+              "key": "conjunction/chiron",
+              "matches": [
+                "care-old-hurt"
+              ],
+              "required": 2,
+              "passed": false
+            },
+            "swappableTo": [
+              {
+                "key": "opposition/chiron",
+                "matches": [
+                  "care-old-hurt",
+                  "other-person"
+                ],
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "key": "opposition/chiron",
+          "passed": false,
+          "details": {
+            "own": {
+              "key": "opposition/chiron",
+              "matches": [
+                "care-old-hurt",
+                "other-person"
+              ],
+              "required": 2,
+              "passed": true
+            },
+            "swappableTo": [
+              {
+                "key": "square/chiron",
+                "matches": [
+                  "care-old-hurt",
+                  "self-friction"
+                ],
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "key": "conjunction/moon",
+          "passed": false,
+          "details": {
+            "own": {
+              "key": "conjunction/moon",
+              "matches": [
+                "feelings-needs"
+              ],
+              "required": 2,
+              "passed": false
+            },
+            "swappableTo": []
+          }
+        },
+        {
+          "key": "conjunction/uranus",
+          "passed": false,
+          "details": {
+            "own": {
+              "key": "conjunction/uranus",
+              "matches": [
+                "change-routine"
+              ],
+              "required": 2,
+              "passed": false
+            },
+            "swappableTo": []
+          }
+        },
+        {
+          "key": "soft/lilith",
+          "passed": false,
+          "details": {
+            "own": {
+              "key": "soft/lilith",
+              "matches": [
+                "desire-appetite"
+              ],
+              "required": 2,
+              "passed": false
+            },
+            "swappableTo": []
+          }
+        },
+        {
+          "key": "house/1",
+          "passed": true,
+          "details": {
+            "own": {
+              "key": "house/1",
+              "matches": [
+                "self-presentation"
+              ],
+              "required": 1,
+              "passed": true
+            },
+            "swappableTo": []
+          }
+        }
+      ]
+    }
+  ],
+  "openerConstructions": [
+    {
+      "key": "conjunction/chiron",
+      "frame": "you type"
+    },
+    {
+      "key": "opposition/chiron",
+      "frame": "a loved"
+    },
+    {
+      "key": "conjunction/moon",
+      "frame": "you read"
+    },
+    {
+      "key": "conjunction/uranus",
+      "frame": "you open"
+    },
+    {
+      "key": "soft/lilith",
+      "frame": "when your"
+    },
+    {
+      "key": "house/1",
+      "frame": "you choose"
+    }
+  ],
+  "repeatedFrames": [],
+  "repeatedOpeners": [],
+  "specificityResults": [
+    {
+      "key": "conjunction/chiron",
+      "passed": false,
+      "details": {
+        "own": {
+          "key": "conjunction/chiron",
+          "matches": [
+            "care-old-hurt"
+          ],
+          "required": 2,
+          "passed": false
+        },
+        "swappableTo": [
+          {
+            "key": "opposition/chiron",
+            "matches": [
+              "care-old-hurt",
+              "other-person"
+            ],
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "key": "opposition/chiron",
+      "passed": false,
+      "details": {
+        "own": {
+          "key": "opposition/chiron",
+          "matches": [
+            "care-old-hurt",
+            "other-person"
+          ],
+          "required": 2,
+          "passed": true
+        },
+        "swappableTo": [
+          {
+            "key": "square/chiron",
+            "matches": [
+              "care-old-hurt",
+              "self-friction"
+            ],
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "key": "conjunction/moon",
+      "passed": false,
+      "details": {
+        "own": {
+          "key": "conjunction/moon",
+          "matches": [
+            "feelings-needs"
+          ],
+          "required": 2,
+          "passed": false
+        },
+        "swappableTo": []
+      }
+    },
+    {
+      "key": "conjunction/uranus",
+      "passed": false,
+      "details": {
+        "own": {
+          "key": "conjunction/uranus",
+          "matches": [
+            "change-routine"
+          ],
+          "required": 2,
+          "passed": false
+        },
+        "swappableTo": []
+      }
+    },
+    {
+      "key": "soft/lilith",
+      "passed": false,
+      "details": {
+        "own": {
+          "key": "soft/lilith",
+          "matches": [
+            "desire-appetite"
+          ],
+          "required": 2,
+          "passed": false
+        },
+        "swappableTo": []
+      }
+    },
+    {
+      "key": "house/1",
+      "passed": true,
+      "details": {
+        "own": {
+          "key": "house/1",
+          "matches": [
+            "self-presentation"
+          ],
+          "required": 1,
+          "passed": true
+        },
+        "swappableTo": []
+      }
+    }
+  ]
+}

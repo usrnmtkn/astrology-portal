@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:10.686Z",
+  "id": "sky.uranus.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "uranus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.opposition.nodes",
+    "planetA": "uranus",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Uranus opposite North Node",
+    "humanMoment": "A lead performer walks out hours before a community theater's sold-out opening, and the understudy takes the stage with a version the cast has never performed for an audience.",
+    "developmentDetail": "The director cuts two scenes on the spot, while ticket holders and funders still expect the advertised production to reach opening night.",
+    "planetaryDynamic": "Uranus brings the abrupt exit and improvised recasting, while the North Node keeps the production aimed at opening night.",
+    "aspectMechanic": "The opposition sets the departing lead and revised performance across from the cast, audience, and funders still holding the opening in place, so neither the disruption nor the destination can be removed from what reaches the stage.",
+    "conditionalConsequence": "If the understudy's version lands, the walkout may end an outgrown dependency on one performer and permanently change how future productions are cast.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The scene is concrete and collective, each field performs its distinct function, and the opposition clearly preserves both Uranus's abrupt rerouting and the node axis's held destination without treating the outcome as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:10.685Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "1d31e9f33f5a2a8d32e416da4a643d95451bae8add14c552b47980d8a8c0bc8f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "820f60655ae14ae01be4f48afc9e46c2f6cf57446a4e0a94a00be103ab0433a8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e95b13b828b193aa6968dbc8ee39dce4d275b2fa4e5f26b7bcd3dbe34193c5d1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:52.482Z",
+  "id": "sky.jupiter.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "jupiter-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.trine.chiron",
+    "planetA": "jupiter",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Jupiter trine Chiron",
+    "humanMoment": "A national writing prize for unpaid caregivers receives thousands of essays about exhaustion, resentment, and love that rarely enter public conversation.",
+    "developmentDetail": "Editors quickly publish a selection, and readers respond with donations, requests for support resources, and stories of their own.",
+    "planetaryDynamic": "Jupiter expands the essays' audience and response, while Chiron holds both the caregivers' hidden pain and the medicine that can come from naming it.",
+    "aspectMechanic": "Under the trine, the published essays and public response reinforce each other with little resistance, widening support while allowing exposure to travel before anyone questions it.",
+    "conditionalConsequence": "If contributors agreed only to judging, the rapid publication could turn welcome recognition into unwanted exposure.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Jupiter expands the essays' audience and response, while Chiron holds both the caregivers' hidden pain and the medicine that can come from naming it.",
+    "why": "Slightly more explanatory than the other fields, but it still distinguishes Jupiter's amplification from Chiron's wound-and-medicine function and ties both directly to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:52.482Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4bd24d674ce1467a4d751790c9c3ac9670ef29b29f141ba3761603a39d130158",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "3169da335ef7a0ef5c4af1eb2146f17111ca8a513ea8644f1ff0382dd05ec87c",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ca00abf515377adb770f187783f8e5458a511565a3ed8567bacd8ba73cff127f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

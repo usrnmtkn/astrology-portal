@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:27.235Z",
+  "id": "sky.chiron.trine.nodes",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "chiron-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.trine.nodes",
+    "planetA": "chiron",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Chiron trine North Node",
+    "humanMoment": "A former foster child takes emergency custody of a niece just as the placement intake reopens memories of a painful removal.",
+    "developmentDetail": "At the review, the new caregiver catches missing medical records and visitation details that others overlooked.",
+    "planetaryDynamic": "Chiron brings the reopened injury and the knowledge formed around it, while the North Node brings a new chapter that requires that knowledge.",
+    "aspectMechanic": "The trine lets the painful history and placement work reinforce each other with little resistance, helping the caregiver catch dangerous gaps while allowing personal distress to move through the case unnoticed.",
+    "conditionalConsequence": "If the reopened history is valued only for its usefulness, the placement may stabilize while the caregiver's own capacity quietly erodes.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The trine lets the painful history and placement work reinforce each other with little resistance, helping the caregiver catch dangerous gaps while allowing personal distress to move through the case unnoticed.",
+    "why": "The mechanic is slightly dense, but it clearly shows the trine carrying both practical skill and unaddressed distress through the same event.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:27.235Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "40a889e1415e83882210c6c7b6b55d704abe05eeef113fc1b751388b53d3aff0",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d04f81726541c16d172d52d7cb332070e010edb66084a72d0a8ca2532d7c02dc",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "70d9db5c59f78d942aabce1687473630b690eb5345d9d716a52173a6c5d506ad"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -76,6 +76,13 @@
         "id": "pluto-retrograde",
         "planet": "pluto",
         "plainTranslation": "review of power and control; transformation works beneath the surface"
+      },
+      "chiron-retrograde": {
+        "voiceNeutral": true,
+        "status": "REVIEWED",
+        "id": "chiron-retrograde",
+        "planet": "chiron",
+        "plainTranslation": "review of old wounds, repair, and the survival responses built around them"
       }
     }
   }

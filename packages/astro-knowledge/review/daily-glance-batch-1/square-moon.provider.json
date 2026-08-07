@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "key": "square/moon",
+  "responseId": "resp_00b3b0024d21971b006a72948d6a208192bb939444a7891a1c",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 96980,
+  "usage": {
+    "inputTokens": 1689,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 1686,
+    "outputTokens": 5533,
+    "reasoningTokens": 5427,
+    "totalTokens": 7222
+  },
+  "estimatedCostUsd": 0.1765425,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "cd3782311fa37bb435ea49ad8628028e5728651e280595744c4b5529d6520b8d",
+  "incompleteDetails": null
+}

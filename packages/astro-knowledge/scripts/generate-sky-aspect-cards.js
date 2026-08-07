@@ -676,7 +676,7 @@ function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowRev
     ``,
     `RULES:`,
     `  - Never use these words/phrases: ${failList}.`,
-    `  - "steady" only if stable/strong/solid precedes it. Bare "loop" -> use "cycle".`,
+    `  - "Steady" is allowed for observable effort, pace, support, light, or reliability; do not use it as vague energy language or an empty positive adjective. Bare "loop" -> use "cycle".`,
     `  - Em dash is banned; use a spaced hyphen " - " instead.`,
     `  - Keep absolute dates, degrees, orb, and detailed space mechanics out of the card body; the app renders those separately from facts.`,
     `  - Metaphors: elemental imagery is allowed only when it matches an element in play here (${elements}). Do NOT name the element or the mechanics ("air-fire sextile", "this trine links two air signs", "fire ignites water") - the element is felt, never labeled.`,

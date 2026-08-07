@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:07.360Z",
+  "id": "sky.chiron.square.nodes",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "chiron-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.square.nodes",
+    "planetA": "chiron",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Chiron square North Node",
+    "humanMoment": "A documentary editor is hired to finish a film about workplace retaliation just as an appeal reopens their own unresolved complaint.",
+    "developmentDetail": "Archived testimony and looming cut deadlines require the editor to handle the same tactics and language that once drove them out of the industry.",
+    "planetaryDynamic": "Chiron brings the old injury back into active pain, while the North Node presents a new assignment that requires the expertise the injury has blocked.",
+    "aspectMechanic": "The square pits the cut deadlines against the reopened appeal, so production delays keep returning until the role either includes the wound work or stops depending on the skill it has disrupted.",
+    "conditionalConsequence": "If the production treats the appeal as separate from the job, each new filing can interrupt another cut and push the film's release back.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The square pits the cut deadlines against the reopened appeal, so production delays keep returning until the role either includes the wound work or stops depending on the skill it has disrupted.",
+    "why": "The mechanic is slightly dense, but it clearly connects the recurring production conflict to unresolved wound work and preserves the source nuance.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:07.360Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "150fb60176bd6539d20fd41f1ebd331fe4e3fe4a65977b27bc4bbde99e885a2f",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "8f86214a18b7d21921b7afabc38c63dd419ebf824e42a82309bf95302216af41",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b254959d63208ffc95843111157e250384bcaf6a4fab712967b312a45f493e5a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

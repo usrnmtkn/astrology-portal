@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T03:47:39.150Z",
+  "status": "needs_review",
+  "serving": false,
+  "recordCount": 4,
+  "counts": {
+    "chiron": 1,
+    "lilith": 1,
+    "classical-quincunx": 1,
+    "node-axis": 1
+  },
+  "countFindings": [
+    {
+      "batch": "lilith",
+      "expected": 72,
+      "actual": 1
+    },
+    {
+      "batch": "chiron",
+      "expected": 66,
+      "actual": 1
+    },
+    {
+      "batch": "node-axis",
+      "expected": 60,
+      "actual": 1
+    },
+    {
+      "batch": "classical-quincunx",
+      "expected": 42,
+      "actual": 1
+    }
+  ],
+  "lintFailures": [],
+  "judgeRepairs": [
+    {
+      "id": "sky.saturn.sextile.nodes",
+      "score": 1,
+      "naturalnessScore": 1,
+      "naturalnessContractViolation": false,
+      "naturalnessContractIssues": [],
+      "weakestField": "aspect expression",
+      "why": "Several sentences rely on compressed abstractions that obscure the practical meaning and do not sound natural aloud."
+    }
+  ],
+  "repetition": {
+    "repeatedFiveGrams": [],
+    "repeatedOpenings": []
+  },
+  "settingSaturation": [],
+  "passed": false
+}

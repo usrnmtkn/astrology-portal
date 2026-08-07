@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:35:51.681Z",
+  "id": "sky.venus.quincunx.mars",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "venus-mars",
+    "path": "data/pairs/venus-mars.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.venus.quincunx.mars",
+    "planetA": "venus",
+    "planetB": "mars",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Mars",
+    "body": "Desire sets the table, then action reaches for the door. Under Venus quincunx Mars, attraction and momentum keep missing each other’s handoff, so every move calls for another small correction. A kiss cut short by a ringing phone, a cart filled and emptied twice, a creative burst spent fixing the wrong detail. We lean toward pleasure, connection, or beauty, then redirect the energy into pursuit, defense, or one more task.\n\nWe feel the mismatch as restless chemistry, with enough heat to start and no agreement on what the heat is for. Charm pushes too hard, initiative arrives after the mood has cooled, and decisions wobble between moving closer and getting on with it. Even money and pleasure catch this crooked timing, with an impulse followed by a quick recalculation. The desire is honest. The move still needs another take.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "Even money and pleasure catch this crooked timing, with an impulse followed by a quick recalculation.",
+    "why": "The draft is lived-first, concrete, collective, and accurately expresses repeated quincunx adjustment without turning explanatory. The final truth-and-catch lands cleanly.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:35:51.681Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "bd5ffcc0dc54777468a253bc0428adf85f6277609c9de0565384eb5799caecf2",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "8a31796f15eb537b3082f677c5717ec6dc9d4ede611a2ad2a1fd1fb5f4828835",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e3df5488ce7130abc3ff49d7a15cbe5db828459dd8162682dce4a988f2c3f8f7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.mars",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

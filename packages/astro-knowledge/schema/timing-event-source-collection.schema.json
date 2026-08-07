@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/timing-event-source-collection.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "kind", "sourceDocument", "sourceDocumentSha256", "generatedBy", "keyFormat",
+    "ownerApproval", "importScope", "serving", "voiceNeutral", "status", "exclusions",
+    "sourceRecords", "concreteMappings"
+  ],
+  "properties": {
+    "id": { "enum": ["timing-event-sources-v8-candidate", "timing-event-sources-v9"] },
+    "kind": { "const": "timing-event-source-collection" },
+    "sourceDocument": { "type": "string" },
+    "sourceDocumentSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "generatedBy": { "type": "string" },
+    "keyFormat": { "const": "dot-segments-with-underscore-normalized-phase" },
+    "ownerApproval": { "enum": ["approved_meaning_layer_only", "approved_meaning_layer_only_31_records"] },
+    "importScope": { "enum": ["currently-emitted-stations-active-passages-and-pass-neutral-ingresses", "calculated_non_serving_timing_families"] },
+    "serving": { "const": false },
+    "voiceNeutral": { "const": true },
+    "status": { "const": "REVIEWED" },
+    "exclusions": { "type": "array", "items": { "type": "string" } },
+    "sourceRecords": { "type": "array" },
+    "concreteMappings": { "type": "array" },
+    "approvedSourceRecordCount": { "type": "integer" },
+    "newlyApprovedSourceRecordCount": { "type": "integer" },
+    "pendingSourceRecordCount": { "type": "integer" }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:55.125Z",
+  "id": "sky.mars.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mars-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.opposition.nodes",
+    "planetA": "mars",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Mars opposite North Node",
+    "humanMoment": "A record label launches another ownership challenge over an old catalog just as its new artists need deposits to secure a first national tour.",
+    "developmentDetail": "Lawyers and longtime executives rally around recovering the masters, while booking agents watch venues release unconfirmed dates.",
+    "planetaryDynamic": "Mars supplies the legal push and appetite to win, while the North Node marks the tour as the direction where that effort could build on itself.",
+    "aspectMechanic": "The opposition places the executives contesting the old catalog across from the new artists trying to book the tour, so neither claim on the label's money and labor can be edited out of the outcome.",
+    "conditionalConsequence": "If the ownership challenge takes the deposits, the label can recover the masters and still lose the booking window for the artists meant to carry its next chapter.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mars supplies the legal push and appetite to win, while the North Node marks the tour as the direction where that effort could build on itself.",
+    "why": "The node axis is compressed to the North Node, but the old catalog clearly supplies the release-side contrast, so the mechanic remains accurate and specific.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:55.125Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "957487519c6d96513ab680d70eafcb166e6e5b65a491d2a42a2edbd3ae86f596",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "fbf899023b82453b076c4e6f227162c2c3f7ced332f4febfce76df867b1d10ac",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c8f4c49efc51b073bad1b9f43e70e4650c91807fb7a2d00bdcb77a33c15ce58e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

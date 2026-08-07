@@ -1,0 +1,818 @@
+{
+  "schemaVersion": 2,
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1",
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "formatExemplars": [
+    {
+      "id": "sky-placement-format-v4-mars-capricorn",
+      "planet": "mars",
+      "sign": "capricorn",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "voice_format_generation_evidence_only",
+      "article": {
+        "tagline": "The drive is back, and this time it wants proof, not promises.",
+        "hook": "Make the plan, then make it real. Mars governs the part of us that acts, pushes, and fights for what matters; in Capricorn, it stops waiting to feel ready and starts asking what all this effort is actually building. The work may be slow, but the aim gets sharper.",
+        "lived": "From {{transitStart}} to {{transitEnd}}, we may want extra proof that our time is going somewhere productive: the proposal revised until it holds, the budget faced without flinching, the difficult task handled before it grows teeth. Motivation looks less like a burst of feeling and more like returning to the daily work after the novelty has worn off. We may feel most alive when there is a clear finish line and a solid way to reach it.",
+        "turn": "Tunnel vision sets in when the mountain is all anyone can see. We push past the point where the effort serves the goal, and the grind quietly becomes the way we prove our worth. That is not ambition anymore - that is trying to earn rest we never take. The smart move is to cut the climb when the summit turns out to be just another place to keep climbing from.",
+        "moves": [
+          "We can choose one long-delayed practical task and give it a two-hour block with a defined finish.",
+          "We can write the next three steps for a goal that has been living only in our heads.",
+          "We can cancel one obligation that looks productive but only proves we are busy."
+        ]
+      }
+    },
+    {
+      "id": "sky-placement-format-v4-saturn-capricorn",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "voice_format_generation_evidence_only",
+      "article": {
+        "tagline": "Building something that lasts should not mean disappearing into the work.",
+        "hook": "Saturn in Capricorn proves that life is not a report card. Saturn handles limits, standards, and the kind of work that holds its value over time; in Capricorn, it forces us to build from the ground up instead of chasing quick wins. This transit turns ambition into a structure we can actually stand inside.",
+        "lived": "From {{transitStart}} until {{transitEnd}}, we may choose the training that takes longer, repair the budget instead of making excuses for overspending, or become the person who keeps a hard promise when nobody is watching. Work gets more serious because we can see what it could become if we stop treating every effort like a temporary experiment. The real shift is not doing more - it is building something sturdy enough to carry the life we are heading toward.",
+        "turn": "But competence can become a hiding place. The way one more task replaces the conversation, the way rest keeps getting postponed until the next milestone, the way the bar keeps rising so no achievement has time to feel like enough. If nobody can reach us until the work is done, the work is running our lives.",
+        "moves": [
+          "We can choose one long-term goal and give it a weekly appointment with a defined stopping point.",
+          "We can write down one responsibility carried alone, then ask a specific person to take a defined part of it.",
+          "We can leave work at the promised time once this week, even with more still left to do."
+        ]
+      }
+    },
+    {
+      "id": "sky-placement-format-v4-neptune-libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "voice_format_generation_evidence_only",
+      "article": {
+        "tagline": "Peace that depends on one person staying quiet is not peace.",
+        "hook": "A relationship can look calm while someone disappears inside it. Neptune blurs the edges between us, and in Libra it makes fairness, beauty, and mutual understanding feel like needs we cannot live without. This transit can make the ideal partnership, workplace, or handshake deal feel close enough to reach for.",
+        "lived": "Neptune stays in Libra from {{transitStart}} until {{transitEnd}}, giving ideas about fairness and relationship time to shape a generation. That long shift shows up in ordinary rooms: the meeting that keeps circling until nobody remembers the decision, the shared project polished past usefulness, the couple making every plan together because separate wants feel rude. The gift is real: more imagination in how we work, love, and make room for another person.",
+        "turn": "The blur arrives when keeping everyone comfortable becomes more important than telling the truth. We edit our needs into something harmless, agree to terms we do not understand, and call it being the bigger person when one of us is simply the only one who adjusts. A relationship that needs someone's silence to stay peaceful is not peaceful.",
+        "moves": [
+          "We can name one decision we have been softening and state the actual preference in a single sentence.",
+          "Before calling a compromise fair, we can ask who benefits if things stay exactly as they are.",
+          "We can make one shared space more beautiful with a choice everyone involved explicitly agrees on."
+        ]
+      }
+    },
+    {
+      "id": "sky-placement-format-v4-venus-aries",
+      "planet": "venus",
+      "sign": "aries",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "voice_format_generation_evidence_only",
+      "article": {
+        "tagline": "This is the season where wanting stops waiting for permission.",
+        "hook": "Attraction should not require a translator. Venus governs what we love and what we reach for; in Aries, it quits circling the subject and goes straight for the spark. This transit makes desire feel less like a private theory and more like a reason to act.",
+        "lived": "From {{transitStart}} to {{transitEnd}}, we may wear the thing we usually save for a better invitation, buy the ticket before the doubt has finished talking, or be the one who names the flirtation in the room. Affection gets bolder and taste gets cleaner: less collecting, more choosing. A small risk can feel strangely life-giving when it lets us move toward what we actually like.",
+        "turn": "Chasing the thrill can make attraction feel like something to win. We may pursue the person who resists us, lose interest once they are available, or keep score over every difference in taste. The spark is real. Chasing it to prove we can catch it is how we burn through it.",
+        "moves": [
+          "We can ask someone on a date with a real plan, not a vague invitation.",
+          "We can wear or make one thing that feels too bold for our usual taste.",
+          "Before a quick purchase, we can name whether the pull is the object or the rush of choosing it."
+        ]
+      }
+    }
+  ],
+  "formatExemplarStatus": "owner_approved_voice_format_evidence",
+  "ownerReferenceArticles": [
+    {
+      "id": "sky-placement-jupiter-libra-owner-merged-candidate-v1",
+      "planet": "jupiter",
+      "sign": "libra",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "owner_reference_fallback_and_generation_evidence_for_sky_placement",
+      "article": {
+        "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Jupiter enters Libra on {{entryDate}}. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Libra is the sign of balance, connection, and how we get along with each other. Together they make this a year where growth comes through who we meet and what becomes possible together: a friend's introduction leads to a creative collaboration, and the finished work reaches an audience neither person could have found alone. Jupiter spends about a year in each sign and takes about 12 years to visit all twelve.",
+        "tension": "Jupiter makes things bigger, and a few months in, the biggest thing is the list of what we have agreed to. Refusing feels rude, so we keep saying yes: another meeting, more of the work, another \"it's fine\" that is not true. Every extra request, correction, and follow-up starts going to the person who keeps saying yes. When a real choice comes up, we wait to hear what everyone else wants before saying what we want, and the decision goes to whoever speaks first. Somewhere along the way, being agreeable starts doing the work that honesty should be doing. The resentment stays quiet, because every one of these plans is something we technically agreed to.",
+        "development": "Jupiter last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and whatever was learned about fairness then gets its next round now. Just because nobody has complained does not mean an arrangement is fair. This year it helps to say what changed early: that Saturday does not work, that the effort stopped being even, that one voice keeps making the decisions. Some connections will get closer once that is said plainly. Others end when the person benefiting from the old agreement is asked to do more.",
+        "close": "Before {{exitDate}}, we can quit one recurring commitment we have been keeping only because saying no feels rude.",
+        "try_this": [
+          "We can answer one pending invitation with a clear yes or no instead of another maybe.",
+          "We can say which day works for us before asking what everyone else prefers.",
+          "We can stop sending reminders for a responsibility that belongs to someone else."
+        ]
+      }
+    }
+  ],
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1"
+  },
+  "verifiedAstrology": {
+    "planetFunction": "Mars describes action, drive, heat, conflict, courage, desire, and the instinct to move toward what is wanted. It shows how someone fights, initiates, protects, reacts, and uses energy when something needs to happen.",
+    "signExpression": "Your actions are characterized by your desire for balance and harmony. You are motivated to act fairly, and you might find yourself in the role of a mediator. You may also have a knack for artistic pursuits.",
+    "combinedMeaning": "With Mars in Libra, drive moves through negotiation, partnership, and social awareness. Mars is in detriment here, so direct action may get delayed by the need to keep balance.",
+    "collectiveGift": "Mars in Libra: action is relational, strategic, and shaped by fairness.",
+    "observableShadowBehaviors": [
+      "Indecision",
+      "approval-seeking",
+      "conflict avoidance that becomes resentment"
+    ],
+    "timing": "Mars takes close to two years to move through all twelve signs, with retrograde periods that slow or redirect momentum. Its sign describes the style of action; its house shows where pressure, effort, and courage become active.",
+    "supportedDomains": [],
+    "unsupportedDomainWarnings": [
+      "Do not introduce a domain or consequence that is absent from the verified sources."
+    ],
+    "sourceRegisterBoundary": "The source passages below may use natal or second-person register. Extract their astrology only. Never reproduce their person, address the reader, or treat natal wording as Current Sky voice evidence.",
+    "scenarioPolicy": "The writer may create one original lived sequence by combining the governed planet and sign meanings inside the supported domains. The scene may be invented; the astrology may not.",
+    "sourcePassages": [
+      {
+        "sourcePath": "packages/astro-knowledge/data/placements/sign/mars-libra.json",
+        "status": "REVIEWED",
+        "register": "source_meaning_only_may_be_natal",
+        "personBoundary": "Do not reproduce second-person or natal address from this source.",
+        "text": "With Mars in Libra, drive moves through negotiation, partnership, and social awareness. Mars is in detriment here, so direct action may get delayed by the need to keep balance."
+      },
+      {
+        "sourcePath": "packages/astro-knowledge/data/planetary/mars.json",
+        "status": "REVIEWED",
+        "register": "source_meaning_only_may_be_natal",
+        "personBoundary": "Do not reproduce second-person or natal address from this source.",
+        "text": "Mars describes action, drive, heat, conflict, courage, desire, and the instinct to move toward what is wanted. It shows how someone fights, initiates, protects, reacts, and uses energy when something needs to happen. Mars takes close to two years to move through all twelve signs, with retrograde periods that slow or redirect momentum. Its sign describes the style of action; its house shows where pressure, effort, and courage become active. Your actions are characterized by your desire for balance and harmony. You are motivated to act fairly, and you might find yourself in the role of a mediator. You may also have a knack for artistic pursuits."
+      }
+    ],
+    "validation": {
+      "complete": true,
+      "failures": []
+    }
+  },
+  "surfaceRequirements": {
+    "contractId": "tldr-astro.voice.sky-placement.v5",
+    "runtimeContractId": "sky-placement-continuous-v2",
+    "compiledPolicySource": "voice/tldr-astro/marie-satori-editorial-decisions.yaml",
+    "compiledPolicySha256": "cee3782652a11e24e4d188e31c29ae7eb1f2f41be715deafd1f8462b1d667e16",
+    "universalHardConstraints": [
+      {
+        "id": "ED-001",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Use ordinary, current language that makes literal sense when read aloud."
+      },
+      {
+        "id": "ED-002",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Name the pressure, what someone does, and what changes because of it in one recognizable sequence."
+      },
+      {
+        "id": "ED-003",
+        "scope": {
+          "surfaces": [
+            "current-sky"
+          ]
+        },
+        "rule": "Current Sky never uses you, your, yours, yourself, or yourselves; natal and transit-to-natal may use second person."
+      },
+      {
+        "id": "ED-004",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Do not use em dashes."
+      },
+      {
+        "id": "CF-001",
+        "scope": {
+          "prohibited": [
+            "sky-placement"
+          ],
+          "conditional": [
+            "all-other-surfaces"
+          ]
+        },
+        "rule": "Do not use people in Sky Placement. On other surfaces, use it only when the collective itself is the real subject and a more exact subject would be less accurate."
+      },
+      {
+        "id": "CF-013",
+        "scope": {
+          "surfaces": [
+            "all-generated-copy"
+          ]
+        },
+        "rule": "Person is allowed. Prohibit repetitive generic phrases such as one person when a more specific role, action, or subject is available."
+      },
+      {
+        "id": "CF-014",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Looks good on paper is allowed as an ordinary idiom. Other uses of on paper require an actual written document; administrative put the plan on paper phrasing is prohibited."
+      },
+      {
+        "id": "CF-004",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Room is allowed for a literal physical room. Prohibit stock audience or hierarchy phrases such as the loudest person in the room or the smartest voice in the room."
+      },
+      {
+        "id": "CF-005",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Reserve harm and self-harm for literal harm. Do not substitute self-harm for broader language; otherwise name the specific behavior, loss, danger, or consequence."
+      },
+      {
+        "id": "CF-015",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Steady is allowed for observable effort, pace, support, light, or reliability. Prohibit it only as vague energy language or an empty positive adjective."
+      },
+      {
+        "id": "CF-002",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ]
+        },
+        "rule": "Perform, performed, and performance are allowed only for literal acting, music, presentations, or measurable job performance. Prohibit figurative uses about identity, normalcy, worth, emotion, belonging, or social behavior; Leo alone is not an exception."
+      },
+      {
+        "id": "CF-003",
+        "scope": {
+          "surfaces": [
+            "all-generated-copy"
+          ],
+          "literal_exceptions": [
+            "an actual physical object is tilted"
+          ]
+        },
+        "rule": "Do not use tilt or tilts as a figurative substitute for change. Literal physical tilting is allowed."
+      },
+      {
+        "id": "ED-005",
+        "scope": {
+          "surfaces": [
+            "all-editorial-copy"
+          ]
+        },
+        "rule": "When the behavior and cost are clear, stop; delete a following slogan, metaphor, reassurance, or second conclusion."
+      },
+      {
+        "id": "ED-006",
+        "scope": {
+          "surfaces": [
+            "all-editorial-copy"
+          ]
+        },
+        "rule": "Do not turn ordinary events into institutional, advocacy, therapy-workbook, or corporate-operations language unless the actual subject requires it."
+      },
+      {
+        "id": "ED-007",
+        "scope": {
+          "surfaces": [
+            "all-reader-copy"
+          ],
+          "literal_exceptions": [
+            "physical mail is part of the source or scene"
+          ]
+        },
+        "rule": "Use message, reply, response, or what they were told instead of letter or formal technical delivery terms unless physical mail matters."
+      },
+      {
+        "id": "CF-016",
+        "scope": {
+          "surfaces": [
+            "all-editorial-copy"
+          ]
+        },
+        "rule": "Chani-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not."
+      },
+      {
+        "id": "CF-007",
+        "scope": {
+          "surfaces": [
+            "collective-astrology",
+            "outer-planet-copy"
+          ]
+        },
+        "rule": "Collective astrology does not default to campaigns, institutions, policy, organizing, public harm, or collective healing. Those subjects require direct astrological and owner-source support."
+      },
+      {
+        "id": "ED-008",
+        "scope": {
+          "surfaces": [
+            "all-astrology-copy"
+          ]
+        },
+        "rule": "Do not infer a life domain from a sign alone. Taurus does not automatically mean work or career."
+      },
+      {
+        "id": "ED-016",
+        "scope": {
+          "surfaces": [
+            "all-generated-astrology-copy"
+          ]
+        },
+        "rule": "Reject the stock gift-to-problem keyword flip: The gift becomes the problem when [positive keyword] turns into [negative keyword]. Show the observed sequence instead."
+      },
+      {
+        "id": "ED-017",
+        "scope": {
+          "surfaces": [
+            "ordinary-shared-decisions"
+          ]
+        },
+        "rule": "For ordinary shared decisions, reject workshop, mediation, negotiation, and facilitation language unless the literal subject requires it. Name what someone wants, avoids saying, delays, and causes instead."
+      },
+      {
+        "id": "ED-018",
+        "scope": {
+          "surfaces": [
+            "sky-placement"
+          ]
+        },
+        "rule": "Do not build a Sky Placement article around a low-stakes social plan merely because a sign suggests partnership. A social plan must expose a recognizable pressure with a meaningful consequence and cannot stage a perfectly balanced solution to prove the astrology."
+      },
+      {
+        "id": "ED-019",
+        "scope": {
+          "surfaces": [
+            "sky-placement"
+          ]
+        },
+        "rule": "Reject generic fairness conclusions that explain a virtue instead of ending on the specific behavior and cost established by the article."
+      },
+      {
+        "id": "ED-022",
+        "scope": {
+          "surfaces": [
+            "sky-placement"
+          ]
+        },
+        "rule": "Reject sign-cliche stock scenes when they govern the central opening, tension, and development sequence. Isolated practical moves are exempt unless the central scene itself is a scheduling or dinner scene. The scene must follow from this placement's combined meaning at this transit's scale, and a year-long or slower transit cannot be reduced to one evening's logistics."
+      },
+      {
+        "id": "ED-023",
+        "scope": {
+          "surfaces": [
+            "sky-placement-moves"
+          ]
+        },
+        "rule": "Moves must sound like actions someone would actually say they took, not workshop, facilitation, negotiation, or project-management instructions. Until an exact owner-approved moves exemplar exists, the moves section is the highest-risk section and any listed facilitation term there is a score-1 failure."
+      },
+      {
+        "id": "ED-026",
+        "scope": {
+          "surfaces": [
+            "sky-placement"
+          ]
+        },
+        "rule": "A qualitative, non-numeric subperiod may trace to a reviewed residency fact only when it cannot exceed that residency. Numeric or date-like subperiods still require an explicit engine fact or render token."
+      },
+      {
+        "id": "CF-018",
+        "scope": {
+          "surfaces": [
+            "all-editorial-copy"
+          ]
+        },
+        "rule": "Do not use leak, leaks, leaked, or leaking in Marie Satori editorial copy. Name the observable action or consequence instead."
+      },
+      {
+        "id": "ED-010",
+        "scope": {
+          "surfaces": [
+            "app",
+            "sky-editorial"
+          ]
+        },
+        "rule": "Display time in the user's local timezone; computed dates, degrees, motion, and event times come from the engine rather than generated prose."
+      }
+    ],
+    "person": "collective-current-sky",
+    "secondPersonAllowed": false,
+    "generatedSlots": [
+      "opening",
+      "tension",
+      "development",
+      "close",
+      "try_this"
+    ],
+    "engineOwnedSlots": [
+      "headline",
+      "fact_line",
+      "aspect_insert",
+      "entryDate",
+      "exitDate",
+      "priorSign",
+      "priorSignEntryDate",
+      "priorSignExitDate",
+      "previousResidencyEntryDate",
+      "previousResidencyExitDate"
+    ],
+    "slotRequirements": {
+      "opening": "One paragraph showing recognizable ordinary evidence. Include the literal {{entryDate}} slot once. Do not define the planet or sign generically.",
+      "tension": "One paragraph naming one central tension and showing how the same useful behavior creates a cost when pushed too far.",
+      "development": "One practical paragraph that continues the same tension through specific choices. Do not introduce a new theme.",
+      "close": "One sentence naming one realistic choice. Include the literal {{exitDate}} slot once. No slogan, reassurance, or second conclusion.",
+      "try_this": "Two actions by default, or three only when the third adds something different. Each action must be possible this week and specific to the placement."
+    },
+    "assembly": {
+      "factLine": "{{entryDate}} to {{exitDate}}",
+      "aspectInsert": "{{aspectInsert}}",
+      "bodyOrder": [
+        "opening",
+        "tension",
+        "development",
+        "aspect_insert",
+        "close",
+        "try_this"
+      ],
+      "targetWordsWithoutAspect": "220-350"
+    },
+    "requestedBeat": "full_article",
+    "emphasisBeat": "turn",
+    "beatRequirement": "Follow the complete Sky Placement article contract.",
+    "pace": "about six or seven weeks"
+  },
+  "voiceDevices": {
+    "maxPerArticle": 2,
+    "selected": [
+      {
+        "id": "pattern-naming",
+        "rule": "The article may coin a short, plain-words name for the psychological pattern it describes.",
+        "example": "the usefulness addiction."
+      },
+      {
+        "id": "archetype-collision",
+        "rule": "The opening may show the meeting of two archetypes in one balanced sentence.",
+        "example": "The sign that multiplies meets the planet that refines. Gemini speaks in options; Saturn speaks in absolutes."
+      }
+    ]
+  },
+  "movesExemplar": {
+    "id": "sky-placement-format-v4-saturn-capricorn:moves",
+    "source": "voice/tldr-astro/marie-satori-writer/sky-placement-format-exemplars-v4.json",
+    "status": "owner_approved_voice_format_evidence",
+    "ownerApproved": true,
+    "generationEvidenceAuthorized": true,
+    "items": [
+      "We can choose one long-term goal and give it a weekly appointment with a defined stopping point.",
+      "We can write down one responsibility carried alone, then ask a specific person to take a defined part of it.",
+      "We can leave work at the promised time once this week, even with more still left to do."
+    ],
+    "rule": "Use this exact list as a register and movement exemplar for practical actions. Do not treat it as production copy for another placement."
+  },
+  "task": {
+    "exactInstruction": "Write one complete continuous Current Sky fallback article for Mars in Libra. Create one recognizable lived sequence from the verified astrology. Return only opening, tension, development, close, and try_this.",
+    "inputText": ""
+  },
+  "ownerPassages": [
+    {
+      "sourceId": "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+      "sourceArticleId": "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md",
+      "articleBeat": "body",
+      "assignedFunction": null,
+      "paragraphStructure": "narrative development",
+      "affinity": "same_sign",
+      "authorityClass": "owner_authored_final",
+      "text": "As we move into Libra season from this balance point, remember: the scales are supposed to move. That's how they measure actual weight, actual worth, actual balance. Scales that never tip aren't balanced - they're broken.",
+      "matchesRequestedOperation": false
+    },
+    {
+      "sourceId": "owner-article:libra-new-moon:p004:window-4-4",
+      "sourceArticleId": "owner-article:libra-new-moon:p004:window-4-4",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-new-moon.md",
+      "articleBeat": "body",
+      "assignedFunction": null,
+      "paragraphStructure": "narrative development",
+      "affinity": "same_sign",
+      "authorityClass": "owner_authored_final",
+      "text": "Success isn't always about what we build. Sometimes it's about what we stop tearing down within ourselves. Achievement isn't always harmony. Sometimes it's the courage to let things fall apart, so we can begin again.",
+      "matchesRequestedOperation": false
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p057:window-3-2",
+      "sourceArticleId": "owner-article:mars-direct-in-cancer:p057:window-3-2",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "articleBeat": "body",
+      "assignedFunction": null,
+      "paragraphStructure": "contrast development",
+      "affinity": "same_planet",
+      "authorityClass": "owner_authored_final",
+      "text": "At first, it may have felt like just another push to keep going, to keep proving, to keep grinding. But then, something shifted.",
+      "matchesRequestedOperation": false
+    },
+    {
+      "sourceId": "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "sourceArticleId": "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+      "articleBeat": "body",
+      "assignedFunction": null,
+      "paragraphStructure": "narrative development",
+      "affinity": "archetypal_adjacent",
+      "authorityClass": "owner_authored_final",
+      "text": "If job loss or work instability is part of what's happening, the anxiety about money makes rest almost impossible. This Full Moon illuminates the cost of running on stress hormones and calling it productivity.",
+      "matchesRequestedOperation": true
+    },
+    {
+      "sourceId": "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "sourceArticleId": "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/adjacent-formats/pisces-total-lunar-eclipse.md",
+      "articleBeat": "body",
+      "assignedFunction": null,
+      "paragraphStructure": "practical moves",
+      "affinity": "archetypal_adjacent",
+      "authorityClass": "owner_authored_final",
+      "text": "Set a two-line agenda before a meeting. Then create one honest boundary that protects recovery time. Block a half hour for a walk. Say no to a request that costs more than it gives.",
+      "matchesRequestedOperation": true
+    },
+    {
+      "sourceId": "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "sourceArticleId": "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/cancer-new-moon-2025.md",
+      "articleBeat": "body",
+      "assignedFunction": null,
+      "paragraphStructure": "practical moves",
+      "affinity": "archetypal_adjacent",
+      "authorityClass": "owner_authored_final",
+      "text": "It reminds us that emotional honesty is the first form of resistance, and that safety cannot exist where truth is unwelcome. The systems outside are collapsing, but what we rebuild within ourselves now will shape the world we inherit. Choose with care. Choose with courage.",
+      "matchesRequestedOperation": false
+    }
+  ],
+  "preferredVocabulary": {
+    "id": "owner-vocabulary-bank-v1:placement-relevant-v1",
+    "sourceBankId": "owner-vocabulary-bank-v1",
+    "authority": "owner-first",
+    "use": "optional_menu_not_quota",
+    "selection": {
+      "surface": "planet-article",
+      "planet": "mars",
+      "sign": "libra",
+      "maxWords": 10,
+      "maxPhrases": 3
+    },
+    "words": [
+      {
+        "term": "balance",
+        "lane": "owner_surface",
+        "priority": 4,
+        "frequency": 56,
+        "articleCoverage": 6,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 2,
+          "sameSignSeasonOwnerCorpus": 40,
+          "sameSignOwnerCorpus": 41,
+          "samePlanetOwnerCorpus": 1,
+          "selectedOwnerPassages": 2
+        },
+        "score": 452
+      },
+      {
+        "term": "need",
+        "lane": "owner_core",
+        "priority": 5,
+        "frequency": 445,
+        "articleCoverage": 46,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 1,
+          "sameSignSeasonOwnerCorpus": 21,
+          "sameSignOwnerCorpus": 44,
+          "samePlanetOwnerCorpus": 4,
+          "selectedOwnerPassages": 0
+        },
+        "score": 353
+      },
+      {
+        "term": "action",
+        "lane": "owner_observed_sd_overlap",
+        "priority": 3,
+        "frequency": 0,
+        "articleCoverage": 0,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 3,
+          "sameSignSeasonOwnerCorpus": 1,
+          "sameSignOwnerCorpus": 2,
+          "samePlanetOwnerCorpus": 3,
+          "selectedOwnerPassages": 0
+        },
+        "score": 330
+      },
+      {
+        "term": "forward",
+        "lane": "owner_observed_sd_overlap",
+        "priority": 3,
+        "frequency": 0,
+        "articleCoverage": 0,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 0,
+          "sameSignSeasonOwnerCorpus": 12,
+          "sameSignOwnerCorpus": 24,
+          "samePlanetOwnerCorpus": 11,
+          "selectedOwnerPassages": 0
+        },
+        "score": 265
+      },
+      {
+        "term": "emotional",
+        "lane": "owner_core",
+        "priority": 5,
+        "frequency": 486,
+        "articleCoverage": 47,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 0,
+          "sameSignSeasonOwnerCorpus": 35,
+          "sameSignOwnerCorpus": 65,
+          "samePlanetOwnerCorpus": 7,
+          "selectedOwnerPassages": 1
+        },
+        "score": 262
+      },
+      {
+        "term": "relationships",
+        "lane": "owner_core",
+        "priority": 5,
+        "frequency": 353,
+        "articleCoverage": 47,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 0,
+          "sameSignSeasonOwnerCorpus": 33,
+          "sameSignOwnerCorpus": 60,
+          "samePlanetOwnerCorpus": 7,
+          "selectedOwnerPassages": 0
+        },
+        "score": 259
+      },
+      {
+        "term": "rather",
+        "lane": "owner_observed_ac_overlap",
+        "priority": 3,
+        "frequency": 0,
+        "articleCoverage": 0,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 0,
+          "sameSignSeasonOwnerCorpus": 17,
+          "sameSignOwnerCorpus": 27,
+          "samePlanetOwnerCorpus": 8,
+          "selectedOwnerPassages": 0
+        },
+        "score": 259
+      },
+      {
+        "term": "work",
+        "lane": "owner_core",
+        "priority": 5,
+        "frequency": 350,
+        "articleCoverage": 46,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 0,
+          "sameSignSeasonOwnerCorpus": 12,
+          "sameSignOwnerCorpus": 27,
+          "samePlanetOwnerCorpus": 5,
+          "selectedOwnerPassages": 1
+        },
+        "score": 258
+      },
+      {
+        "term": "self",
+        "lane": "owner_core",
+        "priority": 5,
+        "frequency": 388,
+        "articleCoverage": 46,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 0,
+          "sameSignSeasonOwnerCorpus": 12,
+          "sameSignOwnerCorpus": 26,
+          "samePlanetOwnerCorpus": 6,
+          "selectedOwnerPassages": 0
+        },
+        "score": 257
+      },
+      {
+        "term": "instead",
+        "lane": "owner_observed_ac_overlap",
+        "priority": 3,
+        "frequency": 0,
+        "articleCoverage": 0,
+        "relevance": {
+          "supportedDomain": 0,
+          "verifiedAstrology": 0,
+          "sameSignSeasonOwnerCorpus": 15,
+          "sameSignOwnerCorpus": 27,
+          "samePlanetOwnerCorpus": 6,
+          "selectedOwnerPassages": 0
+        },
+        "score": 255
+      }
+    ],
+    "phrases": [
+      {
+        "phrase": "keeping the peace",
+        "lane": "owner_signature_phrase",
+        "frequency": 11,
+        "articleCoverage": 8,
+        "relevance": {
+          "sameSignSeasonOwnerCorpus": 3,
+          "sameSignOwnerCorpus": 3,
+          "samePlanetOwnerCorpus": 0,
+          "selectedOwnerPassages": 0,
+          "astrologyTokenHits": 1
+        },
+        "score": 325
+      },
+      {
+        "phrase": "professional life",
+        "lane": "owner_signature_phrase",
+        "frequency": 17,
+        "articleCoverage": 12,
+        "relevance": {
+          "sameSignSeasonOwnerCorpus": 2,
+          "sameSignOwnerCorpus": 3,
+          "samePlanetOwnerCorpus": 0,
+          "selectedOwnerPassages": 0,
+          "astrologyTokenHits": 0
+        },
+        "score": 215
+      },
+      {
+        "phrase": "social circles",
+        "lane": "owner_signature_phrase",
+        "frequency": 13,
+        "articleCoverage": 11,
+        "relevance": {
+          "sameSignSeasonOwnerCorpus": 1,
+          "sameSignOwnerCorpus": 2,
+          "samePlanetOwnerCorpus": 2,
+          "selectedOwnerPassages": 0,
+          "astrologyTokenHits": 1
+        },
+        "score": 128
+      }
+    ]
+  },
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "cycle-line",
+        "rule": "In the meaning beat, use one or two sentences teaching the planet's rhythm. Every number must come from planet-cycle-facts.json. Do not write this slot for the Moon.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 2 years",
+          "typicalSignStay": "roughly 6 to 7 weeks per sign",
+          "variabilityNote": "A retrograde can extend one sign residency to about 7 months."
+        }
+      }
+    ],
+    "inactive": [
+      {
+        "id": "prior-sign-handoff",
+        "reason": "required backing fact was not supplied"
+      },
+      {
+        "id": "concurrent-events",
+        "reason": "eventsDuringTransit was empty"
+      },
+      {
+        "id": "cycle-location",
+        "reason": "previous residency entry and exit dates were not both supplied"
+      }
+    ]
+  },
+  "writerPrompt": "You are writing one original TLDR Astro Current Sky fallback article.\n\nRead the attached owner-authored Marie Satori passages before writing. They were selected by placement affinity and establish sentence register and paragraph movement. The verified astrology establishes the placement's meaning and limits. Some verified astrology source rows use natal or second-person register. Extract their meaning only. Never reproduce their person, address the reader, or use natal wording as Current Sky voice evidence.\n\nCreate one recognizable lived sequence from the verified astrology. Use ordinary current language. Name the pressure, what someone does, and what changes because of it. The scene may be invented; the astrology may not. Do not use a stock sign scene. The scene must follow from this planet-sign combination at the transit's actual scale.\n\nWrite one continuous article for the supplied fallback contract. The app supplies the headline, fact line, dates, and any approved aspect insert. Keep one central tension across every paragraph. Opening shows ordinary evidence. Tension names how the same strength creates a cost. Development continues that exact problem through practical choices. Close names one realistic choice before {{exitDate}}. Try this contains two or three specific actions that do not repeat the close. Write actions someone would actually say they took, not facilitation, negotiation, or project-management instructions.\n\nPreserve the supplied surface contract, facts, output fields, and applicable hard constraints. Do not copy or analyze the owner passages. Do not return options, commentary, a source map, or a style explanation.\n\nReturn only strict JSON with exactly these keys: opening, tension, development, close, try_this. Use the literal {{entryDate}} in opening and {{exitDate}} in close. The try_this value must be an array of two or three one-sentence strings. Stop after the final action.\n\nUse collective language. Do not use people, you, your, yours, yourself, or yourselves. Use we, someone, a named group, or the actual subject."
+}

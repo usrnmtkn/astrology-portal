@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:15.493Z",
+  "id": "sky.jupiter.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "jupiter-uranus",
+    "path": "data/pairs/jupiter-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.quincunx.uranus",
+    "planetA": "jupiter",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Jupiter quincunx Uranus",
+    "humanMoment": "A public lecture series adopts an experimental format, drawing larger crowds while leaving longtime attendees unsure how to follow it.",
+    "developmentDetail": "Organizers keep changing session lengths and program notes as each new feature attracts curiosity but creates a different point of confusion.",
+    "planetaryDynamic": "Jupiter expands the series and its range of ideas, while Uranus disrupts the format with unconventional methods.",
+    "aspectMechanic": "The quincunx keeps wider access and experimental delivery from coordinating, so session lengths and program notes change whenever the growing crowd meets another unfamiliar feature.",
+    "conditionalConsequence": "If the format is framed clearly, attendance can hold, but if the confusion persists, the series may be dismissed as eccentric regardless of the ideas' merit.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Jupiter expands the series and its range of ideas, while Uranus disrupts the format with unconventional methods.",
+    "why": "The planetary distinction is accurate but slightly more explanatory than lived; the surrounding fields supply strong concrete detail, repeated quincunx adjustment, and a scene-based conditional outcome.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:15.492Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9eaf5295e3ed3f070db703be4eeeb1c035e5f6b03ae4d515734a5118c02bbfef",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5448285efa81aa8e786eee5bc7869dc12a7109aba8eda102bdcb901613a98c95",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "56a4958a4f293f57e1c46625522a444028a0723950cd2ebd9f41545077e03bcf"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

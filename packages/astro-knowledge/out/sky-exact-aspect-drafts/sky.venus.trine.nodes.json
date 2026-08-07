@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:53.278Z",
+  "id": "sky.venus.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "venus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.venus.trine.nodes",
+    "planetA": "venus",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Venus trine North Node",
+    "humanMoment": "A farmers' market receives an affordable lease inside a busy transit concourse just as its former square becomes available again.",
+    "developmentDetail": "Vendors see reliable foot traffic at the concourse, while longtime customers promise to return if the stalls move back.",
+    "planetaryDynamic": "Venus supplies the appeal, loyalty, and economic value around both offers, while the North Node marks the concourse connection as the developing path and leaves the old square's historical pull to the other end of the nodal axis.",
+    "aspectMechanic": "Under the trine, the concourse lease can align attraction and forward movement with little resistance, helping the relocation work or letting weak terms carry the vendors farther before anyone questions them.",
+    "conditionalConsequence": "If the concourse traffic becomes steady sales, the market gains a permanent home without depending on nostalgia for the old square.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Venus supplies the appeal, loyalty, and economic value around both offers, while the North Node marks the concourse connection as the developing path and leaves the old square's historical pull to the other end of the nodal axis.",
+    "why": "The nodal distinction is slightly technical, but it remains accurate, specific to the scene, and avoids treating either direction as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:53.277Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "f9fdb25d56fce36ed14b8c8b62f0e71d2c3c069c0ef4d8e86fdaf1f7401e7c9c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "748ec53acbaf3a55c160026f0a241c17c291aac303a40445f0028e73570382e4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "1952a0b4eebcff58307470729ade4a12c1c8648bbbeb1ecd08b99aebaa991f77"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

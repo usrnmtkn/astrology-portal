@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:56.439Z",
+  "id": "sky.neptune.quincunx.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "neptune-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.quincunx.nodes",
+    "planetA": "neptune",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Neptune quincunx North Node",
+    "humanMoment": "A community hospice opens a weekly respite room after local caregivers rally around the need, while eligibility and staffing remain unsettled.",
+    "developmentDetail": "The first sessions fill quickly, but late cancellations and conflicting intake decisions expose what the program has not yet defined.",
+    "planetaryDynamic": "Neptune supplies the compassionate vision and lingering uncertainty, while the North Node presses for a direction that caregivers can recognize and follow.",
+    "aspectMechanic": "The quincunx keeps the respite room changing its intake process, staffing, and session structure because the vision and the workable route answer different needs.",
+    "conditionalConsequence": "If completed sessions shape the next round of intake and staffing, the program can become clearer without claiming that every uncertainty is resolved.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx keeps the respite room changing its intake process, staffing, and session structure because the vision and the workable route answer different needs.",
+    "why": "The mechanic is somewhat operational in tone, but it clearly shows repeated adjustment between Neptune’s vision and the Node’s readable direction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:56.439Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "f65b8fcfe4073574d9fab3f9b921843ba1d887beedbd1626b027e4f7139f07e5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5cb8bf677db71c6dddb24eb158838c69638f15780f1d3c83ccecd275fc48f0ef",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "349b2d054e956f5f63b40b7e84e805536fd91c17c4ecde3e73de366fef3e7443"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

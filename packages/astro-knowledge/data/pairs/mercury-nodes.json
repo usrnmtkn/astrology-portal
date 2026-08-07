@@ -1,0 +1,24 @@
+{
+  "id": "mercury-nodes",
+  "planetA": "mercury",
+  "planetB": "nodes",
+  "traditional": "The day's conversations meet the chapter's; some subjects belong to the past, one belongs to the path.",
+  "modern": {
+    "blend": "The question that keeps arriving from different mouths; the chapter is speaking.",
+    "harmonious": "The introduction or idea that belongs to the future arrives through an ordinary channel.",
+    "hard": "The catch-up call that only rehearses the past; the pitch aimed at a closed door.",
+    "business": "Take the conversation that advances the direction; archive the ones that only recap."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "The question that keeps arriving from different mouths; the chapter is speaking.",
+  "harmonious": "The introduction or idea that belongs to the future arrives through an ordinary channel.",
+  "hard": "The catch-up call that only rehearses the past; the pitch aimed at a closed door.",
+  "business": "Take the conversation that advances the direction; archive the ones that only recap."
+}

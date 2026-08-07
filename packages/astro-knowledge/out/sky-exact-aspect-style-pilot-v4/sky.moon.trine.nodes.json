@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:41:28.659Z",
+  "id": "sky.moon.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "moon-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.moon.trine.nodes",
+    "planetA": "moon",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Moon trine North Node",
+    "body": "A new direction opens, and our first impulse is to make it feel like the life we already know. With Moon trine North Node, we can say yes quickly, rearrange the evening, send the application, or take the unfamiliar route without spending hours fighting ourselves. But after a hard day, the archived thread gets reopened, the old routine takes over, and a chapter that ended starts looking like shelter. Because the choice comes so naturally, we may travel farther with it before asking whether it is actually forward.\n\nSometimes the familiar gives us enough calm to stay present in new territory: the usual breakfast before a first day, the same playlist on an unknown drive, one small ritual that keeps us from backing out. Other times, comfort quietly chooses the destination, and we mistake relief for confirmation. Our mood can approve a choice faster than experience can test it, especially when stress has us reaching for what once worked. New does not always feel right on arrival; discomfort may simply mean we have stopped repeating ourselves.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "opening",
+    "weakest": "A new direction opens, and our first impulse is to make it feel like the life we already know.",
+    "why": "The opening is slightly abstract, but it establishes the pair-specific tension immediately and the concrete details that follow give it strong lived movement.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:41:28.659Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "ac1e050bf9de55c816581c6191f653712babe12da56742b2e06b7ea65689ccad",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "fca5c7cb016a80f4b936c2c4f03b550f02d0cc776dda7b2c124bf17c883b6231",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6075e9fd085fc6d100050aa086f3435c056a7ba93aa5d348c573d56b5f1b1624"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -170,7 +170,7 @@ assert.match(
 );
 assert.match(
   renderedParts(friendBond),
-  /Lilith in Sagittarius is trine Chris's Ascendant through August 1, activating the connection it makes with your Ascendant\.$/u
+  /Lilith in Sagittarius is trine Chris's Ascendant until August 1, activating the connection it makes with your Ascendant\.$/u
 );
 assert.doesNotMatch(renderedParts(friendBond), /That line is one of|How you come across meets/u);
 
@@ -202,7 +202,7 @@ const friendLilithAscendant = transitSynastryFallbackRendererV3.renderTransitAsp
   window: "Until August 1"
 });
 assert.match(renderedParts(friendLilithAscendant), /^Their first impressions, the style they lead with, and how they meet the world drop the polite filter/u);
-assert.match(renderedParts(friendLilithAscendant), /Lilith in Sagittarius is trining Chris's natal Ascendant through August 1\.$/u);
+assert.match(renderedParts(friendLilithAscendant), /Lilith in Sagittarius is trining Chris's natal Ascendant until August 1\.$/u);
 assert.doesNotMatch(renderedParts(friendLilithAscendant), /In plain terms/u);
 
 console.log("Transit aspect V3 selection contract passed.");

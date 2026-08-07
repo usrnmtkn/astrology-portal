@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:15.297Z",
+  "id": "sky.saturn.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "saturn-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.sextile.nodes",
+    "planetA": "saturn",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Saturn sextile North Node",
+    "humanMoment": "A family receives an opening at an assisted-living residence just as rotating home care becomes too expensive to sustain.",
+    "developmentDetail": "The siblings set a move-in date, sell unused equipment, and divide the remaining care costs instead of renewing another temporary arrangement.",
+    "planetaryDynamic": "Saturn brings the cost limit and move-in deadline, while the North Node identifies the next chapter of care as the assignment that can no longer be postponed.",
+    "aspectMechanic": "The sextile creates a usable opening at the residence, but the family still has to claim the room, set the date, and end the costly rotation.",
+    "conditionalConsequence": "If the opening is accepted in time, the care arrangement gains a durable structure and the temporary system can be released.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Saturn brings the cost limit and move-in deadline, while the North Node identifies the next chapter of care as the assignment that can no longer be postponed.",
+    "why": "Ready for owner review; the scene is concrete, the sextile requires timely action, and the Saturn-node dynamic remains specific without treating the opening as automatic or fated.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:15.297Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4e91f990b99f70e71ef758dbaa5334a4b65b812baac79c32c0454308e8e7d5d4",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "72ffdaef4646deec1b1c88ee36e33a7dd7fd8ea7ca222b56035ff55792379280",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "11b60180a694666c0bdd5f6266011776b2bd495c779207d62625cf5f66c8d9a3"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

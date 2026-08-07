@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:59.614Z",
+  "id": "sky.moon.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "moon-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.opposition.lilith",
+    "planetA": "moon",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Moon opposite Lilith",
+    "humanMoment": "At a bridal fitting, relatives keep bringing out a familiar, modest gown while the bride repeatedly reaches for the dress they called too revealing.",
+    "developmentDetail": "The attendant begins pinning the safer option as the bride continues watching the other dress in the mirror.",
+    "planetaryDynamic": "The Moon protects family comfort and familiarity, while Lilith carries the bride's disallowed appetite for the revealing dress.",
+    "aspectMechanic": "The opposition places the relatives guarding the modest gown across from the bride reaching for the revealing dress, so neither choice can be edited out of the fitting.",
+    "conditionalConsequence": "If the modest gown is ordered to keep the peace, the purchase will preserve the family's relief alongside the bride's plainly unmet preference.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete and specific, each field performs its assigned function, and the opposition clearly externalizes family comfort against the bride's disallowed appetite without advice or abstraction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:59.614Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "1a05a8ed2efc3ca6d14fd6f46dd9b14541663678fd645fc5e3358647db2504c6",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "30731902d8e2ef4b336280ee4b4481fa4d14cc2851c9110c261b224842a94a2e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d6acf2335ebd8a7a8fdc609717231ae696bab561abc66a5cc0635431a046b3db"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

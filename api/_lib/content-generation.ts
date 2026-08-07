@@ -654,7 +654,18 @@ const synastryBannedPhrases = [
   "who they are connects with",
   "the thing to watch",
   "give it somewhere to go",
-  "this connection works best when"
+  "this connection works best when",
+  "there is something about",
+  "there's something about",
+  "grounding presence",
+  "karmic bond",
+  "challenging but rewarding",
+  "powerful and positive",
+  "ideally, you",
+  "open communication can",
+  "communicate about these issues",
+  "appreciate each other's differences",
+  "if you work together, this can become a strength"
 ];
 
 function bannedPhrasePattern(phrase: string) {
@@ -2666,10 +2677,16 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
         `Person A body house: ${aspectHouseA || "missing"}.`,
         `Person B body sign: ${aspectSignB || "missing"}.`,
         `Person B body house: ${aspectHouseB || "missing"}.`,
-        "Preserve direction: Person A's body to Person B's body. Do not canonicalize or reverse the meaning.",
+        "Preserve direction: Person A's body to Person B's body. Do not canonicalize or reverse the meaning. Do not turn A affecting B into a mutual statement unless the chart supports both directions.",
         relationshipContextRules,
-        "Write the body from the reader's lived experience of the other person's contact, not as abstract compatibility mechanics.",
-        "Name the felt effect first, then the practical pattern, then one concrete move.",
+        "Write in the owner's direct, lived, emotionally precise voice, with some warmth but no therapy language. Describe what happens between the two people rather than assigning broad personality traits.",
+        "Structure: start with the clearest chart-supported relationship effect, stated directly. Then show how it appears through recognizable behavior, choices, conversations, work, affection, time, money, support, or conflict. Then name the actual cost or tension itself, not a vague pivot like 'there may be challenges'. End on the lived tension, contrast, or recognition between the two people.",
+        "Do not end with advice, communication coaching, repair instructions, or a balanced conclusion. Never close with lines like 'Ideally, you can communicate about these issues.'",
+        "Headline, when requested, describes the lived dynamic (like 'Their approval carries weight' or 'Their care can become pressure'), never a grade of the aspect (never 'motivating', 'intriguing', 'grounding presence', 'deep connection', 'karmic bond', 'challenging but rewarding').",
+        "Do not open with 'There is something about', 'This can be a powerful connection', or hedged filler. Use may, can, or might only when the outcome genuinely depends on how the people respond; state the chart-supported dynamic itself directly.",
+        "Do not translate the aspect into personality labels ('free-spirited', 'nurturing', 'a natural caretaker'); the card is about what these two factors bring out between these two people.",
+        "Evidence rule: every sentence must be supported by the two bodies, the aspect group, the direction, and available house or relationship context. Do not invent biography, caretaker or parent roles, financial dependency, a particular job, relationship type, trauma, breakups, jealousy, or long-term commitment unless the supplied chart or content layer supports it.",
+        "Length: 70-130 words for a standard summary; 110-170 only when the aspect genuinely needs two layers. One paragraph when the dynamic is simple, two only when the contrast is real. Do not lengthen by repeating a claim with more hedging.",
         "Use one or two approved lived examples from the Synastry Writing System when they fit. Do not invent examples.",
         "No therapy-speak, no fate language, no soulmate language."
       ].join("\n");

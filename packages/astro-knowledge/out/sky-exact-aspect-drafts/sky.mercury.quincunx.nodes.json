@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:47.391Z",
+  "id": "sky.mercury.quincunx.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mercury-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.mercury.quincunx.nodes",
+    "planetA": "mercury",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx North Node",
+    "humanMoment": "At a repertory cinema’s closing-night screening, longtime patrons trade stories about favorite films while several younger viewers separately ask what will replace the venue.",
+    "developmentDetail": "Each version of the question pulls the lobby conversation away from the retrospective and toward possible screenings in borrowed spaces.",
+    "planetaryDynamic": "Mercury carries both the patrons’ stories and the recurring question, while the North Node marks which conversation belongs to the venue’s next chapter.",
+    "aspectMechanic": "The quincunx between Mercury and the North Node keeps the lobby exchange shifting between favorite films and borrowed-space screenings, as each return of the question changes what the conversation must cover without ending the retrospective.",
+    "conditionalConsequence": "If the repeated question keeps redirecting the room, borrowed-space screenings may become the lasting subject of closing night rather than the films being remembered.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "All five fields are concrete, distinct, mechanically accurate, scene-specific, evergreen, and correctly frame the repeated question as redirecting conversation toward the next chapter without treating the Node as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:47.390Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4dec5044c5b91d899ad4939295e3ef9aacdf2b0bee3284f08d9a43cb0680b45d",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "bb8c07e33c9fe1a0d2a83d9c69d1c5ce7ff71d6255b047ec20931de1da3c0008",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "85ebe8e56205ac4180fcd1c734e7ef7425f0c6123b1b8223725f00b7fde1ada7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

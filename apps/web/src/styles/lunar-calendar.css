@@ -1302,59 +1302,94 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .lunar-moon-disc {
-  --moon-shadow-edge: color-mix(in srgb, var(--lunar-moon-dark) 78%, var(--lunar-moon-dark-edge));
+  --moon-phase-scale: 0;
   position: relative;
   display: inline-block;
   width: 36px;
   height: 36px;
   overflow: hidden;
   border-radius: var(--radius-pill);
-  background: var(--lunar-moon-disc-bg);
-  box-shadow: var(--shadow-lunar-phase);
+  background: var(--lunar-new-moon-bg);
+  box-shadow: var(--shadow-lunar-phase-dark);
 }
 
 .lunar-moon-disc::before {
   content: "";
   position: absolute;
-  top: -1px;
-  bottom: -1px;
-  width: var(--moon-dark, 50%);
-  background: var(--lunar-moon-shadow-bg);
-  box-shadow: var(--shadow-lunar-phase-ring);
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-size: 200% 100%;
 }
 
 .lunar-moon-disc::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--lunar-moon-overlay-bg);
-  mix-blend-mode: multiply;
-  opacity: 0.5;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transform: scaleX(var(--moon-phase-scale));
   pointer-events: none;
 }
 
 .lunar-moon-disc.is-waxing::before {
-  left: -1px;
-  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+  right: 0;
+  background-position: right center;
 }
 
 .lunar-moon-disc.is-waning::before {
-  right: -1px;
-  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+  left: 0;
+  background-position: left center;
 }
 
-.lunar-moon-disc.is-full::before {
-  opacity: 0;
+.lunar-moon-disc.is-waxing.is-crescent::after {
+  left: 50%;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0 / 50%;
+  background: var(--lunar-moon-shadow-bg);
+  transform-origin: left center;
 }
 
-.lunar-moon-disc.is-new {
-  background: var(--lunar-new-moon-bg);
-  box-shadow: var(--shadow-lunar-phase-dark);
+.lunar-moon-disc.is-waning.is-crescent::after {
+  right: 50%;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill) / 50%;
+  background: var(--lunar-moon-shadow-bg);
+  transform-origin: right center;
 }
 
-.lunar-moon-disc.is-new::before {
-  opacity: 0;
+.lunar-moon-disc.is-waxing.is-gibbous::after {
+  right: 50%;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill) / 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-position: left center;
+  background-size: 200% 100%;
+  transform-origin: right center;
+}
+
+.lunar-moon-disc.is-waning.is-gibbous::after {
+  left: 50%;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0 / 50%;
+  background: var(--lunar-moon-disc-bg);
+  background-position: right center;
+  background-size: 200% 100%;
+  transform-origin: left center;
+}
+
+.lunar-moon-disc.is-full {
+  background: var(--lunar-moon-disc-bg);
+  box-shadow: var(--shadow-lunar-phase);
+}
+
+.lunar-moon-disc.is-full::before,
+.lunar-moon-disc.is-full::after,
+.lunar-moon-disc.is-new::before,
+.lunar-moon-disc.is-new::after,
+.lunar-moon-disc.is-quarter::after {
+  display: none;
+}
+
+.lunar-moon-disc:not(.is-new) {
+  box-shadow: var(--shadow-lunar-phase);
 }
 
 .lunar-milestones {
@@ -2191,10 +2226,10 @@ a.tx-card.has-article:hover .tx-more {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: baseline;
-  gap: var(--lunar-space-6);
+  gap: var(--lunar-space-4);
   max-width: 68ch;
   margin-top: var(--lunar-space-5);
-  padding-top: var(--lunar-space-10);
+  padding-top: var(--lunar-space-7);
   border-top: 1px solid var(--line);
 }
 
@@ -2211,28 +2246,27 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .lunar-weekly-hero__shifts ul {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--lunar-space-5) var(--lunar-space-14);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lunar-space-3) var(--lunar-space-5);
   min-width: 0;
   margin: 0;
   padding: 0;
   color: var(--ink-2);
-  font-family: var(--font-label);
-  font-size: var(--lunar-type-caption);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
   line-height: var(--leading-body);
   list-style: none;
 }
 
 .lunar-weekly-hero__shifts li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: baseline;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-5);
 }
 
-.lunar-weekly-hero__shifts li::before {
+.lunar-weekly-hero__shifts li:not(:last-child)::after {
   content: "·";
-  margin-right: var(--lunar-space-5);
   color: var(--muted);
 }
 
@@ -2517,11 +2551,6 @@ a.tx-card.has-article:hover .tx-more {
 
   .lunar-weekly-hero__shifts {
     gap: var(--lunar-space-6);
-  }
-
-  .lunar-weekly-hero__shifts ul {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--lunar-space-4);
   }
 
   .lunar-weekly-day {

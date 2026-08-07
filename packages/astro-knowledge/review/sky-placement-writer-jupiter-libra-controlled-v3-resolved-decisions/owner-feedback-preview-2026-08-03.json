@@ -1,0 +1,39 @@
+{
+  "mode": "dry-run",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "owner_rejected",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-writer-jupiter-libra-controlled-v3-owner-review",
+    "surface": "sky-placement",
+    "planet": "jupiter",
+    "sign": "libra",
+    "articleBeat": "full_article",
+    "before": "Tagline: Jupiter in Libra helps us grow through fair, honest partnership.\n\nHook: The dinner plan finally moves when everyone stops saying, ‘Anything is fine.’ Jupiter describes the confidence to reach beyond the first available choice and learn from what happens next. With Jupiter in Libra, more becomes possible when we compare preferences, negotiate fairly, and shape an answer that each side can support.\n\nLived: Over about a year, this transit returns us to shared choices long enough to notice how often politeness hides a real preference. A group of friends is arranging a long-delayed reunion: half want a quiet dinner, half want live music, and every polite response pushes the choice into another week. Someone asks each friend to name one detail that matters and one they can release. The group chooses a small place for dinner and live music nearby, so the reunion happens instead of slipping into another month of vague replies.\n\nTurn: The gift becomes the problem when diplomacy turns into avoidance. We praise every suggestion, hide the preference that might disappoint someone, and request another round of opinions. That can cost the group the date entirely or leave us committed to a one-sided plan because agreement came before honesty. Fairness requires each side to be heard before the choice is made.\n\nMoves: We can ask each side to name one must-have and one flexible detail before we propose a compromise. / We can set a decision time for shared plans and stop adding options once one choice meets the preferences already stated. / We can name the condition that would make a partner’s proposal feel mutual before we agree to it.",
+    "after": "[rejected without replacement]",
+    "whatChanged": "No replacement was supplied. Preserve the draft unchanged only as rejected negative evaluation evidence. It is not generation evidence, calibration evidence, production copy, canonical content, or promotion evidence.",
+    "ownerReason": "The failure spans the complete article: a swappable tagline, textbook planet explanation, formal negotiation language, workshop-style prompts, a manufactured compromise, a gift-to-shadow keyword inversion, a generic fairness conclusion, and no meaningful stakes. Terra reduced a full-draft failure to one weak tagline.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [
+      "generic_tagline",
+      "explanatory_before_observable",
+      "administrative_move",
+      "overbalanced_structure",
+      "swappable_astrology",
+      "generic_coverage_sentence",
+      "abstract_consequence"
+    ],
+    "approvalLevel": "owner_rejected",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions/writer-response.json",
+      "packages/astro-knowledge/review/sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions/packet.json"
+    ],
+    "provenance": "rejection: The entire draft is off-voice.",
+    "feedbackKind": "rejection",
+    "exactApprovalScope": "not_exact_approval"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

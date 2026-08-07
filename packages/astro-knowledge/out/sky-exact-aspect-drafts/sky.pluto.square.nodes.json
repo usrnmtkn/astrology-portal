@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:05.225Z",
+  "id": "sky.pluto.square.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "pluto-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.square.nodes",
+    "planetA": "pluto",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Pluto square North Node",
+    "humanMoment": "An independent radio station goes off air whenever its landlord blocks access to the transmitter room.",
+    "developmentDetail": "Sponsors pause payments and local programs lose their slots while the station's trustees seek temporary entry instead of using the broadcast license to relocate the equipment.",
+    "planetaryDynamic": "Pluto exposes the authority buried in the license, while the North Node makes the station's next chapter depend on whether that authority is claimed.",
+    "aspectMechanic": "The square keeps cutting the broadcast and revenue until the trustees address the choice between temporary access and a permanent relocation.",
+    "conditionalConsequence": "If the trustees continue negotiating for entry without deciding whether to move the transmitter, each new lockout will cost the station more programming and income.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The entry uses a concrete collective conflict, distinguishes Pluto’s buried authority from the node-driven chapter decision, and makes the square recur through practical lockouts and losses until the underlying choice is addressed.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:05.224Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9478ce2d7c30937bf7d0664d48aee6913e1a0e9ed417f7a8c548341e2d136c3a",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "9b491851adc2cf455f27bff2e89f927f9ef5cf78cf9faa8182a0e90422961d4a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "5a81e5316b639a47d9cc49071f8b157b9d896598b7695f91ff452f12fe65c564"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

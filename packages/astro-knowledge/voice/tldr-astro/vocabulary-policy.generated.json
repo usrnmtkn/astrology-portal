@@ -1,0 +1,481 @@
+{
+  "schemaVersion": 1,
+  "artifact": "vocabulary-policy",
+  "generatedBy": "scripts/compile-marie-satori-editorial-decisions.js",
+  "decisionSource": "voice/tldr-astro/marie-satori-editorial-decisions.yaml",
+  "decisionSourceId": "marie-satori-editorial-decisions-v1",
+  "decisionSourceSha256": "8dfe6d6459f705689ee4267f2ae01b1262bff54bf5ffa0d822683bea0a2a7717",
+  "decisions": [
+    {
+      "id": "ED-001",
+      "category": "voice",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Use ordinary, current language that makes literal sense when read aloud.",
+      "rationale": "The owner repeatedly rejected polished wording that no one would normally say.",
+      "effect": "require",
+      "examplesAllowed": [
+        "Everyone else has to change their plans later."
+      ],
+      "examplesRejected": [
+        "The banished want refuses to stay reasonable.",
+        "The arrangement stopped telling the truth."
+      ],
+      "preferredExamples": [
+        "Everyone else has to change their plans later."
+      ],
+      "excludedExamples": [
+        "The banished want refuses to stay reasonable.",
+        "The arrangement stopped telling the truth."
+      ]
+    },
+    {
+      "id": "ED-003",
+      "category": "surface",
+      "scope": {
+        "surfaces": [
+          "current-sky"
+        ]
+      },
+      "rule": "Current Sky never uses you, your, yours, yourself, or yourselves; natal and transit-to-natal may use second person.",
+      "rationale": "Current Sky describes shared weather while natal surfaces address the reader directly.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "We notice the disagreement sooner."
+      ],
+      "examplesRejected": [
+        "You notice the disagreement sooner."
+      ],
+      "preferredExamples": [
+        "We notice the disagreement sooner."
+      ],
+      "excludedExamples": [
+        "You notice the disagreement sooner."
+      ]
+    },
+    {
+      "id": "CF-001",
+      "category": "subject",
+      "scope": {
+        "prohibited": [
+          "sky-placement"
+        ],
+        "conditional": [
+          "all-other-surfaces"
+        ]
+      },
+      "rule": "Do not use people in Sky Placement. On other surfaces, use it only when the collective itself is the real subject and a more exact subject would be less accurate.",
+      "rationale": "Generic people repeatedly conceals the actual subject in Sky Placement while remaining legitimate in some collective contexts.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "A sibling stops hosting every holiday."
+      ],
+      "examplesRejected": [
+        "People can care deeply and still leave the rule untouched."
+      ],
+      "preferredExamples": [
+        "A sibling stops hosting every holiday."
+      ],
+      "excludedExamples": [
+        "People can care deeply and still leave the rule untouched."
+      ]
+    },
+    {
+      "id": "CF-003",
+      "category": "word-choice",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ],
+        "literal_exceptions": [
+          "an actual physical object is tilted"
+        ]
+      },
+      "rule": "Do not use tilt or tilts as a figurative substitute for change. Literal physical tilting is allowed.",
+      "rationale": "The owner rejected tilt in this phrasing and explicitly retained the physical-object exception.",
+      "effect": "prohibit_with_literal_exception",
+      "examplesAllowed": [
+        "The table tilts toward the window."
+      ],
+      "examplesRejected": [
+        "A dinner plan starts to tilt."
+      ],
+      "preferredExamples": [
+        "The table tilts toward the window."
+      ],
+      "excludedExamples": [
+        "A dinner plan starts to tilt."
+      ]
+    },
+    {
+      "id": "ED-006",
+      "category": "register",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Do not turn ordinary events into institutional, advocacy, therapy-workbook, or corporate-operations language unless the actual subject requires it.",
+      "rationale": "These registers repeatedly replace recognizable behavior with categories and reports.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "Everyone else has to change their plans later."
+      ],
+      "examplesRejected": [
+        "The pattern becomes evidence.",
+        "Reopen one agreement.",
+        "Document the task and record what fails."
+      ],
+      "preferredExamples": [
+        "Everyone else has to change their plans later."
+      ],
+      "excludedExamples": [
+        "The pattern becomes evidence.",
+        "Reopen one agreement.",
+        "Document the task and record what fails."
+      ]
+    },
+    {
+      "id": "ED-007",
+      "category": "communication",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ],
+        "literal_exceptions": [
+          "physical mail is part of the source or scene"
+        ]
+      },
+      "rule": "Use message, reply, response, or what they were told instead of letter or formal technical delivery terms unless physical mail matters.",
+      "rationale": "Letter sounded dated, while portal notification and electronic correspondence sounded technical rather than current.",
+      "effect": "prefer",
+      "examplesAllowed": [
+        "Three families compare the messages they received.",
+        "A handwritten letter arrives in the mail."
+      ],
+      "examplesRejected": [
+        "Three families compare letters.",
+        "Three families receive the same portal notification."
+      ],
+      "preferredExamples": [
+        "Three families compare the messages they received.",
+        "A handwritten letter arrives in the mail."
+      ],
+      "excludedExamples": [
+        "Three families compare letters.",
+        "Three families receive the same portal notification."
+      ]
+    },
+    {
+      "id": "CF-016",
+      "category": "adjacent-voice",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Chani-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not.",
+      "rationale": "Softness is not the problem; recognizable borrowed constructions and the wrong recurring subject matter are.",
+      "effect": "conditional",
+      "examplesAllowed": [
+        "Warm, emotionally observant permission to do one nameable thing."
+      ],
+      "examplesRejected": [
+        "Welcome to another powerful week.",
+        "Let's dive into what the stars have in store.",
+        "You got this."
+      ],
+      "preferredExamples": [
+        "Warm, emotionally observant permission to do one nameable thing."
+      ],
+      "excludedExamples": [
+        "Welcome to another powerful week.",
+        "Let's dive into what the stars have in store.",
+        "You got this."
+      ]
+    },
+    {
+      "id": "CF-007",
+      "category": "domain",
+      "scope": {
+        "surfaces": [
+          "collective-astrology",
+          "outer-planet-copy"
+        ]
+      },
+      "rule": "Collective astrology does not default to campaigns, institutions, policy, organizing, public harm, or collective healing. Those subjects require direct astrological and owner-source support.",
+      "rationale": "Collective was repeatedly translated into generic progressive-publication subject matter rather than Marie's recurring concerns.",
+      "effect": "conditional",
+      "examplesAllowed": [
+        "A platform changes who gets heard."
+      ],
+      "examplesRejected": [
+        "The denial becomes evidence and turns into a public campaign."
+      ],
+      "preferredExamples": [
+        "A platform changes who gets heard."
+      ],
+      "excludedExamples": [
+        "The denial becomes evidence and turns into a public campaign."
+      ]
+    },
+    {
+      "id": "CF-008",
+      "category": "writer-architecture",
+      "scope": {
+        "surfaces": [
+          "sky-placement-writer"
+        ]
+      },
+      "rule": "Use six diverse exact owner-authored passages for register and movement plus verified astrology. Do not require an owner article about the exact placement.",
+      "rationale": "Owner articles teach voice; governed astrology supplies meaning; the writer may invent a scene but not astrology.",
+      "effect": "require",
+      "examplesAllowed": [],
+      "examplesRejected": [],
+      "preferredExamples": [],
+      "excludedExamples": []
+    },
+    {
+      "id": "ED-014",
+      "category": "retrieval",
+      "scope": {
+        "surfaces": [
+          "sky-placement-current-sky-writer"
+        ]
+      },
+      "rule": "Owner authorship is necessary but not sufficient for a Current Sky first-call passage. Select passages that are active-surface compatible and teach the required writing operation: recognizable evidence, clear subject and action, one pressure-choice-consequence sequence, a concrete turn, an ending that names the cost and stops, and practical language that continues the same pressure.",
+      "rationale": "The controlled Jupiter-in-Libra v3 packet contained authentic owner prose that primarily taught incompatible historical style rather than the Current Sky operation.",
+      "effect": "require_operation_matched_retrieval",
+      "examplesAllowed": [
+        "A passage with recognizable evidence, a clear action, and a consequence."
+      ],
+      "examplesRejected": [
+        "A historical passage selected only because it shares a sign, planet, or broad keyword."
+      ],
+      "preferredExamples": [
+        "A passage with recognizable evidence, a clear action, and a consequence."
+      ],
+      "excludedExamples": [
+        "A historical passage selected only because it shares a sign, planet, or broad keyword."
+      ]
+    },
+    {
+      "id": "ED-021",
+      "category": "retrieval-regression",
+      "scope": {
+        "surfaces": [
+          "sky-placement-current-sky-writer"
+        ]
+      },
+      "rule": "Six authentic owner passages can still form an invalid Current Sky packet when they primarily teach incompatible historical style. Preserve those passages in the corpus while rejecting the incompatible set from Current Sky first-call retrieval.",
+      "rationale": "The controlled v3 set emphasized shadow work, abstract psychological labels, polarity, archetypal moral lessons, and stacked metaphor rather than the required Current Sky operation.",
+      "effect": "reject_incompatible_packet_set",
+      "examplesAllowed": [],
+      "examplesRejected": [],
+      "preferredExamples": [],
+      "excludedExamples": []
+    },
+    {
+      "id": "ED-025",
+      "category": "retrieval",
+      "scope": {
+        "surfaces": [
+          "sky-placement-current-sky-writer"
+        ]
+      },
+      "rule": "Retire the fixed six-passage packet. Select four to six verified owner-authored passages by affinity: same sign first, same planet second, and archetypally adjacent material third. Provenance and exact-source verification remain mandatory.",
+      "rationale": "A fixed group of passages repeatedly taught the wrong operation and did not adapt to the requested placement.",
+      "effect": "require_affinity_retrieval",
+      "examplesAllowed": [
+        "For Jupiter in Libra, include an eligible Libra-season passage and an eligible Jupiter passage."
+      ],
+      "examplesRejected": [
+        "The same six passages for every placement."
+      ],
+      "preferredExamples": [
+        "For Jupiter in Libra, include an eligible Libra-season passage and an eligible Jupiter passage."
+      ],
+      "excludedExamples": [
+        "The same six passages for every placement."
+      ]
+    },
+    {
+      "id": "CF-018",
+      "category": "word-choice",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Do not use leak, leaks, leaked, or leaking in Marie Satori editorial copy. Name the observable action or consequence instead.",
+      "rationale": "The house style guide already prohibited leak language for emotion or expression, and the owner confirmed that leak is an AI tell she does not use.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "After enough of this, no one trusts what is said anymore."
+      ],
+      "examplesRejected": [
+        "Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest."
+      ],
+      "preferredExamples": [
+        "After enough of this, no one trusts what is said anymore."
+      ],
+      "excludedExamples": [
+        "Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest."
+      ]
+    },
+    {
+      "id": "CF-012",
+      "category": "architecture",
+      "scope": {
+        "surfaces": [
+          "sky-placement-editorial-system"
+        ]
+      },
+      "rule": "Keep the architecture fixed: verified astrology supplies meaning, Sol writes one draft, deterministic checks catch hard failures, Terra judges afterward, and only the owner approves exact wording.",
+      "rationale": "Durable corrections should update scoped policy and regression tests rather than trigger another architecture redesign.",
+      "effect": "require",
+      "examplesAllowed": [],
+      "examplesRejected": [],
+      "preferredExamples": [],
+      "excludedExamples": []
+    }
+  ],
+  "exclusions": [
+    {
+      "term": "people",
+      "decisionId": "CF-001",
+      "scope": {
+        "prohibited": [
+          "sky-placement"
+        ],
+        "conditional": [
+          "all-other-surfaces"
+        ]
+      }
+    },
+    {
+      "term": "tilt",
+      "decisionId": "CF-003",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ],
+        "literal_exceptions": [
+          "an actual physical object is tilted"
+        ]
+      }
+    },
+    {
+      "term": "tilts",
+      "decisionId": "CF-003",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ],
+        "literal_exceptions": [
+          "an actual physical object is tilted"
+        ]
+      }
+    },
+    {
+      "term": "tilted",
+      "decisionId": "CF-003",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ],
+        "literal_exceptions": [
+          "an actual physical object is tilted"
+        ]
+      }
+    },
+    {
+      "term": "tilting",
+      "decisionId": "CF-003",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ],
+        "literal_exceptions": [
+          "an actual physical object is tilted"
+        ]
+      }
+    },
+    {
+      "term": "letter",
+      "decisionId": "ED-007",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ],
+        "literal_exceptions": [
+          "physical mail is part of the source or scene"
+        ]
+      }
+    },
+    {
+      "term": "letters",
+      "decisionId": "ED-007",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ],
+        "literal_exceptions": [
+          "physical mail is part of the source or scene"
+        ]
+      }
+    },
+    {
+      "term": "correspondence",
+      "decisionId": "ED-007",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ],
+        "literal_exceptions": [
+          "physical mail is part of the source or scene"
+        ]
+      }
+    },
+    {
+      "term": "leak",
+      "decisionId": "CF-018",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      }
+    },
+    {
+      "term": "leaks",
+      "decisionId": "CF-018",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      }
+    },
+    {
+      "term": "leaked",
+      "decisionId": "CF-018",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      }
+    },
+    {
+      "term": "leaking",
+      "decisionId": "CF-018",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      }
+    }
+  ],
+  "rule": "Vocabulary evidence is a menu, never a quota, and cannot override a surface rule."
+}

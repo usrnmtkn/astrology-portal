@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:06.770Z",
+  "id": "sky.mercury.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mercury-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.sextile.chiron",
+    "planetA": "mercury",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Mercury sextile Chiron",
+    "humanMoment": "At a pharmacy counter, a customer jokes about a troubling side effect instead of giving the answer rehearsed on the way there.",
+    "developmentDetail": "The pharmacist hears the strain beneath the joke, asks one plain follow-up question, and the real concern finally comes out.",
+    "planetaryDynamic": "Mercury supplies the words and questions, while Chiron carries the old hurt that makes speaking plainly feel risky or exposed.",
+    "aspectMechanic": "The sextile creates a usable opening between the joke and the follow-up question, but the pharmacist still has to notice the strain and act on it.",
+    "conditionalConsequence": "If the concern is spoken and recorded, the medication review can address the side effect instead of leaving it hidden behind a cheerful answer.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The sextile creates a usable opening between the joke and the follow-up question, but the pharmacist still has to notice the strain and act on it.",
+    "why": "This is the most explicit sentence, but it applies the sextile accurately and concretely to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:06.769Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "af357012511ccc93aed9216cd9108099c57a85a7f74aa33625feaa08d34f3457",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "407ed479535f5bdbacbc65642d76a656613c9ae81d2cc7b2c8c3373d82511ad1",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "2655dfc46c8bb52ed3e1426d0f1cae0fd80211f9e03712901e7e27bd0439ef73"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

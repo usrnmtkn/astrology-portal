@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:01.605Z",
+  "id": "sky.moon.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "moon-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.conjunction.nodes",
+    "planetA": "moon",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Moon conjunct North Node",
+    "humanMoment": "A family empties a longtime home while preparing to move into an unfamiliar place.",
+    "developmentDetail": "Old routines return during the packing, and each new commitment feels less certain beside rooms filled with shared history.",
+    "planetaryDynamic": "The Moon pulls the family toward familiar routines, while the North Node marks the unfamiliar place the move requires them to enter.",
+    "aspectMechanic": "Under the conjunction, emptying the old rooms and committing to the new place become one event, making homesickness difficult to separate from evidence that the move is wrong.",
+    "conditionalConsequence": "If the family's discomfort is treated as proof of a bad decision, the move may stall even when the old home no longer fits their needs.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "Old routines return during the packing, and each new commitment feels less certain beside rooms filled with shared history.",
+    "why": "The phrase \"each new commitment\" is slightly abstract, but the packing and history-filled rooms keep the consequence observable and specific.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:01.604Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4848726cdd019f3a1c86b4e7863a9b4f8657e62653226f7bf2f2766ac3e5aca2",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "4f9d0e9673c777a042a4ae4ddd51116db31f319028ec369dc94366ad9d34666c",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c2e8882a1a2230b5ae0814f3a9e9109a389779fac17e922733682cd83a09c8ba"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

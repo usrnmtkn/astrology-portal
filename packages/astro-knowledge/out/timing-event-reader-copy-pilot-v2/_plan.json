@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "calls": {
+    "writer": 4,
+    "judge": 1,
+    "total": 5
+  },
+  "writer": {
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement"
+  },
+  "judge": {
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "judge:sky-placement:sol-owner-authorized",
+    "authorization": "owner-explicit-sol-generation-and-judging"
+  },
+  "targets": [
+    "sky.station.mercury.pisces.retrograde",
+    "sky.retrograde.venus.scorpio.retrograde_passage",
+    "sky.station.chiron.taurus.retrograde",
+    "sky.ingress.jupiter.leo"
+  ]
+}

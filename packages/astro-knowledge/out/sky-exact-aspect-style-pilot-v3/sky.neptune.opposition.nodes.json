@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:33:28.797Z",
+  "id": "sky.neptune.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "neptune-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "draft": {
+    "id": "sky.neptune.opposition.nodes",
+    "planetA": "neptune",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Neptune opposite North Node",
+    "body": "We can feel where life is pulling before we can make out the road. With Neptune opposite North Node, the dream glows at a distance and the next move keeps asking for an address. A half-packed box by the door, an old photo pulled from the drawer, a route searched and never started, the calling is present but its shape slips. One person names what could be, another asks what happens Tuesday, and both voices stay in the room. Nostalgia makes the release side look sweeter than it was, while every practical demand can seem too small for the vision.\n\nWe hover between protecting what still feels meaningful and testing whether it can lead anywhere. Certainty does not arrive first; direction sharpens when we choose one workable move and watch what clears. The fog can stall us, but it also reveals where the dream cannot survive contact with the day. The calling is real. The map is not.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Lived-first tension, concrete fragments, active Neptune-node conflict, natural collective deepening, and a clean truth-and-catch ending all match the voice model.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:33:28.796Z",
+      "promptVersion": "sky-exact-aspect-voice-v3-venus-square-mars:prompt-v3",
+      "rubricVersion": "sky-exact-aspect-voice-v3-venus-square-mars",
+      "promptSha256": "e3dd39331faee48e10e3bc128bfd6661618d64f9b2adfb887541381c01ebff59",
+      "rubricSha256": "eea6c04da2d7d99d1d6a4daf1145788ee58cc69df46fb992178b5339281713fa",
+      "contentSha256": "1eed7b481cdf05f4c3b82168ff895c65dadf06b95cf55797ec7f8a0caeceb5d8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b1b56f9f7bb365ba0fd30ea041f7c55922b34df259c462bef9de688893c41308"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

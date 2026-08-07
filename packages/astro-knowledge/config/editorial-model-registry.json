@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "2026-08-03.9",
+  "registryVersion": "2026-08-05.1",
   "policyVersion": "editorial-model-promotion-v1",
   "lanes": {
     "generation:default": {
@@ -62,7 +62,7 @@
         "provider": "openai",
         "model": "gpt-5.6-sol",
         "reasoningEffort": "xhigh",
-        "promptVersion": "sky-placement-writer-v9:natal-source-guard-domain-filter-v1",
+        "promptVersion": "sky-placement-writer-v14:owner-corpus-warmth-none-found-v1",
         "rubricVersion": "not-applicable-writing-only",
         "evaluationSetVersion": "sky-placement-writer-heldout-pending-v2",
         "policyVersion": "editorial-writer-policy-v1",
@@ -253,6 +253,41 @@
         "rubricVersion": "editorial-source-bank-v1",
         "evaluationSetVersion": "editorial-source-bank-owner-approved-v1",
         "policyVersion": "editorial-judge-policy-v1"
+      },
+      "rollback": null,
+      "history": []
+    },
+    "judge:daily-glance": {
+      "role": "judge",
+      "surface": "daily-glance",
+      "active": null,
+      "candidate": {
+        "releaseId": "daily-glance-judge-openai-gpt-4.1-mini-candidate-v1",
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "promptVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+        "rubricVersion": "daily-glance-voice-v1",
+        "evaluationSetVersion": "daily-glance-owner-calibration-v1",
+        "policyVersion": "editorial-judge-policy-v1",
+        "notes": "Advisory best-of-N selection judge built 2026-08-05 at owner request. Calibration gate: goldMean>=2.6, negativeMean<=1.9, zero negative threes (report in review/). GR-003: scores rank candidates, never approve. Promotion unauthorized."
+      },
+      "rollback": null,
+      "history": []
+    },
+    "writer:daily-glance": {
+      "role": "writer",
+      "surface": "daily-glance",
+      "active": null,
+      "candidate": {
+        "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-3-v2",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "promptVersion": "daily-glance-writer-v5:style-s3+directive-v2+harvest-v2",
+        "rubricVersion": "not-applicable-writing-only",
+        "evaluationSetVersion": "daily-glance-owner-calibration-v1",
+        "policyVersion": "editorial-writer-policy-v1",
+        "notes": "Owner-directive writer lane; judged best-of-N selection via judge:daily-glance. All output review-gated; no promotion."
       },
       "rollback": null,
       "history": []

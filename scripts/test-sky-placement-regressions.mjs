@@ -65,6 +65,39 @@ const sunLeo = renderer.renderSkyPlacement({
     applying: true
   }]
 });
+const structuralTokenRenderer = createTransitSynastryRenderer(
+  { authoredCards: [] },
+  fallbackTemplates,
+  {
+    hookRows: [{
+      contentKey: "fallback-hook/sky-sign-copy/jupiter/libra",
+      content_role: "fallback_hook",
+      grammar_frame: "continuous_editorial_unit",
+      render_policy: "sky-placement-continuous-v2",
+      review_status: "approved",
+      fact_line: "{{entryDate}} to {{exitDate}}",
+      opening: "After {{priorSignEntryDate}} to {{priorSignExitDate}} in {{priorSign}}, Jupiter changes the subject. Jupiter was last here from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}.",
+      tension: "The same strength can become a cost.",
+      development: "A clear decision changes what happens next.",
+      aspect_insert: "{{aspectInsert}}",
+      close: "Before {{exitDate}}, the answer has to be clear.",
+      try_this: ["Name the answer.", "Change the plan."],
+      aspect_units: []
+    }],
+    vocabularyRows: []
+  }
+);
+const structuralTokenJupiterLibra = structuralTokenRenderer.renderSkyPlacement({
+  planet: "jupiter",
+  sign: "libra",
+  entryDate: "August 24, 2028",
+  exitDate: "September 24, 2029",
+  priorSign: "virgo",
+  priorSignEntryDate: "July 26, 2027",
+  priorSignExitDate: "August 24, 2028",
+  previousResidencyEntryDate: "September 9, 2016",
+  previousResidencyExitDate: "October 10, 2017"
+});
 const sunLeoReference = renderSkyPlacementReference({
   planet: "sun",
   sign: "leo",
@@ -101,6 +134,16 @@ const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
   sign: "aries"
 });
+assert.throws(
+  () => renderer.renderSkyPlacement({ planet: "venus", sign: "virgo" }),
+  /SOURCE_GAP: continuous sky placement sign copy venus\/virgo/u,
+  "Venus in Virgo must remain source-gapped until a continuous-v2 article is reviewed."
+);
+assert.throws(
+  () => renderer.renderSkyPlacement({ planet: "moon", sign: "scorpio" }),
+  /SOURCE_GAP: sky placement moon\/scorpio/u,
+  "Moon in Scorpio must fail closed while its owner-rejected turn has no reviewed replacement."
+);
 const saturnPiscesDirect = renderer.renderSkyPlacement({
   planet: "saturn",
   sign: "pisces",
@@ -168,19 +211,27 @@ const targetSpecificTransitEffectRows = fallbackSourceRows.hookRows.filter((row)
 const authoredTransitAspectRows = transitSynastryRows.authoredCards.filter((row) =>
   row.contentKey.startsWith("authored/transit-aspect/")
 );
-const approvedSkyPlacementRows = fallbackSourceRows.hookRows.filter((row) =>
+const skyPlacementRows = fallbackSourceRows.hookRows.filter((row) =>
   /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn|moves)\//u.test(row.contentKey)
 );
-const approvedSkyPlacementCoreRows = fallbackSourceRows.hookRows.filter((row) =>
+const skyPlacementCoreRows = fallbackSourceRows.hookRows.filter((row) =>
   /^fallback-hook\/sky-placement-(?:hook|lived|turn)\//u.test(row.contentKey)
 );
-const approvedSkyPlacementRowsByFamily = Object.fromEntries(
+const skyPlacementRowsByFamily = Object.fromEntries(
   ["tagline", "hook", "lived", "turn", "moves"].map((family) => [
     family,
     fallbackSourceRows.hookRows.filter((row) =>
       row.contentKey.startsWith(`fallback-hook/sky-placement-${family}/`)
     )
   ])
+);
+const rejectedSkyPlacementKeys = new Set([
+  "fallback-hook/sky-placement-turn/moon/scorpio",
+  "fallback-hook/sky-placement-tagline/moon/scorpio",
+  "fallback-hook/sky-placement-moves/venus/virgo"
+]);
+const readerEligibleSkyPlacementRows = skyPlacementRows.filter((row) =>
+  ["approved", "approved_reuse", "reviewed"].includes(row.review_status)
 );
 const zodiacSigns = [
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -242,10 +293,11 @@ assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generi
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
-assert.equal(approvedSkyPlacementRows.length, 840, "The package must include five approved article slots for all 168 sky placements.");
-assert.equal(approvedSkyPlacementCoreRows.length, 504, "Every placement pair must have approved hook, lived, and turn rows.");
-for (const [family, rows] of Object.entries(approvedSkyPlacementRowsByFamily)) {
-  assert.equal(rows.length, 168, `Every sky placement must have an approved ${family} row.`);
+assert.equal(skyPlacementRows.length, 840, "The package must preserve five article slots for all 168 sky placements.");
+assert.equal(skyPlacementCoreRows.length, 504, "Every placement pair must preserve hook, lived, and turn rows.");
+assert.equal(readerEligibleSkyPlacementRows.length, 837, "Only the three explicitly owner-rejected rows may be quarantined.");
+for (const [family, rows] of Object.entries(skyPlacementRowsByFamily)) {
+  assert.equal(rows.length, 168, `Every sky placement must preserve a ${family} row.`);
 }
 for (const planet of retrogradePlacementPlanets) {
   for (const sign of zodiacSigns) {
@@ -256,8 +308,13 @@ for (const planet of retrogradePlacementPlanets) {
     );
   }
 }
-for (const row of approvedSkyPlacementRows) {
-  assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
+for (const row of skyPlacementRows) {
+  if (rejectedSkyPlacementKeys.has(row.contentKey)) {
+    assert.equal(row.review_status, "needs_review", `${row.contentKey} must remain quarantined after owner rejection.`);
+    assert.match(row.approved_via ?? "", /superseded by explicit owner rejection/u);
+  } else {
+    assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
+  }
 }
 for (const row of authoredTransitAspectRows) {
   assert.equal(row.review_status, "approved", `${row.contentKey} must be reader-eligible.`);
@@ -293,7 +350,7 @@ assert.match(
 );
 assert.equal(
   venusAscendantBondTransit.headline,
-  "Mars square X's Ascendant",
+  "Transiting Mars square X's Ascendant",
   "Bond-transit headlines must name the activated endpoint."
 );
 assert.notEqual(
@@ -359,6 +416,12 @@ assert.match(
   /^July 22 to August 23\n\nThe Sun moves into Leo on July 22,/u,
   "Package Sun-in-Leo copy must lead with the engine-filled fact line and lived opening."
 );
+assert.match(
+  structuralTokenJupiterLibra.body,
+  /After July 26 to August 24 in Virgo, Jupiter changes the subject\. Jupiter was last here from September 9 to October 10\./u,
+  "Continuous placement rows must receive prior-sign and previous-residency facts through resolver tokens."
+);
+assert.doesNotMatch(structuralTokenJupiterLibra.body, /\{\{/u, "Structural transit tokens must fail closed rather than reach the reader unresolved.");
 assert.match(sunLeo.body, /A birthday, launch, or personal win becomes harder to treat like an ordinary day\./u);
 assert.match(sunLeo.body, /Not every project needs an audience, but the work you want recognized has to leave your desk eventually\./u);
 assert.match(sunLeo.body, /The encouraging response may be real\. It still does not mean the budget, deadline, or workload can stretch forever\./u);

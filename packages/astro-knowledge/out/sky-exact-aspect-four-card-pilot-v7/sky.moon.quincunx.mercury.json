@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:43:48.820Z",
+  "id": "sky.moon.quincunx.mercury",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "moon-mercury",
+    "path": "data/pairs/moon-mercury.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "meaningBrief": {
+    "tension": "Feelings and thoughts address different concerns, so clear expression requires repeated adjustment.",
+    "examples": [
+      "A person feels upset but explains the situation only in practical terms.",
+      "A message is revised several times because the wording does not match the mood.",
+      "A strong reaction is spoken immediately and clarified later."
+    ],
+    "pairBehavior": "The Moon contributes feelings, bodily needs, and daily responses, while Mercury contributes thought, language, and communication.",
+    "aspectBehavior": "The quincunx makes feeling and thinking solve different problems at once, so neither can fully incorporate the other.",
+    "consequence": "Communication shifts between withholding feelings and expressing them before they have been considered."
+  },
+  "draft": {
+    "id": "sky.moon.quincunx.mercury",
+    "planetA": "moon",
+    "planetB": "mercury",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Mercury",
+    "body": "We are upset, but the first explanation sounds like a list of errands, costs, and practical facts. Moon quincunx Mercury has the body asking for rest or reassurance while the mind organizes timing, wording, and what can be fixed. A text gets rewritten three times because the polite version hides the mood; a quick reply says too much, then needs another message to explain what was meant. What we feel is real, but language keeps addressing the practical problem instead of what actually hurts.\n\nThis can move us back and forth between saying nothing and speaking before thought has caught up. We clarify, soften, add context, then realize the new wording has left out another part of the feeling. Mood colors the message, logic edits the mood, and neither version holds the whole truth for long. Clear expression may take more than one pass, not because the first words were false, but because feeling and thought need time to meet.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived-first opening, concrete communication details, accurate Moon-Mercury friction, natural collective voice, and a clear final turn. The repeated revisions make the quincunx adjustment unmistakable without turning explanatory.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:43:46.338Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "596980902b562d384a64101aa51f3c01773181f4facac805ba4b1262b1972b41",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "e04671a07370d523ddaf3e6fab268e274f72c5cc93df1d8c6536c925d8e187ed",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "10692641d5ceeb34a3853c0c741aa54ee15b57cfe534a71d9446db15f794a251"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.mercury",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is natural, immediately clear, and uses coherent metaphor without obscuring the meaning.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is natural, immediately clear, and uses coherent metaphor without obscuring the meaning.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:43:48.820Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "ec983f5293df2c104749741e1a322653393f9952216efbc326b4e4befcafbcbc",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "e04671a07370d523ddaf3e6fab268e274f72c5cc93df1d8c6536c925d8e187ed",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4c245ec3ad78b3f8551b275bfa1fe650b84e5cf8614d9613eaaee89239f1f372"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

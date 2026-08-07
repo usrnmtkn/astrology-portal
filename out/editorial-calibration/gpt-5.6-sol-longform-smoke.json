@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-01T23:46:37.912Z",
+  "sourceRevision": "",
+  "laneId": "judge:sky-article-longform",
+  "registryVersion": "2026-08-01.1",
+  "releaseId": "sky-article-judge-openai-gpt-5.6-sol-candidate-v1",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-article-longform-v1:prompt-v1",
+  "rubricVersion": "sky-article-longform-v1",
+  "evaluationSetVersion": "sky-article-longform-approved-weak-v1",
+  "policyVersion": "editorial-judge-policy-v1",
+  "reportKind": "smoke",
+  "sampleCount": 1,
+  "promotionEligible": false,
+  "status": "failed",
+  "approvedMean": 2,
+  "weakMean": 1,
+  "separation": 1,
+  "minimumSeparation": 1,
+  "disagreement": false,
+  "approved": [
+    {
+      "id": "TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+      "sourceSha256": "b533e709f2dfc329b11a9d3ff092aa86c52ed3f1be560987010447d3f3ddccb3",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "TLDR-Article-Edition-Jupiter-Cancer-2025-OWNER.md",
+      "sourceSha256": "5430edd61cfa74e218e6c306c99dda588cf4f155f85efaf5d08ac4da3a7ebb33",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER.md",
+      "sourceSha256": "3a0c4cbab43e42961062f7628c8fb3e65a259293158cb22bfecf262ca7633b8c",
+      "score": 3,
+      "verdict": "in-voice",
+      "disagreement": false
+    },
+    {
+      "id": "TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER.md",
+      "sourceSha256": "c87d8c26fbc1ada6b89d395a841f4c0dbbaafa95c6720fa3414f41f747f11fb8",
+      "score": 3,
+      "verdict": "in-voice",
+      "disagreement": false
+    }
+  ],
+  "weakControls": [
+    {
+      "id": "weak-control-abstract-strategy-brief",
+      "sourceSha256": "145e9c990b9e99a23986b501ed021893b9d5a6004f40bb310766a3c3a6f20b87",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    },
+    {
+      "id": "weak-control-generic-cosmic-overview",
+      "sourceSha256": "9ee9b0f1c8ddb415a3507c2a27b0112e46361806b528bba4fd86a15c5949c19e",
+      "score": 1,
+      "verdict": "off-voice",
+      "disagreement": false
+    }
+  ]
+}

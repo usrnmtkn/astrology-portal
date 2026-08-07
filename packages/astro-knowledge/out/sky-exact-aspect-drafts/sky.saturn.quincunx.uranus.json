@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:27.997Z",
+  "id": "sky.saturn.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "saturn-uranus",
+    "path": "data/pairs/saturn-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.uranus",
+    "planetA": "saturn",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Uranus",
+    "humanMoment": "A transit station opens contactless fare gates while continuing to accept older travel cards at the same entrances.",
+    "developmentDetail": "Commuters change lines as some gates process phones quickly but send cardholders to attendants for manual clearance.",
+    "planetaryDynamic": "Saturn maintains controlled access and legacy requirements, while Uranus introduces faster technology that changes how the crowd moves.",
+    "aspectMechanic": "The quincunx keeps the gates, lines, and manual clearances shifting because secure entry and contactless speed cannot hold one stable arrangement.",
+    "conditionalConsequence": "If attendants keep switching gates between phones and older cards, the faster scan relocates the delay to manual clearance.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If attendants keep switching gates between phones and older cards, the faster scan relocates the delay to manual clearance.",
+    "why": "The consequence is slightly compressed, but it follows concretely from the operational conflict and shows how solving for speed shifts the burden elsewhere.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:27.996Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9d1cfbcf1cddb9264fe538db115c48821e9ec3907c5c5185bfac6bac4a0aba50",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "745a89cd288b27f9589082e0a146240659717eab9d48edb8b34e00341951e2f8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ae47d93acbab8db033ea4d65e2bf317468a7241b573c36b2bea403f0bc299b45"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

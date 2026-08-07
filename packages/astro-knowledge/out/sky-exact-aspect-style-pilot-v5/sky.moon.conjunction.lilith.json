@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:44:01.013Z",
+  "id": "sky.moon.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "moon-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.moon.conjunction.lilith",
+    "planetA": "moon",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Moon conjunct Lilith",
+    "body": "The evening is comfortable, but we cannot settle into it. We put on the usual show, eat the familiar meal, and call staying in a relief, even as restlessness keeps sending us back to the fridge or the phone. With Moon conjunct Lilith, we can cancel the plan for safety and still ache for the invitation we claimed not to want. The need for comfort and the need to break its rules arrive as one unnamed mood.\n\nSoothing ourselves may work for an hour, but it can also bury the appetite causing the agitation. We reach for another snack, another episode, another small pleasure that asks nothing difficult of us, then wonder why none of it lands. The want underneath may be less convenient: attention, sex, solitude, honesty, a night that does not follow the usual script. Before feeding the mood again, we can ask what it would order if it were allowed to speak.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived tension, concrete contemporary details, accurate merged behavior, natural collective voice, and a clean pair-specific ending. The copy is clear, evergreen, and structurally compliant.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:44:01.013Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "f6e9e1ea830f0b040b691f3a9f66b87227300dde0d9eaaccd103ec087a38f0cc",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "ced6bdd9d67d3c5a7bcbaa6177f3231242db33c20a1b06702160437afa57ec8a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "82dd78b3f1ecf4e0757962713fd8805ffd4c0b858e657f96359e7a41fa502cd1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

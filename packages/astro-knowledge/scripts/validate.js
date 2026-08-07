@@ -72,8 +72,8 @@ const entryShapes = {
   planetary: {
     schemaFile: "planetary.schema.json",
     required: ["id", "planet", "title", "overview", "cycle", "signs", "source", "voiceNeutral", "status"],
-    types: { id: "string", planet: "string", title: "string", overview: "string", cycle: "string", signs: "array", source: "object" },
-    optional: []
+    types: { id: "string", planet: "string", title: "string", overview: "string", cycle: "string", signs: "array", source: "object", provenance: "string", acAddendum: "array:string" },
+    optional: ["provenance", "acAddendum"]
   },
   point: {
     schemaFile: "point.schema.json",
@@ -106,8 +106,8 @@ const entryShapes = {
   placement: {
     schemaFile: "placement.schema.json",
     required: ["id", "kind", "planet", "key", "tldr", "body", "gift", "challenge", "voiceNeutral", "status"],
-    types: { id: "string", kind: "string", planet: "string", key: "string|number", tldr: "string", body: "string", gift: "string", challenge: "string", note: "string" },
-    optional: ["source", "note"],
+    types: { id: "string", kind: "string", planet: "string", key: "string|number", tldr: "string", body: "string", gift: "string", challenge: "string", collectiveGift: "string", supportedDomains: "array:string", unsupportedDomainWarnings: "array:string", scenarioPolicy: "string", note: "string" },
+    optional: ["source", "note", "collectiveGift", "supportedDomains", "unsupportedDomainWarnings", "scenarioPolicy"],
     enums: { kind: ["sign", "house"] }
   },
   angle: {
@@ -147,8 +147,8 @@ const entryShapes = {
   synastryAspect: {
     schemaFile: "synastry-aspect.schema.json",
     required: ["id", "kind", "planetA", "planetB", "aspect", "plainTranslation", "policy", "voiceNeutral", "status"],
-    optional: ["note", "summaryShort", "summaryDeep", "tension", "advice", "weight", "authoringStatus"],
-    types: { id: "string", kind: "string", planetA: "string", planetB: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string", summaryShort: "string", summaryDeep: "string", tension: "string", advice: "string", weight: "number", authoringStatus: "string" },
+    optional: ["note", "humanMoment", "summaryShort", "summaryDeep", "tension", "advice", "weight", "authoringStatus"],
+    types: { id: "string", kind: "string", planetA: "string", planetB: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string", humanMoment: "string", summaryShort: "string", summaryDeep: "string", tension: "string", advice: "string", weight: "number", authoringStatus: "string" },
     enums: { kind: ["interaspect"], authoringStatus: ["draft", "approved", "locked"] }
   },
   synastryPointContact: {
@@ -481,11 +481,76 @@ function listDirectJsonFiles(dir) {
     .sort();
 }
 
-function flattenText(value) {
-  if (typeof value === "string") return value;
-  if (Array.isArray(value)) return value.map(flattenText).join(" ");
-  if (value && typeof value === "object") return Object.values(value).map(flattenText).join(" ");
-  return "";
+const literalBannedVoiceUseAllowlist = new Map([
+  [
+    "data/synastry/aspects/A-mercury_B-neptune_trine.json::tension",
+    "The risk is that it gets too comfortable to leave. You can build a shared world so lovely that ordinary life starts to feel like an interruption. When the bills come, when a real conflict surfaces, when something needs a plain practical decision, you both drift back toward the softer register instead. The connection pulls you toward the beautiful and the meaningful, never toward the dull and necessary, and a leaking faucet does not fix itself while you are busy being moved by a sunset. There is a subtler version of the same problem. The trine is good at the gentle feelings and clumsy with the ugly ones. Tenderness comes naturally. Anger, frustration, and plain disappointment do not, and it is easy to keep things poetic precisely when an unbeautiful truth needs saying. The danger is not a fight. It is a hard conversation that quietly never happens."
+  ],
+  [
+    "data/synastry/aspects/A-neptune_B-mercury_trine.json::tension",
+    "The risk is that it gets too comfortable to leave. You can build a shared world so lovely that ordinary life starts to feel like an interruption. When the bills come, when a real conflict surfaces, when something needs a plain practical decision, you both drift back toward the softer register instead. The connection pulls you toward the beautiful and the meaningful, never toward the dull and necessary, and a leaking faucet does not fix itself while you are busy being moved by a sunset. There is a subtler version of the same problem. The trine is good at the gentle feelings and clumsy with the ugly ones. Tenderness comes naturally. Anger, frustration, and plain disappointment do not, and it is easy to keep things poetic precisely when an unbeautiful truth needs saying. The danger is not a fight. It is a hard conversation that quietly never happens."
+  ],
+  [
+    "data/modifiers/nodal-axis-timing-framework.json::classes.transitingNodeContacts.planets.neptune.examples[2]",
+    "water or leak issue"
+  ],
+  [
+    "data/transits/mercury-conjunction-uranus.json::readerCopy.body",
+    "One message changes the direction of the entire conversation before anyone can prepare a response. A leak, alert, resignation note, discovery, or technical breakthrough reaches every screen and makes the older explanation immediately irrelevant. Mercury carries the information, while Uranus makes its arrival sudden, far-reaching, and difficult to control. Under the conjunction, the news and the break from the old plan happen as one event. The revelation may create a better route forward while leaving the people responsible for the earlier story scrambling to catch up."
+  ],
+  [
+    "data/transits/mercury-square-pluto.json::readerCopy.summary",
+    "Two sides use selective leaks and edited messages to control what the public believes happened."
+  ],
+  [
+    "data/transits/mercury-square-pluto.json::readerCopy.body",
+    "Two sides use selective leaks and edited messages to control what the public believes happened. Each release contains enough truth to wound the other side while withholding the details that would complicate its own position. Mercury keeps the evidence and accusations circulating, while Pluto controls access to the records that could settle the dispute. The square turns communication into a fight over who can force their version into the official history. The truth may eventually emerge, but by then every source has taught the audience to suspect the motive behind the message."
+  ]
+]);
+
+function listStringFields(value, fieldPath = "") {
+  if (typeof value === "string") return [{ fieldPath, value }];
+  if (Array.isArray(value)) {
+    return value.flatMap((entry, index) => listStringFields(entry, `${fieldPath}[${index}]`));
+  }
+  if (value && typeof value === "object") {
+    return Object.entries(value).flatMap(([key, entry]) => {
+      const childPath = fieldPath ? `${fieldPath}.${key}` : key;
+      return listStringFields(entry, childPath);
+    });
+  }
+  return [];
+}
+
+function isAllowedLiteralBannedVoiceUse(relativeFilePath, fieldPath, value) {
+  return literalBannedVoiceUseAllowlist.get(`${relativeFilePath}::${fieldPath}`) === value;
+}
+
+function validateLiteralBannedVoiceUseAllowlist(errors, checks) {
+  for (const [key, expectedValue] of literalBannedVoiceUseAllowlist.entries()) {
+    const separatorIndex = key.indexOf("::");
+    const relativeFilePath = key.slice(0, separatorIndex);
+    const fieldPath = key.slice(separatorIndex + 2);
+    const filePath = path.join(root, relativeFilePath);
+
+    if (!fs.existsSync(filePath)) {
+      errors.push(`${relativeFilePath}:${fieldPath}: stale banned-voice literal-use allowlist entry; file is missing`);
+      continue;
+    }
+
+    const field = listStringFields(readJson(filePath)).find((entry) => entry.fieldPath === fieldPath);
+    if (!field) {
+      errors.push(`${relativeFilePath}:${fieldPath}: stale banned-voice literal-use allowlist entry; field is missing`);
+      continue;
+    }
+    if (!checks.some((check) => check.pattern.test(field.value))) {
+      errors.push(`${relativeFilePath}:${fieldPath}: stale banned-voice literal-use allowlist entry; field no longer contains a banned term`);
+      continue;
+    }
+    if (field.value !== expectedValue) {
+      errors.push(`${relativeFilePath}:${fieldPath}: stale banned-voice literal-use allowlist entry; approved wording changed`);
+    }
+  }
 }
 
 function escapeRegExp(value) {
@@ -523,13 +588,19 @@ function validateVoicePolicy(errors) {
   }
 
   if (checks.length === 0) return;
+  validateLiteralBannedVoiceUseAllowlist(errors, checks);
 
   for (const filePath of listJsonFiles(dataRoot)) {
     const json = readJson(filePath);
-    const text = flattenText(json);
+    const relativeFilePath = rel(filePath);
+    const fields = listStringFields(json);
     for (const check of checks) {
-      if (check.pattern.test(text)) {
-        errors.push(`${rel(filePath)}: contains banned voice term "${check.term}"`);
+      const hasUnapprovedUse = fields.some(({ fieldPath, value }) => (
+        check.pattern.test(value)
+        && !isAllowedLiteralBannedVoiceUse(relativeFilePath, fieldPath, value)
+      ));
+      if (hasUnapprovedUse) {
+        errors.push(`${relativeFilePath}: contains banned voice term "${check.term}"`);
       }
     }
   }
@@ -622,4 +693,12 @@ if (require.main === module) {
   console.log("Validation passed: all data files match their schemas.");
 }
 
-module.exports = { validateAll, listJsonFiles, listDirectJsonFiles, readJson };
+module.exports = {
+  isAllowedLiteralBannedVoiceUse,
+  listDirectJsonFiles,
+  listJsonFiles,
+  listStringFields,
+  readJson,
+  validateLiteralBannedVoiceUseAllowlist,
+  validateAll
+};

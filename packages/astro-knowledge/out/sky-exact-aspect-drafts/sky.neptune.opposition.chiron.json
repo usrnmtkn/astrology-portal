@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:56.009Z",
+  "id": "sky.neptune.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "neptune-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.opposition.chiron",
+    "planetA": "neptune",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Neptune opposite Chiron",
+    "humanMoment": "At a tenants' court clinic, one renter describing mold-related illness is surrounded by other residents asking the same volunteer to take on their cases.",
+    "developmentDetail": "By closing time, photographs, medical bills, and eviction notices from several buildings cover the table while the original filing remains unfinished.",
+    "planetaryDynamic": "Neptune blurs one renter's hardship into the suffering around it, while Chiron keeps the documented illness defined as the wound requiring attention.",
+    "aspectMechanic": "The opposition places the renter's unfinished filing across from the residents' accumulating cases, so neither the specific illness nor the wider demand for help can be edited out.",
+    "conditionalConsequence": "If the volunteer treats the entire pile as one emergency, the original filing may miss its deadline while the other residents still leave without representation.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The opposition places the renter's unfinished filing across from the residents' accumulating cases, so neither the specific illness nor the wider demand for help can be edited out.",
+    "why": "All fields meet the contract; this sentence is slightly more structurally explicit than the others but still applies the opposition clearly and naturally.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:56.008Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "d158f7e61a0b66554e7cd22ba35b0e0d22f4cdd964e253505fa152a8a062ae0b",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "df89b15f582d635daaf4334eb4e5eb24f5542f7c08833f1bd81f7d1781b48d9d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d927fb975b6943ece3b3fe777c37632392ad11f127cca659b8d709cade9c56e8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

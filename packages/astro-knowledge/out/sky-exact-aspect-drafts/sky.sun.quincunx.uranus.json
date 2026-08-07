@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:04:06.305Z",
+  "id": "sky.sun.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-uranus",
+    "path": "data/pairs/sun-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.sun.quincunx.uranus",
+    "planetA": "sun",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Uranus",
+    "humanMoment": "A lead performer abandons the rehearsed staging during a live show, forcing the lighting and camera crews to follow an unplanned route.",
+    "developmentDetail": "The change gives the performance a striking edge, but cues, entrances, and sightlines need correction with every new departure.",
+    "planetaryDynamic": "The Sun centers identity and self-direction, while Uranus pushes for independence, disruption, and doing things differently.",
+    "aspectMechanic": "The quincunx makes the performer's self-directed expression and the production's response to each disruption solve different problems at once, requiring repeated technical adjustments because neither can fully accommodate the other.",
+    "conditionalConsequence": "If the departures continue, the show can look brilliantly original while its timing and transitions become less reliable.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx makes the performer's self-directed expression and the production's response to each disruption solve different problems at once, requiring repeated technical adjustments because neither can fully accommodate the other.",
+    "why": "The mechanic is slightly dense but clearly applies the quincunx's repeated-adjustment pattern to the concrete scene, and all fields meet the contract.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:04:06.305Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "a298a7d2ba47eb852b6306dec8bea21647a46ad0168a6a5aef41d9084ca69be5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "cfa1705c2295a42461d5f0600e324b4511c7a5c4580716da569d8497a7360546",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b7a71a5ada1ce507fa1334871d7b423ed07c676ffeb0b57e808bbb2a5c3290e1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

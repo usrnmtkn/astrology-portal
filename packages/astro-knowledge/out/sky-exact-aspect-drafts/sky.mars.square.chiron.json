@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:17.244Z",
+  "id": "sky.mars.square.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mars-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.square.chiron",
+    "planetA": "mars",
+    "planetB": "chiron",
+    "aspect": "square",
+    "title": "Mars square Chiron",
+    "humanMoment": "A stunt performer stops a rehearsal over an unsafe rig, then apologizes for delaying the production before anyone fixes it.",
+    "developmentDetail": "The crew resets the scene while the performer quietly repeats the same safety objection.",
+    "planetaryDynamic": "Mars pushes the performer to interrupt the action, while Chiron carries the old lesson that taking up space with a firm objection comes at a cost.",
+    "aspectMechanic": "The square makes every rehearsal reset return to the unsafe rig until the production decides whether the safety objection can stand without an apology.",
+    "conditionalConsequence": "If the apology keeps clearing the way for another reset, the schedule stays intact by leaving the original hazard in place.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The crew resets the scene while the performer quietly repeats the same safety objection.",
+    "why": "This is the least developed field, but it still adds an observable consequence and establishes the recurring conflict without repeating the opening.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:17.243Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "777c027c9340797eda342dd65f71103ffb062c37eb880a44075bc2282a2596dd",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "3132936cde7360a419682c68d04dad6f9326cd09768ac556584f15954e49b8a4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "084f897d64bf724fd635f1feb1c951126b197acbc8865939f6c61a71690ae138"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.square.chiron",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

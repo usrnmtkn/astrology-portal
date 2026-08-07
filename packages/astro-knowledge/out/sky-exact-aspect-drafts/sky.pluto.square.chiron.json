@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:20.782Z",
+  "id": "sky.pluto.square.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "pluto-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.square.chiron",
+    "planetA": "pluto",
+    "planetB": "chiron",
+    "aspect": "square",
+    "title": "Pluto square Chiron",
+    "humanMoment": "A theater revival stalls when performers learn its central scene recreates an assault the company removed from its founding history.",
+    "developmentDetail": "Rehearsals keep breaking down at that scene as archived notes and former members’ accounts contradict the official story.",
+    "planetaryDynamic": "Pluto excavates the suppressed record, while Chiron marks the original injury the company built around without acknowledging.",
+    "aspectMechanic": "The Pluto-Chiron square turns each attempt to resume rehearsals into the same practical conflict over whether the company will preserve the scene or confront the founding harm it repeats.",
+    "conditionalConsequence": "If producers keep treating the stoppages as a current cast problem, delays and departures may intensify in proportion to how long the original account was suppressed.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The Pluto-Chiron square turns each attempt to resume rehearsals into the same practical conflict over whether the company will preserve the scene or confront the founding harm it repeats.",
+    "why": "This is the densest sentence, but it clearly applies the square’s recurring practical conflict to a specific, observable choice and remains natural enough for owner review.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:20.782Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "2a1f3740ee1126fa7f10e4290a3df1e548130eab884f7b93c8742f88f0bd6c6b",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "cff66db1de08f891e23b13f0941df2d66b2a8e2393d5dc5745f22231420733c3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "004ee0fc38a556021053cd4344c4dcdc81ef9499f957fef333b0f2503517f99a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.square.chiron",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -291,7 +291,12 @@ console.log(`Rendered ${lun} lunation articles (incl. eclipse kinds).`);
 // Calendar layer: phases, void of course, season markers, weekly moon (all signs + variants)
 const PHASES = ["new-moon","waxing-crescent","first-quarter","waxing-gibbous","full-moon","disseminating","last-quarter","balsamic"];
 let cal = 0;
-for (const ph of PHASES) { const r = renderCalendarPhase({ phase: ph, sign: "cancer" }); if (!r.headline || /\{\{/.test(r.body)) fail(`phase ${ph}`); cal++; }
+for (const ph of PHASES) for (const sg of SIGNS) {
+  const r = renderCalendarPhase({ phase: ph, sign: sg });
+  if (!r.headline || /\{\{/.test(r.body)) fail(`phase ${ph}/${sg}`);
+  if (r.contentKey !== `fallback-hook/moon-phase-sign/${ph}/${sg}`) fail(`phase ${ph}/${sg}: wrong content key`);
+  cal++;
+}
 for (let i = 0; i < SIGNS.length; i++) { const r = renderVoidOfCourse({ sign: SIGNS[i], nextSign: SIGNS[(i+1)%12] }); if (/\{\{/.test(r.body)) fail(`voc ${SIGNS[i]}`); cal++; }
 for (const w of ["march-equinox","june-solstice","september-equinox","december-solstice"]) { const r = renderSeasonMarker({ which: w }); if (!r.body || !r.headline) fail(`marker ${w}`); cal++; }
 for (const sg of SIGNS) for (const v of [1,2]) {

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:17.850Z",
+  "id": "sky.moon.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "moon-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.sextile.nodes",
+    "planetA": "moon",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Moon sextile North Node",
+    "humanMoment": "A theater company is offered a short run in an unfamiliar public space after its usual venue becomes unavailable.",
+    "developmentDetail": "During rehearsal, performers return to their old entrances under pressure even though the new layout offers a workable route to opening night.",
+    "planetaryDynamic": "The Moon pulls the company toward familiar stage habits, while the North Node points toward the unfamiliar setup the production now has to enter.",
+    "aspectMechanic": "The sextile creates a usable opening through the new layout, but the company still has to notice it and rehearse the entrances that make the run possible.",
+    "conditionalConsequence": "If the performers treat awkward rehearsals as part of learning the space rather than proof that it cannot work, the production can open as scheduled.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "The Moon pulls the company toward familiar stage habits, while the North Node points toward the unfamiliar setup the production now has to enter.",
+    "why": "The node axis is slightly compressed by naming only the North Node, but the sentence still accurately contrasts familiar reflexes with forward movement.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:17.850Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "fdb51ad471857a793b6ff656c5b10e19b8c0c30bf0092a713fdfc1aac9387694",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "ad64f430990ac4b03605ab5fb5cfa9278d91655ca83f3a17dbc19656f8edaf5f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "68bb2cfaed40a70d358ace4b8c2353c76b6fcd35e17f1e737c87b659d11b77d9"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

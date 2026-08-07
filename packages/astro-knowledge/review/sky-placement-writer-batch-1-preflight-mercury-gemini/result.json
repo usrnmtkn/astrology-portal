@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-writer-batch-1-preflight-mercury-gemini",
+  "recordedAt": "2026-08-04T11:31:56.938Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "mercury",
+    "sign": "gemini"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v10:cycle-word+placement-name+standalone-opening-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:gemini-season-2025:p018:window-2-3",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+      "owner-article:mercury-in-virgo-2025:p006:window-2-4",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:mercury-in-taurus-2025:p008:window-1-4"
+    ]
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "surfaceLint": {
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "sky-placement",
+          "term": "group chat",
+          "match": "group chat",
+          "reason": "overused modern object (also removed from the aspect phrase bank)"
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "hook is long (98 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Mercury in Gemini makes an unfinished question hard to leave alone. From {{entryDate}}, a message with incomplete details can set off a quick chain: someone finds the original source, someone else spots a contradiction, and the group chat fills with links, screenshots, and sharper questions. We connect information fast, revise what we thought we knew, and get closer to an answer by talking it through. Mercury moves through all twelve signs in about one year because it stays near the Sun, usually spending roughly two weeks to two months in each sign. A retrograde can extend a stay.",
+    "tension": "The pressure builds after the missing fact has been found, when the search keeps moving because each answer suggests another angle. We open more tabs, add side questions to the chat, and answer the newest reply before checking whether it changes the actual decision. A clever summary gets repeated because it is quick and memorable, while the slower source that contradicts it goes unread. By the time the group has to choose, the confirmed detail is buried under commentary, and nobody can tell which version is current. The exchange stays lively, but the information stops becoming more useful.",
+    "development": "Getting clear does not require shutting down curiosity. We can return to the original question, separate what is confirmed from what is merely interesting, and send only the material that changes the choice. When a contradiction appears, someone can correct the earlier summary in plain language instead of adding another theory. The side questions can wait in a note. The chat gets shorter, and the choice gets clearer: the group uses the same checked facts instead of whichever reply arrived last.",
+    "close": "Before {{exitDate}}, we can stop one looping search and make the pending choice from the facts we have actually checked.",
+    "try_this": [
+      "We can read the original source before forwarding a summary.",
+      "We can delete a clever sentence from a draft when the source does not support it.",
+      "We can turn off chat alerts while reading the source that everyone is discussing."
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-03T03:39:45.926Z",
+  "sourceBundle": "review/sky-placement-voice-pass-v6-targeted-candidates.json",
+  "release": {
+    "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-terra",
+    "reasoningEffort": "low",
+    "registryState": "active",
+    "registryOverride": false
+  },
+  "requestCount": 3,
+  "samplesPerArticle": 1,
+  "promotionAuthorized": false,
+  "governedContentChanged": false,
+  "ownerApprovalImplied": false,
+  "results": [
+    {
+      "candidateId": "sky-placement-v6-saturn-capricorn",
+      "title": "Saturn in Capricorn",
+      "result": {
+        "score": 3,
+        "verdict": "in-voice",
+        "weakest": "What holds gets reinforced.",
+        "why": "The placement is unmistakable: Saturn tests durability while Capricorn exposes ambition built on overwork; the turn names observable behavior and ends cleanly with bite.",
+        "gate": "human-review"
+      }
+    },
+    {
+      "candidateId": "sky-placement-v6-neptune-libra",
+      "title": "Neptune in Libra",
+      "result": {
+        "score": 3,
+        "verdict": "in-voice",
+        "weakest": "We learn how to make the room look peaceful.",
+        "why": "The Neptune blur and Libra’s social smoothing are clear, and the article tracks their collective cost through recognizable behavior to a sharp close.",
+        "gate": "human-review"
+      }
+    },
+    {
+      "candidateId": "sky-placement-v6-uranus-pisces",
+      "title": "Uranus in Pisces",
+      "result": {
+        "score": 3,
+        "verdict": "in-voice",
+        "weakest": "Uranus spends roughly seven years in Pisces, long enough for separate complaints to become a pattern no one can dismiss.",
+        "why": "It clearly makes Uranus’s systemic disruption move through Pisces’s compassion and suffering, with a concrete escalation from private burden to collective action and a behavioral shadow with bite.",
+        "gate": "human-review"
+      }
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T01:58:08.066Z",
+  "id": "sky.sun.quincunx.moon",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-moon",
+    "path": "data/pairs/sun-moon.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.quincunx.moon",
+    "planetA": "sun",
+    "planetB": "moon",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Moon",
+    "humanMoment": "A host keeps changing the pace of a crowded family celebration as visible responsibilities clash with the need for rest and privacy.",
+    "developmentDetail": "Guests see a confident welcome followed by abrupt pauses, shortened rituals, and repeated changes to the schedule.",
+    "planetaryDynamic": "The Sun sustains the role being performed in public, while the Moon registers bodily limits and immediate emotional needs.",
+    "aspectMechanic": "The quincunx makes identity and emotion solve different problems at once, forcing repeated adjustments because neither can fully accommodate the other.",
+    "conditionalConsequence": "If the host keeps compensating for both demands, the celebration continues but its timing and tone remain unsettled.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The scene is concrete and observable, the Sun and Moon are clearly distinguished, and the quincunx produces repeated practical adjustments without drifting into advice or prediction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T01:58:08.065Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7bd28e73d04a0150e1ce093c8d0457f39e06e53eb8fba690473ec2dfaa0dbb84",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "032fd3cfcc1ea27db26e5b2603166b7e02f383c30fd595a5818cb10f81a8115a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "670e901059ffc667a48a87374f9ff56461c7fa70c16c400daf205da69c228170"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.moon",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

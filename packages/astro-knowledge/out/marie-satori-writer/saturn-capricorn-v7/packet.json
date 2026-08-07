@@ -1,0 +1,437 @@
+{
+  "schemaVersion": 1,
+  "packetId": "marie-satori-writer:sky-placement:saturn-capricorn:hook",
+  "createdAt": "2026-08-02T00:00:00.000Z",
+  "surface": "sky-placement",
+  "target": {
+    "planet": "saturn",
+    "sign": "capricorn",
+    "beat": "hook",
+    "goal": "replace polished abstraction with the exact cost of overwork",
+    "failureTags": [
+      "abstract_consequence",
+      "requires_interpretation",
+      "polished_but_flat"
+    ],
+    "keywords": [
+      "burnout",
+      "overtime",
+      "rest",
+      "work",
+      "achievement",
+      "indispensable",
+      "deadline",
+      "exhaustion",
+      "accomplishment"
+    ]
+  },
+  "writerLane": {
+    "laneId": "writer:sky-placement",
+    "runtimeRegistered": false,
+    "judgeLane": "judge:sky-placement",
+    "rule": "Write and self-edit first. Terra-low judges only after authorship audit."
+  },
+  "surfaceContract": {
+    "id": "tldr-astro.voice.sky-placement.v5",
+    "voiceDescription": "Direct, modern, and emotionally exact. The article is not a sign encyclopedia; its job is to give the reader one memorable way to recognize the transit in real life. Interesting before comprehensive. Verbs and scenes over adjective triplets. Prefer a clear observation over a polished abstraction. A memorable phrase earns its place only when it makes literal sense on the first read.",
+    "person": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'people' when people collectively are the actual subject, 'someone', or a concrete shared scene. Never use 'you', 'your', 'yours', 'yourself', or 'yourselves'. Second person belongs to transit-to-natal copy. Historical owner-approved second-person originals are preserved in fixtures/sky-placement-historical-second-person.json and are excluded from active generation and judge calibration.",
+    "beats": [
+      {
+        "beat": "hook",
+        "requirement": "2-4 sentences. Sentence 1 is the standalone recognition quote: a complete line someone would remember or send to a friend. The reader promotes it into a bold callout and removes it from the article body. Begin with a lived premise, not a slogan or abstract placement summary. The remaining sentences form the meaning paragraph: explain what the planet governs and how the sign changes its method, pace, or priorities. Translate meaning into natural prose and behavior, never a keyword list. Name the transit only after the human situation is clear when possible."
+      },
+      {
+        "beat": "lived expression",
+        "requirement": "What the planet-sign combination does in ordinary life. 2-4 sentences. Include the transit's pace (days, weeks, years, decades) somewhere in the article, usually here. Concrete evidence INVENTED FRESH for this placement - the kind of thing a reader would recognize from their own week. Build movement from pressure to choice to consequence. Do not line up three representative examples from work, family, relationships, or public life as if completing a coverage checklist; concrete nouns do not rescue a flat inventory. One charged sequence beats three interchangeable scenarios. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output; they leaked into every card of the first batch.) Explain the planet through behavior, never through a keyword list."
+      },
+      {
+        "beat": "turn",
+        "requirement": "Name where the gift becomes the problem and end with a clean truth. 2-5 sentences. The shadow must be observable behavior, not an abstract warning. Name the exact cost: the delayed conversation, cancelled plan, overspending, overwork, one-sided agreement, or other source-supported consequence. A directive is allowed when it is specific. End on the strongest plain sentence; no dramatic metaphor, second aphorism, blessing, or soft summary after it."
+      }
+    ],
+    "taglineRules": "2-5 words, imperative or sharp claim, no terminal period, no planet/sign name needed. In OUR voice, not CHANI's: plain everyday words, bite over sparkle.",
+    "movesRules": "2-3 items. Each is one sentence, a specific doable action tied to THIS placement (CHANI model: 'emcee an open mic', not 'embrace the energy'). No generic coaching verbs (embrace, trust, align, manifest). A move that would work for any placement fails the swap test.",
+    "loreBoundary": "Sign lore, rulership, modality, elements-as-labels, symbols, and season history belong in an optional 'About [Sign]' block rendered separately, NEVER in the article body. The element may be felt in imagery (heat for Leo, depth for Scorpio) but never named as mechanics.",
+    "sourcePath": "packages/astro-knowledge/voice/tldr-astro/sky-placement.json"
+  },
+  "astrologyFacts": {
+    "meaning": {
+      "kind": "placements-sign",
+      "source": "data/placements/sign/saturn-capricorn.json",
+      "tldr": "Saturn in Capricorn: discipline is strong, structural, and built for long-range mastery.",
+      "body": "With Saturn in Capricorn, the work is responsibility, ambition, endurance, and wise authority. Saturn is at home here, so effort can become legacy when it does not harden the heart.",
+      "gift": "Strategy, resilience, leadership, and the ability to build something that lasts.",
+      "challenge": "Workaholism, emotional austerity, and equating worth with achievement."
+    },
+    "authoringLayer": {
+      "planetFunction": "structure, discipline, limits, and time",
+      "planetUseful": "mastery earned through patient, unglamorous work",
+      "planetDistortion": "rigidity, self-denial, or fear of never being enough",
+      "signMethod": "disciplined, ambitious, long-game",
+      "signBehavior": "committing to the long game, doing the work, and keeping its word",
+      "signNeed": "achievement and structure",
+      "signDistortion": "the belief that you are what you finish. The people who love you are not reading your resume.",
+      "pairColor": null
+    },
+    "tier": "social",
+    "policy": "These checked-in meaning fields bound interpretation. Historical voice excerpts never supply dates, degrees, or runtime facts."
+  },
+  "positiveExamples": [
+    {
+      "sourceId": "owner-article:full-moon-in-taurus:p001",
+      "text": "Stop Proving Your Worth. You've burned yourself out trying to make yourself indispensable. All that overtime just to feel secure. Every yes your body rejected. No one really knows what your stability has cost you - and here's the truth: you're not supposed to feel safe. You're supposed to keep producing, keep proving, make impact, keep earning your right to take up space. That's the con. Your worth isn't actually on the table, but they need you to believe it is.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-lunation",
+      "planet": "moon",
+      "sign": "taurus",
+      "house": "",
+      "articleBeat": "hook",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "1fa53bb33d8758d4cc8fd84b2b51a868966af7e0caafa9be042c834e12f1ef03",
+      "retrievalScore": 690,
+      "selectionReasons": [
+        "5 editorial-goal terms",
+        "same article beat",
+        "9 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e089",
+      "text": "Twenty-five years ago, you learned to work through pain like it was a virtue. You internalized the belief that suffering equaled strength, that endurance was the highest form of love. But Saturn in your house of health and service asks: What if rest isn't laziness?",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-active-fixture",
+      "surface": "sky-article-longform",
+      "planet": "saturn",
+      "sign": "aries",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "published article body excerpt",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Active owner-published fixture preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "26ba5ff47e97fecbaa7a698bbd3ec91b7252181f31384c6853c23b70d32e641c",
+      "retrievalScore": 675,
+      "selectionReasons": [
+        "owner-authored astrology article",
+        "4 editorial-goal terms",
+        "same planet",
+        "8 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p063",
+      "text": "Venus retrograde is a stripping away. A confrontation with the patterns that shape your relationships. The silent agreements, the quiet compromises, the ways you’ve bent to keep the peace without asking what it’s cost you. If something ended without closure, expect the door to open. The question isn’t just who is coming back? but why? Have you softened yourself to be more acceptable, more digestible, more easy to love? Some relationships will reveal their expiration dates. Others will show you where the real work begins. By April 3, Venus moves back into your 6th house of work, health, the daily rhythms that make up your life. This is where the consequences of your relationships become physical. The exhaustion that won’t fade. The stress that lingers in your body. The way you structure your day around someone else’s needs instead of your own. If something has been quietly draining you, this is when it makes itself known. By April 12, the choice will be clear: keep stretching yourself thin for the sake of balance, or step back into alignment with what actually sustains you.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-article-longform",
+      "planet": "venus",
+      "sign": "aries",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "paragraph under Venus Retrograde Horoscopes",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "567fd1c1b5ff62e7850435f3cd710ae72f5820a3c40553413f326aed65e8d0a9",
+      "retrievalScore": 620,
+      "selectionReasons": [
+        "owner-authored astrology article",
+        "5 editorial-goal terms",
+        "10 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p038",
+      "text": "Mercury is retrograde in your sixth house of work, health, and daily habits. This is your check-in moment. Are your habits really working for you, or are you just performing wellness while running yourself into the ground? Leo energy wants to look good, feel good, and shine. But in the sixth house, that glow has to be built on rest, balance, and boundaries. Are you taking care of yourself, or just making it look like you are? Small habits add up. So do small sacrifices. You might be out here saying everything’s fine, posting about clean eating or productivity hacks, but skipping meals, losing sleep, or staying in environments that silently drain you. That disconnect catches up. This retrograde exposes the gap between what you say is healthy and what’s actually is. Your time and energy are sacred. Treat them like it. You may also find yourself revisiting habits you picked up in a past relationship or work environment. Leo reminds you that real confidence isn’t in how good it looks, it’s in how good it feels behind the scenes. Your energy is not endless.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-article-longform",
+      "planet": "mercury",
+      "sign": "leo",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "paragraph under Pisces & Pisces Rising",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "c068b6208f8a653b2b75b663cdd028c6fe79c21a331535f876588a4e0db01b41",
+      "retrievalScore": 545,
+      "selectionReasons": [
+        "owner-authored astrology article",
+        "4 editorial-goal terms",
+        "10 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p057",
+      "text": "Mars went retrograde in Leo on December 6, 2024, igniting your 6th house of work, routines, and well-being. The battlefield was your body, your schedule, the endless to-do lists that never seemed to end. At first, it may have felt like just another push to keep going, to keep proving, to keep grinding. But then, something shifted. The harder you pushed, the more resistance you met. Exhaustion settled in. Frustration built. The systems you relied on, your habits, your discipline, even your motivation.. began to break down. Mars in Leo wanted you to conquer your daily life, but retrograde motion forced you to ask: is this even working for me anymore? Then, on January 6, 2025, Mars slid back into Cancer, into your 5th house of creativity, pleasure, and self-expression. Have you been living for obligation rather than inspiration? Have you forgotten how to create just for the sake of it? Have you been waiting for permission to fully express yourself?",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-article-longform",
+      "planet": "mars",
+      "sign": "cancer",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "d94189ed2f6e37ad62b43dac2e2c329b852abeef7282900e3fa8e7853fd029cd",
+      "retrievalScore": 535,
+      "selectionReasons": [
+        "owner-authored astrology article",
+        "4 editorial-goal terms",
+        "9 candidate-language terms"
+      ]
+    }
+  ],
+  "contrastiveEdits": [
+    {
+      "id": "sky-placement-saturn-capricorn-name-lost-time",
+      "surface": "sky-placement",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "articleBeat": "hook",
+      "before": "Work that holds its value over time needs a structure that does not depend on disappearance.",
+      "after": "Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off.",
+      "whatChanged": "Replaced polished shorthand with the exact time and rest being lost.",
+      "ownerReason": "Name the visible cost instead of asking the reader to interpret disappearance.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": [
+        "abstract_consequence",
+        "requires_interpretation",
+        "polished_but_flat"
+      ],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Owner called the replacement great; the complete article remains unapproved.",
+      "retrievalScore": 465,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "same sign",
+        "3 matching failure tags",
+        "23 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-neptune-libra-show-agreement-before-cancellation",
+      "surface": "sky-placement",
+      "planet": "neptune",
+      "sign": "libra",
+      "articleBeat": "hook",
+      "before": "Nobody raises their voice, but one person keeps cancelling plans they never wanted.",
+      "after": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable.",
+      "whatChanged": "Restored the missing behavior that causes the later cancellation.",
+      "ownerReason": "The real pattern begins when someone agrees to avoid disturbing the mood and cancels later.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": [
+        "behavior_missing",
+        "explanatory_before_observable",
+        "polished_but_flat"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Preferred hook from owner-provided review; not exact full-article approval.",
+      "retrievalScore": 280,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "1 matching failure tag",
+        "13 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-demand-not-carry",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "lived",
+      "before": "The old version asked one person to carry too much.",
+      "after": "The old structure demands more than anyone should give.",
+      "whatChanged": "Changed a familiar carrying metaphor into direct pressure and a limit.",
+      "ownerReason": "Demands names the pressure; anyone keeps the cost collective without second person.",
+      "reasonSource": "explicit_owner_edit_analysis",
+      "failureTags": [
+        "polished_but_flat",
+        "requires_interpretation"
+      ],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"
+      ],
+      "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval.",
+      "retrievalScore": 255,
+      "selectionReasons": [
+        "same surface",
+        "2 matching failure tags",
+        "7 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-name-relational-cost",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "lived",
+      "before": "What looked like stability turns out to be obligation.",
+      "after": "What looked like connection turns out to be heavy obligation.",
+      "whatChanged": "Moved from a system label to the relational bond being reinterpreted.",
+      "ownerReason": "Connection makes the realization more emotionally precise than stability.",
+      "reasonSource": "explicit_owner_edit_analysis",
+      "failureTags": [
+        "abstract_consequence",
+        "polished_but_flat"
+      ],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"
+      ],
+      "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval.",
+      "retrievalScore": 235,
+      "selectionReasons": [
+        "same surface",
+        "2 matching failure tags",
+        "3 relevant terms"
+      ]
+    }
+  ],
+  "negativeExamples": [
+    {
+      "id": "polished-disappearance",
+      "surface": "sky-placement",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "articleBeat": "hook",
+      "text": "Work that holds its value over time needs a structure that does not depend on disappearance.",
+      "failureTags": [
+        "abstract_consequence",
+        "requires_interpretation",
+        "polished_but_flat"
+      ],
+      "reason": "The sentence hides lost evenings, weekends, and days off inside an abstract noun.",
+      "sourcePath": "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+      "retrievalScore": 413,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "same sign",
+        "3 matching failure tags",
+        "12 relevant terms"
+      ]
+    },
+    {
+      "id": "unnatural-banished-want",
+      "surface": "sky-placement",
+      "articleBeat": "hook",
+      "text": "The banished want refuses to stay reasonable.",
+      "failureTags": [
+        "unnatural_personification",
+        "requires_interpretation",
+        "polished_but_flat"
+      ],
+      "reason": "A central sentence fails literal English and asks the reader to decode an abstraction.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-placement-judge-targeted-v3.json",
+      "retrievalScore": 266,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "2 matching failure tags",
+        "4 relevant terms"
+      ]
+    }
+  ],
+  "vocabularySource": "packages/astro-knowledge/voice/tldr-astro/owner-vocabulary-bank.json",
+  "bannedPatternSource": "packages/astro-knowledge/voice/banned-constructions.json",
+  "currentCandidate": {
+    "candidateId": "sky-placement-v7-saturn-capricorn",
+    "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json",
+    "article": {
+      "tagline": "Build it without disappearing",
+      "hook": "Ambition stops looking impressive when the person holding everything together cannot take a day off. Saturn in Capricorn exposes the plans that only work because someone remembers every deadline, catches every mistake, and stays late to make up the difference. Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off.",
+      "lived": "Over roughly two and a half years, a project can win praise while one person still sends corrections at midnight, covers a vacant role, and logs in on vacation. The first missed deadline shows what the praise concealed: nobody else knows the process, the budget depends on free overtime, and the work stops when that person does. Saturn reinforces what can survive a handoff. The rest was never a strong plan; it was one person's unpaid time.",
+      "turn": "Being needed can feel like proof of competence until every problem belongs to the same person. We answer messages during dinner, redo delegated work, and postpone rest so nobody sees the system fail. The organization calls that person indispensable instead of admitting the deadlines, knowledge, and recovery plan were never shared. A plan that cannot survive one person's absence was never fully built.",
+      "moves": [
+        "Document the task nobody else can complete before the next deadline forces a handoff.",
+        "Give one recurring responsibility to someone who can carry it without supervision.",
+        "Close the laptop at the agreed time and record what fails before asking the same person to cover it."
+      ]
+    },
+    "governance": {
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    }
+  },
+  "governance": {
+    "mayChangeOwnerApproval": false,
+    "mayPromote": false,
+    "mayChangeModelRegistry": false,
+    "mayUseThirdPartyAsVoiceEvidence": false,
+    "mayUseCalibrationOnlyV3AsGenerationEvidence": false,
+    "surfaceCompatibilityNote": "Published owner examples from older surfaces may contain second person. They guide diction and pressure-consequence logic only; the Current Sky surface contract remains controlling."
+  }
+}

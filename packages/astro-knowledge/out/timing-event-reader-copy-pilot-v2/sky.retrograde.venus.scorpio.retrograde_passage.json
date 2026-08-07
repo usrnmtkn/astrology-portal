@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.retrograde.venus.scorpio.retrograde_passage",
+  "title": "Venus retrograde in Scorpio",
+  "status": "approved",
+  "serving": false,
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "body": "An old relationship comes back around, and we feel the pull before we know whether anything has actually changed. We pause before answering and look at whether the old problem is different, not only whether the attraction has returned. Venus is retrograde in Scorpio, bringing love, loyalty, money, and private agreements back under review. The temptation is to treat the intensity as an answer, or to test the other person instead of asking them directly.\n\nWe return to the original arrangement and name what it has cost, what it has given, and which promises no longer fit. A commitment made years ago may still be worth keeping, but only if the bond gives something real now. Once those terms are spoken aloud, we can revise the commitment instead of forcing the old version to fit. What matters is whether we can keep the promise now, not how strong the pull is.",
+  "preview": "An old relationship comes back around, and we feel the pull before we know whether anything has actually changed. We pause before answering and look at whether the old problem is different, not only whether the attraction has returned.",
+  "sourceId": "src.timing.venus.retrograde-passage",
+  "writer": {
+    "responseId": "resp_0d10e77110e85cde006a70fa14699481a298a35618c790b081",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "packetVersion": "timing-event-writer-packet-v1:owner-six-minimal",
+    "promptVersion": "timing-event-writer-v1:owner-six+v8-meaning",
+    "retrievedOwnerSourceIds": [
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:monthly-overview-june-2025:p001:window-2-2",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:gemini-season-2025:p018:window-2-3"
+    ],
+    "usage": {
+      "input_tokens": 1420,
+      "input_tokens_details": {
+        "cache_write_tokens": 1417,
+        "cached_tokens": 0
+      },
+      "output_tokens": 3597,
+      "output_tokens_details": {
+        "reasoning_tokens": 3389
+      },
+      "total_tokens": 5017
+    }
+  },
+  "revision": {
+    "source": "review/timing-event-reader-copy-pilot-v2-feedback.json",
+    "reviewClass": "exact_owner_approved",
+    "originalWriterResponseId": "resp_0d10e77110e85cde006a70fa14699481a298a35618c790b081"
+  },
+  "deterministicChecks": {
+    "passed": true,
+    "wordCount": 151,
+    "sentenceCount": 8,
+    "paragraphCount": 2,
+    "preview": "An old relationship comes back around, and we feel the pull before we know whether anything has actually changed. We pause before answering and look at whether the old problem is different, not only whether the attraction has returned.",
+    "findings": []
+  },
+  "judge": {
+    "score": null,
+    "verdict": "not_run",
+    "failedChecks": [],
+    "evidence": [],
+    "rationale": "This revised wording has not received a completed judge response. The judge-only retry remains blocked because the OpenAI account has no credits remaining.",
+    "evidenceStatus": "human_review_required",
+    "evidenceFailures": [
+      "no completed judge response"
+    ],
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "judge:sky-placement:sol-owner-authorized",
+    "responseId": null
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:35.632Z",
+  "id": "sky.pluto.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "pluto-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.trine.chiron",
+    "planetA": "pluto",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Pluto trine Chiron",
+    "humanMoment": "A wrongful-conviction review traces decades of testimony back to the first coerced confession in the case.",
+    "developmentDetail": "Archived recordings show that later witnesses repeated details introduced during that interrogation, and the prosecution's story begins to unravel.",
+    "planetaryDynamic": "Pluto excavates the case record, while Chiron marks the coerced confession as the original injury beneath everything that followed.",
+    "aspectMechanic": "Under the trine, excavation through the archived recordings and the injury inside the first confession reinforce each other with little resistance, helping the review reach the root while showing how far the prosecution's story traveled before anyone questioned it.",
+    "conditionalConsequence": "If the confession is discredited, the conviction may be reopened because the later testimony can no longer stand as independent evidence.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, excavation through the archived recordings and the injury inside the first confession reinforce each other with little resistance, helping the review reach the root while showing how far the prosecution's story traveled before anyone questioned it.",
+    "why": "Ready for owner review; the aspect sentence is slightly dense but applies the trine clearly and specifically to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:35.631Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7f96b5a993c4bbd7c8d36f0d14a6688a3659cb2747ac8ca2d1f75411e9065a98",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "ae1f8d558f0c4bc7e5f1211a73e418b88806d2b6a8e1b70d3060e287a7d939a6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e64555686b8ee41f33536d4db562c1d50034d637b8202f1dd263fe20db666468"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

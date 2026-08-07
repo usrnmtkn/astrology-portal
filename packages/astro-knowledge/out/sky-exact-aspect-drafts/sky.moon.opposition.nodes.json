@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:14:29.244Z",
+  "id": "sky.moon.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "moon-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.opposition.nodes",
+    "planetA": "moon",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Moon opposite North Node",
+    "humanMoment": "An annual procession starts on a new route, while longtime participants assemble at the old starting point.",
+    "developmentDetail": "Marshals redirect familiar faces across town as spectators line both streets and each crowd assumes the other has missed the event.",
+    "planetaryDynamic": "The Moon pulls participants toward the familiar starting point, while the North Node marks the unfamiliar route the procession is meant to take.",
+    "aspectMechanic": "The opposition places longtime participants at the old starting point and marshals along the new route, so the procession cannot proceed as though either gathering is absent.",
+    "conditionalConsequence": "If discomfort with the new route is treated as evidence that it is wrong, the procession may begin with part of its public left waiting on the street it used to follow.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "Marshals redirect familiar faces across town as spectators line both streets and each crowd assumes the other has missed the event.",
+    "why": "The scene is concrete and collective, the Moon and North Node are clearly distinguished, and the opposition is expressed through two gatherings that must both affect the outcome. The development detail is slightly crowded but remains observable and functional.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:14:29.244Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "fbda868427fe45832a0f2795f82741201ecd0e034af0a4e7bdb6cdd39567caed",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "f926b672c3034919bc957276edc29552ec0c0801d0fd55cb8da195023d6bf264",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "948435d02d3fdaf1b787ef5c9b656bccff01f5f95c3b89823a685fa7181aebad"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

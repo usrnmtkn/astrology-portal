@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:33.734Z",
+  "id": "sky.mercury.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mercury-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.opposition.chiron",
+    "planetA": "mercury",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Mercury opposite Chiron",
+    "humanMoment": "A renter reporting a ceiling leak loses the rehearsed explanation and snaps when the repair-line operator questions whether the problem is urgent.",
+    "developmentDetail": "A page of careful notes sits beside the phone as the caller alternates between strained cheerfulness, long pauses, and precise details about the spreading stain.",
+    "planetaryDynamic": "Mercury pushes to describe the damage clearly, while Chiron holds the old expectation that hesitation will be treated as ignorance.",
+    "aspectMechanic": "The opposition places the renter's halting report across from the operator's demand for a clear account, so neither the leak nor the sharp reaction to being doubted can be edited out of the call.",
+    "conditionalConsequence": "If the operator treats the sharp reply as a refusal to cooperate, the repair request may close without the spreading damage being logged.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the operator treats the sharp reply as a refusal to cooperate, the repair request may close without the spreading damage being logged.",
+    "why": "The consequence is slightly procedural in phrasing but follows directly and plausibly from the concrete scene. All fields are specific, evergreen, mechanically accurate, and functionally distinct.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:33.734Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7b701f94e7babebd627108c53dd597ed5591c006a720c240610c415e2f870201",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "13c83b0d992587638c3e71760fb5fc6a2bc9c85c33df846084c316a3dd3fcb13",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8e8f1b43442f0ec1993f2342ada635e98a2053cf7c95faedcadb516b291119f1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

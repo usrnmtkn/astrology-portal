@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:24.628Z",
+  "id": "sky.saturn.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.square.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Saturn square Lilith",
+    "humanMoment": "A restaurant closes early when kitchen staff refuse to keep cleaning after their paid shifts end.",
+    "developmentDetail": "Orders are canceled, tables are cleared, and the next day's opening is delayed while the owners insist that the closing checklist is mandatory.",
+    "planetaryDynamic": "Saturn enforces the checklist and fixed shift structure, while Lilith represents the labor those rules excluded and the refusal to provide it for free.",
+    "aspectMechanic": "The square turns the closing checklist into a practical standoff, with another early closure each time unpaid cleaning is demanded without deciding whether it belongs inside the paid shift.",
+    "conditionalConsequence": "If the restaurant reopens without settling that choice, canceled orders and delayed openings will keep costing both the business and its workers.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the restaurant reopens without settling that choice, canceled orders and delayed openings will keep costing both the business and its workers.",
+    "why": "The consequence is slightly broader than the preceding details about exactly how workers bear the cost, but it remains concrete, conditional, and fully grounded in the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:24.628Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "a35cdf3e924d65673ebc097324e787e3931e297e5ac7733f254160d8e3dae187",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "98a6a1503690ecd2512b9862dad8a9266922bd09cd57b92083da9e4bba712e7a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6cad3d8c0ffbb575ff1860aa82b944064ab2dd24985a98c523b4bd6ea745f177"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

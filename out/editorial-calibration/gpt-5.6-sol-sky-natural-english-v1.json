@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T03:41:26.161Z",
+  "status": "failed",
+  "serving": false,
+  "laneId": "judge:sky-exact-aspect",
+  "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "low",
+  "samples": 1,
+  "owner": [
+    {
+      "cohort": "owner",
+      "id": "sky.venus.virgo.square.mars.gemini",
+      "score": 1,
+      "rationale": "Several lines combine abstract agents and competing metaphors in ways that require decoding rather than sounding natural aloud.",
+      "failedChecks": [
+        "mixed-metaphor",
+        "abstract-agent",
+        "unnatural-usage"
+      ],
+      "evidence": [
+        {
+          "checkId": "mixed-metaphor",
+          "sentence": "Attraction wants somewhere to land, and drive keeps shifting the coordinates."
+        },
+        {
+          "checkId": "abstract-agent",
+          "sentence": "Venus in Virgo weighs every signal for real value; Mars in Gemini keeps the options circling, ready to pivot or bail."
+        },
+        {
+          "checkId": "unnatural-usage",
+          "sentence": "The same charge that makes us magnetic also burns up patience, and what could be easy chemistry becomes a string of second guesses."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.chiron.taurus.sextile.north-node.aquarius",
+      "score": 2,
+      "rationale": "The opening uses the unnatural phrase “experience learned”; experience is gained, while lessons are learned.",
+      "failedChecks": [
+        "unnatural-usage"
+      ],
+      "evidence": [
+        {
+          "checkId": "unnatural-usage",
+          "sentence": "Experience learned the hard way becomes useful to other people."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.lilith.sagittarius.sextile.north-node.aquarius",
+      "score": 1,
+      "rationale": "The opening forces conflict and opportunity into a polished metaphor instead of plainly saying that people expect resistance but receive support.",
+      "failedChecks": [
+        "mixed-metaphor"
+      ],
+      "evidence": [
+        {
+          "checkId": "mixed-metaphor",
+          "sentence": "Desires expected to trigger a fight suddenly find an open door instead."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.venus.virgo.square.lilith.sagittarius",
+      "score": 1,
+      "rationale": "Several lines turn desire and attraction into strained abstractions, making the passage sound polished but not immediately natural aloud.",
+      "failedChecks": [
+        "unnatural-usage",
+        "abstract-agent",
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "unnatural-usage",
+          "sentence": "We keep the conversation pleasant and leave wishing we had said what we wanted; attraction lands outside the life that looks sensible on paper, or a small request receives a sharper no than anyone expected."
+        },
+        {
+          "checkId": "abstract-agent",
+          "sentence": "With Venus in Virgo square Lilith in Sagittarius, desire is being edited for usefulness and good judgment while the banished want refuses to stay reasonable."
+        },
+        {
+          "checkId": "slogan-compression",
+          "sentence": "The pressure to keep everything appropriate is working against the appetite that will not ask permission."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.mars.gemini.opposition.lilith.sagittarius",
+      "score": 2,
+      "rationale": "One sentence feels compressed and unnatural because replies do not normally “collide with” long-suppressed opinions and convictions.",
+      "failedChecks": [
+        "unnatural-usage"
+      ],
+      "evidence": [
+        {
+          "checkId": "unnatural-usage",
+          "sentence": "With Mars in Gemini opposite Lilith in Sagittarius, fast replies collide with opinions and convictions held back too long."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.pluto.aquarius.square.chiron.taurus",
+      "score": 2,
+      "rationale": "Most of the draft is clear, but one sentence gives an abstract shift a physical action, making the point sound more written than spoken.",
+      "failedChecks": [
+        "abstract-agent"
+      ],
+      "evidence": [
+        {
+          "checkId": "abstract-agent",
+          "sentence": "With Pluto in Aquarius square Chiron in Taurus, shifts in who controls money and material support press directly on older fears about not having enough to survive."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    }
+  ],
+  "negative": [
+    {
+      "cohort": "negative",
+      "id": "negative.1",
+      "score": 1,
+      "rationale": "The sentence forces together two polished abstractions whose relationship is not clear in ordinary speech.",
+      "failedChecks": [
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "slogan-compression",
+          "sentence": "An old want comes back with better timing and nowhere left to hide."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "negative",
+      "id": "negative.2",
+      "score": 1,
+      "rationale": "The line compresses an argument and its consequences into a slogan rather than stating clearly how winning the fight could keep us stuck.",
+      "failedChecks": [
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "slogan-compression",
+          "sentence": "We may win the old fight and still lose the next chapter."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "negative",
+      "id": "negative.3",
+      "score": 1,
+      "rationale": "The sentence hides who is testing whom and compresses the outcome into an abstract slogan.",
+      "failedChecks": [
+        "abstract-agent"
+      ],
+      "evidence": [
+        {
+          "checkId": "abstract-agent",
+          "sentence": "The test usually creates the distance it was meant to prevent."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    },
+    {
+      "cohort": "negative",
+      "id": "negative.4",
+      "score": 1,
+      "rationale": "The sentence compresses a simple idea into an unnatural contrast between growing less and going farther.",
+      "failedChecks": [
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "slogan-compression",
+          "sentence": "The right opportunity may ask us to grow less at once and go farther."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": []
+    }
+  ]
+}

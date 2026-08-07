@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:54:35.149Z",
+  "id": "sky.saturn.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "saturn-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A reasonable requirement triggers an old sense of inadequacy, making it hard to meet the standard without added distress.",
+    "examples": [
+      "A deadline brings back anxiety about past failures.",
+      "A supervisor's correction recalls earlier harsh criticism.",
+      "A clear schedule helps only after it is separated from personal judgment."
+    ],
+    "pairBehavior": "Saturn contributes standards and discipline, while Chiron contributes pain from having standards used as a source of shame.",
+    "aspectBehavior": "The quincunx keeps the practical requirement and the old pain focused on different problems, so repeated adjustments are needed.",
+    "consequence": "The requirement may be met, but only after several changes to the structure, expectations, or emotional response."
+  },
+  "draft": {
+    "id": "sky.saturn.quincunx.chiron",
+    "planetA": "saturn",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Chiron",
+    "body": "A reasonable deadline can still make us feel as if one mistake will prove we were never capable. Saturn quincunx Chiron puts the work that needs doing beside an older fear of not being good enough to do it. A supervisor’s correction sounds too much like earlier harsh criticism; a clear schedule starts to feel like a verdict on our worth. Saturn keeps the standard in view, and Chiron keeps registering the shame once attached to standards.\n\nThe practical fix and the emotional fix do not arrive together. A firmer schedule may organize the work but increase the anxiety; more reassurance may calm the reaction without finishing the task. So we adjust more than once, changing the timeline, clarifying what is actually expected, and separating the current requirement from the old judgment. The structure starts helping when it tells us what needs to happen without deciding what our struggle says about us.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived tension, concrete examples, accurate Saturn-Chiron behavior, repeated adjustment, and a clean pair-specific ending. The copy is clear, collective, evergreen, and structurally compliant.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:31.900Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "5fa7ef7b1f8dee6c803b816e1ff8a9dcf183149d2a3fb2750e25d34e7846c73d",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "ef962f1346e0806b178b3b1e7a5f807417e0a59b4d5fb3f87a0a8c265a4ffd66",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "40478b27c8b0f306b0141c5d17b326939c4590ad3ac2e7d50c04034d1a32116c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is clear, natural, and immediately understandable, with coherent metaphors and no compressed or ambiguous phrasing.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is clear, natural, and immediately understandable, with coherent metaphors and no compressed or ambiguous phrasing.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:35.148Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "b38d12777f026ac3aeb49e8779b702440fd57826c7374616b46b9c57f0f5e8f4",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "ef962f1346e0806b178b3b1e7a5f807417e0a59b4d5fb3f87a0a8c265a4ffd66",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b6ad8d2adbdce08b673b04dded5b5d0c8fdfb05381aae0d22c7d63fa7d4e9b2c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

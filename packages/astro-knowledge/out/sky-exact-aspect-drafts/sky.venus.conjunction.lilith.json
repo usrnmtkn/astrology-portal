@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:32.363Z",
+  "id": "sky.venus.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "venus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.conjunction.lilith",
+    "planetA": "venus",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Venus conjunct Lilith",
+    "humanMoment": "A gallery opens a polished exhibition for donors while visitors gather around an unsanctioned work installed in the back room.",
+    "developmentDetail": "The official pieces receive courteous praise, but the unlisted work draws longer lines, sharper reactions, and several demands that it be removed.",
+    "planetaryDynamic": "Venus protects the gallery's appeal and social approval, while Lilith gives the unsanctioned work its pull and its refusal to fit the approved program.",
+    "aspectMechanic": "Under the conjunction, the polished exhibition and the back-room attraction become one event, making approval and unpermitted desire difficult to separate.",
+    "conditionalConsequence": "If the gallery names why the unlisted work draws interest, its place can be negotiated, but if that interest is denied, the removal demands may become the exhibition's main story.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The official pieces receive courteous praise, but the unlisted work draws longer lines, sharper reactions, and several demands that it be removed.",
+    "why": "The reactions are slightly compressed, but they remain observable, specific, and clearly develop the opening event.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:32.362Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "edcc49fb8d9b76718caa436c3a17f44d5812ea7772bdf470ac5ba6468a132389",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c50e1bac8d1b6f531d10d919a16d4e921f2f68b759aa5b56118adfd6514da5e2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a580f59aa7fe4f0a081b96b4ee4e5817459adb1386524137db3d4096c9d79b45"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

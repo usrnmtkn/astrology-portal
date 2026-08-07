@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_05a5f65c12686251006a7169562c0c819f85c666d2bbbcd364",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 6412,
+    "input_tokens_details": {
+      "cache_write_tokens": 6409,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4004,
+    "output_tokens_details": {
+      "reasoning_tokens": 3624
+    },
+    "total_tokens": 10416
+  },
+  "outputText": "{\"opening\":\"Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Someone reads a reply twice and says the tone does not match the words; after we sit with that feeling, a half-finished thought becomes the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury circles the zodiac in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.\",\"tension\":\"The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.\",\"development\":\"Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, name the impression separately, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.\",\"close\":\"Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.\",\"try_this\":[\"We can reread one confusing message and copy the exact sentence that is shaping our interpretation.\",\"We can send “Still deciding” instead of another maybe that could be read as yes or no.\"]}"
+}

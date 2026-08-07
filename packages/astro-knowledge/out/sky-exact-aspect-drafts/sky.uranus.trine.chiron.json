@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:26.635Z",
+  "id": "sky.uranus.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "uranus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.uranus.trine.chiron",
+    "planetA": "uranus",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Uranus trine Chiron",
+    "humanMoment": "A stage mechanism fails during a dance performance, forcing the company to abandon a lift sequence built around one performer’s old shoulder injury.",
+    "developmentDetail": "The improvised spacing releases the compensating grip, the dancer moves more freely, and the cast repeats the revision at the next show.",
+    "planetaryDynamic": "Uranus breaks the fixed sequence, while Chiron reveals how the choreography had grown around the injured shoulder.",
+    "aspectMechanic": "Under the trine, the mechanism’s failure and the dancer’s freer movement validate each other with little resistance, allowing the revised spacing to spread before its new demands are fully tested.",
+    "conditionalConsequence": "If the company keeps the revision, it may protect the injured shoulder while shifting unmeasured strain onto other performers.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, the mechanism’s failure and the dancer’s freer movement validate each other with little resistance, allowing the revised spacing to spread before its new demands are fully tested.",
+    "why": "Slightly formal in phrasing, but it clearly applies the trine’s easy reinforcement and preserves the risk of an untested change spreading.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:26.635Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "2921c0164b9ef9c51609861a66c09d4f84f4acbb3ce6b2be0ad3a739facadd96",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "a5e215e665e54d4c24c374b3d351dea24a9520c5302478ac18da250f5c2aa004",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d296c96ab1bc68296afc3e2649dcda1fd8a32302dd42fda07ffec97f2e6fb6fe"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.station.chiron.taurus.retrograde",
+  "title": "Chiron stations retrograde in Taurus",
+  "status": "needs_review",
+  "serving": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "body": "We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency. This is not an alarm or a verdict on the project; it is a regular pause for repair inside a story already unfolding. When we talk at home about why the work stopped, an old fear may become plain: rest feels unsafe, comfort feels unearned, and we use every material choice to measure our worth.\n\nInstead of rushing back to the plan, we look at the survival response underneath it. Some of us keep accumulating to feel protected, while others among us deny basic comfort to show that no need can threaten us. We can repair this pattern patiently by separating real stability from the endless demand for proof, then choosing what is sustainable in material terms. As we live with this wound, we often become unusually skilled at helping one another build steadiness without shame. We build real security when we stop treating exhaustion as proof that we deserve to be safe.",
+  "preview": "We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency.",
+  "sourceId": "src.timing.outer.station-retrograde",
+  "writer": {
+    "responseId": "resp_025f799bf6b70ac0006a70fa5a32e0819ea85a603fac710a3a",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "packetVersion": "timing-event-writer-packet-v1:owner-six-minimal",
+    "promptVersion": "timing-event-writer-v1:owner-six+v8-meaning",
+    "retrievedOwnerSourceIds": [
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:monthly-overview-june-2025:p001:window-2-2",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:gemini-season-2025:p018:window-2-3"
+    ],
+    "usage": {
+      "input_tokens": 1333,
+      "input_tokens_details": {
+        "cache_write_tokens": 1330,
+        "cached_tokens": 0
+      },
+      "output_tokens": 2314,
+      "output_tokens_details": {
+        "reasoning_tokens": 2070
+      },
+      "total_tokens": 3647
+    }
+  },
+  "deterministicChecks": {
+    "passed": false,
+    "wordCount": 200,
+    "sentenceCount": 9,
+    "paragraphCount": 2,
+    "preview": "We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency.",
+    "findings": [
+      {
+        "checkId": "batch-scaffold",
+        "detail": "Sentence scaffold is repeated across the batch: this is not.",
+        "sentence": "This is not an alarm or a verdict on the project; it is a regular pause for repair inside a story already unfolding."
+      }
+    ]
+  },
+  "judge": {
+    "score": null,
+    "verdict": "not_run",
+    "failedChecks": [],
+    "evidence": [],
+    "rationale": "The first judge response was incomplete. The judge-only retry was blocked because the OpenAI account had no credits remaining.",
+    "evidenceStatus": "human_review_required",
+    "evidenceFailures": [
+      "no completed judge response"
+    ],
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "judge:sky-placement:sol-owner-authorized",
+    "responseId": null
+  }
+}

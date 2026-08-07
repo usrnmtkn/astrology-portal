@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:50.601Z",
+  "id": "sky.jupiter.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.opposition.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Jupiter opposite North Node",
+    "humanMoment": "A community clinic can secure a large insurer contract for high-volume procedures just as a neighborhood coalition assembles a smaller fund for a mobile prenatal service.",
+    "developmentDetail": "The contract would fill existing treatment rooms and raise revenue, while the mobile service would reach patients the clinic has never been able to serve.",
+    "planetaryDynamic": "Jupiter magnifies the scale and income of the insurer contract, while the North Node identifies the mobile service as growth tied to the clinic's next direction.",
+    "aspectMechanic": "The opposition places the insurer's high-volume contract across from the neighborhood coalition's mobile route, so neither source of growth can be edited out of the clinic's choice.",
+    "conditionalConsequence": "If the clinic commits its rooms and staff to the larger contract, the prenatal route may remain unfunded; if it protects capacity for the smaller fund, revenue grows more slowly while a new care network takes hold.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The clinic choice concretely contrasts large, familiar expansion with smaller growth aligned to a new direction, and the opposition keeps both opportunities materially present without turning the node axis into fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:50.600Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "76ab870f0030f2c4a4aa2c2f6949f2b8f1be0e9bbb021342d6af7079e77b0754",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d7cbe1fbe4c2e0854d05ed8dcf0b00fe5acc6c14936c2c5ea816546caf2a469b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6ff845ee42158f673482f76e081f9ebc622766ec4d7c0cf6557f180bcaf31445"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

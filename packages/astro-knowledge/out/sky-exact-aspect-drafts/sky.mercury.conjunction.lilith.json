@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:55.912Z",
+  "id": "sky.mercury.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mercury-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.conjunction.lilith",
+    "planetA": "mercury",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Mercury conjunct Lilith",
+    "humanMoment": "During a household budget discussion, one partner says plainly that the recurring shortfall comes from an expense both have avoided naming.",
+    "developmentDetail": "The spreadsheet stays open as the usual soft explanations stop and the disputed charge becomes the only subject on the table.",
+    "planetaryDynamic": "Mercury tries to keep the discussion civil and workable, while Lilith brings out the sentence that politeness had kept buried.",
+    "aspectMechanic": "In the conjunction, explaining the expense and naming what was avoided happen in the same statement, making useful candor difficult to separate from needless offense.",
+    "conditionalConsequence": "If the disputed charge is acknowledged, the budget can reflect the real cost even as the partner linked to it feels exposed.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the disputed charge is acknowledged, the budget can reflect the real cost even as the partner linked to it feels exposed.",
+    "why": "The consequence follows directly from the scene, though \"the partner linked to it\" is slightly less natural than the rest of the entry.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:55.912Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "c4ae872a07682b3ff5e89eaef3a824a0389b4ec29f0a6b0902b61f9cdf967f10",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "eabf14b13216d55918e53538e77a6424f07560a0e7cbac02b77c4d2ab119daf2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "03b2e9a1b86a00c2331bf50cb687243830d1248fbe39560b7942fb86fef94b4b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

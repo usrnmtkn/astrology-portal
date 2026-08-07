@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:50.864Z",
+  "id": "sky.moon.quincunx.jupiter",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "moon-jupiter",
+    "path": "data/pairs/moon-jupiter.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.quincunx.jupiter",
+    "planetA": "moon",
+    "planetB": "jupiter",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Jupiter",
+    "humanMoment": "A neighborhood benefit dinner keeps adding tables as donations and late arrivals exceed the original head count.",
+    "developmentDetail": "Servers stretch portions, restock trays, and stay past closing to keep the welcome generous.",
+    "planetaryDynamic": "The Moon registers hunger, care, and physical limits, while Jupiter expands optimism, giving, and the scale of the occasion.",
+    "aspectMechanic": "The quincunx keeps the growing head count and kitchen capacity out of sync, so portions, trays, and closing time keep changing as the welcome expands.",
+    "conditionalConsequence": "If the welcome grows faster than food and labor, some guests receive less while servers become overextended.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The concrete benefit dinner scene develops through observable strain, clearly distinguishes lunar needs from Jupiterian expansion, and expresses the quincunx through repeated capacity adjustments with a grounded conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:50.863Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "9210a45591d153c621baa935543b04fb96c55fbcceaf680ef4d8371835b3b15b",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "350db6f4644649926906d26e713b7f6431bd3db565a03a5031480948588d6e68",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ce7b20ffaea4c9fd76c0180fd1fccbc32dea865993484d2717eaf1f865ecc7f8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.jupiter",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

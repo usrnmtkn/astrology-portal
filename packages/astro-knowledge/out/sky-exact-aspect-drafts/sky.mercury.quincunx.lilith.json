@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:58.557Z",
+  "id": "sky.mercury.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mercury-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.lilith",
+    "planetA": "mercury",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Lilith",
+    "humanMoment": "At a crowded restaurant anniversary dinner, a server tells the room that the kitchen staff have not received their share of the tips.",
+    "developmentDetail": "The owner turns the interruption into a joke, but the server repeats the missing amount as diners set down their glasses.",
+    "planetaryDynamic": "Mercury tries to keep the dinner pleasant, while Lilith puts the withheld tip money into one plain sentence.",
+    "aspectMechanic": "The quincunx keeps the toast and the accusation out of step, so each new joke prompts the server to restate the missing amount more directly.",
+    "conditionalConsequence": "If the owner cannot account for the tips before dinner ends, diners may challenge the bill or leave gratuities with the kitchen staff directly.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The scene is concrete and observable, the planetary roles are distinct, and the repeated mismatch between jokes and increasingly direct restatements expresses the quincunx clearly. The consequence follows naturally without becoming advice or prophecy.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:58.557Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "803e567d3605b9022aa7676b4acf2819e39d4430aeadd9129988c9521a8c885e",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "517e5c63c64c7329adc10afc707892167253b1fbb8078b29cb631952b04f20c3",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3175aa5ab4d1af81b21c88c13d836d08c43fad2bb8a4539e957e9d6e1990e5c3"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

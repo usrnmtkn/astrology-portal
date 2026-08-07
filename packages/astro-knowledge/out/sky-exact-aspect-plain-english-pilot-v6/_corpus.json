@@ -1,0 +1,33 @@
+{
+  "status": "needs_review",
+  "serving": false,
+  "entries": {
+    "sky.jupiter.opposition.nodes": {
+      "id": "sky.jupiter.opposition.nodes",
+      "planetA": "jupiter",
+      "planetB": "nodes",
+      "aspect": "opposition",
+      "title": "Jupiter opposite North Node",
+      "body": "The offer with more money can keep us doing work we have already outgrown, while a modest opening asks us to start over. With Jupiter opposite the North Node, one person pushes us to take on more, reach a bigger audience, or repeat what already succeeds, while someone else insists that we choose a direction. More orders, another booking, a renewed contract: growth is available, but it may lead straight back into the same life. The forward option may begin with less attention, less certainty, and no way to keep every possibility open.\n\nWe cannot dismiss the larger opportunity, and we cannot follow the smaller one without giving something up. Both positions shape the outcome, so trying to satisfy everyone only spreads our time and energy thinner. The useful break comes after we decide where we are going, not when we collect the most impressive yes.",
+      "collectiveLeadEligible": false
+    },
+    "sky.mars.conjunction.nodes": {
+      "id": "sky.mars.conjunction.nodes",
+      "planetA": "mars",
+      "planetB": "nodes",
+      "aspect": "conjunction",
+      "title": "Mars conjunct North Node",
+      "body": "A problem we have already fought over demands another response just as a new project needs our full effort. With Mars conjunct North Node, action and forward direction arrive in the same moment, making urgency look like proof that we are headed somewhere useful. We fire off the correction, reopen the old dispute, spend the evening proving a point; meanwhile, the application stays unfinished and the first real step never gets taken. The same force can move a delayed plan forward: the call gets made, the deposit gets paid, the work finally begins.\n\nThis is not a shortage of drive. The difficulty is telling productive effort from the familiar rush of defending a chapter we are trying to leave behind, because both can feel equally necessary while we are inside them. Winning the argument can still keep us stuck in the same situation; the effort that matters now is the effort that moves the new plan forward.",
+      "collectiveLeadEligible": false
+    },
+    "sky.venus.trine.chiron": {
+      "id": "sky.venus.trine.chiron",
+      "planetA": "venus",
+      "planetB": "chiron",
+      "aspect": "trine",
+      "title": "Venus trine Chiron",
+      "body": "Someone shows up with warmth, and we immediately look for the catch. A kind message gets reread for hidden meaning, a good date ends with sudden distance, or a small test gets slipped into the conversation to see who notices. With Venus trine Chiron, wanting affection and expecting rejection can reinforce each other so easily that suspicion starts to feel reasonable. The sweetness is real, but the old injury still gets a vote.\n\nThis ease can also let care reach the place that doubts it. A steady reply, a plan kept, or affection offered without being chased gives us something solid to register, even when we are slow to trust it. Testing someone's affection can push them away, even when they were already showing up, and love does not become false just because doubt speaks first.",
+      "collectiveLeadEligible": false
+    }
+  }
+}

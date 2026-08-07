@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:11.322Z",
+  "id": "sky.mercury.quincunx.jupiter",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-jupiter",
+    "path": "data/pairs/mercury-jupiter.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.jupiter",
+    "planetA": "mercury",
+    "planetB": "jupiter",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Jupiter",
+    "humanMoment": "A neighborhood book fair expands its seller list while promoting a bigger selection and better deals.",
+    "developmentDetail": "New listings, prices, and sales copy keep changing as more stalls join the event.",
+    "planetaryDynamic": "Mercury manages the details and wording, while Jupiter enlarges the offer and gives the promotion an optimistic cast.",
+    "aspectMechanic": "The quincunx makes every added stall alter the listings and prices, while each correction reshapes the fair’s larger sales pitch.",
+    "conditionalConsequence": "If the guide is printed before the changes settle, visitors may find missing sellers or prices that no longer match the stalls.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete, evergreen scene with distinct planetary roles, reciprocal quincunx adjustments, and a specific conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:11.321Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "3441f76bd8d2f99bcfc3e7f5efcf4bf011d455821b62c2a0fed7a44052fbe681",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "096baba090a16d50f2cef4a7ae18b1a1b027daf367527be6a061c34cd06b96f7",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d75526078d899fa0e89b929e6f3c77aa8ca1c8fc565e3be3541a90bf911c829d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.jupiter",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

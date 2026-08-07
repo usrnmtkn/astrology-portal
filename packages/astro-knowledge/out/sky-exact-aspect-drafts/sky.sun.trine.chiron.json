@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:02.422Z",
+  "id": "sky.sun.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "sun-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.trine.chiron",
+    "planetA": "sun",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Sun trine Chiron",
+    "humanMoment": "At a public showcase, an artist receives strong praise and immediately starts revising work that was already finished.",
+    "developmentDetail": "Compliments go unanswered while attention stays fixed on another artist who appears to handle recognition with ease.",
+    "planetaryDynamic": "The Sun brings the artist into view, while Chiron carries the old ache of having been seen in a way that hurt.",
+    "aspectMechanic": "Under the trine, visibility and the old bruise reinforce each other with little resistance, so recognition can expose a real gift or let compensatory overwork travel farther before anyone questions it.",
+    "conditionalConsequence": "If the present praise keeps being treated as evidence of an older failure, the finished work may be revised past the point that made it compelling.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "Compliments go unanswered while attention stays fixed on another artist who appears to handle recognition with ease.",
+    "why": "The comparison is slightly interpretive, but it remains observable, scene-specific, and clearly develops the opening without repeating it.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:02.422Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ffd9268ccacd39c18db4f458594818589cdeff9f87797f9579b80afebccd10b0",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "81f041d80fd646a6c2de875b2daaa707a5406a51fd9c67839ec513d7dbc8a894",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6dde35775527c06125875afcb2fa205f1ce9349bf59799e65ca2ecd2094b2077"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

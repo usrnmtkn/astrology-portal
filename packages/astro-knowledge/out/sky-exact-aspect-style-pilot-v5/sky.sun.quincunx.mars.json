@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:47:10.284Z",
+  "id": "sky.sun.quincunx.mars",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-mars",
+    "path": "data/pairs/sun-mars.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.sun.quincunx.mars",
+    "planetA": "sun",
+    "planetB": "mars",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Mars",
+    "body": "We take on too much to prove we can handle it, then bristle when the work starts running us. Sun quincunx Mars has us pushing ahead, pulling back to protect our pride, then speeding up again because stopping feels like defeat. The extra errand squeezed into lunch, the jar forced open after someone offers help, the sharp reply softened ten minutes later: action keeps getting tangled with the need to stay in charge of ourselves. Every move that gets something done can also raise the question of who decides.\n\nA simple request starts sounding like an order, so we refuse it, reconsider, and complete it our own way at twice the effort. Anger may disappear from view only to return as impatience, defiance, or a need to force the result. Once that heat has a specific job, we stop wasting energy proving that no one can direct us.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "ending",
+    "weakest": "Once that heat has a specific job, we stop wasting energy proving that no one can direct us.",
+    "why": "The ending is slightly more interpretive than the lived examples, but it remains clear, pair-specific, and completes a clean turn. The draft sharply captures pride, action, anger, and resistance to authority through recognizable behavior.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:47:10.284Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "b29e41f6252ea857b823e3150e65c1915ecaf009a043d5a7d16fbc0ef1e2fb6c",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "e9a8ab445f19a54050f5ecc2f12c4528e348976b6ad3e224ef19b8c1868fd22a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b08d19e49793645873a6b3313ed9618bb00ee274bb818e6f358f46dfa8fb65b4"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.mars",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

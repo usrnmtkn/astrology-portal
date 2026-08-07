@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:16:26.677Z",
+  "id": "sky.jupiter.quincunx.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.jupiter.quincunx.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Jupiter quincunx North Node",
+    "humanMoment": "A public library is offered a large donation to double its popular DVD collection just as a small grant opens a device-lending service for residents without reliable internet access.",
+    "developmentDetail": "The donation requires more shelving and cataloging for a format already in demand, while the grant needs charging stations, repair capacity, and new checkout rules.",
+    "planetaryDynamic": "Jupiter magnifies the scale and appeal of both offers, while the nodal axis places familiar DVD growth in the backward pull and the North Node marks device lending as the smaller forward opening.",
+    "aspectMechanic": "The quincunx keeps floor space, staffing, and checkout systems in revision because doubling the DVD collection does not accommodate the demands of building device lending.",
+    "conditionalConsequence": "If the library gives most of its space and labor to the larger donation, the device service may open below demand, while protecting the smaller grant limits an expansion with immediate public appeal.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": null,
+    "weakest": null,
+    "why": "The entry uses a concrete collective dilemma, clearly distinguishes indiscriminate expansion from nodal direction, and shows the quincunx through ongoing operational adjustments and credible tradeoffs.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:16:26.676Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "5129f0b4cf015a5ad7bcd15d4db6de46b772ba7af0ea2df9ebc09ece39240bd3",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c67e2ae72f3c44dcc9a997faa3769d81e432eaaea98ac22a19031c6b250d9fe4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "58abe69ce6f6566f1ae4ecf0ae0e4e24e94265f77bad71e63dff543a8643f5d4"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:04.957Z",
+  "id": "sky.uranus.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "uranus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.opposition.chiron",
+    "planetA": "uranus",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Uranus opposite Chiron",
+    "humanMoment": "A neighborhood pharmacy closes overnight, interrupting the weekly dressing changes that several patients had quietly built into its consultation service.",
+    "developmentDetail": "Former staff begin treating those patients at a market stall while the landlord keeps the pharmacy locked and empty.",
+    "planetaryDynamic": "Uranus breaks the familiar care routine without warning, while Chiron marks the injuries that routine had kept covered and manageable.",
+    "aspectMechanic": "The opposition places the locked pharmacy across from the market stall, so neither the closure nor the exposed need can be edited out of what replaces the service.",
+    "conditionalConsequence": "If the stall becomes the only replacement, wound care becomes more visible while patients who depended on privacy and records lose continuity.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The opposition places the locked pharmacy across from the market stall, so neither the closure nor the exposed need can be edited out of what replaces the service.",
+    "why": "The spatial framing is slightly schematic, but it clearly applies the opposition by keeping the closure and the exposed care need in active tension. All required checks pass.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:04.957Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4392c62aa92d0d44024dd90bdb0fc1651fb24750167b7c508f23b1e94a111c72",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d6c22b365740b08f4a485f16ea063cb5e39bc6797a2696a31c2e8ecc71c9f9fe",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "c486dbec37813158eef910a8cb015b85ccea32ebf131b29d9c9bef4acf8e00ce"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

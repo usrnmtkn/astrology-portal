@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:17.345Z",
+  "id": "sky.mercury.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mercury-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.opposition.lilith",
+    "planetA": "mercury",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Mercury opposite Lilith",
+    "humanMoment": "At a postgame press conference, a player says the coach pressured injured athletes to compete while the club publicly called them fit.",
+    "developmentDetail": "The club spokesperson tries to return to the score, but reporters keep asking which medical reports were changed and who approved them.",
+    "planetaryDynamic": "Mercury carries the spokesperson's effort to keep the exchange orderly and presentable, while Lilith holds the player's statement that the club would rather leave unsaid.",
+    "aspectMechanic": "The opposition places the return to the score across from the allegation and the reporters' questions, so neither position can be edited out of the press conference.",
+    "conditionalConsequence": "If the medical records support the player's account, the attempt to contain the exchange could bring formal scrutiny to the coach and club staff.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the medical records support the player's account, the attempt to contain the exchange could bring formal scrutiny to the coach and club staff.",
+    "why": "The consequence is somewhat procedural but remains specific, conditional, and clearly grounded in the press conference conflict. All fields fulfill their distinct functions, and the opposition is expressed through visible competing positions.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:17.344Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "a7be4262d5525ef2e61842dbf169d008e41514be4f96e0e0027e2620db4ae72c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "897dbe6ce7e95da64cbb6c8bb1bad0d122dd9231eb7a4295cb541a4b77f94797",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0100cbf73a9761b00a36cc083720dfd12db95b703553c0fad247ed309442dc86"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

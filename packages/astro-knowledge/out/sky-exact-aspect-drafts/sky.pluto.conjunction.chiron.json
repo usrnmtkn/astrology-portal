@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:49.145Z",
+  "id": "sky.pluto.conjunction.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "pluto-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.conjunction.chiron",
+    "planetA": "pluto",
+    "planetB": "chiron",
+    "aspect": "conjunction",
+    "title": "Pluto conjunct Chiron",
+    "humanMoment": "A property dispute sends a family digging through old deeds and exposes the eviction that first split the household.",
+    "developmentDetail": "The current argument shifts as relatives retell who lost the home, who benefited, and why the subject stayed closed for decades.",
+    "planetaryDynamic": "Pluto excavates the records and silence, while Chiron marks the original injury still shaping the dispute.",
+    "aspectMechanic": "Under the conjunction, digging through the deeds and reopening the eviction become one process, making recovered leverage difficult to separate from the old fear driving the argument.",
+    "conditionalConsequence": "If the old fear is treated as proof of present danger, the conflict may escalate far beyond the current property's stakes.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the old fear is treated as proof of present danger, the conflict may escalate far beyond the current property's stakes.",
+    "why": "No material weakness; the consequence follows clearly from the family dispute and preserves the distinction between an old injury and present danger.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:49.144Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ad3930dedec30963a1ee1170bb7fe35fc762d71f875278fb1e1a70c0ccda039a",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "399694292365b90f28781f5d64e7d576c13e266c670e69e02404d89294b6e00d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "704cbb37655f09c3527a86675503531699bcb01cfc3b6fb20ac5c2a7f6417bc7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.conjunction.chiron",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

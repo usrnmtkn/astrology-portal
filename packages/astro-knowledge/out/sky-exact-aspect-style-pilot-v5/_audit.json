@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T02:47:27.096Z",
+  "status": "needs_review",
+  "serving": false,
+  "recordCount": 12,
+  "counts": {
+    "node-axis": 3,
+    "lilith": 3,
+    "chiron": 3,
+    "classical-quincunx": 3
+  },
+  "countFindings": [
+    {
+      "batch": "lilith",
+      "expected": 72,
+      "actual": 3
+    },
+    {
+      "batch": "chiron",
+      "expected": 66,
+      "actual": 3
+    },
+    {
+      "batch": "node-axis",
+      "expected": 60,
+      "actual": 3
+    },
+    {
+      "batch": "classical-quincunx",
+      "expected": 42,
+      "actual": 3
+    }
+  ],
+  "lintFailures": [],
+  "judgeRepairs": [],
+  "repetition": {
+    "repeatedFiveGrams": [],
+    "repeatedOpenings": []
+  },
+  "settingSaturation": [],
+  "passed": true
+}

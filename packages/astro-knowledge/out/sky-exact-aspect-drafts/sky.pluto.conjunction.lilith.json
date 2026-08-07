@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:53.361Z",
+  "id": "sky.pluto.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "pluto-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.pluto.conjunction.lilith",
+    "planetA": "pluto",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Pluto conjunct Lilith",
+    "humanMoment": "A banned writer's work returns to public circulation when an archive releases the letters used to push her out.",
+    "developmentDetail": "Publishers, relatives, and former critics dispute who may frame the story as old accusations begin shaping new contracts and exhibitions.",
+    "planetaryDynamic": "Pluto brings the buried record into a struggle over power, while Lilith carries the old sentence of exile and its demand for daylight.",
+    "aspectMechanic": "Under the conjunction, the release of the letters and the fight over who controls the story become difficult to separate.",
+    "conditionalConsequence": "If the letters become ammunition against a new target, the exhibition may repeat the banishment it claims to expose.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the letters become ammunition against a new target, the exhibition may repeat the banishment it claims to expose.",
+    "why": "The causal link is slightly compressed, but it remains specific, conditional, and grounded in the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:53.360Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "420996476f411004cba54fba9c4c0f7d5cd6b47efcdd68ac7527aa8a92b29251",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "6dab3408584d53bafa25d08bed93de8f730adb24453b478203034fa8b91cf5a6",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "bb1ab8edf93dc7cf75ad5267edbff31baebfabadb990e16df4404350f3c9571c"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.pluto.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

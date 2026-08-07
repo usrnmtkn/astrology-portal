@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:48.059Z",
+  "id": "sky.venus.quincunx.jupiter",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "venus-jupiter",
+    "path": "data/pairs/venus-jupiter.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.venus.quincunx.jupiter",
+    "planetA": "venus",
+    "planetB": "jupiter",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Jupiter",
+    "humanMoment": "At a community theater fundraiser, organizers add free desserts and extra raffle prizes even though ticket revenue still falls short of costume repairs.",
+    "developmentDetail": "As attendance estimates change, volunteers keep revising portions, prize orders, and the amount left for the stage.",
+    "planetaryDynamic": "Venus brings hospitality, pleasure, and value choices, while Jupiter brings generosity and the urge to make the event bigger.",
+    "aspectMechanic": "The quincunx keeps dessert portions, raffle orders, and repair funds in motion because expanding the celebration does not settle what the production can afford.",
+    "conditionalConsequence": "If each addition draws from the repair budget, the fundraiser may feel abundant while raising less for the costumes.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Venus brings hospitality, pleasure, and value choices, while Jupiter brings generosity and the urge to make the event bigger.",
+    "why": "The scene is concrete, the changing allocations show repeated adjustment, and the consequence follows directly from generosity competing with the fundraiser's purpose.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:48.058Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "a871b40e7a795cff2e34939a4c1f2fcdfef65b85b595fdd545af3d1bd254198a",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d2e1c36e140dc05f1afbb34fbf279097e16a695569931ef7c57f8d8b6729ec5e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "9268b02fb73534054632508565a3973e529daaf0050da92f6ce1bb7fde2eeea7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.jupiter",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

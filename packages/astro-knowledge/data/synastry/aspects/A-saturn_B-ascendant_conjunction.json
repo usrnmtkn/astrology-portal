@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "conjunction",
   "plainTranslation": "Their standards affect how freely you show up around them.",
+  "humanMoment": "{{holder1}}'s standards make {{holder2}} more aware of how they act, but {{holder2}} may start holding parts of themselves back to avoid criticism.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,

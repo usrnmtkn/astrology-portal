@@ -186,9 +186,11 @@ export default async function loadUnits() {
   const weekly = weeklyRows
     .filter((record) => ["approved", "approved_reuse", "reviewed"].includes(record.review_status))
     .map((record) => {
+      const headline = record.weeklyHeadline ?? record.headline;
+      const sourceBody = record.weeklyOverview ?? record.body;
       const body = record.contentKey.startsWith("authored/week-opener/")
-        ? record.body.replaceAll("{{signTitle}}", "Leo")
-        : record.body;
+        ? sourceBody.replaceAll("{{signTitle}}", "Leo")
+        : sourceBody;
 
       return {
         key: record.contentKey.replaceAll("/", "."),
@@ -197,7 +199,7 @@ export default async function loadUnits() {
         version: "author-final",
         declaredSlots: ["headline", "body"],
         fields: {
-          headline: record.headline,
+          headline,
           body
         }
       };

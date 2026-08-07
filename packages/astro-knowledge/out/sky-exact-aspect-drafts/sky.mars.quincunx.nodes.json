@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:36.936Z",
+  "id": "sky.mars.quincunx.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mars-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.mars.quincunx.nodes",
+    "planetA": "mars",
+    "planetB": "nodes",
+    "aspect": "quincunx",
+    "title": "Mars quincunx North Node",
+    "humanMoment": "A community clinic pulls nurses into documenting a years-old insurer clawback just as its new mobile prenatal service begins booking patients.",
+    "developmentDetail": "The van route and appeals file are revised every week as the same staff cover intake, records, and visits.",
+    "planetaryDynamic": "Mars supplies the staff’s effort, while the nodal axis distinguishes between refighting the inherited payment dispute and building a care service with room to grow.",
+    "aspectMechanic": "The Mars quincunx North Node keeps the van route changing when the appeals file expands, then leaves the file waiting when booked visits claim the nurses, because each demand uses the same labor for a different problem.",
+    "conditionalConsequence": "If the clinic keeps favoring the clawback, it may recover the disputed money while repeated cancellations make the prenatal service unreliable.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The van route and appeals file are revised every week as the same staff cover intake, records, and visits.",
+    "why": "This is the least vivid field, but it still adds observable operational strain without repeating the opening; all requirements are satisfied.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:36.936Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "264a1899bab2a6ace297a68096dc288a2517a3a4ae4b0c71543c95a429a5ce51",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "6ad6d356eef07e6ca8e27c8361aec659b86a24a795e32852666324300fd8b81d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "dc7bb1adcf7416cedc844fdeefec2e39a017bad85c291c6d5cfc1b775217f151"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.quincunx.nodes",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:44:08.841Z",
+  "id": "sky.jupiter.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "jupiter-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.jupiter.trine.lilith",
+    "planetA": "jupiter",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Jupiter trine Lilith",
+    "body": "The thing we have been trying not to want starts sounding less reckless and more like the obvious next move. Jupiter trine Lilith gives the banished appetite room to grow, and suddenly we are pricing the trip we cannot afford, admitting the current arrangement is not enough, or saying the part we usually edit out. Because the desire meets so little resistance, honesty can arrive without the usual shame or argument. We ask for more and discover that other people are willing to discuss it.\n\nThat ease can open a real conversation, but it can also make every craving sound justified. We may confuse wanting something intensely with having permission to take it, spend it, or cross a line for it. The appetite deserves an honest hearing; it does not get the final vote.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspect phrasing",
+    "weakest": "Jupiter trine Lilith gives the banished appetite room to grow, and suddenly we are pricing the trip we cannot afford, admitting the current arrangement is not enough, or saying the part we usually edit out.",
+    "why": "The aspect naming is slightly more explanatory than the surrounding lived-first copy, but the sentence remains concrete, natural, and specific to Jupiter-Lilith amplification.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:44:08.840Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "a737dfc9ccb58b1787eed3736fc72ae0e4008745eff3a7d98f0a20d09b7be6de",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "b1ff36f7aa43ed6cfff0e97aa94cb1f42deb544bc7b5ecd397ecb8301d7e7160",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "f718bea0224668e4f648e37b5996657e7127c5d4bd927f4aa6a633a8617f5029"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

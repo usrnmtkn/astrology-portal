@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:01.243Z",
+  "id": "sky.mars.opposition.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mars-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.opposition.chiron",
+    "planetA": "mars",
+    "planetB": "chiron",
+    "aspect": "opposition",
+    "title": "Mars opposite Chiron",
+    "humanMoment": "A freelance photographer invoices a magazine for using images beyond the license, then apologizes and reduces the charge when the editor calls the demand aggressive.",
+    "developmentDetail": "The editor treats the expanded use as routine while the photographer keeps documenting the breach but stops pressing for full payment.",
+    "planetaryDynamic": "Mars drives the photographer to confront the unpaid use, while Chiron carries the old wound around taking up enough space to make the demand hold.",
+    "aspectMechanic": "The opposition places the photographer's invoice across from the editor's dismissal, so neither the licensing breach nor the softened charge can be edited out of the dispute.",
+    "conditionalConsequence": "If the reduced charge closes the dispute, the magazine keeps the extra images at a discount and the photographer absorbs the remaining cost.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mars drives the photographer to confront the unpaid use, while Chiron carries the old wound around taking up enough space to make the demand hold.",
+    "why": "All fields meet the contract; this sentence is slightly more abstract than the surrounding copy but still distinguishes Mars from Chiron accurately and applies both to the scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:01.243Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "0786095533b4eaa2333cb57d5dbd620a3b66169ca26ed8464b09c7976c880e7d",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "d97bec869c2a2db47ce3ee736b05d82de11250be785d851fc52acfb8edfd3086",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "be991a9124d18930433c02bb434d053e4f94ec7ca2027dfc8a336b8e36bfae86"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.opposition.chiron",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

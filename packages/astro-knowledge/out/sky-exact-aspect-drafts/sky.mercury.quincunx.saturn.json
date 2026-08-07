@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:12.768Z",
+  "id": "sky.mercury.quincunx.saturn",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-saturn",
+    "path": "data/pairs/mercury-saturn.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.saturn",
+    "planetA": "mercury",
+    "planetB": "saturn",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Saturn",
+    "humanMoment": "A retailer delays a product launch when shipping terms no longer fit the cost ceiling.",
+    "developmentDetail": "Revised quotes arrive with slower delivery windows, while each faster option introduces a charge that must be checked line by line.",
+    "planetaryDynamic": "Mercury handles the quotes, calculations, and negotiations, while Saturn enforces the limits and demands exact terms.",
+    "aspectMechanic": "The Mercury-Saturn quincunx keeps the shipping terms changing to meet the cost ceiling, then forces the budget calculation to change when delivery becomes too slow.",
+    "conditionalConsequence": "If no quote can satisfy both the deadline and the cost ceiling, the launch remains on hold until one condition is revised.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": null,
+    "weakest": null,
+    "why": "Concrete, observable business stakes clearly distinguish Mercury from Saturn and express the quincunx through repeated adjustments between cost and timing.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:12.767Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b0ad3b0e808d40e85f5af8e5ed5af8d784c115db1247647d767e333ffc40d2ea",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "145acb430bc3836ab83560af2c670118b737ef4e2c9dd90a43bd7a15258708fd",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "44821581f575af15ad0c9d35c670d019eaa74e9cd0ac47a0a1efd455479290b8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.saturn",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

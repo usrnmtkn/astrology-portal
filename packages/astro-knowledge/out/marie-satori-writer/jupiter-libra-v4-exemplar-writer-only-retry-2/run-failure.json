@@ -1,0 +1,5 @@
+{
+  "recordedAt": "2026-08-03T22:42:32.691Z",
+  "status": "failed",
+  "message": "OpenAI writer response was incomplete: max_output_tokens."
+}

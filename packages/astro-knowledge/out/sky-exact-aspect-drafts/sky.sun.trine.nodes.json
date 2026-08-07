@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:46.012Z",
+  "id": "sky.sun.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "sun-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.sun.trine.nodes",
+    "planetA": "sun",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Sun trine North Node",
+    "humanMoment": "A celebrated performer receives the loudest applause for a familiar act, then accepts a smaller role in an unfamiliar production.",
+    "developmentDetail": "The tribute confirms the reputation already built, while the new credit looks minor on the program but points beyond the work audiences expect.",
+    "planetaryDynamic": "The Sun brings identity and recognition into view, while the North Node marks the developing direction and the opposite South Node describes the old act still earning approval.",
+    "aspectMechanic": "Under the trine, recognition and the developing direction reinforce each other with little resistance, helping the new role gain traction or letting applause for the old one pass as proof of progress.",
+    "conditionalConsequence": "If the familiar act keeps receiving the real investment, the new production may remain a token credit despite appearing to mark a change.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, recognition and the developing direction reinforce each other with little resistance, helping the new role gain traction or letting applause for the old one pass as proof of progress.",
+    "why": "The aspect mechanic is slightly dense, but it clearly applies the trine's ease to both constructive traction and the risk of mistaking old recognition for forward movement. All fields are specific, coherent, evergreen, and correctly distinguish the Sun from the nodal axis.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:46.012Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "e84ddd16c18a359709aaa51d50de6c010264f766e4a7454aa94995dbbfd6c455",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "605aefce91b4e05a10c44a51cee9012a639d2f8769b89d3ffc678f12c7057369",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "49671c91598fc3bf6212c3dee0e6296c823060ab6a7ac03415931051e7fb9e16"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

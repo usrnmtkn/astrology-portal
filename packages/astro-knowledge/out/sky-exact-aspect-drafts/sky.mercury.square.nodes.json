@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:57.773Z",
+  "id": "sky.mercury.square.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mercury-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.square.nodes",
+    "planetA": "mercury",
+    "planetB": "nodes",
+    "aspect": "square",
+    "title": "Mercury square North Node",
+    "humanMoment": "During a radio station’s anniversary broadcast, callers keep asking whether it will investigate local rent hikes while the hosts replay beloved segments from the archive.",
+    "developmentDetail": "Producers cut to music whenever the question returns, and the pledge line slows after each deflection.",
+    "planetaryDynamic": "Mercury carries the callers’ repeated question, while the North Node marks which conversation belongs to the station’s next chapter.",
+    "aspectMechanic": "The square pits the archived stories against the rent-hike question, and the same drop in pledges returns until the station chooses which subject to pursue.",
+    "conditionalConsequence": "If the broadcast stays with nostalgia, the station may end its celebration with fewer donations and an unanswered demand for relevant coverage.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mercury carries the callers’ repeated question, while the North Node marks which conversation belongs to the station’s next chapter.",
+    "why": "All fields satisfy the contract; this sentence is the most explicitly interpretive but still distinguishes Mercury from the North Node clearly and accurately.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:57.772Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "f1cde148a36171d104eb22a0ecaca9cb74663efebc4b0fb85655962ec42e619c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "9ca07aaf47d1303ec1b4300786a8def9197cee580b103f1e4d36818613785cac",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "949ae4b0fb88fc8746966e52012cfb2c62a904d933642a307b1b5453a95b4fdc"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.square.nodes",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

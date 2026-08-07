@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:29.719Z",
+  "id": "sky.saturn.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "saturn-pluto",
+    "path": "data/pairs/saturn-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.pluto",
+    "planetA": "saturn",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Pluto",
+    "humanMoment": "A city utility keeps a damaged water system running while crews replace corroded mains under strict service limits.",
+    "developmentDetail": "Each excavation exposes deeper failures, shifting shutdown schedules, repair costs, and the scope of the work.",
+    "planetaryDynamic": "Saturn enforces limits and accountability, while Pluto brings pressure, control, and the need for a total overhaul.",
+    "aspectMechanic": "The quincunx forces shutdown schedules to keep changing as strict service limits and expanding excavation demands fail to coordinate.",
+    "conditionalConsequence": "If the limits remain rigid while the damage keeps widening, service interruptions and costs become harder to contain.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Saturn enforces limits and accountability, while Pluto brings pressure, control, and the need for a total overhaul.",
+    "why": "The planetary language is slightly more abstract than the scene, but it clearly distinguishes both bodies, and the full entry is concrete, coherent, evergreen, and mechanically accurate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:29.719Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "362558631d9074286b9be41f2296191b3043cfab87f0b554f77c6ee2f9f4ee87",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "052311c27e9ef8a8d1b4b72eb5f3c0ebb0621a8f1fea5b4b3fe0ca5cd706a09a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b5f2963bab11a47790f81ad87b00ca934fe4f7f81d27061856ebf7c550de929f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

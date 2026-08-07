@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:46:10.683Z",
+  "targetCount": 1,
+  "recordCount": 4,
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judge": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "byBatch": {
+    "chiron": 1,
+    "lilith": 1,
+    "classical-quincunx": 1,
+    "node-axis": 1
+  },
+  "byGate": {
+    "owner-review": 3,
+    "editorial-repair": 1
+  },
+  "entries": [
+    {
+      "id": "sky.mars.trine.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "naturalnessScore": 3,
+      "naturalnessEvidenceValid": true,
+      "attempts": 2
+    },
+    {
+      "id": "sky.mercury.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "naturalnessScore": 3,
+      "naturalnessEvidenceValid": true,
+      "attempts": 3
+    },
+    {
+      "id": "sky.moon.quincunx.mercury",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "naturalnessScore": 3,
+      "naturalnessEvidenceValid": true,
+      "attempts": 3
+    },
+    {
+      "id": "sky.saturn.sextile.nodes",
+      "batch": "node-axis",
+      "reviewGate": "editorial-repair",
+      "judgeScore": 1,
+      "naturalnessScore": 1,
+      "naturalnessEvidenceValid": true,
+      "attempts": 5
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:10.651Z",
+  "id": "sky.saturn.sextile.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "saturn-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.saturn.sextile.lilith",
+    "planetA": "saturn",
+    "planetB": "lilith",
+    "aspect": "sextile",
+    "title": "Saturn sextile Lilith",
+    "humanMoment": "A family revises an elder-care rota after one relative refuses to cover another overnight shift.",
+    "developmentDetail": "The shared calendar and care receipts reveal who has taken extra nights and where paid support could replace unpaid labor.",
+    "planetaryDynamic": "Saturn maintains the care obligations and schedule, while Lilith gives the excluded refusal a place in the arrangement.",
+    "aspectMechanic": "The sextile creates a usable opening to redistribute the overnight shifts, but the family still has to act on what the refusal and records expose.",
+    "conditionalConsequence": "If the rota changes and paid support covers the gap, the care continues without depending on one relative's forced compliance.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Saturn maintains the care obligations and schedule, while Lilith gives the excluded refusal a place in the arrangement.",
+    "why": "The phrasing is slightly abstract, but it accurately distinguishes Saturnian obligation from Lilith's represented refusal and remains grounded in the care arrangement.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:10.651Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "e1986359cd03ce7f9f694d8fe793da6a733d68001b656be7354ac1d6e74be0a1",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "7993773eb64fbd8df5f9d0f23c99dfa8a5bf279d796ea3b14e1810c3b145f15b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "0bf855025eeb1804b3bc45f554dbcaf36f9fd387fbd46b8e080e0c3af42c52b0"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.sextile.lilith",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

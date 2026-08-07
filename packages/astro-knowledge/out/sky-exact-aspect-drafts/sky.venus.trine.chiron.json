@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:00.103Z",
+  "id": "sky.venus.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "venus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.venus.trine.chiron",
+    "planetA": "venus",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Venus trine Chiron",
+    "humanMoment": "After a long medical leave, a stagehand returns to find meals, rides, and covered shifts already arranged by the crew.",
+    "developmentDetail": "Instead of accepting the help, the stagehand contacts each person separately to check whether the offer was genuine or made under pressure.",
+    "planetaryDynamic": "Venus carries the offered care and the wish to feel wanted, while Chiron supplies the standing expectation that the offers will end in rejection.",
+    "aspectMechanic": "Under the trine, each meal, ride, and covered shift makes the stagehand feel both more wanted and more exposed, so the verification calls multiply with little resistance before anyone questions the pattern.",
+    "conditionalConsequence": "If the crew reads the repeated checks as distrust, some of the help may be withdrawn even though the original offers were sincere.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, each meal, ride, and covered shift makes the stagehand feel both more wanted and more exposed, so the verification calls multiply with little resistance before anyone questions the pattern.",
+    "why": "The trine mechanic is accurate and scene-specific, though this sentence is slightly more explanatory than the other fields.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:00.103Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "5169b0385faecdbc523bbe024508d4c797d762b4c4ebbc5b2064f2aea3af2c31",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "1b9f9dcaf3fc835e837b71da97bcdecc07f305db1105f769d6e09271a4a7d299",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "eec5b52ca3e624cb16969a3aa6093f5514ff6bc954e5d5ff9b73a07755520e37"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

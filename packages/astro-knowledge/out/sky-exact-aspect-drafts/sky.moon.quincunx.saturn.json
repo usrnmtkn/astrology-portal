@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:55.341Z",
+  "id": "sky.moon.quincunx.saturn",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "moon-saturn",
+    "path": "data/pairs/moon-saturn.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.quincunx.saturn",
+    "planetA": "moon",
+    "planetB": "saturn",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Saturn",
+    "humanMoment": "At an overnight shelter, a surge in arrivals forces staff to shorten intake conversations and hold firm to the bed limit.",
+    "developmentDetail": "Families wait with tired children while workers move quickly through names, needs, and available spaces.",
+    "planetaryDynamic": "The Moon brings bodily needs and emotional care, while Saturn brings limits, duty, and structure.",
+    "aspectMechanic": "The quincunx keeps changing the length of intake conversations and the use of available beds as care needs expand against a fixed limit.",
+    "conditionalConsequence": "If each new arrival leads to another adjustment, the shelter may remain dependable under pressure while the atmosphere grows increasingly distant and joyless.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx keeps changing the length of intake conversations and the use of available beds as care needs expand against a fixed limit.",
+    "why": "Slightly operational in phrasing, but it clearly applies repeated adjustment between expanding care needs and fixed limits.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:55.340Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "de4ad0d88b4ce39f6c99f5910a6cac6c833e2ac7a059d2ea739525df44a6e044",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "81ad0eb7fb8e66879aafe98bf869b43ae2fbb1ac1818cebbdadd4e30839092d4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "2a66732cd00df8c2c2405f0132b562cb64e9db3da59e2aa61939036e536133d4"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.saturn",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

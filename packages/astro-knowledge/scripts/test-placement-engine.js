@@ -22,6 +22,11 @@ const placementGolds = examples.filter((entry) => (
   && entry.mode === placementMode
   && entry.canonical
 ));
+const rejectedPlacementExamples = examples.filter((entry) => (
+  entry.surface === "sky"
+  && entry.mode === placementMode
+  && entry.editorialStatus === "owner_rejected_2026_08_03"
+));
 const topperMode = "collective-placement-topper";
 const topperGolds = examples.filter((entry) => (
   entry.surface === "sky"
@@ -30,7 +35,8 @@ const topperGolds = examples.filter((entry) => (
 ));
 
 assert.equal(aspectGolds.length, 17);
-assert.equal(placementGolds.length, 5);
+assert.equal(placementGolds.length, 4);
+assert.deepEqual(rejectedPlacementExamples.map((entry) => entry.sourceId), ["sky-moon-in-scorpio"]);
 assert.equal(topperGolds.length, 2);
 
 for (const exemplar of aspectGolds) {
@@ -49,6 +55,11 @@ for (const exemplar of placementGolds) {
     { score: 3, fails: 0, warns: 0 },
     `${exemplar.sourceId} must be lint-clean in placement mode.`
   );
+}
+
+for (const exemplar of rejectedPlacementExamples) {
+  const result = lintCard(exemplar.body, { mode: placementMode });
+  assert.ok(result.fails > 0, `${exemplar.sourceId} must stay out of the active gold set after owner rejection.`);
 }
 
 for (const exemplar of topperGolds) {
@@ -373,7 +384,7 @@ assert.equal(judged.judge.score, 3);
 assert.equal(judged.gate, "human-review");
 assert.equal(judged.judge.recommendation, "approve");
 
-  console.log("Sky-placement engine contract passed: 17 aspect golds, 5 placement golds, 2 topper golds, 168 source-backed placements.");
+  console.log(`Sky-placement engine contract passed: ${aspectGolds.length} aspect golds, ${placementGolds.length} active placement golds, ${rejectedPlacementExamples.length} rejected historical placement, ${topperGolds.length} topper golds, 168 source-backed placements.`);
 }
 
 main().catch((error) => {

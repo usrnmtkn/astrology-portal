@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:36.448Z",
+  "id": "sky.chiron.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "chiron-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.chiron.opposition.lilith",
+    "planetA": "chiron",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Chiron opposite Lilith",
+    "humanMoment": "A museum exhibition on a persecuted artist draws protests after curators omit letters that openly describe the desires for which the artist was condemned.",
+    "developmentDetail": "Visitors begin reading copies of the letters beside displays that document the punishment while leaving its stated cause vague.",
+    "planetaryDynamic": "Chiron holds the record of injury, while Lilith restores the appetite that the exhibition removed from that record.",
+    "aspectMechanic": "The opposition places the curators documenting punishment across from visitors reading the omitted letters aloud, so neither the injury nor the desire can be edited out of the exhibition's meaning.",
+    "conditionalConsequence": "If the letters enter the display, the museum may keep its account of persecution only by admitting that the forbidden desire was part of the same story.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "Visitors begin reading copies of the letters beside displays that document the punishment while leaving its stated cause vague.",
+    "why": "No material weakness. The detail is observable, advances the opening, and clarifies how the omitted desire confronts the documented injury.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:36.448Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4668f331fb0afe2683fec322754972f0ed912d362cf921e629d2d2d0c0771299",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "0e61883514bce1e2a191ed9da9ec0cd415486c9c94ae85950e2ec93b20d3bde1",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3433c18f12f869798c7a87d611c2fc1cabd983c24147aa4ef25d86265be6e32d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.chiron.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -5,6 +5,7 @@
   "planetB": "venus",
   "aspect": "conjunction",
   "plainTranslation": "Warm, affectionate, naturally drawn together. The Venus person adores the Sun person; the Sun person feels appreciated and seen. One of the gentlest attraction contacts. Failure mode: pleasant but passive - lots of warmth, little drive. Enjoy the affection, and make sure something supplies the momentum.",
+  "humanMoment": "{{holder2}} genuinely admires who {{holder1}} is, and {{holder1}} thrives on that warmth. The risk comes when {{holder1}} starts relying on that approval to feel valid.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
   "voiceNeutral": true,

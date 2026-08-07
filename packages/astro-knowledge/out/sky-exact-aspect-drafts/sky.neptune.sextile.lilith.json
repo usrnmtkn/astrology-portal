@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:38.417Z",
+  "id": "sky.neptune.sextile.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "neptune-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.sextile.lilith",
+    "planetA": "neptune",
+    "planetB": "lilith",
+    "aspect": "sextile",
+    "title": "Neptune sextile Lilith",
+    "humanMoment": "A cottage-living trend sells out bread ovens, linen aprons, and gardening kits as people buy into an image of domestic escape.",
+    "developmentDetail": "Returns and resale listings pile up alongside comments about exhaustion, crowded homes, and the lack of uninterrupted time.",
+    "planetaryDynamic": "Neptune wraps relief in an idyllic lifestyle, while Lilith carries the less polished want for rest and space away from constant demands.",
+    "aspectMechanic": "The sextile creates a usable opening in the returns and comments to recognize what the cottage kits were standing in for, but buyers or sellers still have to notice the pattern and act.",
+    "conditionalConsequence": "If that pattern is acknowledged, money may shift from decorative escape toward practical forms of respite.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The sextile creates a usable opening in the returns and comments to recognize what the cottage kits were standing in for, but buyers or sellers still have to notice the pattern and act.",
+    "why": "All checks pass; the mechanic is slightly explicit but remains scene-specific, accurate, and natural.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:38.416Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "e54b2f3db9f954b079f151c1dd9c0e24afd77e2061b6ed4118fc9f40213ec1a9",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c0d44627b1dd27b5e9974ce39c6b48558487992515c1184683d962e13d62a08f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4b469d926f4c70f3c5eaba5564015d54ecb4e4084dd2b4ddbfa28139ac73febc"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.sextile.lilith",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

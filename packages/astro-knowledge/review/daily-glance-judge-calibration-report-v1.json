@@ -1,0 +1,473 @@
+{
+ "schemaVersion": 1,
+ "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+ "judgeModel": "gpt-4.1-mini",
+ "calibratedAt": "2026-08-05T17:46:55.829Z",
+ "goldMean": 2.71,
+ "negativeMean": 2.24,
+ "negativeScoreThrees": 8,
+ "acceptance": {
+  "goldMeanMin": 2.6,
+  "negativeMeanMax": 1.9,
+  "negativeScoreThreeMax": 0
+ },
+ "passed": false,
+ "rows": [
+  {
+   "tier": "gold",
+   "key": "soft/mars",
+   "source": "reference-pair",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures the internal struggle of procrastination in a clear, relatable way that feels like a genuine insight rather than a generic statement. It "
+  },
+  {
+   "tier": "gold",
+   "key": "square/lilith",
+   "source": "pilots-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a subtle but common experience in a plain, conversational way that feels like the owner’s voice. It names a feeling many have but don’t a"
+  },
+  {
+   "tier": "gold",
+   "key": "opposition/mars",
+   "source": "pilots-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence crisply names a familiar but rarely articulated emotional reaction to pressure, capturing the tension between instinctive defense and thoughtful r"
+  },
+  {
+   "tier": "gold",
+   "key": "house/11",
+   "source": "pilots-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence crisply names a common but unspoken cost of going along with group pressure, capturing a feeling many have but rarely articulate so clearly. It se"
+  },
+  {
+   "tier": "gold",
+   "key": "square/moon",
+   "source": "batch-1-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a common but often unspoken internal conflict in a clear, relatable way that fits the owner's voice perfectly. It names a recognizable em"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/mars",
+   "source": "batch-1-approval",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This sentence names a common but often unspoken experience—how quick reactions can escalate issues—making it the clearest and most relatable insight in the cand"
+  },
+  {
+   "tier": "gold",
+   "key": "opposition/sun",
+   "source": "batch-1-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence names a common but often unspoken feeling—resentment over a commitment made to keep peace—that crystallizes the core emotional stake and would res"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/lilith",
+   "source": "batch-1-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a universal but often unspoken truth in a clear, direct way that resonates emotionally without sounding preachy or formulaic. It names a "
+  },
+  {
+   "tier": "gold",
+   "key": "soft/pluto",
+   "source": "batch-1-approval",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This line captures a clear, relatable truth about expressing feelings without overburdening others, which fits the owner's voice well. However, the overall cand"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/north-node",
+   "source": "batch-1-approval",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This line names a common experience clearly and concretely, giving a tangible example of what is being reconsidered. It sets the stage for the reflection but th"
+  },
+  {
+   "tier": "gold",
+   "key": "opposition/south-node",
+   "source": "batch-1-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a familiar but often unspoken emotional trade-off in a simple, clear way that feels authentic and direct, making it a natural candidate f"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/chiron",
+   "source": "batch-2-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures the core emotional conflict and offers a simple, concrete alternative that readers can immediately understand and apply. It names a commo"
+  },
+  {
+   "tier": "gold",
+   "key": "square/chiron",
+   "source": "batch-2-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This line captures a common but often unspoken frustration with indirect communication, naming the emotional cost clearly and succinctly. It reads like a lived "
+  },
+  {
+   "tier": "gold",
+   "key": "opposition/chiron",
+   "source": "batch-2-approval",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This line names a common but often unspoken communication gap clearly and directly, making it a sentence someone might save or share. It captures the core issue"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/moon",
+   "source": "batch-2-approval",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This line names a clear, relatable feeling that many have experienced but not always named so directly, capturing the emotional cost of rescheduling and setting"
+  },
+  {
+   "tier": "gold",
+   "key": "soft/lilith",
+   "source": "batch-2-approval",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This headline crisply names a common but unspoken feeling that many recognize but rarely articulate so clearly. It captures the core tension of the piece and wo"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/uranus",
+   "source": "batch-2-approval",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This sentence clearly names a specific, relatable experience and its cost (time and money), capturing a feeling many readers recognize but rarely say so directl"
+  },
+  {
+   "tier": "gold",
+   "key": "house/1",
+   "source": "batch-2-approval",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence crisply names a universal but often unspoken truth about identity and presence, making it memorable and likely to be saved or shared. It embodies "
+  },
+  {
+   "tier": "gold",
+   "key": "square/venus",
+   "source": "batch-3-owner-authored",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This line nails the emotional core of the candidate—naming a feeling many have but rarely articulate so clearly. It is punchy, direct, and carries the weight of"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/jupiter",
+   "source": "batch-3-owner-authored",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a common but often unspoken frustration with well-meaning help that complicates rather than simplifies. It names a recognizable cost (ene"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/saturn",
+   "source": "batch-3-owner-authored",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence crisply names the emotional and practical toll of family caregiving in a way that feels both true and fresh, making it a likely candidate for savi"
+  },
+  {
+   "tier": "gold",
+   "key": "house/12",
+   "source": "batch-3-owner-authored",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence names a subtle but deeply felt consequence of early messaging that many experience but rarely articulate so clearly. It captures the emotional and"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/mercury",
+   "source": "batch-3-owner-authored",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a complex, relatable feeling clearly and succinctly, naming the emotional and practical burden that the horoscope addresses. It reads lik"
+  },
+  {
+   "tier": "gold",
+   "key": "conjunction/sun",
+   "source": "batch-3-owner-authored",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence crisply names a common but unspoken social dynamic—how pretending not to care can backfire by signaling distance rather than flexibility. It captu"
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/jupiter",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a common but under-articulated experience of being overwhelmed by generosity, naming the real consequence of overcommitment and the emoti"
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/mercury",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 3,
+   "why": "This sentence delivers a clear, actionable insight that feels like a practical takeaway, but it comes too late in the body and is somewhat abstract without a vi"
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/saturn",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This line clearly names a recognizable cost—time and capacity—and shows a concrete action that reflects the lived experience of feeling cornered by family deman"
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/sun",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This headline captures a subtle but relatable truth in a plain, conversational way that fits the owner's voice well. It names a common experience that many feel"
+  },
+  {
+   "tier": "negative",
+   "key": "house/12",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This line clearly names the recognizable cost of losing private time and the difficulty of reclaiming rest, which is a concrete consequence many feel but rarely"
+  },
+  {
+   "tier": "negative",
+   "key": "house/5",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This sentence names a very specific, common, and unspoken experience in flirting that readers would recognize and save. It grounds the piece in a clear, lived m"
+  },
+  {
+   "tier": "negative",
+   "key": "opposition/jupiter",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a common but unspoken feeling clearly and compassionately, validating the reader's boundary without apology. It reads naturally and is li"
+  },
+  {
+   "tier": "negative",
+   "key": "opposition/pluto",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a common but often unspoken feeling of vulnerability in power struggles, affirming the reader's right to express their needs without sham"
+  },
+  {
+   "tier": "negative",
+   "key": "soft/chiron",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This sentence captures a common but unspoken feeling clearly and memorably, making it a strong candidate for saving or sharing. The rest of the body supports th"
+  },
+  {
+   "tier": "negative",
+   "key": "soft/mercury",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 6,
+   "why": "This headline crisply names a common but unspoken experience that readers will recognize and appreciate, making it a strong, shareable line. It sets the tone fo"
+  },
+  {
+   "tier": "negative",
+   "key": "soft/uranus",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This line names a common but often unspoken feeling—hesitation rooted in familiarity despite a practical downside—making it the closest candidate sentence to a "
+  },
+  {
+   "tier": "negative",
+   "key": "square/mars",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This sentence sets a vivid, relatable scene that captures a common experience of boundary testing and pressure, anchoring the piece in a concrete moment that re"
+  },
+  {
+   "tier": "negative",
+   "key": "square/uranus",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence captures a common but often unspoken experience of sudden overwhelm and misattribution, naming a specific mental trap that feels true and clear wi"
+  },
+  {
+   "tier": "negative",
+   "key": "square/venus",
+   "source": "batch-3-v1-owner-rejected-flat",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This sentence crisply names the emotional sting of being ignored in a way that readers can recognize but might not have put into words. It anchors the piece in "
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/lilith",
+   "source": "batch-1-v1-owner-rejected-no-harvest",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This sentence names a relatable internal experience—making choices feel less authentic because of the need to justify them—and invites a direct, concrete self-c"
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/mars",
+   "source": "batch-1-v1-owner-rejected-no-harvest",
+   "score": 2,
+   "dimScore": 1,
+   "why": "This line offers a concrete, actionable step that feels practical and grounded, fitting the owner's style of naming a lived example and a clear instruction. How"
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/north-node",
+   "source": "batch-1-v1-owner-rejected-no-harvest",
+   "score": 2,
+   "dimScore": 2,
+   "why": "This sentence captures a nuanced insight about how to interpret hesitation or repeated checking, offering a clear mental shift that feels conversational and tru"
+  },
+  {
+   "tier": "negative",
+   "key": "opposition/south-node",
+   "source": "batch-1-v1-owner-rejected-no-harvest",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This line captures a clear, relatable moment of self-awareness and action that someone might save or share because it names a common but unspoken habit—leaving "
+  },
+  {
+   "tier": "negative",
+   "key": "opposition/sun",
+   "source": "batch-1-v1-owner-rejected-no-harvest",
+   "score": 2,
+   "dimScore": 2,
+   "why": "This line crisply names a boundary-setting action that many feel but hesitate to express, making it a strong, memorable takeaway. However, the rest of the body "
+  },
+  {
+   "tier": "negative",
+   "key": "soft/pluto",
+   "source": "batch-1-v1-owner-rejected-no-harvest",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This sentence captures a nuanced emotional truth in plain language, offering permission without cliché or coaching tone. It conveys a relatable experience of ho"
+  },
+  {
+   "tier": "negative",
+   "key": "square/moon",
+   "source": "batch-1-v1-owner-rejected-no-harvest",
+   "score": 2,
+   "dimScore": 3,
+   "why": "This sentence captures a common internal conflict clearly and empathetically, naming the cost of self-blame and the alternative of self-compassion. However, the"
+  },
+  {
+   "tier": "negative",
+   "key": "soft/jupiter",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence encapsulates the core message in a memorable, vivid way that feels original and true to the owner's voice. It names a feeling of momentum and oppo"
+  },
+  {
+   "tier": "negative",
+   "key": "square/jupiter",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 2,
+   "dimScore": 6,
+   "why": "This line crisply names a common but often unspoken experience about overcommitting and the lasting impact of follow-through, making it a strong, shareable insi"
+  },
+  {
+   "tier": "negative",
+   "key": "conjunction/venus",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence names a subtle but widespread experience in a clear, relatable way that feels original and true to the owner's voice. It captures the essence of t"
+  },
+  {
+   "tier": "negative",
+   "key": "opposition/neptune",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This sentence is the strongest because it clearly names a common but unspoken dynamic—how our internal narratives exaggerate reality compared to others' actual "
+  },
+  {
+   "tier": "negative",
+   "key": "house/2",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This sentence crisply names a common but unspoken feeling about self-worth and comparison, capturing a truth many feel but rarely say so plainly. It anchors the"
+  },
+  {
+   "tier": "negative",
+   "key": "soft/sun",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This sentence clearly names a familiar internal struggle—holding back a request—and highlights the actionable part the reader can control, making it a strong, r"
+  },
+  {
+   "tier": "negative",
+   "key": "square/south-node",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This sentence captures a clear, relatable tension that many feel but don't often articulate so plainly. It balances a simple truth with a subtle critique of com"
+  },
+  {
+   "tier": "negative",
+   "key": "opposition/uranus",
+   "source": "copy-batch-A-owner-demoted-2026-08-04",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence crisply captures the core tension of the horoscope in a way that feels both fresh and deeply familiar, naming a subtle social dynamic that many fe"
+  },
+  {
+   "tier": "negative",
+   "key": "cs/1",
+   "source": "co-star-format-model-competitor-register",
+   "score": 3,
+   "dimScore": 7,
+   "why": "This sentence crisply names a widespread but often unspoken confusion in relationships, capturing the core issue in a way that feels both personal and universal"
+  },
+  {
+   "tier": "negative",
+   "key": "cs/2",
+   "source": "co-star-format-model-competitor-register",
+   "score": 2,
+   "dimScore": 6,
+   "why": "This line names a common internal experience in a fresh, clear way that someone might save or share. However, the overall tone of the candidate is more aphorist"
+  },
+  {
+   "tier": "negative",
+   "key": "cs/3",
+   "source": "co-star-format-model-competitor-register",
+   "score": 2,
+   "dimScore": 4,
+   "why": "This sentence clearly names a feeling many have experienced but rarely hear addressed so directly and compassionately, making it the strongest line. It grounds "
+  },
+  {
+   "tier": "negative",
+   "key": "cs/4",
+   "source": "co-star-format-model-competitor-register",
+   "score": 2,
+   "dimScore": 5,
+   "why": "This sentence names a feeling many have but rarely say so directly, capturing the cost of diminished self-worth in relationships. It stands out as a vivid, rela"
+  }
+ ]
+}

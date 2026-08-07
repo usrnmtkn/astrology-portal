@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:39.667Z",
+  "id": "sky.venus.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "venus-neptune",
+    "path": "data/pairs/venus-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.quincunx.neptune",
+    "planetA": "venus",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Neptune",
+    "humanMoment": "A community theater launches a lush fundraising campaign for a revival before the promised sponsorship is secured.",
+    "developmentDetail": "As ticket packages go on sale, the romantic imagery draws attention while organizers keep revising what each contribution can actually fund.",
+    "planetaryDynamic": "Venus shapes the campaign's appeal and perceived value, while Neptune supplies the imaginative vision and idealized expectations.",
+    "aspectMechanic": "The quincunx keeps the campaign alternating between preserving its dreamlike imagery and recalibrating ticket packages and contribution promises to match available funding.",
+    "conditionalConsequence": "If contribution promises continue to follow the imagery rather than confirmed costs, the theater may sell an experience the final production cannot deliver.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Venus shapes the campaign's appeal and perceived value, while Neptune supplies the imaginative vision and idealized expectations.",
+    "why": "All fields meet the contract; this sentence is the most explanatory, but it still clearly distinguishes the planets and fits the concrete scene.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:39.667Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "8f1d914ce0627d83c3607e2718362c35c407eb22a5e431fc7c30f5898e149c71",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "0f9dddb765eb97de5ee90cf8a0bdf5ed42b5dc2edb3fa2c7d9de848a2017005b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8d4df28ec62c95d3a27cca3933f1f2913a296d7f73709e922655b03ac088926f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

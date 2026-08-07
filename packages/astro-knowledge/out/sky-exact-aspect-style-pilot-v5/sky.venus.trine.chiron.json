@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:46:28.311Z",
+  "id": "sky.venus.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "venus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.trine.chiron",
+    "planetA": "venus",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Venus trine Chiron",
+    "body": "Something kind arrives, and we start looking for the catch. With Venus trine Chiron, affection and the expectation of rejection can move together so easily that sweetness itself feels suspicious. We reread the warm text for hidden meaning, shrug off a sincere compliment, or pull back after a good night to see whether anyone follows. Care can reach an old injury here, but doubt can also travel farther than it should because nothing interrupts the story that being wanted is unsafe.\n\nSmall tests begin to look reasonable: waiting longer to reply, withholding affection, making someone prove what they already showed. The test usually creates the distance it was meant to prevent. Love may be real even when our doubt is loud, and asking plainly gives it a better chance than setting a trap.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "ending",
+    "weakest": "Love may be real even when our doubt is loud, and asking plainly gives it a better chance than setting a trap.",
+    "why": "Slightly advice-forward, but it makes a clear, pair-specific turn and cleanly resolves the pattern.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:46:28.310Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "b1e02d3f987c639dd464aa169f72996677c459a5da00b6485ba7f9e913b211fe",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "af649ecf90b394bcb36e369ae626631a955b018eddeba119bb2f4af6b18a9aab",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b16557c5cd93fab247e93f472211a3251da4563d2ffce9e5e306cda22a372ac3"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

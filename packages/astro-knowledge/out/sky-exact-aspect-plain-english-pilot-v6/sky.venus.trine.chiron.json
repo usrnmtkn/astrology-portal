@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:58:01.684Z",
+  "id": "sky.venus.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "venus-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 3,
+  "draft": {
+    "id": "sky.venus.trine.chiron",
+    "planetA": "venus",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Venus trine Chiron",
+    "body": "Someone shows up with warmth, and we immediately look for the catch. A kind message gets reread for hidden meaning, a good date ends with sudden distance, or a small test gets slipped into the conversation to see who notices. With Venus trine Chiron, wanting affection and expecting rejection can reinforce each other so easily that suspicion starts to feel reasonable. The sweetness is real, but the old injury still gets a vote.\n\nThis ease can also let care reach the place that doubts it. A steady reply, a plan kept, or affection offered without being chased gives us something solid to register, even when we are slow to trust it. Testing someone's affection can push them away, even when they were already showing up, and love does not become false just because doubt speaks first.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 1,
+    "fails": 1,
+    "findings": [
+      {
+        "severity": "fail",
+        "field": "body",
+        "reason": "Sky voice fail: The 'steady' word family is only allowed when 'stable', 'strong', or 'solid' appears before it in the card; otherwise use calm, solid, grounded, consistent, or sure.",
+        "source": "sky-aspect",
+        "match": "steady"
+      }
+    ]
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "body",
+    "weakest": "A steady reply, a plan kept, or affection offered without being chased gives us something solid to register, even when we are slow to trust it.",
+    "why": "The draft is otherwise strong and in voice, but “steady” violates the local Sky voice contract because no approved stabilizing term appears before it.",
+    "failedChecks": [
+      "restricted steady word family"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:57:57.197Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "fd36ec21d013a7ce6844ea5fb7d9b206462c49748161ec78b9bf5342b44d75b9",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "4ce40534e881321f198687d058245c5809f8f35fb882506cf8731aeda69ed396",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+      "registryVersion": "2026-08-01.10",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "restricted steady word family"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4e2b61a33ca532fa89da7822e4ba3c0f57011fdf20354f00b98084221f3cbd81"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "rationale": "Several lines turn doubt, care, and past hurt into poetic actors, making otherwise clear ideas feel compressed and slogan-like.",
+    "failedChecks": [
+      "abstract-agent",
+      "slogan-compression"
+    ],
+    "evidence": [
+      {
+        "checkId": "abstract-agent",
+        "sentence": "This ease can also let care reach the place that doubts it."
+      },
+      {
+        "checkId": "slogan-compression",
+        "sentence": "The sweetness is real, but the old injury still gets a vote."
+      }
+    ],
+    "why": "Several lines turn doubt, care, and past hurt into poetic actors, making otherwise clear ideas feel compressed and slogan-like.",
+    "weakest": "This ease can also let care reach the place that doubts it.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:58:01.682Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "9478f216dc8b43f99710f9d22f90adb08f5e221623673bc8434adad646985646",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "4ce40534e881321f198687d058245c5809f8f35fb882506cf8731aeda69ed396",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v6",
+      "registryVersion": "2026-08-01.10",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "abstract-agent",
+            "slogan-compression"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ee4fb6eeb6ca91b82674664d1afabb926e7eca5cfb747694eea5a786cf503cc9"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

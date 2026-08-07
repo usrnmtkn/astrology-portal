@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/uranus/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus takes about 84 years to circle the zodiac and stays about 7 years in each sign.",
+      "tension": "The pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.",
+      "development": "We do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can choose one new way of communicating that deserves to last and let one distracting format go.",
+      "try_this": [
+        "We can finish one saved article or lesson before opening another tab on the same subject.",
+        "We can return to one message thread and answer the question we skipped when the subject changed.",
+        "We can compare one summary with its original source and correct one claim we repeated too quickly."
+      ],
+      "aspect_units": [],
+      "body_you": "From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus takes about 84 years to circle the zodiac and stays about 7 years in each sign.\n\nThe pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.\n\nWe do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.\n\nBefore {{exitDate}}, we can choose one new way of communicating that deserves to last and let one distracting format go.",
+      "body_they": "From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus takes about 84 years to circle the zodiac and stays about 7 years in each sign.\n\nThe pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.\n\nWe do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.\n\nBefore {{exitDate}}, we can choose one new way of communicating that deserves to last and let one distracting format go.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-pilot-uranus-gemini-v1"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

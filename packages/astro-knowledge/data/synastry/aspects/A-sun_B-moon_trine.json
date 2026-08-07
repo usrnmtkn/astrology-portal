@@ -5,6 +5,7 @@
   "planetB": "moon",
   "aspect": "trine",
   "plainTranslation": "A natural, easy fit between who one is and what the other needs. Drives and feelings sync; the relationship feels like home fast. Failure mode: comfort breeds passivity. Stay awake in it - easy compatibility still needs effort to become something.",
+  "humanMoment": "Being around {{holder1}} gives {{holder2}} an immediate sense of home, no explanations needed and nothing to prove.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
   "voiceNeutral": true,

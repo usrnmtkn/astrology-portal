@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:41:04.927Z",
+  "id": "sky.mars.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mars-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.conjunction.nodes",
+    "planetA": "mars",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Mars conjunct North Node",
+    "body": "We can win the argument, clear the backlog, and still spend the day moving in the wrong direction. Mars conjunct North Node gives our drive an address, but it also makes effort look like proof that the address is right. The reopened dispute, the task we keep rescuing, the project that finally catches our hunger: everything arrives with enough urgency to deserve action. Once we are in motion, it is hard to separate useful momentum from the thrill of having something to fight for.\n\nThat is where unfinished business can disguise itself as progress. We push harder at the old chapter because the conflict is familiar and winning still feels possible, even when the result keeps us tied to what is ending. The better use of this charge is not necessarily quieter; it is the work that keeps building after the immediate victory wears off. Some fights can be won and still take us backward.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "clarity",
+    "weakest": "Mars conjunct North Node gives our drive an address, but it also makes effort look like proof that the address is right.",
+    "why": "The repeated address metaphor is slightly more conceptual than the surrounding lived detail, but it remains immediately understandable and pair-specific.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:41:04.927Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "58b56d941847877dad0b406aaeeaa836dde4193e85d6620cf5338ac1508ae895",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "5529a996a54e7a23b7ccff49f6e427f69861ee684b6c052b375f13d07084d004",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6ce92d97de554d0c4aea1f3e66eb72bdb2d273dcf80aee6e2b21c5d94793475a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -19,7 +19,9 @@ import {
   fallbackArchitectureV3BundledManifestSummary,
   fallbackArchitectureV3ManifestForBundle,
   fallbackArchitectureV3PackageVersion,
-  loadFallbackArchitectureV3BundledManifest,
+  loadFallbackArchitectureV3BundledCoreManifest,
+  loadFallbackArchitectureV3BundledSkyPlacementManifest,
+  transitV3AuthoredCardForContentKey,
   type FallbackArchitectureV3Bundle,
   type FallbackArchitectureV3PackageManifest,
   type HookRow,
@@ -95,11 +97,85 @@ type GeneratedContentRow = {
 };
 
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
+const fallbackArchitectureV3SkyPlacementProvider = "tldrastro-fallback-architecture-v3-sky-placement";
 const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 const fallbackArchitectureV3BundleCacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const fallbackArchitectureV3BundleVersionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
-const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v3";
+const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4";
+const fallbackArchitectureV3SkyPlacementBundleCacheKey = "tldrastro:fallbackArchitectureV3:skyPlacementDashboardBundle";
+const fallbackArchitectureV3SkyPlacementBundleVersionKey = "tldrastro:fallbackArchitectureV3:skyPlacementDashboardBundleVersion";
+const fallbackArchitectureV3SkyPlacementBundleCacheSchema = "fallback-architecture-v3-sky-placement-dashboard-cache-v1";
 const fallbackArchitectureV3ImportBatchId = `fallback-architecture-${fallbackArchitectureV3PackageVersion}`;
+
+function isSkyPlacementFallbackPartitionKey(contentKey: string) {
+  return contentKey.startsWith("fallback-hook/sky-sign-copy/")
+    || (
+      contentKey.startsWith("fallback-hook/sky-placement-")
+      && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
+    );
+}
+
+function isSkyPlacementDashboardDistributionEligible(row: GeneratedContentRow) {
+  const record = packageRecord(row);
+  const isContinuous = record.render_policy === "sky-placement-continuous-v2"
+    || row.content_key.startsWith("fallback-hook/sky-sign-copy/");
+
+  if (!isContinuous) return true;
+
+  const sourceSnapshot = rowSourceSnapshot(row);
+  const facts = rowFacts(row);
+  return stringFrom(
+    sourceSnapshot.distributionState,
+    sourceSnapshot.distribution_state,
+    facts.distributionState,
+    facts.distribution_state
+  ) === "serving";
+}
+
+export function fallbackArchitectureV3AuthoredContentForKey(contentKey: string): LiveGeneratedContent | null {
+  const card = transitV3AuthoredCardForContentKey(contentKey);
+  const body = typeof card?.body === "string" ? card.body.trim() : "";
+
+  if (!card || !body) {
+    return null;
+  }
+
+  const headline = typeof card.headline === "string" && card.headline.trim()
+    ? card.headline.trim()
+    : null;
+  const surface = typeof card.surface === "string" && card.surface.trim()
+    ? card.surface.trim()
+    : "sky";
+  const sourceKeys = Array.isArray(card.source_keys)
+    ? card.source_keys.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+    : [];
+
+  return {
+    id: `fallback-architecture-v3:${contentKey}`,
+    contentKey,
+    surface,
+    mode: "article",
+    eventType: "timing-event",
+    targetDate: null,
+    headline,
+    summary: null,
+    body,
+    sections: [],
+    blockType: "essay",
+    provider: fallbackArchitectureV3Provider,
+    sourceSnapshot: {
+      canonicalKey: contentKey,
+      contentType: "authored-content",
+      contentRole: card.content_role ?? "full_copy",
+      reviewStatus: card.review_status ?? null,
+      sourceKeys
+    },
+    judgeScore: null,
+    judgeGate: null,
+    model: null,
+    updatedAt: ""
+  };
+}
 
 type FallbackArchitectureV3MirrorMetadata = {
   packageVersion: string;
@@ -867,11 +943,14 @@ function fallbackSystemBucket(row: GeneratedContentRow) {
   return { contentType, role };
 }
 
-function isApprovedFallbackArchitectureV3Row(row: GeneratedContentRow) {
+function isApprovedFallbackArchitectureV3Row(
+  row: GeneratedContentRow,
+  provider = fallbackArchitectureV3Provider
+) {
   const { role, reviewStatus } = generatedRowPackageRole(row);
 
   return Boolean(
-    row.provider === fallbackArchitectureV3Provider
+    row.provider === provider
       && (
         fallbackArchitectureV3ApprovedReviews.has(reviewStatus)
         || (role === "template" && !reviewStatus)
@@ -879,7 +958,10 @@ function isApprovedFallbackArchitectureV3Row(row: GeneratedContentRow) {
   );
 }
 
-function fallbackArchitectureV3RowMirrorMetadata(row: GeneratedContentRow): FallbackArchitectureV3MirrorMetadata | null {
+function fallbackArchitectureV3RowMirrorMetadata(
+  row: GeneratedContentRow,
+  partition: "core" | "sky-placement"
+): FallbackArchitectureV3MirrorMetadata | null {
   const sourceSnapshot = rowSourceSnapshot(row);
   const facts = rowFacts(row);
   const record = packageRecord(row);
@@ -892,6 +974,12 @@ function fallbackArchitectureV3RowMirrorMetadata(row: GeneratedContentRow): Fall
     record.package_version
   );
   const contentHash = stringFrom(
+    sourceSnapshot.packagePartitionContentHash,
+    sourceSnapshot.package_partition_content_hash,
+    facts.packagePartitionContentHash,
+    facts.package_partition_content_hash,
+    record.packagePartitionContentHash,
+    record.package_partition_content_hash,
     sourceSnapshot.packageContentHash,
     sourceSnapshot.package_content_hash,
     facts.packageContentHash,
@@ -900,6 +988,12 @@ function fallbackArchitectureV3RowMirrorMetadata(row: GeneratedContentRow): Fall
     record.package_content_hash
   );
   const keyManifestHash = stringFrom(
+    sourceSnapshot.packagePartitionKeyManifestHash,
+    sourceSnapshot.package_partition_key_manifest_hash,
+    facts.packagePartitionKeyManifestHash,
+    facts.package_partition_key_manifest_hash,
+    record.packagePartitionKeyManifestHash,
+    record.package_partition_key_manifest_hash,
     sourceSnapshot.packageKeyManifestHash,
     sourceSnapshot.package_key_manifest_hash,
     facts.packageKeyManifestHash,
@@ -907,7 +1001,21 @@ function fallbackArchitectureV3RowMirrorMetadata(row: GeneratedContentRow): Fall
     record.packageKeyManifestHash,
     record.package_key_manifest_hash
   );
-  const rawKeyCount = sourceSnapshot.packageKeyCount
+  const rowPartition = stringFrom(
+    sourceSnapshot.packagePartition,
+    sourceSnapshot.package_partition,
+    facts.packagePartition,
+    facts.package_partition,
+    record.packagePartition,
+    record.package_partition
+  );
+  const rawKeyCount = sourceSnapshot.packagePartitionKeyCount
+    ?? sourceSnapshot.package_partition_key_count
+    ?? facts.packagePartitionKeyCount
+    ?? facts.package_partition_key_count
+    ?? record.packagePartitionKeyCount
+    ?? record.package_partition_key_count
+    ?? sourceSnapshot.packageKeyCount
     ?? sourceSnapshot.package_key_count
     ?? facts.packageKeyCount
     ?? facts.package_key_count
@@ -915,7 +1023,14 @@ function fallbackArchitectureV3RowMirrorMetadata(row: GeneratedContentRow): Fall
     ?? record.package_key_count;
   const keyCount = Number(rawKeyCount);
 
-  if (!packageVersion || !contentHash || !keyManifestHash || !Number.isInteger(keyCount) || keyCount <= 0) {
+  if (
+    !packageVersion
+    || (rowPartition && rowPartition !== partition)
+    || !contentHash
+    || !keyManifestHash
+    || !Number.isInteger(keyCount)
+    || keyCount <= 0
+  ) {
     return null;
   }
 
@@ -934,32 +1049,20 @@ function equalFallbackArchitectureV3MirrorMetadata(
 
 async function fallbackArchitectureV3BundleManifestIfValid(
   bundle: FallbackArchitectureV3Bundle,
-  metadata: FallbackArchitectureV3MirrorMetadata
+  metadata: FallbackArchitectureV3MirrorMetadata,
+  loadBundledPartitionManifest: () => Promise<FallbackArchitectureV3PackageManifest>
 ): Promise<FallbackArchitectureV3PackageManifest | null> {
-  const versionComparison = compareFallbackArchitectureV3PackageVersions(
-    metadata.packageVersion,
-    fallbackArchitectureV3BundledManifestSummary.packageVersion
-  );
-
-  if (versionComparison === null || versionComparison < 0) {
+  if (metadata.packageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion) {
     return null;
   }
 
   const manifest = fallbackArchitectureV3ManifestForBundle(bundle, metadata.packageVersion);
-  const bundledManifest = await loadFallbackArchitectureV3BundledManifest();
-  const bundledKeys = new Set(bundledManifest.keys);
-  const mirrorKeys = new Set(manifest.keys);
-  const containsBundledManifest = [...bundledKeys].every((key) => mirrorKeys.has(key));
-  const sameVersionMatchesBundled = versionComparison !== 0
-    || (
-      manifest.contentHash === fallbackArchitectureV3BundledManifestSummary.contentHash
-      && manifest.keyManifestHash === fallbackArchitectureV3BundledManifestSummary.keyManifestHash
-      && manifest.keyCount === fallbackArchitectureV3BundledManifestSummary.keyCount
-    );
+  const bundledManifest = await loadBundledPartitionManifest();
 
   if (
-    !containsBundledManifest
-    || !sameVersionMatchesBundled
+    manifest.contentHash !== bundledManifest.contentHash
+    || manifest.keyManifestHash !== bundledManifest.keyManifestHash
+    || manifest.keyCount !== bundledManifest.keyCount
     || manifest.contentHash !== metadata.contentHash
     || manifest.keyManifestHash !== metadata.keyManifestHash
     || manifest.keyCount !== metadata.keyCount
@@ -990,14 +1093,39 @@ export function clearCachedFallbackArchitectureV3Bundle() {
   }
 }
 
-export async function readCachedFallbackArchitectureV3Bundle(): Promise<CachedFallbackArchitectureV3Bundle | null> {
+function clearCachedFallbackArchitectureV3SkyPlacementBundle() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(fallbackArchitectureV3SkyPlacementBundleVersionKey);
+    window.localStorage.removeItem(fallbackArchitectureV3SkyPlacementBundleCacheKey);
+  } catch {
+    // The route-owned static package remains active when browser storage is blocked.
+  }
+}
+
+async function readCachedFallbackArchitectureV3Partition({
+  cacheKey,
+  cacheSchema,
+  clear,
+  loadManifest,
+  partition,
+  versionKey
+}: {
+  cacheKey: string;
+  cacheSchema: string;
+  clear: () => void;
+  loadManifest: () => Promise<FallbackArchitectureV3PackageManifest>;
+  partition: "core" | "skyPlacement";
+  versionKey: string;
+}): Promise<CachedFallbackArchitectureV3Bundle | null> {
   if (typeof window === "undefined") {
     return null;
   }
 
   try {
-    const version = Number(window.localStorage.getItem(fallbackArchitectureV3BundleVersionKey) ?? "0");
-    const rawBundle = window.localStorage.getItem(fallbackArchitectureV3BundleCacheKey);
+    const version = Number(window.localStorage.getItem(versionKey) ?? "0");
+    const rawBundle = window.localStorage.getItem(cacheKey);
 
     if (!version || !rawBundle) {
       return null;
@@ -1005,6 +1133,7 @@ export async function readCachedFallbackArchitectureV3Bundle(): Promise<CachedFa
 
     const envelope = JSON.parse(rawBundle) as {
       schema?: unknown;
+      runtimeCapability?: unknown;
       bundledPackageVersion?: unknown;
       bundledContentHash?: unknown;
       bundledKeyManifestHash?: unknown;
@@ -1016,18 +1145,21 @@ export async function readCachedFallbackArchitectureV3Bundle(): Promise<CachedFa
       bundle?: unknown;
     };
     const bundle = envelope?.bundle as FallbackArchitectureV3Bundle | undefined;
+    const bundledPartition = fallbackArchitectureV3BundledManifestSummary.partitions?.[partition];
 
     if (
-      envelope?.schema !== fallbackArchitectureV3BundleCacheSchema
+      !bundledPartition
+      || envelope?.schema !== cacheSchema
+      || envelope?.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary.runtimeCapability
       || envelope?.bundledPackageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion
-      || envelope?.bundledContentHash !== fallbackArchitectureV3BundledManifestSummary.contentHash
-      || envelope?.bundledKeyManifestHash !== fallbackArchitectureV3BundledManifestSummary.keyManifestHash
+      || envelope?.bundledContentHash !== bundledPartition.contentHash
+      || envelope?.bundledKeyManifestHash !== bundledPartition.keyManifestHash
       || envelope?.dashboardVersion !== version
       || !bundle?.transitLib
       || !bundle?.rowsFile
       || !bundle?.templatesFile
     ) {
-      clearCachedFallbackArchitectureV3Bundle();
+      clear();
       return null;
     }
 
@@ -1037,10 +1169,14 @@ export async function readCachedFallbackArchitectureV3Bundle(): Promise<CachedFa
       keyManifestHash: String(envelope.mirrorKeyManifestHash ?? ""),
       keyCount: Number(envelope.mirrorKeyCount)
     };
-    const mirror = await fallbackArchitectureV3BundleManifestIfValid(bundle, mirrorMetadata);
+    const mirror = await fallbackArchitectureV3BundleManifestIfValid(
+      bundle,
+      mirrorMetadata,
+      loadManifest
+    );
 
     if (!mirror) {
-      clearCachedFallbackArchitectureV3Bundle();
+      clear();
       return null;
     }
 
@@ -1050,27 +1186,64 @@ export async function readCachedFallbackArchitectureV3Bundle(): Promise<CachedFa
       mirror
     };
   } catch {
-    clearCachedFallbackArchitectureV3Bundle();
+    clear();
     return null;
   }
 }
 
-function cacheFallbackArchitectureV3Bundle(
+export function readCachedFallbackArchitectureV3Bundle() {
+  return readCachedFallbackArchitectureV3Partition({
+    cacheKey: fallbackArchitectureV3BundleCacheKey,
+    cacheSchema: fallbackArchitectureV3BundleCacheSchema,
+    clear: clearCachedFallbackArchitectureV3Bundle,
+    loadManifest: loadFallbackArchitectureV3BundledCoreManifest,
+    partition: "core",
+    versionKey: fallbackArchitectureV3BundleVersionKey
+  });
+}
+
+function readCachedFallbackArchitectureV3SkyPlacementBundle() {
+  return readCachedFallbackArchitectureV3Partition({
+    cacheKey: fallbackArchitectureV3SkyPlacementBundleCacheKey,
+    cacheSchema: fallbackArchitectureV3SkyPlacementBundleCacheSchema,
+    clear: clearCachedFallbackArchitectureV3SkyPlacementBundle,
+    loadManifest: loadFallbackArchitectureV3BundledSkyPlacementManifest,
+    partition: "skyPlacement",
+    versionKey: fallbackArchitectureV3SkyPlacementBundleVersionKey
+  });
+}
+
+function cacheFallbackArchitectureV3Partition(
   version: number,
   bundle: FallbackArchitectureV3Bundle,
-  mirror: FallbackArchitectureV3PackageManifest
+  mirror: FallbackArchitectureV3PackageManifest,
+  {
+    cacheKey,
+    cacheSchema,
+    partition,
+    versionKey
+  }: {
+    cacheKey: string;
+    cacheSchema: string;
+    partition: "core" | "skyPlacement";
+    versionKey: string;
+  }
 ) {
   if (typeof window === "undefined" || !version) {
     return;
   }
 
   try {
-    window.localStorage.setItem(fallbackArchitectureV3BundleVersionKey, String(version));
-    window.localStorage.setItem(fallbackArchitectureV3BundleCacheKey, JSON.stringify({
-      schema: fallbackArchitectureV3BundleCacheSchema,
+    const bundledPartition = fallbackArchitectureV3BundledManifestSummary.partitions?.[partition];
+    if (!bundledPartition) return;
+
+    window.localStorage.setItem(versionKey, String(version));
+    window.localStorage.setItem(cacheKey, JSON.stringify({
+      schema: cacheSchema,
+      runtimeCapability: fallbackArchitectureV3BundledManifestSummary.runtimeCapability,
       bundledPackageVersion: fallbackArchitectureV3BundledManifestSummary.packageVersion,
-      bundledContentHash: fallbackArchitectureV3BundledManifestSummary.contentHash,
-      bundledKeyManifestHash: fallbackArchitectureV3BundledManifestSummary.keyManifestHash,
+      bundledContentHash: bundledPartition.contentHash,
+      bundledKeyManifestHash: bundledPartition.keyManifestHash,
       mirrorPackageVersion: mirror.packageVersion,
       mirrorContentHash: mirror.contentHash,
       mirrorKeyManifestHash: mirror.keyManifestHash,
@@ -1081,6 +1254,32 @@ function cacheFallbackArchitectureV3Bundle(
   } catch {
     // The static package remains available when browser storage is full or blocked.
   }
+}
+
+function cacheFallbackArchitectureV3Bundle(
+  version: number,
+  bundle: FallbackArchitectureV3Bundle,
+  mirror: FallbackArchitectureV3PackageManifest
+) {
+  cacheFallbackArchitectureV3Partition(version, bundle, mirror, {
+    cacheKey: fallbackArchitectureV3BundleCacheKey,
+    cacheSchema: fallbackArchitectureV3BundleCacheSchema,
+    partition: "core",
+    versionKey: fallbackArchitectureV3BundleVersionKey
+  });
+}
+
+function cacheFallbackArchitectureV3SkyPlacementBundle(
+  version: number,
+  bundle: FallbackArchitectureV3Bundle,
+  mirror: FallbackArchitectureV3PackageManifest
+) {
+  cacheFallbackArchitectureV3Partition(version, bundle, mirror, {
+    cacheKey: fallbackArchitectureV3SkyPlacementBundleCacheKey,
+    cacheSchema: fallbackArchitectureV3SkyPlacementBundleCacheSchema,
+    partition: "skyPlacement",
+    versionKey: fallbackArchitectureV3SkyPlacementBundleVersionKey
+  });
 }
 
 function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
@@ -1223,8 +1422,10 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     }
   }
 
-  const approvedRows = rows.filter(isApprovedFallbackArchitectureV3Row);
-  const metadataByRow = approvedRows.map((row) => fallbackArchitectureV3RowMirrorMetadata(row));
+  const approvedRows = rows
+    .filter((row) => isApprovedFallbackArchitectureV3Row(row))
+    .filter((row) => !isSkyPlacementFallbackPartitionKey(row.content_key));
+  const metadataByRow = approvedRows.map((row) => fallbackArchitectureV3RowMirrorMetadata(row, "core"));
   const mirrorMetadata = metadataByRow.find((metadata): metadata is FallbackArchitectureV3MirrorMetadata => Boolean(metadata));
 
   if (
@@ -1300,7 +1501,11 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     rowsFile: { hookRows, vocabularyRows },
     templatesFile: { templates }
   };
-  const mirror = await fallbackArchitectureV3BundleManifestIfValid(candidateBundle, mirrorMetadata);
+  const mirror = await fallbackArchitectureV3BundleManifestIfValid(
+    candidateBundle,
+    mirrorMetadata,
+    loadFallbackArchitectureV3BundledCoreManifest
+  );
 
   if (!mirror) {
     console.warn("Fallback architecture V3 dashboard package failed version, completeness, or hash validation; bundled package remains active.", {
@@ -1321,6 +1526,105 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     mirror
   );
 
+  return bundle;
+}
+
+export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+  const supabase = await getSupabaseClient();
+  const cached = await readCachedFallbackArchitectureV3SkyPlacementBundle();
+
+  if (!supabase) return cached?.bundle ?? null;
+
+  const { data: versionRows, error: versionError } = await supabase
+    .from("generated_interpretations")
+    .select("updated_at")
+    .eq("provider", fallbackArchitectureV3SkyPlacementProvider)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .returns<Array<Pick<GeneratedContentRow, "updated_at">>>();
+
+  if (versionError) {
+    console.warn("Sky Placement dashboard partition version failed to load; cached/local content remains active.", versionError);
+    return cached?.bundle ?? null;
+  }
+
+  const dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
+  if (!dashboardVersion) return cached?.bundle ?? null;
+  if (cached?.version === dashboardVersion) return cached.bundle;
+
+  const rows: GeneratedContentRow[] = [];
+  const pageSize = 1000;
+
+  for (let page = 0; page < 10; page += 1) {
+    const from = page * pageSize;
+    const { data, error } = await supabase
+      .from("generated_interpretations")
+      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
+      .eq("provider", fallbackArchitectureV3SkyPlacementProvider)
+      .order("updated_at", { ascending: false })
+      .order("id", { ascending: false })
+      .range(from, from + pageSize - 1)
+      .returns<GeneratedContentRow[]>();
+
+    if (error) {
+      console.warn("Sky Placement dashboard partition failed to load; cached/local content remains active.", error);
+      return cached?.bundle ?? null;
+    }
+
+    rows.push(...(data ?? []));
+    if (!data || data.length < pageSize) break;
+  }
+
+  const approvedRows = rows.filter((row) => (
+    isApprovedFallbackArchitectureV3Row(row, fallbackArchitectureV3SkyPlacementProvider)
+    && isSkyPlacementFallbackPartitionKey(row.content_key)
+    && isSkyPlacementDashboardDistributionEligible(row)
+  ));
+  const metadataByRow = approvedRows.map((row) => fallbackArchitectureV3RowMirrorMetadata(row, "sky-placement"));
+  const metadata = metadataByRow.find((value): value is FallbackArchitectureV3MirrorMetadata => Boolean(value));
+
+  if (
+    !metadata
+    || metadataByRow.some((value) => !value || !equalFallbackArchitectureV3MirrorMetadata(value, metadata))
+  ) {
+    clearCachedFallbackArchitectureV3SkyPlacementBundle();
+    return null;
+  }
+
+  const seen = new Set<string>();
+  const hookRows: HookRow[] = [];
+
+  for (const row of approvedRows) {
+    if (seen.has(row.content_key)) {
+      clearCachedFallbackArchitectureV3SkyPlacementBundle();
+      return null;
+    }
+    seen.add(row.content_key);
+
+    const { contentType, role } = fallbackSystemBucket(row);
+    if (contentType === "source-material" || role !== "fallback_hook") continue;
+    const hook = packageHookRowFromRow(row);
+    if (hook) hookRows.push(hook);
+  }
+
+  const candidateBundle: FallbackArchitectureV3Bundle = {
+    transitLib: { authoredCards: [] },
+    templatesFile: { templates: [] },
+    rowsFile: { hookRows, vocabularyRows: [] }
+  };
+  const mirror = await fallbackArchitectureV3BundleManifestIfValid(
+    candidateBundle,
+    metadata,
+    loadFallbackArchitectureV3BundledSkyPlacementManifest
+  );
+
+  if (!mirror) {
+    clearCachedFallbackArchitectureV3SkyPlacementBundle();
+    return null;
+  }
+
+  const bundle = { ...candidateBundle, packageManifest: mirror };
+  cacheFallbackArchitectureV3SkyPlacementBundle(dashboardVersion, bundle, mirror);
   return bundle;
 }
 

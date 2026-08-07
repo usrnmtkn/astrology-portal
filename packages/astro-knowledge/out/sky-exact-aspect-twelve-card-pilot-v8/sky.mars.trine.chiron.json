@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:54:49.482Z",
+  "id": "sky.mars.trine.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "mars-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A person acts for others but softens or apologizes when stating a personal need.",
+    "examples": [
+      "They tell a coworker to stop interrupting, then say it was probably not a big deal.",
+      "They confront a landlord over a neighbor's unsafe stairs but do not report the broken lock on their own door.",
+      "They ask for a day off, then offer to work part of it."
+    ],
+    "pairBehavior": "Mars contributes the drive to act and assert, while Chiron contributes the learned discomfort with taking up space.",
+    "aspectBehavior": "The trine allows direct action and learned discomfort to reinforce each other with little resistance, supporting effective assertion or making habitual retreat easier to repeat.",
+    "consequence": "Personal boundaries are either maintained with less struggle or softened so consistently that the behavior continues without being questioned."
+  },
+  "draft": {
+    "id": "sky.mars.trine.chiron",
+    "planetA": "mars",
+    "planetB": "chiron",
+    "aspect": "trine",
+    "title": "Mars trine Chiron",
+    "body": "It is easier to defend someone else than to let our own need take up the room. Mars trine Chiron can make the move and the recoil equally fluent: we tell a coworker to stop interrupting, then insist it was probably no big deal; confront a landlord about a neighbor’s unsafe stairs while ignoring the broken lock on our own door; ask for a day off, then offer to work part of it. The boundary gets spoken, but the apology follows so smoothly that no one has to question the retreat.\n\nThe same speed can work in our favor when we let the first clear no stand. Action moves before the old lesson that force was not allowed can soften it, and a personal boundary holds with less struggle than expected. But when every ask includes its own exit, the pattern keeps going because it looks polite and workable. The direct ask may cost less than the years of not asking.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "compressedExampleBeat",
+    "weakest": "Mars trine Chiron can make the move and the recoil equally fluent: we tell a coworker to stop interrupting, then insist it was probably no big deal; confront a landlord about a neighbor’s unsafe stairs while ignoring the broken lock on our own door; ask for a day off, then offer to work part of it.",
+    "why": "The examples are vivid and pair-specific, but they form three developed mini-stories instead of a quick beat of concrete fragments.",
+    "failedChecks": [
+      "compressed examples use fragments, not mini-stories"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:44.284Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "37b132a95f9ee145d51c87dccf99ac179c19fe1d19429f4f24b3b6170b061c81",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "a79052022c27273f19176261d882143256e5eb983568c9aaed951aadcfe1225c",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "compressed examples use fragments, not mini-stories"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "71e0276e3e536735de04ddb0c786bebec912b61c4f6eed2e8a91665c7e590a7e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.trine.chiron",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "rationale": "Two sentences rely on compressed abstractions that obscure the straightforward pattern of asserting a need and then backing away from it.",
+    "failedChecks": [
+      "abstract-agent",
+      "unclear-causality"
+    ],
+    "evidence": [
+      {
+        "checkId": "abstract-agent",
+        "sentence": "Mars trine Chiron can make the move and the recoil equally fluent: we tell a coworker to stop interrupting, then insist it was probably no big deal; confront a landlord about a neighbor’s unsafe stairs while ignoring the broken lock on our own door; ask for a day off, then offer to work part of it."
+      },
+      {
+        "checkId": "unclear-causality",
+        "sentence": "Action moves before the old lesson that force was not allowed can soften it, and a personal boundary holds with less struggle than expected."
+      }
+    ],
+    "why": "Two sentences rely on compressed abstractions that obscure the straightforward pattern of asserting a need and then backing away from it.",
+    "weakest": "Mars trine Chiron can make the move and the recoil equally fluent: we tell a coworker to stop interrupting, then insist it was probably no big deal; confront a landlord about a neighbor’s unsafe stairs while ignoring the broken lock on our own door; ask for a day off, then offer to work part of it.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:54:49.482Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "cf89134d72f8b3471a44635676ec359e86f69be1664f6d9646381035c5de81a8",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "a79052022c27273f19176261d882143256e5eb983568c9aaed951aadcfe1225c",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "abstract-agent",
+            "unclear-causality"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "4b44a94123f83acd354f837c48c791e402dceb2967498842776299adea581fec"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

@@ -5,6 +5,7 @@
   "planetB": "ascendant",
   "aspect": "conjunction",
   "plainTranslation": "Their questions, explanations, and way of talking sit right on top of how freely you present yourself and enter situations.",
+  "humanMoment": "What {{holder1}} says about {{holder2}} can quickly shape how {{holder2}} sees themselves and how they choose to present themselves.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Merged from cc-synastry-web-bundle.json.",
   "voiceNeutral": true,

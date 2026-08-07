@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/virgo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Mercury in Virgo catches the missing detail before it becomes a bigger misunderstanding. From {{entryDate}}, a group may receive conflicting messages that do not quite match. Someone compares the wording, finds the inconsistency, and writes a clear summary of what is known; the next decision becomes easier because nobody has to guess which version is current. Questions get more specific, explanations get more useful, and small corrections prevent repeated confusion. Mercury moves through all twelve signs in about a year because it stays near the Sun, usually spending roughly two weeks to two months in each sign. A retrograde can keep it in one sign longer.",
+      "tension": "Once that correction works, every uncertain detail may start to feel equally urgent. The summary gets checked against old messages, then checked again for tone, punctuation, and every possible exception. Meanwhile, the group is still waiting, the original confusion is still active, and the careful reply arrives too late to help. Exactness becomes a shield against action when no wording feels safe enough to send.",
+      "development": "The practical choice is to separate details that change the meaning from details that merely leave the explanation less polished. We can confirm the current version, quote the lines that conflict, and name what remains unknown without rebuilding the entire account. If the facts are clear enough for the next decision, the answer can include an open question instead of going through repeated rounds of private checking. Harmless phrasing can stay imperfect; a contradiction that changes what the group does belongs at the top. The response then reaches the group while it can still settle the confusion.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, we can choose a delayed clarification and send the verified facts without waiting for the perfect explanation.",
+      "try_this": [
+        "We can compare conflicting messages and write down the detail that changes the decision.",
+        "We can turn a recurring worry into a direct question with a factual answer.",
+        "We can leave a harmless wording preference alone when the meaning is already clear."
+      ],
+      "aspect_units": [],
+      "body_you": "Mercury in Virgo catches the missing detail before it becomes a bigger misunderstanding. From {{entryDate}}, a group may receive conflicting messages that do not quite match. Someone compares the wording, finds the inconsistency, and writes a clear summary of what is known; the next decision becomes easier because nobody has to guess which version is current. Questions get more specific, explanations get more useful, and small corrections prevent repeated confusion. Mercury moves through all twelve signs in about a year because it stays near the Sun, usually spending roughly two weeks to two months in each sign. A retrograde can keep it in one sign longer.\n\nOnce that correction works, every uncertain detail may start to feel equally urgent. The summary gets checked against old messages, then checked again for tone, punctuation, and every possible exception. Meanwhile, the group is still waiting, the original confusion is still active, and the careful reply arrives too late to help. Exactness becomes a shield against action when no wording feels safe enough to send.\n\nThe practical choice is to separate details that change the meaning from details that merely leave the explanation less polished. We can confirm the current version, quote the lines that conflict, and name what remains unknown without rebuilding the entire account. If the facts are clear enough for the next decision, the answer can include an open question instead of going through repeated rounds of private checking. Harmless phrasing can stay imperfect; a contradiction that changes what the group does belongs at the top. The response then reaches the group while it can still settle the confusion.\n\nBefore {{exitDate}}, we can choose a delayed clarification and send the verified facts without waiting for the perfect explanation.",
+      "body_they": "Mercury in Virgo catches the missing detail before it becomes a bigger misunderstanding. From {{entryDate}}, a group may receive conflicting messages that do not quite match. Someone compares the wording, finds the inconsistency, and writes a clear summary of what is known; the next decision becomes easier because nobody has to guess which version is current. Questions get more specific, explanations get more useful, and small corrections prevent repeated confusion. Mercury moves through all twelve signs in about a year because it stays near the Sun, usually spending roughly two weeks to two months in each sign. A retrograde can keep it in one sign longer.\n\nOnce that correction works, every uncertain detail may start to feel equally urgent. The summary gets checked against old messages, then checked again for tone, punctuation, and every possible exception. Meanwhile, the group is still waiting, the original confusion is still active, and the careful reply arrives too late to help. Exactness becomes a shield against action when no wording feels safe enough to send.\n\nThe practical choice is to separate details that change the meaning from details that merely leave the explanation less polished. We can confirm the current version, quote the lines that conflict, and name what remains unknown without rebuilding the entire account. If the facts are clear enough for the next decision, the answer can include an open question instead of going through repeated rounds of private checking. Harmless phrasing can stay imperfect; a contradiction that changes what the group does belongs at the top. The response then reaches the group while it can still settle the confusion.\n\nBefore {{exitDate}}, we can choose a delayed clarification and send the verified facts without waiting for the perfect explanation.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sky-placement-writer-batch-1-preflight-mercury-virgo"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

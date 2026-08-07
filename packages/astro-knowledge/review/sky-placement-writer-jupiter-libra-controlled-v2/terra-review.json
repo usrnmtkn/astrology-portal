@@ -1,0 +1,58 @@
+{
+  "score": 3,
+  "verdict": "in-voice",
+  "weakest": "For about a year, growth comes less through going it alone and more through making room without making ourselves smaller.",
+  "why": "The placement is unmistakable: Jupiter expands possibility through Libra’s shared decisions, with a concrete social sequence and an observable shadow that lands cleanly.",
+  "samples": 1,
+  "disagreement": false,
+  "contractViolation": false,
+  "contractIssues": [],
+  "audit": {
+    "schemaVersion": 1,
+    "recordedAt": "2026-08-03T17:18:11.166Z",
+    "promptVersion": "tldr-astro.voice.sky-placement.v5:prompt-v1",
+    "rubricVersion": "tldr-astro.voice.sky-placement.v5",
+    "promptSha256": "dfd1f97618a0112650744b5a199439ca25b7d1b9c214ea46ddd18ce0d182070c",
+    "rubricSha256": "764496e32ce4fb0ec8b6d35affcf69c3d04fca29096bd672645e5884904ed366",
+    "contentSha256": "afc73b67a48a1f97286c9cd17a8f4b4475863280e97f46bfceb8881a4b503e0e",
+    "provider": "openai",
+    "model": "gpt-5.6-terra",
+    "releaseId": "sky-placement-judge-openai-gpt-5.6-terra-v2",
+    "registryVersion": "2026-08-03.8",
+    "registryLaneId": "judge:sky-placement",
+    "registryState": "active",
+    "registryOverride": false,
+    "evaluationSetVersion": "sky-placement-owner-approved-v3+weak-v5",
+    "policyVersion": "editorial-judge-policy-v1",
+    "reasoningEffort": "low",
+    "temperature": 0.1,
+    "samples": 1,
+    "scores": [
+      3
+    ],
+    "verdicts": [
+      {
+        "score": 3,
+        "verdict": "in-voice",
+        "failedChecks": [],
+        "contractViolation": false,
+        "contractIssues": [],
+        "outputSha256": "41ab892e8908e0b368d68fd4c37162028d375f6a0614e6db3432a47b3100efec"
+      }
+    ],
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "privacyMode": "redact",
+    "redactionCount": 0,
+    "context": {
+      "surface": "sky-placement",
+      "planet": "jupiter",
+      "sign": "libra",
+      "tier": "social"
+    }
+  },
+  "gate": "human-review",
+  "recommendation": "approve",
+  "approvalSource": "llm-advisory"
+}

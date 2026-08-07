@@ -1,0 +1,753 @@
+{
+  "schemaVersion": 1,
+  "artifact": "judge-policy",
+  "generatedBy": "scripts/compile-marie-satori-editorial-decisions.js",
+  "decisionSource": "voice/tldr-astro/marie-satori-editorial-decisions.yaml",
+  "decisionSourceId": "marie-satori-editorial-decisions-v1",
+  "decisionSourceSha256": "8dfe6d6459f705689ee4267f2ae01b1262bff54bf5ffa0d822683bea0a2a7717",
+  "role": "Classify and explain final acceptability of the untouched draft. Never rewrite, approve, or promote it.",
+  "compactRubric": [
+    "Read-aloud rule: does every central sentence sound natural and literal when spoken?",
+    "Morning-reader test: do the early sentences stay short, carry one idea each, and make sense on one tired read without reparsing?",
+    "Does the draft name a recognizable pressure, action, and consequence?",
+    "Is the subject matter supported by the verified astrology?",
+    "Does the draft follow the applicable surface contract?",
+    "Does it resemble the owner passages rather than generic astrology, institutional prose, therapy copy, corporate advice, or a polished slogan?",
+    "Would any central sentence need to be translated into ordinary English?"
+  ],
+  "decisions": [
+    {
+      "id": "ED-001",
+      "category": "voice",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Use ordinary, current language that makes literal sense when read aloud.",
+      "rationale": "The owner repeatedly rejected polished wording that no one would normally say.",
+      "effect": "require",
+      "examplesAllowed": [
+        "Everyone else has to change their plans later."
+      ],
+      "examplesRejected": [
+        "The banished want refuses to stay reasonable.",
+        "The arrangement stopped telling the truth."
+      ]
+    },
+    {
+      "id": "ED-002",
+      "category": "voice",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Name the pressure, what someone does, and what changes because of it in one recognizable sequence.",
+      "rationale": "Concrete nouns alone do not create authored writing; the sequence needs pressure, choice, and consequence.",
+      "effect": "require",
+      "examplesAllowed": [
+        "Saying yes avoids the discomfort of saying no, then everyone else has to change their plans later."
+      ],
+      "examplesRejected": [
+        "A family member stops being the automatic host; a workplace questions the arrangement."
+      ]
+    },
+    {
+      "id": "ED-003",
+      "category": "surface",
+      "scope": {
+        "surfaces": [
+          "current-sky"
+        ]
+      },
+      "rule": "Current Sky never uses you, your, yours, yourself, or yourselves; natal and transit-to-natal may use second person.",
+      "rationale": "Current Sky describes shared weather while natal surfaces address the reader directly.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "We notice the disagreement sooner."
+      ],
+      "examplesRejected": [
+        "You notice the disagreement sooner."
+      ]
+    },
+    {
+      "id": "CF-001",
+      "category": "subject",
+      "scope": {
+        "prohibited": [
+          "sky-placement"
+        ],
+        "conditional": [
+          "all-other-surfaces"
+        ]
+      },
+      "rule": "Do not use people in Sky Placement. On other surfaces, use it only when the collective itself is the real subject and a more exact subject would be less accurate.",
+      "rationale": "Generic people repeatedly conceals the actual subject in Sky Placement while remaining legitimate in some collective contexts.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "A sibling stops hosting every holiday."
+      ],
+      "examplesRejected": [
+        "People can care deeply and still leave the rule untouched."
+      ]
+    },
+    {
+      "id": "CF-013",
+      "category": "subject",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ]
+      },
+      "rule": "Person is allowed. Prohibit repetitive generic phrases such as one person when a more specific role, action, or subject is available.",
+      "rationale": "The word is natural in owner writing; repetition becomes formulaic and can hide who acts.",
+      "effect": "permit_with_construction_prohibition",
+      "examplesAllowed": [
+        "The person who remembers every birthday keeps the spare key."
+      ],
+      "examplesRejected": [
+        "One person decides. One person explains. One person fixes it."
+      ]
+    },
+    {
+      "id": "CF-014",
+      "category": "dated-language",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Looks good on paper is allowed as an ordinary idiom. Other uses of on paper require an actual written document; administrative put the plan on paper phrasing is prohibited.",
+      "rationale": "The owner uses the ordinary idiom but rejected AI-generated administrative instructions.",
+      "effect": "permit_with_context",
+      "examplesAllowed": [
+        "It looks good on paper.",
+        "The signed contract exists on paper."
+      ],
+      "examplesRejected": [
+        "Put the emergency plan on paper."
+      ]
+    },
+    {
+      "id": "CF-004",
+      "category": "construction",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Room is allowed for a literal physical room. Prohibit stock audience or hierarchy phrases such as the loudest person in the room or the smartest voice in the room.",
+      "rationale": "Literal rooms provide useful evidence; room-as-audience phrasing is a stock hierarchy cliché.",
+      "effect": "permit_literal_prohibit_stock_construction",
+      "examplesAllowed": [
+        "A guest room turns into an office."
+      ],
+      "examplesRejected": [
+        "The loudest person in the room becomes the plan.",
+        "The smartest voice in the room takes over."
+      ]
+    },
+    {
+      "id": "CF-005",
+      "category": "word-choice",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Reserve harm and self-harm for literal harm. Do not substitute self-harm for broader language; otherwise name the specific behavior, loss, danger, or consequence.",
+      "rationale": "Severity should match what actually happened, and the older automatic replacement made ordinary consequences sound harsher than intended.",
+      "effect": "reserve_literal_use",
+      "examplesAllowed": [
+        "The fall caused physical harm."
+      ],
+      "examplesRejected": [
+        "Once the harm becomes visible."
+      ]
+    },
+    {
+      "id": "CF-015",
+      "category": "word-choice",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Steady is allowed for observable effort, pace, support, light, or reliability. Prohibit it only as vague energy language or an empty positive adjective.",
+      "rationale": "Published owner writing uses steady naturally; the earlier stable, strong, or solid qualifier rule did not evaluate the noun or sentence.",
+      "effect": "permit_observable_prohibit_vague",
+      "examplesAllowed": [
+        "A full day in Taurus emphasizes steady effort.",
+        "The support remains steady."
+      ],
+      "examplesRejected": [
+        "The transit brings steady energy."
+      ]
+    },
+    {
+      "id": "CF-002",
+      "category": "construction",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Perform, performed, and performance are allowed only for literal acting, music, presentations, or measurable job performance. Prohibit figurative uses about identity, normalcy, worth, emotion, belonging, or social behavior; Leo alone is not an exception.",
+      "rationale": "The words are ordinary in literal performance contexts but repeatedly became polished figurative framing in generated copy.",
+      "effect": "permit_literal_prohibit_figurative",
+      "examplesAllowed": [
+        "The actor prepares for the performance.",
+        "The manager reviews quarterly job performance."
+      ],
+      "examplesRejected": [
+        "Life is not a performance review."
+      ]
+    },
+    {
+      "id": "CF-003",
+      "category": "word-choice",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ],
+        "literal_exceptions": [
+          "an actual physical object is tilted"
+        ]
+      },
+      "rule": "Do not use tilt or tilts as a figurative substitute for change. Literal physical tilting is allowed.",
+      "rationale": "The owner rejected tilt in this phrasing and explicitly retained the physical-object exception.",
+      "effect": "prohibit_with_literal_exception",
+      "examplesAllowed": [
+        "The table tilts toward the window."
+      ],
+      "examplesRejected": [
+        "A dinner plan starts to tilt."
+      ]
+    },
+    {
+      "id": "CF-006",
+      "category": "tagline",
+      "scope": {
+        "surfaces": [
+          "sky-placement-tagline"
+        ]
+      },
+      "rule": "A tagline must be a clear full sentence readers understand on first read. Strong is welcome; cryptic compression is not.",
+      "rationale": "The owner retired Stop calling silence peace because the compressed line did not make sense without explanation.",
+      "effect": "require",
+      "examplesAllowed": [
+        "The disagreement starts before the cancellation."
+      ],
+      "examplesRejected": [
+        "Stop calling silence peace",
+        "Make kindness practical"
+      ]
+    },
+    {
+      "id": "ED-005",
+      "category": "ending",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "When the behavior and cost are clear, stop; delete a following slogan, metaphor, reassurance, or second conclusion.",
+      "rationale": "Stacked endings repeatedly turn a strong paragraph into polished generated copy.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "After enough of this, no one trusts what is said anymore."
+      ],
+      "examplesRejected": [
+        "That is the lesson. That is the opening. That is where the future begins."
+      ]
+    },
+    {
+      "id": "ED-006",
+      "category": "register",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Do not turn ordinary events into institutional, advocacy, therapy-workbook, or corporate-operations language unless the actual subject requires it.",
+      "rationale": "These registers repeatedly replace recognizable behavior with categories and reports.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "Everyone else has to change their plans later."
+      ],
+      "examplesRejected": [
+        "The pattern becomes evidence.",
+        "Reopen one agreement.",
+        "Document the task and record what fails."
+      ]
+    },
+    {
+      "id": "ED-007",
+      "category": "communication",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ],
+        "literal_exceptions": [
+          "physical mail is part of the source or scene"
+        ]
+      },
+      "rule": "Use message, reply, response, or what they were told instead of letter or formal technical delivery terms unless physical mail matters.",
+      "rationale": "Letter sounded dated, while portal notification and electronic correspondence sounded technical rather than current.",
+      "effect": "prefer",
+      "examplesAllowed": [
+        "Three families compare the messages they received.",
+        "A handwritten letter arrives in the mail."
+      ],
+      "examplesRejected": [
+        "Three families compare letters.",
+        "Three families receive the same portal notification."
+      ]
+    },
+    {
+      "id": "ED-013",
+      "category": "recognizability",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ]
+      },
+      "rule": "Flag sentences matching the documented CC/SD constructions in voice/banned-constructions.json because they read as CC or SD rather than the house voice. Owner-verbatim text is exempt. Treat this as a judged consideration, not an automatic score failure; falsifiable language versus unsupported affirmation is the tiebreaker.",
+      "rationale": "Generated astrology copy drifts toward the genre's two dominant sites by default, while a small number of house-approved moves sit near the boundary.",
+      "effect": "judge_consideration",
+      "examplesAllowed": [
+        "Owner-verbatim text is exempt."
+      ],
+      "examplesRejected": [
+        "Welcome to another powerful week"
+      ]
+    },
+    {
+      "id": "CF-016",
+      "category": "adjacent-voice",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Chani-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not.",
+      "rationale": "Softness is not the problem; recognizable borrowed constructions and the wrong recurring subject matter are.",
+      "effect": "conditional",
+      "examplesAllowed": [
+        "Warm, emotionally observant permission to do one nameable thing."
+      ],
+      "examplesRejected": [
+        "Welcome to another powerful week.",
+        "Let's dive into what the stars have in store.",
+        "You got this."
+      ]
+    },
+    {
+      "id": "CF-007",
+      "category": "domain",
+      "scope": {
+        "surfaces": [
+          "collective-astrology",
+          "outer-planet-copy"
+        ]
+      },
+      "rule": "Collective astrology does not default to campaigns, institutions, policy, organizing, public harm, or collective healing. Those subjects require direct astrological and owner-source support.",
+      "rationale": "Collective was repeatedly translated into generic progressive-publication subject matter rather than Marie's recurring concerns.",
+      "effect": "conditional",
+      "examplesAllowed": [
+        "A platform changes who gets heard."
+      ],
+      "examplesRejected": [
+        "The denial becomes evidence and turns into a public campaign."
+      ]
+    },
+    {
+      "id": "ED-008",
+      "category": "astrology-scope",
+      "scope": {
+        "surfaces": [
+          "all-astrology-copy"
+        ]
+      },
+      "rule": "Do not infer a life domain from a sign alone. Taurus does not automatically mean work or career.",
+      "rationale": "A planet, house, aspect, or verified source must support the chosen domain.",
+      "effect": "require",
+      "examplesAllowed": [
+        "Work appears when the supplied astrology supports employment."
+      ],
+      "examplesRejected": [
+        "Taurus makes this transit about work."
+      ]
+    },
+    {
+      "id": "ED-015",
+      "category": "tagline",
+      "scope": {
+        "surfaces": [
+          "sky-placement-tagline"
+        ]
+      },
+      "rule": "Reject the swappable tagline construction [Planet] in [sign] helps us grow through [generic virtue or domain]. A tagline must tell the reader what is actually happening.",
+      "rationale": "Naming a placement and generic virtue produces interchangeable astrology copy rather than a recognizable line.",
+      "effect": "prohibit_construction",
+      "examplesAllowed": [
+        "The plan changes when someone finally says what they want."
+      ],
+      "examplesRejected": [
+        "Jupiter in Libra helps us grow through fair, honest partnership."
+      ]
+    },
+    {
+      "id": "ED-016",
+      "category": "construction",
+      "scope": {
+        "surfaces": [
+          "all-generated-astrology-copy"
+        ]
+      },
+      "rule": "Reject the stock gift-to-problem keyword flip: The gift becomes the problem when [positive keyword] turns into [negative keyword]. Show the observed sequence instead.",
+      "rationale": "The formula reads like a generic astrology gift-and-shadow template.",
+      "effect": "prohibit_construction",
+      "examplesAllowed": [
+        "The cancellation is where the disagreement finally shows up."
+      ],
+      "examplesRejected": [
+        "The gift becomes the problem when diplomacy turns into avoidance."
+      ]
+    },
+    {
+      "id": "ED-017",
+      "category": "register",
+      "scope": {
+        "surfaces": [
+          "ordinary-shared-decisions"
+        ]
+      },
+      "rule": "For ordinary shared decisions, reject workshop, mediation, negotiation, and facilitation language unless the literal subject requires it. Name what someone wants, avoids saying, delays, and causes instead.",
+      "rationale": "The controlled draft converted a dinner plan into a facilitated compromise exercise.",
+      "effect": "prohibit_contextual_register",
+      "examplesAllowed": [
+        "Someone says no before everyone else changes their plans later."
+      ],
+      "examplesRejected": [
+        "compare preferences",
+        "negotiate fairly",
+        "shape an answer each side can support",
+        "name one must-have",
+        "name one flexible detail",
+        "set a decision time",
+        "proposal feel mutual",
+        "propose a compromise"
+      ]
+    },
+    {
+      "id": "ED-018",
+      "category": "scene",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "Do not build a Sky Placement article around a low-stakes social plan merely because a sign suggests partnership. A social plan must expose a recognizable pressure with a meaningful consequence and cannot stage a perfectly balanced solution to prove the astrology.",
+      "rationale": "The dinner-and-live-music solution was manufactured to demonstrate compromise rather than reveal a consequential pattern.",
+      "effect": "require_meaningful_stakes",
+      "examplesAllowed": [
+        "A social plan whose delayed refusal changes trust or creates a real cost."
+      ],
+      "examplesRejected": [
+        "A perfectly accommodated dinner plan with no meaningful stakes."
+      ]
+    },
+    {
+      "id": "ED-019",
+      "category": "ending",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "Reject generic fairness conclusions that explain a virtue instead of ending on the specific behavior and cost established by the article.",
+      "rationale": "The controlled article ended with a universal principle that could close many unrelated relationship articles.",
+      "effect": "prohibit_generic_conclusion",
+      "examplesAllowed": [
+        "After enough of this, no one trusts what is said anymore."
+      ],
+      "examplesRejected": [
+        "Fairness requires each side to be heard before the choice is made."
+      ]
+    },
+    {
+      "id": "ED-020",
+      "category": "judge-severity",
+      "scope": {
+        "surfaces": [
+          "sky-placement-judge"
+        ]
+      },
+      "rule": "A central register failure spanning hook, lived section, turn, and moves is a full-draft rejection. Do not reduce it to one weak tagline or one isolated sentence.",
+      "rationale": "Terra rated the controlled Jupiter-in-Libra draft borderline and named only the tagline despite formal negotiation language and workshop framing throughout.",
+      "effect": "require_full_draft_severity",
+      "examplesAllowed": [],
+      "examplesRejected": [
+        "The complete controlled Jupiter-in-Libra v3 Sol draft."
+      ]
+    },
+    {
+      "id": "ED-022",
+      "category": "scene",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "Reject sign-cliche stock scenes when they govern the central opening, tension, and development sequence. Isolated practical moves are exempt unless the central scene itself is a scheduling or dinner scene. The scene must follow from this placement's combined meaning at this transit's scale, and a year-long or slower transit cannot be reduced to one evening's logistics.",
+      "rationale": "The rejected Jupiter-in-Libra draft passed the earlier checks while reproducing the named Libra dinner-plan meme and shrinking a year-long transit to one evening.",
+      "effect": "prohibit_sign_meme_scenes_and_scale_mismatch",
+      "examplesAllowed": [
+        "A sequence whose pressure and consequence could only follow from the combined planet and sign meaning at the stated duration.",
+        "A creative-collaboration article may include separate moves about answering an invitation and naming which day works; those moves do not turn the central scene into invitation scheduling."
+      ],
+      "examplesRejected": [
+        "Libra friends cannot choose a restaurant or dinner plan.",
+        "Virgo uses a color-coded spreadsheet.",
+        "Aries goes to the gym or gets an impulsive haircut.",
+        "Cancer takes a bubble bath or cancels plans.",
+        "Taurus makes a retail-therapy splurge.",
+        "Gemini has a double-booked calendar."
+      ]
+    },
+    {
+      "id": "ED-023",
+      "category": "moves-register",
+      "scope": {
+        "surfaces": [
+          "sky-placement-moves"
+        ]
+      },
+      "rule": "Moves must sound like actions someone would actually say they took, not workshop, facilitation, negotiation, or project-management instructions. Until an exact owner-approved moves exemplar exists, the moves section is the highest-risk section and any listed facilitation term there is a score-1 failure.",
+      "rationale": "The owner corpus does not yet supply an approved bulleted-moves exemplar, and the rejected draft invented facilitation-workshop language.",
+      "effect": "prohibit_facilitation_register_in_moves",
+      "examplesAllowed": [
+        "An ordinary action stated in words someone would use after doing it."
+      ],
+      "examplesRejected": [
+        "name one must-have",
+        "name one flexible detail",
+        "set a decision time",
+        "hear each side",
+        "make a proposal",
+        "make it mutual",
+        "negotiate",
+        "identify the stakeholder",
+        "align",
+        "create an action item"
+      ]
+    },
+    {
+      "id": "ED-024",
+      "category": "judge-register",
+      "scope": {
+        "surfaces": [
+          "sky-placement-judge"
+        ]
+      },
+      "rule": "Apply an owner-register check even when every deterministic rule passes. Generic product copy fails. Compare only against eligible owner evidence, and cite the three weakest lines. Never treat an unapproved card as a format exemplar.",
+      "rationale": "Terra passed a mechanically clean draft that the owner rejected as generic product copy.",
+      "effect": "require_owner_register_check",
+      "examplesAllowed": [
+        "A draft whose observations and sentence movement are plausibly the owner's."
+      ],
+      "examplesRejected": [
+        "Jupiter in Libra helps us grow through fair, honest partnership."
+      ]
+    },
+    {
+      "id": "ED-026",
+      "category": "facts",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "A qualitative, non-numeric subperiod may trace to a reviewed residency fact only when it cannot exceed that residency. Numeric or date-like subperiods still require an explicit engine fact or render token.",
+      "rationale": "Narrative pacing inside a known residency window is not a new moving fact, but numeric and calendar-like claims must remain engine-owned.",
+      "effect": "fact_gate_narrative_subperiods",
+      "examplesAllowed": [
+        "A few months in",
+        "Early in the transit",
+        "By midyear"
+      ],
+      "examplesRejected": [
+        "In March",
+        "Four months in",
+        "By the 15th"
+      ]
+    },
+    {
+      "id": "ED-027",
+      "category": "readability",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy",
+          "sky-placement-judge"
+        ]
+      },
+      "rule": "Apply the morning-reader test: every sentence must make sense on one tired read, with short sentences early, one idea per opening sentence, and no construction that requires a second pass to parse.",
+      "rationale": "Readers often open these write-ups first thing in the morning while they are still waking up.",
+      "effect": "require_morning_reader_clarity",
+      "examplesAllowed": [
+        "The answer changed. We ask what changed with it."
+      ],
+      "examplesRejected": [
+        "A long opening sentence that combines the scene, interpretation, astrology, timing, and conclusion before the reader can find the point."
+      ]
+    },
+    {
+      "id": "CF-018",
+      "category": "word-choice",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Do not use leak, leaks, leaked, or leaking in Marie Satori editorial copy. Name the observable action or consequence instead.",
+      "rationale": "The house style guide already prohibited leak language for emotion or expression, and the owner confirmed that leak is an AI tell she does not use.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "After enough of this, no one trusts what is said anymore."
+      ],
+      "examplesRejected": [
+        "Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest."
+      ]
+    },
+    {
+      "id": "OW-002",
+      "category": "owner-rejection",
+      "scope": {
+        "surfaces": [
+          "sky-placement-evaluation"
+        ],
+        "candidate": "sky-placement-writer-jupiter-libra-controlled-v3-resolved-decisions",
+        "excluded_uses": [
+          "generation-evidence",
+          "calibration-evidence",
+          "production-copy",
+          "governed-promotion"
+        ]
+      },
+      "rule": "The complete controlled Jupiter-in-Libra v3 Sol draft is owner-rejected and may serve only as negative evaluation evidence.",
+      "rationale": "The owner rejected the writing as a whole, not only Terra's weakest-line diagnosis.",
+      "effect": "authorize_negative_evaluation_only",
+      "examplesAllowed": [],
+      "examplesRejected": [
+        "The complete controlled Jupiter-in-Libra v3 Sol draft."
+      ]
+    },
+    {
+      "id": "CF-012",
+      "category": "architecture",
+      "scope": {
+        "surfaces": [
+          "sky-placement-editorial-system"
+        ]
+      },
+      "rule": "Keep the architecture fixed: verified astrology supplies meaning, Sol writes one draft, deterministic checks catch hard failures, Terra judges afterward, and only the owner approves exact wording.",
+      "rationale": "Durable corrections should update scoped policy and regression tests rather than trigger another architecture redesign.",
+      "effect": "require",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    },
+    {
+      "id": "ED-009",
+      "category": "approval",
+      "scope": {
+        "surfaces": [
+          "all-editorial-content"
+        ]
+      },
+      "rule": "Only the owner may approve exact wording. Better, good, great, preferred wording, and judge scores do not grant exact approval or promotion.",
+      "rationale": "Writing, judging, exact approval, calibration use, generation evidence, and production promotion are separate permissions.",
+      "effect": "require",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    },
+    {
+      "id": "ED-010",
+      "category": "facts",
+      "scope": {
+        "surfaces": [
+          "app",
+          "sky-editorial"
+        ]
+      },
+      "rule": "Display time in the user's local timezone; computed dates, degrees, motion, and event times come from the engine rather than generated prose.",
+      "rationale": "Reader output must not hardcode PT or hand-write moving facts.",
+      "effect": "require",
+      "examplesAllowed": [],
+      "examplesRejected": [
+        "All event times are shown in PT."
+      ]
+    },
+    {
+      "id": "ED-011",
+      "category": "facts",
+      "scope": {
+        "surfaces": [
+          "astrology-reference"
+        ]
+      },
+      "rule": "Use 17 arcminutes as the primary traditional cazimi figure; a claim of within 1 degree must be flaggable.",
+      "rationale": "The reference fact bank distinguishes the primary traditional figure from broader modern usage.",
+      "effect": "require",
+      "examplesAllowed": [
+        "Cazimi is within 17 arcminutes under the primary traditional figure."
+      ],
+      "examplesRejected": [
+        "Cazimi means within 1 degree."
+      ]
+    },
+    {
+      "id": "ED-012",
+      "category": "facts",
+      "scope": {
+        "surfaces": [
+          "astrology-reference"
+        ]
+      },
+      "rule": "The Barbault quote remains unverified and cannot serve until independently confirmed.",
+      "rationale": "Unverified quotations cannot become factual authority.",
+      "effect": "prohibit",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    },
+    {
+      "id": "OW-001",
+      "category": "exact-approval",
+      "scope": {
+        "surfaces": [
+          "sky-placement-judge-calibration"
+        ],
+        "uses": [
+          "calibration-only"
+        ],
+        "excluded_uses": [
+          "generation-evidence",
+          "production-copy",
+          "governed-promotion"
+        ]
+      },
+      "rule": "Uranus in Cancer v3 is exact owner-approved calibration evidence only.",
+      "rationale": "The owner explicitly limited approval to judge calibration.",
+      "effect": "authorize_calibration_only",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    }
+  ],
+  "prohibitedActions": [
+    "rewrite the draft",
+    "grant approval",
+    "promote content",
+    "treat calibration-only approval as writer evidence"
+  ]
+}

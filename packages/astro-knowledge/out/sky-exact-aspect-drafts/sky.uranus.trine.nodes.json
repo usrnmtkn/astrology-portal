@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:15:33.671Z",
+  "id": "sky.uranus.trine.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "uranus-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.trine.nodes",
+    "planetA": "uranus",
+    "planetB": "nodes",
+    "aspect": "trine",
+    "title": "Uranus trine North Node",
+    "humanMoment": "A structural failure closes a regional archive weeks before its public reopening, sending the collection into an accelerated digitization project.",
+    "developmentDetail": "Records that sat in boxes for years appear online in batches, while rushed catalog labels are copied across the new database.",
+    "planetaryDynamic": "Uranus supplies the sudden closure and digital reroute, while the North Node keeps long-delayed public access as the destination.",
+    "aspectMechanic": "The trine lets the transfer and reopening reinforce each other with little resistance, so both public access and mislabeled records can spread quickly.",
+    "conditionalConsequence": "If the copied labels go unchecked, researchers may build later work on errors introduced during the shortcut.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "humanMoment",
+    "weakest": "A structural failure closes a regional archive weeks before its public reopening, sending the collection into an accelerated digitization project.",
+    "why": "The opening is slightly institutional in tone, but it remains concrete and recognizable; the full entry clearly distinguishes Uranus from the North Node, applies the trine’s low-resistance reinforcement, and carries the shortcut’s risks into a plausible consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:15:33.671Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "723c7b1c232bc8f72dfec1807f5ec63c35b80c3c4bd133f5919306dcc31d97eb",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "dd41889ed8c5ab6127e3ffe84100208126e10f2bcd45b21bff3296d226d11052",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "8ed33bc17418f4f287fadbee14fdbe3804197334bbc6bd4cb9eea4029ff19599"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.trine.nodes",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

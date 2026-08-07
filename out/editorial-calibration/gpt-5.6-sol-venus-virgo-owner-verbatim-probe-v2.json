@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T01:47:18.992Z",
+  "probe": "owner-verbatim-verdict-contract",
+  "fixtureId": "venus-in-virgo-2025",
+  "sourceSha256": "d94de91ed33731c825733ff6fd9440c0a0e61ee058ee19fe509d178ddbbfa505",
+  "releaseId": "sky-article-judge-openai-gpt-5.6-sol-candidate-v2",
+  "registryVersion": "2026-08-01.2",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-article-longform-v2:prompt-v2",
+  "rubricVersion": "sky-article-longform-v2",
+  "score": 2,
+  "verdict": "borderline",
+  "failedChecks": [
+    "spoken-not-written"
+  ],
+  "contractViolation": false,
+  "contractIssues": [],
+  "disagreement": false,
+  "gate": "human-review",
+  "recommendation": "revise",
+  "privacyMode": "redact",
+  "redactionCount": 0
+}

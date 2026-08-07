@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:34.160Z",
+  "id": "sky.uranus.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "uranus-neptune",
+    "path": "data/pairs/uranus-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.uranus.quincunx.neptune",
+    "planetA": "uranus",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Uranus quincunx Neptune",
+    "humanMoment": "A public arts festival unveils an immersive waterfront installation, but unstable projection technology keeps altering the experience organizers promised.",
+    "developmentDetail": "Artists preserve the dreamlike atmosphere while technicians reroute power, revise sightlines, and remove features that will not run reliably.",
+    "planetaryDynamic": "Uranus brings disruptive experimentation and radical change, while Neptune supplies the imaginative vision the installation is meant to embody.",
+    "aspectMechanic": "The quincunx keeps the projection technology and dreamlike atmosphere in revision, as every technical fix alters the vision and every artistic change creates a new operating problem.",
+    "conditionalConsequence": "If revisions continue after public access begins, visitors may encounter an uneven work whose most inventive features are also its least dependable.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Uranus brings disruptive experimentation and radical change, while Neptune supplies the imaginative vision the installation is meant to embody.",
+    "why": "The distinction is accurate and scene-specific, though slightly more explanatory than the other fields.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:34.160Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "74c2a17eabfd7e5cbb3d12d96c98158c756af07fa6925c80159b34181178f403",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "da4fce6c276f08b134cf3cf9d3185483c2d6f6927f80d733dfbfaa45a9fdb067",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "318df2593ba17b48638f0faa094ebf8bea9ad4ef64474ab9c140c3f8239c36dd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.uranus.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

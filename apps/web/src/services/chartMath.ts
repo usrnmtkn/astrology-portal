@@ -104,6 +104,73 @@ export function angularDistance(first: number, second: number) {
   return difference > 180 ? 360 - difference : difference;
 }
 
+export type DailyGlanceAspectType = (typeof transitAspectDefinitions)[number]["type"];
+
+export type DailyGlanceSelection =
+  | { kind: "aspect"; natal: string; aspect: DailyGlanceAspectType; orb: number }
+  | { kind: "house"; house: number };
+
+function forwardAngularDistance(from: number, to: number) {
+  return normalizedAngle(to - from);
+}
+
+/**
+ * Selects the Moon's tightest applying natal contact for Daily At-a-Glance.
+ *
+ * The transiting Moon moves forward through the zodiac. A contact is applying
+ * only when one of the aspect's exact longitudes is still ahead of the Moon
+ * within the daily gate. Separating contacts are intentionally ignored; when
+ * none are applying, the caller receives the whole-sign house fallback.
+ */
+export function selectDailyGlanceDriver(
+  moonLongitude: number,
+  natalTargets: Array<{ planet: string; longitude?: number }>,
+  fallbackHouse: number | null,
+  maxOrb = 5
+): DailyGlanceSelection | null {
+  let tightest: Extract<DailyGlanceSelection, { kind: "aspect" }> | null = null;
+
+  for (const target of natalTargets) {
+    const normalizedTarget = target.planet.trim().toLowerCase();
+    if (normalizedTarget === "ascendant" || normalizedTarget === "descendant") {
+      continue;
+    }
+
+    if (typeof target.longitude !== "number" || !Number.isFinite(target.longitude)) {
+      continue;
+    }
+
+    for (const definition of transitAspectDefinitions) {
+      const exactLongitudes = definition.exact === 0 || definition.exact === 180
+        ? [normalizedAngle(target.longitude + definition.exact)]
+        : [
+            normalizedAngle(target.longitude + definition.exact),
+            normalizedAngle(target.longitude - definition.exact)
+          ];
+      const applyingOrb = Math.min(
+        ...exactLongitudes.map((exactLongitude) => forwardAngularDistance(moonLongitude, exactLongitude))
+      );
+
+      if (applyingOrb <= maxOrb && (!tightest || applyingOrb < tightest.orb)) {
+        tightest = {
+          kind: "aspect",
+          natal: target.planet,
+          aspect: definition.type,
+          orb: applyingOrb
+        };
+      }
+    }
+  }
+
+  if (tightest) {
+    return tightest;
+  }
+
+  return fallbackHouse && fallbackHouse >= 1 && fallbackHouse <= 12
+    ? { kind: "house", house: fallbackHouse }
+    : null;
+}
+
 export function zodiacSignForLongitude(longitude: number) {
   return zodiacSigns[Math.floor(normalizedAngle(longitude) / 30)] ?? "Aries";
 }

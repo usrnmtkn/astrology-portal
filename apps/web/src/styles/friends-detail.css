@@ -343,7 +343,16 @@
   letter-spacing: var(--tracking-pill);
 }
 
-.synastry-placements-comparison,
+.synastry-placements-comparison {
+  /* Keep these compact comparison cards stable even when the shared card
+     system is loaded after this lazy feature stylesheet. */
+  --natal-card-padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
+  --natal-card-gap: var(--space-3);
+
+  display: grid;
+  gap: var(--section-label-gap-after);
+}
+
 .synastry-placement-rows {
   display: grid;
   gap: var(--gap-14);
@@ -370,7 +379,7 @@
   align-self: start;
   display: grid;
   min-width: 0;
-  gap: var(--gap-12);
+  gap: var(--section-label-gap-after);
 }
 
 .synastry-placement-column-inner {
@@ -383,7 +392,7 @@
   justify-content: space-between;
   align-items: baseline;
   gap: var(--gap-12);
-  padding: 0 0 calc(var(--space-3) - var(--space-1) / 4);
+  padding: 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -425,11 +434,11 @@
   --synastry-placement-meta-width: 104px;
 
   display: grid;
-  grid-template-columns: minmax(58px, max-content) 34px var(--synastry-placement-meta-width);
+  grid-template-columns: minmax(58px, max-content) 34px minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
+  justify-content: stretch;
+  gap: var(--natal-card-gap);
+  padding: var(--natal-card-padding);
   border: 1px solid var(--card-border);
   border-bottom: 0;
   border-radius: 0;

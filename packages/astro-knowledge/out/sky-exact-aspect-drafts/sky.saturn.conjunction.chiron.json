@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:07:56.474Z",
+  "id": "sky.saturn.conjunction.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "saturn-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.conjunction.chiron",
+    "planetA": "saturn",
+    "planetB": "chiron",
+    "aspect": "conjunction",
+    "title": "Saturn conjunct Chiron",
+    "humanMoment": "A missed rent payment puts a household back at the kitchen table with bank statements, due dates, and a hard limit on spending.",
+    "developmentDetail": "One person corrects every figure in the same sharp tone that once made the other hide mistakes, even though the shortfall is real.",
+    "planetaryDynamic": "Saturn insists that the payment standard be met, while Chiron exposes the old inadequacy attached to being corrected.",
+    "aspectMechanic": "Under the Saturn-Chiron conjunction, correcting the figures and reopening the old inadequacy happen in the same exchange, making a useful spending limit hard to separate from a verdict.",
+    "conditionalConsequence": "If the figures become proof of failure, the household may avoid the budget it needs, but if the limit is separated from the judgment, the same structure can steady the next payment.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "One person corrects every figure in the same sharp tone that once made the other hide mistakes, even though the shortfall is real.",
+    "why": "Slightly more explanatory than the other fields, but it still adds observable behavior, preserves the distinction between a real requirement and an old wound, and supports the conjunction mechanic.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:07:56.474Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "273d74f98b9d39273a3c72e7fe9518425eea93744ca60df401b6a53727d50053",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "6f38302a6c0e2185581a016b2ac6553dde35710e9759aa0200f0e86b0d3f5d5a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "38a2c930d573b3b178485c953e367cc63b9fc7313ec3b4d0ec79145bbd6437de"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.conjunction.chiron",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

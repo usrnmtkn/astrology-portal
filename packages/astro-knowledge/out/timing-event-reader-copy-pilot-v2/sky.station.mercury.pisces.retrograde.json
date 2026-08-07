@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.station.mercury.pisces.retrograde",
+  "title": "Mercury stations retrograde in Pisces",
+  "status": "approved",
+  "serving": false,
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "body": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision. Mercury slows to a stop in Pisces and starts moving backward. In this sensitive water sign, we can catch tone, imagery, and feeling faster than facts, which makes intuition vivid and certainty less reliable.\n\nWhen the same conversation circles back, the repeated wording may expose an assumption that kept us talking past one another. We can restate the agreement and confirm the times before anything gets booked. Not every plan falls apart here. Some decisions made during the pause hold. The useful change is knowing which part was an impression and which part was confirmed.",
+  "preview": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision.",
+  "sourceId": "src.timing.mercury.station-retrograde",
+  "writer": {
+    "responseId": "resp_04261e5de4b96531006a70f9e05abc819f9501d9d5430bf3e7",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "packetVersion": "timing-event-writer-packet-v1:owner-six-minimal",
+    "promptVersion": "timing-event-writer-v1:owner-six+v8-meaning",
+    "retrievedOwnerSourceIds": [
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:monthly-overview-june-2025:p001:window-2-2",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:gemini-season-2025:p018:window-2-3"
+    ],
+    "usage": {
+      "input_tokens": 1364,
+      "input_tokens_details": {
+        "cache_write_tokens": 1361,
+        "cached_tokens": 0
+      },
+      "output_tokens": 2620,
+      "output_tokens_details": {
+        "reasoning_tokens": 2392
+      },
+      "total_tokens": 3984
+    }
+  },
+  "revision": {
+    "source": "review/timing-event-reader-copy-pilot-v2-feedback.json",
+    "reviewClass": "exact_owner_approved",
+    "originalWriterResponseId": "resp_04261e5de4b96531006a70f9e05abc819f9501d9d5430bf3e7"
+  },
+  "deterministicChecks": {
+    "passed": true,
+    "wordCount": 147,
+    "sentenceCount": 9,
+    "paragraphCount": 2,
+    "preview": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision.",
+    "findings": []
+  },
+  "judge": {
+    "score": null,
+    "verdict": "not_run",
+    "failedChecks": [],
+    "evidence": [],
+    "rationale": "This revised wording has not received a completed judge response. The judge-only retry remains blocked because the OpenAI account has no credits remaining.",
+    "evidenceStatus": "human_review_required",
+    "evidenceFailures": [
+      "no completed judge response"
+    ],
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "judge:sky-placement:sol-owner-authorized",
+    "responseId": null
+  }
+}

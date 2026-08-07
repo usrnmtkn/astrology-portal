@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "artifact": "writer-policy",
+  "generatedBy": "scripts/compile-marie-satori-editorial-decisions.js",
+  "decisionSource": "voice/tldr-astro/marie-satori-editorial-decisions.yaml",
+  "decisionSourceId": "marie-satori-editorial-decisions-v1",
+  "decisionSourceSha256": "8dfe6d6459f705689ee4267f2ae01b1262bff54bf5ffa0d822683bea0a2a7717",
+  "architecture": [
+    "Verified astrology supplies meaning.",
+    "Sol writes one original draft.",
+    "Deterministic checks catch hard violations.",
+    "Terra judges the untouched draft afterward.",
+    "Only the owner approves exact wording."
+  ],
+  "firstCallAllowedInputs": [
+    "surface contract",
+    "verified astrology facts",
+    "four to six exact owner-authored affinity passages",
+    "up to two owner voice devices",
+    "required output fields",
+    "applicable universal hard constraints"
+  ],
+  "firstCallForbiddenInputs": [
+    "rejected AI drafts",
+    "assistant rewrites",
+    "Terra commentary",
+    "judge scores",
+    "calibration reports",
+    "governance reports",
+    "approval metadata",
+    "full negative-example inventory",
+    "full owner-feedback audit"
+  ],
+  "firstCallConstraints": [
+    {
+      "id": "ED-001",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Use ordinary, current language that makes literal sense when read aloud."
+    },
+    {
+      "id": "ED-002",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Name the pressure, what someone does, and what changes because of it in one recognizable sequence."
+    },
+    {
+      "id": "ED-003",
+      "scope": {
+        "surfaces": [
+          "current-sky"
+        ]
+      },
+      "rule": "Current Sky never uses you, your, yours, yourself, or yourselves; natal and transit-to-natal may use second person."
+    },
+    {
+      "id": "ED-004",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Do not use em dashes."
+    },
+    {
+      "id": "CF-001",
+      "scope": {
+        "prohibited": [
+          "sky-placement"
+        ],
+        "conditional": [
+          "all-other-surfaces"
+        ]
+      },
+      "rule": "Do not use people in Sky Placement. On other surfaces, use it only when the collective itself is the real subject and a more exact subject would be less accurate."
+    },
+    {
+      "id": "CF-013",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ]
+      },
+      "rule": "Person is allowed. Prohibit repetitive generic phrases such as one person when a more specific role, action, or subject is available."
+    },
+    {
+      "id": "CF-014",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Looks good on paper is allowed as an ordinary idiom. Other uses of on paper require an actual written document; administrative put the plan on paper phrasing is prohibited."
+    },
+    {
+      "id": "CF-004",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Room is allowed for a literal physical room. Prohibit stock audience or hierarchy phrases such as the loudest person in the room or the smartest voice in the room."
+    },
+    {
+      "id": "CF-005",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Reserve harm and self-harm for literal harm. Do not substitute self-harm for broader language; otherwise name the specific behavior, loss, danger, or consequence."
+    },
+    {
+      "id": "CF-015",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Steady is allowed for observable effort, pace, support, light, or reliability. Prohibit it only as vague energy language or an empty positive adjective."
+    },
+    {
+      "id": "CF-002",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Perform, performed, and performance are allowed only for literal acting, music, presentations, or measurable job performance. Prohibit figurative uses about identity, normalcy, worth, emotion, belonging, or social behavior; Leo alone is not an exception."
+    },
+    {
+      "id": "CF-003",
+      "scope": {
+        "surfaces": [
+          "all-generated-copy"
+        ],
+        "literal_exceptions": [
+          "an actual physical object is tilted"
+        ]
+      },
+      "rule": "Do not use tilt or tilts as a figurative substitute for change. Literal physical tilting is allowed."
+    },
+    {
+      "id": "CF-006",
+      "scope": {
+        "surfaces": [
+          "sky-placement-tagline"
+        ]
+      },
+      "rule": "A tagline must be a clear full sentence readers understand on first read. Strong is welcome; cryptic compression is not."
+    },
+    {
+      "id": "ED-005",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "When the behavior and cost are clear, stop; delete a following slogan, metaphor, reassurance, or second conclusion."
+    },
+    {
+      "id": "ED-006",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Do not turn ordinary events into institutional, advocacy, therapy-workbook, or corporate-operations language unless the actual subject requires it."
+    },
+    {
+      "id": "ED-007",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ],
+        "literal_exceptions": [
+          "physical mail is part of the source or scene"
+        ]
+      },
+      "rule": "Use message, reply, response, or what they were told instead of letter or formal technical delivery terms unless physical mail matters."
+    },
+    {
+      "id": "CF-016",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Chani-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not."
+    },
+    {
+      "id": "CF-007",
+      "scope": {
+        "surfaces": [
+          "collective-astrology",
+          "outer-planet-copy"
+        ]
+      },
+      "rule": "Collective astrology does not default to campaigns, institutions, policy, organizing, public harm, or collective healing. Those subjects require direct astrological and owner-source support."
+    },
+    {
+      "id": "ED-008",
+      "scope": {
+        "surfaces": [
+          "all-astrology-copy"
+        ]
+      },
+      "rule": "Do not infer a life domain from a sign alone. Taurus does not automatically mean work or career."
+    },
+    {
+      "id": "ED-015",
+      "scope": {
+        "surfaces": [
+          "sky-placement-tagline"
+        ]
+      },
+      "rule": "Reject the swappable tagline construction [Planet] in [sign] helps us grow through [generic virtue or domain]. A tagline must tell the reader what is actually happening."
+    },
+    {
+      "id": "ED-016",
+      "scope": {
+        "surfaces": [
+          "all-generated-astrology-copy"
+        ]
+      },
+      "rule": "Reject the stock gift-to-problem keyword flip: The gift becomes the problem when [positive keyword] turns into [negative keyword]. Show the observed sequence instead."
+    },
+    {
+      "id": "ED-017",
+      "scope": {
+        "surfaces": [
+          "ordinary-shared-decisions"
+        ]
+      },
+      "rule": "For ordinary shared decisions, reject workshop, mediation, negotiation, and facilitation language unless the literal subject requires it. Name what someone wants, avoids saying, delays, and causes instead."
+    },
+    {
+      "id": "ED-018",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "Do not build a Sky Placement article around a low-stakes social plan merely because a sign suggests partnership. A social plan must expose a recognizable pressure with a meaningful consequence and cannot stage a perfectly balanced solution to prove the astrology."
+    },
+    {
+      "id": "ED-019",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "Reject generic fairness conclusions that explain a virtue instead of ending on the specific behavior and cost established by the article."
+    },
+    {
+      "id": "ED-022",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "Reject sign-cliche stock scenes when they govern the central opening, tension, and development sequence. Isolated practical moves are exempt unless the central scene itself is a scheduling or dinner scene. The scene must follow from this placement's combined meaning at this transit's scale, and a year-long or slower transit cannot be reduced to one evening's logistics."
+    },
+    {
+      "id": "ED-023",
+      "scope": {
+        "surfaces": [
+          "sky-placement-moves"
+        ]
+      },
+      "rule": "Moves must sound like actions someone would actually say they took, not workshop, facilitation, negotiation, or project-management instructions. Until an exact owner-approved moves exemplar exists, the moves section is the highest-risk section and any listed facilitation term there is a score-1 failure."
+    },
+    {
+      "id": "ED-026",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "A qualitative, non-numeric subperiod may trace to a reviewed residency fact only when it cannot exceed that residency. Numeric or date-like subperiods still require an explicit engine fact or render token."
+    },
+    {
+      "id": "ED-027",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy",
+          "sky-placement-judge"
+        ]
+      },
+      "rule": "Apply the morning-reader test: every sentence must make sense on one tired read, with short sentences early, one idea per opening sentence, and no construction that requires a second pass to parse."
+    },
+    {
+      "id": "CF-018",
+      "scope": {
+        "surfaces": [
+          "all-editorial-copy"
+        ]
+      },
+      "rule": "Do not use leak, leaks, leaked, or leaking in Marie Satori editorial copy. Name the observable action or consequence instead."
+    },
+    {
+      "id": "ED-010",
+      "scope": {
+        "surfaces": [
+          "app",
+          "sky-editorial"
+        ]
+      },
+      "rule": "Display time in the user's local timezone; computed dates, degrees, motion, and event times come from the engine rather than generated prose."
+    }
+  ],
+  "compilerOnlyDecisions": [
+    {
+      "id": "CF-008",
+      "category": "writer-architecture",
+      "scope": {
+        "surfaces": [
+          "sky-placement-writer"
+        ]
+      },
+      "rule": "Use six diverse exact owner-authored passages for register and movement plus verified astrology. Do not require an owner article about the exact placement.",
+      "rationale": "Owner articles teach voice; governed astrology supplies meaning; the writer may invent a scene but not astrology.",
+      "effect": "require",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    },
+    {
+      "id": "CF-009",
+      "category": "writer-architecture",
+      "scope": {
+        "surfaces": [
+          "sky-placement-writer-first-call"
+        ]
+      },
+      "rule": "Keep rejected drafts, assistant rewrites, negative examples, judge output, scores, calibration, governance, and approval metadata out of the first writing call.",
+      "rationale": "The writer needs owner prose and astrology, not the system's analysis of failed writing.",
+      "effect": "prohibit",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    },
+    {
+      "id": "ED-014",
+      "category": "retrieval",
+      "scope": {
+        "surfaces": [
+          "sky-placement-current-sky-writer"
+        ]
+      },
+      "rule": "Owner authorship is necessary but not sufficient for a Current Sky first-call passage. Select passages that are active-surface compatible and teach the required writing operation: recognizable evidence, clear subject and action, one pressure-choice-consequence sequence, a concrete turn, an ending that names the cost and stops, and practical language that continues the same pressure.",
+      "rationale": "The controlled Jupiter-in-Libra v3 packet contained authentic owner prose that primarily taught incompatible historical style rather than the Current Sky operation.",
+      "effect": "require_operation_matched_retrieval",
+      "examplesAllowed": [
+        "A passage with recognizable evidence, a clear action, and a consequence."
+      ],
+      "examplesRejected": [
+        "A historical passage selected only because it shares a sign, planet, or broad keyword."
+      ]
+    },
+    {
+      "id": "ED-021",
+      "category": "retrieval-regression",
+      "scope": {
+        "surfaces": [
+          "sky-placement-current-sky-writer"
+        ]
+      },
+      "rule": "Six authentic owner passages can still form an invalid Current Sky packet when they primarily teach incompatible historical style. Preserve those passages in the corpus while rejecting the incompatible set from Current Sky first-call retrieval.",
+      "rationale": "The controlled v3 set emphasized shadow work, abstract psychological labels, polarity, archetypal moral lessons, and stacked metaphor rather than the required Current Sky operation.",
+      "effect": "reject_incompatible_packet_set",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    },
+    {
+      "id": "ED-025",
+      "category": "retrieval",
+      "scope": {
+        "surfaces": [
+          "sky-placement-current-sky-writer"
+        ]
+      },
+      "rule": "Retire the fixed six-passage packet. Select four to six verified owner-authored passages by affinity: same sign first, same planet second, and archetypally adjacent material third. Provenance and exact-source verification remain mandatory.",
+      "rationale": "A fixed group of passages repeatedly taught the wrong operation and did not adapt to the requested placement.",
+      "effect": "require_affinity_retrieval",
+      "examplesAllowed": [
+        "For Jupiter in Libra, include an eligible Libra-season passage and an eligible Jupiter passage."
+      ],
+      "examplesRejected": [
+        "The same six passages for every placement."
+      ]
+    },
+    {
+      "id": "CF-012",
+      "category": "architecture",
+      "scope": {
+        "surfaces": [
+          "sky-placement-editorial-system"
+        ]
+      },
+      "rule": "Keep the architecture fixed: verified astrology supplies meaning, Sol writes one draft, deterministic checks catch hard failures, Terra judges afterward, and only the owner approves exact wording.",
+      "rationale": "Durable corrections should update scoped policy and regression tests rather than trigger another architecture redesign.",
+      "effect": "require",
+      "examplesAllowed": [],
+      "examplesRejected": []
+    }
+  ]
+}

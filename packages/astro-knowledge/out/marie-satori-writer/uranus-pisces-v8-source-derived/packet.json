@@ -1,0 +1,465 @@
+{
+  "schemaVersion": 1,
+  "packetId": "marie-satori-writer:sky-placement:uranus-pisces:lived",
+  "createdAt": "2026-08-02T00:00:00.000Z",
+  "surface": "sky-placement",
+  "target": {
+    "planet": "uranus",
+    "sign": "pisces",
+    "beat": "lived",
+    "goal": "derive a lived paragraph from repetition, ordinary evidence, realization, and direct conclusion",
+    "failureTags": [
+      "behavior_missing",
+      "category_inventory",
+      "polished_but_flat",
+      "dated_communication_object",
+      "generic_collective_opener",
+      "harsh_register"
+    ],
+    "keywords": [
+      "again",
+      "same",
+      "repeating",
+      "stop",
+      "help",
+      "carry",
+      "overwhelm",
+      "sacrifice",
+      "rescue",
+      "realize",
+      "cost"
+    ],
+    "positiveSourceIds": [
+      "owner-article:monthly-overview-june-2025:p004",
+      "owner-article:venus-in-cancer:p021",
+      "owner-article:chiron-retrograde-in-aries:p018",
+      "owner-article:full-moon-in-taurus:p007",
+      "owner-article:libra-new-moon:p004"
+    ],
+    "ranking": "structure-first"
+  },
+  "writerLane": {
+    "laneId": "writer:sky-placement",
+    "runtimeRegistered": false,
+    "judgeLane": "judge:sky-placement",
+    "rule": "Write and self-edit first. Terra-low judges only after authorship audit."
+  },
+  "surfaceContract": {
+    "id": "tldr-astro.voice.sky-placement.v5",
+    "voiceDescription": "Direct, modern, and emotionally exact. The article is not a sign encyclopedia; its job is to give the reader one memorable way to recognize the transit in real life. Interesting before comprehensive. Verbs and scenes over adjective triplets. Prefer a clear observation over a polished abstraction. A memorable phrase earns its place only when it makes literal sense on the first read.",
+    "person": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'someone', a named group, or a concrete shared scene. 'People' may appear only when people collectively are the actual subject; never open a sentence with the generic phrase 'People ...'. Never use 'you', 'your', 'yours', 'yourself', or 'yourselves'. Second person belongs to transit-to-natal copy. Historical owner-approved second-person originals are preserved in fixtures/sky-placement-historical-second-person.json and are excluded from active generation and judge calibration.",
+    "beats": [
+      {
+        "beat": "hook",
+        "requirement": "2-4 sentences. Sentence 1 is the standalone recognition quote: a complete line someone would remember or send to a friend. The reader promotes it into a bold callout and removes it from the article body. Begin with a lived premise, not a slogan or abstract placement summary. The remaining sentences form the meaning paragraph: explain what the planet governs and how the sign changes its method, pace, or priorities. Translate meaning into natural prose and behavior, never a keyword list. Name the transit only after the human situation is clear when possible."
+      },
+      {
+        "beat": "lived expression",
+        "requirement": "What the planet-sign combination does in ordinary life. 2-4 sentences. Include the transit's pace (days, weeks, years, decades) somewhere in the article, usually here. Concrete evidence INVENTED FRESH for this placement - the kind of thing a reader would recognize from their own week. Build movement from pressure to choice to consequence. Do not line up three representative examples from work, family, relationships, or public life as if completing a coverage checklist; concrete nouns do not rescue a flat inventory. One charged sequence beats three interchangeable scenarios. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output; they leaked into every card of the first batch.) Explain the planet through behavior, never through a keyword list."
+      },
+      {
+        "beat": "turn",
+        "requirement": "Name where the gift becomes the problem and end with a clean truth. 2-5 sentences. The shadow must be observable behavior, not an abstract warning. Name the exact cost: the delayed conversation, cancelled plan, overspending, overwork, one-sided agreement, or other source-supported consequence. A directive is allowed when it is specific. End on the strongest plain sentence; no dramatic metaphor, second aphorism, blessing, or soft summary after it."
+      }
+    ],
+    "taglineRules": "2-5 words, imperative or sharp claim, no terminal period, no planet/sign name needed. In OUR voice, not CHANI's: plain everyday words, bite over sparkle.",
+    "movesRules": "2-3 items. Each is one sentence, a specific doable action tied to THIS placement (CHANI model: 'emcee an open mic', not 'embrace the energy'). No generic coaching verbs (embrace, trust, align, manifest). A move that would work for any placement fails the swap test.",
+    "loreBoundary": "Sign lore, rulership, modality, elements-as-labels, symbols, and season history belong in an optional 'About [Sign]' block rendered separately, NEVER in the article body. The element may be felt in imagery (heat for Leo, depth for Scorpio) but never named as mechanics.",
+    "sourcePath": "packages/astro-knowledge/voice/tldr-astro/sky-placement.json"
+  },
+  "astrologyFacts": {
+    "meaning": {
+      "kind": "placements-sign",
+      "source": "data/placements/sign/uranus-pisces.json",
+      "tldr": "Uranus in Pisces.",
+      "body": "The urge to disrupt and break free expressed through imaginative, boundary-less compassion. (Modern planet; no traditional dignity.)",
+      "gift": "At work this reads as the urge to disrupt and break free carried out with imaginative.",
+      "challenge": "Instability sharpened by escapism."
+    },
+    "authoringLayer": {
+      "planetFunction": "change, innovation, and the urge to break free",
+      "planetUseful": "breakthroughs, authenticity, and useful disruption",
+      "planetDistortion": "chaos, restlessness, or blowing things up to feel free",
+      "signMethod": "dreamy, compassionate, boundary-dissolving",
+      "signBehavior": "feeling what others feel, imagining more, and forgiving what is done",
+      "signNeed": "meaning and gentleness",
+      "signDistortion": "the belief that feeling someone's pain is the same as helping them. Compassion with no boundary drowns the lifeguard.",
+      "pairColor": null
+    },
+    "tier": "generational",
+    "policy": "These checked-in meaning fields bound interpretation. Historical voice excerpts never supply dates, degrees, or runtime facts."
+  },
+  "positiveExamples": [
+    {
+      "sourceId": "owner-article:monthly-overview-june-2025:p004",
+      "text": "Stories long buried may resurface through your voice, your dreams, your memories. You may find yourself repeating patterns that belong to the people who raised you. You might notice yourself repeating things your grandmother used to say, or worrying about the same things your mother did. Sometimes, we inherit more than we realize. Start conversations with older relatives, ask about what they never got to do. Listen with care, and engage with intention. Jupiter in Cancer amplifies not just joy, but also grief. The next year calls you to grow the hearth, not the empire.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/monthly-overview-june-2025.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-article-reference",
+      "planet": "",
+      "sign": "",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "e7c611ef1799a4be1d73aeda871dec43a57b6a674c236fc0ea0099ea4bf055f5",
+      "retrievalScore": 835,
+      "selectionReasons": [
+        "explicit source-derived selection",
+        "5 editorial-goal terms",
+        "same lived/body function",
+        "5 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p021",
+      "text": "Being strong doesn’t mean never needing help. It means knowing when to rest, when to lean in, and when to stop hiding behind the “I’ve got this” mask. During Venus in Cancer, your attention is pulled inward toward the most foundational parts of your life, including your home, your family ties, and the emotional patterns you’ve carried since childhood. You may find yourself craving comfort and care in ways that surprise you, especially if you’re used to being the strong one who keeps it all together. When Venus clashes with Saturn and Neptune on August 1, the pressure to be everything to everyone might come to a head, and the emotional weight of unspoken needs could feel heavier than usual.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-article-longform",
+      "planet": "venus",
+      "sign": "cancer",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "paragraph under Key Dates",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "fda82df0dc3af657a87354913d84cc7410a155529bd26fe40132398d8bf48254",
+      "retrievalScore": 861,
+      "selectionReasons": [
+        "explicit source-derived selection",
+        "owner-authored astrology article",
+        "4 editorial-goal terms",
+        "same lived/body function",
+        "8 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p018",
+      "text": "You’ve built your life around being the one others can count on, steady, thoughtful, and in control. But this retrograde is asking you to face what you’ve been avoiding: the emotional cost of carrying other people’s baggage. Whether it was a betrayal, a power dynamic, or a debt that was never yours to begin with, you absorbed it to keep things moving. You may have pushed it down to stay functional, but your body remembers what your mind tried to forget. You’re not here to carry someone else’s pain just because you know how to survive it. Let yourself finally lay it down.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-article-longform",
+      "planet": "chiron",
+      "sign": "aries",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "paragraph under Virgo & Virgo Rising",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "b27dc9da16ba09bb75ba564a8263e9238aa43776bd31f6e0969c3f9a7d958e09",
+      "retrievalScore": 955,
+      "selectionReasons": [
+        "explicit source-derived selection",
+        "owner-authored astrology article",
+        "5 editorial-goal terms",
+        "same lived/body function",
+        "5 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:full-moon-in-taurus:p007",
+      "text": "Stop hoarding what you actually need to share—the help you won't ask for, the desire you've been editing out of conversations, the admission that you're lonely or want something you're not supposed to want. Let people see the messy, unproductive, still-figuring-it-out parts. It's not a crisis that you're different than you were last year. It's not a failure that the old strategies stopped working. Transformation isn't the breakdown, refusing it will be.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-lunation",
+      "planet": "moon",
+      "sign": "taurus",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "58a4d1b4f29ae72169423937b29296671e13911f560242ae6426d1c4cb1354d5",
+      "retrievalScore": 641,
+      "selectionReasons": [
+        "explicit source-derived selection",
+        "3 editorial-goal terms",
+        "same lived/body function",
+        "8 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:libra-new-moon:p004",
+      "text": "No one knows the exhaustion of being everyone's safe harbor while your own needs drift unanchored. No one knows how far you've come, or what your peace-keeping has cost you. What your endless accommodation has asked you to sacrifice. Success isn't always about what we build. Sometimes it's about what we stop tearing down within ourselves. Achievement isn't always harmony. Sometimes it's the courage to let things fall apart, so we can begin again.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-new-moon.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-lunation",
+      "planet": "moon",
+      "sign": "libra",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "58a00b691556c6f1e1ab7e37c558778740a29d19a6b2008d8daa02898e337d90",
+      "retrievalScore": 737,
+      "selectionReasons": [
+        "explicit source-derived selection",
+        "4 editorial-goal terms",
+        "same lived/body function",
+        "6 candidate-language terms"
+      ]
+    }
+  ],
+  "contrastiveEdits": [
+    {
+      "id": "sky-placement-uranus-pisces-private-denial-to-public-evidence",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "lived",
+      "before": "Care becomes visible in what changes: money is moved, access is widened, and a rule that protected the institution is challenged.",
+      "after": "Someone spends months appealing the same denial, finds three other families caught behind the same rule, and turns a folder of unanswered emails into a public complaint.",
+      "whatChanged": "Replaced a civic category inventory with one observable escalation sequence.",
+      "ownerReason": "Show private denial, repeated pattern, compared evidence, public complaint, and a challenge to the rule.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": [
+        "category_inventory",
+        "generic_coverage_sentence",
+        "behavior_missing",
+        "overbalanced_structure"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Owner-provided replacement candidate; complete article remains needs_review.",
+      "retrievalScore": 405,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "same sign",
+        "2 matching failure tags",
+        "10 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-show-role-before-astrology",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "hook",
+      "before": "The person everyone calls may stop answering every call. Uranus in Cancer changes the private rules around home and family, especially the rules that made one person responsible for remembering, helping, hosting, and handling every emergency.",
+      "after": "The person who remembers every birthday, keeps the spare key, and gets called when someone needs help may stop doing all of it. Uranus in Cancer changes the private rules around home and family, especially the ones that only worked because one person was always available.",
+      "whatChanged": "Showed the family role through ordinary evidence before explaining the astrology.",
+      "ownerReason": "Name what the person actually does instead of turning them into a role or listing labor categories.",
+      "reasonSource": "explicit_owner_review",
+      "failureTags": [
+        "abstract_hook",
+        "behavior_missing",
+        "category_inventory",
+        "explanatory_before_observable"
+      ],
+      "approvalLevel": "exact_owner_approved_calibration_only",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json",
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v3.json"
+      ],
+      "provenance": "The after wording belongs to exact v3, approved for judge calibration only and forbidden as generation evidence.",
+      "retrievalScore": 310,
+      "selectionReasons": [
+        "same surface",
+        "same planet",
+        "2 matching failure tags",
+        "18 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-demand-not-carry",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "lived",
+      "before": "The old version asked one person to carry too much.",
+      "after": "The old structure demands more than anyone should give.",
+      "whatChanged": "Changed a familiar carrying metaphor into direct pressure and a limit.",
+      "ownerReason": "Demands names the pressure; anyone keeps the cost collective without second person.",
+      "reasonSource": "explicit_owner_edit_analysis",
+      "failureTags": [
+        "polished_but_flat",
+        "requires_interpretation"
+      ],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"
+      ],
+      "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval.",
+      "retrievalScore": 290,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "1 matching failure tag",
+        "4 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-name-relational-cost",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "lived",
+      "before": "What looked like stability turns out to be obligation.",
+      "after": "What looked like connection turns out to be heavy obligation.",
+      "whatChanged": "Moved from a system label to the relational bond being reinterpreted.",
+      "ownerReason": "Connection makes the realization more emotionally precise than stability.",
+      "reasonSource": "explicit_owner_edit_analysis",
+      "failureTags": [
+        "abstract_consequence",
+        "polished_but_flat"
+      ],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json"
+      ],
+      "provenance": "Owner-directed line edit preserved as contrastive evidence, not standalone approval.",
+      "retrievalScore": 290,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "1 matching failure tag",
+        "4 relevant terms"
+      ]
+    }
+  ],
+  "negativeExamples": [
+    {
+      "id": "dated-compare-letters",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "lived",
+      "text": "Then three families compare letters and find identical wording, identical delays, and identical reasons for rejection.",
+      "failureTags": [
+        "dated_communication_object",
+        "category_inventory",
+        "polished_but_flat"
+      ],
+      "reason": "The communication object sounds dated, and the sentence preserves the rejected case-study structure. Modern scenes compare messages, screenshots, emails, or notices when comparison is genuinely needed.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json",
+      "retrievalScore": 381,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "same sign",
+        "3 matching failure tags",
+        "4 relevant terms"
+      ]
+    },
+    {
+      "id": "generic-people-opener",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "hook",
+      "text": "People can care deeply and still leave the rule untouched.",
+      "failureTags": [
+        "generic_collective_opener",
+        "generic_coverage_sentence",
+        "polished_but_flat"
+      ],
+      "reason": "The generic People opener states a thesis instead of naming the group, message, decision, or event.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json",
+      "retrievalScore": 278,
+      "selectionReasons": [
+        "same surface",
+        "same planet",
+        "same sign",
+        "2 matching failure tags",
+        "7 relevant terms"
+      ]
+    }
+  ],
+  "vocabularySource": "packages/astro-knowledge/voice/tldr-astro/owner-vocabulary-bank.json",
+  "bannedPatternSource": "packages/astro-knowledge/voice/banned-constructions.json",
+  "currentCandidate": {
+    "candidateId": "sky-placement-v8-uranus-pisces",
+    "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v8-source-derived-candidates.json",
+    "article": {
+      "tagline": "Plan past the crisis",
+      "hook": "Friends answer every call, and nobody says out loud that the same request keeps returning. Uranus breaks precedent; in Pisces, feeling deeply and helping in the moment stop being enough.",
+      "lived": "The phone lights up after midnight, and everyone already knows what the message will say. Friends send what they can, rearrange the morning, and promise to check in tomorrow. A month later, the same request returns. Uranus spends roughly seven years in Pisces, long enough for another rescue to stop being the only answer.",
+      "turn": "Urgency can still decide everything. Every message feels impossible to ignore, so plans are cancelled, money is sent without a limit, and nobody asks what can continue after tonight. Answering every crisis immediately can leave nobody able to answer the next one.",
+      "moves": [
+        "Turn one repeated request into a plan that begins before the next late-night message.",
+        "Decide what help can continue for a month before promising it for tonight.",
+        "Keep one limit in place even when the reason for crossing it feels compassionate."
+      ]
+    },
+    "governance": {
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    }
+  },
+  "governance": {
+    "mayChangeOwnerApproval": false,
+    "mayPromote": false,
+    "mayChangeModelRegistry": false,
+    "mayUseThirdPartyAsVoiceEvidence": false,
+    "mayUseCalibrationOnlyV3AsGenerationEvidence": false,
+    "surfaceCompatibilityNote": "Published owner examples from older surfaces may contain second person. They guide diction and pressure-consequence logic only; the Current Sky surface contract remains controlling."
+  }
+}

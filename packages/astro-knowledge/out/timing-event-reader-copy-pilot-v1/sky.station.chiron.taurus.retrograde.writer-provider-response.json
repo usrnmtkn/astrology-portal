@@ -1,0 +1,24 @@
+{
+  "responseId": "resp_025f799bf6b70ac0006a70fa5a32e0819ea85a603fac710a3a",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 1333,
+    "input_tokens_details": {
+      "cache_write_tokens": 1330,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2314,
+    "output_tokens_details": {
+      "reasoning_tokens": 2070
+    },
+    "total_tokens": 3647
+  },
+  "outputText": "{\"body\":\"We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency. This is not an alarm or a verdict on the project; it is a regular pause for repair inside a story already unfolding. When we talk at home about why the work stopped, an old fear may become plain: rest feels unsafe, comfort feels unearned, and we use every material choice to measure our worth.\\n\\nInstead of rushing back to the plan, we look at the survival response underneath it. Some of us keep accumulating to feel protected, while others among us deny basic comfort to show that no need can threaten us. We can repair this pattern patiently by separating real stability from the endless demand for proof, then choosing what is sustainable in material terms. As we live with this wound, we often become unusually skilled at helping one another build steadiness without shame. We build real security when we stop treating exhaustion as proof that we deserve to be safe.\"}"
+}

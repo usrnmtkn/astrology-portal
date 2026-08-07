@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T01:58:13.279Z",
+  "id": "sky.mars.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mars-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mars.opposition.lilith",
+    "planetA": "mars",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Mars opposite Lilith",
+    "humanMoment": "A routine noise complaint at a neighborhood venue becomes a standoff between organizers enforcing the curfew and performers who refuse to be quieted.",
+    "developmentDetail": "The organizers point to permits and closing times, while the performers name years of being welcomed for their work and punished for taking up space.",
+    "planetaryDynamic": "Mars carries the authority to enforce the limit, while Lilith carries the accumulated rage of wildness repeatedly invited in and then told to behave.",
+    "aspectMechanic": "The opposition places sanctioned control and banished fury across from each other through opposing positions, so neither can be edited out of the outcome.",
+    "conditionalConsequence": "If the set is stopped by force, the venue may protect its permit that night while losing the performers and audience members who recognize the old exclusion in the new enforcement.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "developmentDetail",
+    "weakest": "The organizers point to permits and closing times, while the performers name years of being welcomed for their work and punished for taking up space.",
+    "why": "The detail is slightly interpretive, but it clearly develops the standoff through observable claims and preserves the history behind the disproportionate heat.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T01:58:13.278Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "4b82ff82227710448b47a3533a19962648a6db6e308d922535fa5765d42490ee",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "7942e2bf5b687d155e05c6712517926800608ec72e764f066df10eed43ce30ef",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "02a31f285ba1161948aec45320d82a460b0c12845d7f457fad104bdc47765e3a"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

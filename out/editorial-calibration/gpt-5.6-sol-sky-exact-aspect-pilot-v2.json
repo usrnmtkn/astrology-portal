@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T01:57:24.554Z",
+  "laneId": "judge:sky-exact-aspect",
+  "registryVersion": "2026-08-01.6",
+  "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "low",
+  "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+  "rubricVersion": "sky-exact-aspect-voice-v2",
+  "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+  "policyVersion": "editorial-judge-policy-v1",
+  "reportKind": "pilot-smoke",
+  "sampleCount": 1,
+  "promotionEligible": false,
+  "status": "failed",
+  "approvedMean": 2.375,
+  "weakMean": 1,
+  "separation": 1.375,
+  "minimumSeparation": 1,
+  "disagreement": false,
+  "approved": [
+    {
+      "cohort": "approved",
+      "id": "sky.sun.conjunction.mercury",
+      "sourceSha256": "bf51a719311a5484b6623d611aa9510b918b752de63387a7e5d61c4e875c7e09",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "planetaryDynamic",
+      "why": "The scene imports Mercury-Pluto themes of secrecy, leverage, exposure, and hidden control instead of showing the Sun merging identity or authority with Mercury’s thought and speech.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.conjunction.moon",
+      "sourceSha256": "c9fba0a61655488c0eb8834f1c023ce733d4474e8c6fbeb705157cad196a9362",
+      "score": 3,
+      "verdict": "off-voice",
+      "weakestField": "developmentDetail",
+      "why": "All checks pass; \"missed care\" is slightly compressed but remains understandable in context.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.conjunction.venus",
+      "sourceSha256": "9915649c7502bda3e5d86b94a94d60851d12704d621b18b7e8e5ad0f33e0895a",
+      "score": 3,
+      "verdict": "off-voice",
+      "weakestField": "conditionalConsequence",
+      "why": "Slightly interpretive, but it remains a plausible collective consequence of the scene rather than advice or a moral.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.opposition.moon",
+      "sourceSha256": "3f7e904f11a16cb5e645c8a15938b2fb2dce6ec96b9b17da3b885e167b94ad75",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "humanMoment",
+      "why": "“The shift” names no concrete event, and the later grab bag of staff, parents, or residents leaves the scene generic rather than lived and specific.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.sextile.mars",
+      "sourceSha256": "8e9feac276dc8fa3d20b2213f8a09890d8bf52cb8f3ac1bdbc9b54b28eeb433c",
+      "score": 2,
+      "verdict": "off-voice",
+      "weakestField": "conditionalConsequence",
+      "why": "The consequence introduces drifting support that the scene never establishes, making the ending feel like strategy language rather than an observable result.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.sextile.moon",
+      "sourceSha256": "6a97f48f8ed0fb88254b913ceca99ba666b590aa76491e6d81e1f4af45436879",
+      "score": 3,
+      "verdict": "off-voice",
+      "weakestField": "",
+      "why": "Concrete, specific scene with distinct Sun and Moon functions, an actionable sextile opening, and a consequence that follows naturally.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.square.moon",
+      "sourceSha256": "05b0645dc1d4672cfe393e99ab6978d92fe5bc3c1828df42f8590ce89c991ac1",
+      "score": 3,
+      "verdict": "off-voice",
+      "weakestField": "humanMoment",
+      "why": "The opening is slightly less specific than the later fields, but it still establishes a recognizable concrete event and clear collective disruption.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "approved",
+      "id": "sky.sun.trine.moon",
+      "sourceSha256": "d9661da65c787ec6b3bf5b7d69bcee3651cb61bf1564d163c3ec23655ae0483a",
+      "score": 3,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "Slightly echoes the opening's rumor prevention, but it still clearly applies the trine by showing communication and practical support reinforcing each other.",
+      "disagreement": false,
+      "contractViolation": false
+    }
+  ],
+  "weakControls": [
+    {
+      "cohort": "weak",
+      "id": "weak.astrology-first",
+      "sourceSha256": "b78c1eea80557c2e1949b1dbf5a60f41135e65db199baf9da74af51dda0d8354",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "humanMoment",
+      "why": "The draft never establishes a recognizable event or observable scene; all five fields rely on abstract astrology-first boilerplate, and the consequence becomes a collective prophecy.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.generic-fallback",
+      "sourceSha256": "7a5487da709ab30b1e2eaad7d1ab3192bb1349ceef4e3cda4189c4ce44ed4bcb",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "humanMoment",
+      "why": "The entry is generic horoscope fallback rather than a recognizable collective scene; several fields rely on vague keyword stitching, abstract positivity, and an unsupported good-outcome slogan.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.moralizing-advice",
+      "sourceSha256": "cbcdd776aa6679c36b0ac43054370fd9b7f61423984ea99cd4accf5dee79304b",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "conditionalConsequence",
+      "why": "The ending shifts into second-person moralizing advice and a generic slogan instead of showing a conditional consequence of the unchecked claim. The aspect mechanic is also abstract rather than applying the square's recurring conflict to the scene.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.natal-second-person",
+      "sourceSha256": "14fc85d8301f77dc09ff0e7d5021d1178408a320eec8c36303cbdfbb0a6b9360",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "planetaryDynamic",
+      "why": "The draft substitutes Mercury and communication for the required Sun-Moon dynamic of identity and emotional needs, while every field uses second person and remains generic horoscope advice.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.repetitive-template",
+      "sourceSha256": "216103524da044ff7355c5da402dddb4d2e358a116503f33a5be7ff8fb96428e",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "planetaryDynamic",
+      "why": "Multiple fields merely repeat “power struggle,” and the planetary dynamic fails to distinguish the Sun’s identity or visibility from Pluto’s control, intensity, and transformational pressure.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.sign-specific-live-card",
+      "sourceSha256": "210a51e2c13a00cac15d7b26a7c0d2caa44a14f48b03e8e4ad9fef15cb630cdd",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "developmentDetail",
+      "why": "It uses prohibited sign-specific framing and replaces observable development with a generic claim about support; the mechanic is also vague, and the consequence relies on a date rather than the scene.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.strategy-brief",
+      "sourceSha256": "4f8d150a3cb6c698218abc0345b1221d82a4012ee8c67f0afac168bf0e95ecaa",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "humanMoment",
+      "why": "The entry reads entirely like an abstract strategy brief, with no concrete event, observable development, distinctive conjunction behavior, or scene-based consequence.",
+      "disagreement": false,
+      "contractViolation": false
+    },
+    {
+      "cohort": "weak",
+      "id": "weak.wrong-aspect-mechanic",
+      "sourceSha256": "ca6126b71777b7aa39683b0759c1eb9c4d7044b96d15840df131550a1edac5fd",
+      "score": 1,
+      "verdict": "off-voice",
+      "weakestField": "aspectMechanic",
+      "why": "This reverses the opposition mechanic into effortless cooperation. The scene consistently describes a harmonious Sun-Mars dynamic and omits the required confrontation between authority and action across different people, groups, or positions.",
+      "disagreement": false,
+      "contractViolation": false
+    }
+  ]
+}

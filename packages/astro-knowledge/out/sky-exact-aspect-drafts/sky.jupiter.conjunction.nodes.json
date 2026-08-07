@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:21:31.493Z",
+  "id": "sky.jupiter.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "jupiter-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.conjunction.nodes",
+    "planetA": "jupiter",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Jupiter conjunct North Node",
+    "humanMoment": "A film festival is offered a lucrative distribution package for an expanded retrospective just as modest underwriting makes a first-time local directors program possible.",
+    "developmentDetail": "The retrospective promises larger audiences and immediate press, while the new program has fewer screenings but creates a route for work that has not reached cinemas before.",
+    "planetaryDynamic": "Jupiter enlarges the festival's reach and resources, while the North Node marks which programming choice carries its development forward.",
+    "aspectMechanic": "Under the conjunction, the distribution offer and the programming direction merge into one decision, making the larger audience difficult to separate from the retrospective's backward pull.",
+    "conditionalConsequence": "If the festival commits its screens to the local directors program, the smaller underwriting could become the opening that builds its next audience and source of films.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Jupiter enlarges the festival's reach and resources, while the North Node marks which programming choice carries its development forward.",
+    "why": "The entry is concrete, specific, evergreen, and mechanically sound; this sentence is the most interpretive but still clearly distinguishes Jupiterian expansion from nodal direction without treating the path as fate.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:21:31.492Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "dd8b9d0a77986d90ba13a3c00382ca719eda13d3206060c5a6d783959f1a3b5c",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "849a61ae510360f80c56cdf479f8bf69d7ec6090b688561c2d790602781459dd",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "1d05e42454ef0a761b181e5629df47c24c4877e4041c0eeed2ceb0787a2947a6"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

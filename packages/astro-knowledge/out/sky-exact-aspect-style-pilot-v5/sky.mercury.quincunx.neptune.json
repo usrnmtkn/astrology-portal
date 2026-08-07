@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:45:12.864Z",
+  "id": "sky.mercury.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-neptune",
+    "path": "data/pairs/mercury-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.neptune",
+    "planetA": "mercury",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Neptune",
+    "body": "A simple question keeps producing an answer that sounds right until we try to use it. We reread the email, check the screenshot, replay the voice note, and still remember a version that was never actually said. Mercury quincunx Neptune has us moving between literal wording and the mood underneath it, revising the story each time one fails to account for the other. A hunch fills a gap beautifully, then one stubborn detail sends us back to the facts.\n\nIdeas can arrive sideways now: one image unlocks a paragraph, an overheard phrase solves a design problem, a vague impression points toward the question we forgot to ask. But plans built from those flashes need another pass, because names blur, times drift, and assumptions quietly harden into memory. We keep editing the wording to match what we sensed, then editing the vision to match what can be confirmed. The imagination can find the opening; the details decide whether we can act on it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived tension, concrete contemporary details, accurate Mercury-Neptune behavior, and repeated adjustment are all clear without becoming instructional. The ending turns cleanly from imaginative opening to practical verification.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:45:12.864Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "207640fe354135652a23584dbb96b20179c4710564453f22a85b3e8f44c11054",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "1985be489b3c350d780dcd141ba10c77d099dc2b91fb147360b9b1407f4e98b2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "d6fdbe4ee0b5d31c70224a66446bfd67fcede9a233154730d31fd750cab3a535"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

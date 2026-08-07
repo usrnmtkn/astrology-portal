@@ -1,11 +1,12 @@
 {
-  "appBootGzipBytes": 535000,
+  "appBootGzipBytes": 420000,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 579000,
+  "readerBootGzipBytes": 465000,
   "readerInitialCssGzipBytes": 47000,
   "largestJavaScriptGzipBytes": 520000,
-  "friendsWorkspaceChunkGzipBytes": 12000,
+  "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 5000,
+  "skyPlacementFallbackChunkGzipBytes": 150000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 103500,
   "totalJavaScriptGzipBytes": 2602000

@@ -1,0 +1,9 @@
+{
+  "status": "no_usable_artifact",
+  "writerRequestStarted": true,
+  "writerResponseRecorded": false,
+  "articleProduced": false,
+  "terraCalled": false,
+  "billingStatus": "unknown",
+  "note": "The first authorized process persisted its packet and fail-closed routing record, then ended without a provider response, article, error record, or Terra review. No replacement call was made automatically."
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:14.953Z",
+  "id": "sky.neptune.opposition.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "neptune-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.opposition.nodes",
+    "planetA": "neptune",
+    "planetB": "nodes",
+    "aspect": "opposition",
+    "title": "Neptune opposite North Node",
+    "humanMoment": "A food bank replaces one weekly parcel line with a pay-what-you-can market, drawing new shoppers and protests from longtime recipients who trusted the old routine.",
+    "developmentDetail": "Volunteers track which staples move and where queues form, while supporters still disagree about whether the market is meant to improve access, dignity, or financial stability.",
+    "planetaryDynamic": "Neptune carries the ideal and the uncertainty around its purpose, while the North Node presses the trial toward a direction that can be recognized through practice.",
+    "aspectMechanic": "The opposition places recipients defending the parcel line across from volunteers testing the market, so neither the old routine nor the emerging evidence can be removed from the outcome.",
+    "conditionalConsequence": "If the market reduces queues but leaves staple access uneven, the food bank gains a clearer direction without settling every argument about what should have been preserved.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Neptune carries the ideal and the uncertainty around its purpose, while the North Node presses the trial toward a direction that can be recognized through practice.",
+    "why": "All checks pass; this is the least concrete field, but it still clearly distinguishes Neptune's uncertain ideal from the Node's practice-led direction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:14.952Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "536a9633ec15c233254b15b597fce1d02b3fcd93bba1ad9ad6307fa19a99def4",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "7bf9028c5fcca92fc2ab3852f823f7c7ff35c230dfa1e5d16b9ba8fc483015d9",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "f0518bbcad5935516ac5653d151de88b9f634d226ce96910bc52cbe6353c15e8"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.opposition.nodes",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:38.541Z",
+  "id": "sky.venus.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "venus-uranus",
+    "path": "data/pairs/venus-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.quincunx.uranus",
+    "planetA": "venus",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Uranus",
+    "humanMoment": "A pop-up exhibition draws a rush of buyers with unconventional work and pay-what-feels-right prices.",
+    "developmentDetail": "Sales spike around a few pieces, then stall as artists pull items, revise prices, or release reserved purchases.",
+    "planetaryDynamic": "Venus builds attraction and agreement around value, while Uranus introduces sudden changes and freedom from convention.",
+    "aspectMechanic": "The quincunx keeps prices, reservations, and availability in revision because the desire to secure a purchase cannot settle the push to keep access unrestricted.",
+    "conditionalConsequence": "If the terms continue to shift, the initial excitement can leave sales uneven and purchases unfinished.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete and observable, the Venus-Uranus distinction is accurate, and the quincunx is expressed through repeated revisions that prevent attraction and freedom from settling into stable terms.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:38.541Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "74cb97796da2ee9a44462d7fcf5c5b495ab098de15097595212823941cecf768",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "0ca006e093b4a67303d1f9a55be1d48856f16de0942c9853586b820967c28d5b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "2c97d57c4acf5dc4ad3225a75f9c9bdbc8fb81588e2f15d17e0283a9f730cda7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

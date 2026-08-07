@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:52.981Z",
+  "id": "sky.venus.quincunx.pluto",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "venus-pluto",
+    "path": "data/pairs/venus-pluto.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.venus.quincunx.pluto",
+    "planetA": "venus",
+    "planetB": "pluto",
+    "aspect": "quincunx",
+    "title": "Venus quincunx Pluto",
+    "humanMoment": "At a charity auction, bidding on a coveted artwork climbs past its stated value as two patrons refuse to yield.",
+    "developmentDetail": "The room's attention shifts from the artwork to who can afford to claim it and who will be seen backing down.",
+    "planetaryDynamic": "Venus brings attraction and value to the artwork, while Pluto intensifies the desire to control who takes possession.",
+    "aspectMechanic": "The quincunx keeps the bidding shifting between valuing the artwork and controlling its claim, with each higher price changing what yielding would mean.",
+    "conditionalConsequence": "If the contest keeps driving the bids, the sale may raise more money while leaving the winner with a purchase shaped as much by power as by desire.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete, observable auction dynamics clearly distinguish Venusian value and attraction from Plutonian control, while the escalating bids express repeated quincunx adjustment and lead to a plausible conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:52.980Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "ad4b9162fac76ed485687f9d7bb7567d769834995594d7db56056704ad810625",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "8d43b9ad3966f350aef769d9d12464e041813c3482bc4bc557160c01450ba87a",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "e9e2ee6a1f690bc671547c20cb0990379b931884dab4af3aa5ec2ac4901af88d"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.quincunx.pluto",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

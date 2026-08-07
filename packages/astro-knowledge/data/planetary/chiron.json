@@ -1,0 +1,69 @@
+{
+  "id": "chiron",
+  "planet": "chiron",
+  "title": "Chiron Meaning",
+  "overview": "Chiron describes the wound that teaches: the tender place where an early, unearned hurt shaped a survival response, and where healing turns private pain into the ability to help others carry theirs. In the myth Chiron is the wounded healer, the mentor whose own injury never fully closes, and the talent often grows from the same place as the wound. A slow-moving body orbiting between Saturn and Uranus, it works the bridge between what structure can hold and what has to change. Chiron does not promise that the wound disappears; it shows how to carry it differently.",
+  "cycle": "Chiron takes about fifty years to move through all twelve signs, spending roughly four to nine years in each because its orbit is elliptical. Its yearly retrograde is a regular pause for repair, and its return near age fifty marks a life-defining review of the wound and what it taught.",
+  "signs": [
+    {
+      "sign": "aries",
+      "body": "With Chiron in Aries, the wound sits in the sense of self: wanting things, going first, and existing without apology. Healing works through acting anyway and learning that the discomfort can be survived."
+    },
+    {
+      "sign": "taurus",
+      "body": "With Chiron in Taurus, the wound sits in security and worth: having enough, deserving comfort, and trusting that safety does not have to be earned through endless proof."
+    },
+    {
+      "sign": "gemini",
+      "body": "With Chiron in Gemini, the wound sits in the voice: being heard, being believed, and trusting that the words are enough without overexplaining."
+    },
+    {
+      "sign": "cancer",
+      "body": "With Chiron in Cancer, the wound sits in belonging: being cared for without earning it, and learning that needing comfort is not a debt."
+    },
+    {
+      "sign": "leo",
+      "body": "With Chiron in Leo, the wound sits in creative worth: being seen without performing for it, and trusting the work matters before anyone applauds."
+    },
+    {
+      "sign": "virgo",
+      "body": "With Chiron in Virgo, the wound sits in adequacy: being useful enough, correct enough, and learning that imperfection is not failure."
+    },
+    {
+      "sign": "libra",
+      "body": "With Chiron in Libra, the wound sits in acceptance: being chosen, being fair, and learning that a real self costs some approval."
+    },
+    {
+      "sign": "scorpio",
+      "body": "With Chiron in Scorpio, the wound sits in trust: betrayal, power, and learning that control cannot substitute for intimacy."
+    },
+    {
+      "sign": "sagittarius",
+      "body": "With Chiron in Sagittarius, the wound sits in meaning: lost faith, broken certainties, and learning to believe again without borrowing someone else's answer."
+    },
+    {
+      "sign": "capricorn",
+      "body": "With Chiron in Capricorn, the wound sits in recognition: achievement as the price of love, and learning that worth is not a title."
+    },
+    {
+      "sign": "aquarius",
+      "body": "With Chiron in Aquarius, the wound sits in belonging to the group: being the outsider, and learning that difference can connect instead of exile."
+    },
+    {
+      "sign": "pisces",
+      "body": "With Chiron in Pisces, the wound sits in faith and boundaries: absorbing everything, and learning that compassion does not require disappearing."
+    }
+  ],
+  "source": {
+    "title": "TLDR-Batch2-Blocker-SignOff-Sheet.md, Section B",
+    "pages": []
+  },
+  "provenance": "[Greene:Chiron-in-Love — unmerited wound; wounded-healer myth; resentment and compassion as the wound's two roads — supports Meaning] [Comet:Chiron-creativity — the talent arises from the same place as the wound — supports Meaning] [Hand Clow:Rainbow-Bridge — Chiron bridges the inner (Saturn) and outer (Uranus) planets — supports the structure/change line] [Satori:chiron-retrograde-in-aries — \"Chiron doesn't promise that the wound disappears. It shows us how to carry it differently\" — the overview's last line adapts the owner's own sentence — supports Meaning, owner voice] [data/modifiers/chiron-life-cycle.json + approved retrograde line \"review of old wounds, repair, and the survival responses built around them\" — supports cycle] Consistent with TLDR-Article-Edition-Chiron-Aries-REVIEW and TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.",
+  "acAddendum": [
+    "Wound-and-remedy-together: Chiron contacts surface old wounds and supply the means of working with them in the same touch [AC:astrology-20th-26th — \"bringing old wounds to the surface yet offering homeopathic perspectives on the same\" — supports Meaning].",
+    "Chiron turns whatever it joins toward healing work; a configuration that includes Chiron becomes about repair whether or not repair was the plan [AC:jupiter-chiron-neptune-aquarius — \"demands the visionary trip be a healing journey\" — supports Meaning].",
+    "Honest shadow note: Chiron-centered configurations can carry a sour, aggrieved tone before they carry a healing one; copy should not pretend the wound feels gentle [AC:astrology-20th-26th — \"the negativity that sometimes infects... during Chiron-centered configurations\" — supports Meaning]."
+  ],
+  "voiceNeutral": true,
+  "status": "REVIEWED"
+}

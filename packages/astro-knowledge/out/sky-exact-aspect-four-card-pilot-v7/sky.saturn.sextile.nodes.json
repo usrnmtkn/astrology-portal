@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:46:10.682Z",
+  "id": "sky.saturn.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "saturn-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 5,
+  "meaningBrief": {
+    "tension": "A postponed task becomes necessary when delay creates a firm deadline or rising cost.",
+    "examples": [
+      "A delayed job application receives a submission deadline.",
+      "A group approves a new process instead of maintaining the old one.",
+      "An expensive storage contract is terminated."
+    ],
+    "pairBehavior": "Saturn indicates the deadline, while the North Node identifies the necessary future task.",
+    "aspectBehavior": "The sextile creates a practical opportunity, but a person or group must recognize it and act.",
+    "consequence": "A delayed decision is scheduled, a future-focused structure is established, or an expensive commitment is ended."
+  },
+  "draft": {
+    "id": "sky.saturn.sextile.nodes",
+    "planetA": "saturn",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Saturn sextile North Node",
+    "body": "The task we kept postponing now has a date, a higher price, or both. A delayed application gets a submission deadline; a group realizes maintaining the old process takes more work than approving the new one; the storage contract costs too much to keep. Saturn sextile North Node gives the future assignment a practical opening, but someone still has to see it and act. What once felt optional is becoming necessary.\n\nThe pressure is not always a sign that the world is failing us. It may be the chapter’s work finally maturing enough to demand time, structure, and a real decision. We schedule what has drifted, build for where we are going, or release what has become too expensive to maintain. The opening becomes useful when the decision leaves the someday list and enters real life.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "weakestField": "aspect expression",
+    "weakest": "Saturn sextile North Node gives the future assignment a practical opening, but someone still has to see it and act.",
+    "why": "This explains the aspect as a mechanic instead of letting it emerge through lived events, and it reduces the node axis to the North Node. Combined with strategy-brief phrasing such as “future assignment” and “becomes useful,” the entry feels competent but instructional rather than intimate and immediate.",
+    "failedChecks": [
+      "aspect mechanics stated",
+      "node axis incomplete",
+      "strategy-brief voice",
+      "abstract phrasing"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:46:04.829Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "b2b4e9da9f4279fd5241a6e67ac30dcc9257e18236ccd078904222c90a61dc9d",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "a11a39067b9590649fa7c8e3c12cc99ab3b458d9bdfa5b644d55c7ff6759d11e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "aspect mechanics stated",
+            "node axis incomplete",
+            "strategy-brief voice",
+            "abstract phrasing"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a88c9305992ff14169f1cb204841fc1a3a24748a9b940f0fbd32517ba711ea8e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 1,
+    "verdict": "off-voice",
+    "rationale": "Several sentences rely on compressed abstractions that obscure the practical meaning and do not sound natural aloud.",
+    "failedChecks": [
+      "abstract-agent",
+      "unnatural-usage"
+    ],
+    "evidence": [
+      {
+        "checkId": "abstract-agent",
+        "sentence": "Saturn sextile North Node gives the future assignment a practical opening, but someone still has to see it and act."
+      },
+      {
+        "checkId": "unnatural-usage",
+        "sentence": "It may be the chapter’s work finally maturing enough to demand time, structure, and a real decision."
+      }
+    ],
+    "why": "Several sentences rely on compressed abstractions that obscure the practical meaning and do not sound natural aloud.",
+    "weakest": "Saturn sextile North Node gives the future assignment a practical opening, but someone still has to see it and act.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:46:10.682Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "887c422bd6d4b1ab0cebc604e5246023bb3cb65b6e8b2397cb90a27e5e276629",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "a11a39067b9590649fa7c8e3c12cc99ab3b458d9bdfa5b644d55c7ff6759d11e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        1
+      ],
+      "verdicts": [
+        {
+          "score": 1,
+          "verdict": "off-voice",
+          "failedChecks": [
+            "abstract-agent",
+            "unnatural-usage"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "75f9d044a828b643d094a81a58b1b65bed85e1385a747c691e68fbcd61672886"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "regenerate",
+    "recommendation": "regenerate",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

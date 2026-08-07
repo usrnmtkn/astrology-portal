@@ -1,0 +1,394 @@
+{
+  "schemaVersion": 1,
+  "runId": "sky-placement-blind-2026-08-02T22-48-33-462Z",
+  "status": "owner-preferences-recorded-model-key-sealed",
+  "instructions": "Score each anonymous review independently before opening the model key.",
+  "ownerPreferenceSummary": {
+    "A": 0,
+    "B": 5,
+    "tie": 9,
+    "overallPreference": "B",
+    "modelIdentityRevealed": false,
+    "promotionRecommended": false
+  },
+  "cases": [
+    {
+      "caseId": "case-001",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-002",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-003",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-004",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-005",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-006",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-007",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-008",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-009",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-010",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-011",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-012",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-013",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    },
+    {
+      "caseId": "case-014",
+      "reviews": {
+        "A": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        },
+        "B": {
+          "naturalEnglish": null,
+          "astrologyScope": null,
+          "ownerVoice": null,
+          "editorialRestraint": null,
+          "ruleEnforcement": null,
+          "unnecessaryRewrite": null,
+          "falsePositive": null,
+          "preferred": null,
+          "notes": ""
+        }
+      }
+    }
+  ]
+}

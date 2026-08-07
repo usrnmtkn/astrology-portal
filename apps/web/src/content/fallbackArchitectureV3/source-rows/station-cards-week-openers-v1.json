@@ -162,57 +162,153 @@
   "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)"
  },
  {
+  "contentKey": "sky.station.mercury.pisces.retrograde",
+  "surface": "current-sky-timing-event",
+  "content_role": "full_copy",
+  "headline": "Mercury stations retrograde in Pisces",
+  "body": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision. Mercury slows to a stop in Pisces and starts moving backward. In this sensitive water sign, we can catch tone, imagery, and feeling faster than facts, which makes intuition vivid and certainty less reliable.\n\nWhen the same conversation circles back, the repeated wording may expose an assumption that kept us talking past one another. We can restate the agreement and confirm the times before anything gets booked. Not every plan falls apart here. Some decisions made during the pause hold. The useful change is knowing which part was an impression and which part was confirmed.",
+  "review_status": "approved",
+  "owner_approved": true,
+  "serving": true,
+  "promotion_authorized": true,
+  "source_keys": [
+   "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.station.mercury.pisces.retrograde.json",
+   "src.timing.mercury.station-retrograde"
+  ],
+  "approved_via": "Exact owner approval in chat 2026-08-03; reader import and wiring authorized 2026-08-03"
+ },
+ {
+  "contentKey": "sky.retrograde.venus.scorpio.retrograde_passage",
+  "surface": "current-sky-timing-event",
+  "content_role": "full_copy",
+  "headline": "Venus retrograde in Scorpio",
+  "body": "An old relationship comes back around, and we feel the pull before we know whether anything has actually changed. We pause before answering and look at whether the old problem is different, not only whether the attraction has returned. Venus is retrograde in Scorpio, bringing love, loyalty, money, and private agreements back under review. The temptation is to treat the intensity as an answer, or to test the other person instead of asking them directly.\n\nWe return to the original arrangement and name what it has cost, what it has given, and which promises no longer fit. A commitment made years ago may still be worth keeping, but only if the bond gives something real now. Once those terms are spoken aloud, we can revise the commitment instead of forcing the old version to fit. What matters is whether we can keep the promise now, not how strong the pull is.",
+  "review_status": "approved",
+  "owner_approved": true,
+  "serving": true,
+  "promotion_authorized": true,
+  "source_keys": [
+   "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.retrograde.venus.scorpio.retrograde_passage.json",
+   "src.timing.venus.retrograde-passage"
+  ],
+  "approved_via": "Exact owner approval in chat 2026-08-03; reader import and wiring authorized 2026-08-03"
+ },
+ {
+  "contentKey": "sky.station.chiron.taurus.retrograde",
+  "surface": "current-sky-timing-event",
+  "content_role": "full_copy",
+  "headline": "Chiron stations retrograde in Taurus",
+  "body": "We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency. This is not an alarm or a verdict on the project. It is a regular pause for repair inside a story already unfolding. When we talk at home about why the work stopped, an old fear may become plain: rest feels unsafe, comfort feels unearned, and every material choice becomes a measure of worth.\n\nInstead of rushing back to the plan, we look at the survival response underneath it. Some of us stockpile to feel protected. Others refuse comfort entirely, to prove that no need can touch us. Living with this wound can make us unusually good at helping one another build stability without shame. The repair starts when being safe stops having to be earned.",
+  "review_status": "approved",
+  "owner_approved": true,
+  "serving": true,
+  "promotion_authorized": true,
+  "source_keys": [
+   "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.station.chiron.taurus.retrograde.json",
+   "src.timing.outer.station-retrograde"
+  ],
+  "approved_via": "Exact owner approval in chat 2026-08-03; reader import and wiring authorized 2026-08-03"
+ },
+ {
+  "contentKey": "sky.ingress.jupiter.leo",
+  "surface": "current-sky-timing-event",
+  "content_role": "full_copy",
+  "headline": "Jupiter enters Leo",
+  "body": "We bring a creative pursuit into the open and invite friends to take part. What felt like a small pleasure can become the plan everyone wants to join before we know whether we can sustain it. As Jupiter enters Leo, we grow through visible self-expression, big-hearted generosity, and the confidence to risk a larger stage. Once praise starts coming, we commit more time, make bolder promises, and give the idea more room.\n\nWe feel the pressure when we begin judging the pursuit by the attention it receives. Jupiter expands whatever is already in motion, not only what deserves more room. Creative courage and inflated ego can grow together, until every setback threatens to become a drama. The desire does not need to shrink. The work is to keep sharing the thing without making the recognition the reason we stay. Once excitement settles into routine, we find out whether we are building a meaningful practice or only chasing applause.",
+  "review_status": "approved",
+  "owner_approved": true,
+  "serving": true,
+  "promotion_authorized": true,
+  "source_keys": [
+   "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.ingress.jupiter.leo.json",
+   "src.timing.jupiter.ingress"
+  ],
+  "approved_via": "Exact owner approval in chat 2026-08-03; reader import and wiring authorized 2026-08-03"
+ },
+ {
   "contentKey": "authored/week-opener/quiet",
   "surface": "weekly-opener",
   "content_role": "full_copy",
-  "headline": "A quiet week",
-  "body": "No major sky event dominates this week. The Moon keeps the days moving, but there is no single date asking for extra preparation. Use the quieter pace to finish what has been hanging over you or leave more room around your schedule.",
-  "review_status": "approved",
-  "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)"
+  "headline": "The schedule is quieter. Use the room before it fills again.",
+  "body": "No major sky event dominates this week, which makes the ordinary demands easier to see. A task that keeps rolling into the next week, an invoice no one followed up on, or a responsibility with no clear owner may be using more time than it deserves. Without one urgent event setting the pace, you can judge the schedule by what it actually requires. Notice which commitments are maintained through habit and which ones still serve a clear purpose. The practical move is not to invent a crisis because the calendar feels open. Finish the work already promised, close the conversation that keeps restarting, and leave some time unassigned. A quieter week is useful when you treat open space as part of the plan. Decide what will not be added before the next demand arrives. Write the limit down while it is clear.",
+  "weeklyHeadline": "The schedule is quieter. Use the room before it fills again.",
+  "weeklyOverview": "No major sky event dominates this week, which makes the ordinary demands easier to see. A task that keeps rolling into the next week, an invoice no one followed up on, or a responsibility with no clear owner may be using more time than it deserves. Without one urgent event setting the pace, you can judge the schedule by what it actually requires. Notice which commitments are maintained through habit and which ones still serve a clear purpose. The practical move is not to invent a crisis because the calendar feels open. Finish the work already promised, close the conversation that keeps restarting, and leave some time unassigned. A quieter week is useful when you treat open space as part of the plan. Decide what will not be added before the next demand arrives. Write the limit down while it is clear.",
+  "review_status": "reviewed",
+  "approved_via": "owner-source implementation edit 2026-08-03"
  },
  {
   "contentKey": "authored/week-opener/standard",
   "surface": "weekly-opener",
   "content_role": "full_copy",
-  "headline": "An ordinary week",
-  "body": "This week has a few active moments, but no single transit takes over the entire schedule. Most days can be handled as they come. Keep the calendar realistic and leave enough room for the one or two conversations, deadlines, or decisions that need more attention.",
-  "review_status": "approved",
-  "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)"
+  "headline": "{{leadEventTitle}} leads a crowded week.",
+  "body": "{{leadEventTitle}} opens a week with several active movements, but no single event explains the whole schedule. A conversation may need an answer before the work behind that answer has been assigned. A deadline may look manageable until meetings, travel, care work, or another expense is counted. The pressure comes from accumulation. Each request may be reasonable by itself, while the combined load is not. Check the calendar before making another promise. Ask who owns the next step, how much it costs, and what can move if the estimate is wrong. Later in the week, an agreement may need more detail because two people heard different versions of the same plan. Put the responsibility where everyone can see it. Most of the week can stay intact. The correction is to stop treating every request as if it has first claim on your time.",
+  "weeklyHeadline": "{{leadEventTitle}} leads a crowded week.",
+  "weeklyOverview": "{{leadEventTitle}} opens a week with several active movements, but no single event explains the whole schedule. A conversation may need an answer before the work behind that answer has been assigned. A deadline may look manageable until meetings, travel, care work, or another expense is counted. The pressure comes from accumulation. Each request may be reasonable by itself, while the combined load is not. Check the calendar before making another promise. Ask who owns the next step, how much it costs, and what can move if the estimate is wrong. Later in the week, an agreement may need more detail because two people heard different versions of the same plan. Put the responsibility where everyone can see it. Most of the week can stay intact. The correction is to stop treating every request as if it has first claim on your time.",
+  "review_status": "reviewed",
+  "approved_via": "owner-source implementation edit 2026-08-03"
  },
  {
   "contentKey": "authored/week-opener/headliner",
   "surface": "weekly-opener",
   "content_role": "full_copy",
-  "headline": "One significant day this week",
-  "body": "One date carries most of this week’s pressure. The surrounding days may feel quieter by comparison. Organize your schedule so you meet that day with time and attention to spare rather than arriving already depleted.",
-  "review_status": "approved",
-  "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)"
+  "headline": "{{leadEventTitle}} changes the rest of the schedule.",
+  "body": "{{leadEventTitle}} carries most of this week’s pressure, but its consequence does not stay on one day. A decision, result, deadline, or announcement may change who is responsible for the next step. The first answer can feel final because everyone wants the waiting to end. Before you commit, count the hours, money, follow-up, and maintenance the decision requires. A plan that only works because one person absorbs the extra labor still needs revision. Give this event room in the calendar, then protect the day after it from unnecessary demands. Later, check whether every person involved understood the same agreement. Keep the useful part of the plan and correct the part that depends on vague expectations. Change the deadline, assign the follow-up, or reduce the scope. The week becomes easier when the consequence is named instead of left for someone else to carry.",
+  "weeklyHeadline": "{{leadEventTitle}} changes the rest of the schedule.",
+  "weeklyOverview": "{{leadEventTitle}} carries most of this week’s pressure, but its consequence does not stay on one day. A decision, result, deadline, or announcement may change who is responsible for the next step. The first answer can feel final because everyone wants the waiting to end. Before you commit, count the hours, money, follow-up, and maintenance the decision requires. A plan that only works because one person absorbs the extra labor still needs revision. Give this event room in the calendar, then protect the day after it from unnecessary demands. Later, check whether every person involved understood the same agreement. Keep the useful part of the plan and correct the part that depends on vague expectations. Change the deadline, assign the follow-up, or reduce the scope. The week becomes easier when the consequence is named instead of left for someone else to carry.",
+  "review_status": "reviewed",
+  "approved_via": "owner-source implementation edit 2026-08-03"
  },
  {
   "contentKey": "authored/week-opener/station",
   "surface": "weekly-opener",
   "content_role": "full_copy",
-  "headline": "A planet changes direction this week",
-  "body": "A planet changes direction this week, and the pace may feel uneven around the station. A delay can begin moving, or a plan that was moving quickly may need another look. Give the shift a little time before deciding what it means.",
-  "review_status": "approved",
-  "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)"
+  "headline": "{{leadEventTitle}}. Check the plan before you push it.",
+  "body": "{{leadEventTitle}} changes the pace this week, and a plan may speed up, stall, or return for another decision. The station can make the first response feel more urgent than it is. Check what was actually approved, declined, promised, or delayed before acting on an assumption. By midweek, the practical cost may be clearer. Extra hours, a missed detail, a shared expense, or a responsibility no one assigned can explain why the plan keeps slipping. Later, another person may need a more specific agreement about who is doing the work and what happens if the timing changes again. Do not abandon the entire plan because one part needs repair. Correct the estimate. Reassign the task. Document the decision. Give the station enough time to show whether the change is durable before building the rest of the schedule around it.",
+  "weeklyHeadline": "{{leadEventTitle}}. Check the plan before you push it.",
+  "weeklyOverview": "{{leadEventTitle}} changes the pace this week, and a plan may speed up, stall, or return for another decision. The station can make the first response feel more urgent than it is. Check what was actually approved, declined, promised, or delayed before acting on an assumption. By midweek, the practical cost may be clearer. Extra hours, a missed detail, a shared expense, or a responsibility no one assigned can explain why the plan keeps slipping. Later, another person may need a more specific agreement about who is doing the work and what happens if the timing changes again. Do not abandon the entire plan because one part needs repair. Correct the estimate. Reassign the task. Document the decision. Give the station enough time to show whether the change is durable before building the rest of the schedule around it.",
+  "review_status": "reviewed",
+  "approved_via": "owner-source implementation edit 2026-08-03"
  },
  {
   "contentKey": "authored/week-opener/new-moon",
   "surface": "weekly-opener",
   "content_role": "full_copy",
-  "headline": "New Moon week",
-  "body": "A New Moon in {{signTitle}} arrives this week. The beginning may be quiet, showing up first as a decision, conversation, or small commitment rather than a visible result. Notice what begins asking for your attention and give it one practical place in the week.",
-  "review_status": "approved",
-  "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)"
+  "headline": "{{leadEventTitle}} needs a real place in the schedule.",
+  "body": "{{leadEventTitle}} arrives this week, and a new plan may begin with a conversation, application, assignment, or private decision. The idea can be useful without being ready for a full commitment. Before adding it to the calendar, ask what it requires after the first burst of interest. Count the time, money, labor, and follow-up. By midweek, a limit may show where the original estimate was too generous or where one person was expected to carry the extra work. Later, an agreement may need clearer terms so enthusiasm is not mistaken for consent. Give the plan one practical starting point instead of making a promise for the entire outcome. Choose the first task, name its owner, and set a review date. A beginning becomes credible when the support for it is visible. Start smaller than the original excitement suggested.",
+  "weeklyHeadline": "{{leadEventTitle}} needs a real place in the schedule.",
+  "weeklyOverview": "{{leadEventTitle}} arrives this week, and a new plan may begin with a conversation, application, assignment, or private decision. The idea can be useful without being ready for a full commitment. Before adding it to the calendar, ask what it requires after the first burst of interest. Count the time, money, labor, and follow-up. By midweek, a limit may show where the original estimate was too generous or where one person was expected to carry the extra work. Later, an agreement may need clearer terms so enthusiasm is not mistaken for consent. Give the plan one practical starting point instead of making a promise for the entire outcome. Choose the first task, name its owner, and set a review date. A beginning becomes credible when the support for it is visible. Start smaller than the original excitement suggested.",
+  "review_status": "reviewed",
+  "approved_via": "owner-source implementation edit 2026-08-03"
  },
  {
   "contentKey": "authored/week-opener/full-moon",
   "surface": "weekly-opener",
   "content_role": "full_copy",
-  "headline": "Full Moon week",
-  "body": "A Full Moon in {{signTitle}} arrives this week, bringing more attention to a situation that has been building. A decision, feeling, result, or conflict may become harder to ignore. Leave enough room to respond before turning one intense moment into a final verdict.",
-  "review_status": "approved",
-  "approved_via": "owner rewrite 2026-07-29 (Marie Satori final upload)"
+  "headline": "{{leadEventTitle}} brings a result. The consequence still needs a plan.",
+  "body": "{{leadEventTitle}} arrives this week, and a result, conflict, payment, deadline, or decision may become difficult to postpone. What becomes visible can clarify the problem without solving the work that follows it. Before reacting, separate the immediate result from the responsibility it creates. Who owns the next step? How much will it cost? Which deadline changes if this one now takes priority? By midweek, the gap between the original promise and the available labor may be obvious. Later, a relationship or work agreement may need clearer terms because the earlier version depended on silence or unequal effort. Keep the part of the plan that still works. Revise the estimate, divide the follow-up, and put the new agreement in writing. A result is useful when it changes how the work is carried. Do not leave the consequence unassigned again.",
+  "weeklyHeadline": "{{leadEventTitle}} brings a result. The consequence still needs a plan.",
+  "weeklyOverview": "{{leadEventTitle}} arrives this week, and a result, conflict, payment, deadline, or decision may become difficult to postpone. What becomes visible can clarify the problem without solving the work that follows it. Before reacting, separate the immediate result from the responsibility it creates. Who owns the next step? How much will it cost? Which deadline changes if this one now takes priority? By midweek, the gap between the original promise and the available labor may be obvious. Later, a relationship or work agreement may need clearer terms because the earlier version depended on silence or unequal effort. Keep the part of the plan that still works. Revise the estimate, divide the follow-up, and put the new agreement in writing. A result is useful when it changes how the work is carried. Do not leave the consequence unassigned again.",
+  "review_status": "reviewed",
+  "approved_via": "owner-source implementation edit 2026-08-03"
+ },
+ {
+  "contentKey": "authored/week-overview/2026-08-02",
+  "surface": "weekly-overview",
+  "content_role": "weekly_overview",
+  "weekStart": "2026-08-02",
+  "weekEnd": "2026-08-08",
+  "headline": "The plan may be approved. Someone still has to carry it.",
+  "body": "At the beginning of the week, a plan may finally get an answer after too much waiting or discussion. Chiron stations retrograde, and an old fear of rejection or failure can rush into the room before the facts do. Check what was actually said before you respond.\n\nBy midweek, the Last Quarter Moon in Taurus puts the cost in plain view. A deadline may only work because one person absorbs the extra hours. A shared expense may be larger than estimated. A plan that sounded manageable may require more labor, money, or maintenance than anyone assigned. If that is true, the plan is incomplete, not inevitable.\n\nWhen Venus enters Libra, fairness becomes a practical question. Who is doing the work? Who is paying? What did each person agree to, and was it specific enough to hold once the work began? Sun trine Saturn offers a useful correction: keep the part that works and give it structure. Change the deadline. Divide the responsibility. Reduce the promise. Put the agreement in writing. A decision is not finished until someone can maintain it.",
+  "weeklyHeadline": "The plan may be approved. Someone still has to carry it.",
+  "weeklyOverview": "At the beginning of the week, a plan may finally get an answer after too much waiting or discussion. Chiron stations retrograde, and an old fear of rejection or failure can rush into the room before the facts do. Check what was actually said before you respond.\n\nBy midweek, the Last Quarter Moon in Taurus puts the cost in plain view. A deadline may only work because one person absorbs the extra hours. A shared expense may be larger than estimated. A plan that sounded manageable may require more labor, money, or maintenance than anyone assigned. If that is true, the plan is incomplete, not inevitable.\n\nWhen Venus enters Libra, fairness becomes a practical question. Who is doing the work? Who is paying? What did each person agree to, and was it specific enough to hold once the work began? Sun trine Saturn offers a useful correction: keep the part that works and give it structure. Change the deadline. Divide the responsibility. Reduce the promise. Put the agreement in writing. A decision is not finished until someone can maintain it.",
+  "mainShifts": [
+   "Chiron stations retrograde",
+   "Last Quarter Moon in Taurus",
+   "Venus enters Libra",
+   "Sun trine Saturn"
+  ],
+  "mainEvent": "Last Quarter Moon in Taurus",
+  "review_status": "reviewed",
+  "approved_via": "owner-source implementation edit 2026-08-03"
  }
 ]

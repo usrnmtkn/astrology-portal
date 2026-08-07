@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "packetId": "marie-satori-writer:sky-placement:neptune-libra:hook",
+  "createdAt": "2026-08-02T00:00:00.000Z",
+  "surface": "sky-placement",
+  "target": {
+    "planet": "neptune",
+    "sign": "libra",
+    "beat": "hook",
+    "goal": "advance one agreement-to-cancellation sequence without category inventory or repeated explanation",
+    "failureTags": [
+      "behavior_missing",
+      "explanatory_before_observable",
+      "category_inventory",
+      "repeated_beat",
+      "polished_but_flat"
+    ],
+    "keywords": [
+      "agree",
+      "agreement",
+      "disagree",
+      "disagreement",
+      "cancel",
+      "cancellation",
+      "peace",
+      "silence",
+      "compromise",
+      "trust"
+    ]
+  },
+  "writerLane": {
+    "laneId": "writer:sky-placement",
+    "runtimeRegistered": false,
+    "judgeLane": "judge:sky-placement",
+    "rule": "Write and self-edit first. Terra-low judges only after authorship audit."
+  },
+  "surfaceContract": {
+    "id": "tldr-astro.voice.sky-placement.v5",
+    "voiceDescription": "Direct, modern, and emotionally exact. The article is not a sign encyclopedia; its job is to give the reader one memorable way to recognize the transit in real life. Interesting before comprehensive. Verbs and scenes over adjective triplets. Prefer a clear observation over a polished abstraction. A memorable phrase earns its place only when it makes literal sense on the first read.",
+    "person": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'people' when people collectively are the actual subject, 'someone', or a concrete shared scene. Never use 'you', 'your', 'yours', 'yourself', or 'yourselves'. Second person belongs to transit-to-natal copy. Historical owner-approved second-person originals are preserved in fixtures/sky-placement-historical-second-person.json and are excluded from active generation and judge calibration.",
+    "beats": [
+      {
+        "beat": "hook",
+        "requirement": "2-4 sentences. Sentence 1 is the standalone recognition quote: a complete line someone would remember or send to a friend. The reader promotes it into a bold callout and removes it from the article body. Begin with a lived premise, not a slogan or abstract placement summary. The remaining sentences form the meaning paragraph: explain what the planet governs and how the sign changes its method, pace, or priorities. Translate meaning into natural prose and behavior, never a keyword list. Name the transit only after the human situation is clear when possible."
+      },
+      {
+        "beat": "lived expression",
+        "requirement": "What the planet-sign combination does in ordinary life. 2-4 sentences. Include the transit's pace (days, weeks, years, decades) somewhere in the article, usually here. Concrete evidence INVENTED FRESH for this placement - the kind of thing a reader would recognize from their own week. Build movement from pressure to choice to consequence. Do not line up three representative examples from work, family, relationships, or public life as if completing a coverage checklist; concrete nouns do not rescue a flat inventory. One charged sequence beats three interchangeable scenarios. (The spec's classic illustrations - unsent message, corrected coffee order, overfilled calendar - are teaching examples and BANNED in output; they leaked into every card of the first batch.) Explain the planet through behavior, never through a keyword list."
+      },
+      {
+        "beat": "turn",
+        "requirement": "Name where the gift becomes the problem and end with a clean truth. 2-5 sentences. The shadow must be observable behavior, not an abstract warning. Name the exact cost: the delayed conversation, cancelled plan, overspending, overwork, one-sided agreement, or other source-supported consequence. A directive is allowed when it is specific. End on the strongest plain sentence; no dramatic metaphor, second aphorism, blessing, or soft summary after it."
+      }
+    ],
+    "taglineRules": "2-5 words, imperative or sharp claim, no terminal period, no planet/sign name needed. In OUR voice, not CHANI's: plain everyday words, bite over sparkle.",
+    "movesRules": "2-3 items. Each is one sentence, a specific doable action tied to THIS placement (CHANI model: 'emcee an open mic', not 'embrace the energy'). No generic coaching verbs (embrace, trust, align, manifest). A move that would work for any placement fails the swap test.",
+    "loreBoundary": "Sign lore, rulership, modality, elements-as-labels, symbols, and season history belong in an optional 'About [Sign]' block rendered separately, NEVER in the article body. The element may be felt in imagery (heat for Leo, depth for Scorpio) but never named as mechanics.",
+    "sourcePath": "packages/astro-knowledge/voice/tldr-astro/sky-placement.json"
+  },
+  "astrologyFacts": {
+    "meaning": {
+      "kind": "placements-sign",
+      "source": "data/placements/sign/neptune-libra.json",
+      "tldr": "Neptune in Libra.",
+      "body": "Imagination and idealism expressed through relational, fair-minded balance. (Modern planet; no traditional dignity.)",
+      "gift": "At work this reads as imagination and idealism carried out with relational.",
+      "challenge": "Escapism and confusion sharpened by indecision."
+    },
+    "authoringLayer": {
+      "planetFunction": "imagination, spirituality, and dissolving boundaries",
+      "planetUseful": "compassion, inspiration, and creative vision",
+      "planetDistortion": "illusion, escapism, or losing the thread of what's real",
+      "signMethod": "relational, balancing, fairness-seeking",
+      "signBehavior": "hearing both sides, keeping things fair, and making the room more beautiful",
+      "signNeed": "harmony and fairness",
+      "signDistortion": "the belief that keeping the peace is the same as keeping the relationship. A relationship that cannot survive your honest sentence was already thinner than it looked.",
+      "pairColor": null
+    },
+    "tier": "generational",
+    "policy": "These checked-in meaning fields bound interpretation. Historical voice excerpts never supply dates, degrees, or runtime facts."
+  },
+  "positiveExamples": [
+    {
+      "sourceId": "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p001",
+      "text": "This Libra Season teaches the difference between honest compromise and self-abandonment. You are learning that being direct is not cruel, and that any relationship that asks you to dilute your voice or constantly self-edit to keep the peace will not hold.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/adjacent-formats/relationship-year-libra-2025-to-venus-rx-2026.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "relationship-astrology",
+      "planet": "venus",
+      "sign": "libra",
+      "house": "",
+      "articleBeat": "hook",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "4424d95a07f2d37fbf9b7a4e7a019769f071e2dfc414f4c67e5d762167d91403",
+      "retrievalScore": 555,
+      "selectionReasons": [
+        "2 editorial-goal terms",
+        "same article beat",
+        "same sign",
+        "8 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:libra-season-autumn-equinox:p001",
+      "text": "The Autumn Equinox arrives September 22 at 8:44 AM EDT - the exact same moment the Sun enters Libra and Libra season officially begins: Sept. 22 and stays until Oct, 22, bringing our attention to relationships and how we show up in them. At the equinox, day and night are equal for approximately one moment. Then immediately, inexorably, darkness begins to overtake light. This is the truth - balance is a moment, not a state. It's a pause in constant motion, not a destination you arrive at.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-season",
+      "planet": "",
+      "sign": "libra",
+      "house": "",
+      "articleBeat": "hook",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "72b1cf52b372822b250d7199240749a8045c12265040bb149299ddb632f8b31a",
+      "retrievalScore": 490,
+      "selectionReasons": [
+        "1 editorial-goal terms",
+        "same article beat",
+        "same sign",
+        "9 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:full-moon-in-taurus:p001",
+      "text": "Stop Proving Your Worth. You've burned yourself out trying to make yourself indispensable. All that overtime just to feel secure. Every yes your body rejected. No one really knows what your stability has cost you - and here's the truth: you're not supposed to feel safe. You're supposed to keep producing, keep proving, make impact, keep earning your right to take up space. That's the con. Your worth isn't actually on the table, but they need you to believe it is.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-lunation",
+      "planet": "moon",
+      "sign": "taurus",
+      "house": "",
+      "articleBeat": "hook",
+      "structuralFunction": "article paragraph",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "1fa53bb33d8758d4cc8fd84b2b51a868966af7e0caafa9be042c834e12f1ef03",
+      "retrievalScore": 475,
+      "selectionReasons": [
+        "2 editorial-goal terms",
+        "same article beat",
+        "11 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p011",
+      "text": "Eclipses are always collective, but they land differently for everyone. If you want to know what part of your life this Pisces eclipse is pulling you into, you can book a one-month overview email reading. You’ll leave with clarity about what’s closing out, and where to trust the unknown.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-site",
+      "surface": "sky-article-longform",
+      "planet": "mercury",
+      "sign": "virgo",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "paragraph under Eclipse Season",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Published article body preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "c954dad6605528fc3f443aa51248e304fd1f98e699b515c42017899a102f0634",
+      "retrievalScore": 470,
+      "selectionReasons": [
+        "owner-authored astrology article",
+        "3 editorial-goal terms",
+        "10 candidate-language terms"
+      ]
+    },
+    {
+      "sourceId": "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e034",
+      "text": "Stop believing that being understood requires constant explanation. As you release the need to be everything to everyone, you finally get to discover who you are when no one's watching. Your higher path involves using your gift for connection to bridge not just people and ideas, but the conscious and unconscious worlds.",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER.md",
+      "author": "Marie Satori",
+      "origin": "owner-published-active-fixture",
+      "surface": "sky-article-longform",
+      "planet": "uranus",
+      "sign": "gemini",
+      "house": "",
+      "articleBeat": "body",
+      "structuralFunction": "published article body excerpt",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthored": true,
+      "ownerApproved": true,
+      "reviewStatus": "published",
+      "editorialStatus": "owner_authored_final",
+      "canonical": false,
+      "useAsPositiveVoiceEvidence": true,
+      "useAsContextualEvidence": false,
+      "useAsNegativeEvidence": false,
+      "failureTags": [],
+      "factUseAuthorized": false,
+      "provenance": "Active owner-published fixture preserved by packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/manifest.json; voice evidence only, never runtime facts.",
+      "sourceSha256": "e0a482508d45e361c3ccb19d7491d6c98efd26f9d6ab200bf93d35ddb57c0d94",
+      "retrievalScore": 460,
+      "selectionReasons": [
+        "owner-authored astrology article",
+        "3 editorial-goal terms",
+        "9 candidate-language terms"
+      ]
+    }
+  ],
+  "contrastiveEdits": [
+    {
+      "id": "sky-placement-neptune-libra-show-agreement-before-cancellation",
+      "surface": "sky-placement",
+      "planet": "neptune",
+      "sign": "libra",
+      "articleBeat": "hook",
+      "before": "Nobody raises their voice, but one person keeps cancelling plans they never wanted.",
+      "after": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable.",
+      "whatChanged": "Restored the missing behavior that causes the later cancellation.",
+      "ownerReason": "The real pattern begins when someone agrees to avoid disturbing the mood and cancels later.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": [
+        "behavior_missing",
+        "explanatory_before_observable",
+        "polished_but_flat"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Preferred hook from owner-provided review; not exact full-article approval.",
+      "retrievalScore": 465,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "same sign",
+        "3 matching failure tags",
+        "33 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-cancer-show-role-before-astrology",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "cancer",
+      "articleBeat": "hook",
+      "before": "The person everyone calls may stop answering every call. Uranus in Cancer changes the private rules around home and family, especially the rules that made one person responsible for remembering, helping, hosting, and handling every emergency.",
+      "after": "The person who remembers every birthday, keeps the spare key, and gets called when someone needs help may stop doing all of it. Uranus in Cancer changes the private rules around home and family, especially the ones that only worked because one person was always available.",
+      "whatChanged": "Showed the family role through ordinary evidence before explaining the astrology.",
+      "ownerReason": "Name what the person actually does instead of turning them into a role or listing labor categories.",
+      "reasonSource": "explicit_owner_review",
+      "failureTags": [
+        "abstract_hook",
+        "behavior_missing",
+        "category_inventory",
+        "explanatory_before_observable"
+      ],
+      "approvalLevel": "exact_owner_approved_calibration_only",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v2.json",
+        "packages/astro-knowledge/review/sky-placement-uranus-cancer-owner-approval-candidate-v3.json"
+      ],
+      "provenance": "The after wording belongs to exact v3, approved for judge calibration only and forbidden as generation evidence.",
+      "retrievalScore": 400,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "3 matching failure tags",
+        "17 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-saturn-capricorn-name-lost-time",
+      "surface": "sky-placement",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "articleBeat": "hook",
+      "before": "Work that holds its value over time needs a structure that does not depend on disappearance.",
+      "after": "Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off.",
+      "whatChanged": "Replaced polished shorthand with the exact time and rest being lost.",
+      "ownerReason": "Name the visible cost instead of asking the reader to interpret disappearance.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": [
+        "abstract_consequence",
+        "requires_interpretation",
+        "polished_but_flat"
+      ],
+      "approvalLevel": "positive_direction_not_approved",
+      "sourcePaths": [
+        "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Owner called the replacement great; the complete article remains unapproved.",
+      "retrievalScore": 270,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "1 matching failure tag",
+        "8 relevant terms"
+      ]
+    },
+    {
+      "id": "sky-placement-uranus-pisces-private-denial-to-public-evidence",
+      "surface": "sky-placement",
+      "planet": "uranus",
+      "sign": "pisces",
+      "articleBeat": "lived",
+      "before": "Care becomes visible in what changes: money is moved, access is widened, and a rule that protected the institution is challenged.",
+      "after": "Someone spends months appealing the same denial, finds three other families caught behind the same rule, and turns a folder of unanswered emails into a public complaint.",
+      "whatChanged": "Replaced a civic category inventory with one observable escalation sequence.",
+      "ownerReason": "Show private denial, repeated pattern, compared evidence, public complaint, and a challenge to the rule.",
+      "reasonSource": "explicit_owner_provided_review",
+      "failureTags": [
+        "category_inventory",
+        "generic_coverage_sentence",
+        "behavior_missing",
+        "overbalanced_structure"
+      ],
+      "approvalLevel": "owner_revised_candidate",
+      "sourcePaths": [
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
+        "packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json"
+      ],
+      "provenance": "Owner-provided replacement candidate; complete article remains needs_review.",
+      "retrievalScore": 250,
+      "selectionReasons": [
+        "same surface",
+        "2 matching failure tags",
+        "6 relevant terms"
+      ]
+    }
+  ],
+  "negativeExamples": [
+    {
+      "id": "polished-peace-staged",
+      "surface": "sky-placement",
+      "planet": "neptune",
+      "sign": "libra",
+      "articleBeat": "hook",
+      "text": "Peace can be staged.",
+      "failureTags": [
+        "abstract_hook",
+        "behavior_missing",
+        "polished_but_flat"
+      ],
+      "reason": "The line sounds composed but does not yet show the agreement and later cancellation.",
+      "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
+      "retrievalScore": 342,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "same planet",
+        "same sign",
+        "2 matching failure tags",
+        "8 relevant terms"
+      ]
+    },
+    {
+      "id": "polished-disappearance",
+      "surface": "sky-placement",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "articleBeat": "hook",
+      "text": "Work that holds its value over time needs a structure that does not depend on disappearance.",
+      "failureTags": [
+        "abstract_consequence",
+        "requires_interpretation",
+        "polished_but_flat"
+      ],
+      "reason": "The sentence hides lost evenings, weekends, and days off inside an abstract noun.",
+      "sourcePath": "packages/astro-knowledge/docs/sky-placement-voice-pass-v5-owner-review-2026-08-02.md",
+      "retrievalScore": 215,
+      "selectionReasons": [
+        "same surface",
+        "same article beat",
+        "1 matching failure tag",
+        "5 relevant terms"
+      ]
+    }
+  ],
+  "vocabularySource": "packages/astro-knowledge/voice/tldr-astro/owner-vocabulary-bank.json",
+  "bannedPatternSource": "packages/astro-knowledge/voice/banned-constructions.json",
+  "currentCandidate": {
+    "candidateId": "sky-placement-v7-neptune-libra",
+    "sourcePath": "packages/astro-knowledge/review/sky-placement-voice-pass-v7-writer-candidates.json",
+    "article": {
+      "tagline": "Stop calling silence peace",
+      "hook": "An evening can go well and still leave something important unsaid. One person agrees to plans they do not want, then cancels later because saying no in the moment felt too uncomfortable. Neptune in Libra makes disagreement easy to soften and hard to resolve.",
+      "lived": "Neptune stays in one sign for roughly fourteen years, long enough for a habit of avoiding disagreement to become normal. One person says yes to dinner, changes the time twice, and cancels an hour before because the real answer was no. Nobody argued, so the evening is still described as peaceful. After enough years, everyone knows which questions are safer not to ask, and decisions keep getting made around answers nobody gave.",
+      "turn": "The problem is not only the cancellation. It is the agreement that was never real. One person avoids discomfort in the moment; everyone else reorganizes later and learns not to trust the next yes. A plan is not shared when someone has to agree, cancel, and take the blame for being unreliable just to keep the peace.",
+      "moves": [
+        "Say no when the answer is no, before someone else arranges their time around a yes.",
+        "Ask for each person's first choice before negotiating a compromise.",
+        "Reopen one agreement that looks peaceful only because disagreement keeps arriving as cancellation."
+      ]
+    },
+    "governance": {
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false
+    }
+  },
+  "governance": {
+    "mayChangeOwnerApproval": false,
+    "mayPromote": false,
+    "mayChangeModelRegistry": false,
+    "mayUseThirdPartyAsVoiceEvidence": false,
+    "mayUseCalibrationOnlyV3AsGenerationEvidence": false,
+    "surfaceCompatibilityNote": "Published owner examples from older surfaces may contain second person. They guide diction and pressure-consequence logic only; the Current Sky surface contract remains controlling."
+  }
+}

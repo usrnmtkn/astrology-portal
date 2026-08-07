@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "configId": "daily-glance-writer-sol-xhigh-batch-2-v1",
+  "packetVersion": "daily-glance-writer-packet-v5:owner-directive+warmth+scene+owner-six+key-facts+p4+sm-dg+dg-r1-r17+owner-tests",
+  "promptVersion": "daily-glance-writer-v5:owner-directive-batch-2-rerun-rules",
+  "status": "owner-authorized-batch",
+  "authorities": [
+    "packages/astro-knowledge/review/daily-glance-rebuild-plan-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-owner-writer-directive-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-format-model-costar-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-reference-pair-soft-mars-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-pilots-v1-approval-2026-08-04.md",
+    "packages/astro-knowledge/review/daily-glance-harvest-wiring-2026-08-04.md"
+  ],
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-2-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 7,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "pricing": {
+    "currency": "USD",
+    "unit": "per_1m_tokens",
+    "retrievedAt": "2026-08-02",
+    "source": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+    "shortContextMaximumInputTokens": 272000,
+    "shortContext": { "input": 5, "cachedInput": 0.5, "cacheWrite": 6.25, "output": 30 },
+    "longContext": { "input": 10, "cachedInput": 1, "cacheWrite": 12.5, "output": 45 }
+  },
+  "output": {
+    "fields": ["headline", "body"],
+    "headline": { "sentences": 1, "minimumWords": 4, "maximumWords": 16, "terminal": "." },
+    "body": { "minimumSentences": 3, "maximumSentences": 5, "minimumWords": 40, "maximumWords": 65, "maximumInstructions": 1, "instructionPosition": "final-sentence" },
+    "engineHiddenTerms": [
+      "sun", "moon", "mercury", "venus", "lilith", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "node", "nodes",
+      "aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
+      "square", "opposition", "conjunction", "trine", "sextile", "aspect", "house", "first house", "1st", "planet", "natal", "transit"
+    ]
+  },
+  "styleMarkers": [
+    { "id": "SM-DG-1", "rule": "The reader is the grammatical subject; abstractions do not act." },
+    { "id": "SM-DG-2", "rule": "Inner states are offered with may, never asserted as diagnosis." },
+    { "id": "SM-DG-3", "rule": "Alternatives are real options, not images; use no metaphor in this register." },
+    { "id": "SM-DG-4", "rule": "Vary sentence length naturally and include one short, blunt sentence without turning the body into staccato fragments." },
+    { "id": "SM-DG-5", "rule": "The word whether is not owner language and must not appear." },
+    { "id": "SM-DG-6", "rule": "Ambient-force energy language is banned; ordinary effort-cost use remains allowed." }
+  ],
+  "dailyRules": [
+    { "id": "DG-R1", "rule": "Vary sentence structures across the batch; each structural function must sound independently authored." },
+    { "id": "DG-R2", "rule": "Keep conjunction saturated, square internally frictional, opposition frictional through another person, soft mildly easier, and house fallback topic-led." },
+    { "id": "DG-R3", "rule": "Land the close on the single concrete instruction and keep it literal to the behavior already shown." },
+    { "id": "DG-R4", "rule": "Describe a brief available condition or friction at hours scale; results remain open." },
+    { "id": "DG-R5", "rule": "Address the reader with respect and treat their ordinary baseline as capable." },
+    { "id": "DG-R6", "rule": "When a room appears, use it only as a concrete collective subject in motion." },
+    { "id": "DG-R7", "rule": "Give the body a key-specific opener construction that does not repeat another batch opener." },
+    { "id": "DG-R8", "rule": "A room may act collectively; audience comparisons must stay attached to a named ordinary behavior." },
+    { "id": "DG-R9", "rule": "A single instruction may naturally enumerate one person, one action, or one change without being split into extra instructions." },
+    { "id": "DG-R10", "rule": "House fallback copy begins from its life topic, names the pull plainly, and ends at speak-up scale." },
+    { "id": "DG-R11", "rule": "The headline makes an unhedged claim; may never appears in a headline." },
+    { "id": "DG-R12", "rule": "The body opens inside the scene, never with a time anchor; today may appear later, sparingly." },
+    { "id": "DG-R13", "rule": "Use may at most once in the body, and only for an inner state." },
+    { "id": "DG-R14", "rule": "Keep the scene concrete but non-biographical; use generic current props rather than invented personal history." },
+    { "id": "DG-R15", "rule": "The final action repairs the exact moment; no somatic or generic-wellness micro-instruction." },
+    { "id": "DG-R16", "rule": "The ‘It takes less X to A than to B’ construction is owner-reserved; do not use it." },
+    { "id": "DG-R17", "rule": "Use at most one quoted-dialogue line in the body, and only if it earns its place." }
+  ],
+  "batch1LintGuidance": [
+    { "id": "B1-L1", "rule": "Use at most one time-anchor phrase anywhere in the body, and never use it as the opener." },
+    { "id": "B1-L2", "rule": "Use may only for a reader's inner state, never as padding on observable actions or every clause." },
+    { "id": "B1-L3", "rule": "Match the headline grammar of the approved exemplar for this group, not only its topic or tone." },
+    { "id": "B1-L4", "rule": "Conjunction now has approved owner exemplars; use their saturation grammar without copying their scene or phrasing." }
+  ],
+  "ownerPromptCore": "Draft from the lived moment, not from the astrological concept. Name what the reader is doing, what happens next, and what the behavior costs them. Replace abstract summaries with ordinary decisions, errands, messages, work, plans, money, time, and relationships. Use one concrete scene instead of listing every possible manifestation. Limit hedging. Let the headline make a clear claim in language someone would actually say. Reassurance must answer the specific fear created by the scene, not offer generic emotional permission. End with one action that directly repairs or clarifies the moment described. Vary the sentence rhythm, including at least one short, blunt sentence. Before finalizing, reject any line that could fit almost any transit or sounds like therapy, corporate training, or generic productivity advice.",
+  "ownerGuidance": [
+    { "id": "OWNER-STEP-1", "rule": "Find the lived moment first: the action, what immediately precedes it, the realization afterward, and its cost." },
+    { "id": "OWNER-STEP-2", "rule": "Write a headline someone would actually say: a contradiction, consequence, blunt truth, or moment already in motion." },
+    { "id": "OWNER-STEP-3", "rule": "Use one concrete scene rather than category stacks; keep it portable without listing every manifestation." },
+    { "id": "OWNER-STEP-4", "rule": "Name what becomes harder because of the pattern." },
+    { "id": "OWNER-STEP-5", "rule": "Take a position; one may or can is usually enough." },
+    { "id": "OWNER-STEP-6", "rule": "Place reassurance after recognition, and make it answer the exact shame or fear created by the scene." },
+    { "id": "OWNER-STEP-7", "rule": "Make the instruction repair the exact moment, never general wellness." },
+    { "id": "OWNER-STEP-8", "rule": "Vary sentence length and include one short, blunt turn." },
+    { "id": "OWNER-STEP-9", "rule": "Apply specificity, morning-read, and screenshot tests before returning the final JSON." }
+  ],
+  "ownerFinalTests": [
+    { "id": "OWNER-TEST-specificity", "rule": "The body must fail a mechanical swap against the other six batch keys; generic copy is a failure." },
+    { "id": "OWNER-TEST-morning-read", "rule": "Every sentence must parse half-awake; mechanical guard caps body sentences at 28 words and flags semicolons or parentheses." },
+    { "id": "OWNER-TEST-screenshot", "rule": "At least one body sentence must be a candidate line worth saving because it names a recognizable experience clearly." }
+  ],
+  "harvestSources": {
+    "searchOrder": ["daily-family-authored-clauses", "owner-corpus", "aphorism-library-themes"],
+    "reviewedClausesPath": "tldr-astro-phrasebank/phrasebank/reviewed-clauses.json",
+    "ownerCorpusRoot": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform",
+    "aphorismLibraryPath": "tldr-astro-phrasebank/copy/MARIE-VOICE-CALIBRATION.md",
+    "aphorismLibrarySection": "A5"
+  },
+  "referencePassages": [
+    { "sourceId": "daily-glance-square-moon-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-square-register-evidence", "text": "The plan is not more important than the energy you actually have." },
+    { "sourceId": "daily-glance-square-moon-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-square-register-evidence", "text": "You may get halfway through the errands and realize the rest of the list is too much. Forcing the original schedule can turn a normal day into a fight with yourself. Changing the plan does not make you unreliable. Remove one nonessential task before you start resenting everything that remains." },
+    { "sourceId": "daily-glance-conjunction-mars-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "The feeling hits, and you are already doing something about it." },
+    { "sourceId": "daily-glance-conjunction-mars-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide whether you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish." },
+    { "sourceId": "daily-glance-opposition-sun-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-opposition-register-evidence", "text": "You can say yes in public and regret it in private." },
+    { "sourceId": "daily-glance-opposition-sun-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-opposition-register-evidence", "text": "Someone asks for more, and the answer that keeps the peace comes out before you check what it will cost you. An hour later, you are resentful about a commitment you never wanted. Correct the answer. Tell them you agreed too quickly and need to revise what you can take on." },
+    { "sourceId": "daily-glance-conjunction-lilith-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "The want you keep explaining away is still there." },
+    { "sourceId": "daily-glance-conjunction-lilith-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is…\" and stop before the justification." },
+    { "sourceId": "daily-glance-soft-pluto-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-soft-register-evidence", "text": "It takes less effort to acknowledge a feeling than to keep minimizing it." },
+    { "sourceId": "daily-glance-soft-pluto-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-soft-register-evidence", "text": "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel." },
+    { "sourceId": "daily-glance-conjunction-north-node-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "You keep reopening the next step you said you were not ready for." },
+    { "sourceId": "daily-glance-conjunction-north-node-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. It does mean the choice deserves more than another closed tab. Write one sentence naming why you want it." },
+    { "sourceId": "daily-glance-house-11-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-pilots-v1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-house-register-evidence", "text": "Keeping the peace is not worth inheriting everyone else's priorities." },
+    { "sourceId": "daily-glance-house-11-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-pilots-v1-approval-2026-08-04.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-house-register-evidence", "text": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time." }
+  ],
+  "keys": [
+    {
+      "key": "conjunction/chiron",
+      "register": "saturation",
+      "emotionalCore": "needing care and an old hurt becoming impossible to separate",
+      "groupGuidance": "Care and the old ache arrive together; the need fills the moment without becoming a cure narrative.",
+      "exemplarPolicy": "the approved conjunction/lilith pair supplies saturation-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-conjunction-lilith-owner-headline", "daily-glance-conjunction-lilith-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-conjunction-lilith-owner-headline", "daily-glance-conjunction-lilith-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:venus-in-cancer:p023#not-weak-for-needing-care", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md", "selector": "exact-sentence", "text": "You’re not weak for needing care." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "No owner-authored Moon-Chiron five-beat entry exists; generated sky-exact drafts are excluded from positive evidence." },
+      "expectedFactCount": 3,
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "care-old-hurt", "pattern": "\\b(?:care|comfort|help|support|need|hurt|ache|sore|sensitive|wound|asking)\\w*\\b" },
+        { "id": "saturation", "pattern": "\\b(?:arrive together|at once|takes? up|hard to ignore|immediate|fills?|all at once|same moment|right away|quickly)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-chiron.json", "selector": "modern.blend", "text": "Care and the old ache arrive together; accepting comfort is the day's actual work." },
+        { "sourcePath": "packages/astro-knowledge/data/planetary/chiron.json", "selector": "overview", "match": "includes", "text": "the tender place where an early, unearned hurt shaped a survival response" },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.conjunction", "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day." }
+      ]
+    },
+    {
+      "key": "square/chiron",
+      "register": "self-friction",
+      "emotionalCore": "needing support while the old defense tries to swallow the request",
+      "groupGuidance": "The wound and need create friction inside the reader's own response and build toward one honest adjustment.",
+      "exemplarPolicy": "the approved square/moon pair supplies square-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-square-moon-owner-headline", "daily-glance-square-moon-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-square-moon-owner-headline", "daily-glance-square-moon-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:venus-in-cancer:p032#simple-to-be-loved", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md", "selector": "exact-sentence", "text": "You don’t have to be simple to be loved." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "No owner-authored Moon-Chiron five-beat entry exists; generated sky-exact drafts are excluded from positive evidence." },
+      "expectedFactCount": 3,
+      "specificitySwapScope": ["conjunction/chiron", "opposition/chiron"],
+      "specificityAdvisory": true,
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "care-old-hurt", "pattern": "\\b(?:care|comfort|help|support|need|hurt|ache|sore|sensitive|wound|asking)\\w*\\b" },
+        { "id": "self-friction", "pattern": "\\b(?:swallow|hold back|quiet|withdraw|downplay|too much|resent|test|hide|yourself|push(?:ing)? it down)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-chiron.json", "selector": "modern.hard", "text": "The need swallowed mid-sentence; the unspoken test set for loved ones, which backfires." },
+        { "sourcePath": "packages/astro-knowledge/data/planetary/chiron.json", "selector": "overview", "match": "includes", "text": "the tender place where an early, unearned hurt shaped a survival response" },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.square", "text": "friction that builds toward an adjustment; malefic-leaning; the friction is internal to the person's own day (self-friction register per DG-R2)." }
+      ]
+    },
+    {
+      "key": "opposition/chiron",
+      "register": "other-friction",
+      "emotionalCore": "someone touching an old sensitivity before the present moment is fully heard",
+      "groupGuidance": "Another person brings the old sore place into view; separate what happened now from the defense it woke up.",
+      "exemplarPolicy": "the approved opposition/sun pair supplies opposition-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-opposition-sun-owner-headline", "daily-glance-opposition-sun-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-opposition-sun-owner-headline", "daily-glance-opposition-sun-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:venus-in-cancer:p023#do-it-all-alone", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md", "selector": "exact-sentence", "text": "You don’t have to do it all alone." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "No owner-authored Moon-Chiron five-beat entry exists; generated sky-exact drafts are excluded from positive evidence." },
+      "expectedFactCount": 3,
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "care-old-hurt", "pattern": "\\b(?:care|comfort|help|support|need|hurt|ache|sore|sensitive|wound|asking)\\w*\\b" },
+        { "id": "other-person", "pattern": "\\b(?:someone|another person|they|them|friend|partner|coworker|loved one)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-chiron.json", "selector": "modern.hard", "text": "The need swallowed mid-sentence; the unspoken test set for loved ones, which backfires." },
+        { "sourcePath": "packages/astro-knowledge/data/planetary/chiron.json", "selector": "overview", "match": "includes", "text": "the tender place where an early, unearned hurt shaped a survival response" },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.opposition", "text": "the other side comes fully into view; awareness- and relationship-oriented; friction arrives through another person (other-friction register)." }
+      ]
+    },
+    {
+      "key": "conjunction/moon",
+      "register": "saturation",
+      "emotionalCore": "feelings and needs arriving quickly enough to shape the next response",
+      "groupGuidance": "The reader's feelings take up more space and become difficult to ignore; keep the stakes to an ordinary choice or reaction.",
+      "exemplarPolicy": "the approved conjunction/lilith pair supplies saturation-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-conjunction-lilith-owner-headline", "daily-glance-conjunction-lilith-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-conjunction-lilith-owner-headline", "daily-glance-conjunction-lilith-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "daily-family-authored-clause", "sourceId": "home.moon-forecast.sign.cancer#slots.boundaryOrCarePrompt:s1", "sourcePath": "tldr-astro-phrasebank/phrasebank/reviewed-clauses.json", "recordId": "home.moon-forecast.sign.cancer", "selector": "slots.boundaryOrCarePrompt", "text": "You don't have to host everyone's feelings today." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "No owner-approved transiting-Moon-to-natal-Moon five-beat scene exists." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "feelings-needs", "pattern": "\\b(?:feeling|feelings|mood|need|needs|reaction|answer|decide|respond)\\w*\\b" },
+        { "id": "saturation", "pattern": "\\b(?:arrive|at once|takes? up|hard to ignore|immediate|fills?|all at once|same moment|right away|quickly)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-moon.json", "selector": "modern.blend", "text": "Your feelings arrive quickly and take up more space than usual. It is hard to ignore what you need, and your mood may shape how you answer, decide, or react for the next few hours." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.conjunction", "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day." }
+      ]
+    },
+    {
+      "key": "conjunction/uranus",
+      "register": "saturation",
+      "emotionalCore": "restlessness and the need for change filling an ordinary routine",
+      "groupGuidance": "The need for room, change, or surprise saturates the mood; disruption is observed, never prescribed.",
+      "exemplarPolicy": "the approved conjunction/north-node pair supplies saturation-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-conjunction-north-node-owner-headline", "daily-glance-conjunction-north-node-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-conjunction-north-node-owner-headline", "daily-glance-conjunction-north-node-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:chiron-retrograde-in-aries#allowed-to-change-direction", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md", "selector": "exact-sentence", "text": "You’re allowed to change your direction as you learn more about who you are." },
+      "sceneEvidence": { "mode": "owner-five-beat", "sourceId": "sky.moon.conjunction.uranus#humanMoment+developmentDetail", "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json", "recordId": "sky.moon.conjunction.uranus", "humanMoment": "A comfortable routine is disrupted overnight by a price hike, property shift, or forced technology upgrade.", "developmentDetail": "Rent rises, a long-standing service closes, or a household system is replaced before anyone can prepare." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "change-routine", "pattern": "\\b(?:change|routine|plan|different|unexpected|surprise|restless|freedom|room|disrupt)\\w*\\b" },
+        { "id": "saturation", "pattern": "\\b(?:arrive|at once|takes? up|hard to ignore|immediate|fills?|all at once|same moment|right away|quickly|everywhere)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-uranus.json", "selector": "modern.blend", "text": "Emotional life meets disruption and the need for freedom. Feelings turn unpredictable, restless, and resistant to routine." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.conjunction", "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day." }
+      ]
+    },
+    {
+      "key": "soft/lilith",
+      "register": "mild-ease",
+      "emotionalCore": "having enough room to name a want without turning it into a crisis",
+      "groupGuidance": "A brief supportive opening makes honest desire easier to name; it does not promise permission, action, or results.",
+      "exemplarPolicy": "the approved soft/pluto pair supplies soft-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-soft-pluto-owner-headline", "daily-glance-soft-pluto-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-soft-pluto-owner-headline", "daily-glance-soft-pluto-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-reference:leo-new-moon-2025:you-are-allowed-to-want-more", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-new-moon-2025.md", "selector": "exact-sentence", "text": "You’re allowed to want more." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "Checked-in Moon-Lilith five-beat drafts remain unapproved AI candidates and are excluded from positive evidence." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "desire-appetite", "pattern": "\\b(?:want|desire|appetite|comfort|pleasure|preference|honest)\\w*\\b" },
+        { "id": "mild-ease", "pattern": "\\b(?:easier|ease|room|available|less effort|less resistance|without turning|can name|can say)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-lilith.json", "selector": "modern.harmonious", "text": "The appetite gets named without wrecking the nest; comfort expands to include it." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.soft", "match": "includes", "text": "a supportive opening is offered, not automatic" }
+      ]
+    },
+    {
+      "key": "house/1",
+      "register": "topic-led",
+      "emotionalCore": "how it feels to show up as yourself before anyone responds",
+      "groupGuidance": "Begin from self, body, identity, or first impressions; name one ordinary pull and end with a speak-up-scale action.",
+      "exemplarPolicy": "the approved house/11 pair supplies house-fallback register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-house-11-owner-headline", "daily-glance-house-11-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-house-11-owner-headline", "daily-glance-house-11-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:leo-season-2025#individuality-strength", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/adjacent-formats/leo-season-2025.md", "selector": "exact-sentence", "text": "Your individuality is a strength, but meaningful connection requires learning how to share it." },
+      "sceneEvidence": { "mode": "house-context", "sourceId": "phrasebank-house-context:cc/house/1", "sourcePath": "tldr-astro-phrasebank/phrasebank/houses.json", "recordId": "cc/house/1", "scene": "how you show up, your body, the first move you make" },
+      "specificity": { "minimumGroups": 1, "cueGroups": [
+        { "id": "self-presentation", "pattern": "\\b(?:body|show up|carry yourself|first impression|appearance|identity|introduce yourself|enter|take up space|wear|yourself)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/primitives/houses.json", "selector": "entries.0.plainTranslation", "text": "Self, body, identity, first impressions" }
+      ]
+    }
+  ]
+}

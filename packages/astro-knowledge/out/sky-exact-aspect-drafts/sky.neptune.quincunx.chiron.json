@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:10:35.691Z",
+  "id": "sky.neptune.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "neptune-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.quincunx.chiron",
+    "planetA": "neptune",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Neptune quincunx Chiron",
+    "humanMoment": "At a documentary screening, one subject’s account of addiction prompts audience members to line up afterward with their own stories, requests, and phone numbers.",
+    "developmentDetail": "The crew extends the event, collecting private disclosures and offering rides or cash while the subject waits to discuss the follow-up care promised in the film.",
+    "planetaryDynamic": "Neptune blurs the boundary between one person’s pain and the audience’s distress, while Chiron keeps the subject’s specific wound defined enough to be tended.",
+    "aspectMechanic": "The quincunx forces the crew to keep redrawing the line between extending the screening for new disclosures and securing the subject’s promised follow-up care.",
+    "conditionalConsequence": "If every story becomes part of the same emergency, the event can consume its resources while the subject’s agreed care remains unfinished.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete and collective, the development adds observable stakes, and the planetary and quincunx mechanics clearly distinguish diffuse shared distress from the specific wound requiring care.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:10:35.690Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "bfb20ac2079985211fcc25dff137f8e63025a839149fdfd07a8c6206b58890b9",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "1ca8a25c301c5ebc0ec8a0cc4b29f5aabda61a52d35a779aa03f5a4d2d6457c2",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "7f838530ac344f30e777f6a0cb86fe1fe965ed01a50149857b38d11b7ab56231"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

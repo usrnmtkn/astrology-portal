@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:56:12.209Z",
+  "id": "sky.sun.quincunx.moon",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "sun-moon",
+    "path": "data/pairs/sun-moon.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "The way a person presents themselves does not fully match what they feel and need.",
+    "examples": [
+      "A manager appears confident while privately needing reassurance.",
+      "Someone accepts a leadership role but repeatedly changes plans to protect personal time.",
+      "A person stays composed in public and later withdraws to handle unmet emotional needs."
+    ],
+    "pairBehavior": "The Sun contributes identity, self-direction, and public presence, while the Moon contributes feelings, bodily needs, and private responses.",
+    "aspectBehavior": "The quincunx makes identity and emotional needs address different concerns, so repeated adjustments are necessary and neither can fully accommodate the other.",
+    "consequence": "Decisions and behavior often require revision as public aims and private needs continue to interfere with each other."
+  },
+  "draft": {
+    "id": "sky.sun.quincunx.moon",
+    "planetA": "sun",
+    "planetB": "moon",
+    "aspect": "quincunx",
+    "title": "Sun quincunx Moon",
+    "body": "We say yes to taking the lead, then keep changing the plan to protect the time we need alone. With Sun quincunx Moon, the choice everyone sees and the response we have in private do not quite agree. We sound sure on the call, check twice for reassurance afterward, and stay composed through dinner before going quiet at home. The role may fit the person we mean to be, but not the body, mood, or daily life that has to carry it.\n\nOur direction keeps meeting needs it did not account for, so decisions rarely stay finished. We revise the schedule, soften the promise, step forward again, then pull back when the emotional cost becomes clear. Public aims cannot simply overrule private needs, and private needs do not erase the life we are trying to build. Making room for both may mean changing the arrangement again.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 2,
+    "verdict": "borderline",
+    "weakestField": "ending",
+    "weakest": "Making room for both may mean changing the arrangement again.",
+    "why": "The piece is specific, lived-first, and accurate, but the final sentence ends conditionally and softens the clean turn the entry needs.",
+    "failedChecks": [
+      "clean nonconditional ending"
+    ],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:56:06.326Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "05ed5cf0c8efae402fd799477abb4c5e05cad461536793525d3c3c65059fc11d",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "acaeb282fc01708985aed442a5b6265b35bc4f90d70a66b84870b71f85655a3f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "clean nonconditional ending"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "ad6ac1da0560ab799c8d55f2ee761d99b687d8ca08eb7655c9c0ab06d37f903e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.quincunx.moon",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 2,
+    "verdict": "borderline",
+    "rationale": "One sentence combines abstract phrasing with the unnatural idea that decisions can “stay finished,” though the rest is immediately clear.",
+    "failedChecks": [
+      "unnatural-usage"
+    ],
+    "evidence": [
+      {
+        "checkId": "unnatural-usage",
+        "sentence": "Our direction keeps meeting needs it did not account for, so decisions rarely stay finished."
+      }
+    ],
+    "why": "One sentence combines abstract phrasing with the unnatural idea that decisions can “stay finished,” though the rest is immediately clear.",
+    "weakest": "Our direction keeps meeting needs it did not account for, so decisions rarely stay finished.",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:56:12.209Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "88cd3970fa1b6bcf43591e72426b97f6fbe3d1c8670f7675bcc09eb00ebc48f9",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "acaeb282fc01708985aed442a5b6265b35bc4f90d70a66b84870b71f85655a3f",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        2
+      ],
+      "verdicts": [
+        {
+          "score": 2,
+          "verdict": "borderline",
+          "failedChecks": [
+            "unnatural-usage"
+          ],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "6c891a94eba85c50f595e007b8594ee1db7af1703f250f9e137df63e1388cc33"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "revise",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "editorial-repair"
+}

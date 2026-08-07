@@ -1,0 +1,42 @@
+{
+  "responseId": "resp_07b810e9e79aaf95006a71ce09146c81a19be54db91f0c17a3",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v10:cycle-word+placement-name+standalone-opening-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:mars-direct-in-cancer:p057:window-3-2",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:venus-retrograde-2025:p073:window-4-2"
+  ],
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 6419,
+    "input_tokens_details": {
+      "cache_write_tokens": 6416,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4299,
+    "output_tokens_details": {
+      "reasoning_tokens": 3874
+    },
+    "total_tokens": 10718
+  },
+  "article": {
+    "opening": "Mars in Capricorn makes the stubborn unfinished goal feel workable again. When Mars enters Capricorn on {{entryDate}}, we choose a concrete result, put the necessary steps in order, and start with the part that has been avoided. The first hard section gets done, then the next, and visible progress replaces the argument about whether we feel ready. Mars takes about 2 years to move through all twelve signs and usually spends roughly 6 to 7 weeks in each sign, so this stretch favors concentrated effort rather than endless preparation.",
+    "tension": "Once the plan starts working, we can make it harsher. A necessary step is finished and immediately followed by an extra improvement, then another; the stopping point moves, breaks are treated as weakness, and an interruption gets a sharper answer than it deserves. Because taking over is faster than waiting, we may also grab work that was not ours to carry. The goal moves forward, but the cost is overwork, impatience, and a standard that keeps changing after the original need has been met.",
+    "development": "Capricorn gives Mars enough patience to correct the course without abandoning the goal. We can return to the first definition of finished, separate what the result needs from what ambition keeps adding, and leave optional polish for later. When an obstacle appears, the practical move is to change the sequence or reduce the load, not push harder by reflex. When another part moves slowly, taking it over may be efficient in the moment, but it leaves us carrying more and resenting the delay. Keeping attention on the part we can actually finish preserves the energy required to complete it.",
+    "close": "Before {{exitDate}}, we can leave one nonessential improvement undone and finish the version that answers the goal we set at the start.",
+    "try_this": [
+      "We can do the hardest necessary step before touching any optional improvement this week.",
+      "We can end one work session at the time we planned, even if momentum says to add another task.",
+      "We can stop doing one task we took over only because waiting felt inefficient."
+    ]
+  }
+}

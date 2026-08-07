@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:03:23.294Z",
+  "id": "sky.sun.conjunction.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "sun-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.sun.conjunction.nodes",
+    "planetA": "sun",
+    "planetB": "nodes",
+    "aspect": "conjunction",
+    "title": "Sun conjunct North Node",
+    "humanMoment": "A celebrated performer receives the loudest applause for an old signature act while a less familiar role begins drawing serious interest.",
+    "developmentDetail": "The proven material still fills seats, but the smaller new project carries more creative weight despite offering less status and certainty.",
+    "planetaryDynamic": "The Sun seeks recognition through an established identity, while the North Node points toward the next role and away from what has already been mastered.",
+    "aspectMechanic": "Under the conjunction, recognition and direction merge in the same opportunity, making the strength of the old identity difficult to separate from its limits.",
+    "conditionalConsequence": "If the familiar act keeps receiving the larger reward, the emerging role may remain marginal even as it becomes the more significant next step.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the conjunction, recognition and direction merge in the same opportunity, making the strength of the old identity difficult to separate from its limits.",
+    "why": "The mechanic is slightly more abstract than the scene-based fields, but it clearly applies conjunction behavior and preserves the central conflict between recognition and direction.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:03:23.293Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "703ebbd08c12cffbd7c67614af5576127e387df4cf5f57f31cb8deeade7d2ad5",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "a5691fd320ecbf74b0b5af2423eeb026000fca95cc68d4b918b66fb24d4467bf",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "79b3a0313af1fc685e80917350d70cfab94dffa6170d0f6873fd2f8ad53ff9a7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.sun.conjunction.nodes",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

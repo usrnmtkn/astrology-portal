@@ -1,0 +1,614 @@
+{
+ "version": "pair-sources-chiron-lilith-nodes-v1",
+ "note": "Merges into dist/sky.json pairs on approval; sun-chiron already exists in the store and is intentionally omitted here (compare and reconcile). Node ids use planetB 'nodes' for the axis.",
+ "pairs": [
+  {
+   "id": "moon-chiron",
+   "planetA": "moon",
+   "planetB": "chiron",
+   "traditional": "Comfort meets the wound about needing it; being tended touches the place that learned not to ask.",
+   "modern": {
+    "blend": "Care and the old ache arrive together; accepting comfort is the day's actual work.",
+    "harmonious": "Tending flows without triggering the old defense; help gets accepted mid-struggle.",
+    "hard": "The need swallowed mid-sentence; the unspoken test set for loved ones, which backfires.",
+    "business": "Support offered at work lands on old sensitivities; accept help without treating it as a verdict."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "mercury-chiron",
+   "planetA": "mercury",
+   "planetB": "chiron",
+   "traditional": "Saying it meets the wound about being heard; words near the tender place go quiet or come out with spikes.",
+   "modern": {
+    "blend": "The rehearsed sentence and the healing conversation share one window; the imperfect version said aloud does the work.",
+    "harmonious": "The hard conversation opens easier than expected and repairs more than planned.",
+    "hard": "The sharp reply to anyone who sounds condescending; cheerfulness worn as a mask over the real answer.",
+    "business": "Feedback conversations carry old charge; write the message, then send the plain version."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "venus-chiron",
+   "planetA": "venus",
+   "planetB": "chiron",
+   "traditional": "Wanting to be wanted meets the standing expectation of rejection; affection arrives and the old injury answers the door.",
+   "modern": {
+    "blend": "Sweetness and suspicion arrive together; the love may be real even where the doubt is loud.",
+    "harmonious": "Closeness deepens where the guard drops; received affection actually lands.",
+    "hard": "Pulling back just as it gets good; the small tests set for loved ones to prove they care, which push away what they check for.",
+    "business": "Recognition at work stings oddly; take the compliment at face value once."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "mars-chiron",
+   "planetA": "mars",
+   "planetB": "chiron",
+   "traditional": "Acting meets the wound about taking up space; assertion presses on the old lesson that force was not allowed.",
+   "modern": {
+    "blend": "Courage and the flinch fire together; the direct ask costs less than years of not asking.",
+    "harmonious": "Boundaries hold without apology; advocacy extends to yourself, not only others.",
+    "hard": "The anger that turns into apology; the boundary stated and immediately softened.",
+    "business": "The raise or scope conversation triggers old smallness; make the ask in writing first."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "jupiter-chiron",
+   "planetA": "jupiter",
+   "planetB": "chiron",
+   "traditional": "Growth amplifies both the wound and the medicine; hard to tell which is loudest.",
+   "modern": {
+    "blend": "Expansion surfaces old grief and larger access in the same season.",
+    "harmonious": "Generosity toward pain that used to be hidden; the teacher whose lesson lands where it heals.",
+    "hard": "The growth spurt that reopens the sore spot; more feeling mistaken for more damage.",
+    "business": "Stretch roles press on old inadequacy; the stretch is usually the treatment."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "saturn-chiron",
+   "planetA": "saturn",
+   "planetB": "chiron",
+   "traditional": "The standard meets the place where the standard was once used as a weapon.",
+   "modern": {
+    "blend": "Discipline and the old verdict arrive together; the structure helps once it stops being a sentence.",
+    "harmonious": "Requirements steady the healing; the deadline organizes instead of accuses.",
+    "hard": "The deadline that summons an old inadequacy; the authority figure who sounds like the original one.",
+    "business": "Review cycles feel personal; the requirement may be reasonable even when the feeling is old."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "uranus-chiron",
+   "planetA": "uranus",
+   "planetB": "chiron",
+   "traditional": "Sudden change rips the familiar bandage off the crooked-healed place.",
+   "modern": {
+    "blend": "Disruption and release land at once; what got uncovered was waiting for exactly this.",
+    "harmonious": "The shock that frees something; healing arrives sideways and unscheduled.",
+    "hard": "The disruption exposes what the routine was protecting before anyone is ready.",
+    "business": "Reorgs and pivots hit old injuries; separate the change from the wound it touched."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "neptune-chiron",
+   "planetA": "neptune",
+   "planetB": "chiron",
+   "traditional": "Dissolving edges meets a wound that needs its edges to be tended; personal pain blurs into everyone's.",
+   "modern": {
+    "blend": "Compassion floods; name whose hurt it is before deciding what to do with it.",
+    "harmonious": "Art, rest, and mercy actually treat the old injury instead of medicating it.",
+    "hard": "The sadness with no clear owner; carrying strangers; the escape that medicates instead of treats.",
+    "business": "Burnout by absorption; check which of the team's weight is actually yours."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "pluto-chiron",
+   "planetA": "pluto",
+   "planetB": "chiron",
+   "traditional": "Excavation reaches the oldest buried injury; the deep work finds the original story.",
+   "modern": {
+    "blend": "The root gets found; intensity proportional to how long it waited, not present danger.",
+    "harmonious": "Power returns as the oldest fear gets faced; the therapy that finally lands.",
+    "hard": "The crisis that retells the first story; depth work mistaken for present emergency.",
+    "business": "High-stakes pressure reopens the earliest doubt; treat it as archive, not forecast."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "sun-lilith",
+   "planetA": "sun",
+   "planetB": "lilith",
+   "traditional": "Daylight approval meets the want ruled unacceptable; the public self and the banished self ask for the same stage.",
+   "modern": {
+    "blend": "The persona feels like a costume; the exiled want is information about the life, not a threat to it.",
+    "harmonious": "The real self airs safely; someone says the unsayable and the room exhales.",
+    "hard": "The outrageous urge in a respectable meeting; the identity that suddenly cannot breathe.",
+    "business": "Reputation versus authenticity; decide which rooms get the whole personality."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "moon-lilith",
+   "planetA": "moon",
+   "planetB": "lilith",
+   "traditional": "Safety meets the hunger safety was built to silence; comfort and the banished appetite cannot both run the evening.",
+   "modern": {
+    "blend": "Restlessness inside a pleasant routine; ask what the want underneath would order if it could speak.",
+    "harmonious": "The appetite gets named without wrecking the nest; comfort expands to include it.",
+    "hard": "The mood with no name that is a want with no permission; comfort eating standing in for desire.",
+    "business": "Cozy stability chafes; schedule one outlet before the restlessness picks one."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "mercury-lilith",
+   "planetA": "mercury",
+   "planetB": "lilith",
+   "traditional": "Pleasant conversation meets the sentence nobody is supposed to say.",
+   "modern": {
+    "blend": "The unsayable reaches the tongue's edge; said plainly once, it costs less than the silence has.",
+    "harmonious": "The room exhales because someone finally names it; honesty clears years of static.",
+    "hard": "The meeting where everyone knows and nobody says; the message drafted and deleted.",
+    "business": "The elephant in the retro; name it once, factually, and watch the agenda unstick."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "venus-lilith",
+   "planetA": "venus",
+   "planetB": "lilith",
+   "traditional": "Being liked meets wanting without permission; likable love versus undomesticated desire.",
+   "modern": {
+    "blend": "The approved list and the actual attraction diverge; desire that gets named can negotiate.",
+    "harmonious": "The real want enters the relationship and improves it; the no arrives clean.",
+    "hard": "The relationship polished for the audience while the real want goes hungry; the exile that erupts.",
+    "business": "The polite yes that breeds resentment; state the actual term before signing."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "mars-lilith",
+   "planetA": "mars",
+   "planetB": "lilith",
+   "traditional": "Sanctioned drive meets banished rage and the wildness that refuses taming.",
+   "modern": {
+    "blend": "Heat with an old address; the size of the reaction measures the age of the exile, not the offense.",
+    "harmonious": "The wild energy gets a legitimate outlet and steadies everything around it.",
+    "hard": "The small irritation carrying decade-old heat; the battle of wills about who gets domesticated.",
+    "business": "Authority friction with history behind it; fight the current issue only."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "jupiter-lilith",
+   "planetA": "jupiter",
+   "planetB": "lilith",
+   "traditional": "Amplification reaches the want kept in the cellar; the banished appetite grows louder.",
+   "modern": {
+    "blend": "The craving gets loud and discussable; bigger appetite is a subject, not a mandate.",
+    "harmonious": "The honest conversation about wanting more finally happens and goes well.",
+    "hard": "The transgression that suddenly seems reasonable; the amplifier blurs the ethics too.",
+    "business": "Scope appetite grows; sober-check the line that seemed obvious last month."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "saturn-lilith",
+   "planetA": "saturn",
+   "planetB": "lilith",
+   "traditional": "The rules meet what the rules exiled; structure and refusal at one table.",
+   "modern": {
+    "blend": "The obligation reads as a cage and the refusal finally gets representation.",
+    "harmonious": "Renegotiation works because the exiled term is finally on the table.",
+    "hard": "Compliance snaps into defiance; some rules deserve the refusal, some refusals are old anger.",
+    "business": "Policy versus person; sort which rules deserve the pushback before acting."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "uranus-lilith",
+   "planetA": "uranus",
+   "planetB": "lilith",
+   "traditional": "Liberation meets the exile that has been waiting for exactly that; the exit can get theatrical.",
+   "modern": {
+    "blend": "The sudden freedom claimed after years of silence; right move, check the timing.",
+    "harmonious": "The unconventional choice lands and relieves everyone, including the doubters.",
+    "hard": "The dramatic quit; the boundary announced as a detonation.",
+    "business": "The resignation letter drafted at midnight deserves a daylight read."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "neptune-lilith",
+   "planetA": "neptune",
+   "planetB": "lilith",
+   "traditional": "Fog dresses the banished want as fantasy, longing, or somebody else's story.",
+   "modern": {
+    "blend": "The daydream with a repeating theme; follow it to its plain content.",
+    "harmonious": "Imagination gives the exiled want a safe first form: the art, the plan, the admission.",
+    "hard": "The parasocial pull; the escape that is an unmet want wearing a disguise.",
+    "business": "Vague dissatisfaction at work; the want underneath is usually ordinary and speakable."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "pluto-lilith",
+   "planetA": "pluto",
+   "planetB": "lilith",
+   "traditional": "Two kinds of buried power negotiate who surfaces; the exile and the underworld recognize each other.",
+   "modern": {
+    "blend": "The reclamation that changes what a person will accept forever after.",
+    "harmonious": "Old banishments integrate; the power comes back without the vendetta.",
+    "hard": "The obsession that is an exile demanding daylight; the struggle that repeats an ancient banishment.",
+    "business": "Power plays with history in them; integration wins, revenge repeats."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "sun-nodes",
+   "planetA": "sun",
+   "planetB": "nodes",
+   "traditional": "Current identity meets the chapter's assignment; who you are versus who the era asks you to become.",
+   "modern": {
+    "blend": "Recognition arrives for the old act while the new direction feels unqualified; both readings are information.",
+    "harmonious": "The small step toward the hungry side lands larger than it looks.",
+    "hard": "The role that fits the resume and not the direction; applause for what is behind you.",
+    "business": "Career identity checkpoint; take the meeting that fits the direction, not the history."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "moon-nodes",
+   "planetA": "moon",
+   "planetB": "nodes",
+   "traditional": "Comfort points backward while the assignment points forward; the south node is where the familiar lives.",
+   "modern": {
+    "blend": "Homesickness for a finished chapter; uncomfortable and wrong are different readings.",
+    "harmonious": "The new territory starts to feel like home faster than expected.",
+    "hard": "The old habit that returns under stress; the retreat that costs the chapter time.",
+    "business": "The comfortable workflow versus the needed one; discomfort is not a defect report."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "mercury-nodes",
+   "planetA": "mercury",
+   "planetB": "nodes",
+   "traditional": "The day's conversations meet the chapter's; some subjects belong to the past, one belongs to the path.",
+   "modern": {
+    "blend": "The question that keeps arriving from different mouths; the chapter is speaking.",
+    "harmonious": "The introduction or idea that belongs to the future arrives through an ordinary channel.",
+    "hard": "The catch-up call that only rehearses the past; the pitch aimed at a closed door.",
+    "business": "Take the conversation that advances the direction; archive the ones that only recap."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "venus-nodes",
+   "planetA": "venus",
+   "planetB": "nodes",
+   "traditional": "Attraction sorts arrivals from the past and the path; chemistry is not a verdict, direction is also information.",
+   "modern": {
+    "blend": "The ex resurfacing on schedule; the new person who fits the direction instead of the history.",
+    "harmonious": "The bond that feeds the assignment; pleasure that funds the path.",
+    "hard": "The pull backward wearing its best outfit; the pleasure that postpones the chapter.",
+    "business": "Partnerships and deals: choose the one pointed where you are going."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "mars-nodes",
+   "planetA": "mars",
+   "planetB": "nodes",
+   "traditional": "Effort meets direction; energy spent refighting the old chapter versus building the new one.",
+   "modern": {
+    "blend": "The drive finally has an address; effort on the hunger side builds on itself.",
+    "harmonious": "The project that advances the assignment moves fast and recruits help.",
+    "hard": "The battle that is the previous era's unfinished business; winning the fight, losing the chapter.",
+    "business": "Prioritize the workstream pointed forward; the old fight is a cost center."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "jupiter-nodes",
+   "planetA": "jupiter",
+   "planetB": "nodes",
+   "traditional": "Growth in every direction meets growth along the path; size is not the measure, direction is.",
+   "modern": {
+    "blend": "Opportunities split into big-and-backward versus small-and-forward.",
+    "harmonious": "Luck concentrates once the direction is chosen; the right door opens easily.",
+    "hard": "The yes that is large and points the wrong way; expansion as avoidance.",
+    "business": "Evaluate offers by direction first, size second."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "saturn-nodes",
+   "planetA": "saturn",
+   "planetB": "nodes",
+   "traditional": "The deadline meets the assignment; the chapter's work stops being optional.",
+   "modern": {
+    "blend": "The postponed decision acquires a date; pressure as the assignment maturing.",
+    "harmonious": "Structure built for the future holds; the release finally completes because maintaining it got too expensive.",
+    "hard": "The obligation to the old chapter that now costs double; the delay that compounds.",
+    "business": "Commit the plan to writing with dates; the era stops accepting verbal intentions."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "uranus-nodes",
+   "planetA": "uranus",
+   "planetB": "nodes",
+   "traditional": "The sudden detour meets the set direction; the interruption may be the path correcting for lost time.",
+   "modern": {
+    "blend": "The disruption that ejects someone from the outgrown chapter all at once.",
+    "harmonious": "The shortcut nobody planned lands the future early.",
+    "hard": "The reroute that reads as catastrophe for a week and as rescue for a decade.",
+    "business": "The unexpected change mostly deletes what was already over; rebuild forward."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "neptune-nodes",
+   "planetA": "neptune",
+   "planetB": "nodes",
+   "traditional": "The dream on the path meets the fog over it; the vision guides or the haze stalls.",
+   "modern": {
+    "blend": "The calling felt but not yet specified; one concrete step makes the fog answer.",
+    "harmonious": "Meaning and direction cooperate; the work starts feeling like a calling honestly.",
+    "hard": "Nostalgia romanticizing the release side; drifting labeled as trusting.",
+    "business": "Vision decks need one shipped deliverable attached, or they stay weather."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "pluto-nodes",
+   "planetA": "pluto",
+   "planetB": "nodes",
+   "traditional": "The assignment requires power that has to be dug up first; the collective question gets personal.",
+   "modern": {
+    "blend": "Authority reclaimed because the path demands it; endings that transform rather than close.",
+    "harmonious": "Deep resources surface exactly when the direction needs them.",
+    "hard": "The grip on what already ended; power struggles standing in for the real release.",
+    "business": "Succession, ownership, and control questions arrive on schedule; answer them deliberately."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "chiron-lilith",
+   "planetA": "chiron",
+   "planetB": "lilith",
+   "traditional": "The wound and the exile are one story told twice: what was hurt and what was banished are often the same want.",
+   "modern": {
+    "blend": "The healing stalls until the forbidden want is admitted; then both move.",
+    "harmonious": "The reclaimed desire turns out to be medicine; shame dissolves when the stories are told together.",
+    "hard": "Treating the want and the wound as separate cases keeps both open.",
+    "business": "The blocked ambition and the old injury share a root; address them as one case."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "chiron-nodes",
+   "planetA": "chiron",
+   "planetB": "nodes",
+   "traditional": "The medicine is on the path; the chapter's assignment runs through the wound work.",
+   "modern": {
+    "blend": "The old injury surfaces exactly when the new chapter needs the skill it blocks.",
+    "harmonious": "The helper role arrives; the release doubles as treatment.",
+    "hard": "Healing treated as a prerequisite that postpones the path it belongs to.",
+    "business": "The stretch assignment touches the sore spot on purpose; that is the curriculum."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  },
+  {
+   "id": "lilith-nodes",
+   "planetA": "lilith",
+   "planetB": "nodes",
+   "traditional": "The reclaimed want belongs to the future; the exile returns and the chapter decides its place.",
+   "modern": {
+    "blend": "The banished appetite turns out to be the hunger the north node meant.",
+    "harmonious": "The want stops being a secret and starts being a plan.",
+    "hard": "Reclamation aimed at revenge serves the past; the respectable habit revealed as release-side material.",
+    "business": "The unconventional direction you keep suppressing may be the actual strategy."
+   },
+   "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+   "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+   },
+   "status": "DRAFT",
+   "editorialSource": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md"
+  }
+ ]
+}

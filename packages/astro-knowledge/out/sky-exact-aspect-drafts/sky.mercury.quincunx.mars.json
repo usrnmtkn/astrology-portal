@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:19:12.107Z",
+  "id": "sky.mercury.quincunx.mars",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-mars",
+    "path": "data/pairs/mercury-mars.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.quincunx.mars",
+    "planetA": "mercury",
+    "planetB": "mars",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Mars",
+    "humanMoment": "At a busy clinic reception desk, a scheduling error triggers rapid corrections and sharp replies.",
+    "developmentDetail": "Each new detail changes the proposed fix, while impatient interruptions force staff and patients to restart the exchange.",
+    "planetaryDynamic": "Mercury supplies the details and wording, while Mars brings urgency, heat, and the impulse to act.",
+    "aspectMechanic": "The quincunx keeps the schedule correction shifting as Mercury revises the information and Mars pushes for action before the exchange is settled.",
+    "conditionalConsequence": "If speed continues to outrun clarification, the wrong appointment may be changed and the dispute may intensify.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "Concrete, observable clinic scene with distinct Mercury and Mars functions, a clear quincunx pattern of repeated adjustment, and a conditional consequence that follows naturally.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:19:12.106Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "bc229f369616262d5894ba866c68f2a9c670ad772c80adbe79b82463db2b6352",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "ec3d6a7ecd769ec1f73a6a29dd84d14b3da0c3e61e90fe280fb3b2ddf5d1a7f4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "3a4150e0434b3fca5225d98ca6ee3346e16db6f7be6ee795e0726353a3589fcd"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.mars",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

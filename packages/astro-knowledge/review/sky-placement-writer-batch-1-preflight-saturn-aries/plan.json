@@ -1,0 +1,85 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "saturn",
+  "sign": "aries",
+  "outDir": "/Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-batch-1-preflight-saturn-aries",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v10:cycle-word+placement-name+standalone-opening-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e123:window-2-2",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:gemini-new-moon-2025:p004:window-2-3"
+  ],
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/saturn-aries.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With Saturn in Aries, Saturn is in fall, so discipline and initiative start out at odds; the work is developing initiative without recklessness and authority without constant combat. Patience becomes the tool that makes courage sustainable."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/saturn.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Saturn describes time, structure, boundaries, maturity, responsibility, limits, discipline, and the lessons that ask someone to become more capable and realistic. It shows where life may move slowly, but also where lasting strength can be built. Saturn takes about twenty-nine years to move through all twelve signs and spends roughly two and a half years in each sign. Its sign describes the style of the lesson; its house shows where commitment, pressure, and mastery develop over time. When Saturn resides in Aries, your life lessons center around self-assertion and individuality. Discipline and patience become tools you need to master to overcome impulsive actions. You learn to cultivate the courage to take the lead and stand up for yourself without being overly confrontational."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "cycle-line",
+        "rule": "In the meaning beat, use one or two sentences teaching the planet's rhythm. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not write this slot for the Moon.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 29 years",
+          "typicalSignStay": "roughly 2.5 to 3 years per sign",
+          "variabilityNote": null
+        }
+      }
+    ],
+    "inactive": [
+      {
+        "id": "prior-sign-handoff",
+        "reason": "required backing fact was not supplied"
+      },
+      {
+        "id": "concurrent-events",
+        "reason": "eventsDuringTransit was empty"
+      },
+      {
+        "id": "cycle-location",
+        "reason": "previous residency entry and exit dates were not both supplied"
+      }
+    ]
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet saturn --sign aries --out /Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-batch-1-preflight-saturn-aries"
+}

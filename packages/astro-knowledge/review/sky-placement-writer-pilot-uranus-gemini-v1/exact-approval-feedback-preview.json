@@ -1,0 +1,30 @@
+{
+  "mode": "dry-run",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "sky-placement-pilot-uranus-gemini-owner-line-edit-v1-exact-approval",
+    "surface": "sky-placement",
+    "planet": "uranus",
+    "sign": "gemini",
+    "articleBeat": "full_article",
+    "before": "The owner-revised Uranus in Gemini candidate held for final voice review.",
+    "after": "Opening: From {{entryDate}}, a community class that once handed out a page of notes starts sharing the same lesson as a voice note, a short video, and a searchable transcript. A missed session no longer means losing the thread; someone asks a question in the daily message chain, another explanation appears, and the class starts teaching itself in several forms. This change has time to reshape habits rather than pass as a brief novelty. Uranus in Gemini takes about 84 years to move through all twelve signs and stays about 7 years in each sign.\n\nTension: The pressure builds when every new format promises to be quicker or clearer than the one already in use. The class moves from one thread to another, someone answers a difficult question with three more links, and an explanation gets abandoned when a fresher angle appears. The same willingness to experiment that made the lesson easier to access now scatters attention across unfinished versions. When a correction finally comes, the earlier wording is still being repeated, and the conversation changes subject before the mistake is settled.\n\nDevelopment: We do not need to defend the old handout or follow every new tool. We can keep the voice note that made the lesson easier to grasp, finish the explanation underneath it, and mark which claim changed after it was checked. If the message chain jumps to a new question, someone can return to the sentence left unanswered instead of adding another link no one has read. The chain gets quieter, and the corrected explanation is the one the class uses next time.\n\nClose: Before {{exitDate}}, we can let one distracting format go.\n\nTry this:\n- We can finish one saved article or lesson before opening another tab on the same subject.\n- We can return to one message thread and answer the question we skipped when the subject changed.\n- We can compare one summary with its original source and correct one claim we repeated too quickly.",
+    "whatChanged": "Preserved the final lint-clean Uranus in Gemini wording and recorded exact fallback-article approval without serving or wiring authority.",
+    "ownerReason": "The scene, tension, and single-action close read clean without further changes.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/sky-placement-writer-pilot-uranus-gemini-v1/owner-line-edited-candidate.json"
+    ],
+    "provenance": "exact_wording_approval: With the three owner-directed line edits applied, I explicitly approve the exact wording of sky-placement-pilot-mercury-pisces-owner-line-edit-v1, sky-placement-pilot-mars-libra-owner-line-edit-v1, and sky-placement-pilot-uranus-gemini-owner-line-edit-v1 as owner-approved fallback articles for their placement pages. Serving and wiring remain separate.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "owner_approved_fallback_article_for_placement_page_serving_and_wiring_separate"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

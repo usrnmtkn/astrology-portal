@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "source": "packages/astro-knowledge/review/sky-placement-writer-batch-1-owner-approved-fallbacks-2026-08-04.json",
+  "archivalStatus": "superseded",
+  "supersededReason": "The associated approval was recorded in error and was revoked by the owner. Lint results are preserved as historical mechanical results only; they do not imply approval.",
+  "policyChanges": [
+    "group chat is a warning when the scene is literally a group conversation",
+    "group chat may occur at most once across a batch",
+    "settle is exempt when it literally means resolving an issue or confusion",
+    "Saturn in Aries uses the exact owner-directed replacement for the unsent try-this item"
+  ],
+  "results": [
+    {"id": "sky-placement-batch-1-mercury-gemini-superseded-v1", "score": 2, "fails": 0, "warns": 1, "warning": "group chat", "approved": false},
+    {"id": "sky-placement-batch-1-mercury-virgo-superseded-v1", "score": 3, "fails": 0, "warns": 0, "approved": false},
+    {"id": "sky-placement-batch-1-mars-aries-superseded-v1", "score": 3, "fails": 0, "warns": 0, "approved": false},
+    {"id": "sky-placement-batch-1-mars-scorpio-superseded-v1", "score": 3, "fails": 0, "warns": 0, "approved": false},
+    {"id": "sky-placement-batch-1-mars-capricorn-superseded-v1", "score": 3, "fails": 0, "warns": 0, "approved": false},
+    {"id": "sky-placement-batch-1-saturn-aries-superseded-v1", "score": 3, "fails": 0, "warns": 0, "approved": false},
+    {"id": "sky-placement-batch-1-jupiter-leo-superseded-v1", "score": 3, "fails": 0, "warns": 0, "approved": false}
+  ],
+  "batchRepetition": {
+    "passed": true,
+    "term": "group chat",
+    "maxOccurrences": 1,
+    "occurrenceCount": 1,
+    "articleId": "sky-placement-batch-1-mercury-gemini-superseded-v1"
+  },
+  "servingAuthorized": false,
+  "wiringAuthorized": false,
+  "generationEvidenceAuthorized": false,
+  "promotionAuthorized": false,
+  "canonical": false
+}

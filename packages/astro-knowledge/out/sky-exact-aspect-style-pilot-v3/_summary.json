@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:35:54.052Z",
+  "targetCount": 2,
+  "recordCount": 12,
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judge": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "byBatch": {
+    "chiron": 3,
+    "classical-quincunx": 3,
+    "lilith": 3,
+    "node-axis": 3
+  },
+  "byGate": {
+    "owner-review": 12
+  },
+  "entries": [
+    {
+      "id": "sky.chiron.sextile.nodes",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.jupiter.quincunx.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.jupiter.quincunx.neptune",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.lilith.sextile.nodes",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.mars.opposition.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.mercury.quincunx.saturn",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.neptune.opposition.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 3
+    },
+    {
+      "id": "sky.pluto.square.chiron",
+      "batch": "chiron",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    },
+    {
+      "id": "sky.saturn.trine.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 3
+    },
+    {
+      "id": "sky.venus.quincunx.mars",
+      "batch": "classical-quincunx",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.square.lilith",
+      "batch": "lilith",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 2
+    },
+    {
+      "id": "sky.venus.square.nodes",
+      "batch": "node-axis",
+      "reviewGate": "owner-review",
+      "judgeScore": 3,
+      "attempts": 1
+    }
+  ]
+}

@@ -328,31 +328,36 @@ function contrastiveEntries() {
   const records = readJson(file).records;
   const entries = [];
   for (const record of records) {
-    entries.push(baseEntry({
-      sourceId: `contrastive:${record.id}:before`,
-      text: record.before,
-      sourcePath: relative(file),
-      author: "AI-assisted or superseded copy",
-      origin: "owner-correction-before",
-      surface: record.surface,
-      planet: record.planet || "",
-      sign: record.sign || "",
-      articleBeat: record.articleBeat,
-      structuralFunction: `${record.articleBeat} before owner correction`,
-      authorityClass: "owner_rejected",
-      ownerAuthored: false,
-      ownerApproved: false,
-      reviewStatus: "replaced",
-      editorialStatus: "owner_rejected",
-      canonical: false,
-      useAsPositiveVoiceEvidence: false,
-      useAsNegativeEvidence: true,
-      failureTags: record.failureTags,
-      provenance: record.provenance
-    }));
+    if (record.beforeIsRejected !== false) {
+      entries.push(baseEntry({
+        sourceId: `contrastive:${record.id}:before`,
+        text: record.before,
+        sourcePath: relative(file),
+        author: "AI-assisted or superseded copy",
+        origin: "owner-correction-before",
+        surface: record.surface,
+        planet: record.planet || "",
+        sign: record.sign || "",
+        articleBeat: record.articleBeat,
+        structuralFunction: `${record.articleBeat} before owner correction`,
+        authorityClass: "owner_rejected",
+        ownerAuthored: false,
+        ownerApproved: false,
+        reviewStatus: "replaced",
+        editorialStatus: "owner_rejected",
+        canonical: false,
+        useAsPositiveVoiceEvidence: false,
+        useAsNegativeEvidence: true,
+        failureTags: record.failureTags,
+        provenance: record.provenance
+      }));
+    }
     if (record.approvalLevel === "owner_rejected") continue;
     const exactCalibrationOnly = record.approvalLevel === "exact_owner_approved_calibration_only";
     const exactOwnerApproved = record.approvalLevel === "exact_owner_approved";
+    const exactApprovalScope = String(record.exactApprovalScope || "");
+    const exactApprovalAllowsWriterEvidence = exactOwnerApproved
+      && (!exactApprovalScope || /generation_evidence/u.test(exactApprovalScope));
     const authorityClass = exactCalibrationOnly || exactOwnerApproved
       ? "exact_owner_approved"
       : record.approvalLevel === "owner_revised_candidate"
@@ -375,8 +380,8 @@ function contrastiveEntries() {
       reviewStatus: exactCalibrationOnly ? "approved_calibration_only" : exactOwnerApproved ? "approved" : "needs_review",
       editorialStatus: authorityClass,
       canonical: false,
-      useAsPositiveVoiceEvidence: exactOwnerApproved,
-      useAsContextualEvidence: !exactOwnerApproved,
+      useAsPositiveVoiceEvidence: exactApprovalAllowsWriterEvidence,
+      useAsContextualEvidence: !exactOwnerApproved && !exactCalibrationOnly,
       useAsNegativeEvidence: false,
       failureTags: [],
       provenance: record.provenance

@@ -45,6 +45,7 @@ assertCanonicalSkyPoints([...SKY_ASPECT_POINT_ORDER]);
 
 const SE_CHIRON = 15;
 const SE_MEAN_BLACK_MOON_LILITH = 12;
+const SE_DERIVED_SOUTH_NODE = -1001;
 
 type SwissEphConstructor = typeof import("swisseph-wasm").default;
 type SwissEphInstance = InstanceType<SwissEphConstructor>;
@@ -61,8 +62,41 @@ type SkyCalculationOptions = {
 
 export type LunarCalendarEventType = "lunation" | "ingress" | "aspect" | "station";
 export type LunarCalendarEclipseType = "solar" | "lunar";
-export type RetrogradePhase = "pre-shadow" | "station-retrograde" | "retrograde-passage" | "cazimi" | "station-direct" | "post-shadow";
+export type RetrogradePhase = "pre-shadow" | "station-retrograde" | "retrograde-passage" | "cazimi" | "sun-opposition" | "station-direct" | "post-shadow";
 export type PlanetDirection = "direct" | "retrograde";
+export type IngressPassType = "initial" | "re-entry" | "final";
+
+export type SkyPlacementTransitAspectFact = {
+  id: string;
+  eventType: "aspect";
+  planet: string;
+  otherPlanet: string;
+  planets: [string, string];
+  aspect: "conjunction" | "sextile" | "square" | "trine" | "opposition";
+  occursAt: string;
+  dateKey: string;
+  rank: number;
+};
+
+export type SkyPlacementTransitFacts = {
+  planet: string;
+  sign: string;
+  timeZone: string;
+  referenceDate: string;
+  transitStart: string;
+  transitEnd: string;
+  priorSign: string;
+  priorSignEntryDate: string;
+  priorSignExitDate: string;
+  previousResidency: {
+    sign: string;
+    entryDate: string;
+    exitDate: string;
+  } | null;
+  rankedEventsDuringTransit: SkyPlacementTransitAspectFact[];
+  calculationSource: "Swiss Ephemeris";
+  zodiac: "tropical";
+};
 
 export type LunarCalendarEvent = {
   id: string;
@@ -81,6 +115,7 @@ export type LunarCalendarEvent = {
   fromSign?: string;
   toSign?: string;
   direction?: PlanetDirection;
+  passType?: IngressPassType;
   phase?: RetrogradePhase;
   longitude?: number;
   retrogradeStart?: string;
@@ -89,6 +124,7 @@ export type LunarCalendarEvent = {
   shadowEnd?: string;
   cazimi?: boolean;
   cazimiOrb?: number;
+  nearSun?: boolean;
   eclipseType?: LunarCalendarEclipseType;
 };
 
@@ -137,7 +173,8 @@ type LunarCalendarMonthOptions = {
 const calendarAspectDefinitions = SKY_ASPECT_DEFINITIONS
   .filter(({ type }) => type !== "quincunx")
   .map(({ type, exactAngle }) => [type, exactAngle] as const);
-const cazimiOrbDegrees = 1;
+const namedCazimiOrbDegrees = 17 / 60;
+const nearSunOrbDegrees = 1;
 
 let swissEphPromise: Promise<SwissEphInstance> | null = null;
 
@@ -190,9 +227,22 @@ function signForLongitude(longitude: number) {
   };
 }
 
-function southNodePositionFromNorthNode(northNode: CalculatedPlanet, ascendant: string): CalculatedPlanet {
+function southNodePositionFromNorthNode(
+  swe: SwissEphInstance,
+  northNode: CalculatedPlanet,
+  ascendant: string,
+  date: Date,
+  includeTransitWindows: boolean,
+  timeZone?: string
+): CalculatedPlanet {
   const longitude = normalizeDegrees((northNode.longitude ?? 0) + 180);
   const { sign, signGlyph, degree } = signForLongitude(longitude);
+  const transitWindow = includeTransitWindows
+    ? signTransitWindowFor(swe, "South Node", SE_DERIVED_SOUTH_NODE, date, sign)
+    : {};
+  const structuralTransitFacts = includeTransitWindows
+    ? skyPlacementStructuralTransitFacts(swe, "South Node", SE_DERIVED_SOUTH_NODE, sign, transitWindow)
+    : {};
 
   return {
     ...northNode,
@@ -203,7 +253,10 @@ function southNodePositionFromNorthNode(northNode: CalculatedPlanet, ascendant: 
     signGlyph,
     degree,
     house: wholeSignHouse(sign, ascendant),
-    theme: themeForPoint("South Node")
+    theme: themeForPoint("South Node"),
+    transitTimeZone: includeTransitWindows ? timeZone ?? "UTC" : undefined,
+    ...transitWindow,
+    ...structuralTransitFacts
   };
 }
 
@@ -266,7 +319,10 @@ function moonPhaseName(sunLongitude: number, moonLongitude: number) {
   return "Waning Crescent";
 }
 
-function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Date) {
+function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Date): number {
+  if (planetId === SE_DERIVED_SOUTH_NODE) {
+    return normalizeDegrees(exactPlanetLongitude(swe, swe.SE_TRUE_NODE, date) + 180);
+  }
   const jd = swe.julday(
     date.getUTCFullYear(),
     date.getUTCMonth() + 1,
@@ -278,7 +334,10 @@ function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Dat
   return normalizeDegrees(swe.calc_ut(jd, planetId, flags)[0]);
 }
 
-function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
+function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date): number {
+  if (planetId === SE_DERIVED_SOUTH_NODE) {
+    return exactPlanetSpeed(swe, swe.SE_TRUE_NODE, date);
+  }
   const jd = swe.julday(
     date.getUTCFullYear(),
     date.getUTCMonth() + 1,
@@ -298,8 +357,19 @@ function planetSunOrb(swe: SwissEphInstance, planetId: number, date: Date) {
   return angularSeparation(exactPlanetLongitude(swe, planetId, date), exactPlanetLongitude(swe, swe.SE_SUN, date));
 }
 
-function isPlanetCazimi(swe: SwissEphInstance, planetId: number, date: Date) {
-  return planetSunOrb(swe, planetId, date) <= cazimiOrbDegrees;
+function solarProximityFactsFor(swe: SwissEphInstance, planetId: number, date: Date) {
+  const exactOrb = planetSunOrb(swe, planetId, date);
+  const cazimiOrb = Number(exactOrb.toFixed(3));
+
+  return {
+    cazimi: exactOrb <= namedCazimiOrbDegrees,
+    cazimiOrb,
+    nearSun: exactOrb <= nearSunOrbDegrees
+  };
+}
+
+function supportsSolarProximity(planet: string) {
+  return ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron"].includes(planet);
 }
 
 function transitSearchStepDays(planet: string) {
@@ -397,6 +467,364 @@ function signTransitWindowFor(
     transitStart: transitStart.toISOString(),
     transitEnd: transitEnd.toISOString(),
     transitRemainingLabel: compactDurationLabelFromDays(remainingDays)
+  };
+}
+
+const skyPlacementAspectAngles = [
+  ["conjunction", [0]],
+  ["sextile", [60, 300]],
+  ["square", [90, 270]],
+  ["trine", [120, 240]],
+  ["opposition", [180]]
+] as const;
+
+const skyPlacementConcurrentBodies = [
+  "Sun",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto"
+] as const;
+
+const skyPlacementSearchYears: Record<string, number> = {
+  Sun: 2,
+  Mercury: 2,
+  Venus: 2,
+  Mars: 4,
+  Jupiter: 14,
+  Saturn: 32,
+  Uranus: 90,
+  Neptune: 180,
+  Pluto: 300,
+  Chiron: 60,
+  "North Node": 20,
+  "South Node": 20
+};
+
+const skyPlacementPreviousCycleGapYears: Record<string, number> = {
+  Sun: 0.5,
+  Mercury: 0.35,
+  Venus: 0.5,
+  Mars: 1,
+  Jupiter: 6,
+  Saturn: 14,
+  Uranus: 40,
+  Neptune: 80,
+  Pluto: 100,
+  Chiron: 20,
+  "North Node": 8,
+  "South Node": 8
+};
+
+function skyPlacementPlanetName(value: string) {
+  const normalized = value.trim().toLowerCase().replace(/[_\s]+/gu, "-");
+  const names: Record<string, string> = {
+    sun: "Sun",
+    mercury: "Mercury",
+    venus: "Venus",
+    mars: "Mars",
+    jupiter: "Jupiter",
+    saturn: "Saturn",
+    uranus: "Uranus",
+    neptune: "Neptune",
+    pluto: "Pluto",
+    chiron: "Chiron",
+    "north-node": "North Node",
+    "south-node": "South Node"
+  };
+  return names[normalized] ?? null;
+}
+
+function skyPlacementPlanetId(swe: SwissEphInstance, planet: string) {
+  const ids: Record<string, number> = {
+    Sun: swe.SE_SUN,
+    Mercury: swe.SE_MERCURY,
+    Venus: swe.SE_VENUS,
+    Mars: swe.SE_MARS,
+    Jupiter: swe.SE_JUPITER,
+    Saturn: swe.SE_SATURN,
+    Uranus: swe.SE_URANUS,
+    Neptune: swe.SE_NEPTUNE,
+    Pluto: swe.SE_PLUTO,
+    Chiron: SE_CHIRON,
+    "North Node": swe.SE_TRUE_NODE,
+    "South Node": SE_DERIVED_SOUTH_NODE
+  };
+  return ids[planet] ?? null;
+}
+
+function signedAngle(value: number) {
+  const normalized = normalizeDegrees(value);
+  return normalized > 180 ? normalized - 360 : normalized;
+}
+
+function refineDirectedAspect(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetAngle: number,
+  lowerInput: Date,
+  upperInput: Date
+) {
+  let lower = lowerInput;
+  let upper = upperInput;
+  let lowerValue = signedAngle(
+    exactPlanetLongitude(swe, secondPlanetId, lower)
+    - exactPlanetLongitude(swe, firstPlanetId, lower)
+    - targetAngle
+  );
+
+  for (let index = 0; index < 54; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+    const midpointValue = signedAngle(
+      exactPlanetLongitude(swe, secondPlanetId, midpoint)
+      - exactPlanetLongitude(swe, firstPlanetId, midpoint)
+      - targetAngle
+    );
+    if (lowerValue === 0 || lowerValue * midpointValue <= 0) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+      lowerValue = midpointValue;
+    }
+  }
+
+  return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+function skyPlacementEventRank(otherPlanet: string, aspect: SkyPlacementTransitAspectFact["aspect"]) {
+  const bodyRank: Record<string, number> = {
+    Pluto: 0,
+    Neptune: 1,
+    Uranus: 2,
+    Saturn: 3,
+    Jupiter: 4,
+    Mars: 5,
+    Venus: 6,
+    Mercury: 7,
+    Sun: 8
+  };
+  const aspectRank: Record<SkyPlacementTransitAspectFact["aspect"], number> = {
+    conjunction: 0,
+    opposition: 1,
+    square: 2,
+    trine: 3,
+    sextile: 4
+  };
+  return (bodyRank[otherPlanet] ?? 9) * 10 + aspectRank[aspect];
+}
+
+function findRankedSkyPlacementAspects(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  start: Date,
+  end: Date,
+  timeZone: string
+) {
+  const spanDays = Math.max(1, (end.getTime() - start.getTime()) / 86_400_000);
+  const stepDays = spanDays > 3650 ? 4 : spanDays > 730 ? 2 : 0.5;
+  const events: SkyPlacementTransitAspectFact[] = [];
+
+  for (const otherPlanet of skyPlacementConcurrentBodies) {
+    if (otherPlanet === planet) continue;
+    const otherPlanetId = skyPlacementPlanetId(swe, otherPlanet);
+    if (otherPlanetId === null) continue;
+
+    for (const [aspect, targetAngles] of skyPlacementAspectAngles) {
+      for (const targetAngle of targetAngles) {
+        let previousDate = start;
+        let previousValue = signedAngle(
+          exactPlanetLongitude(swe, otherPlanetId, previousDate)
+          - exactPlanetLongitude(swe, planetId, previousDate)
+          - targetAngle
+        );
+        for (
+          let time = start.getTime() + stepDays * 86_400_000;
+          previousDate.getTime() < end.getTime();
+          time += stepDays * 86_400_000
+        ) {
+          const currentDate = new Date(Math.min(time, end.getTime()));
+          const currentValue = signedAngle(
+            exactPlanetLongitude(swe, otherPlanetId, currentDate)
+            - exactPlanetLongitude(swe, planetId, currentDate)
+            - targetAngle
+          );
+          const crossed = Math.abs(currentValue - previousValue) < 180
+            && (previousValue === 0 || previousValue * currentValue < 0);
+          if (crossed) {
+            const occursAt = refineDirectedAspect(
+              swe,
+              planetId,
+              otherPlanetId,
+              targetAngle,
+              previousDate,
+              currentDate
+            );
+            const duplicate = events.some((event) => (
+              event.otherPlanet === otherPlanet
+              && event.aspect === aspect
+              && Math.abs(new Date(event.occursAt).getTime() - occursAt.getTime()) < 3 * 60 * 60_000
+            ));
+            if (!duplicate) {
+              events.push({
+                id: `aspect-${planet}-${aspect}-${otherPlanet}-${occursAt.toISOString()}`.toLowerCase().replace(/\s+/gu, "-"),
+                eventType: "aspect",
+                planet,
+                otherPlanet,
+                planets: [planet, otherPlanet],
+                aspect,
+                occursAt: occursAt.toISOString(),
+                dateKey: localDateKey(occursAt, timeZone),
+                rank: skyPlacementEventRank(otherPlanet, aspect)
+              });
+            }
+          }
+          previousDate = currentDate;
+          previousValue = currentValue;
+          if (currentDate.getTime() === end.getTime()) break;
+        }
+      }
+    }
+  }
+
+  return events.sort((first, second) => (
+    first.rank - second.rank || first.occursAt.localeCompare(second.occursAt)
+  ));
+}
+
+function findDateInSign(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  referenceDate: Date
+) {
+  if (exactPlanetSign(swe, planetId, referenceDate) === sign) return referenceDate;
+  const stepDays = transitSearchStepDays(planet);
+  const maxIterations = Math.ceil(((skyPlacementSearchYears[planet] ?? 32) * 365.25) / stepDays);
+  let date = referenceDate;
+  for (let index = 0; index < maxIterations; index += 1) {
+    date = addDays(date, stepDays);
+    if (exactPlanetSign(swe, planetId, date) === sign) return date;
+  }
+  return null;
+}
+
+function findPreviousSameSignResidency(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  currentStart: Date
+) {
+  const minimumGapDays = (skyPlacementPreviousCycleGapYears[planet] ?? 1) * 365.25;
+  const stepDays = transitSearchStepDays(planet);
+  const maxIterations = Math.ceil(((skyPlacementSearchYears[planet] ?? 32) * 365.25) / stepDays);
+  let date = addDays(currentStart, -minimumGapDays);
+  for (let index = 0; index < maxIterations; index += 1) {
+    if (exactPlanetSign(swe, planetId, date) === sign) {
+      const window = signTransitWindowFor(swe, planet, planetId, date, sign);
+      if (window.transitStart && window.transitEnd && new Date(window.transitEnd) < currentStart) {
+        return { start: new Date(window.transitStart), end: new Date(window.transitEnd) };
+      }
+    }
+    date = addDays(date, -stepDays);
+  }
+  return null;
+}
+
+function skyPlacementStructuralTransitFacts(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  sign: string,
+  transitWindow: { transitStart?: string; transitEnd?: string }
+) {
+  if (planet === "Moon" || !transitWindow.transitStart || !transitWindow.transitEnd) return {};
+  const currentStart = new Date(transitWindow.transitStart);
+  const priorReference = new Date(currentStart.getTime() - 5 * 60_000);
+  const priorTransitSign = exactPlanetSign(swe, planetId, priorReference);
+  const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorTransitSign);
+  const previousResidency = findPreviousSameSignResidency(swe, planet, planetId, sign, currentStart);
+  return {
+    priorTransitSign,
+    priorTransitStart: priorWindow.transitStart ?? null,
+    priorTransitEnd: priorWindow.transitEnd ?? null,
+    previousSignResidencyStart: previousResidency?.start.toISOString() ?? null,
+    previousSignResidencyEnd: previousResidency?.end.toISOString() ?? null
+  };
+}
+
+/**
+ * Calculation-only facts for Sky Placement authoring packets. This does not
+ * select or serve prose. Dates remain UTC instants with an explicit local-zone
+ * date key; the authoring adapter joins meanings from astro-knowledge.
+ */
+export async function getSkyPlacementTransitFacts({
+  planet: planetInput,
+  sign,
+  referenceDate = new Date(),
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+}: {
+  planet: string;
+  sign: string;
+  referenceDate?: Date;
+  timeZone?: string;
+}): Promise<SkyPlacementTransitFacts> {
+  const swe = await getSwissEph();
+  const planet = skyPlacementPlanetName(planetInput);
+  const planetId = planet ? skyPlacementPlanetId(swe, planet) : null;
+  if (!planet || planetId === null) throw new Error(`Unsupported Sky Placement planet: ${planetInput}`);
+  if (!signs.some(([candidate]) => candidate.toLowerCase() === sign.toLowerCase())) {
+    throw new Error(`Unsupported zodiac sign: ${sign}`);
+  }
+  const signTitle = signs.find(([candidate]) => candidate.toLowerCase() === sign.toLowerCase())?.[0] ?? sign;
+  const dateInSign = findDateInSign(swe, planet, planetId, signTitle, referenceDate);
+  if (!dateInSign) throw new Error(`Could not locate ${planet} in ${signTitle} from ${referenceDate.toISOString()}`);
+  const currentWindow = signTransitWindowFor(swe, planet, planetId, dateInSign, signTitle);
+  if (!currentWindow.transitStart || !currentWindow.transitEnd) {
+    throw new Error(`Could not calculate the ${planet} in ${signTitle} transit window.`);
+  }
+  const currentStart = new Date(currentWindow.transitStart);
+  const currentEnd = new Date(currentWindow.transitEnd);
+  const priorReference = new Date(currentStart.getTime() - 5 * 60_000);
+  const priorSign = exactPlanetSign(swe, planetId, priorReference);
+  const priorWindow = signTransitWindowFor(swe, planet, planetId, priorReference, priorSign);
+  if (!priorWindow.transitStart || !priorWindow.transitEnd) {
+    throw new Error(`Could not calculate the prior-sign window for ${planet} in ${signTitle}.`);
+  }
+  const previousResidency = findPreviousSameSignResidency(swe, planet, planetId, signTitle, currentStart);
+
+  return {
+    planet,
+    sign: signTitle,
+    timeZone,
+    referenceDate: dateInSign.toISOString(),
+    transitStart: currentStart.toISOString(),
+    transitEnd: currentEnd.toISOString(),
+    priorSign,
+    priorSignEntryDate: priorWindow.transitStart,
+    priorSignExitDate: priorWindow.transitEnd,
+    previousResidency: previousResidency ? {
+      sign: signTitle,
+      entryDate: previousResidency.start.toISOString(),
+      exitDate: previousResidency.end.toISOString()
+    } : null,
+    rankedEventsDuringTransit: findRankedSkyPlacementAspects(
+      swe,
+      planet,
+      planetId,
+      currentStart,
+      currentEnd,
+      timeZone
+    ),
+    calculationSource: "Swiss Ephemeris",
+    zodiac: "tropical"
   };
 }
 
@@ -1189,10 +1617,12 @@ function findIngresses(
   calendarPlanets.forEach(([planet, glyph], index) => {
     const planetId = planetIds[index];
     const stepMs = planet === "Moon" ? 3 * 60 * 60_000 : 12 * 60 * 60_000;
-    let previousDate = start;
+    const historyStart = planet === "Sun" ? start : addDays(start, -550);
+    const ingressHistory: LunarCalendarEvent[] = [];
+    let previousDate = historyStart;
     let previousSign = exactPlanetSign(swe, planetId, previousDate);
 
-    for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+    for (let time = historyStart.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
       const currentDate = new Date(time);
       const currentSign = exactPlanetSign(swe, planetId, currentDate);
 
@@ -1202,8 +1632,17 @@ function findIngresses(
         const direction = exactPlanetSpeed(swe, planetId, occursAt) < 0 ? "retrograde" : "direct";
         const toSign = exactPlanetSign(swe, planetId, occursAt);
         const dateKey = localDateKey(occursAt, timeZone);
-
-        events.push({
+        const previousIngress = ingressHistory.at(-1);
+        const passType: IngressPassType = planet === "Sun"
+          ? "initial"
+          : direction === "retrograde"
+            ? "re-entry"
+            : previousIngress?.direction === "retrograde"
+              && previousIngress.fromSign === toSign
+              && previousIngress.toSign === previousSign
+              ? "final"
+              : "initial";
+        const event: LunarCalendarEvent = {
           id: `ingress-${planet.toLowerCase().replace(/\s+/g, "-")}-${occursAt.toISOString()}`,
           type: "ingress",
           title: `${planet} enters ${toSign}`,
@@ -1216,8 +1655,14 @@ function findIngresses(
           toSign,
           sign: toSign,
           longitude,
-          direction
-        });
+          direction,
+          passType
+        };
+
+        ingressHistory.push(event);
+        if (occursAt.getTime() >= start.getTime() && occursAt.getTime() <= end.getTime()) {
+          events.push(event);
+        }
       }
 
       previousDate = currentDate;
@@ -1267,9 +1712,10 @@ function findStations(
     swe.SE_SATURN,
     swe.SE_URANUS,
     swe.SE_NEPTUNE,
-    swe.SE_PLUTO
+    swe.SE_PLUTO,
+    SE_CHIRON
   ];
-  const stationPlanets = planets.slice(2, 10);
+  const stationPlanets = planets.slice(2, 11);
   const events: LunarCalendarEvent[] = [];
   const stepMs = 12 * 60 * 60_000;
 
@@ -1304,8 +1750,7 @@ function findStations(
             direction,
             phase: direction === "retrograde" ? "station-retrograde" : "station-direct",
             longitude,
-            cazimi: isPlanetCazimi(swe, planetId, occursAt),
-            cazimiOrb: Number(planetSunOrb(swe, planetId, occursAt).toFixed(3))
+            ...solarProximityFactsFor(swe, planetId, occursAt)
           });
         }
       }
@@ -1332,9 +1777,10 @@ function findActiveRetrogrades(
     swe.SE_SATURN,
     swe.SE_URANUS,
     swe.SE_NEPTUNE,
-    swe.SE_PLUTO
+    swe.SE_PLUTO,
+    SE_CHIRON
   ];
-  const retrogradePlanets = planets.slice(2, 10);
+  const retrogradePlanets = planets.slice(2, 11);
 
   const events: LunarCalendarEvent[] = [];
   const directStationCache = new Map<string, Date | null>();
@@ -1383,6 +1829,7 @@ function findActiveRetrogrades(
       const sign = exactPlanetSign(swe, planetId, sampleTime);
       const endsAt = nextDirectStation(planetId, planet, sampleTime);
       const retrogradeFacts = retrogradeCycleFactsFor(swe, planet, planetId, sampleTime, "retrograde");
+      const solarProximity = solarProximityFactsFor(swe, planetId, sampleTime);
       const longitude = Number(exactPlanetLongitude(swe, planetId, sampleTime).toFixed(4));
 
       events.push({
@@ -1403,8 +1850,9 @@ function findActiveRetrogrades(
         retrogradeEnd: retrogradeFacts.retrogradeEnd ?? endsAt?.toISOString(),
         shadowStart: retrogradeFacts.retrogradeShadowStart ?? undefined,
         shadowEnd: retrogradeFacts.retrogradeShadowEnd ?? undefined,
-        cazimi: retrogradeFacts.cazimi ?? false,
-        cazimiOrb: retrogradeFacts.cazimiOrb ?? Number(planetSunOrb(swe, planetId, sampleTime).toFixed(3))
+        cazimi: retrogradeFacts.cazimi ?? solarProximity.cazimi,
+        cazimiOrb: retrogradeFacts.cazimiOrb ?? solarProximity.cazimiOrb,
+        nearSun: retrogradeFacts.nearSun ?? solarProximity.nearSun
       });
     });
   }
@@ -1421,7 +1869,7 @@ function retrogradeSearchWindowDays(planet: string) {
     return 420;
   }
 
-  if (["Uranus", "Neptune", "Pluto"].includes(planet)) {
+  if (["Uranus", "Neptune", "Pluto", "Chiron"].includes(planet)) {
     return 600;
   }
 
@@ -1571,7 +2019,7 @@ function retrogradeCycleFactsFor(
   planetId: number,
   date: Date,
   motion: PlanetDirection
-): Pick<PlanetPosition, "retrogradeStart" | "retrogradeEnd" | "retrogradeWindowSource" | "retrogradePhase" | "retrogradeShadowStart" | "retrogradeShadowEnd" | "cazimi" | "cazimiOrb"> {
+): Pick<PlanetPosition, "retrogradeStart" | "retrogradeEnd" | "retrogradeWindowSource" | "retrogradePhase" | "retrogradeShadowStart" | "retrogradeShadowEnd" | "cazimi" | "cazimiOrb" | "nearSun"> {
   if (motion !== "retrograde") {
     return {};
   }
@@ -1608,8 +2056,6 @@ function retrogradeCycleFactsFor(
     nextStation,
     shadowSearchDays
   );
-  const cazimiOrb = Number(planetSunOrb(swe, planetId, date).toFixed(3));
-
   return {
     retrogradeStart: previousStation.toISOString(),
     retrogradeEnd: nextStation.toISOString(),
@@ -1617,9 +2063,158 @@ function retrogradeCycleFactsFor(
     retrogradePhase: "retrograde-passage",
     retrogradeShadowStart: shadowStart?.toISOString() ?? null,
     retrogradeShadowEnd: shadowEnd?.toISOString() ?? null,
-    cazimi: cazimiOrb <= cazimiOrbDegrees,
-    cazimiOrb
+    ...solarProximityFactsFor(swe, planetId, date)
   };
+}
+
+type RetrogradeCycleWindow = {
+  retrogradeStart: Date;
+  retrogradeEnd: Date;
+  shadowStart: Date;
+  shadowEnd: Date;
+};
+
+function planetStationTimesBetween(
+  swe: SwissEphInstance,
+  planetId: number,
+  start: Date,
+  end: Date
+) {
+  const stations: Array<{ occursAt: Date; direction: PlanetDirection }> = [];
+  const stepMs = 12 * 60 * 60_000;
+  let previousDate = start;
+  let previousSpeed = exactPlanetSpeed(swe, planetId, previousDate);
+
+  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+    const currentDate = new Date(time);
+    const currentSpeed = exactPlanetSpeed(swe, planetId, currentDate);
+
+    if (previousSpeed === 0 || previousSpeed * currentSpeed < 0) {
+      const occursAt = refineStationEvent(swe, planetId, previousDate, currentDate);
+      const direction: PlanetDirection = exactPlanetSpeed(swe, planetId, addDays(occursAt, 1)) < 0
+        ? "retrograde"
+        : "direct";
+      if (!stations.some((station) => Math.abs(station.occursAt.getTime() - occursAt.getTime()) < 24 * 60 * 60_000)) {
+        stations.push({ occursAt, direction });
+      }
+    }
+
+    previousDate = currentDate;
+    previousSpeed = currentSpeed;
+  }
+
+  return stations;
+}
+
+function retrogradeCycleWindowsForRange(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  start: Date,
+  end: Date
+): RetrogradeCycleWindow[] {
+  const searchDays = retrogradeSearchWindowDays(planet);
+  const stations = planetStationTimesBetween(
+    swe,
+    planetId,
+    addDays(start, -searchDays),
+    addDays(end, searchDays)
+  );
+  const shadowSearchDays = Math.max(90, Math.min(searchDays, 240));
+  const cycles: RetrogradeCycleWindow[] = [];
+
+  stations.forEach((station, index) => {
+    if (station.direction !== "retrograde") return;
+    const directStation = stations.slice(index + 1).find((candidate) => candidate.direction === "direct");
+    if (!directStation) return;
+
+    const retrogradeStartLongitude = exactPlanetLongitude(swe, planetId, station.occursAt);
+    const retrogradeEndLongitude = exactPlanetLongitude(swe, planetId, directStation.occursAt);
+    const shadowStart = findNearestPreviousLongitudeCrossing(
+      swe,
+      planetId,
+      retrogradeEndLongitude,
+      station.occursAt,
+      shadowSearchDays
+    );
+    const shadowEnd = findNearestNextLongitudeCrossing(
+      swe,
+      planetId,
+      retrogradeStartLongitude,
+      directStation.occursAt,
+      shadowSearchDays
+    );
+
+    if (!shadowStart || !shadowEnd) return;
+    if (!(shadowStart < station.occursAt && station.occursAt < directStation.occursAt && directStation.occursAt < shadowEnd)) return;
+    if (shadowEnd < start || shadowStart > end) return;
+    cycles.push({
+      retrogradeStart: station.occursAt,
+      retrogradeEnd: directStation.occursAt,
+      shadowStart,
+      shadowEnd
+    });
+  });
+
+  return cycles;
+}
+
+function findActiveShadowPhases(
+  swe: SwissEphInstance,
+  displayStart: Date,
+  displayEnd: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const shadowPlanetIds = [swe.SE_MERCURY, swe.SE_VENUS, swe.SE_MARS];
+  const shadowPlanets = planets.slice(2, 5);
+  const cyclesByPlanet = shadowPlanets.map(([planet], index) => (
+    retrogradeCycleWindowsForRange(swe, planet, shadowPlanetIds[index], displayStart, displayEnd)
+  ));
+  const events: LunarCalendarEvent[] = [];
+
+  for (let time = displayStart.getTime(); time < displayEnd.getTime(); time += 86_400_000) {
+    const dayStart = new Date(time);
+    const sampleTime = addDays(dayStart, 0.5);
+    const dateKey = localDateKey(dayStart, timeZone);
+
+    shadowPlanets.forEach(([planet, glyph], index) => {
+      const cycle = cyclesByPlanet[index].find((candidate) => (
+        sampleTime >= candidate.shadowStart && sampleTime <= candidate.shadowEnd
+      ));
+      if (!cycle) return;
+
+      const phase: RetrogradePhase | null = sampleTime < cycle.retrogradeStart
+        ? "pre-shadow"
+        : sampleTime >= cycle.retrogradeEnd
+          ? "post-shadow"
+          : null;
+      if (!phase) return;
+
+      const planetId = shadowPlanetIds[index];
+      const sign = exactPlanetSign(swe, planetId, sampleTime);
+      events.push({
+        id: `${phase}-${planet.toLowerCase()}-${dateKey}`,
+        type: "station",
+        title: `${planet} retrograde ${phase}`,
+        startsAt: dayStart.toISOString(),
+        endsAt: (phase === "pre-shadow" ? cycle.retrogradeStart : cycle.shadowEnd).toISOString(),
+        dateKey,
+        glyph,
+        primary: false,
+        planet,
+        sign,
+        direction: "direct",
+        phase,
+        longitude: Number(exactPlanetLongitude(swe, planetId, sampleTime).toFixed(4)),
+        retrogradeStart: cycle.retrogradeStart.toISOString(),
+        retrogradeEnd: cycle.retrogradeEnd.toISOString(),
+        shadowStart: cycle.shadowStart.toISOString(),
+        shadowEnd: cycle.shadowEnd.toISOString()
+      });
+    });
+  }
+
+  return events;
 }
 
 function activeRetrogradeWindowFor(
@@ -1699,6 +2294,453 @@ function refineAspectEvent(
   }
 
   return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+type SkyAspectRecord = SkySnapshot["aspects"][number];
+type SkyAspectTiming = NonNullable<SkyAspectRecord["timing"]>;
+
+function skyPointPlanetId(swe: SwissEphInstance, point: string) {
+  const ids: Record<string, number> = {
+    Sun: swe.SE_SUN,
+    Moon: swe.SE_MOON,
+    Mercury: swe.SE_MERCURY,
+    Venus: swe.SE_VENUS,
+    Mars: swe.SE_MARS,
+    Jupiter: swe.SE_JUPITER,
+    Saturn: swe.SE_SATURN,
+    Uranus: swe.SE_URANUS,
+    Neptune: swe.SE_NEPTUNE,
+    Pluto: swe.SE_PLUTO,
+    Chiron: SE_CHIRON,
+    Lilith: SE_MEAN_BLACK_MOON_LILITH,
+    "North Node": swe.SE_TRUE_NODE
+  };
+  return ids[point] ?? null;
+}
+
+function skyAspectPresentationOrb(aspect: SkyAspectRecord) {
+  const points = new Set([aspect.from, aspect.to]);
+  if (points.has("Moon")) return 6;
+  if (["Sun", "Mercury", "Venus", "Mars"].some((point) => points.has(point))) return 3;
+  return 1.5;
+}
+
+function directedAspectResidualsAt(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  date: Date,
+  targetDegrees: number
+) {
+  const directed = shortestAngleDistance(
+    exactPlanetLongitude(swe, firstPlanetId, date) - exactPlanetLongitude(swe, secondPlanetId, date)
+  );
+  const residuals = [shortestAngleDistance(directed - targetDegrees)];
+  if (targetDegrees !== 0 && targetDegrees !== 180) {
+    residuals.push(shortestAngleDistance(directed + targetDegrees));
+  }
+  return residuals;
+}
+
+function refineDirectedAspectPass(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetDegrees: number,
+  branch: number,
+  lowerInput: Date,
+  upperInput: Date
+) {
+  let lower = lowerInput;
+  let upper = upperInput;
+  let lowerDistance = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees)[branch];
+  for (let index = 0; index < 54; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+    const midpointDistance = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, midpoint, targetDegrees)[branch];
+    if (lowerDistance === 0 || lowerDistance * midpointDistance <= 0) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+      lowerDistance = midpointDistance;
+    }
+  }
+  return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+function scanExactAspectPasses(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetDegrees: number,
+  start: Date,
+  end: Date,
+  stepDays: number,
+  branchFilter: number | null = null
+) {
+  const passes: Date[] = [];
+  let previousDate = start;
+  let previous = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, previousDate, targetDegrees);
+  const stepMs = Math.max(60 * 60_000, stepDays * 86_400_000);
+
+  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+    const currentDate = new Date(time);
+    const current = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, currentDate, targetDegrees);
+    current.forEach((distance, branch) => {
+      if (branchFilter !== null && branch !== branchFilter) return;
+      const prior = previous[branch];
+      if (!Number.isFinite(prior) || Math.abs(distance - prior) > 180) return;
+      if (prior === 0 || distance === 0 || prior * distance < 0) {
+        const exact = refineDirectedAspectPass(
+          swe,
+          firstPlanetId,
+          secondPlanetId,
+          targetDegrees,
+          branch,
+          previousDate,
+          currentDate
+        );
+        if (!passes.some((pass) => Math.abs(pass.getTime() - exact.getTime()) < 6 * 60 * 60_000)) {
+          passes.push(exact);
+        }
+      }
+    });
+    previousDate = currentDate;
+    previous = current;
+  }
+  return passes.sort((first, second) => first.getTime() - second.getTime());
+}
+
+function findNamedCazimis(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const cazimiBodies = [
+    { planet: "Mercury", glyph: "☿", planetId: swe.SE_MERCURY },
+    { planet: "Venus", glyph: "♀", planetId: swe.SE_VENUS }
+  ];
+
+  return cazimiBodies.flatMap(({ planet, glyph, planetId }) => (
+    scanExactAspectPasses(swe, planetId, swe.SE_SUN, 0, start, end, 1 / 8).map((occursAt) => {
+      const direction: PlanetDirection = exactPlanetSpeed(swe, planetId, occursAt) < 0 ? "retrograde" : "direct";
+      const proximity = solarProximityFactsFor(swe, planetId, occursAt);
+      if (!proximity.cazimi) {
+        throw new Error(`${planet} conjunction at ${occursAt.toISOString()} fell outside the named cazimi threshold.`);
+      }
+
+      const sign = exactPlanetSign(swe, planetId, occursAt);
+      return {
+        id: `cazimi-${planet.toLowerCase()}-${direction}-${occursAt.toISOString()}`,
+        type: "station" as const,
+        title: `${planet} ${direction} cazimi`,
+        startsAt: occursAt.toISOString(),
+        dateKey: localDateKey(occursAt, timeZone),
+        glyph: `${glyph}☉`,
+        primary: true,
+        planet,
+        planets: [planet, "Sun"] as [string, string],
+        aspect: "conjunction",
+        sign,
+        sunSign: exactPlanetSign(swe, swe.SE_SUN, occursAt),
+        direction,
+        phase: "cazimi" as const,
+        longitude: Number(exactPlanetLongitude(swe, planetId, occursAt).toFixed(4)),
+        ...proximity
+      };
+    })
+  ));
+}
+
+function findMarsSunRetrogradeMidpoints(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  return scanExactAspectPasses(swe, swe.SE_MARS, swe.SE_SUN, 180, start, end, 1 / 8)
+    .filter((occursAt) => exactPlanetSpeed(swe, swe.SE_MARS, occursAt) < 0)
+    .map((occursAt) => ({
+      id: `retrograde-mars-sun-opposition-${occursAt.toISOString()}`,
+      type: "station" as const,
+      title: "Mars retrograde midpoint opposite Sun",
+      startsAt: occursAt.toISOString(),
+      dateKey: localDateKey(occursAt, timeZone),
+      glyph: "♂☉",
+      primary: true,
+      planet: "Mars",
+      planets: ["Mars", "Sun"] as [string, string],
+      aspect: "opposition",
+      sign: exactPlanetSign(swe, swe.SE_MARS, occursAt),
+      sunSign: exactPlanetSign(swe, swe.SE_SUN, occursAt),
+      direction: "retrograde" as const,
+      phase: "sun-opposition" as const,
+      longitude: Number(exactPlanetLongitude(swe, swe.SE_MARS, occursAt).toFixed(4))
+    }));
+}
+
+function directedAspectBranchAt(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetDegrees: number,
+  date: Date
+) {
+  const residuals = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees);
+  return residuals.reduce((best, residual, index) => (
+    Math.abs(residual) < Math.abs(residuals[best]) ? index : best
+  ), 0);
+}
+
+function aspectPresentationDistanceAt(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  date: Date,
+  targetDegrees: number
+) {
+  return Math.min(...directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees).map(Math.abs));
+}
+
+function refineAspectBoundary(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetDegrees: number,
+  presentationDegrees: number,
+  nearInput: Date,
+  farInput: Date
+) {
+  let near = nearInput;
+  let far = farInput;
+  for (let index = 0; index < 45; index += 1) {
+    const midpoint = new Date((near.getTime() + far.getTime()) / 2);
+    if (aspectPresentationDistanceAt(swe, firstPlanetId, secondPlanetId, midpoint, targetDegrees) <= presentationDegrees) {
+      near = midpoint;
+    } else {
+      far = midpoint;
+    }
+  }
+  return new Date((near.getTime() + far.getTime()) / 2);
+}
+
+function findAspectBoundary(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetDegrees: number,
+  presentationDegrees: number,
+  from: Date,
+  direction: -1 | 1,
+  stepDays: number,
+  maxDays: number
+) {
+  let near = from;
+  for (let elapsed = stepDays; elapsed <= maxDays; elapsed += stepDays) {
+    const far = addDays(from, direction * elapsed);
+    if (aspectPresentationDistanceAt(swe, firstPlanetId, secondPlanetId, far, targetDegrees) > presentationDegrees) {
+      return refineAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, near, far);
+    }
+    near = far;
+  }
+  return addDays(from, direction * maxDays);
+}
+
+function clusterAspectPasses(passes: Date[], maxGapDays: number) {
+  const clusters: Date[][] = [];
+  for (const pass of passes) {
+    const current = clusters.at(-1);
+    if (!current || pass.getTime() - current.at(-1)!.getTime() > maxGapDays * 86_400_000) {
+      clusters.push([pass]);
+    } else {
+      current.push(pass);
+    }
+  }
+  return clusters;
+}
+
+function skyAspectTimingFor(
+  swe: SwissEphInstance,
+  aspect: SkyAspectRecord,
+  positions: CalculatedPlanet[],
+  reference: Date,
+  timeZone?: string
+): SkyAspectTiming | null {
+  const firstPlanetId = skyPointPlanetId(swe, aspect.from);
+  const secondPlanetId = skyPointPlanetId(swe, aspect.to);
+  if (firstPlanetId === null || secondPlanetId === null || aspect.from === "South Node" || aspect.to === "South Node") return null;
+
+  const targetDegrees = Number(aspect.exactAngle);
+  if (!Number.isFinite(targetDegrees)) return null;
+  const firstPosition = positions.find((position) => position.planet === aspect.from);
+  const secondPosition = positions.find((position) => position.planet === aspect.to);
+  if (!firstPosition || !secondPosition) return null;
+
+  const relativeSpeed = Math.max(0.002, Math.abs(firstPosition.speed - secondPosition.speed));
+  const fastestSpeed = Math.max(0.02, Math.abs(firstPosition.speed), Math.abs(secondPosition.speed));
+  const presentationDegrees = skyAspectPresentationOrb(aspect);
+  const estimatedDurationDays = (presentationDegrees * 2) / relativeSpeed;
+  const boundaryStepDays = Math.max(0.125, Math.min(5, presentationDegrees / (fastestSpeed * 4)));
+  const maxBoundaryDays = Math.max(60, Math.min(5500, estimatedDurationDays * 4));
+  const currentWindowStart = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, reference, -1, boundaryStepDays, maxBoundaryDays);
+  const currentWindowEnd = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, reference, 1, boundaryStepDays, maxBoundaryDays);
+  const passScanStepDays = Math.max(1 / 24, Math.min(2, presentationDegrees / (fastestSpeed * 8)));
+  const currentWindowPasses = scanExactAspectPasses(
+    swe,
+    firstPlanetId,
+    secondPlanetId,
+    targetDegrees,
+    currentWindowStart,
+    currentWindowEnd,
+    passScanStepDays
+  );
+  if (!currentWindowPasses.length) return null;
+  const engagementBranch = directedAspectBranchAt(
+    swe,
+    firstPlanetId,
+    secondPlanetId,
+    targetDegrees,
+    currentWindowPasses[0]
+  );
+
+  const currentWindowDurationDays = Math.max(0, (currentWindowEnd.getTime() - currentWindowStart.getTime()) / 86_400_000);
+  const maxSeriesGapDays = Math.max(10, Math.min(550, currentWindowDurationDays * 4));
+  const seriesHorizonDays = Math.max(60, Math.min(5000, maxSeriesGapDays * 8));
+  const allPasses = scanExactAspectPasses(
+    swe,
+    firstPlanetId,
+    secondPlanetId,
+    targetDegrees,
+    addDays(reference, -seriesHorizonDays),
+    addDays(reference, seriesHorizonDays),
+    passScanStepDays,
+    engagementBranch
+  );
+  const seedPassTimes = new Set(currentWindowPasses.map((pass) => Math.round(pass.getTime() / 60_000)));
+  const linkedPasses = clusterAspectPasses(allPasses, maxSeriesGapDays).find((cluster) => (
+    cluster.some((pass) => seedPassTimes.has(Math.round(pass.getTime() / 60_000)))
+  )) ?? currentWindowPasses;
+  const hasRetrogradeRehit = linkedPasses.some((pass) => (
+    exactPlanetSpeed(swe, firstPlanetId, pass) < 0 || exactPlanetSpeed(swe, secondPlanetId, pass) < 0
+  ));
+  const engagementPasses = linkedPasses.length > 1 && !hasRetrogradeRehit
+    ? currentWindowPasses
+    : linkedPasses;
+  const engagementStart = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, engagementPasses[0], -1, boundaryStepDays, maxBoundaryDays);
+  const engagementEnd = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, engagementPasses.at(-1)!, 1, boundaryStepDays, maxBoundaryDays);
+
+  const durationDays = Math.max(0, (engagementEnd.getTime() - engagementStart.getTime()) / 86_400_000);
+  const group: SkyAspectTiming["group"] = durationDays <= 10 ? "this-week" : durationDays < 365 ? "this-season" : "undercurrent";
+  const closestPassIndex = engagementPasses.reduce((best, pass, index) => (
+    Math.abs(pass.getTime() - reference.getTime()) < Math.abs(engagementPasses[best].getTime() - reference.getTime()) ? index : best
+  ), 0);
+  const nextPassIndex = engagementPasses.findIndex((pass) => pass.getTime() > reference.getTime());
+  const exactDistanceHours = Math.abs(engagementPasses[closestPassIndex].getTime() - reference.getTime()) / 3_600_000;
+  const phase: SkyAspectTiming["phase"] = exactDistanceHours <= 12
+    ? "exact"
+    : nextPassIndex >= 0 ? "building" : "fading";
+  const passIndex = phase === "exact"
+    ? closestPassIndex
+    : nextPassIndex >= 0 ? nextPassIndex : engagementPasses.length - 1;
+
+  let cycleLocation: SkyAspectTiming["cycleLocation"] = null;
+  const hasNode = aspect.from.includes("Node") || aspect.to.includes("Node");
+  if (group === "undercurrent" && !hasNode) {
+    const cycleStepDays = Math.max(5, Math.min(30, estimatedDurationDays / 20));
+    const searchDays = 220 * 365.2425;
+    try {
+      const previous = scanExactAspectPasses(swe, firstPlanetId, secondPlanetId, targetDegrees, addDays(engagementStart, -searchDays), addDays(engagementStart, -1), cycleStepDays, engagementBranch).at(-1) ?? null;
+      const next = scanExactAspectPasses(swe, firstPlanetId, secondPlanetId, targetDegrees, addDays(engagementEnd, 1), addDays(engagementEnd, searchDays), cycleStepDays, engagementBranch)[0] ?? null;
+      const currentYear = engagementPasses[passIndex].getFullYear();
+      cycleLocation = {
+        previousYear: previous?.getFullYear() ?? null,
+        nextYear: next?.getFullYear() ?? null,
+        cycleYears: aspect.type === "conjunction" && previous ? Math.max(1, currentYear - previous.getFullYear()) : null,
+        ambiguous: false
+      };
+    } catch {
+      cycleLocation = {
+        previousYear: null,
+        nextYear: null,
+        cycleYears: null,
+        ambiguous: true
+      };
+    }
+  }
+
+  return {
+    group,
+    phase,
+    engagementStart: engagementStart.toISOString(),
+    engagementEnd: engagementEnd.toISOString(),
+    timeZone,
+    buildsAllWeek: group === "this-week" && phase === "building" && engagementPasses[passIndex].getTime() - reference.getTime() >= 5 * 86_400_000,
+    passIndex: passIndex + 1,
+    exactPasses: engagementPasses.map((pass) => ({
+      exactAt: pass.toISOString(),
+      firstMotion: exactPlanetSpeed(swe, firstPlanetId, pass) < 0 ? "retrograde" : "direct",
+      secondMotion: exactPlanetSpeed(swe, secondPlanetId, pass) < 0 ? "retrograde" : "direct"
+    })),
+    cycleLocation,
+    relation: null
+  };
+}
+
+function addSkyAspectRelations(aspects: SkyAspectRecord[]) {
+  const undercurrents = aspects.filter((aspect) => aspect.timing?.group === "undercurrent");
+  return aspects.map((aspect) => {
+    if (aspect.timing?.group !== "this-week") return aspect;
+    const engagementStart = new Date(aspect.timing.engagementStart).getTime();
+    const engagementEnd = new Date(aspect.timing.engagementEnd).getTime();
+    if (!Number.isFinite(engagementStart) || !Number.isFinite(engagementEnd)) return aspect;
+    const relation = undercurrents.find((undercurrent) => {
+      const pair = new Set([undercurrent.from, undercurrent.to]);
+      const sharesExactlyOnePlanet = pair.has(aspect.from) !== pair.has(aspect.to);
+      const exactDuringFastEngagement = undercurrent.timing?.exactPasses.some((pass) => {
+        const exactAt = new Date(pass.exactAt).getTime();
+        return Number.isFinite(exactAt) && exactAt >= engagementStart && exactAt <= engagementEnd;
+      });
+      return sharesExactlyOnePlanet && exactDuringFastEngagement;
+    });
+    if (!relation || !aspect.timing) return aspect;
+    const undercurrentPair = new Set([relation.from, relation.to]);
+    const fastPlanet = undercurrentPair.has(aspect.from) ? aspect.to : aspect.from;
+    return {
+      ...aspect,
+      timing: {
+        ...aspect.timing,
+        relation: {
+          fastPlanet,
+          undercurrentA: relation.from,
+          undercurrentB: relation.to
+        }
+      }
+    };
+  });
+}
+
+function enrichSkyAspectTiming(
+  swe: SwissEphInstance,
+  aspects: SkyAspectRecord[],
+  positions: CalculatedPlanet[],
+  reference: Date,
+  timeZone?: string
+) {
+  return addSkyAspectRelations(aspects.map((aspect) => {
+    const timing = skyAspectTimingFor(swe, aspect, positions, reference, timeZone);
+    if (!timing) return aspect;
+    const exactAt = timing.exactPasses[Math.max(0, timing.passIndex - 1)]?.exactAt ?? null;
+    return {
+      ...aspect,
+      exactAt,
+      series: timing.exactPasses.length > 1 ? {
+        index: timing.passIndex,
+        count: timing.exactPasses.length,
+        throughLabel: timing.engagementEnd
+      } : null,
+      timing
+    };
+  }));
 }
 
 function findSkyAspects(
@@ -1849,7 +2891,8 @@ function weekGridRange(anchor: Date, timeZone: string) {
     weekday: "short"
   }).format(localMidnight);
   const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
-  const gridStart = zonedDateTimeToUtc(timeZone, localParts.year, localParts.month, localParts.day - Math.max(0, weekdayIndex));
+  const daysSinceMonday = weekdayIndex === 0 ? 6 : Math.max(0, weekdayIndex - 1);
+  const gridStart = zonedDateTimeToUtc(timeZone, localParts.year, localParts.month, localParts.day - daysSinceMonday);
   const gridEnd = new Date(gridStart.getTime() + 7 * 86_400_000);
 
   return { gridStart, gridEnd };
@@ -2069,6 +3112,25 @@ export function getLunarCalendarRangeEvents(
   return request;
 }
 
+/**
+ * Calculation-only timing facts that are deliberately excluded from the
+ * reader calendar feeds until their exact prose has separate owner approval.
+ */
+export async function getNonServingTimingEventCandidates(
+  location: LocationInput = defaultLocation,
+  start: Date,
+  end: Date
+): Promise<LunarCalendarEvent[]> {
+  const swe = await getSwissEph();
+  const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+
+  return [
+    ...findActiveShadowPhases(swe, start, end, timeZone),
+    ...findNamedCazimis(swe, start, end, timeZone),
+    ...findMarsSunRetrogradeMidpoints(swe, start, end, timeZone)
+  ].sort((first, second) => first.startsAt.localeCompare(second.startsAt));
+}
+
 const solarDaylightCache = new Map<string, Promise<SolarDaylight>>();
 const maxSolarDaylightCacheEntries = 24;
 
@@ -2178,8 +3240,14 @@ export async function getAstrodienstSky(
     const transitWindow = options.includeTransitWindows
       ? signTransitWindowFor(swe, planet, planetIds[index], date, sign)
       : {};
+    const structuralTransitFacts = options.includeTransitWindows
+      ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow)
+      : {};
     const retrogradeWindow = options.includeTransitWindows
       ? retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
+      : {};
+    const solarProximity = options.includeTransitWindows && supportsSolarProximity(planet)
+      ? solarProximityFactsFor(swe, planetIds[index], date)
       : {};
 
     return {
@@ -2197,14 +3265,30 @@ export async function getAstrodienstSky(
       theme: themeForPoint(planet),
       transitTimeZone: options.includeTransitWindows ? location.timeZone ?? "UTC" : undefined,
       ...transitWindow,
+      ...structuralTransitFacts,
+      ...solarProximity,
       ...retrogradeWindow
     };
   });
   const northNode = positions.find((position) => position.planet === "North Node");
-  const displayPositions = northNode ? [...positions, southNodePositionFromNorthNode(northNode, ascendant)] : positions;
+  const displayPositions = northNode ? [
+    ...positions,
+    southNodePositionFromNorthNode(
+      swe,
+      northNode,
+      ascendant,
+      date,
+      Boolean(options.includeTransitWindows),
+      location.timeZone
+    )
+  ] : positions;
   const sun = displayPositions.find((position) => position.planet === "Sun") ?? displayPositions[0];
   const moon = displayPositions.find((position) => position.planet === "Moon") ?? displayPositions[1];
   const houseCusps = wholeSignHouseCusps(ascendant);
+  const calculatedAspects = canonicalizeNodeAxisAspects(calculateSkyAspects(displayPositions));
+  const timedAspects = options.includeTransitWindows
+    ? enrichSkyAspectTiming(swe, calculatedAspects, positions, date, location.timeZone)
+    : calculatedAspects;
   const snapshot: SkySnapshot = {
     location,
     generatedAt: date.toISOString(),
@@ -2221,7 +3305,7 @@ export async function getAstrodienstSky(
     solarDaylight: solarDaylightForDay(swe, location, date),
     dominantElement: elementForSign(sun.sign),
     positions: displayPositions.map((position) => ({ ...position })),
-    aspects: canonicalizeNodeAxisAspects(calculateSkyAspects(displayPositions))
+    aspects: timedAspects
   };
 
   return {

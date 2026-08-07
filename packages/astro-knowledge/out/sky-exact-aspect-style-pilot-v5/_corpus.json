@@ -1,0 +1,114 @@
+{
+  "status": "needs_review",
+  "serving": false,
+  "entries": {
+    "sky.jupiter.opposition.nodes": {
+      "id": "sky.jupiter.opposition.nodes",
+      "planetA": "jupiter",
+      "planetB": "nodes",
+      "aspect": "opposition",
+      "title": "Jupiter opposite North Node",
+      "body": "A generous offer solves an immediate problem and quietly pulls us back toward a direction we had already outgrown. More money, a wider audience, a calendar filled months ahead: the size is flattering, but the next step we actually need looks modest beside it. With Jupiter opposite North Node, one person is selling us on how large this could become while another keeps asking where all that growth would lead. Both positions have real value, and choosing one does not erase the consequences raised by the other.\n\nWe can accept every introduction, add another commitment, and call the increased activity progress while the work we mean to build keeps getting postponed. Refusing the oversized option may look ungrateful, especially to people who can see its benefits but not its detour. Once we choose a direction, luck becomes easier to recognize in the contact, opening, or resource that helps us continue. The right opportunity may ask us to grow less at once and go farther.",
+      "collectiveLeadEligible": false
+    },
+    "sky.jupiter.trine.lilith": {
+      "id": "sky.jupiter.trine.lilith",
+      "planetA": "jupiter",
+      "planetB": "lilith",
+      "aspect": "trine",
+      "title": "Jupiter trine Lilith",
+      "body": "The thing we have been trying not to want starts sounding less reckless and more like the obvious next move. Jupiter trine Lilith gives the banished appetite room to grow, and suddenly we are pricing the trip we cannot afford, admitting the current arrangement is not enough, or saying the part we usually edit out. Because the desire meets so little resistance, honesty can arrive without the usual shame or argument. We ask for more and discover that other people are willing to discuss it.\n\nThat ease can open a real conversation, but it can also make every craving sound justified. We may confuse wanting something intensely with having permission to take it, spend it, or cross a line for it. The appetite deserves an honest hearing; it does not get the final vote.",
+      "collectiveLeadEligible": false
+    },
+    "sky.mars.conjunction.nodes": {
+      "id": "sky.mars.conjunction.nodes",
+      "planetA": "mars",
+      "planetB": "nodes",
+      "aspect": "conjunction",
+      "title": "Mars conjunct North Node",
+      "body": "A fight we know how to win can still keep us tied to a chapter that is already ending. We reopen the old argument, answer the bait, spend another night proving a point, and call the surge of energy progress. With Mars conjunct North Node, effort and direction arrive as one urgent impulse, making it hard to tell whether we are advancing or simply reacting faster. The drive finally has an address, but not every familiar battle belongs there.\n\nThe same force can push us to send the application, start the build, make the call, or commit to work that feeds a growing hunger. Once action meets the direction that can build on itself, momentum stops scattering and begins to accumulate. We may win the old fight and still lose the next chapter.",
+      "collectiveLeadEligible": false
+    },
+    "sky.mercury.opposition.chiron": {
+      "id": "sky.mercury.opposition.chiron",
+      "planetA": "mercury",
+      "planetB": "chiron",
+      "aspect": "opposition",
+      "title": "Mercury opposite Chiron",
+      "body": "We spend days rehearsing one honest sentence, then hear a trace of condescension and reply more sharply than we meant to. Mercury opposite Chiron puts the need to say it across from the old fear of sounding slow, confused, or easy to dismiss. A careful question meets a defensive joke, a cheerful \"I’m fine\" covers the real answer, or someone else names the hurt we were trying to avoid.\n\nThe roles can switch before the conversation is over: one person pushes for clarity, another goes quiet, and neither can pretend the missing words do not matter. Our doubt about being heard can make us unusually careful listeners, able to find the real issue beneath a clumsy explanation. Once the conversation starts, it may heal more than expected. The imperfect truth said aloud can do what the polished sentence still waiting cannot.",
+      "collectiveLeadEligible": false
+    },
+    "sky.mercury.quincunx.neptune": {
+      "id": "sky.mercury.quincunx.neptune",
+      "planetA": "mercury",
+      "planetB": "neptune",
+      "aspect": "quincunx",
+      "title": "Mercury quincunx Neptune",
+      "body": "A simple question keeps producing an answer that sounds right until we try to use it. We reread the email, check the screenshot, replay the voice note, and still remember a version that was never actually said. Mercury quincunx Neptune has us moving between literal wording and the mood underneath it, revising the story each time one fails to account for the other. A hunch fills a gap beautifully, then one stubborn detail sends us back to the facts.\n\nIdeas can arrive sideways now: one image unlocks a paragraph, an overheard phrase solves a design problem, a vague impression points toward the question we forgot to ask. But plans built from those flashes need another pass, because names blur, times drift, and assumptions quietly harden into memory. We keep editing the wording to match what we sensed, then editing the vision to match what can be confirmed. The imagination can find the opening; the details decide whether we can act on it.",
+      "collectiveLeadEligible": false
+    },
+    "sky.moon.conjunction.lilith": {
+      "id": "sky.moon.conjunction.lilith",
+      "planetA": "moon",
+      "planetB": "lilith",
+      "aspect": "conjunction",
+      "title": "Moon conjunct Lilith",
+      "body": "The evening is comfortable, but we cannot settle into it. We put on the usual show, eat the familiar meal, and call staying in a relief, even as restlessness keeps sending us back to the fridge or the phone. With Moon conjunct Lilith, we can cancel the plan for safety and still ache for the invitation we claimed not to want. The need for comfort and the need to break its rules arrive as one unnamed mood.\n\nSoothing ourselves may work for an hour, but it can also bury the appetite causing the agitation. We reach for another snack, another episode, another small pleasure that asks nothing difficult of us, then wonder why none of it lands. The want underneath may be less convenient: attention, sex, solitude, honesty, a night that does not follow the usual script. Before feeding the mood again, we can ask what it would order if it were allowed to speak.",
+      "collectiveLeadEligible": false
+    },
+    "sky.moon.trine.nodes": {
+      "id": "sky.moon.trine.nodes",
+      "planetA": "moon",
+      "planetB": "nodes",
+      "aspect": "trine",
+      "title": "Moon trine North Node",
+      "body": "The next step opens up, and our first instinct is to reach for the life we already know. With Moon trine North Node, we bring familiar rhythms into new territory and settle faster than expected. The usual breakfast, the old playlist, the person we call when everything changes can give us enough comfort to keep moving. But ease also lets an old stress habit slip into a new plan without raising alarms.\n\nHomesickness can sound like a reason to turn back, especially when the future still feels awkward and unfinished. We may reopen a chapter that already ended simply because we know our lines, or mistake discomfort for proof that a new choice is wrong. Feeling at home in a choice does not prove that choice belongs to our future.",
+      "collectiveLeadEligible": false
+    },
+    "sky.saturn.quincunx.chiron": {
+      "id": "sky.saturn.quincunx.chiron",
+      "planetA": "saturn",
+      "planetB": "chiron",
+      "aspect": "quincunx",
+      "title": "Saturn quincunx Chiron",
+      "body": "A reasonable deadline can still wake the fear that we are about to be exposed as inadequate. With Saturn quincunx Chiron, we tighten the standard to prove we can meet it, then recoil when that pressure lands on a place that healed unevenly. A red correction, a clipped reminder, the familiar tone of someone checking our work can sound much older than the moment itself. We revise the plan, ease the demand, then worry that easing it means failing.\n\nThe requirement and the reaction keep needing separate attention. Discipline cannot erase the ache, and the ache cannot decide every limit, so we adjust the pace, the method, or the measure and try again. Structure starts helping when it tells us what needs to be done without turning the result into a verdict on who we are.",
+      "collectiveLeadEligible": false
+    },
+    "sky.saturn.quincunx.uranus": {
+      "id": "sky.saturn.quincunx.uranus",
+      "planetA": "saturn",
+      "planetB": "uranus",
+      "aspect": "quincunx",
+      "title": "Saturn quincunx Uranus",
+      "body": "The shortcut works until it skips a step everyone relied on. We restore the old routine, then resent how slow it is: update the device, reset the password, move the deadline, put one rule back after removing another. Saturn quincunx Uranus has us protecting what must stay dependable while changing what has stopped working, and every fix exposes another place where the two do not cooperate.\n\nKeeping everything familiar preserves order but blocks improvement; changing everything at once creates more cleanup than freedom. The pressure eases briefly when we make one careful adjustment, then returns when the next exception appears. An either-or choice stalls us because stability and innovation both need a real place in the plan. What lasts is not the old system or the total overhaul, but the version we can keep revising without losing what works.",
+      "collectiveLeadEligible": false
+    },
+    "sky.saturn.square.lilith": {
+      "id": "sky.saturn.square.lilith",
+      "planetA": "saturn",
+      "planetB": "lilith",
+      "aspect": "square",
+      "title": "Saturn square Lilith",
+      "body": "The obligation we agreed to keeps taking more than we meant to give, and the next small demand is where compliance finally breaks. A recurring charge, a family expectation, the shift no one else will cover: Saturn square Lilith puts the rule and the refusal in direct conflict. We follow the arrangement to avoid consequences, then resent it enough to miss the payment, cancel late, or say no with more force than the moment requires. The practical fallout returns because the real choice has not been named.\n\nSome structures are holding life together; others survive because nobody has challenged them. Our anger can tell the difference only after we stop treating every limit as oppression and every duty as sacred. Renegotiation becomes possible when the refusal gets representation before it turns into sabotage. The rule may need to change, but the no still has to answer for what happens next.",
+      "collectiveLeadEligible": false
+    },
+    "sky.sun.quincunx.mars": {
+      "id": "sky.sun.quincunx.mars",
+      "planetA": "sun",
+      "planetB": "mars",
+      "aspect": "quincunx",
+      "title": "Sun quincunx Mars",
+      "body": "We take on too much to prove we can handle it, then bristle when the work starts running us. Sun quincunx Mars has us pushing ahead, pulling back to protect our pride, then speeding up again because stopping feels like defeat. The extra errand squeezed into lunch, the jar forced open after someone offers help, the sharp reply softened ten minutes later: action keeps getting tangled with the need to stay in charge of ourselves. Every move that gets something done can also raise the question of who decides.\n\nA simple request starts sounding like an order, so we refuse it, reconsider, and complete it our own way at twice the effort. Anger may disappear from view only to return as impatience, defiance, or a need to force the result. Once that heat has a specific job, we stop wasting energy proving that no one can direct us.",
+      "collectiveLeadEligible": false
+    },
+    "sky.venus.trine.chiron": {
+      "id": "sky.venus.trine.chiron",
+      "planetA": "venus",
+      "planetB": "chiron",
+      "aspect": "trine",
+      "title": "Venus trine Chiron",
+      "body": "Something kind arrives, and we start looking for the catch. With Venus trine Chiron, affection and the expectation of rejection can move together so easily that sweetness itself feels suspicious. We reread the warm text for hidden meaning, shrug off a sincere compliment, or pull back after a good night to see whether anyone follows. Care can reach an old injury here, but doubt can also travel farther than it should because nothing interrupts the story that being wanted is unsafe.\n\nSmall tests begin to look reasonable: waiting longer to reply, withholding affection, making someone prove what they already showed. The test usually creates the distance it was meant to prevent. Love may be real even when our doubt is loud, and asking plainly gives it a better chance than setting a trap.",
+      "collectiveLeadEligible": false
+    }
+  }
+}

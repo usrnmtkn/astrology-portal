@@ -4,6 +4,8 @@ import fs from "node:fs"; import path from "node:path"; import url from "node:ur
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const rows = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
 const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
+const pairDailyFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/pair-daily-frames-v1.json"), "utf8"));
+const pairDailyClausesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/pair-daily-clauses-v1.json"), "utf8"));
 const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
 const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-aspect-phrasebook-v1.json"), "utf8"));
 const skyPlacementVoicePassV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-placement-inventories-voice-pass-v1.json"), "utf8"));
@@ -30,6 +32,8 @@ const SECTIONS = [
   ["Sky page: seasons, lunations, eclipses", k => /^fallback-hook\/sky-(season|lunation|axis|fullmoon|newmoon|eclipse|sign-trap|event|horoscope)/.test(k)],
   ["Calendar: phases, void, markers", k => k.startsWith("fallback-hook/moon-") || k.startsWith("fallback-hook/season-marker/")],
   ["Friends Circle feed", k => k.startsWith("fallback-hook/circle-")],
+  ["Today between you two (pair daily) — approved 2026-08-06", k => k.startsWith("fallback-hook/pair-daily/"),
+   "Connective frames for the daily pair paragraph on a friend's Compatibility tab. {readerClause}/{friendClause} fill from your approved daily At-a-Glance lines; {friendHandle} is the friend's @handle; {bondClause} is the active connection transit's effect line. Nothing serves until you approve the exact wording."],
   ["Everything else (labels, houses, misc.)", () => true],
 ];
 import { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear } from "../resolver/renderFallback.mjs";
@@ -65,6 +69,8 @@ const place = (item) => { for (let i = 0; i < SECTIONS.length; i++) if (SECTIONS
 const named = (obj, fields) => fields.map((f) => [f, obj[f]]).filter(([, v]) => v);
 for (const r of rows.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["title", "question", "headline"]) });
 for (const r of bondLanguagePass2.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of pairDailyFramesV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of pairDailyClausesV1.rows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["review_status", "source_key"]) });
 for (const r of skyArticleV1.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["review_status"]) });
 for (const r of skyAspectPhrasebookV1.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["review_status"]) });
 for (const r of skyPlanetFramesV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });

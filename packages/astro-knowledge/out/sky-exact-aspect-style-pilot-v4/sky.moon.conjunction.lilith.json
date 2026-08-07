@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:40:51.992Z",
+  "id": "sky.moon.conjunction.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "moon-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.moon.conjunction.lilith",
+    "planetA": "moon",
+    "planetB": "lilith",
+    "aspect": "conjunction",
+    "title": "Moon conjunct Lilith",
+    "body": "Everything is comfortable enough, so why are we still prowling the kitchen, refreshing the same feed, or picking at a conversation that was supposed to be over? Moon conjunct Lilith folds the need for safety into the appetite that safety usually keeps quiet. The pleasant routine and the forbidden want arrive as one mood, making it hard to tell whether we need soothing or permission. We reach for what is familiar and resent it for not satisfying us.\n\nThat confusion can turn hunger into irritability, desire into restlessness, and a simple no into proof that something is missing. We may eat past fullness, stay up past exhaustion, or keep the evening agreeable while privately wanting something much less polite. Before we reach for another substitute, the better question is what the want underneath would order if it could speak.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "clarity",
+    "weakest": "The pleasant routine and the forbidden want arrive as one mood, making it hard to tell whether we need soothing or permission.",
+    "why": "Ready for owner review. The slightly abstract phrasing remains immediately legible and accurately expresses the merged Moon-Lilith pressure.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:40:51.991Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "37c1449aaff9ca266cc4ac9918bbcc1e4731f1fbda69ebd1e60de64098788ce8",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "15e79e04fab7e4e9251526cf9fb6aab10e9154f4e76cdedc991e7cc651c842fe",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "64f44132fe0b290aa2a44ccad84c29cc947d7eaa46636d894dd729a383a0b1ed"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.conjunction.lilith",
+        "aspect": "conjunction"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

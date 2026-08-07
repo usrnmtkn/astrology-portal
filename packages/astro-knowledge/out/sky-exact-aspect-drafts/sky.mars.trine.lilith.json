@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:27.545Z",
+  "id": "sky.mars.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mars-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.mars.trine.lilith",
+    "planetA": "mars",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Mars trine Lilith",
+    "humanMoment": "A museum covers a photograph before opening night, and the artist tears down the screen as guests enter.",
+    "developmentDetail": "Other contributors uncover their own works while security replaces the barriers and visitors film the confrontation.",
+    "planetaryDynamic": "Mars carries security's sanctioned force to control the exhibition, while Lilith carries the artists' rage at being censored and their refusal to be made acceptable.",
+    "aspectMechanic": "Under the trine, replacing the barriers and tearing them down reinforce each other with little resistance, letting the confrontation spread through the exhibition before museum directors reconsider the decision.",
+    "conditionalConsequence": "If security keeps restoring the barriers as contributors remove them, the opening can close early and leave the museum facing a broader dispute over whose work it tries to tame.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If security keeps restoring the barriers as contributors remove them, the opening can close early and leave the museum facing a broader dispute over whose work it tries to tame.",
+    "why": "The consequence is slightly more interpretive than the other fields, but it follows directly from the escalating confrontation and preserves the Mars-Lilith conflict.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:27.545Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "b0390ddadb5bd9604c379447c003f139e5a4e97820d686d4cefd9bf44dc481d0",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "f22a74a417396ae69447913c737d90cacb24eef9fc951b0061df0c61ad04bf4b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b1a3fa3f0656ef32cf7fdc16ecb41ecad853bdf8204539037d709db4e18a601b"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mars.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

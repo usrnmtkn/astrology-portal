@@ -1,0 +1,31 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "timing-event-v2-mercury-pisces-station-retrograde-owner-approved",
+    "surface": "current-sky-timing-event",
+    "planet": "mercury",
+    "sign": "pisces",
+    "articleBeat": "body",
+    "before": "[no prior wording supplied]",
+    "after": "A reply about a trip arrives far later than expected, the itinerary changes for a second time, and we begin filling the silence with guesses. Settling the matter quickly feels easier than sitting with the uncertainty, but we make better decisions by checking what was actually said and leaving room for revision. Mercury slows to a stop in Pisces and starts moving backward. In this sensitive water sign, we can catch tone, imagery, and feeling faster than facts, which makes intuition vivid and certainty less reliable.\n\nWhen the same conversation circles back, the repeated wording may expose an assumption that kept us talking past one another. We can restate the agreement and confirm the times before anything gets booked. Not every plan falls apart here. Some decisions made during the pause hold. The useful change is knowing which part was an impression and which part was confirmed.",
+    "whatChanged": "Owner explicitly approved the complete V2 timing-event body after source-overlap, instruction-list, repeated-ending, and plain-English revisions.",
+    "ownerReason": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+      "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.station.mercury.pisces.retrograde.json"
+    ],
+    "provenance": "exact_wording_approval: I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "exact_timing_event_body_only"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

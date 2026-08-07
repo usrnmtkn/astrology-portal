@@ -1,0 +1,16 @@
+{
+  "id": "timing-event-v2-jupiter-leo-ingress-owner-approved",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "current-sky-timing-event",
+  "planet": "jupiter",
+  "sign": "leo",
+  "articleBeat": "body",
+  "after": "We bring a creative pursuit into the open and invite friends to take part. What felt like a small pleasure can become the plan everyone wants to join before we know whether we can sustain it. As Jupiter enters Leo, we grow through visible self-expression, big-hearted generosity, and the confidence to risk a larger stage. Once praise starts coming, we commit more time, make bolder promises, and give the idea more room.\n\nWe feel the pressure when we begin judging the pursuit by the attention it receives. Jupiter expands whatever is already in motion, not only what deserves more room. Creative courage and inflated ego can grow together, until every setback threatens to become a drama. The desire does not need to shrink. The work is to keep sharing the thing without making the recognition the reason we stay. Once excitement settles into routine, we find out whether we are building a meaningful practice or only chasing applause.",
+  "whatChanged": "Owner explicitly approved the complete V2 timing-event body after the semicolon-parallel maxim was replaced with two immediately clear sentences.",
+  "ownerStatement": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+  "approvalScope": "exact_timing_event_body_only",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+    "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.ingress.jupiter.leo.json"
+  ]
+}

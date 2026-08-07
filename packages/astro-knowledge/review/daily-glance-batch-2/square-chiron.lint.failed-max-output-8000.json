@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "key": "square/chiron",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "parseError": "Unexpected end of JSON input",
+  "checks": [],
+  "findings": []
+}

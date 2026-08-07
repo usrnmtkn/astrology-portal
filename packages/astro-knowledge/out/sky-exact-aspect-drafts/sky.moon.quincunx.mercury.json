@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:17:29.609Z",
+  "id": "sky.moon.quincunx.mercury",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "moon-mercury",
+    "path": "data/pairs/moon-mercury.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.quincunx.mercury",
+    "planetA": "moon",
+    "planetB": "mercury",
+    "aspect": "quincunx",
+    "title": "Moon quincunx Mercury",
+    "humanMoment": "A family keeps revising an elder's care rota as fatigue changes what is manageable and pharmacy instructions alter the timing.",
+    "developmentDetail": "Pickup times move, meals are delayed, and each new message fixes one part of the day while disrupting another.",
+    "planetaryDynamic": "The Moon tracks fatigue, meals, and immediate care needs, while Mercury carries the instructions and coordinates the pickups.",
+    "aspectMechanic": "The quincunx keeps the rota shifting as changes made for fatigue force new messages and pickup times, which then unsettle the care plan again.",
+    "conditionalConsequence": "If the latest pickup time no longer matches the elder's condition, food or medicine may arrive when it cannot be used.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "The scene is concrete and evergreen, the Moon and Mercury are clearly distinguished, and the quincunx is expressed through repeated practical adjustments with a plausible conditional consequence.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:17:29.608Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "6bd5f6d54c3067cfba5b4a8103149ea746d936331e8e64dee8fb38a0e8249427",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "efa738d0eb73ede47424b4fe7c0a215a0884b1b52af2b34bcf47dc3a1b328d07",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "a568a10e37c0ee5fac41ec0078cbdadac942937c77ceb42fa1457e1fee813587"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.quincunx.mercury",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

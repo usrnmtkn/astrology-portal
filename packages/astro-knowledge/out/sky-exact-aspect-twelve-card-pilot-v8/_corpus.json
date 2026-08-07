@@ -1,0 +1,114 @@
+{
+  "status": "needs_review",
+  "serving": false,
+  "entries": {
+    "sky.jupiter.square.nodes": {
+      "id": "sky.jupiter.square.nodes",
+      "planetA": "jupiter",
+      "planetB": "nodes",
+      "aspect": "square",
+      "title": "Jupiter square North Node",
+      "body": "The biggest opportunity on the table may also pull us back into a life we already know. With Jupiter square North Node, options multiply faster than our sense of direction can sort them. A higher-paying job repeats an old career pattern; several exciting projects take time from one important commitment; a familiar business offer delays work on a new professional goal. Everything looks like growth, but only some choices develop what we will need next.\n\nWhen we avoid choosing, the same conflict returns in a different form. We take on more, lose time for the work that matters, and meet another appealing offer that recreates the same delay. Once we commit to a direction, the useful opportunity becomes easier to recognize and act on. The smaller option may pay less or impress fewer people, but it can build the skills and momentum our long-term direction requires.",
+      "collectiveLeadEligible": false
+    },
+    "sky.mars.trine.chiron": {
+      "id": "sky.mars.trine.chiron",
+      "planetA": "mars",
+      "planetB": "chiron",
+      "aspect": "trine",
+      "title": "Mars trine Chiron",
+      "body": "It is easier to defend someone else than to let our own need take up the room. Mars trine Chiron can make the move and the recoil equally fluent: we tell a coworker to stop interrupting, then insist it was probably no big deal; confront a landlord about a neighbor’s unsafe stairs while ignoring the broken lock on our own door; ask for a day off, then offer to work part of it. The boundary gets spoken, but the apology follows so smoothly that no one has to question the retreat.\n\nThe same speed can work in our favor when we let the first clear no stand. Action moves before the old lesson that force was not allowed can soften it, and a personal boundary holds with less struggle than expected. But when every ask includes its own exit, the pattern keeps going because it looks polite and workable. The direct ask may cost less than the years of not asking.",
+      "collectiveLeadEligible": false
+    },
+    "sky.mercury.square.lilith": {
+      "id": "sky.mercury.square.lilith",
+      "planetA": "mercury",
+      "planetB": "lilith",
+      "aspect": "square",
+      "title": "Mercury square Lilith",
+      "body": "Keeping a conversation pleasant starts to cost more when everyone knows what is being left out. A concern disappears from the staff meeting, a direct message gets drafted and deleted, and a family talks around the problem sitting in plain view. With Mercury square Lilith, we keep reaching for the polite version while the unacceptable sentence waits at the edge of the tongue. The room stays calm, but nothing actually gets resolved.\n\nThe same communication problem returns in a different form because the important fact is still missing. We revise the wording, soften the tone, or wait for a better moment, only to face the same choice again. Saying the unsayable thing plainly once may cost less than continuing to pay for the silence.",
+      "collectiveLeadEligible": false
+    },
+    "sky.moon.opposition.chiron": {
+      "id": "sky.moon.opposition.chiron",
+      "planetA": "moon",
+      "planetB": "chiron",
+      "aspect": "opposition",
+      "title": "Moon opposite Chiron",
+      "body": "Someone offers a hug, and the person who needed it most starts crying. With the Moon opposite Chiron, one person moves closer with care while another changes the subject, stiffens, or insists everything is fine. A request for support begins and disappears mid-sentence; later, silence becomes a test of whether a partner will notice without being told. The comfort is real, but so is the old pain around having to need it.\n\nAcross our relationships, both positions shape what happens: some of us keep reaching out, while others pull back and wait to be noticed. Care can land as relief and exposure at once, which is why a gentle gesture can bring a reaction larger than anyone expected. The work today may be accepting what is already being offered instead of making someone pass an exam they never knew they were taking.",
+      "collectiveLeadEligible": false
+    },
+    "sky.neptune.sextile.nodes": {
+      "id": "sky.neptune.sextile.nodes",
+      "planetA": "neptune",
+      "planetB": "nodes",
+      "aspect": "sextile",
+      "title": "Neptune sextile North Node",
+      "body": "A new direction can feel deeply meaningful and still be too vague to follow. With Neptune sextile the North Node, the calling is there, but the details arrive only when we give it something real to answer. An artist opens a blank document without choosing a subject; an old project reaches its end, and suddenly we remember only what worked. What we already know starts looking better than it was because the next step has not taken shape yet.\n\nThe opening becomes useful when we act on one part of the vision instead of waiting for certainty. We take the short course, test the idea, make the call, and a specific role or next move comes into view. That action may confirm the direction, or show us that the plan is still too foggy to carry forward. Clarity comes from trying the road, not staring at it.",
+      "collectiveLeadEligible": false
+    },
+    "sky.saturn.quincunx.chiron": {
+      "id": "sky.saturn.quincunx.chiron",
+      "planetA": "saturn",
+      "planetB": "chiron",
+      "aspect": "quincunx",
+      "title": "Saturn quincunx Chiron",
+      "body": "A reasonable deadline can still make us feel as if one mistake will prove we were never capable. Saturn quincunx Chiron puts the work that needs doing beside an older fear of not being good enough to do it. A supervisor’s correction sounds too much like earlier harsh criticism; a clear schedule starts to feel like a verdict on our worth. Saturn keeps the standard in view, and Chiron keeps registering the shame once attached to standards.\n\nThe practical fix and the emotional fix do not arrive together. A firmer schedule may organize the work but increase the anxiety; more reassurance may calm the reaction without finishing the task. So we adjust more than once, changing the timeline, clarifying what is actually expected, and separating the current requirement from the old judgment. The structure starts helping when it tells us what needs to happen without deciding what our struggle says about us.",
+      "collectiveLeadEligible": false
+    },
+    "sky.sun.conjunction.lilith": {
+      "id": "sky.sun.conjunction.lilith",
+      "planetA": "sun",
+      "planetB": "lilith",
+      "aspect": "conjunction",
+      "title": "Sun conjunct Lilith",
+      "body": "The version of us that earns approval can suddenly feel like a costume when an unacceptable want needs words. With Sun conjunct Lilith, the need to be seen and respected joins the desire to say what people may reject, and both come through the same choice. A taboo concern gets raised in a formal meeting; a respected volunteer admits wanting something that clashes with the group’s standards. Sometimes the strongest reaction is relief when someone else finally voices the objection everyone avoided.\n\nBecause the wish for approval and the rejected desire are moving together, honest courage can be hard to separate from speaking without weighing the consequences. We may protect our public identity by editing out something real, then resent the life that identity helped us build. The rejected desire is not automatically right, but it may be useful information about what no longer fits. Being accepted should not require us to act like part of us does not exist.",
+      "collectiveLeadEligible": false
+    },
+    "sky.sun.quincunx.moon": {
+      "id": "sky.sun.quincunx.moon",
+      "planetA": "sun",
+      "planetB": "moon",
+      "aspect": "quincunx",
+      "title": "Sun quincunx Moon",
+      "body": "We say yes to taking the lead, then keep changing the plan to protect the time we need alone. With Sun quincunx Moon, the choice everyone sees and the response we have in private do not quite agree. We sound sure on the call, check twice for reassurance afterward, and stay composed through dinner before going quiet at home. The role may fit the person we mean to be, but not the body, mood, or daily life that has to carry it.\n\nOur direction keeps meeting needs it did not account for, so decisions rarely stay finished. We revise the schedule, soften the promise, step forward again, then pull back when the emotional cost becomes clear. Public aims cannot simply overrule private needs, and private needs do not erase the life we are trying to build. Making room for both may mean changing the arrangement again.",
+      "collectiveLeadEligible": false
+    },
+    "sky.uranus.quincunx.lilith": {
+      "id": "sky.uranus.quincunx.lilith",
+      "planetA": "uranus",
+      "planetB": "lilith",
+      "aspect": "quincunx",
+      "title": "Uranus quincunx Lilith",
+      "body": "A decision that took years to reach can come out in the middle of an argument. With Uranus quincunx Lilith, we stop accepting exclusion or control and claim freedom fast, but the way we leave may not account for what happens next. We quit without notice, end a relationship in the heat of a fight, or set a family boundary so strict that no one knows how it will work. The need is real, and the delivery can still turn a long-delayed refusal into a fresh problem.\n\nUranus wants the exit open now; Lilith wants everything that was silenced named before we go. We may revise the breakup terms, explain the resignation differently, or change a boundary each time it meets real life. None of this means the freedom was a mistake. It means the timing, wording, and practical terms need another pass after the first rush of release.",
+      "collectiveLeadEligible": false
+    },
+    "sky.uranus.quincunx.neptune": {
+      "id": "sky.uranus.quincunx.neptune",
+      "planetA": "uranus",
+      "planetB": "neptune",
+      "aspect": "quincunx",
+      "title": "Uranus quincunx Neptune",
+      "body": "We want the future to change without losing the vision that made change worth pursuing. With Uranus quincunx Neptune, radical moves keep forcing revisions to the ideals meant to guide them. A reform movement changes what it will support, a new technology reaches more people but misses its social goal, and services get rebuilt around a public promise that keeps shifting.\n\nEach practical fix answers one need and exposes another. Uranus pushes for disruption when the current structure no longer works; Neptune keeps asking whether the result still reflects the larger dream. We adjust the plan, restate the purpose, then discover that the two have drifted apart again. Visionary change can still move forward, but not in a straight line. The vision may hold, even when the route to it cannot.",
+      "collectiveLeadEligible": false
+    },
+    "sky.venus.conjunction.nodes": {
+      "id": "sky.venus.conjunction.nodes",
+      "planetA": "venus",
+      "planetB": "nodes",
+      "aspect": "conjunction",
+      "title": "Venus conjunct North Node",
+      "body": "An ex texts just as a promising new relationship begins, and both connections can feel important for completely different reasons. Venus conjunct North Node puts attraction right inside the choice between what is familiar and what could change our direction. The old relationship may return with instant chemistry and a shared history; the new person may fit the life we are actually building. Because desire and direction arrive together, it is easy to treat every strong feeling as a sign to continue.\n\nWhat matters becomes clearer through consequences. A partner who supports a long-term goal can make the next commitment easier, while a pleasurable relationship can keep us postponing work or decisions we already know we need to make. Chemistry tells us that something has our attention; what the relationship supports or delays tells us where it is taking us.",
+      "collectiveLeadEligible": false
+    },
+    "sky.venus.quincunx.saturn": {
+      "id": "sky.venus.quincunx.saturn",
+      "planetA": "venus",
+      "planetB": "saturn",
+      "aspect": "quincunx",
+      "title": "Venus quincunx Saturn",
+      "body": "A bonus lands, and instead of celebrating, we move it straight to savings because future expenses already feel too close. A planned evening together stays on the calendar, but neither person fully relaxes. With Venus quincunx Saturn, affection and reward keep running into duty, caution, and the fear that enjoying something now will cost us later. We stay loyal, keep the promise, reach the goal, then postpone the pleasure that was supposed to come with it.\n\nThis takes constant adjustment. When we loosen up, obligation quickly returns; when we tighten the rules, warmth and connection start to thin out. Commitments hold, but rewards get limited, delayed, or accepted with guilt. Security matters, but it starts costing too much when every pleasure has to justify itself.",
+      "collectiveLeadEligible": false
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:12:36.882Z",
+  "id": "sky.venus.opposition.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "venus-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.venus.opposition.lilith",
+    "planetA": "venus",
+    "planetB": "lilith",
+    "aspect": "opposition",
+    "title": "Venus opposite Lilith",
+    "humanMoment": "During a live dating-show finale, the featured contestant refuses the planned proposal and names the eliminated partner they still want.",
+    "developmentDetail": "The host presses for a camera-ready ending as the rejected finalist returns to the set and the audience divides between applause and boos.",
+    "planetaryDynamic": "Venus favors the likable romance prepared for broadcast, while Lilith gives the contestant's unapproved desire and forceful no equal weight.",
+    "aspectMechanic": "The opposition places the host's camera-ready proposal across from the contestant's unscripted choice, so neither the planned ending nor the named desire can be edited out of the live result.",
+    "conditionalConsequence": "If the broadcast continues, the marketable finale is replaced by footage that exposes how much of the romance depended on excluding the attraction that remained.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If the broadcast continues, the marketable finale is replaced by footage that exposes how much of the romance depended on excluding the attraction that remained.",
+    "why": "All fields satisfy the contract; the consequence is slightly more interpretive than the others but still follows directly from the live, unscripted refusal.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:12:36.882Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "a930b9480aea8d82b77c4e8868430411b601417a2fb2261875ad01f0c13deed0",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "27513ac08e9a6bc1e7674e75449c8cb55b4959dfd12143e65b99e399396a5a8e",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "31328d079b8c6698c290f2b1f93f1deba331c31039cd6d87070f00469ca4de4e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.venus.opposition.lilith",
+        "aspect": "opposition"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-02T04:04:45.249Z",
+  "status": "passed",
+  "serving": false,
+  "laneId": "judge:sky-exact-aspect",
+  "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+  "model": "gpt-5.6-sol",
+  "reasoningEffort": "low",
+  "samples": 1,
+  "owner": [
+    {
+      "cohort": "owner",
+      "id": "sky.venus.virgo.square.mars.gemini",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Venus square Mars.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.chiron.taurus.sextile.north-node.aquarius",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Chiron sextile North Node.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.lilith.sagittarius.sextile.north-node.aquarius",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Lilith sextile North Node.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.venus.virgo.square.lilith.sagittarius",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Venus square Lilith.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.mars.gemini.opposition.lilith.sagittarius",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Mars opposition Lilith.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.pluto.aquarius.square.chiron.taurus",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Pluto square Chiron.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.mercury.square.lilith",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Mercury square Lilith.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.saturn.quincunx.chiron",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Saturn quincunx Chiron.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.uranus.quincunx.lilith",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Uranus quincunx Lilith.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    },
+    {
+      "cohort": "owner",
+      "id": "sky.venus.quincunx.saturn",
+      "score": 3,
+      "rationale": "Exact owner-approved style model: Venus quincunx Saturn.",
+      "failedChecks": [],
+      "evidence": [],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": true
+    }
+  ],
+  "negative": [
+    {
+      "cohort": "negative",
+      "id": "negative.1",
+      "score": 1,
+      "rationale": "The sentence forces together two abstract ideas - better timing and having nowhere to hide - without making the actual situation clear.",
+      "failedChecks": [
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "slogan-compression",
+          "sentence": "An old want comes back with better timing and nowhere left to hide."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": false
+    },
+    {
+      "cohort": "negative",
+      "id": "negative.2",
+      "score": 1,
+      "rationale": "The line compresses an argument and its consequences into a mixed, slogan-like metaphor that requires paraphrasing.",
+      "failedChecks": [
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "slogan-compression",
+          "sentence": "We may win the old fight and still lose the next chapter."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": false
+    },
+    {
+      "cohort": "negative",
+      "id": "negative.3",
+      "score": 1,
+      "rationale": "The compressed phrasing hides who is testing whom and how the test pushes them apart.",
+      "failedChecks": [
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "slogan-compression",
+          "sentence": "The test usually creates the distance it was meant to prevent."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": false
+    },
+    {
+      "cohort": "negative",
+      "id": "negative.4",
+      "score": 1,
+      "rationale": "The line compresses its meaning into an unnatural slogan and needs paraphrasing to become clear.",
+      "failedChecks": [
+        "slogan-compression"
+      ],
+      "evidence": [
+        {
+          "checkId": "slogan-compression",
+          "sentence": "The right opportunity may ask us to grow less at once and go farther."
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "exactApprovedGold": false
+    }
+  ]
+}

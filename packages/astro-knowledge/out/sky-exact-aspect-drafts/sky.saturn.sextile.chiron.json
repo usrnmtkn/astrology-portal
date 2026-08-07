@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:08:12.343Z",
+  "id": "sky.saturn.sextile.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "saturn-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.sextile.chiron",
+    "planetA": "saturn",
+    "planetB": "chiron",
+    "aspect": "sextile",
+    "title": "Saturn sextile Chiron",
+    "humanMoment": "A licensing assessor offers an apprentice a second attempt after a failed safety demonstration.",
+    "developmentDetail": "The apprentice hesitates at the same instruction they missed before, but the assessor breaks the procedure into measurable steps instead of treating the error as proof they do not belong.",
+    "planetaryDynamic": "Saturn holds the safety standard, while Chiron carries the ache of having a standard used as a verdict on ability.",
+    "aspectMechanic": "The sextile makes the second attempt usable, but the apprentice still has to return to the safety demonstration and complete the measurable steps.",
+    "conditionalConsequence": "If the apprentice completes the corrected sequence, the certification proceeds without the earlier failure becoming a final judgment.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The sextile makes the second attempt usable, but the apprentice still has to return to the safety demonstration and complete the measurable steps.",
+    "why": "The mechanic is slightly explicit, but it correctly presents the sextile as an actionable opening rather than an automatic benefit, and every field is concrete, distinct, evergreen, and scene-specific.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:08:12.343Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "08cd5848d4e89d406195ab87fb96195e99b1bd6306bcbcae447e1f0062e8ebf3",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "5dd85279e882c889933a9a285a5ac65d07168d75feb520e33f9aaf61404f20fc",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "2013445d345088b1f6e60d9188960ee2247ab678b05ee6c335c10b0f371c6c84"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.sextile.chiron",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

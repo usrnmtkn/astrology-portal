@@ -1,0 +1,430 @@
+{
+  "schema": "tldrastro-calendar-quarter-phase-sign-candidates-v1",
+  "surface": "calendar",
+  "purpose": "Owner-review candidates for exact First Quarter and Last Quarter Moon-in-sign fallback hooks.",
+  "serving_status": "non_serving_review_artifact",
+  "governance": {
+    "review_status": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "canonical": false,
+    "render_eligible": false
+  },
+  "editorial_constraints": [
+    "Name the exact lunar phase and current Moon sign.",
+    "Ground the interpretation in the sign ruler, element, modality, or an owner-approved sign tension.",
+    "Do not invent a personal event, relationship, project, or outcome.",
+    "Do not use generic plan, harvest, or put-down language.",
+    "Do not serve any candidate until the owner approves its exact wording."
+  ],
+  "candidates": [
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/aries",
+      "phase": "first-quarter",
+      "moonSign": "Aries",
+      "body_you": "At the First Quarter Moon in Aries, momentum meets its first test through action. Mars rules this cardinal fire sign, so friction exposes where decisiveness is useful and where speed has become reactivity. The adjustment is direct: act on the clear signal without turning every obstacle into a fight.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/aries",
+        "fallback-hook/lunation-sign-compact/new-moon/aries",
+        "fallback-hook/lunation-sign-compact/full-moon/aries"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/taurus",
+      "phase": "first-quarter",
+      "moonSign": "Taurus",
+      "body_you": "At the First Quarter Moon in Taurus, momentum meets the question of sustainability. Venus rules this fixed earth sign, so the test is material: the body, the budget, and the value of what is being maintained. The adjustment protects real stability without confusing rigidity with security.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/taurus",
+        "fallback-hook/lunation-sign-compact/new-moon/taurus",
+        "fallback-hook/lunation-sign-compact/full-moon/taurus"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/gemini",
+      "phase": "first-quarter",
+      "moonSign": "Gemini",
+      "body_you": "At the First Quarter Moon in Gemini, momentum depends on the information moving through the room. Mercury rules this mutable air sign, so the test arrives through a message, question, contradiction, or missing fact. The adjustment separates useful data from noise and gives the important exchange a clear direction.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/gemini",
+        "fallback-hook/lunation-sign-compact/new-moon/gemini",
+        "fallback-hook/lunation-sign-compact/full-moon/gemini"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/cancer",
+      "phase": "first-quarter",
+      "moonSign": "Cancer",
+      "body_you": "At the First Quarter Moon in Cancer, forward motion meets the need for safety, care, and belonging. The Moon rules this cardinal water sign, so the test is emotional without being vague: what needs protection, and what has been carried too long? The adjustment distinguishes genuine care from automatic caretaking.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/cancer",
+        "fallback-hook/lunation-sign-compact/new-moon/cancer",
+        "fallback-hook/lunation-sign-compact/full-moon/cancer"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/leo",
+      "phase": "first-quarter",
+      "moonSign": "Leo",
+      "body_you": "At the First Quarter Moon in Leo, the test concerns creative ownership and visibility. The Sun rules this fixed fire sign, so friction reveals whether the desire is genuine or performed for approval. The adjustment gives the work a recognizable author without making applause the measure of its worth.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/leo",
+        "fallback-hook/lunation-sign-compact/new-moon/leo",
+        "fallback-hook/lunation-sign-compact/full-moon/leo"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/virgo",
+      "phase": "first-quarter",
+      "moonSign": "Virgo",
+      "body_you": "At the First Quarter Moon in Virgo, the first useful correction becomes visible in the details. Mercury rules this mutable earth sign, so the test concerns the routine, method, or standard carrying the work. The adjustment fixes what is measurable without turning every imperfection into evidence of failure.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/virgo",
+        "fallback-hook/lunation-sign-compact/new-moon/virgo",
+        "fallback-hook/lunation-sign-compact/full-moon/virgo"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/libra",
+      "phase": "first-quarter",
+      "moonSign": "Libra",
+      "body_you": "At the First Quarter Moon in Libra, momentum meets the terms of participation. Venus rules this cardinal air sign, so the test concerns reciprocity, fairness, and the adjustments required to keep an agreement balanced. The correction creates actual harmony instead of preserving the appearance of peace.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/libra",
+        "fallback-hook/lunation-sign-compact/new-moon/libra",
+        "fallback-hook/lunation-sign-compact/full-moon/libra"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/scorpio",
+      "phase": "first-quarter",
+      "moonSign": "Scorpio",
+      "body_you": "At the First Quarter Moon in Scorpio, pressure gathers around trust, power, and what has remained unspoken. Mars rules this fixed water sign, so resistance carries information about the real stakes. The adjustment goes below the pleasant surface and separates committed depth from control maintained through silence.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/scorpio",
+        "fallback-hook/lunation-sign-compact/new-moon/scorpio",
+        "fallback-hook/lunation-sign-compact/full-moon/scorpio"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/sagittarius",
+      "phase": "first-quarter",
+      "moonSign": "Sagittarius",
+      "body_you": "At the First Quarter Moon in Sagittarius, the test is whether the larger direction can survive contact with reality. Jupiter rules this mutable fire sign, so conviction, meaning, and movement matter. The adjustment keeps the horizon open while distinguishing genuine expansion from an escape dressed as possibility.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/sagittarius",
+        "fallback-hook/lunation-sign-compact/new-moon/sagittarius",
+        "fallback-hook/lunation-sign-compact/full-moon/sagittarius"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/capricorn",
+      "phase": "first-quarter",
+      "moonSign": "Capricorn",
+      "body_you": "At the First Quarter Moon in Capricorn, momentum is tested by structure, responsibility, and time. Saturn rules this cardinal earth sign, so friction identifies the load that belongs to the work and the burden that does not. The adjustment strengthens the framework without treating exhaustion as proof of commitment.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/capricorn",
+        "fallback-hook/lunation-sign-compact/new-moon/capricorn",
+        "fallback-hook/lunation-sign-compact/full-moon/capricorn"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/aquarius",
+      "phase": "first-quarter",
+      "moonSign": "Aquarius",
+      "body_you": "At the First Quarter Moon in Aquarius, the system itself becomes the test. Saturn rules this fixed air sign, so pressure reveals which rules, roles, or group expectations support the future and which only preserve an old arrangement. The adjustment protects the principle without mistaking distance for clarity.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/aquarius",
+        "fallback-hook/lunation-sign-compact/new-moon/aquarius",
+        "fallback-hook/lunation-sign-compact/full-moon/aquarius"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/first-quarter/pisces",
+      "phase": "first-quarter",
+      "moonSign": "Pisces",
+      "body_you": "At the First Quarter Moon in Pisces, movement meets what cannot be forced into a clean outline. Jupiter rules this mutable water sign, so faith, imagination, and compassion belong in the response. The adjustment gives the feeling a boundary and a rhythm without demanding certainty before meaning has formed.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/first-quarter",
+        "authored/calendar-weekly-moon/pisces",
+        "fallback-hook/lunation-sign-compact/new-moon/pisces",
+        "fallback-hook/lunation-sign-compact/full-moon/pisces"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/aries",
+      "phase": "last-quarter",
+      "moonSign": "Aries",
+      "body_you": "At the Last Quarter Moon in Aries, the review concerns where action still has purpose and where reaction is spending energy without changing anything. Mars rules this cardinal fire sign, so release is active rather than passive. End the unnecessary fight and keep the courage that made movement possible.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/aries",
+        "fallback-hook/lunation-sign-compact/new-moon/aries",
+        "fallback-hook/lunation-sign-compact/full-moon/aries"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/taurus",
+      "phase": "last-quarter",
+      "moonSign": "Taurus",
+      "body_you": "At the Last Quarter Moon in Taurus, the review is practical: what still supports the body, the budget, and the life being maintained? Venus rules this fixed earth sign, so release begins by separating real stability from what is only familiar. What remains should be sustainable, not merely difficult to move.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/taurus",
+        "fallback-hook/lunation-sign-compact/new-moon/taurus",
+        "fallback-hook/lunation-sign-compact/full-moon/taurus"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/gemini",
+      "phase": "last-quarter",
+      "moonSign": "Gemini",
+      "body_you": "At the Last Quarter Moon in Gemini, the review begins with the story, message, or assumption still circulating after its usefulness has ended. Mercury rules this mutable air sign, so release is mental and verbal. Retire the extra explanation and keep the fact that changes the conversation.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/gemini",
+        "fallback-hook/lunation-sign-compact/new-moon/gemini",
+        "fallback-hook/lunation-sign-compact/full-moon/gemini"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/cancer",
+      "phase": "last-quarter",
+      "moonSign": "Cancer",
+      "body_you": "At the Last Quarter Moon in Cancer, the review returns to care, protection, and the emotional labor required to keep a place or bond safe. The Moon rules this cardinal water sign, so release starts where caretaking became automatic. Keep the care; end the assumption that one person must carry it.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/cancer",
+        "fallback-hook/lunation-sign-compact/new-moon/cancer",
+        "fallback-hook/lunation-sign-compact/full-moon/cancer"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/leo",
+      "phase": "last-quarter",
+      "moonSign": "Leo",
+      "body_you": "At the Last Quarter Moon in Leo, the review concerns the difference between genuine creative ownership and the performance required to keep receiving approval. The Sun rules this fixed fire sign, so release restores warmth and authorship. Let the empty applause go; keep what still deserves a name and a visible place.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/leo",
+        "fallback-hook/lunation-sign-compact/new-moon/leo",
+        "fallback-hook/lunation-sign-compact/full-moon/leo"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/virgo",
+      "phase": "last-quarter",
+      "moonSign": "Virgo",
+      "body_you": "At the Last Quarter Moon in Virgo, the review is specific: which routine, standard, or repair still earns the effort it requires? Mercury rules this mutable earth sign, so release happens through discernment rather than neglect. Retire the perfectionism and preserve the method that actually improves the result.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/virgo",
+        "fallback-hook/lunation-sign-compact/new-moon/virgo",
+        "fallback-hook/lunation-sign-compact/full-moon/virgo"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/libra",
+      "phase": "last-quarter",
+      "moonSign": "Libra",
+      "body_you": "At the Last Quarter Moon in Libra, the review concerns the compromises and agreements holding a relationship or collaboration in balance. Venus rules this cardinal air sign, so release names the adjustment that became one-sided. Real harmony survives an honest sentence; performance does not.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/libra",
+        "fallback-hook/lunation-sign-compact/new-moon/libra",
+        "fallback-hook/lunation-sign-compact/full-moon/libra"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/scorpio",
+      "phase": "last-quarter",
+      "moonSign": "Scorpio",
+      "body_you": "At the Last Quarter Moon in Scorpio, the review reaches the attachment, silence, or power arrangement beneath the visible situation. Mars rules this fixed water sign, so release is deliberate and complete. Name what has kept its charge, then separate the truth worth carrying from the control that kept it buried.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/scorpio",
+        "fallback-hook/lunation-sign-compact/new-moon/scorpio",
+        "fallback-hook/lunation-sign-compact/full-moon/scorpio"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/sagittarius",
+      "phase": "last-quarter",
+      "moonSign": "Sagittarius",
+      "body_you": "At the Last Quarter Moon in Sagittarius, the review compares the belief with the distance it has actually traveled. Jupiter rules this mutable fire sign, so release concerns an outdated conviction, direction, or promise of expansion. Keep the meaning that still opens the world; retire the story that only avoids the present.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/sagittarius",
+        "fallback-hook/lunation-sign-compact/new-moon/sagittarius",
+        "fallback-hook/lunation-sign-compact/full-moon/sagittarius"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/capricorn",
+      "phase": "last-quarter",
+      "moonSign": "Capricorn",
+      "body_you": "At the Last Quarter Moon in Capricorn, the review measures responsibility against what the structure now returns. Saturn rules this cardinal earth sign, so release is practical: an expired duty, an inherited standard, or a burden mistaken for authority. Keep the framework that works; stop using endurance as its only proof.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/capricorn",
+        "fallback-hook/lunation-sign-compact/new-moon/capricorn",
+        "fallback-hook/lunation-sign-compact/full-moon/capricorn"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/aquarius",
+      "phase": "last-quarter",
+      "moonSign": "Aquarius",
+      "body_you": "At the Last Quarter Moon in Aquarius, the review belongs to the system, group, or rule that has outlived the future it was meant to support. Saturn rules this fixed air sign, so release changes the structure rather than staging rebellion for its own sake. Preserve the principle; retire the obsolete arrangement.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/aquarius",
+        "fallback-hook/lunation-sign-compact/new-moon/aquarius",
+        "fallback-hook/lunation-sign-compact/full-moon/aquarius"
+      ]
+    },
+    {
+      "contentKey": "fallback-hook/moon-phase/last-quarter/pisces",
+      "phase": "last-quarter",
+      "moonSign": "Pisces",
+      "body_you": "At the Last Quarter Moon in Pisces, the review concerns what has been absorbed, excused, or left undefined for too long. Jupiter rules this mutable water sign, so release does not require cynicism; it requires a boundary around compassion. Keep the faith that survives verification and let the vagueness dissolve.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "fallback-hook/moon-phase/last-quarter",
+        "authored/calendar-weekly-moon/pisces",
+        "fallback-hook/lunation-sign-compact/new-moon/pisces",
+        "fallback-hook/lunation-sign-compact/full-moon/pisces"
+      ]
+    }
+  ]
+}

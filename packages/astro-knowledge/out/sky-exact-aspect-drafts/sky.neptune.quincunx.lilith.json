@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:27.157Z",
+  "id": "sky.neptune.quincunx.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "neptune-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.neptune.quincunx.lilith",
+    "planetA": "neptune",
+    "planetB": "lilith",
+    "aspect": "quincunx",
+    "title": "Neptune quincunx Lilith",
+    "humanMoment": "A genealogy platform sees a surge in orders after a documentary invites viewers to imagine themselves as heirs to forgotten dynasties.",
+    "developmentDetail": "Customers buy extra reports and reshape family trees around tenuous matches while support staff field requests to confirm long-held family legends.",
+    "planetaryDynamic": "Neptune turns uncertain ancestry into an absorbing story, while Lilith carries the quieter want for belonging and recognition beneath it.",
+    "aspectMechanic": "The quincunx keeps customers revising family trees to preserve the legend, then revising the legend when new reports fail to support it.",
+    "conditionalConsequence": "If the imagined lineage continues to drive purchases, an ordinary wish to belong can produce disputed claims and mounting fees.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "",
+    "weakest": "",
+    "why": "The entry opens with a recognizable collective event, develops observable behavior, clearly separates Neptune's fantasy from Lilith's concealed wish, and expresses the quincunx through repeated revisions between evidence and legend.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:27.157Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "3de11ee6ba3c465d8bf05016b91f176f3821a08be768984dbb2e180ca1fb6e46",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c2e4eade178b0f7a51f9d40fbf71fc67c31236633b5a8340be32b8e39dec1ca8",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "b17cc4b142aa710448973f62ac93d5ccfa1f62e859cb448554385d4707ce3839"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.neptune.quincunx.lilith",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

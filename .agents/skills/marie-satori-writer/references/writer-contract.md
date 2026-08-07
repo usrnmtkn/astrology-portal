@@ -8,19 +8,15 @@ Use only the provided astrology facts and governed evidence. Never invent a doma
 
 ## Before drafting
 
-Identify:
+Identify the transit's central pressure, recognizable behavior that proves it, the choices made under pressure, the consequence, and the contradiction the turn should reveal.
 
-- one lived pressure at the center of the article;
-- recognizable behavior that proves it;
-- the choice made under pressure;
-- the consequence;
-- the contradiction the turn should reveal.
+Name the feeling underneath that pressure in one short phrase. Search the owner corpus for that feeling and its close variants. When a qualifying owner-authored line names the feeling from inside or gives permission or reassurance, prefer a pronoun-free line, otherwise collectivize it minimally, and record the exact source ID and path. Use at most one such line as a warmth foundation near the end of development. When no qualifying line exists, record `harvest_mode: none_found`, keep the register plain, and do not invent permission, reassurance, benediction, or a turn-toward-the-reader line. Missing warmth is acceptable and non-blocking.
 
-Build one sequence. Do not inventory several possible manifestations.
+Keep the transit as the subject. Lived moments illustrate the placement; one invented scenario must not carry the whole card. Use a few related, recognizable moments when they reveal the same pressure, but do not turn them into a coverage inventory.
 
-The writer may invent that sequence from the governed planet and sign meanings inside the listed supported domains. Do not require an existing owner article about the placement or a prewritten owner scenario. Invent the scene, never the astrology.
+The writer may invent lived moments from the governed planet and sign meanings inside the listed supported domains. Do not require an existing owner article about the placement or a prewritten owner scenario. Invent the scene, never the astrology.
 
-Warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Do not solve thematic drift by making the prose colder.
+Warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed when supported. They are never required. Do not solve thematic drift by making the prose colder, and do not manufacture imitation warmth when the harvest finds no owner foundation.
 
 Marie determines what the article notices. When the astrology supports them, prefer owner-recurring pressures: technology, power, gatekeeping, being underestimated or pushed down, access, recognition, work, money, status, control, exclusion, invisible labor, someone else setting the terms, being expected to accept less, and refusing a limiting role.
 
@@ -43,6 +39,7 @@ Rewrite any sentence that:
 - repeats the previous sentence;
 - explains a lesson the article already showed;
 - turns advice into administrative instructions;
+- introduces a coaching scaffold such as `the practical choice is`, `the correction is not`, or `the next choice is whether`;
 - adds a second conclusion;
 - sounds like a competent content writer imitating Marie Satori.
 
@@ -56,6 +53,8 @@ Do not confuse simplicity with flatness. A simple sentence is strong when it nam
 - Never use the generic noun `people`; name who or what is actually acting.
 - Never use `you`, `your`, `yours`, `yourself`, or `yourselves`.
 - Keep timing proportional to the transit.
+- A qualitative, non-numeric subperiod such as `a few months in`, `early in the transit`, or `by midyear` may trace to a reviewed residency fact only when it cannot exceed that residency.
+- Numeric or date-like subperiods such as `four months in`, `in March`, or `by the 15th` require an explicit engine fact or render token.
 - Distinguish planet function from sign expression.
 - Do not drift into houses or natal advice.
 - Keep moves collective and concrete.
@@ -68,11 +67,11 @@ For the current app fallback, write exactly five fields: `opening`, `tension`, `
 
 - `opening` shows recognizable ordinary evidence and contains the literal `{{entryDate}}` slot once.
 - `tension` names one pressure and shows how the same strength creates a cost.
-- `development` continues that exact pressure through practical choices.
-- `close` is one realistic choice containing the literal `{{exitDate}}` slot once.
+- `development` continues that exact pressure through consequence and lived moments. It does not announce the advice with a coaching scaffold.
+- `close` lands inside the consequence and contains the literal `{{exitDate}}` slot once. It is not a task-management instruction.
 - `try_this` contains two specific actions by default and three only when the third adds something different.
 
-The engine owns the headline, fact line, dates, and approved aspect insert. Do not generate a tagline for this contract. Do not move dates or aspect facts into prose. Every candidate remains `needs_review` and render-ineligible until the owner approves the exact wording and separately authorizes import.
+The engine owns the headline, date range, cycle fact line, dates, and approved aspect insert. The cycle fact line renders directly under the date range. Do not repeat cycle length or sign-stay facts in the article body. Prose may mention duration only when the duration itself carries meaning that is not already expressed by the fact line. Do not generate a tagline for this contract. Do not move dates or aspect facts into prose. Every candidate remains `needs_review` and render-ineligible until the owner approves the exact wording and separately authorizes import.
 
 ## Internal drafting process
 
@@ -84,7 +83,7 @@ The engine owns the headline, fact line, dates, and approved aspect insert. Do n
 5. Write three hook options privately.
 6. Reject hooks that open with definition, abstraction, slogan, or atmosphere.
 7. Choose the clearest lived pressure.
-8. Draft the complete article around one sequence.
+8. Draft the complete article with the transit as the throughline and lived moments as evidence.
 9. Read every sentence literally.
 10. Replace polished shorthand with the event or cost it represents.
 11. Remove repeated beats.
@@ -105,7 +104,7 @@ For every sentence ask:
 - Does it repeat an idea?
 - Does it require translation from polished shorthand?
 - Could it move to another placement?
-- Does it advance the same sequence?
+- Does it advance the transit's pressure rather than an invented scenario for its own sake?
 - Is there a stronger ordinary noun or verb?
 - Is the cost specific?
 - Is the sentence needed?
@@ -120,16 +119,17 @@ At article level require:
 
 - a behavior-first hook;
 - astrology that accompanies rather than replaces observation;
-- one advancing sequence;
-- no lived inventory;
+- the transit remains the subject;
+- lived moments illustrate rather than dominate the article;
+- no lived inventory or single-scenario takeover;
 - a behavioral turn with consequence;
-- one ending;
+- one ending that lands inside the consequence rather than assigning a task;
 - moves with pressure, choice, or consequence;
 - no Current Sky second person;
 - natural language over polish.
 - no advocacy-default subject matter unsupported by the astrology and owner evidence;
 - warmth is preserved when changing an unsupported lived domain.
-- no stock sign scene; the lived sequence must follow from the combined placement at the transit's actual scale;
+- no stock sign scene; evaluate the central opening, tension, and development sequence. Isolated practical moves do not create a prohibited scene unless that scene already governs the article;
 - moves use ordinary actions rather than facilitation, negotiation, or project-management language;
 - no more than two supplied owner voice devices, and zero is allowed.
 

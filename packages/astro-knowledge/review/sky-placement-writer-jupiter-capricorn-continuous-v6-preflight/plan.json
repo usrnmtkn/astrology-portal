@@ -1,0 +1,37 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "planet": "jupiter",
+  "sign": "capricorn",
+  "outDir": "/Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-jupiter-capricorn-continuous-v6-preflight",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v5:continuous-fallback-v2"
+  },
+  "positiveEvidencePoolId": "sky-placement-current-sky-owner-published-positive-v2",
+  "retrievedOwnerSourceIds": [
+    "surface-qualified-v2:gemini-season-2025:information-systems-opening",
+    "surface-qualified-v2:full-moon-taurus:work-instability-hook",
+    "surface-qualified-v2:uranus-taurus:money-technology-sequence",
+    "surface-qualified-v2:libra-season:relationship-power-sequence",
+    "surface-qualified-v2:pisces-season:urgency-clarity-turn",
+    "surface-qualified-v2:mercury-taurus:practical-action-sequence"
+  ],
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/jupiter-capricorn.json",
+      "status": "REVIEWED",
+      "text": "Jupiter in Capricorn: you grow through discipline, ambition, and patient building. Luck comes via responsibility and the long game. Watch: pessimism limiting your reach."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/jupiter.json",
+      "status": "REVIEWED",
+      "text": "Jupiter describes growth, wisdom, opportunity, belief, generosity, risk, confidence, and the instinct to expand beyond what is already known. It shows where someone seeks meaning, trusts possibility, and learns through experience. Jupiter takes about twelve years to move through the zodiac and spends about one year in each sign. Its sign describes the style of growth; its house shows where opportunity, perspective, and excess can become visible. With Jupiter in Capricorn, it rewards patience, discipline, and ambition. You can find success through hard work, good organization, and the pursuit of long-term goals. Your leadership skills and business acumen are enhanced, often leading to professional growth."
+    }
+  ],
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --planet jupiter --sign capricorn --out /Users/mprez/Code/tldrastro/packages/astro-knowledge/review/sky-placement-writer-jupiter-capricorn-continuous-v6-preflight"
+}

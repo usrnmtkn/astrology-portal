@@ -1,0 +1,16 @@
+{
+  "id": "timing-event-v2-venus-scorpio-retrograde-passage-owner-approved",
+  "feedbackKind": "exact_wording_approval",
+  "surface": "current-sky-timing-event",
+  "planet": "venus",
+  "sign": "scorpio",
+  "articleBeat": "body",
+  "after": "An old relationship comes back around, and we feel the pull before we know whether anything has actually changed. We pause before answering and look at whether the old problem is different, not only whether the attraction has returned. Venus is retrograde in Scorpio, bringing love, loyalty, money, and private agreements back under review. The temptation is to treat the intensity as an answer, or to test the other person instead of asking them directly.\n\nWe return to the original arrangement and name what it has cost, what it has given, and which promises no longer fit. A commitment made years ago may still be worth keeping, but only if the bond gives something real now. Once those terms are spoken aloud, we can revise the commitment instead of forcing the old version to fit. What matters is whether we can keep the promise now, not how strong the pull is.",
+  "whatChanged": "Owner explicitly approved the complete V2 timing-event body after predictive phrasing, abstraction chains, list construction, and polished-flat closing revisions.",
+  "ownerStatement": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+  "approvalScope": "exact_timing_event_body_only",
+  "sourcePaths": [
+    "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+    "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.retrograde.venus.scorpio.retrograde_passage.json"
+  ]
+}

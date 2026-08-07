@@ -124,7 +124,7 @@ await build({
   platform: "node"
 });
 
-const { getLunarCalendarMonth } = await import(`${pathToFileURL(ephemerisBundleFile).href}?t=${Date.now()}`);
+const { getLunarCalendarMonth, getLunarCalendarRangeEvents } = await import(`${pathToFileURL(ephemerisBundleFile).href}?t=${Date.now()}`);
 const ingressCalendar = await getLunarCalendarMonth({
   label: "Portsmouth, NH",
   latitude: 43.0718,
@@ -171,6 +171,21 @@ for (const expected of [
   );
 }
 
+const leoSeasonEvents = await getLunarCalendarRangeEvents({
+  label: "Portsmouth, NH",
+  latitude: 43.0718,
+  longitude: -70.7626,
+  timeZone: "America/New_York"
+}, new Date("2026-07-22T00:00:00.000Z"), new Date("2026-08-23T00:00:00.000Z"));
+assert.ok(
+  leoSeasonEvents.some((event) => event.type === "lunation" && event.title.startsWith("New Moon")),
+  "The Leo-season range feed must include its New Moon for the Day season chip."
+);
+assert.ok(
+  leoSeasonEvents.some((event) => event.type === "lunation" && event.title.startsWith("Full Moon")),
+  "The Leo-season range feed must include its Full Moon for the Day season chip."
+);
+
 fs.rmSync(ephemerisBundleFile, { force: true });
 
 const newMoonEvent = {
@@ -211,8 +226,42 @@ const routeSource = read("apps/web/src/routes/CalendarRoute.tsx");
 const calendarSource = read("apps/web/src/features/calendar/LunarCalendar.tsx");
 const calendarCss = read("apps/web/src/styles/lunar-calendar.css");
 const bundledSkyCore = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"));
+const timingEventRows = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json"));
 const venusLibraIngress = bundledSkyCore.hookRows.find(
   (row) => row.contentKey === "fallback-hook/sky-event/ingress/venus/libra"
+);
+const approvedTimingEventKeys = [
+  "sky.station.mercury.pisces.retrograde",
+  "sky.retrograde.venus.scorpio.retrograde_passage",
+  "sky.station.chiron.taurus.retrograde",
+  "sky.ingress.jupiter.leo"
+];
+
+for (const contentKey of approvedTimingEventKeys) {
+  const row = timingEventRows.find((candidate) => candidate.contentKey === contentKey);
+  const approvedArtifact = JSON.parse(read(`packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/${contentKey}.json`));
+
+  assert.ok(row, `${contentKey} must be imported into the reader package.`);
+  assert.equal(row.review_status, "approved", `${contentKey} must be reader-eligible.`);
+  assert.equal(row.serving, true, `${contentKey} must record reader serving authorization.`);
+  assert.equal(row.promotion_authorized, true, `${contentKey} must record explicit promotion authorization.`);
+  assert.equal(row.body, approvedArtifact.body, `${contentKey} must preserve the exact owner-approved V2 wording.`);
+}
+
+assert.match(
+  calendarSource,
+  /fallbackArchitectureV3AuthoredContentForKey\(contentKey\)[\s\S]{0,260}generatedContent\.get\(contentKey\)/u,
+  "Calendar timing events must select package-authored exact copy before remote generated content."
+);
+assert.match(
+  appSource,
+  /fallbackArchitectureV3AuthoredContentForKey\(contentKey\)[\s\S]{0,100}\?\? liveGeneratedContent\(generatedContent, contentKey\)/u,
+  "Calendar detail views must select package-authored exact copy before remote generated content."
+);
+assert.match(
+  appSource,
+  /const eventBody = calendarEventDetailBody\(event, generatedContent, description\);\s+return eventBody\.length > 0\s+\? \{/u,
+  "Exact timing-event copy must own the Calendar detail body even when a general placement article exists."
 );
 
 assert.doesNotMatch(
@@ -374,6 +423,26 @@ assert.match(
   "Direct-station copy must use the event date line instead of claiming every event happens this week."
 );
 assert.match(calendarCss, /\.tx-body--loading/u, "Calendar cards must reserve prose space while content hydrates.");
+assert.match(
+  calendarSource,
+  /getLunarCalendarRangeEvents\([\s\S]*?dateFromDateKey\(season\.start\),[\s\S]*?dateFromDateKey\(season\.end\)/u,
+  "Calendar must load the zodiac season's lean event range for lunar milestones."
+);
+assert.match(
+  calendarSource,
+  /const \[seasonEvents, setSeasonEvents\][\s\S]*?\.\.\.seasonEvents/u,
+  "The season panel must merge season-wide events when selecting its New and Full Moon."
+);
+assert.match(
+  calendarSource,
+  /moonDiscClass\(phase: string, illumination: number\)[\s\S]*?is-crescent[\s\S]*?is-gibbous[\s\S]*?is-quarter/u,
+  "Calendar Moon discs must distinguish crescent, gibbous, and quarter geometry."
+);
+assert.match(
+  calendarCss,
+  /\.lunar-moon-disc\.is-waxing\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waxing\.is-gibbous::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-gibbous::after/u,
+  "Calendar Moon discs must render waxing and waning geometry on opposite sides."
+);
 
 console.log(JSON.stringify({
   aspectKeys: aspectKeys.length,

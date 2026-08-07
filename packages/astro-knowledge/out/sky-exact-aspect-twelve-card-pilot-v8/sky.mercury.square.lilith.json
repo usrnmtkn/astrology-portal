@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T03:55:09.894Z",
+  "id": "sky.mercury.square.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "mercury-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "meaningBrief": {
+    "tension": "A person avoids stating an uncomfortable fact to keep a conversation pleasant.",
+    "examples": [
+      "A concern is omitted during a staff meeting.",
+      "A direct message is drafted and deleted.",
+      "A family avoids discussing a known problem."
+    ],
+    "pairBehavior": "Mercury favors polite conversation, while Lilith brings forward the statement that others consider unacceptable.",
+    "aspectBehavior": "The square creates a practical conflict that repeats until the choice between politeness and honesty is addressed.",
+    "consequence": "The same communication problem returns because the important fact remains unstated."
+  },
+  "draft": {
+    "id": "sky.mercury.square.lilith",
+    "planetA": "mercury",
+    "planetB": "lilith",
+    "aspect": "square",
+    "title": "Mercury square Lilith",
+    "body": "Keeping a conversation pleasant starts to cost more when everyone knows what is being left out. A concern disappears from the staff meeting, a direct message gets drafted and deleted, and a family talks around the problem sitting in plain view. With Mercury square Lilith, we keep reaching for the polite version while the unacceptable sentence waits at the edge of the tongue. The room stays calm, but nothing actually gets resolved.\n\nThe same communication problem returns in a different form because the important fact is still missing. We revise the wording, soften the tone, or wait for a better moment, only to face the same choice again. Saying the unsayable thing plainly once may cost less than continuing to pay for the silence.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "second-paragraph transition",
+    "weakest": "The same communication problem returns in a different form because the important fact is still missing.",
+    "why": "Slightly more explanatory and generic than the surrounding lines, but it clearly establishes the recurring consequence and does not weaken the piece.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:06.653Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "85e7cd08a72747a03ed09509e26297854c372506ad513186c9bba40ac7493ec0",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "bfe6dc61673493282339edf612b516fb2de4fb5faf87a982df06c337fc6b93ee",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "037e3090ddc022042e9fad9c903a5def24d027f71b6d9c85c62c05e21eeb002f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.square.lilith",
+        "aspect": "square"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "naturalnessJudge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "rationale": "Every sentence is natural, coherent, and immediately understandable, with clear metaphors that carry consistently through the passage.",
+    "failedChecks": [],
+    "evidence": [],
+    "why": "Every sentence is natural, coherent, and immediately understandable, with clear metaphors that carry consistently through the passage.",
+    "weakest": "",
+    "contractViolation": false,
+    "contractIssues": [],
+    "samples": 1,
+    "disagreement": false,
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T03:55:09.894Z",
+      "promptVersion": "sky-exact-aspect-natural-english-v1:prompt-v1",
+      "rubricVersion": "sky-exact-aspect-natural-english-v1",
+      "promptSha256": "ba5b182223e56359dee97c291dbd7efcf99959a9ce1a4956582080ceaaddfebd",
+      "rubricSha256": "52897d9590977cd897db7dc5eace127f8556391a3cb685995f51f50de592f1fa",
+      "contentSha256": "bfe6dc61673493282339edf612b516fb2de4fb5faf87a982df06c337fc6b93ee",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v7",
+      "registryVersion": "2026-08-01.12",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "302c3853e1652329dcde517cc07a830317d4490f8cfa52a95205b94df549f08e"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect-natural-english",
+        "modelSurface": "sky-exact-aspect"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

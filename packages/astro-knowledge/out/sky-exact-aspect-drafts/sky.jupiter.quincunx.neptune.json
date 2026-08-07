@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:20:16.512Z",
+  "id": "sky.jupiter.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "jupiter-neptune",
+    "path": "data/pairs/jupiter-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.quincunx.neptune",
+    "planetA": "jupiter",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Jupiter quincunx Neptune",
+    "humanMoment": "A charity gala unveils an ambitious housing fund and draws a rush of large public pledges.",
+    "developmentDetail": "The projected number of homes keeps changing as organizers count on unconfirmed subsidies and donated labor.",
+    "planetaryDynamic": "Jupiter expands the fund’s scale and confidence, while Neptune supplies the compassionate vision and makes uncertain support seem available.",
+    "aspectMechanic": "The quincunx keeps forcing revisions between the rising housing target and the shifting projections because the pledges and imagined support never settle into one workable budget.",
+    "conditionalConsequence": "If contracts are signed before the subsidies and labor are confirmed, the fund could commit to more homes than the pledges can finance.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "The quincunx keeps forcing revisions between the rising housing target and the shifting projections because the pledges and imagined support never settle into one workable budget.",
+    "why": "The sentence is slightly dense, but it clearly applies the quincunx's repeated-adjustment mechanic to the concrete funding mismatch.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:20:16.512Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "8c66e021d14b3a5324472715449e0a05f185b98ad0f8540262ce837076c411b4",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "97eda67c5016862ef41b64638ea4b1852280e256f4c93e694ef2b6a5cc58eecd",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.7",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "82d1f35b967a8dfc56f8927cbfb540bab1f822992a57cabf46b7f102bf3ec695"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

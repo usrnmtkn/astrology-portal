@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:45:26.036Z",
+  "id": "sky.saturn.quincunx.uranus",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "saturn-uranus",
+    "path": "data/pairs/saturn-uranus.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.saturn.quincunx.uranus",
+    "planetA": "saturn",
+    "planetB": "uranus",
+    "aspect": "quincunx",
+    "title": "Saturn quincunx Uranus",
+    "body": "The shortcut works until it skips a step everyone relied on. We restore the old routine, then resent how slow it is: update the device, reset the password, move the deadline, put one rule back after removing another. Saturn quincunx Uranus has us protecting what must stay dependable while changing what has stopped working, and every fix exposes another place where the two do not cooperate.\n\nKeeping everything familiar preserves order but blocks improvement; changing everything at once creates more cleanup than freedom. The pressure eases briefly when we make one careful adjustment, then returns when the next exception appears. An either-or choice stalls us because stability and innovation both need a real place in the plan. What lasts is not the old system or the total overhaul, but the version we can keep revising without losing what works.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "ending",
+    "weakest": "What lasts is not the old system or the total overhaul, but the version we can keep revising without losing what works.",
+    "why": "The ending is slightly more strategic than lived-in, but it remains clear, pair-specific, and delivers a clean turn.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:45:26.035Z",
+      "promptVersion": "sky-exact-aspect-voice-v5-owner-style:prompt-v5",
+      "rubricVersion": "sky-exact-aspect-voice-v5-owner-style",
+      "promptSha256": "c4e9e64ed1a19ba303db434b5915d555343bc7810d078e5e5537a6394bf3024d",
+      "rubricSha256": "a0a5f46424333ac95be8f831d8298d53ef460b9a3f9f1e9fe6e5e667b3fb89d5",
+      "contentSha256": "1569f0357741e71d55e3b3c8e24de200385c5f9be6b202af3778290d75ed616b",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v5",
+      "registryVersion": "2026-08-01.9",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-models-v1",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "43f0ac1dda6fefc49bdb7206ceddaee82a15f73057361359193f2b84bbd7f16f"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.saturn.quincunx.uranus",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

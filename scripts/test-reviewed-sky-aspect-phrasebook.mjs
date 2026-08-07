@@ -4,11 +4,13 @@ import {
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import {
-  renderSkyAspectCard as renderNodeSkyAspectCard
+  renderSkyAspectCard as renderNodeSkyAspectCard,
+  renderSkyPlacement as renderNodeSkyPlacement
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
 
 const readJson = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url), "utf8"));
 const phrasebook = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json");
+const skySignCopySun = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json");
 const sourceRows = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const transitRows = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
 const templates = readJson("../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
@@ -21,7 +23,7 @@ const exactTransitRecords = fs.readdirSync(transitDirectory)
   .map((name) => readJson(`../packages/astro-knowledge/data/transits/${name}`));
 const browserRenderer = createTransitSynastryRenderer(transitRows, templates, {
   ...sourceRows,
-  hookRows: [...sourceRows.hookRows, ...phrasebook.hookRows]
+  hookRows: [...sourceRows.hookRows, ...phrasebook.hookRows, ...skySignCopySun.rows]
 });
 
 assert.equal(phrasebook.hookRows.length, 148);
@@ -30,6 +32,45 @@ assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fall
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-aspect-exact/")).length, 4);
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-placement-sign/")).length, 36);
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-aspect-sign/")).length, 78);
+
+const placementHooks = phrasebook.hookRows.filter((row) => (
+  row.contentKey.startsWith("fallback-hook/sky-placement-sign/")
+));
+for (const row of placementHooks) {
+  const [, , planet, sign] = row.contentKey.split("/");
+  if (planet === "sun" && sign === "leo") {
+    continue;
+  }
+  const nodeResult = renderNodeSkyPlacement({ planet, sign });
+  const browserResult = browserRenderer.renderSkyPlacement({ planet, sign });
+
+  assert.equal(nodeResult.templateKey, "sky-placement-standalone-hook-v1");
+  assert.equal(browserResult.templateKey, "sky-placement-standalone-hook-v1");
+  assert.equal(nodeResult.contentKey, row.contentKey);
+  assert.equal(browserResult.contentKey, row.contentKey);
+  assert.equal(nodeResult.body, row.body_you);
+  assert.equal(browserResult.body, row.body_you);
+  assert.deepEqual(browserResult.parts, [row.body_you]);
+  assert.doesNotMatch(row.body_you, /\b(?:you|your|yours|yourself|yourselves)\b/iu);
+}
+
+const sunLeo = browserRenderer.renderSkyPlacement({
+  planet: "sun",
+  sign: "leo",
+  entryDate: "July 22, 2026",
+  exitDate: "August 23, 2026"
+});
+assert.equal(sunLeo.templateKey, "sky-placement-continuous-v2");
+assert.equal(sunLeo.contentKey, "fallback-hook/sky-sign-copy/sun/leo");
+
+const venusVirgo = browserRenderer.renderSkyPlacement({ planet: "venus", sign: "virgo" });
+assert.equal(venusVirgo.contentKey, "fallback-hook/sky-placement-sign/venus/virgo");
+assert.match(venusVirgo.body, /^Venus in Virgo expresses care through attention/u);
+assert.throws(
+  () => browserRenderer.renderSkyPlacement({ planet: "mercury", sign: "virgo" }),
+  /SOURCE_GAP: continuous sky placement sign copy mercury\/virgo/u,
+  "Unreviewed continuous placement copy must remain dark."
+);
 
 assert.equal(approvedJupiterNeptune.status, "LIVE");
 assert.match(approvedJupiterNeptune.readerCopy?.body ?? "", /^Hope has somewhere to go\./u);

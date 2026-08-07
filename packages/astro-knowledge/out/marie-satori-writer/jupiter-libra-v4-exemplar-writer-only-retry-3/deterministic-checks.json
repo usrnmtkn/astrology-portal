@@ -1,0 +1,28 @@
+{
+  "astrology": {
+    "passed": false,
+    "planetNamed": false,
+    "signNamed": false,
+    "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+  },
+  "engineSlots": {
+    "passed": true,
+    "entryDateInOpening": true,
+    "exitDateInClose": true
+  },
+  "pronouns": {
+    "passed": true,
+    "prohibitedMatch": null
+  },
+  "surfaceLint": {
+    "score": 3,
+    "fails": 0,
+    "warns": 0,
+    "findings": [],
+    "notes": [
+      "hook is long (73 words); the hook is the sendable line, not a paragraph",
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  "overallPassed": false
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:11:10.857Z",
+  "id": "sky.moon.trine.lilith",
+  "batch": "lilith",
+  "source": {
+    "pairKey": "moon-lilith",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.moon.trine.lilith",
+    "planetA": "moon",
+    "planetB": "lilith",
+    "aspect": "trine",
+    "title": "Moon trine Lilith",
+    "humanMoment": "At a family reunion, the planned buffet sits untouched while relatives crowd around a cousin frying a dish the hosts had ruled too messy for the rented hall.",
+    "developmentDetail": "Second helpings disappear quickly as grease spots spread across the tablecloth and the usual small talk gives way to loud requests for the recipe.",
+    "planetaryDynamic": "The Moon supplies the comfort of a shared family meal, while Lilith brings forward the appetite that the hosts tried to keep off the menu.",
+    "aspectMechanic": "Under the trine, the reunion's familiar comfort and the ruled-out frying reinforce each other, so the crowd keeps asking for more before anyone questions the mess.",
+    "conditionalConsequence": "If the forbidden dish becomes the center of the reunion, the hosts may face a cleaning charge after an evening everyone else remembers as the first one that felt satisfying.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "aspectMechanic",
+    "weakest": "Under the trine, the reunion's familiar comfort and the ruled-out frying reinforce each other, so the crowd keeps asking for more before anyone questions the mess.",
+    "why": "The phrasing \"ruled-out frying\" is slightly compressed, but the sentence clearly shows ease allowing comfort and forbidden appetite to reinforce each other while consequences go unchallenged.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:11:10.856Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "7b59f5bef51951d26e4fee5d8abb422ccdbc4f0af1b6f5babee368ded1a406e2",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "e901bf583967789cdb54d0e1ea291d2da8d4d121ab6eb05c1a2b458abff9fb2d",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "2837b004b894885ffe39862833d523fc34881885efdb8d30a15ba9aa8c5498de"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.moon.trine.lilith",
+        "aspect": "trine"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

@@ -1,0 +1,31 @@
+{
+  "mode": "apply",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "timing-event-v2-chiron-taurus-station-retrograde-owner-approved",
+    "surface": "current-sky-timing-event",
+    "planet": "chiron",
+    "sign": "taurus",
+    "articleBeat": "body",
+    "before": "[no prior wording supplied]",
+    "after": "We set down a long personal project mid-build when the effort to make life secure starts costing more than it gives. As Chiron stations retrograde in Taurus, we pause the push to prove that we have enough, deserve enough, or can hold everything together through sheer consistency. This is not an alarm or a verdict on the project. It is a regular pause for repair inside a story already unfolding. When we talk at home about why the work stopped, an old fear may become plain: rest feels unsafe, comfort feels unearned, and every material choice becomes a measure of worth.\n\nInstead of rushing back to the plan, we look at the survival response underneath it. Some of us stockpile to feel protected. Others refuse comfort entirely, to prove that no need can touch us. Living with this wound can make us unusually good at helping one another build stability without shame. The repair starts when being safe stops having to be earned.",
+    "whatChanged": "Owner explicitly approved the complete V2 timing-event body after stiff contrast, confusing closure, semicolon, and undecided steadiness-language revisions.",
+    "ownerReason": "I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/timing-event-reader-copy-pilot-v2-feedback.json",
+      "packages/astro-knowledge/out/timing-event-reader-copy-pilot-v2/sky.station.chiron.taurus.retrograde.json"
+    ],
+    "provenance": "exact_wording_approval: I explicitly approve the exact wording of all four V2 reader-copy cards and the exact ten V9 meaning-layer records.",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "exact_timing_event_body_only"
+  },
+  "nextCommands": [
+    "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
+    "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+  ]
+}

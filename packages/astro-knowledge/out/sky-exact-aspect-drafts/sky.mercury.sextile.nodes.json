@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:13:41.340Z",
+  "id": "sky.mercury.sextile.nodes",
+  "batch": "node-axis",
+  "source": {
+    "pairKey": "mercury-nodes",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.mercury.sextile.nodes",
+    "planetA": "mercury",
+    "planetB": "nodes",
+    "aspect": "sextile",
+    "title": "Mercury sextile North Node",
+    "humanMoment": "At an apprenticeship fair, visitors keep asking how to enter a trade while the featured speakers swap stories about how they started years ago.",
+    "developmentDetail": "An organizer notices the repeated question and introduces a working apprentice who can explain the current application route.",
+    "planetaryDynamic": "Mercury carries the visitors' questions and the speakers' stories, while the North Node distinguishes the introduction that belongs to the chapter ahead.",
+    "aspectMechanic": "The sextile creates a usable opening between the repeated question and the apprentice's introduction, but the organizer still has to notice the pattern and act.",
+    "conditionalConsequence": "If the apprentice is given time to explain the route, visitors leave with a concrete next step instead of another account of the past.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "planetaryDynamic",
+    "weakest": "Mercury carries the visitors' questions and the speakers' stories, while the North Node distinguishes the introduction that belongs to the chapter ahead.",
+    "why": "The sentence is slightly more explanatory than the surrounding scene work, but it clearly distinguishes Mercury's conversations from the node's directional role and remains accurate, specific, and natural.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:13:41.340Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "c6d0d331f9ed8db29f9ce3722f52a13cad4a429962c950b42634f5ea5f04ac04",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "c6f1d73013693533cd6a749996052cf42eb26048ff684207aede4e9959682d36",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "49f93db4a62a05b5901e4eb328edf2ee52cd742474425973400a8241e750c7f1"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.sextile.nodes",
+        "aspect": "sextile"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

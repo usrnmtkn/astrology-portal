@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:09:06.550Z",
+  "id": "sky.jupiter.quincunx.chiron",
+  "batch": "chiron",
+  "source": {
+    "pairKey": "jupiter-chiron",
+    "path": "review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+    "status": "needs_review"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 1,
+  "draft": {
+    "id": "sky.jupiter.quincunx.chiron",
+    "planetA": "jupiter",
+    "planetB": "chiron",
+    "aspect": "quincunx",
+    "title": "Jupiter quincunx Chiron",
+    "humanMoment": "A regional sports festival opens an adaptive division and receives far more entries from disabled athletes than its existing course can support.",
+    "developmentDetail": "Transport schedules, start times, rest areas, and medical coverage are revised as new access barriers become visible.",
+    "planetaryDynamic": "Jupiter expands participation and attention, while Chiron brings both the exposed barriers and the knowledge needed to address them.",
+    "aspectMechanic": "The quincunx keeps registration and access plans adjusting around each other, since every rise in entries changes the care required and each care revision changes how many athletes can take part.",
+    "conditionalConsequence": "If entries grow faster than the course can be adapted, the festival may widen participation while also increasing withdrawals and complaints.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "conditionalConsequence",
+    "weakest": "If entries grow faster than the course can be adapted, the festival may widen participation while also increasing withdrawals and complaints.",
+    "why": "All fields meet the contract; this is the least vivid sentence, but it remains a specific, plausible consequence of the access mismatch.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:09:06.550Z",
+      "promptVersion": "sky-exact-aspect-voice-v2:prompt-v2",
+      "rubricVersion": "sky-exact-aspect-voice-v2",
+      "promptSha256": "fd0009e8461f4eff804bd9272e4ffe914dc857105f654cff8b70cd091afd09ef",
+      "rubricSha256": "6561a985606552b006af8128d163e7ea1fa38a05d07911a64560b7ca27c82291",
+      "contentSha256": "7f7df7c86f675cb68fd5686914098e05ce322e11beacd6f07b8902932785c6b4",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v2",
+      "registryVersion": "2026-08-01.6",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-reader-214-v2",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "11aa66cf5c504d6a33ecb9eadb8187f05215bba70e634b94ee6e54047e5770b7"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.jupiter.quincunx.chiron",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}

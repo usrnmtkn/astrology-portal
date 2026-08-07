@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "needs_review",
+  "serving": false,
+  "generatedAt": "2026-08-02T02:41:47.751Z",
+  "id": "sky.mercury.quincunx.neptune",
+  "batch": "classical-quincunx",
+  "source": {
+    "pairKey": "mercury-neptune",
+    "path": "data/pairs/mercury-neptune.json",
+    "status": "DRAFT"
+  },
+  "writer": {
+    "releaseId": "sky-exact-aspect-generation-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "judgeModel": {
+    "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "low"
+  },
+  "attempts": 2,
+  "draft": {
+    "id": "sky.mercury.quincunx.neptune",
+    "planetA": "mercury",
+    "planetB": "neptune",
+    "aspect": "quincunx",
+    "title": "Mercury quincunx Neptune",
+    "body": "We send the message, reread it, and realize it could mean something else entirely. Mercury quincunx Neptune puts precise language and vivid impressions on separate tracks, so a simple exchange can take several edits before it says what we thought we meant. A remembered detail changes when we check the receipt; a clear instruction sounds oddly ambiguous out loud; the perfect idea loses a key fact when we try to use it. Each correction helps one part and unsettles another.\n\nOur minds can make inspired connections now, especially around what has not been said, but intuition is not the same as evidence. We may keep revising the story to fit the feeling, then revise the feeling when the facts return. Imagination opens the door; verification decides whether we can walk through it.",
+    "collectiveLeadEligible": false
+  },
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "findings": []
+  },
+  "judge": {
+    "score": 3,
+    "verdict": "in-voice",
+    "weakestField": "none",
+    "weakest": "",
+    "why": "Sharp lived-first opening, concrete contemporary examples, accurate pair-specific tension, natural collective voice, and a clean ending. The aspect is shown through repeated revision, blurred facts, intuition, and verification rather than explained mechanically.",
+    "failedChecks": [],
+    "samples": 1,
+    "disagreement": false,
+    "contractViolation": false,
+    "contractIssues": [],
+    "audit": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-08-02T02:41:47.751Z",
+      "promptVersion": "sky-exact-aspect-voice-v4-nonflat:prompt-v4",
+      "rubricVersion": "sky-exact-aspect-voice-v4-nonflat",
+      "promptSha256": "a45f83c24b3bda452c2301f1633d4977e4f5eee979b12c8e5a962e0e10bf9c3d",
+      "rubricSha256": "9d17542a2689eb9fab6842308467022a728c4ef00932a7ba93373f51723ae5d6",
+      "contentSha256": "bd9cdcbeac4e545952ed47d5ffe61586930b41653f8726d2d2ed29afbda056ed",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "releaseId": "sky-exact-aspect-judge-openai-gpt-5.6-sol-candidate-v4",
+      "registryVersion": "2026-08-01.8",
+      "registryLaneId": "judge:sky-exact-aspect",
+      "registryState": "candidate",
+      "registryOverride": false,
+      "evaluationSetVersion": "sky-exact-aspect-owner-style-v4",
+      "policyVersion": "editorial-judge-policy-v1",
+      "reasoningEffort": "low",
+      "temperature": 0.1,
+      "samples": 1,
+      "scores": [
+        3
+      ],
+      "verdicts": [
+        {
+          "score": 3,
+          "verdict": "in-voice",
+          "failedChecks": [],
+          "contractViolation": false,
+          "contractIssues": [],
+          "outputSha256": "026a3ab880c2a08701accb469c47e278bce8ac5207f84ed4715090a5dc3b8593"
+        }
+      ],
+      "disagreement": false,
+      "contractViolation": false,
+      "contractIssues": [],
+      "privacyMode": "redact",
+      "redactionCount": 0,
+      "context": {
+        "surface": "sky-exact-aspect",
+        "modelSurface": "sky-exact-aspect",
+        "sourceId": "sky.mercury.quincunx.neptune",
+        "aspect": "quincunx"
+      }
+    },
+    "gate": "human-review",
+    "recommendation": "approve",
+    "approvalSource": "llm-advisory"
+  },
+  "reviewGate": "owner-review"
+}
