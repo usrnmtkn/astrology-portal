@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-venus-jupiter-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/jupiter/soft",
+  "payloadSha256": "76c013d6fcbd97c15d6ee21108cb362e33a97272dcbf87a7f4bd19ed610ed2ff",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Your affection gives {{holder2}} more confidence in the relationship, while {{holder2}} makes it easier for you to express warmth openly. Time together often feels generous and encouraging. You feel appreciated, and {{holder2}} feels that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive.",
+    "body_they": "{{holder1}}'s affection gives you more confidence in the relationship, while you make it easier for {{holder1}} to express warmth openly. Time together often feels generous and encouraging. {{holder1}} feels appreciated, and you feel that optimism is being received rather than dismissed. Limits can become easy to overlook because the experience itself feels so positive.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

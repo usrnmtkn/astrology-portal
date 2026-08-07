@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-north-node-ascendant-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/soft",
+  "payloadSha256": "307fc6fa39d33f7ad4ba944aff429fd3654ce98086a3a84344ea2581030760db",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You make unfamiliar choices feel easier for {{holder2}} to try. {{holder2}} may speak up sooner, take a chance, or step into a new role without feeling like they are forcing themselves. Change tends to happen more naturally around you.",
+    "body_they": "{{holder1}} makes unfamiliar choices feel easier for you to try. You may speak up sooner, take a chance, or step into a new role without feeling like you are forcing yourself. Change tends to happen more naturally around {{holder1}}.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

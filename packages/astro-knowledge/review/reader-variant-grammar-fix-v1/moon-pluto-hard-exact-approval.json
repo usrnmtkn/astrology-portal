@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-pluto-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/pluto/hard",
+  "payloadSha256": "3d628a5771e88f349f115a769d51dd7f71a07507a4d8c62d3a8cf083b86a6263",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may feel watched even when nobody is speaking. {{holder2}} notices the changed tone, delayed reply, or private reaction and wants an answer before you are ready to give one. You guard more because {{holder2}} keeps looking, and {{holder2}} looks harder because the door keeps closing.",
+    "body_they": "{{holder1}} may feel watched even when nobody is speaking. You notice the changed tone, delayed reply, or private reaction and wants an answer before {{holder1}} is ready to give one. {{holder1}} guards more because you keep looking, and you look harder because the door keeps closing.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

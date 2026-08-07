@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-saturn-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/saturn/conjunction",
+  "payloadSha256": "df22b4f94a50e33292dcef14765f667eaef0f7f7c70fd215f88038af99cac107",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} takes your direction seriously and helps turn a rough idea into a plan that can actually be followed. That support can feel reassuring, especially when you need help staying with the work after the excitement wears off. It can also make {{holder2}}'s approval feel like the gate every decision has to pass through.",
+    "body_they": "You take {{holder1}}'s direction seriously and helps turn a rough idea into a plan that can actually be followed. That support can feel reassuring, especially when {{holder1}} needs help staying with the work after the excitement wears off. It can also make your approval feel like the gate every decision has to pass through.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
