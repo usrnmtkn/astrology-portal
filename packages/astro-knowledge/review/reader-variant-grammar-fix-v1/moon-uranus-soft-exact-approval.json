@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-uranus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/uranus/soft",
+  "payloadSha256": "9c8961eae32f3c86a30204c113c65edc3374d68011c4d7b565e48a5b92d8f3a4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} can take space without making you feel unwanted, and you can have feelings without making {{holder2}} feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair.",
+    "body_they": "You can take space without making {{holder1}} feel unwanted, and {{holder1}} can have feelings without making you feel trapped. Closeness does not need constant attendance, and independence does not have to arrive with a slammed door. Both needs can sit at the same table without fighting over the chair.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-neptune-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/neptune/hard",
+  "payloadSha256": "22f47c8a22e68810fb43b17ddaadb42bd96119c39467bc3eaa0af6d36b942789",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You push for a straight answer and {{holder2}} drifts or goes vague. The harder you press, the harder it gets to pin down what is actually happening.",
+    "body_they": "{{holder1}} pushes for a straight answer and you drift or go vague. The harder {{holder1}} presses, the harder it gets to pin down what is actually happening.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

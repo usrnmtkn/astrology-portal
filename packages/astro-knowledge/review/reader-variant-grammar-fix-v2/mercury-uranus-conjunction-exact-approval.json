@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mercury-uranus-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/uranus/conjunction",
+  "payloadSha256": "48e20ce925cf4f54b4c03e371ced54783936774db8f2460043e6cb07130a5882",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} completely shakes up how you think. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning.",
+    "body_they": "You completely shake up how {{holder1}} thinks. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

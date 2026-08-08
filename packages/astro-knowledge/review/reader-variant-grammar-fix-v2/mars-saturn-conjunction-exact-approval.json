@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-saturn-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/saturn/conjunction",
+  "payloadSha256": "4176c03fc177dc6f43cf0fa5dbae507aa8cd48b4b9c4f804b40f887dccc47373",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} grounds your momentum into discipline, or brakes it to a full stop. The tension comes when moving fast and moving carefully start treating each other like the enemy.",
+    "body_they": "You ground {{holder1}}'s momentum into discipline, or brake it to a full stop. The tension comes when moving fast and moving carefully start treating each other like the enemy.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

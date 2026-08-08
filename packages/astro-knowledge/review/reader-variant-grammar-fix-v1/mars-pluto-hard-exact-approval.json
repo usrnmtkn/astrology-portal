@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mars-pluto-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/pluto/hard",
+  "payloadSha256": "dc9d2b954fb4febe8d7dfb519d5e26bbb544703b72e51329aa819c1d58c31341",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Your determination meets {{holder2}}'s need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome they originally wanted.",
+    "body_they": "{{holder1}}'s determination meets your need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome they originally wanted.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

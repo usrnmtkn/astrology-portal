@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-lilith-ascendant-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/hard",
+  "payloadSha256": "12a28251f9e65ea284390204e74a05c3aa990a0b33489fdacff274b300dbc176",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may see {{holder2}}'s composure as avoidance or an attempt to keep everyone comfortable. {{holder2}} may experience your directness as judgment or pressure. You keep pushing for the full truth, while {{holder2}} wants more care in how that truth is delivered.",
+    "body_they": "{{holder1}} may see your composure as avoidance or an attempt to keep everyone comfortable. You may experience {{holder1}}'s directness as judgment or pressure. {{holder1}} keeps pushing for the full truth, while you want more care in how that truth is delivered.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

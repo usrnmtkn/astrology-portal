@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-jupiter-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/jupiter/soft",
+  "payloadSha256": "8d0b6b94a1593e90d36a10c2b6ffd81ccc28a4d024694d4ad042c5451f0c184d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} gives you more confidence to act, while you give {{holder2}}'s optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. You and {{holder2}} may not notice how much larger the plan has become until you are already responsible for carrying it.",
+    "body_they": "You give {{holder1}} more confidence to act, while {{holder1}} gives your optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. {{holder1}} and you may not notice how much larger the plan has become until you are already responsible for carrying it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
