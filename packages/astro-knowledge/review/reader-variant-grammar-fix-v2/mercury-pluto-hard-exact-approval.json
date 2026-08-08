@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mercury-pluto-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/pluto/hard",
+  "payloadSha256": "aeaa03ec7d9f0efc35277ea327988c0f1e6fc2fe3d74648580da5dc5774cabe4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} probes, and your words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition.",
+    "body_they": "You probe, and {{holder1}}'s words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

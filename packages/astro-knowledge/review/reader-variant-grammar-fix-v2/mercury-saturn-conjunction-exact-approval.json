@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mercury-saturn-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/saturn/conjunction",
+  "payloadSha256": "9f9a9b89b77a6f39c0cba9702f123efe247bc70dcf827aca39e6a289d5c3a1bc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} takes your ideas seriously. Instead of treating the conversation as temporary, {{holder2}} may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when {{holder2}} corrects every unfinished thought. You may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized.",
+    "body_they": "You take {{holder1}}'s ideas seriously. Instead of treating the conversation as temporary, you may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when you correct every unfinished thought. {{holder1}} may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

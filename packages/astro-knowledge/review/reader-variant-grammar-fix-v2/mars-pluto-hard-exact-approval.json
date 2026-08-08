@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-pluto-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/pluto/hard",
+  "payloadSha256": "89d19ed1bda3abed486edd6c48978b43494c2349700543295acf4fc1625854c5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Your determination meets {{holder2}}'s need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome you originally wanted.",
+    "body_they": "{{holder1}}'s determination meets your need for control, turning the original disagreement into a battle over who gets the final say. If fighting becomes the default, winning replaces the outcome you originally wanted.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

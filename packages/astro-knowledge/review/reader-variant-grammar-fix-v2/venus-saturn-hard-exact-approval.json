@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-venus-saturn-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/saturn/hard",
+  "payloadSha256": "ceee9fcaf0b5d559df966c6d4ca7fa85fc8a5b4b6e9e43522e759b30d3dbb2a0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You reach for warmth and keep meeting {{holder2}}'s caution, responsibilities, or emotional distance. {{holder2}} may believe that loyalty should speak for itself, while you keep waiting for affection that feels easier to recognize. After enough time, both may describe the relationship as mature or realistic when it has actually become lonely. You feel denied, and {{holder2}} feels unfairly judged for the care that has already been shown through responsibility.",
+    "body_they": "{{holder1}} reaches for warmth and keeps meeting your caution, responsibilities, or emotional distance. You may believe that loyalty should speak for itself, while {{holder1}} keeps waiting for affection that feels easier to recognize. After enough time, both may describe the relationship as mature or realistic when it has actually become lonely. {{holder1}} feels denied, and you feel unfairly judged for the care that has already been shown through responsibility.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

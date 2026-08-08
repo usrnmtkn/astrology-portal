@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-moon-neptune-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/neptune/hard",
+  "payloadSha256": "b8e952709ed5312f9d6719a3b858b0cdcc249f977a0be2730e4b6633940e441f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} may comfort you for a feeling you are not actually having. {{holder2}} becomes convinced that you are sad, distant, disappointed, or quietly asking to be rescued, then treats the correction as part of the mystery. You end up managing the actual emotion and the elaborate bouquet sent to the wrong address.",
+    "body_they": "You may comfort {{holder1}} for a feeling {{holder1}} is not actually having. You become convinced that {{holder1}} is sad, distant, disappointed, or quietly asking to be rescued, then treat the correction as part of the mystery. {{holder1}} ends up managing the actual emotion and the elaborate bouquet sent to the wrong address.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
