@@ -2758,12 +2758,17 @@ function logSkyFactDiagnostic(stage: string, snapshot: SkySnapshot | null, diagn
   });
 }
 
-function formatSkyDate(value: string) {
-  return dateFromInput(value).toLocaleDateString(undefined, {
-    weekday: "long",
+function formatPairDailyDate(value: string) {
+  const date = dateFromInput(value);
+  const weekday = date.toLocaleDateString("en-US", {
+    weekday: "short"
+  });
+  const monthAndDay = date.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric"
   });
+
+  return `${weekday}., ${monthAndDay}`;
 }
 
 function formatSkyFullChartDate(value: string) {
@@ -17279,7 +17284,7 @@ function ManualChartsPanel({
       });
 
       return rendered.body
-        ? { body: rendered.body, dateLabel: formatSkyDate(isoDate) }
+        ? { body: rendered.body, dateLabel: formatPairDailyDate(isoDate) }
         : null;
     } catch (error) {
       if (error instanceof FallbackV3SourceGapError) return null;
