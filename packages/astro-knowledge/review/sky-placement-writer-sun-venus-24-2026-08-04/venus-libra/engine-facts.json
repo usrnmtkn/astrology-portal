@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "libra",
+  "timeZone": "America/New_York",
+  "transitStart": "August 6, 2026",
+  "transitEnd": "September 10, 2026",
+  "transitStartIso": "2026-08-06T19:12:45.999Z",
+  "transitEndIso": "2026-09-10T08:06:49.999Z",
+  "priorSign": "virgo",
+  "priorSignEntryDate": "July 9, 2026",
+  "priorSignExitDate": "August 6, 2026",
+  "previousResidency": {
+    "sign": "libra",
+    "entryDate": "August 29, 2024",
+    "exitDate": "September 22, 2024",
+    "entryDateIso": "2024-08-29T13:22:44.999Z",
+    "exitDateIso": "2024-09-23T02:36:11.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-trine-pluto-2026-08-10t18:08:38.999z",
+      "body": "venus-trine-pluto",
+      "bodies": [
+        "venus",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "August 10, 2026",
+      "dateIso": "2026-08-10T18:08:38.999Z",
+      "rank": 1,
+      "meaning": "Love and value meet intensity. All-or-nothing attraction, deep desire, and a strong pull toward control in relationships. The trine makes this a natural strength: Depth and devotion in love, used deliberately. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-trine-pluto.json"
+    },
+    {
+      "id": "aspect-venus-trine-uranus-2026-08-12t03:46:10.999z",
+      "body": "venus-trine-uranus",
+      "bodies": [
+        "venus",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "August 11, 2026",
+      "dateIso": "2026-08-12T03:46:10.999Z",
+      "rank": 2,
+      "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. The trine makes this a natural strength: Exciting, unconventional bonds and an original aesthetic; freedom inside closeness. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-trine-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-trine-pluto.json",
+      "packages/astro-knowledge/data/transits/venus-trine-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

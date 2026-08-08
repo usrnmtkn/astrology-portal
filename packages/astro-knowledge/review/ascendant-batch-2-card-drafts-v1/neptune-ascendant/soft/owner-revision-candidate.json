@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "neptune-ascendant-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "91f6efc2105acce579f55447477fd6912d445a9c6f566d1a7fa36644008d39fb",
+  "payload": {
+    "body_you": "You tend to interpret the way {{holder2}} comes across generously, even when you are not fully sure what they mean. {{holder2}} then monitors themselves less and acts more naturally around you. This ease can leave your assumptions about them untested.",
+    "body_they": "{{holder1}} tends to interpret the way you come across generously, even when they are not fully sure what you mean. You then monitor yourself less and act more naturally around {{holder1}}. This ease can leave their assumptions about you untested.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "7d1c3db6cab34545a734bf01b13b3f565753a92bdf41157f104cdc99bfdb0462",
+    "writerProviderResponseSha256": "67677d113561b4e7b12064e3d2314f2dd461f194c8cb4f81850d3bf24e38b51f"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/soft/exact-approval.json"
+}

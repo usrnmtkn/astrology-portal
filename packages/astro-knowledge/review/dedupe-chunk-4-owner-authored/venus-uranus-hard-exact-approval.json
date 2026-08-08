@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-uranus-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/uranus/hard",
+  "payloadSha256": "29ebda46c480ceea39be05e8632b7df36af27597dcadbbc100d3e97e6a9f457b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} reaches for consistency, and {{holder2}} pulls back at that exact moment. Asking for certainty is the quickest way to get less of it.",
+    "body_they": "{{holder1}} reaches for consistency, and {{holder2}} pulls back at that exact moment. Asking for certainty is the quickest way to get less of it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

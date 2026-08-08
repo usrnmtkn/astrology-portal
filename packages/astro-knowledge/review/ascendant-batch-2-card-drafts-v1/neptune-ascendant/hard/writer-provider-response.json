@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0bdd5ff8ece1ce7b006a7280fa365881a2b757e95c00d6d984",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 874,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 3317,
+    "output_tokens_details": {
+      "reasoning_tokens": 2991
+    },
+    "total_tokens": 4191
+  },
+  "output_text": "{\n  \"body_you\": \"You may admire a version of {{holder2}} that fits your hopes, and {{holder2}} may not be able to tell what you actually think of them. {{holder2}} may respond by becoming more careful around you and adjusting how they come across based on whether you seem pleased, which can leave them feeling unseen. They want to be seen not just for their dreams but for their willingness to feel everything so deeply.\",\n  \"body_they\": \"{{holder1}} may admire a version of you that fits their hopes, and you may not be able to tell what they actually think of you. You may respond by becoming more careful around {{holder1}} and adjusting how you come across based on whether they seem pleased, which can leave you feeling unseen. You want to be seen not just for your dreams but for your willingness to feel everything so deeply.\",\n  \"warmthSource\": {\n    \"ownerFoundationLineIndex\": 3,\n    \"ownerFoundationSource\": \"full-moon-eclipse-in-pisces-2025\",\n    \"ownerFoundationLine\": \"To be seen not just for our dreams but for our willingness to feel everything so deeply.\",\n    \"usedForm\": {\n      \"body_you\": \"They want to be seen not just for their dreams but for their willingness to feel everything so deeply.\",\n      \"body_they\": \"You want to be seen not just for your dreams but for your willingness to feel everything so deeply.\"\n    }\n  },\n  \"labels\": [\n    \"owner-corpus-derived\"\n  ]\n}"
+}

@@ -169,6 +169,14 @@
   text-overflow: ellipsis;
 }
 
+.aspect-row-narrative-timing {
+  display: grid;
+  gap: calc(var(--space-1) / 2);
+  color: var(--card-meta-color);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-meta);
+}
+
 .synastry-contact-description {
   white-space: pre-line;
 }

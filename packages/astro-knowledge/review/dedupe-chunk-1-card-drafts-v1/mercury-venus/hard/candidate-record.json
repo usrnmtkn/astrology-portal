@@ -1,0 +1,9 @@
+{
+  "target": "mercury-venus-hard",
+  "status": "needs_review",
+  "payloadSha256": "3ebd69ad21ac335d8ccef4361ad5547e2c22da42a2510aed164284ef73816b4a",
+  "harvest_mode": "none_found",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

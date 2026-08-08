@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-saturn-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/saturn/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "450661628394f5f3a1e8b3ea58fd54516b517d7e5074639da74dc4396e6dc3cd",
+  "payload": {
+    "body_you": "{{holder2}} may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. {{holder1}} can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away.",
+    "body_they": "{{holder2}} may be the person who remembers the promise, handles the practical problem, and remains present after everyone else has gone home. {{holder1}} can trust that loyalty deeply. Even so, the same person holding the umbrella may still feel emotionally several feet away.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-saturn/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

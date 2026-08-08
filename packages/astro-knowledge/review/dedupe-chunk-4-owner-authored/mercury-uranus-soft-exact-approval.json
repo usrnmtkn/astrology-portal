@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mercury-uranus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/uranus/soft",
+  "payloadSha256": "8eaa7eeda69174d2581ad19423ee01a1e45ef70bf04a32a93ad8bb458a12ab89",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} keeps {{holder1}}'s thinking from going stale, while {{holder1}} gives {{holder2}}'s leaps somewhere to land. The conversation stays interesting without becoming impossible to follow.",
+    "body_they": "{{holder2}} keeps {{holder1}}'s thinking from going stale, while {{holder1}} gives {{holder2}}'s leaps somewhere to land. The conversation stays interesting without becoming impossible to follow.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

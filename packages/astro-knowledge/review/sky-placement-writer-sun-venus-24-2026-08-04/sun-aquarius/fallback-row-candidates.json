@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "The Sun in Aquarius makes familiar rules easier to question. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aquarius on {{entryDate}}, and attention turns toward ideas, habits, and expectations that no longer fit. A familiar rule gets questioned out loud. A routine changes because its original purpose no longer makes sense. A group finally hears the perspective it had been missing.",
+      "tension": "The pressure rises when independence starts needing proof. Questioning a stale expectation can open a better path, but soon every agreement can feel like conformity. We reject a useful suggestion because it came from the group, keep our thinking private until it is flawless, or stand so far outside the process that the group cannot act on what we see. Distance starts to feel like evidence that the idea is original. The group loses the perspective, and we lose the chance to find where it needs work.",
+      "development": "The Sun last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure returns when a different view has to survive contact with the group it could serve. An idea gets announced before the group knows what it improves. A sharp observation arrives without context, so the group dismisses it as another provocation. A shared effort goes on without us because joining feels too much like being absorbed. The idea may be right and still go nowhere. When identity depends on staying separate, disagreement feels like a demand to fall in line, and working together looks like surrender.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "By {{exitDate}}, an idea defended mainly as proof of independence can leave us outside the group it was supposed to help.",
+      "try_this": [
+        "We can replace one stale routine this week and keep the change only if it makes daily life easier.",
+        "We can bring one unusual idea to a group we already belong to, along with one plain example of how it would help."
+      ],
+      "aspect_units": [],
+      "body_you": "The Sun in Aquarius makes familiar rules easier to question. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aquarius on {{entryDate}}, and attention turns toward ideas, habits, and expectations that no longer fit. A familiar rule gets questioned out loud. A routine changes because its original purpose no longer makes sense. A group finally hears the perspective it had been missing.\n\nThe pressure rises when independence starts needing proof. Questioning a stale expectation can open a better path, but soon every agreement can feel like conformity. We reject a useful suggestion because it came from the group, keep our thinking private until it is flawless, or stand so far outside the process that the group cannot act on what we see. Distance starts to feel like evidence that the idea is original. The group loses the perspective, and we lose the chance to find where it needs work.\n\nThe Sun last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure returns when a different view has to survive contact with the group it could serve. An idea gets announced before the group knows what it improves. A sharp observation arrives without context, so the group dismisses it as another provocation. A shared effort goes on without us because joining feels too much like being absorbed. The idea may be right and still go nowhere. When identity depends on staying separate, disagreement feels like a demand to fall in line, and working together looks like surrender.\n\nBy {{exitDate}}, an idea defended mainly as proof of independence can leave us outside the group it was supposed to help.",
+      "body_they": "The Sun in Aquarius makes familiar rules easier to question. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aquarius on {{entryDate}}, and attention turns toward ideas, habits, and expectations that no longer fit. A familiar rule gets questioned out loud. A routine changes because its original purpose no longer makes sense. A group finally hears the perspective it had been missing.\n\nThe pressure rises when independence starts needing proof. Questioning a stale expectation can open a better path, but soon every agreement can feel like conformity. We reject a useful suggestion because it came from the group, keep our thinking private until it is flawless, or stand so far outside the process that the group cannot act on what we see. Distance starts to feel like evidence that the idea is original. The group loses the perspective, and we lose the chance to find where it needs work.\n\nThe Sun last moved through Aquarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure returns when a different view has to survive contact with the group it could serve. An idea gets announced before the group knows what it improves. A sharp observation arrives without context, so the group dismisses it as another provocation. A shared effort goes on without us because joining feels too much like being absorbed. The idea may be right and still go nowhere. When identity depends on staying separate, disagreement feels like a demand to fall in line, and working together looks like surrender.\n\nBy {{exitDate}}, an idea defended mainly as proof of independence can leave us outside the group it was supposed to help.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sun-aquarius"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

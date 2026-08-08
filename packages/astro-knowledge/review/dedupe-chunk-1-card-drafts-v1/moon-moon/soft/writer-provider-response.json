@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0a59dbda71604035006a729687d7a481a1855313047f2866de",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 799,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1043,
+    "output_tokens_details": {
+      "reasoning_tokens": 888
+    },
+    "total_tokens": 1842
+  },
+  "output_text": "{\"body_you\":\"You quickly pick up on what {{holder2}} is feeling and respond to what they need, and they do the same for you. Your moods tend to settle when you are together, so comfort and emotional safety come easily. Because this feels so comfortable, both of you may avoid hard conversations or changes that would challenge the relationship.\",\"body_they\":\"{{holder1}} quickly picks up on what you are feeling and responds to what you need, and you do the same for them. Your moods tend to settle when you are together, so comfort and emotional safety come easily. Because this feels so comfortable, both of you may avoid hard conversations or changes that would challenge the relationship.\",\"warmthSource\":null,\"labels\":[]}"
+}

@@ -89,7 +89,7 @@ const engine = require("../../packages/astro-knowledge/engine/aspect-patterns/in
   buildPatternActivations(detectionResult: unknown, transitAspects: unknown[], options: Record<string, unknown>): Record<string, unknown>;
   detectPatterns(input: unknown): Record<string, unknown>;
   rankAspectPatterns(detectionResult: unknown, context: Record<string, unknown>): Record<string, unknown>;
-  resolveAspectPatternCopy(context: Record<string, unknown>, options?: { authoredRecords?: AuthoredNatalRecord[] }): ResolvedCopy;
+  resolveAspectPatternCopy(context: Record<string, unknown>, options?: { authoredRecords?: AuthoredNatalRecord[]; useLegacyResolver?: boolean }): ResolvedCopy;
   resolveAspectPatternActivationCopy(context: Record<string, unknown>, options?: { authoredRecords?: AuthoredActivationRecord[] }): ResolvedCopy;
   validateAuthoredAspectPatternRecord(record: AuthoredNatalRecord, context: Record<string, unknown>): ValidationResult;
   validateAuthoredAspectPatternActivationRecord(record: AuthoredActivationRecord, context: Record<string, unknown>): ValidationResult;
@@ -419,10 +419,10 @@ function previewForRecord(kind: PatternWriteupKind, record: AuthoredNatalRecord 
   return contexts.map(([fixtureId, context]) => {
     const authored = kind === "activation"
       ? engine.resolveAspectPatternActivationCopy(context, { authoredRecords: [resolverRecord as AuthoredActivationRecord] })
-      : engine.resolveAspectPatternCopy(context, { authoredRecords: [resolverRecord as AuthoredNatalRecord] });
+      : engine.resolveAspectPatternCopy(context, { authoredRecords: [resolverRecord as AuthoredNatalRecord], useLegacyResolver: true });
     const fallback = kind === "activation"
       ? engine.resolveAspectPatternActivationCopy(context, { authoredRecords: [] })
-      : engine.resolveAspectPatternCopy(context, { authoredRecords: [] });
+      : engine.resolveAspectPatternCopy(context, { authoredRecords: [], useLegacyResolver: true });
     const validation = kind === "activation"
       ? engine.validateAuthoredAspectPatternActivationRecord(record as AuthoredActivationRecord, context)
       : engine.validateAuthoredAspectPatternRecord(record as AuthoredNatalRecord, context);

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "runId": "venus-libra",
+  "recordedAt": "2026-08-05T01:44:22.501Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "venus",
+    "sign": "libra"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+      "owner-article:relationship-year-libra-2025-to-venus-rx-2026:p012:window-2-2",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:venus-in-cancer:p009:window-3-4",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Venus in Libra makes it easier to tell when care is being returned. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and attraction starts to organize itself around reciprocity and shared taste. The tone softens. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when effort is returned without being requested.",
+    "tension": "Venus in Libra can find terms that leave both sides feeling considered. The cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.",
+    "development": "Venus last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and questions about reciprocity may return in a different form. The issue may be a relationship where one side always chooses the harmless answer, a shared expense left unequal because naming the amount feels ungracious, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.",
+    "close": "Before {{exitDate}}, an arrangement may strain when one side can no longer keep agreeing to what it does not want.",
+    "try_this": [
+      "We can state our preferred option before asking anyone else to choose.",
+      "We can total one shared expense and request the exact amount still owed."
+    ]
+  }
+}

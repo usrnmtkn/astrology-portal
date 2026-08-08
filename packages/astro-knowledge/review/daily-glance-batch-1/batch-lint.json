@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "passed": false,
+  "rules": {
+    "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
+    "DG-R7": "No body opener construction may repeat within the batch."
+  },
+  "checks": [
+    {
+      "id": "batch-output-count",
+      "passed": true,
+      "details": "7/7 outputs"
+    },
+    {
+      "id": "DG-R1-recurring-sentence-frame",
+      "passed": false,
+      "details": [
+        {
+          "frame": "for the next",
+          "keys": [
+            "conjunction/mars",
+            "soft/pluto",
+            "conjunction/north-node",
+            "opposition/south-node"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DG-R7-opener-variety",
+      "passed": false,
+      "details": [
+        {
+          "frame": "for the",
+          "keys": [
+            "conjunction/mars",
+            "soft/pluto",
+            "conjunction/north-node",
+            "opposition/south-node"
+          ]
+        },
+        {
+          "frame": "you may",
+          "keys": [
+            "opposition/sun",
+            "conjunction/lilith"
+          ]
+        }
+      ]
+    }
+  ],
+  "openerConstructions": [
+    {
+      "key": "square/moon",
+      "frame": "for a"
+    },
+    {
+      "key": "conjunction/mars",
+      "frame": "for the"
+    },
+    {
+      "key": "opposition/sun",
+      "frame": "you may"
+    },
+    {
+      "key": "conjunction/lilith",
+      "frame": "you may"
+    },
+    {
+      "key": "soft/pluto",
+      "frame": "for the"
+    },
+    {
+      "key": "conjunction/north-node",
+      "frame": "for the"
+    },
+    {
+      "key": "opposition/south-node",
+      "frame": "for the"
+    }
+  ],
+  "repeatedFrames": [
+    {
+      "frame": "for the next",
+      "keys": [
+        "conjunction/mars",
+        "soft/pluto",
+        "conjunction/north-node",
+        "opposition/south-node"
+      ]
+    }
+  ],
+  "repeatedOpeners": [
+    {
+      "frame": "for the",
+      "keys": [
+        "conjunction/mars",
+        "soft/pluto",
+        "conjunction/north-node",
+        "opposition/south-node"
+      ]
+    },
+    {
+      "frame": "you may",
+      "keys": [
+        "opposition/sun",
+        "conjunction/lilith"
+      ]
+    }
+  ]
+}

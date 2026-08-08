@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-sun-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/sun/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b9adacd7934a37f176eb6995495bc2db1e66302da829ebc7b088d768c5efd44e",
+  "payload": {
+    "body_you": "You and {{holder2}} recognize yourselves in each other quickly, and your confidence reinforces theirs as theirs reinforces yours. You often want the same direction and recognition, which makes it easy to move together but hard to tell whose priorities are leading. When both of you want to stand out, that mutual validation can turn into competition.",
+    "body_they": "{{holder1}} and you recognize yourselves in each other quickly, and their confidence reinforces yours as yours reinforces theirs. You often want the same direction and recognition, which makes it easy to move together but hard to tell whose priorities are leading. When both of you want to stand out, that mutual validation can turn into competition.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-sun/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

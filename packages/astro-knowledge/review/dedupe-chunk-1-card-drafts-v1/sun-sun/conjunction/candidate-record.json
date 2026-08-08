@@ -1,0 +1,9 @@
+{
+  "target": "sun-sun-conjunction",
+  "status": "needs_review",
+  "payloadSha256": "b9adacd7934a37f176eb6995495bc2db1e66302da829ebc7b088d768c5efd44e",
+  "harvest_mode": "none_found",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

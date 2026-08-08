@@ -6,6 +6,56 @@
 
   "voiceDescription": "Direct, modern, and emotionally exact. The article is not a sign encyclopedia; its job is to give the reader one memorable way to recognize the transit in real life. Interesting before comprehensive. Verbs and scenes over adjective triplets. Prefer a clear observation over a polished abstraction. A memorable phrase earns its place only when it makes literal sense on the first read.",
 
+  "ownerWriterDirective": {
+    "id": "OV-044",
+    "status": "owner-permanent",
+    "scope": "Sky Placement writer",
+    "text": "Begin with the lived behavior, not a sentence explaining the sign or planet. Remove mechanical\ntransitions such as 'the pressure begins,' 'the same pressure returns,' and 'the pattern appears.'\nReplace them with the exact moment the problem becomes visible. Put the action back on the person\ninstead of using passive phrases such as 'a choice gets made' or 'a task gets reopened.'\nReplace formal, therapeutic, corporate, and textbook language with ordinary words. Do not replace\none abstraction with another. Name what someone does, what another person notices, and what becomes\nharder afterward.\nAvoid mediation language such as 'one side,' 'both sides,' 'neither side,' and 'neither of us.' Use\nthe person, the repeated behavior, or collective 'we' instead. Limit repeated references to 'the\nbond,' 'the connection,' 'pressure,' and 'creative piece.'\nPreserve the strongest consequence in each paragraph. Do not shorten a sentence by removing the\nreason it matters. Keep uncertainty where astrology requires it, but do not turn possible patterns\ninto guarantees. Before approving a replacement, check that it sounds current, can be understood on\nthe first read, and describes a moment someone could recognize from their own life.",
+    "flaggedTerms": [
+      "exacting",
+      "candor",
+      "ungracious",
+      "vitality",
+      "attachment (as jargon)",
+      "reciprocity",
+      "preset role",
+      "full accounting",
+      "rescue reflex",
+      "secure love"
+    ]
+  },
+
+  "moonSignEntryPolicy": {
+    "id": "OV-045",
+    "status": "owner-permanent",
+    "source": "review/moon-template-package-2026-08-05.md",
+    "structure": [
+      "dates and immediate collective mood",
+      "ordinary reactions and decisions",
+      "what the sign supports",
+      "the behavior that distorts it",
+      "an exact engine-fact-gated aspect when available",
+      "one brief reminder that the mood is temporary",
+      "concrete actions"
+    ],
+    "rules": [
+      "Establish the collective mood once through observable effects rather than a uniform inner state.",
+      "Do not include a generic Moon explainer or repeat the mood in the close.",
+      "Keep entry, exit, and aspect dates in resolver slots supplied by the engine.",
+      "Do not use keyword-stack adjectives, poetic-sensory imagery, or astrology cliches.",
+      "Name the behavior that distorts the sign's support in ordinary current language.",
+      "Render an aspect paragraph only for a matching engine-supplied aspect with an exact date."
+    ],
+    "styleEvidence": [
+      "The pace slows, and people become less willing to be rushed.",
+      "You may need more time to decide how you feel before responding.",
+      "Comfort becomes practical.",
+      "A routine may still feel familiar even after it stops helping.",
+      "Choose one priority before agreeing to five.",
+      "By August 7, the mood has moved on."
+    ]
+  },
+
   "person": "collective-current-sky",
   "secondPersonAllowed": false,
   "firstPersonPluralAllowed": true,
@@ -323,6 +373,8 @@
       ,{"term": "\\bthe practical choice is\\b", "reason": "coaching scaffold; state the transit, behavior, and consequence directly"}
       ,{"term": "\\bthe correction is not\\b", "reason": "coaching scaffold; state what changes without announcing a lesson"}
       ,{"term": "\\bthe next choice is whether\\b", "reason": "coaching scaffold; do not turn development into a decision worksheet"}
+      ,{"term": "\\bnot a passing mood\\b", "reason": "banned timing formula; state the actual duration or change without contrasting it with a mood"}
+      ,{"term": "\\ba(?: [a-z-]+){0,2} chapter,\\s*not a\\b", "reason": "banned chapter-not-X formula; state the timescale directly"}
     ],
     "warn": [
       {"term": "group chat", "reason": "Allowed when the scene is literally a group conversation; flag for reviewer attention, and allow at most one occurrence across a batch"},
@@ -334,7 +386,17 @@
       {"term": "journey", "reason": "coaching register"},
       {"term": "invit(es|ation|ing) (you|us)", "reason": "horoscope filler ('invites you to')"},
       {"term": "\\bletters?\\b", "reason": "default to message or response unless the scene specifically depends on physical mail"},
-      {"term": "\\bcorrespondence\\b", "reason": "formal delivery language; default to message, reply, response, or what they were told unless the formality matters"}
+      {"term": "\\bcorrespondence\\b", "reason": "formal delivery language; default to message, reply, response, or what they were told unless the formality matters"},
+      {"term": "\\bexacting\\b", "reason": "OV-044 flagged term; check for formal or over-composed register", "packetSourceAllowed": true},
+      {"term": "\\bcandor\\b", "reason": "OV-044 flagged term; prefer ordinary wording such as honesty when it fits", "packetSourceAllowed": true},
+      {"term": "\\bungracious\\b", "reason": "OV-044 flagged term; check for formal or dated wording", "packetSourceAllowed": true},
+      {"term": "\\bvitality\\b", "reason": "OV-044 flagged term; check whether ordinary wording names the actual energy or condition", "packetSourceAllowed": true},
+      {"term": "\\battachment\\b", "reason": "OV-044 flagged term when used as therapeutic jargon; literal relationship context may be retained by owner review", "packetSourceAllowed": true},
+      {"term": "\\breciprocity\\b", "reason": "OV-044 flagged term; name what is or is not being returned", "packetSourceAllowed": true},
+      {"term": "\\bpreset role\\b", "reason": "OV-044 flagged phrase; name the role or expectation", "packetSourceAllowed": true},
+      {"term": "\\bfull accounting\\b", "reason": "OV-044 flagged phrase; name what is being counted or compared", "packetSourceAllowed": true},
+      {"term": "\\brescue reflex\\b", "reason": "OV-044 flagged phrase; name what someone does before being asked", "packetSourceAllowed": true},
+      {"term": "\\bsecure love\\b", "reason": "OV-044 flagged phrase; name the expected reassurance or result", "packetSourceAllowed": true}
     ]
   },
 

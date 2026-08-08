@@ -59,7 +59,7 @@
     "pluto": {
       "zodiacCircuit": "about 248 years",
       "typicalSignStay": "roughly 12 to 31 years per sign",
-      "variabilityNote": "Pluto has an elliptical orbit, so its time in each sign varies widely. The current sign range must come from the calculation rather than the average residency."
+      "variabilityNote": "Pluto has an elliptical orbit, so its time in each sign varies widely. The calculated range for the current sign takes precedence over the average residency."
     },
     "chiron": {
       "zodiacCircuit": "about 50 years",

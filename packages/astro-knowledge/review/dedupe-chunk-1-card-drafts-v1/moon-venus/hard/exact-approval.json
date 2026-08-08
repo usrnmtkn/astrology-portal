@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-venus-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/venus/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b0015e3cc1a06a075c6b4f4ccf0a5c3702503b32db78eec6bfcf6e9ca4156c0d",
+  "payload": {
+    "body_you": "When {{holder2}} shows affection in the way that feels natural to them, you may respond with hurt or distance because it does not give you the reassurance you need. They may then try harder in the same way, so you still feel uncared for and they feel rejected. Both of you are trying to care, even when neither feels fully understood.",
+    "body_they": "When you show affection in the way that feels natural to you, {{holder1}} may respond with hurt or distance because it does not give them the reassurance they need. You may then try harder in the same way, so {{holder1}} still feels uncared for and you feel rejected. Both of you are trying to care, even when neither feels fully understood.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-venus/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

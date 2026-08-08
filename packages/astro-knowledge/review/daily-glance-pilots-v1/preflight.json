@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "status": "packet-self-lint-passed",
+  "calls": {
+    "plannedWriter": 3,
+    "plannedJudge": 0,
+    "billedMade": 0
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-pilot-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 3,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "keys": [
+    {
+      "key": "square/lilith",
+      "ownerSourceIds": [
+        "daily-glance-soft-mars-owner-headline",
+        "daily-glance-soft-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-lilith.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.square"
+      ],
+      "modelInputSha256": "381827c7af737ffa0f2c150993ef65749eceb1a6439bdf4e6c8f6ff255a9b166",
+      "packetLintPassed": true
+    },
+    {
+      "key": "opposition/mars",
+      "ownerSourceIds": [
+        "daily-glance-soft-mars-owner-headline",
+        "daily-glance-soft-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-mars.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.opposition"
+      ],
+      "modelInputSha256": "e1a8776009a5df200de4cca81ae6affdd002d44786cc5e67ca3d8e99d69dd18d",
+      "packetLintPassed": true
+    },
+    {
+      "key": "house/11",
+      "ownerSourceIds": [
+        "daily-glance-soft-mars-owner-headline",
+        "daily-glance-soft-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F4.house-11"
+      ],
+      "modelInputSha256": "5e5d8274712a1d426e11c21b0726fb2b960531daedce69c8ed6eb59519f0d0af",
+      "packetLintPassed": true
+    }
+  ]
+}

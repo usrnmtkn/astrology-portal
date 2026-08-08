@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-moon-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/moon/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d580943572e448eb24d4b4e80b2e05cbdeb3bb4c4445b3c6b83bec5a7d87cbe0",
+  "payload": {
+    "body_you": "What helps you feel settled often unsettles {{holder2}}, and {{holder2}}'s way of seeking comfort can make you feel just as unsafe. You both react from that discomfort, so each attempt to feel understood can trigger another defensive response and leave neither of you feeling cared for.",
+    "body_they": "What helps {{holder1}} feel settled often unsettles you, and your way of seeking comfort can make {{holder1}} feel just as unsafe. You both react from that discomfort, so each attempt to feel understood can trigger another defensive response and leave neither of you feeling cared for.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mars-uranus-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/uranus/hard",
+  "payloadSha256": "9c3d296e88c2163b694ae96872a0afe4dd136b437f2f5534d6c5ce2cf4df1449",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Just as {{holder1}} commits to a direction, {{holder2}} changes course, or {{holder2}} needs immediate space right when {{holder1}} reaches for backup. Both start acting independently just to avoid the collision.",
+    "body_they": "Just as {{holder1}} commits to a direction, {{holder2}} changes course, or {{holder2}} needs immediate space right when {{holder1}} reaches for backup. Both start acting independently just to avoid the collision.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
