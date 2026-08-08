@@ -30,7 +30,7 @@ Tasks are ordered for execution. Each lists files touched and a done-check. IDs 
 - `api/_lib/provider-config.ts`
 
 **Work**
-- Add `"year_ahead" | "year_ahead_season" | "year_ahead_key_date" | "relationship_report_section"` to both `UserContentSubjectType` and `UserGeneratedSubjectType` (keep the two unions identical; consider extracting to a shared type to stop the duplication).
+- Add `"year_ahead" | "year_ahead_season" | "year_ahead_key_date" | "year_ahead_sr_moment" | "year_ahead_sr_stance" | "year_ahead_sr_sun" | "year_ahead_headline" | "year_ahead_saturn_return_callout" | "relationship_report_section" | "saturn_return" | "saturn_return_section"` to both `UserContentSubjectType` and `UserGeneratedSubjectType` (keep the two unions identical; consider extracting to a shared type to stop the duplication).
 - Route the new types: `year_ahead*` → default provider, `relationship_report_section` → `CONTENT_GENERATION_PROVIDER_RELATIONSHIP`.
 
 **Done when:** type-check passes; a manual `generate-user-content` call with a new subject type persists a row.
@@ -69,6 +69,8 @@ Tasks are ordered for execution. Each lists files touched and a done-check. IDs 
 **Work**
 - Generalize the `SkyDetailArticle.tsx` section pattern (kicker/title/paragraphs/attribution/sourceTag) into a report-agnostic renderer: cover block, chapter/section blocks, key-date list, bottom-sheet detail, colophon.
 - Reuse heading dedup (`utils/articleHeadings`), tokens only, budget-checked.
+- Deduplicate `react` and `react-dom` in Vite so the dev-only report fixture entry shares the app's React runtime.
+- Add a dedicated mobile Playwright fixture check for the long-form renderer and bottom sheet.
 
 **Done when:** renders a fixture report JSON end-to-end; `npm run qa:bundle` passes.
 
