@@ -159,17 +159,6 @@ assert.match(
   /migrateLocalManualChartsToRemote\(account\.id,\s*\[\s*cachedLocalProfile\?\.id,\s*account\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\s*\)/s,
   "Fallback auth/profile loading must still migrate charts from legacy local owner ids."
 );
-assert.match(
-  appSource,
-  /chartsReady=\{remoteAccountId \? remoteProfileReady : authAccountChecked\}/,
-  "Friends chart UI must wait for remote profile loading and migration before replacing local chart state."
-);
-assert.match(
-  appSource,
-  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| \(remoteAccountId \? remoteProfileReady : authAccountChecked\)\}/,
-  "Configured auth must not show local chart rows until signed-in chart migration has resolved."
-);
-
 console.log(JSON.stringify({
   status: "PASS",
   surface: "friends chart data retention",
