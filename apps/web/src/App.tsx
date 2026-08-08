@@ -125,6 +125,7 @@ import {
   type FriendsTab
 } from "./features/friends/friendsRouting";
 import { friendProfileWorkForTab } from "./features/friends/friendProfileWork";
+import { resolveFriendChartLoadingState } from "./features/friends/friendChartLoading";
 import {
   apiSubjectFromManualChart,
   buildFriendChartListItems,
@@ -13157,6 +13158,13 @@ export function App() {
     }
   }
 
+  const friendChartLoadingState = resolveFriendChartLoadingState({
+    authAccountChecked,
+    isAuthConfigured,
+    remoteAccountId,
+    remoteProfileReady
+  });
+
   return (
     <main className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
       {!isSignupMode && (
@@ -13769,8 +13777,8 @@ export function App() {
                     sunriseOrbDegrees={activeSunriseOrbDegrees}
                     chartOwnerUserId={remoteAccountId ?? userProfile.id}
                     chartRefreshKey={remoteProfileReady ? 1 : 0}
-                    chartsReady={remoteAccountId ? remoteProfileReady : authAccountChecked}
-                    allowCachedChartsWhileLoading={!isAuthConfigured || (remoteAccountId ? remoteProfileReady : authAccountChecked)}
+                    chartsReady={friendChartLoadingState.chartsReady}
+                    allowCachedChartsWhileLoading={friendChartLoadingState.allowCachedChartsWhileLoading}
                     onPendingRequestCountChange={setPendingFriendRequestCount}
                     onFriendProfileContentRequest={requestFriendProfileContent}
                     onOpenDetail={openSkyDetail}

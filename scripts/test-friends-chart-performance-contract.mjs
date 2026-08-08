@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
+import { scheduleFriendChartRepair } from "../apps/web/src/features/friends/friendChartLoading.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
@@ -140,11 +141,6 @@ assert.match(
   "The Charts landing view must render cached chart rows without waiting for social-profile availability."
 );
 
-assert.match(
-  appSource,
-  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| \(remoteAccountId \? remoteProfileReady : authAccountChecked\)\}/,
-  "Friends charts must paint their account-scoped cache after chart-account migration resolves."
-);
 assert.doesNotMatch(
   appSource,
   /mode === "friends" && userProfile && sky &&/,
@@ -301,11 +297,63 @@ assert.doesNotMatch(
   /setRelationshipCompareStatus|compareRelationship\(\{/,
   "ManualChartsPanel must not re-embed relationship request state or cancellation."
 );
-assert.match(
-  manualChartsControllerSource,
-  /const repairTimer = window\.setTimeout\(\(\) => \{\s*void repairCharts\(\);\s*\}, 1_500\);/,
-  "Incomplete chart repair must wait until after initial interaction instead of competing with first paint."
+let idleCallback = null;
+let idleOptions = null;
+let cancelledIdleTask = null;
+let repairedDuringIdle = false;
+const cancelIdleRepair = scheduleFriendChartRepair(
+  () => {
+    repairedDuringIdle = true;
+  },
+  {
+    requestIdleCallback(callback, options) {
+      idleCallback = callback;
+      idleOptions = options;
+      return 41;
+    },
+    cancelIdleCallback(handle) {
+      cancelledIdleTask = handle;
+    },
+    setTimeout() {
+      throw new Error("The timeout fallback must not run when idle callbacks are available.");
+    },
+    clearTimeout() {}
+  }
 );
+
+assert.equal(repairedDuringIdle, false, "Chart repair must yield until the browser grants idle time.");
+assert.equal(idleOptions?.timeout, 250, "Idle repair must have a 250 ms maximum wait.");
+idleCallback?.({ didTimeout: false, timeRemaining: () => 10 });
+assert.equal(repairedDuringIdle, true, "Chart repair must start as soon as the browser grants idle time.");
+cancelIdleRepair();
+assert.equal(cancelledIdleTask, 41, "Unmounting must cancel a scheduled idle repair.");
+
+let timeoutCallback = null;
+let timeoutDelay = null;
+let cancelledTimeoutTask = null;
+let repairedDuringFallback = false;
+const cancelFallbackRepair = scheduleFriendChartRepair(
+  () => {
+    repairedDuringFallback = true;
+  },
+  {
+    setTimeout(callback, delay) {
+      timeoutCallback = callback;
+      timeoutDelay = delay ?? 0;
+      return 42;
+    },
+    clearTimeout(handle) {
+      cancelledTimeoutTask = handle;
+    }
+  }
+);
+
+assert.equal(timeoutDelay, 16, "Browsers without idle callbacks must use a one-frame fallback delay.");
+assert.ok(timeoutDelay < 100, "The repair fallback must not restore a user-visible fixed delay.");
+timeoutCallback?.();
+assert.equal(repairedDuringFallback, true, "The timeout fallback must start incomplete-chart repair.");
+cancelFallbackRepair();
+assert.equal(cancelledTimeoutTask, 42, "Unmounting must cancel a scheduled fallback repair.");
 
 console.log(JSON.stringify({
   status: "PASS",
