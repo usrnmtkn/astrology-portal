@@ -28,6 +28,10 @@ A writer result remains `needs_review` unless the owner explicitly approves
 the complete exact wording. A judge score, positive direction, or preferred
 line never authorizes governed-content promotion.
 
+## Serving-content flight rule
+
+Before branching, list open PRs touching fallbackArchitectureV3 or packages/astro-knowledge; if any exists, stop and report.
+
 ### Sky aspect surface
 
 Before changing Sky aspect selection, fallback behavior, loading state, card
