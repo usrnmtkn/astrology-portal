@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-uranus-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/uranus/hard",
+  "payloadSha256": "7a0cde89a6b0eea35a2e4e9320f02309bbc4e1148beb81e47c1d883a3a53c0b5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Just as you begin trusting the arrangement, {{holder2}} changes the rhythm, questions the plan, or needs a different amount of space. {{holder2}} experiences the shift as necessary freedom, while you experience it as the chair being pulled away the moment you sat down. After enough sudden changes, you start bracing before anything has even happened.",
+    "body_they": "Just as {{holder1}} begins trusting the arrangement, you change the rhythm, questions the plan, or needs a different amount of space. You experience the shift as necessary freedom, while {{holder1}} experiences it as the chair being pulled away the moment they sat down. After enough sudden changes, {{holder1}} starts bracing before anything has even happened.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

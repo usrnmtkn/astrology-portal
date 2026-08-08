@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mercury-jupiter-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/conjunction",
+  "payloadSha256": "09bfa68068a0458a21b288028ae0ad7801771d4c92b95eb0dd64c0056618a4a6",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} makes you feel that an idea deserves more attention, more confidence, and a larger audience. Around {{holder2}}, you may speak more freely, take intellectual risks, or finally say something that had previously felt too ambitious. The excitement can make every idea sound important before it has been tested. {{holder2}} expands the possibility, and you may start speaking from the size of that possibility rather than the information already available.",
+    "body_they": "You make {{holder1}} feel that an idea deserves more attention, more confidence, and a larger audience. Around you, {{holder1}} may speak more freely, take intellectual risks, or finally say something that had previously felt too ambitious. The excitement can make every idea sound important before it has been tested. You expand the possibility, and {{holder1}} may start speaking from the size of that possibility rather than the information already available.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

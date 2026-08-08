@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-south-node-ascendant-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/hard",
+  "payloadSha256": "e2f9ce57d98ee7d2b3f56475e083ba4cf475a3c5e9e84e69f0f077d0ac3b85cd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+    "body_they": "{{holder1}} may keep responding to an older version of you, even while you are trying to act differently. You can feel misunderstood or boxed into a role you no longer want. The connection may feel warm and familiar while still making change more difficult.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}
