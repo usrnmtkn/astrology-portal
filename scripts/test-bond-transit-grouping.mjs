@@ -5,7 +5,9 @@ import {
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import {
   contactsForBondTransitGroup,
-  groupBondTransitActivations
+  dedupeBondTransitEndpointCandidates,
+  groupBondTransitActivations,
+  rankBondTransitGroups
 } from "../apps/web/src/services/bondTransitGrouping.ts";
 import fs from "node:fs";
 
@@ -212,4 +214,135 @@ for (const cards of [[joseCard], [chrisCard], [single]]) {
   );
 }
 
-console.log("bond transit grouping passed: friend endpoint, reader endpoint, single contact, and separate endpoints");
+// One transiting planet reaching both endpoints of the SAME contact is one sky event:
+// keep only the tighter-orb endpoint. Different contacts stay separate (asserted above).
+const readerVenusEnd = {
+  ...candidate({
+    contactId: "venus-pluto",
+    counterpartPlanet: "Pluto",
+    endpointOwner: "reader",
+    endpointPlanet: "Venus",
+    aspect: "square"
+  }),
+  activation: { ...activation, orb: 0.4 }
+};
+const friendPlutoEnd = {
+  ...candidate({
+    contactId: "venus-pluto",
+    counterpartPlanet: "Venus",
+    endpointOwner: "friend",
+    endpointPlanet: "Pluto",
+    aspect: "opposition"
+  }),
+  activation: { ...activation, orb: 0.9 }
+};
+const otherContact = {
+  ...candidate({
+    contactId: "moon-mars",
+    counterpartPlanet: "Moon",
+    endpointOwner: "friend",
+    endpointPlanet: "Mars",
+    aspect: "sextile"
+  }),
+  activation: { ...activation, orb: 0.7 }
+};
+const deduped = dedupeBondTransitEndpointCandidates(
+  [friendPlutoEnd, readerVenusEnd, otherContact],
+  (transit) => transit.orb
+);
+assert.deepEqual(
+  deduped.map((entry) => `${entry.contactId}:${entry.endpointOwner}`),
+  ["venus-pluto:reader", "moon-mars:friend"],
+  "Both-endpoint activations of one contact must collapse to the tighter-orb endpoint."
+);
+const tied = dedupeBondTransitEndpointCandidates(
+  [
+    { ...friendPlutoEnd, activation: { ...activation, orb: 0.5 } },
+    { ...readerVenusEnd, activation: { ...activation, orb: 0.5 } }
+  ],
+  (transit) => transit.orb
+);
+assert.deepEqual(
+  tied.map((entry) => entry.endpointOwner),
+  ["reader"],
+  "An orb tie must keep the reader endpoint."
+);
+
+// Ranking: slow planets outrank fast ones; ties break on orb tightness. This runs
+// before the surface's 3-card cap so a Moon card cannot crowd out a Saturn card.
+const rankedGroups = rankBondTransitGroups(
+  groupBondTransitActivations([
+    {
+      ...candidate({
+        contactId: "moon-moon",
+        counterpartPlanet: "Moon",
+        endpointOwner: "reader",
+        endpointPlanet: "Moon",
+        aspect: "conjunction"
+      }),
+      transiting: "moon",
+      activation: { ...activation, orb: 0.1 }
+    },
+    {
+      ...candidate({
+        contactId: "venus-saturn-wide",
+        counterpartPlanet: "Saturn",
+        endpointOwner: "reader",
+        endpointPlanet: "Mars",
+        aspect: "square"
+      }),
+      activation: { ...activation, orb: 0.8 }
+    },
+    {
+      ...candidate({
+        contactId: "venus-pluto",
+        counterpartPlanet: "Pluto",
+        endpointOwner: "reader",
+        endpointPlanet: "Venus",
+        aspect: "square"
+      }),
+      activation: { ...activation, orb: 0.4 }
+    }
+  ]),
+  (transit) => transit.orb
+);
+assert.deepEqual(
+  rankedGroups.map((group) => `${group.transiting}:${group.endpointPlanet}`),
+  ["saturn:venus", "saturn:mars", "moon:moon"],
+  "Ranking must put slow planets first, then tighter orbs; the Moon ranks last."
+);
+
+// Duplicate effect bodies: two cards sharing transiting planet + exact aspect must not
+// repeat the same effect paragraph. duplicateIndex > 0 rotates to the family lane.
+const firstSaturnSquare = renderer.renderBondTransit({
+  transiting: "saturn",
+  aspect: "square",
+  endpointPlanet: "venus",
+  endpointOwner: "reader",
+  activatedPlanets: ["pluto"],
+  otherName: "Chris",
+  friendPossessivePronoun: "his",
+  sign: "aries",
+  duplicateIndex: 0,
+  window: "Until November 13"
+});
+const secondSaturnSquare = renderer.renderBondTransit({
+  transiting: "saturn",
+  aspect: "square",
+  endpointPlanet: "mars",
+  endpointOwner: "reader",
+  activatedPlanets: ["moon"],
+  otherName: "Chris",
+  friendPossessivePronoun: "his",
+  sign: "aries",
+  variant: 2,
+  duplicateIndex: 1,
+  window: "Until November 13"
+});
+assert.notEqual(
+  firstSaturnSquare.parts[0],
+  secondSaturnSquare.parts[0],
+  "Cards sharing a transiting planet and exact aspect must rotate the effect body."
+);
+
+console.log("bond transit grouping passed: friend endpoint, reader endpoint, single contact, separate endpoints, both-endpoint dedupe, ranking, and duplicate rotation");

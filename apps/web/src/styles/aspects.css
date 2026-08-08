@@ -413,7 +413,7 @@
   align-items: start;
   width: 100%;
   gap: var(--updates-aspect-row-gap);
-  padding: var(--updates-aspect-row-padding);
+  padding: var(--updates-aspect-row-padding, clamp(26px, 3.4vw, 38px));
   background: var(--card-bg);
   cursor: default;
   text-align: left;
