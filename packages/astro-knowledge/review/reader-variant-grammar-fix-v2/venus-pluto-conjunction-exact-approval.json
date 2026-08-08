@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-venus-pluto-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/pluto/conjunction",
+  "payloadSha256": "bd9aa0136b609eae1fbb877bfa08b36a2144e58f201f52313ef913710b54e540",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}}'s interest in you is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access.",
+    "body_they": "Your interest in {{holder1}} is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

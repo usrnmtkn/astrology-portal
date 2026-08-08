@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-venus-mars-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/mars/hard",
+  "payloadSha256": "6353f24461e8722fcace7f3a89770e4b34cb7066284465158d4eb7e03d078a0f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. You and {{holder2}} can start using intensity as proof of connection even when neither person feels fully understood.",
+    "body_they": "{{holder1}} and you may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. {{holder1}} and you can start using intensity as proof of connection even when neither person feels fully understood.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

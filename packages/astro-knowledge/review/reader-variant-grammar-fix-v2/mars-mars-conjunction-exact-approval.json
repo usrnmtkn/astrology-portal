@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-mars-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/mars/conjunction",
+  "payloadSha256": "57a0bea41e752fa52de910f460575ea243c4f273e62dd611d108c16e50d6a2e2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} move with the same urgency. When you want the same outcome, plans happen quickly, and neither person has to convince the other to act. When you disagree, both push. You do not want to follow {{holder2}}'s pace, and {{holder2}} does not want to yield to you. The argument becomes a contest over who gets to decide what happens next.",
+    "body_they": "{{holder1}} and you move with the same urgency. When you want the same outcome, plans happen quickly, and neither person has to convince the other to act. When you disagree, both push. {{holder1}} does not want to follow your pace, and you do not want to yield to {{holder1}}. The argument becomes a contest over who gets to decide what happens next.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-pluto-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/pluto/soft",
+  "payloadSha256": "f440b6ccd8a6320b4ef9e22dd56c5859ce0c2e275b77fb17569d60c6ae92fc26",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You can tell {{holder2}} the difficult truth without changing it to make the conversation easier. {{holder2}} stays present with feelings you usually hides, but does not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because you can go deeper without losing track of what still belongs to you.",
+    "body_they": "{{holder1}} can tell you the difficult truth without changing it to make the conversation easier. You stay present with feelings {{holder1}} usually hides, but does not grab the steering wheel or turn the moment into an interrogation. The intensity feels safe because {{holder1}} can go deeper without losing track of what still belongs to them.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}
