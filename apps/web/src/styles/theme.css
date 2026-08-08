@@ -527,6 +527,9 @@
   --container-page: 1440px;
   --container-chart-layout: 1520px;
   --container-app-wide: 1700px;
+  --report-date-label-min-width: 120px;
+  --report-image-min-height: clamp(240px, 36vw, 420px);
+  --report-image-min-height-mobile: 200px;
 
   --inline-gap: var(--space-2);
   --card-list-gap: var(--space-2);

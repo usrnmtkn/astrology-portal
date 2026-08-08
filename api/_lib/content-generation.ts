@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
 
-type ContentMode = "feed" | "in_depth" | "article";
-type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type ContentMode = "feed" | "in_depth" | "article" | "report";
+type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "year_ahead";
 type Planet = "Sun" | "Moon" | "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
 
 export type GenerateContentInput = {

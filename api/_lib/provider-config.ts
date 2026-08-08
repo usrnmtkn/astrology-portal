@@ -9,7 +9,8 @@ const providerEnvByContentType: Record<string, string> = {
   transit_natal: "CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL",
   relationship: "CONTENT_GENERATION_PROVIDER_RELATIONSHIP",
   synastry: "CONTENT_GENERATION_PROVIDER_RELATIONSHIP",
-  composite: "CONTENT_GENERATION_PROVIDER_RELATIONSHIP"
+  composite: "CONTENT_GENERATION_PROVIDER_RELATIONSHIP",
+  relationship_report_section: "CONTENT_GENERATION_PROVIDER_RELATIONSHIP"
 };
 
 function normalizeProvider(provider: string | undefined | null): GenerationProvider | null {

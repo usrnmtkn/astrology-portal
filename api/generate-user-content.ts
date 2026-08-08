@@ -10,6 +10,7 @@ import {
 import { contentGenerationProvider } from "./_lib/provider-config.js";
 
 type UserContentSubjectType =
+  // Keep identical to UserGeneratedSubjectType in apps/web/src/services/userGeneratedContent.ts.
   | "you_update"
   | "you_transit"
   | "natal_summary"
@@ -19,7 +20,18 @@ type UserContentSubjectType =
   | "synastry_aspect"
   | "composite_summary"
   | "composite_placement"
-  | "composite_aspect";
+  | "composite_aspect"
+  | "year_ahead"
+  | "year_ahead_season"
+  | "year_ahead_key_date"
+  | "year_ahead_sr_moment"
+  | "year_ahead_sr_stance"
+  | "year_ahead_sr_sun"
+  | "year_ahead_headline"
+  | "year_ahead_saturn_return_callout"
+  | "relationship_report_section"
+  | "saturn_return"
+  | "saturn_return_section";
 
 type UserContentRequest = GenerateContentInput & {
   subjectType: UserContentSubjectType;
@@ -64,8 +76,8 @@ function supabaseAnonKey() {
   );
 }
 
-function contentProvider() {
-  return contentGenerationProvider();
+function contentProvider(subjectType: UserContentSubjectType) {
+  return contentGenerationProvider({ contentType: subjectType });
 }
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -200,7 +212,7 @@ async function saveUserGeneratedInterpretation(
       knowledge_ids: input.knowledgeIds ?? [],
       source_snapshot: input.sourceSnapshot ?? {},
       prompt_version: "tldr-astro-v4",
-      provider: contentProvider(),
+      provider: contentProvider(input.subjectType),
       model: generated.model,
       headline: generated.headline,
       summary: generated.summary,
@@ -224,6 +236,7 @@ function generationInput(input: UserContentRequest): GenerateContentInput {
     surface: input.surface,
     mode: input.mode,
     eventType: input.eventType,
+    provider: contentProvider(input.subjectType),
     headline: input.headline,
     targetDate: input.targetDate,
     facts: input.facts,
