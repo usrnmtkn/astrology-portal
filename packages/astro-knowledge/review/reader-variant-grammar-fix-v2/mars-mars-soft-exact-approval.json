@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-mars-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/mars/soft",
+  "payloadSha256": "277ab5284e6d90964d263ad50fd55e6db1ab6f9677d957a95eda48d8c5c5991b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} usually move at a similar pace and understand how the other person takes action. You can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until your priorities finally split, and then both discover that agreement had been doing more work than you realized.",
+    "body_they": "{{holder1}} and you usually move at a similar pace and understand how the other person takes action. You can work, compete, or make decisions together without repeatedly blocking each other. The lack of friction feels efficient. It can also mean that neither person challenges the other until your priorities finally split, and then both discover that agreement had been doing more work than you realized.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

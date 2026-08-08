@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_00223745cd5ffae6006a729cc34518819dac8d3df07e486b5d",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1187,
+    "input_tokens_details": {
+      "cache_write_tokens": 1184,
+      "cached_tokens": 0
+    },
+    "output_tokens": 345,
+    "output_tokens_details": {
+      "reasoning_tokens": 212
+    },
+    "total_tokens": 1532
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the fixed direction: {{holder2}} offers affection, {{holder1}} reacts to a missed emotional need, and the Venus holder repeats the same approach. The middle sentences establish a clear behavior-and-cost loop through trying harder, feeling uncared for, and feeling rejected. However, the draft closely paraphrases the approved human moment and governed source without adding a more specific, distinctive observation. The final sentence, \\\"Both of you are trying to care, even when neither feels fully understood,\\\" reads as a generalized summary rather than a fresh earned turn.\"}"
+}

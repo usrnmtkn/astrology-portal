@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-jupiter-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/jupiter/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "c4e75fb66e437cdd01678fbd19312364fab1882b7c392bf66459edd9186d0073",
+  "payload": {
+    "body_you": "{{holder2}} makes pleasure, affection, and generosity feel larger around {{holder1}}. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after {{holder1}} and {{holder2}} have stopped checking what they can realistically sustain.",
+    "body_they": "{{holder2}} makes pleasure, affection, and generosity feel larger around {{holder1}}. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after {{holder1}} and {{holder2}} have stopped checking what they can realistically sustain.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-jupiter/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

@@ -1,0 +1,338 @@
+{
+  "articleCount": 24,
+  "scoreCounts": {
+    "3": 24
+  },
+  "totalFails": 0,
+  "totalWarns": 0,
+  "batchRepetition": {
+    "passed": true,
+    "maxOccurrences": 1,
+    "occurrenceCount": 0,
+    "occurrences": [],
+    "findings": []
+  },
+  "articles": [
+    {
+      "id": "sky-placement-sun-venus-24-sun-aries-owner-approved-v1",
+      "planet": "sun",
+      "sign": "aries",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close",
+        "hook is long (75 words); the hook is the sendable line, not a paragraph",
+        "closer is long; end on a shorter line with bite"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-taurus-owner-approved-v1",
+      "planet": "sun",
+      "sign": "taurus",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-gemini-owner-approved-v1",
+      "planet": "sun",
+      "sign": "gemini",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-cancer-owner-approved-v1",
+      "planet": "sun",
+      "sign": "cancer",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-leo-owner-approved-v1",
+      "planet": "sun",
+      "sign": "leo",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "hook is long (76 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-virgo-owner-approved-v1",
+      "planet": "sun",
+      "sign": "virgo",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-libra-owner-approved-v1",
+      "planet": "sun",
+      "sign": "libra",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-scorpio-owner-approved-v1",
+      "planet": "sun",
+      "sign": "scorpio",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-sagittarius-owner-approved-v1",
+      "planet": "sun",
+      "sign": "sagittarius",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-capricorn-owner-approved-v1",
+      "planet": "sun",
+      "sign": "capricorn",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-aquarius-owner-approved-v1",
+      "planet": "sun",
+      "sign": "aquarius",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-sun-pisces-owner-approved-v1",
+      "planet": "sun",
+      "sign": "pisces",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-aries-owner-approved-v1",
+      "planet": "venus",
+      "sign": "aries",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-taurus-owner-approved-v1",
+      "planet": "venus",
+      "sign": "taurus",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-gemini-owner-approved-v1",
+      "planet": "venus",
+      "sign": "gemini",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-cancer-owner-approved-v1",
+      "planet": "venus",
+      "sign": "cancer",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-leo-owner-approved-v1",
+      "planet": "venus",
+      "sign": "leo",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-virgo-owner-approved-v1",
+      "planet": "venus",
+      "sign": "virgo",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-libra-owner-approved-v1",
+      "planet": "venus",
+      "sign": "libra",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-scorpio-owner-approved-v1",
+      "planet": "venus",
+      "sign": "scorpio",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-sagittarius-owner-approved-v1",
+      "planet": "venus",
+      "sign": "sagittarius",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-capricorn-owner-approved-v1",
+      "planet": "venus",
+      "sign": "capricorn",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-aquarius-owner-approved-v1",
+      "planet": "venus",
+      "sign": "aquarius",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sky-placement-sun-venus-24-venus-pisces-owner-approved-v1",
+      "planet": "venus",
+      "sign": "pisces",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close"
+      ]
+    }
+  ]
+}

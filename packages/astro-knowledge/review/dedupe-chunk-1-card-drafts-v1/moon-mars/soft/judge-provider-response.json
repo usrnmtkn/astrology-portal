@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_07a742101ffc7d6d006a729d1e9a78819dbd376585bf1bdc78",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 831,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 199,
+    "output_tokens_details": {
+      "reasoning_tokens": 81
+    },
+    "total_tokens": 1030
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the fixed direction: {{holder2}} acts directly or quickly, while {{holder1}} responds emotionally and influences what happens next. The first two sentences establish the behavior-and-cost loop, with directness not causing {{holder1}} to pull back and {{holder1}}'s moods not requiring {{holder2}} to pause and calm them. The final sentence cleanly summarizes the same mutual ease around pace and response without adding an excluded claim or a separate conclusion.\"}"
+}

@@ -1,0 +1,287 @@
+{
+  "schemaVersion": 1,
+  "reviewSet": "dedupe-chunk-3-owner-authored-v1",
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "approvedAt": "2026-08-05",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "targetCount": 30,
+  "pairCount": 10,
+  "sourceRowsChanged": 30,
+  "additionalBilledCalls": 0,
+  "writerArtifactsExist": false,
+  "judgeArtifactsExist": false,
+  "governedHumanMomentsAdded": 0,
+  "targets": [
+    {
+      "target": "sun-jupiter/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
+      "payloadSha256": "97a389e9f17bec1a68bb71dae1c23c686dbeff7b115b8955220bb9ae59ff0672",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-jupiter/hard",
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
+      "payloadSha256": "66c48c4ed2da783a7ac824bacd6e079fbfb9178e411f299290895c15a9a61f22",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-jupiter/soft",
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/soft",
+      "payloadSha256": "e3d8f34bba1c0259a42c24ce7579642a5d5198d2810542c4807163516ccaa70f",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-jupiter/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-saturn/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/conjunction",
+      "payloadSha256": "fa13448ac628e4e158e2fa5867feaf27be1ea97fbc6fbdd7090a1636b02aafea",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-saturn/hard",
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/hard",
+      "payloadSha256": "4e449ddb4a44ff7042a804726867301be45d32f915b8cdfb3fe30ebb80c3657c",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-saturn/soft",
+      "contentKey": "fallback-hook/synastry-pair/sun/saturn/soft",
+      "payloadSha256": "42948128a16fdc54b1822a7834d2a212da1127ad5f91c4db8da7bd26f21f88ed",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-saturn/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-uranus/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/conjunction",
+      "payloadSha256": "528bcc753fb6db53318f8bbb7fee295bd85b8a0e06adf7c8c19aafac8fcc540f",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-uranus/hard",
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/hard",
+      "payloadSha256": "cb8a377c4f3283f7c35c6db82dbe84abe752827a6a84ddd519ebcc2fae789571",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-uranus/soft",
+      "contentKey": "fallback-hook/synastry-pair/sun/uranus/soft",
+      "payloadSha256": "ee9bdaf28b3d513fce37875e530660de41148263340cc0b71328362b024d7828",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-uranus/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-neptune/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/conjunction",
+      "payloadSha256": "ca5ca31adbd70795d3f09c29586f19ed89e6b3aad4c44b6cad51b011f3373eda",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-neptune/hard",
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/hard",
+      "payloadSha256": "b6297295dcb6934ad776e2dfea554ad1904dedb77df440c4988ba27ff55e249c",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-neptune/soft",
+      "contentKey": "fallback-hook/synastry-pair/sun/neptune/soft",
+      "payloadSha256": "fd4b84005ee55792d765de36cc5313c90afa838945b24b8f56bbfe629a3fce72",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-neptune/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-pluto/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/conjunction",
+      "payloadSha256": "7dba2ffba30d95cd2d80993cf85d2dcd11d8aaff9b2509c36bb89ca6fb455aa3",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-pluto/hard",
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/hard",
+      "payloadSha256": "f9bb9b2182e0b919a71b7057c7dccc51cdbefd179275b52b7156d2337a3f9ef1",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "sun-pluto/soft",
+      "contentKey": "fallback-hook/synastry-pair/sun/pluto/soft",
+      "payloadSha256": "0b59b1cbebf31babb68fc1a40b462fac0218826d4c9431b95be0506a371125dc",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/sun-pluto/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-jupiter/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/conjunction",
+      "payloadSha256": "d3e8133d96174be80dc2262ad83d25bded343bbc35b30b57814b7e0d5fc91f71",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-jupiter/hard",
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/hard",
+      "payloadSha256": "f7bf273b22ff681a500a359661d679109034ff1abe5118d7ff212b596d26f95d",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-jupiter/soft",
+      "contentKey": "fallback-hook/synastry-pair/moon/jupiter/soft",
+      "payloadSha256": "a829d59caacc3d21694b8616f1fea6d60e79621a08306cc8e45a6907a38e159f",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-jupiter/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-saturn/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/conjunction",
+      "payloadSha256": "450661628394f5f3a1e8b3ea58fd54516b517d7e5074639da74dc4396e6dc3cd",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-saturn/hard",
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/hard",
+      "payloadSha256": "1200105974cb160cd805435541a741aa700fd81f0dc8bc8637bf1a4d81a3e76d",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-saturn/soft",
+      "contentKey": "fallback-hook/synastry-pair/moon/saturn/soft",
+      "payloadSha256": "8b12268605e666678c828ac99456e4f4d46c6a82576e1eb7f3bc2c85d81225ec",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-saturn/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-uranus/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/conjunction",
+      "payloadSha256": "6ad3522fbf60622bc23af0b5e6f27311b05086fadcab027b6d039f76b9f71488",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-uranus/hard",
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/hard",
+      "payloadSha256": "d160d2ac68d339257f39a056b769248cbb79a305b15aef202002b67c56f066ab",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-uranus/soft",
+      "contentKey": "fallback-hook/synastry-pair/moon/uranus/soft",
+      "payloadSha256": "313869f97c272b6a22dd854eaa72775c5ddfc0d6afb95c218b60b55d7332d315",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-uranus/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-neptune/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/conjunction",
+      "payloadSha256": "b98f428a2c07383ebac4d77a00c666d3227dc7859794cce68a7e4160d712ec85",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-neptune/hard",
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/hard",
+      "payloadSha256": "c93d252b2ba036312f1efd794a7d3fed81dc6b3b57394c71372023da47722cf4",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-neptune/soft",
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
+      "payloadSha256": "1af998fe2fd653219ae48930332d08b55d1331c306d52b33c69029a1d1d0ad43",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-neptune/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-pluto/conjunction",
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/conjunction",
+      "payloadSha256": "1f90934fed886643710b7ef062985a9e775fc77348fe67b211c605784ae885da",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/conjunction/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-pluto/hard",
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/hard",
+      "payloadSha256": "500de93b0c4788a0cb26f4c99cbcfc6f581fc8c65ac9243cdaec0bbaefc06840",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/hard/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    },
+    {
+      "target": "moon-pluto/soft",
+      "contentKey": "fallback-hook/synastry-pair/moon/pluto/soft",
+      "payloadSha256": "02a1e4f8b36f1041ddda9921ed158433ebe980033d9c8c8dfad1ed663c5f776d",
+      "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/moon-pluto/soft/exact-approval.json",
+      "authorship": "owner_authored",
+      "writerArtifactsExist": false,
+      "judgeArtifactsExist": false
+    }
+  ]
+}

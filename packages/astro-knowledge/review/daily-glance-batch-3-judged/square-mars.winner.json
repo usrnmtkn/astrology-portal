@@ -1,0 +1,238 @@
+{
+ "key": "square/mars",
+ "advisoryOnly": true,
+ "winner": {
+  "headline": "Being annoyed doesn't mean something is wrong.",
+  "body": "You may hear criticism when a last-minute task is added to your workload and a teammate asks for an immediate answer. You type a sharp reply. If you send it, you risk turning a timing question into a fight over tone and making your actual workload harder to explain. Before you hit send, say what you can finish and name the task that needs to wait."
+ },
+ "judge": {
+  "key": "square/mars",
+  "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+  "judgeModel": "gpt-4.1-mini",
+  "score": 3,
+  "dimScore": 7,
+  "verdict": {
+   "score": 3,
+   "verdict": "This candidate fits the owner's voice well with plain, conversational truth and a clear, early statement of the stakes (risk of conflict and workload misunderstanding). The structure is tight, with the lived example supporting the initial truth and a complete ending that offers a clear corrective action. Hedging is minimal, and the formula avoids mechanical or templated phrasing. The line about risking turning a timing question into a fight over tone is a strong, relatable insight that someone might save or share. The specificity is good for the square/mars key, focusing on workload and communication tension in a team context.",
+   "dimensions": {
+    "voice": true,
+    "stakes": true,
+    "structure": true,
+    "hedging": true,
+    "formula": true,
+    "screenshot_line": true,
+    "specificity": true
+   },
+   "best_line": "If you send it, you risk turning a timing question into a fight over tone and making your actual workload harder to explain.",
+   "why": "This sentence crisply names a common but often unspoken workplace dynamic: how a sharp reply can escalate a simple timing issue into a tone conflict, complicating communication and workload management. It captures a nuanced truth in plain language, making it memorable and shareable."
+  },
+  "usage": {
+   "input_tokens": 1158,
+   "input_tokens_details": {
+    "cache_write_tokens": 0,
+    "cached_tokens": 0
+   },
+   "output_tokens": 278,
+   "output_tokens_details": {
+    "reasoning_tokens": 0
+   },
+   "total_tokens": 1436
+  },
+  "advisoryOnly": true
+ },
+ "lint": {
+  "schemaVersion": 1,
+  "key": "square/mars",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+   "required": false
+  },
+  "checks": [
+   {
+    "id": "P4-headline-one-declarative-sentence",
+    "passed": true,
+    "details": "1 sentence(s)"
+   },
+   {
+    "id": "P4-headline-word-count",
+    "passed": true,
+    "details": "7 words"
+   },
+   {
+    "id": "P4-body-sentence-count",
+    "passed": true,
+    "details": "4 sentences"
+   },
+   {
+    "id": "P4-body-word-count",
+    "passed": true,
+    "details": "67 words"
+   },
+   {
+    "id": "P4-one-final-instruction",
+    "passed": true,
+    "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Before you hit send, say what you can finish and name the task that needs to wait."
+   },
+   {
+    "id": "P4-body-supports-without-repeating",
+    "passed": true,
+    "details": "Body does not repeat the full headline."
+   },
+   {
+    "id": "global+VC-016+DG+SM-output-bans",
+    "passed": true,
+    "details": "No prohibited match."
+   },
+   {
+    "id": "DG-R2-register",
+    "passed": false,
+    "details": "No detectable self-friction cue."
+   },
+   {
+    "id": "DG-R3-no-slogan-or-restatement-closer",
+    "passed": true,
+    "details": "No known slogan or full-headline restatement detected."
+   },
+   {
+    "id": "DG-R4-no-outcome-promise",
+    "passed": true,
+    "details": "No deterministic outcome promise detected."
+   },
+   {
+    "id": "DG-R7-varied-opener",
+    "passed": true,
+    "details": "Body uses a non-fixed opener."
+   },
+   {
+    "id": "DG-R9-enumerated-instruction-allowed",
+    "passed": true,
+    "details": "No enumerated one-X/one-Y instruction present."
+   },
+   {
+    "id": "B1-L1-time-anchor-max-once",
+    "passed": true,
+    "details": "No time-anchor phrase used."
+   },
+   {
+    "id": "B1-L2-may-inner-states-only",
+    "passed": false,
+    "details": [
+     "may hear criticism when a last-minute task is added to your work"
+    ]
+   },
+   {
+    "id": "B1-L3+L4-headline-group-grammar",
+    "passed": false,
+    "details": {
+     "squareGrammar": false,
+     "otherGrammar": false,
+     "softGrammar": false
+    }
+   },
+   {
+    "id": "SM-DG-2-no-diagnostic-history",
+    "passed": true,
+    "details": "No diagnostic reader-history frame detected."
+   },
+   {
+    "id": "DG-R11-unhedged-headline",
+    "passed": true,
+    "details": "Headline makes an unhedged claim."
+   },
+   {
+    "id": "DG-R12-no-time-anchor-opener",
+    "passed": true,
+    "details": "Body opens inside the scene."
+   },
+   {
+    "id": "DG-R13-may-max-once",
+    "passed": true,
+    "details": "1 may usage(s)"
+   },
+   {
+    "id": "DG-R14-scene-not-biographical",
+    "passed": true,
+    "details": "No biographical anchor detected."
+   },
+   {
+    "id": "DG-R15-action-repairs-moment",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R16-owner-reserved-construction",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-max-one",
+    "passed": true,
+    "details": "No quoted-dialogue line used."
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+    "passed": true,
+    "advisory": true,
+    "details": "No quoted-dialogue judgment needed."
+   },
+   {
+    "id": "OWNER-DIRECTIVE-short-blunt-line",
+    "passed": true,
+    "details": [
+     "You type a sharp reply."
+    ]
+   },
+   {
+    "id": "OWNER-TEST-specificity",
+    "passed": true,
+    "advisory": false,
+    "details": {
+     "own": {
+      "key": "square/mars",
+      "matches": [
+       "reactivity",
+       "self-friction"
+      ],
+      "required": 2,
+      "passed": true
+     },
+     "comparisonScope": [
+      "square/uranus",
+      "opposition/jupiter",
+      "opposition/pluto",
+      "soft/mercury",
+      "soft/uranus",
+      "soft/chiron",
+      "house/5"
+     ],
+     "swappableTo": [],
+     "advisorySwappableTo": []
+    }
+   },
+   {
+    "id": "OWNER-TEST-morning-read",
+    "passed": true,
+    "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+   },
+   {
+    "id": "OWNER-TEST-screenshot",
+    "passed": false,
+    "details": "No candidate body line detected."
+   }
+  ],
+  "findings": [],
+  "counts": {
+   "headlineWords": 7,
+   "headlineSentences": 1,
+   "bodyWords": 67,
+   "bodySentences": 4,
+   "instructions": 1,
+   "timeAnchors": 0,
+   "mayUsages": 1,
+   "quotedDialogueLines": 0,
+   "screenshotCandidateLines": 0
+  }
+ }
+}

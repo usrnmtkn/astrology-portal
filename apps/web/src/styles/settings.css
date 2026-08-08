@@ -423,9 +423,9 @@ button.settings-signout-row {
 
 .account-phone-modal label > input {
   text-align: center;
-  font-size: 1.25rem;
+  font-size: var(--text-verification-code-size);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.24em;
+  letter-spacing: var(--tracking-verification-code);
 }
 
 .account-phone-modal .phone-auth-number-control > input {

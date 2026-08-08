@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-mercury-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mercury/soft",
+  "payloadSha256": "bd1e84c397430ee97da369f3e6f86fee85b89ae5d2eb64bb2827b64ca22e7c4a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Conversation tends to move easily between you and {{holder2}}. They can follow each other's reasoning, return to unfinished discussions, and explain complicated ideas without spending half the conversation correcting misunderstandings. That ease can make you and {{holder2}} feel mentally close, even when they have not spoken for a while. The connection often resumes exactly where it stopped.",
+    "body_they": "Conversation tends to move easily between {{holder1}} and you. They can follow each other's reasoning, return to unfinished discussions, and explain complicated ideas without spending half the conversation correcting misunderstandings. That ease can make {{holder1}} and you feel mentally close, even when they have not spoken for a while. The connection often resumes exactly where it stopped.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

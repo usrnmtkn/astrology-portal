@@ -75,30 +75,30 @@ for (const [bundleName, bundle] of [
   );
 }
 
-for (const reviewOnlyPlacementId of [
+for (const servingPlacementId of [
   "chiron-aries",
   "north-node-aquarius",
   "south-node-leo"
 ]) {
-  const reviewOnlyPlacement = fullKnowledge.placements.find((entry) => entry.id === reviewOnlyPlacementId);
+  const servingPlacement = fullKnowledge.placements.find((entry) => entry.id === servingPlacementId);
   assert.ok(
-    reviewOnlyPlacement,
-    `${reviewOnlyPlacementId} must remain available in the full editorial knowledge package.`
+    servingPlacement,
+    `${servingPlacementId} must remain available in the full editorial knowledge package.`
   );
   assert.equal(
-    reviewOnlyPlacement.runtimeEligible,
-    false,
-    `${reviewOnlyPlacementId} must require an explicit serving approval before entering reader bundles.`
+    servingPlacement.runtimeEligible,
+    true,
+    `${servingPlacementId} must retain its explicit serving approval.`
   );
   assert.equal(
-    skyWebKnowledge.placements.some((entry) => entry.id === reviewOnlyPlacementId),
-    false,
-    `${reviewOnlyPlacementId} must remain unavailable in the Sky reader bundle until serving is approved.`
+    skyWebKnowledge.placements.some((entry) => entry.id === servingPlacementId),
+    true,
+    `${servingPlacementId} must remain available in the Sky reader bundle after serving approval.`
   );
   assert.equal(
-    natalWebKnowledge.placements.some((entry) => entry.id === reviewOnlyPlacementId),
-    false,
-    `${reviewOnlyPlacementId} must remain unavailable in the Natal reader bundle until serving is approved.`
+    natalWebKnowledge.placements.some((entry) => entry.id === servingPlacementId),
+    true,
+    `${servingPlacementId} must remain available in the Natal reader bundle after serving approval.`
   );
 }
 
@@ -281,7 +281,7 @@ assert.ok(fallbackHookKeys.has("fallback-hook/transit-aspect-type/square"), "V3 
 const conjunctionSunDailyBody = (fallbackSourceRowsV3.hookRows ?? []).find(
   (row) => row.contentKey === "fallback-hook/daily-body/conjunction/sun"
 );
-const approvedConjunctionSunDailyBody = "Today your own name is loud in your head: your plans, your pride, your unfinished business. Stop downplaying what you want just to seem easygoing. Clear desire is not arrogance. It gives people something honest to respond to. Ask for it directly. Today, it lands.";
+const approvedConjunctionSunDailyBody = "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.";
 assert.equal(conjunctionSunDailyBody?.body_you, approvedConjunctionSunDailyBody, "You Transit must preserve the approved conjunction-Sun daily body.");
 assert.equal(conjunctionSunDailyBody?.body_they, approvedConjunctionSunDailyBody, "The mirrored conjunction-Sun daily body must preserve the approved copy.");
 assert.doesNotMatch(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must not resolve through legacy authored V2 rows.");

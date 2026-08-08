@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_008f00925d85877f006a7295f0f3e881a3b9203e79dab50041",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1301,
+    "input_tokens_details": {
+      "cache_write_tokens": 1298,
+      "cached_tokens": 0
+    },
+    "output_tokens": 368,
+    "output_tokens_details": {
+      "reasoning_tokens": 214
+    },
+    "total_tokens": 1669
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants preserve the required direction: {{holder2}} gives praise and affection toward {{holder1}}, while {{holder1}} responds to that warmth. The middle sentence creates a recognizable behavior-and-cost loop, with praise becoming external validation that determines {{holder1}}'s sense of worth, and it is clearly traced to the supplied foundation line. However, the final sentence, \\\"The affection between you feels warm, gentle, and easy to return,\\\" functions as a generic stock closer after the core point has already landed. \\\"You become more open and expressive in response\\\" also extends slightly beyond the supplied governed framing of feeling appreciated, seen, and warmed by admiration.\"}"
+}

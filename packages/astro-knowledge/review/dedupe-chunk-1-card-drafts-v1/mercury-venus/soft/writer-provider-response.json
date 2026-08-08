@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0bbd5b109c71f2e8006a729d42def481a0aff33f1a08cf03e2",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 792,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 860,
+    "output_tokens_details": {
+      "reasoning_tokens": 721
+    },
+    "total_tokens": 1652
+  },
+  "output_text": "{\"body_you\":\"You tend to notice what {{holder2}} likes and choose words that make them feel considered. {{holder2}} responds with affection, so it is easy for you to ask questions, explain yourself, and keep the conversation pleasant. Neither of you has to put much effort into this exchange.\",\"body_they\":\"{{holder1}} tends to notice what you like and chooses words that make you feel considered. You respond with affection, so it is easy for {{holder1}} to ask questions, explain themselves, and keep the conversation pleasant. Neither of you has to put much effort into this exchange.\",\"warmthSource\":null,\"labels\":[]}"
+}

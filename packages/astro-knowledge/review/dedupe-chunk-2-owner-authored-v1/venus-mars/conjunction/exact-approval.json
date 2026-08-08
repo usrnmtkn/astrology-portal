@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-mars-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/mars/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "a5423e22ecfda632f4a4cd60eed0234914d1a3ccf807c4a633485d0589e73440",
+  "payload": {
+    "body_you": "{{holder2}} makes {{holder1}} feel wanted, noticed, and difficult to ignore. {{holder1}} responds quickly to {{holder2}}'s attention, and the attraction or creative charge between them can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. {{holder1}} and {{holder2}} may feel strongly pulled toward each other before they know how well their daily lives, values, or expectations fit.",
+    "body_they": "{{holder2}} makes {{holder1}} feel wanted, noticed, and difficult to ignore. {{holder1}} responds quickly to {{holder2}}'s attention, and the attraction or creative charge between them can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. {{holder1}} and {{holder2}} may feel strongly pulled toward each other before they know how well their daily lives, values, or expectations fit.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-mars/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

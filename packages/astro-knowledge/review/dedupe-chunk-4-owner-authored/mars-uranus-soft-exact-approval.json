@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mars-uranus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/uranus/soft",
+  "payloadSha256": "9ab53eacb41bf782388ed77717a0a28bc9522f63e88cbf1ee387a7a60a8aa862",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} can act without making {{holder2}} feel crowded, and {{holder2}} can change direction without leaving {{holder1}} stranded. Neither person has to disappear or take over to keep the plan moving.",
+    "body_they": "{{holder1}} can act without making {{holder2}} feel crowded, and {{holder2}} can change direction without leaving {{holder1}} stranded. Neither person has to disappear or take over to keep the plan moving.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

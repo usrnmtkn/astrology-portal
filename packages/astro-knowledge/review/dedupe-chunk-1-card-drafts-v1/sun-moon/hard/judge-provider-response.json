@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_077f754229c6d69d006a72955b6ae081a3b06984ed4a9846d6",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1320,
+    "input_tokens_details": {
+      "cache_write_tokens": 1317,
+      "cached_tokens": 0
+    },
+    "output_tokens": 344,
+    "output_tokens_details": {
+      "reasoning_tokens": 195
+    },
+    "total_tokens": 1664
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the required direction: {{holder1}} pushes ahead with what they are building, while {{holder2}} experiences their needs as obstructive. The first two sentences establish a recognizable loop within the source boundary: feeling in the way leads {{holder2}} to go quiet and adjust, creating tension and leaving {{holder1}} unsure about the withdrawal. The variants are meaningfully parallel, and the reassurance about becoming smaller is traceable to the supplied foundation line. However, the final \\\"There is room\\\" sentence functions as a broad second conclusion after the loop rather than extending the specific friction, which keeps it below a 3.\"}"
+}

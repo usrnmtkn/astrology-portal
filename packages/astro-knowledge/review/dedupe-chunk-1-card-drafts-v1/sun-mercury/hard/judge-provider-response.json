@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_09e753b55edbe204006a7295c14b1c819da81d2ccbf74a837b",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 855,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 213,
+    "output_tokens_details": {
+      "reasoning_tokens": 77
+    },
+    "total_tokens": 1068
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the required direction: {{holder2}}'s questions and opinions challenge {{holder1}}'s identity or direction, and {{holder1}} responds defensively or by pushing back on {{holder2}}'s thinking. The second sentences establish a recognizable escalation loop, where that response makes {{holder2}} more insistent about explaining their point. The final sentence gives the relational cost within the governed boundary: basic conversations become tense and leave both feeling misunderstood. The two versions remain meaningfully parallel, and the draft adds no excluded claims or unsupported warmth.\"}"
+}

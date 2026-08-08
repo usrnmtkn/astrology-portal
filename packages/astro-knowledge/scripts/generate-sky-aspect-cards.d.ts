@@ -61,7 +61,7 @@ export type AspectWarmthHarvest = {
   generationAllowed: boolean;
   surface: string;
   voice: "collective" | "second_person";
-  harvest_mode: "matched" | "vocabulary_only" | "none_found";
+  harvest_mode: "matched" | "vocabulary_only" | "none_found" | null;
   humanMoment: string | null;
   searchTerms: string[];
   ownerFoundationLines: AspectWarmthFoundationLine[];
@@ -91,7 +91,7 @@ export type SkyAspectCardResult = {
     error?: string;
   };
   lintRetryAvoidTerms?: string[][];
-  harvest_mode?: "matched" | "vocabulary_only" | "none_found";
+  harvest_mode?: "matched" | "vocabulary_only" | "none_found" | null;
   warmthHarvest?: AspectWarmthHarvest;
   warmthSource?: {
     sourceArticleId: string;

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "aries",
+  "timeZone": "America/New_York",
+  "transitStart": "April 19, 2027",
+  "transitEnd": "May 14, 2027",
+  "transitStartIso": "2027-04-20T03:57:05.999Z",
+  "transitEndIso": "2027-05-14T21:01:30.999Z",
+  "priorSign": "pisces",
+  "priorSignEntryDate": "March 26, 2027",
+  "priorSignExitDate": "April 19, 2027",
+  "previousResidency": {
+    "sign": "aries",
+    "entryDate": "March 6, 2026",
+    "exitDate": "March 30, 2026",
+    "entryDateIso": "2026-03-06T10:45:45.999Z",
+    "exitDateIso": "2026-03-30T16:00:52.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-sextile-pluto-2027-04-26t01:20:07.999z",
+      "body": "venus-sextile-pluto",
+      "bodies": [
+        "venus",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "April 25, 2027",
+      "dateIso": "2027-04-26T01:20:07.999Z",
+      "rank": 1,
+      "meaning": "Love and value meet intensity. All-or-nothing attraction, deep desire, and a strong pull toward control in relationships. The sextile makes this a natural strength: Depth and devotion in love, used deliberately. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-sextile-pluto.json"
+    },
+    {
+      "id": "aspect-venus-sextile-uranus-2027-04-23t08:08:00.999z",
+      "body": "venus-sextile-uranus",
+      "bodies": [
+        "venus",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "April 23, 2027",
+      "dateIso": "2027-04-23T08:08:00.999Z",
+      "rank": 2,
+      "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. The sextile makes this a natural strength: Exciting, unconventional bonds and an original aesthetic; freedom inside closeness. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-sextile-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-sextile-pluto.json",
+      "packages/astro-knowledge/data/transits/venus-sextile-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

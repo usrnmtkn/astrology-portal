@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "status": "historical-blocker-resolved",
+  "recordedDate": "2026-08-04",
+  "completedProviderCalls": 0,
+  "providerUsage": null,
+  "estimatedCostUsd": 0,
+  "terraCalls": 0,
+  "rawOutputsWritten": 0,
+  "outputLintReportsWritten": 0,
+  "packetSelfLintPassed": [
+    "square/lilith",
+    "opposition/mars",
+    "house/11"
+  ],
+  "blocker": "The initial sandboxed request could not reach the OpenAI API. The required network escalation was then rejected because the Codex account had reached its usage limit, reported to reset on 2026-08-07 at 23:33 America/New_York.",
+  "retryPolicy": "No workaround, indirect execution, automatic retry, Terra call, or substitute output was attempted. The existing live guard will refuse any key that already has a raw or provider artifact.",
+  "resolvedBy": "packages/astro-knowledge/review/daily-glance-pilots-v1/summary.json"
+}
