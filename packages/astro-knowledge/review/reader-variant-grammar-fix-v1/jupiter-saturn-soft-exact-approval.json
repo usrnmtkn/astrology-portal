@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-jupiter-saturn-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/soft",
+  "payloadSha256": "02923cebf3270710b0847f6decd0a7d01a1ffda1390a4a7fbeed6b79702e6803",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You bring the larger possibility, and {{holder2}} helps give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail.",
+    "body_they": "{{holder1}} brings the larger possibility, and you help give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

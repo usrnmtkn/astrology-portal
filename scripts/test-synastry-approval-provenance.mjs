@@ -67,14 +67,15 @@ const batchExactKeys = new Set(
 const allowedLevels = new Set(["exact_owner_approved", "owner_signoff_untraced"]);
 const datePattern = /^\d{4}-\d{2}-\d{2}$/u;
 const shaPattern = /^[a-f0-9]{64}$/u;
-const readerVariantV2Record = JSON.parse(fs.readFileSync(
+const readerVariantV2Manifest = JSON.parse(fs.readFileSync(
   path.join(
     repoRoot,
-    "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/payloads-and-provenance.json",
+    "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/shipping-manifest.json",
   ),
   "utf8",
 ));
-for (const row of readerVariantV2Record.rows) batchExactKeys.add(row.contentKey);
+assert.equal(readerVariantV2Manifest.rows.length, 102, "Expected 102 V2 per-row approvals");
+for (const row of readerVariantV2Manifest.rows) batchExactKeys.add(row.contentKey);
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -91,6 +92,7 @@ const rows = source.hookRows.filter((row) => row.contentKey?.startsWith(synastry
 const statusCounts = {};
 const levelCounts = { exact_owner_approved: 0, owner_signoff_untraced: 0 };
 const batchExactRows = new Set();
+let exactApprovalRecordsResolved = 0;
 
 assert.equal(rows.length, 483, "Expected 483 synastry serving rows");
 
@@ -121,20 +123,18 @@ for (const row of rows) {
   if (batchApprovalPrefixes.some((prefix) => approval.recordPath.startsWith(prefix))) batchExactRows.add(row.contentKey);
   const recordPath = path.join(repoRoot, approval.recordPath);
   assert.ok(fs.existsSync(recordPath), `${row.contentKey}: approval record does not exist: ${approval.recordPath}`);
+  exactApprovalRecordsResolved += 1;
 
   if (approval.recordPath.endsWith(".json")) {
     const record = JSON.parse(fs.readFileSync(recordPath, "utf8"));
+    assert.equal(Array.isArray(record.rows), false, `${row.contentKey}: exact approval must use a per-row record`);
     assert.equal(record.approvalLevel, "exact_owner_approved", `${row.contentKey}: record level mismatch`);
     assert.equal(record.approvedAt, approval.approvedAt, `${row.contentKey}: record date mismatch`);
-    const exactRecord = Array.isArray(record.rows)
-      ? record.rows.find((candidate) => candidate.contentKey === row.contentKey)
-      : record;
-    assert.ok(exactRecord, `${row.contentKey}: bulk approval record lacks contentKey`);
-    assert.equal(exactRecord.contentKey, row.contentKey, `${row.contentKey}: record contentKey mismatch`);
-    assert.equal(exactRecord.payloadSha256, approval.payloadSha256, `${row.contentKey}: record hash mismatch`);
-    assert.equal(sha256(JSON.stringify(exactRecord.payload)), approval.payloadSha256, `${row.contentKey}: record payload hash mismatch`);
-    assert.equal(exactRecord.payload.body_you, row.body_you, `${row.contentKey}: body_you differs from exact record`);
-    assert.equal(exactRecord.payload.body_they, row.body_they, `${row.contentKey}: body_they differs from exact record`);
+    assert.equal(record.contentKey, row.contentKey, `${row.contentKey}: record contentKey mismatch`);
+    assert.equal(record.payloadSha256, approval.payloadSha256, `${row.contentKey}: record hash mismatch`);
+    assert.equal(sha256(JSON.stringify(record.payload)), approval.payloadSha256, `${row.contentKey}: record payload hash mismatch`);
+    assert.equal(record.payload.body_you, row.body_you, `${row.contentKey}: body_you differs from exact record`);
+    assert.equal(record.payload.body_they, row.body_they, `${row.contentKey}: body_they differs from exact record`);
   } else {
     assert.match(approval.recordPath, /^scripts\/test-(?:mars|uranus)-ascendant-.+-copy\.mjs$/u);
     assert.equal(
@@ -147,6 +147,7 @@ for (const row of rows) {
 
 assert.deepEqual(statusCounts, { approved: 165, reviewed: 318 });
 assert.deepEqual(levelCounts, { exact_owner_approved: 165, owner_signoff_untraced: 0 });
+assert.equal(exactApprovalRecordsResolved, 165);
 assert.deepEqual(batchExactRows, batchExactKeys);
 assert.equal(manifest.totals.synastryRows, 483);
 assert.equal(manifest.totals.approved, 132);
@@ -164,4 +165,5 @@ console.log(`  rows: ${rows.length}`);
 console.log(`  approved: ${statusCounts.approved}`);
 console.log(`  reviewed: ${statusCounts.reviewed}`);
 console.log(`  exact_owner_approved: ${levelCounts.exact_owner_approved}`);
+console.log(`  exact approval records resolved: ${exactApprovalRecordsResolved}`);
 console.log(`  owner_signoff_untraced: ${levelCounts.owner_signoff_untraced}`);

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-venus-jupiter-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/jupiter/hard",
+  "payloadSha256": "88dc516b4411b0a61e7a8ce8049a611314a0440a52b6ee39fc9d3c6d8a73df01",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} keeps reaching for more while you are trying to protect what already matters. {{holder2}} may see you as cautious, withholding, or unwilling to enjoy the moment. You may see {{holder2}} as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. {{holder2}} wants it to grow, while you want to know that the existing care will not be lost in the push for more.",
+    "body_they": "You keep reaching for more while {{holder1}} is trying to protect what already matters. You may see {{holder1}} as cautious, withholding, or unwilling to enjoy the moment. {{holder1}} may see you as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. You want it to grow, while {{holder1}} wants to know that the existing care will not be lost in the push for more.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
