@@ -46,7 +46,7 @@ export interface TransitLibFile { authoredCards: AuthoredCard[] }
 export interface TransitRendererOpts { allowUnreviewed?: boolean }
 
 export interface TransitHouseFacts { planet: string; house: number; sign?: string | null; window?: string | null; voice?: string; variant?: number | null; events?: { natal: string; aspect: string; window?: string | null }[]; isRetrograde?: boolean }
-export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
+export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
 export interface BondTransitFacts {
@@ -732,7 +732,7 @@ export function createTransitSynastryRenderer(
     return { headline: fill((v === "you" ? T.headline : (T.headline_they ?? T.headline)) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
 
-  function renderTransitAspect({ transiting, natal, aspect, variant, sign, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
+  function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
     // voice: "you" (reader) or a friend's display name. Friend views use the same approved
     // authored unit, adapted deterministically to third person when no authored friend body exists.
     const v = voice === "you" ? "you" : "they";
@@ -756,6 +756,10 @@ export function createTransitSynastryRenderer(
     const groupsToTry = [g, ...(SHARE[g] ?? [])];
     const tryKeys: string[] = [];
     const push = (a: string, b: string) => {
+      if (pass && pass >= 1 && pass <= 3) {
+        tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
+        if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
+      }
       if (variant) {
         tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
         if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
@@ -806,6 +810,8 @@ export function createTransitSynastryRenderer(
       const authoredHeadline = v === "you"
         ? (c.headline || "")
         : `${title(transiting)} ${aspect} ${voice}'s ${title(natal)}`;
+      const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+      if (passHook) aBody = `${aBody}\n\n${passHook}`;
       return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
     }
   }
@@ -869,6 +875,8 @@ export function createTransitSynastryRenderer(
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
       if (retroLine) body = `${body} ${fill(retroLine, ctx)}`;
     }
+    const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+    if (passHook) body = `${body}\n\n${passHook}`;
     return { headline: fill(((v === "you" ? T.headline : ((T as { headline_they?: string }).headline_they ?? T.headline))) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
 
