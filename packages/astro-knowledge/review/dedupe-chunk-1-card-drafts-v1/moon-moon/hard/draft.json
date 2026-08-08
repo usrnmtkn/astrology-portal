@@ -1,0 +1,15 @@
+{
+  "body_you": "What helps you feel settled often unsettles {{holder2}}, and {{holder2}}'s way of seeking comfort can make you feel just as unsafe. You both react from that discomfort, so each attempt to feel understood can trigger another defensive response and leave neither of you feeling cared for. Together, the deeper work lies in redefining what makes each of you feel secure.",
+  "body_they": "What helps {{holder1}} feel settled often unsettles you, and your way of seeking comfort can make {{holder1}} feel just as unsafe. You both react from that discomfort, so each attempt to feel understood can trigger another defensive response and leave neither of you feeling cared for. Together, the deeper work lies in redefining what makes each of you feel secure.",
+  "warmthSource": {
+    "sourceArticleId": "cancer-new-moon-2025",
+    "originalLine": "But the deeper work lies in redefining what makes you feel secure.",
+    "usedForm": {
+      "body_you": "Together, the deeper work lies in redefining what makes each of you feel secure.",
+      "body_they": "Together, the deeper work lies in redefining what makes each of you feel secure."
+    }
+  },
+  "labels": [
+    "owner-corpus-derived"
+  ]
+}

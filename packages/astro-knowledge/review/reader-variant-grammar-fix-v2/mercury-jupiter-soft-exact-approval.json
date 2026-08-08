@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mercury-jupiter-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/soft",
+  "payloadSha256": "934be743fcbe0fe70080c9cd1e4b8f3a754bf5cdeeb4057e5b810f9b19766dce",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} helps you see beyond the immediate question, while you give {{holder2}} the facts and distinctions that keep the larger idea useful. Conversation between you can feel hopeful without becoming empty. {{holder2}} reminds you that the idea could go further, and you help explain how that growth might actually work.",
+    "body_they": "You help {{holder1}} see beyond the immediate question, while {{holder1}} gives you the facts and distinctions that keep the larger idea useful. Conversation between you can feel hopeful without becoming empty. You remind {{holder1}} that the idea could go further, and {{holder1}} helps explain how that growth might actually work.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

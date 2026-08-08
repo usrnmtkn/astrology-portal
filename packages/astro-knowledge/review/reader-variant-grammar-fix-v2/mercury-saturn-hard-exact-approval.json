@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mercury-saturn-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/saturn/hard",
+  "payloadSha256": "87f76e14daa8aa504566d2df2f0c70e1fcb10647b18ee0350652707702cf4736",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}}'s questions and doubts can sound final to you. A concern that {{holder2}} sees as practical may land as proof that the idea is foolish, unrealistic, or not worth explaining. Over time, you may say less around {{holder2}} or begin preparing for disagreement before the conversation starts. {{holder2}} may then see the silence as a lack of clarity, while you experience the same silence as protection from another discouraging response.",
+    "body_they": "Your questions and doubts can sound final to {{holder1}}. A concern that you see as practical may land as proof that the idea is foolish, unrealistic, or not worth explaining. Over time, {{holder1}} may say less around you or begin preparing for disagreement before the conversation starts. You may then see the silence as a lack of clarity, while {{holder1}} experiences the same silence as protection from another discouraging response.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

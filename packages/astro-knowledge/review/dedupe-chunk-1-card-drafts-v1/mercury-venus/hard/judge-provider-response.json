@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0ec89ed438ba17cb006a729d401f5081a296e03a0b355d941a",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 866,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 192,
+    "output_tokens_details": {
+      "reasoning_tokens": 58
+    },
+    "total_tokens": 1058
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the fixed direction: {{holder1}}'s questioning and explanations act on {{holder2}}'s tact, preferences, and way of showing care. The first two sentences establish the supplied human moment, especially \\\"A comment you consider casual may feel... like criticism of what they like or how they show care.\\\" The third sentence adds a recognizable escalation loop: stronger reaction leads to further explanation, which leaves the Venus holder feeling less understood. The variants remain closely parallel, stay within the governed boundary, and add no excluded claims or unsupported reassurance.\"}"
+}

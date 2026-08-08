@@ -844,11 +844,11 @@ export function buildPatternActivations(
 ): AspectPatternActivationResult;
 export function resolveAspectPatternCopy(
   context: AspectPatternInterpretationContext,
-  options?: { records?: Array<AspectPatternCopyRecord | AuthoredAspectPatternRecord>; authoredRecords?: AuthoredAspectPatternRecord[] }
+  options?: { records?: Array<AspectPatternCopyRecord | AuthoredAspectPatternRecord>; authoredRecords?: AuthoredAspectPatternRecord[]; useLegacyResolver?: boolean }
 ): ResolvedAspectPatternCopy;
 export function resolveAspectPatternCopies(
   contexts: AspectPatternInterpretationContext[],
-  options?: { records?: Array<AspectPatternCopyRecord | AuthoredAspectPatternRecord>; authoredRecords?: AuthoredAspectPatternRecord[] }
+  options?: { records?: Array<AspectPatternCopyRecord | AuthoredAspectPatternRecord>; authoredRecords?: AuthoredAspectPatternRecord[]; useLegacyResolver?: boolean }
 ): ResolvedAspectPatternCopy[];
 export function resolveAspectPatternActivationCopy(
   context: AspectPatternActivationInterpretationContext,

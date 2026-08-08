@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "scorpio",
+  "timeZone": "America/New_York",
+  "transitStart": "September 10, 2026",
+  "transitEnd": "October 25, 2026",
+  "transitStartIso": "2026-09-10T08:06:49.999Z",
+  "transitEndIso": "2026-10-25T09:09:48.999Z",
+  "priorSign": "libra",
+  "priorSignEntryDate": "August 6, 2026",
+  "priorSignExitDate": "September 10, 2026",
+  "previousResidency": {
+    "sign": "scorpio",
+    "entryDate": "September 22, 2024",
+    "exitDate": "October 17, 2024",
+    "entryDateIso": "2024-09-23T02:36:11.999Z",
+    "exitDateIso": "2024-10-17T19:28:22.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-square-pluto-2026-09-15t18:34:51.999z",
+      "body": "venus-square-pluto",
+      "bodies": [
+        "venus",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "September 15, 2026",
+      "dateIso": "2026-09-15T18:34:51.999Z",
+      "rank": 1,
+      "meaning": "Love and value meet intensity. All-or-nothing attraction, deep desire, and a strong pull toward control in relationships. Psychologically the square is inner tension to integrate: Power struggles, jealousy, and treating happiness as a kind of vulnerability to be guarded against. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-pluto.json"
+    },
+    {
+      "id": "aspect-venus-square-mars-2026-10-10t21:31:07.999z",
+      "body": "venus-square-mars",
+      "bodies": [
+        "venus",
+        "mars"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "October 10, 2026",
+      "dateIso": "2026-10-10T21:31:07.999Z",
+      "rank": 3,
+      "meaning": "Attraction meets drive. Desire, and the channeling of energy into pleasure, art, or pursuit. The conjunction can either fuse charm and drive or have the two cancel out. Psychologically the square is inner tension to integrate: Bad timing in romance, indecision, and friction between wanting and acting. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-mars.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-square-pluto.json",
+      "packages/astro-knowledge/data/transits/venus-square-mars.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-uranus-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/uranus/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "528bcc753fb6db53318f8bbb7fee295bd85b8a0e06adf7c8c19aafac8fcc540f",
+  "payload": {
+    "body_you": "Around {{holder2}}, {{holder1}} may feel freer to admit the preference, idea, or version of themselves that usually stays backstage. {{holder2}} makes detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script.",
+    "body_they": "Around {{holder2}}, {{holder1}} may feel freer to admit the preference, idea, or version of themselves that usually stays backstage. {{holder2}} makes detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-uranus/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

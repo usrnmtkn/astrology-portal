@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "key": "house/12",
+  "responseId": "resp_0ec14a29d96f344a006a733b90dfc8819cbe9b6c7c2c934931",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "requestedMaxOutputTokens": 24000,
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 35983,
+  "usage": {
+    "inputTokens": 2264,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 2261,
+    "outputTokens": 1826,
+    "reasoningTokens": 1740,
+    "totalTokens": 4090
+  },
+  "estimatedCostUsd": 0.06892625,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "540d76bd0796439c250c06ebedfbe0b890bc4fcfbc4b66620f3e024dfae25f76",
+  "incompleteDetails": null
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-saturn-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/saturn/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "634933f771a5c97548bc6d1385dd71d011d814b58f358f52753c6d1b03c46fd7",
+  "payload": {
+    "body_you": "{{holder2}} takes {{holder1}}'s ideas seriously. Instead of treating the conversation as temporary, {{holder2}} may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when {{holder2}} corrects every unfinished thought. {{holder1}} may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized.",
+    "body_they": "{{holder2}} takes {{holder1}}'s ideas seriously. Instead of treating the conversation as temporary, {{holder2}} may ask the questions that turn a rough idea into a real plan, finished project, or decision that can hold up over time. That seriousness can become difficult when {{holder2}} corrects every unfinished thought. {{holder1}} may start waiting until the idea is fully formed before speaking, because thinking out loud begins to feel like volunteering to be criticized.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-saturn/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

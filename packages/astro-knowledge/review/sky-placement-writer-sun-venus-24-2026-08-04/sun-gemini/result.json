@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "runId": "sun-gemini",
+  "recordedAt": "2026-08-05T01:20:04.450Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "sun",
+    "sign": "gemini"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:gemini-season-2025:p018:window-2-3",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:venus-in-virgo-2025:p012:window-3-2",
+      "owner-article:gemini-new-moon-2025:p004:window-2-3",
+      "owner-article:full-moon-in-taurus:p027:window-4-2"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close",
+        "hook is long (75 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Gemini on {{entryDate}}, and our attention starts moving faster than our decisions. Questions come quickly. A useful distinction in conversation changes how we understand an idea. The missing words arrive, and energy returns with them. The Sun in Gemini makes curiosity visible. We gather what is interesting, connect it to something else, and pass along an explanation that helps the next conversation go further.",
+    "tension": "The pressure starts when every new angle feels too valuable to leave out. We open another tab, ask another question, and add another exception. A choice that was nearly clear becomes harder because each detail creates one more possible direction. Communication stays active, but the point keeps moving. Replies multiply. No one knows which version we mean. More information begins to protect us from the risk of standing behind one conclusion.",
+    "development": "That drift is easy to miss because it looks like engagement. We keep gathering, comparing, and translating. The notes get longer while the sentence that matters remains unwritten. A lively exchange ends with five interpretations and no shared understanding. An explanation gains so many exceptions that nobody can repeat its point. The Sun last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Its return puts the tension between curiosity and commitment back into view. When every version stays in circulation, our attention divides and our confidence goes with it. We know more, yet become less willing to say what the knowledge means.",
+    "close": "Before {{exitDate}}, every answer kept open for one more angle leaves our words busier and our actual position harder to find.",
+    "try_this": [
+      "We can turn one page of scattered notes into five sentences that end with one clear conclusion.",
+      "We can choose one decision with too many options and remove two that no longer fit what we know.",
+      "We can explain one complicated idea aloud in plain language without adding a second topic."
+    ]
+  }
+}

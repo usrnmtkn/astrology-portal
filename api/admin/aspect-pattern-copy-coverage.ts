@@ -18,7 +18,7 @@ const {
   buildAspectPatternInterpretationContexts(detectionResult: unknown, context: Record<string, unknown>): ContextRecord[];
   detectPatterns(input: unknown): Record<string, unknown>;
   rankAspectPatterns(detectionResult: unknown, context: Record<string, unknown>): Record<string, unknown>;
-  resolveAspectPatternCopy(context: ContextRecord, options?: { authoredRecords?: AuthoredRecord[] }): ResolvedCopy;
+  resolveAspectPatternCopy(context: ContextRecord, options?: { authoredRecords?: AuthoredRecord[]; useLegacyResolver?: boolean }): ResolvedCopy;
   validateAuthoredAspectPatternRecord(record: AuthoredRecord, context: ContextRecord): ValidationResult;
 };
 const { fixtures } = require("../../packages/astro-knowledge/engine/aspect-patterns/fixtures.js") as {
@@ -234,8 +234,8 @@ function coverageReport() {
     const previews = fixtureIds.flatMap((fixtureId) => {
       const context = contextMap.get(fixtureId);
       if (!context) return [];
-      const authored = resolveAspectPatternCopy(context, { authoredRecords: AUTHORED_ASPECT_PATTERN_RECORDS });
-      const fallback = resolveAspectPatternCopy(context, { authoredRecords: [] });
+      const authored = resolveAspectPatternCopy(context, { authoredRecords: AUTHORED_ASPECT_PATTERN_RECORDS, useLegacyResolver: true });
+      const fallback = resolveAspectPatternCopy(context, { authoredRecords: [], useLegacyResolver: true });
       const validation = validateAuthoredAspectPatternRecord(record, context);
       return [{
         fixtureId,

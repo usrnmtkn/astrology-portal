@@ -1,0 +1,1031 @@
+[
+ {
+  "sample": 1,
+  "candidate": {
+   "headline": "What hurt is easier to put into words.",
+   "body": "You can bring a strained conversation back to the part that caused the upset. When you defend every side detail, your reply gets longer and the main question remains unanswered. The side details can wait. Over the next few hours, you can say what hurt and what changed with less second-guessing. You are not restarting the argument by returning to its actual point. Send one direct reply that explains what hurt and ends with the question you need answered."
+  },
+  "raw": "{\"headline\":\"What hurt is easier to put into words.\",\"body\":\"You can bring a strained conversation back to the part that caused the upset. When you defend every side detail, your reply gets longer and the main question remains unanswered. The side details can wait. Over the next few hours, you can say what hurt and what changed with less second-guessing. You are not restarting the argument by returning to its actual point. Send one direct reply that explains what hurt and ends with the question you need answered.\"}",
+  "writerUsage": {
+   "inputTokens": 3690,
+   "cachedInputTokens": 0,
+   "cacheWriteTokens": 3687,
+   "outputTokens": 3217,
+   "reasoningTokens": 3106,
+   "totalTokens": 6907
+  },
+  "responseId": "resp_07d76ae7bbb9d6d8006a736de3bd84819e96083ba26a1b0d9a",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/mercury",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "6 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "80 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send one direct reply that explains what hurt and ends with the question you need answered."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "mercury"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": [
+      "Over the next few hours"
+     ]
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": {
+      "softGrammar": true,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "The side details can wait."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/mercury",
+       "matches": [
+        "communication"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "When you defend every side detail, your reply gets longer and the main question remains unanswered."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 80,
+    "bodySentences": 6,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "soft/mercury",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate matches the owner's voice well with plain, conversational truth and a clear, early statement of the main idea. It names the recognizable cost of prolonging conflict and second-guessing, and the structure leads with the key insight followed by supportive detail. Hedging is minimal and the formula avoids mechanical or templated phrasing. The line about not restarting the argument by returning to its actual point is a clear, relatable insight that someone might save or share. The specificity fits the soft/mercury key by focusing on communication and emotional clarity.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You are not restarting the argument by returning to its actual point.",
+    "why": "This sentence captures a common but unspoken fear in conflict—worrying that addressing the core issue will escalate the fight—while reassuring the reader that clarity is possible and necessary. It is concise, emotionally resonant, and directly supports the horoscope's main message, making it a strong takeaway that fits the owner's voice and the key's emotional register."
+   },
+   "usage": {
+    "input_tokens": 1200,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 277,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1477
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 2,
+  "candidate": {
+   "headline": "The real point is easier to put into words.",
+   "body": "You reach the part of the conversation that explains why the first comment hurt, and you can say it plainly. You may worry that plain language will restart the argument, so you soften every sentence and make the answer you need harder to hear. You are not picking a fight. Send one direct reply that names what hurt, what changed, and the answer you need next while the point feels clear."
+  },
+  "raw": "{\"headline\":\"The real point is easier to put into words.\",\"body\":\"You reach the part of the conversation that explains why the first comment hurt, and you can say it plainly. You may worry that plain language will restart the argument, so you soften every sentence and make the answer you need harder to hear. You are not picking a fight. Send one direct reply that names what hurt, what changed, and the answer you need next while the point feels clear.\"}",
+  "writerUsage": {
+   "inputTokens": 3690,
+   "cachedInputTokens": 3687,
+   "cacheWriteTokens": 0,
+   "outputTokens": 3725,
+   "reasoningTokens": 3624,
+   "totalTokens": 7415
+  },
+  "responseId": "resp_08dfdf967c6f7ad9006a736e2620f0819e8de4796354d5a279",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/mercury",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "9 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "71 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send one direct reply that names what hurt, what changed, and the answer you need next while the point feels clear."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "mercury"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": {
+      "softGrammar": true,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You are not picking a fight."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/mercury",
+       "matches": [
+        "communication",
+        "mild-ease"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "house/5",
+        "matches": [
+         "creativity-play"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 71,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "soft/mercury",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 2,
+   "dimScore": 5,
+   "verdict": {
+    "score": 2,
+    "verdict": "The candidate captures a relatable moment of communication difficulty and encourages clarity, which fits the owner's voice in plain conversational truth. However, it leans on hedging with 'may worry' and 'soften every sentence,' which softens the claim more than typical owner-approved examples. The stakes are implied (risk of restarting argument), but not explicitly named as a recognizable cost like lost time or trust. The structure is mostly clear but the final instruction is somewhat buried and could be more direct. The formula avoids templates and the screenshot line is decent but not as striking as the best owner examples. Specificity to soft/mercury is moderate but could be stronger.",
+    "dimensions": {
+     "voice": true,
+     "stakes": false,
+     "structure": true,
+     "hedging": false,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Send one direct reply that names what hurt, what changed, and the answer you need next while the point feels clear.",
+    "why": "This sentence clearly names the core action and emotional clarity needed, something readers might save or share because it articulates a common but often unspoken communication challenge in a straightforward way."
+   },
+   "usage": {
+    "input_tokens": 1190,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 275,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1465
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 3,
+  "candidate": {
+   "headline": "The real point is easier to say plainly.",
+   "body": "You have a clearer opening to name why the conversation went sideways. Over the next few hours, you can use a private reply to explain what hurt and what changed before another round of corrections buries the point. You are not asking for a fight. Say the thing that’s been living in your chest, then ask for the answer you need next."
+  },
+  "raw": "{\"headline\":\"The real point is easier to say plainly.\",\"body\":\"You have a clearer opening to name why the conversation went sideways. Over the next few hours, you can use a private reply to explain what hurt and what changed before another round of corrections buries the point. You are not asking for a fight. Say the thing that’s been living in your chest, then ask for the answer you need next.\"}",
+  "writerUsage": {
+   "inputTokens": 3690,
+   "cachedInputTokens": 3687,
+   "cacheWriteTokens": 0,
+   "outputTokens": 2161,
+   "reasoningTokens": 2070,
+   "totalTokens": 5851
+  },
+  "responseId": "resp_0bc76ebae9e46c13006a736e7071ac81a19f455cd0333d264c",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/mercury",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "62 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Say the thing that’s been living in your chest, then ask for the answer you need next."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "mercury"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": [
+      "Over the next few hours"
+     ]
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": {
+      "softGrammar": true,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You are not asking for a fight."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/mercury",
+       "matches": [
+        "communication",
+        "mild-ease"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "square/mars",
+        "matches": [
+         "reactivity",
+         "self-friction"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 62,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "soft/mercury",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well with plain, conversational truth and a clear, early statement of the main point. It names a recognizable cost—miscommunication and emotional burden—and offers a practical, timely approach to address it. The structure is tight, with the truth upfront and the example supporting it without delay. Hedging is minimal and the tone avoids formulaic or templated language. The line about saying what's been 'living in your chest' is a strong, relatable phrase that someone might save or share. The specificity to Mercury's communication theme is clear, making it unlikely to work under a different transit.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Say the thing that’s been living in your chest, then ask for the answer you need next.",
+    "why": "This line captures a universal but often unspoken emotional experience with vivid, plain language that feels authentic and direct. It names the internal pressure to speak honestly and the practical next step, making it both emotionally resonant and actionable—exactly the kind of insight the owner aims for."
+   },
+   "usage": {
+    "input_tokens": 1180,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 282,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1462
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 4,
+  "candidate": {
+   "headline": "The real reason is easier to explain.",
+   "body": "You can say what you mean with less effort now that this exchange has reached the reason you were upset. As you record a voice note, you may still worry that saying it directly will restart the argument, so you keep starting over instead of sending it. You are not starting another argument by answering directly. Send the recording once it names what hurt, what changed, and the answer you need next."
+  },
+  "raw": "{\"headline\":\"The real reason is easier to explain.\",\"body\":\"You can say what you mean with less effort now that this exchange has reached the reason you were upset. As you record a voice note, you may still worry that saying it directly will restart the argument, so you keep starting over instead of sending it. You are not starting another argument by answering directly. Send the recording once it names what hurt, what changed, and the answer you need next.\"}",
+  "writerUsage": {
+   "inputTokens": 3690,
+   "cachedInputTokens": 3687,
+   "cacheWriteTokens": 0,
+   "outputTokens": 5773,
+   "reasoningTokens": 5673,
+   "totalTokens": 9463
+  },
+  "responseId": "resp_0d1ba52d00d5e870006a736ea56f88819fac4f79abf921b7bf",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/mercury",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "7 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "72 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send the recording once it names what hurt, what changed, and the answer you need next."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "mercury"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": false,
+     "details": [
+      "may still worry that saying it directly will restart the argumen"
+     ]
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": {
+      "softGrammar": true,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": false,
+     "details": "No 2-8 word body sentence found."
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/mercury",
+       "matches": [
+        "communication",
+        "mild-ease"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "soft/uranus",
+        "matches": [
+         "change-independence",
+         "mild-ease"
+        ],
+        "passed": true
+       },
+       {
+        "key": "soft/chiron",
+        "matches": [
+         "care-old-hurt",
+         "mild-ease"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You are not starting another argument by answering directly."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 7,
+    "headlineSentences": 1,
+    "bodyWords": 72,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "soft/mercury",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate aligns well with the owner's voice: it is plain and conversational, naming a clear emotional stake (the worry about restarting an argument and the need for clear communication). The truth arrives early and is supported by the example of recording a voice note. Hedging is minimal and the formula avoids mechanical or templated language. The line about not starting another argument by answering directly is a strong, shareable insight. The specificity fits the soft/mercury key, focusing on communication and emotional clarity.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You are not starting another argument by answering directly.",
+    "why": "This sentence crisply names a common but unspoken fear in conflict communication—the worry that directness will escalate tension—while reassuring the reader that clarity is not the same as conflict. It captures a nuanced emotional truth in plain language, making it memorable and likely to be saved or shared."
+   },
+   "usage": {
+    "input_tokens": 1189,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 251,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1440
+   },
+   "advisoryOnly": true
+  }
+ }
+]

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "runId": "sun-capricorn",
+  "recordedAt": "2026-08-05T01:29:25.325Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "sun",
+    "sign": "capricorn"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Capricorn on {{entryDate}}, and loose intentions become firm plans. We decide what comes first. We keep a promise after the excitement wears off. Confidence grows when the effort produces something solid.",
+    "tension": "That discipline has a cost when every hour has to prove its worth. We take on extra responsibility because being dependable feels safer than admitting our limits. A finished task gets another round of improvement. Rest gets pushed behind one more milestone. We grow harder to reach, and achievement becomes the only evidence that we are doing enough.",
+    "development": "The Sun last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure returns wherever competence has become the price of being taken seriously. We answer every request because refusing one might expose a limit. We keep correcting work that already holds because completion leaves no standard left to chase. The structure may be sound, yet our lives narrow around maintaining it. By the time the result arrives, there is less energy for the creative purpose that made the effort matter.",
+    "close": "Before {{exitDate}}, the result may be finished while we remain tired, harder to reach, and no more certain of our worth.",
+    "try_this": [
+      "We can finish one task at the standard it actually requires, without adding another round to prove commitment.",
+      "We can eat one full meal away from work and leave the phone in another room."
+    ]
+  }
+}

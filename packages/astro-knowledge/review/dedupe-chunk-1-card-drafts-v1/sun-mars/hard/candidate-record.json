@@ -1,0 +1,9 @@
+{
+  "target": "sun-mars-hard",
+  "status": "needs_review",
+  "payloadSha256": "90e807008d9730ce41f45d73c0befb0a121558a249a20d417150b070eee88db5",
+  "harvest_mode": "matched",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

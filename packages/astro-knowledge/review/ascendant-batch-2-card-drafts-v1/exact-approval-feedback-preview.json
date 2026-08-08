@@ -1,0 +1,31 @@
+{
+  "mode": "dry-run",
+  "target": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/contrastive-edits.json",
+  "authorityEffect": "exact_owner_approved",
+  "approvalInferred": false,
+  "proposedRecord": {
+    "id": "ascendant-batch-2-owner-revisions-v1-exact-approval",
+    "surface": "synastry-aspect",
+    "articleBeat": "neptune-pluto-ascendant-conjunction-hard-soft-resolver-cards",
+    "before": "The original six Sol payloads stored under packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/<pair>/<target>/draft.json.",
+    "beforeIsRejected": false,
+    "after": "The exact approved payloads and hashes stored in packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/OWNER-REVISION-SUMMARY.md and the six owner-revision-candidate.json records.",
+    "whatChanged": "Applied the owner's specified deletions to Neptune conjunction and Pluto soft, and retained the four approved-as-drafted payloads. No additional model or judge calls were made.",
+    "ownerReason": "The owner reviewed all six candidates and explicitly approved the final hash-bound payloads as exact wording.",
+    "reasonSource": "explicit_owner_feedback",
+    "failureTags": [],
+    "approvalLevel": "exact_owner_approved",
+    "sourcePaths": [
+      "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+      "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/OWNER-REVISION-SUMMARY.md",
+      "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-revision-manifest.json"
+    ],
+    "provenance": "exact_wording_approval: six Ascendant batch 2 payload hashes explicitly approved by the owner in chat on 2026-08-04",
+    "feedbackKind": "exact_wording_approval",
+    "exactApprovalScope": "exact_ascendant_batch_2_six_payloads_wording_shipping_via_draft_pr_merge_authorization_required"
+  },
+  "nextCommands": [
+    "create six exact-approval records",
+    "prepare the authorized draft shipping PR"
+  ]
+}

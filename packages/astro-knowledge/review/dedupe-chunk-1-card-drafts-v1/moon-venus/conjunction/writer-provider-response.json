@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0f73ac2575ed8ecb006a729c970aa8819c8d78b4407203daea",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 964,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1122,
+    "output_tokens_details": {
+      "reasoning_tokens": 862
+    },
+    "total_tokens": 2086
+  },
+  "output_text": "{\n  \"body_you\": \"{{holder2}}'s affection makes you feel cared for, and you respond with warmth that helps {{holder2}} relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken. But the deeper work lies in redefining what makes you feel secure.\",\n  \"body_they\": \"Your affection makes {{holder1}} feel cared for, and {{holder1}} responds with warmth that helps you relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken. But the deeper work lies in redefining what makes you feel secure.\",\n  \"warmthSource\": {\n    \"sourceArticleId\": \"cancer-new-moon-2025\",\n    \"originalLine\": \"But the deeper work lies in redefining what makes you feel secure.\",\n    \"usedForm\": {\n      \"body_you\": \"But the deeper work lies in redefining what makes you feel secure.\",\n      \"body_they\": \"But the deeper work lies in redefining what makes you feel secure.\"\n    }\n  },\n  \"labels\": [\n    \"owner-corpus-derived\"\n  ]\n}"
+}

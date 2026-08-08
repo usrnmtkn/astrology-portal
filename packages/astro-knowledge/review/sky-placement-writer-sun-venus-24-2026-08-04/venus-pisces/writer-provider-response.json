@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_00f0f96aeb9ce0ac006a72970295f881a0be52a404a0495088",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8081,
+    "input_tokens_details": {
+      "cache_write_tokens": 8078,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2978,
+    "output_tokens_details": {
+      "reasoning_tokens": 2588
+    },
+    "total_tokens": 11059
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Pisces on {{entryDate}}, and attraction becomes softer, more imaginative, and harder to separate from hope. A small kindness can feel deeply intimate. A song brings back a longing. We notice beauty in what is unfinished, and affection moves through gestures that ask for no credit.\",\"tension\":\"That openness also makes missing information easy to decorate. We explain away mixed signals, spend past our limit to make something lovely, or help before anyone has asked. Each act feels generous on its own. Together, they can build a bond around what we hope is there rather than what is being returned. The rescue reflex keeps us focused on someone else's pain, so we call our own disappointment patience and keep giving.\",\"development\":\"Venus last moved through Pisces from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. During this transit, affection can stay attached to possibility after the facts have changed. We cover the cost again, accept a vague answer, or keep making exceptions because each choice seems small. The total is not small. Generosity stops creating connection and starts protecting an ideal from evidence. Art and tenderness can deepen a mutual bond. In a one-sided exchange, the same gestures can keep the imbalance looking meaningful. What has someone actually offered? What have we supplied because the imagined version felt too beautiful to lose?\",\"close\":\"By {{exitDate}}, sympathy and imagined potential can leave us doing all the work for a connection that only felt mutual.\",\"try_this\":[\"We can ask what kind of help is wanted before stepping in to solve anything.\",\"We can set a cash limit before buying a gift or covering someone else's expense.\",\"We can play one album while drawing, cooking, or arranging a shelf only for pleasure.\"]}"
+}

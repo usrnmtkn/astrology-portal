@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "mercury-venus-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/mercury-venus/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "ece23370f0bc1f56070ea3f8563a6bbfbf80d1203b62ff248d1cb23640946306",
+  "payload": {
+    "body_you": "You tend to notice what {{holder2}} likes and choose words that make them feel considered. {{holder2}} responds with affection, so it is easy for you to ask questions, explain yourself, and keep the conversation pleasant. Neither of you has to put much effort into this exchange.",
+    "body_they": "{{holder1}} tends to notice what you like and chooses words that make you feel considered. You respond with affection, so it is easy for {{holder1}} to ask questions, explain themselves, and keep the conversation pleasant. Neither of you has to put much effort into this exchange.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "913808658a00f6e3ec90dc6148ad7916ce912255dd2a9a5be80dd9065c303750",
+    "writerProviderResponseSha256": "9290093ed8cb8a87736c0c15140a060cd39de2da4dd003850a98a040322927ae"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/mercury-venus/soft/exact-approval.json"
+}

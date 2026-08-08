@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mars-jupiter-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/jupiter/soft",
+  "payloadSha256": "4219f108a0bb87e9fcec8997556d39022d5ddc9279082373574c75550f73d087",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} gives you more confidence to act, while you give {{holder2}}'s optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. You and {{holder2}} may not notice how much larger the plan has become until they are already responsible for carrying it.",
+    "body_they": "You give {{holder1}} more confidence to act, while {{holder1}} gives your optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. {{holder1}} and you may not notice how much larger the plan has become until they are already responsible for carrying it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

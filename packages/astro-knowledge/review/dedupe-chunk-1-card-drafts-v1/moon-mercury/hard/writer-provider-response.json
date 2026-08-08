@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0ae2738a44137af3006a7296b5da1c81a29522b4811bba74aa",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 907,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1157,
+    "output_tokens_details": {
+      "reasoning_tokens": 872
+    },
+    "total_tokens": 2064
+  },
+  "output_text": "{\"body_you\":\"When you want {{holder2}} to stay with you in a feeling, your need for comfort presses on how they think and talk. They reach for logic, questions, or explanations, and you can feel dissected instead of supported, so you keep asking for emotional company while they keep trying to make sense of it. When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.\",\"body_they\":\"When {{holder1}} wants you to stay with them in a feeling, their need for comfort presses on how you think and talk. You reach for logic, questions, or explanations, and they can feel dissected instead of supported, so they keep asking for emotional company while you keep trying to make sense of it. When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.\",\"warmthSource\":{\"sourceArticleId\":\"aquarius-season-2025\",\"originalLine\":\"When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.\",\"usedForm\":{\"body_you\":\"When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.\",\"body_they\":\"When the ground beneath you feels unstable, it’s natural to want to hold tightly to what you know.\"}},\"labels\":[\"owner-corpus-derived\"]}"
+}

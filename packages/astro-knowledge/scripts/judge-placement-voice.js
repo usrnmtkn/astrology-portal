@@ -94,6 +94,8 @@ function buildJudgePrompt(article, options = {}) {
     `  FIRST-READ NATURAL ENGLISH REVIEW: Does every central sentence sound natural and literal on first read? A central sentence that requires translation cannot score 2 or 3 unless the failure is isolated and the remaining article is strongly grounded.`,
     ``,
     `OWNER-REGISTER AND SCENE CHECKS`,
+    `Adjacent-voice recognizability: flag phrasing that matches the CC/SD/AC construction families in voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out.`,
+    `Shared astrological knowledge and terminology are never flagged by recognizability: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
     `  A scene that any astrology account would attach to this sign is a fail. It must be derivable from THIS placement's combined meaning at THIS transit's scale. A Jupiter year is not a dinner; a year-long or slower transit reduced to one evening's logistics scores 1.`,
     `  Compare the draft with only the eligible owner evidence below. Generic product copy that violates no literal ban still fails the owner-register check. If no approved format exemplar is available, do not invent one or treat a needs-review card as approved.`,
     `  Treat moves as the highest-risk section until an exact owner-approved moves exemplar exists. In moves, must-have, flexible detail, decision time, each side, proposal, mutual, negotiate, stakeholder, align or alignment, and action item are facilitation-register failures and score 1.`,

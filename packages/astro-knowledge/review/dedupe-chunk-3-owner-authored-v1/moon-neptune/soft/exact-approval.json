@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-neptune-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "1af998fe2fd653219ae48930332d08b55d1331c306d52b33c69029a1d1d0ad43",
+  "payload": {
+    "body_you": "{{holder2}} often knows when {{holder1}} needs gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves {{holder1}} feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+    "body_they": "{{holder2}} often knows when {{holder1}} needs gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves {{holder1}} feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-neptune/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

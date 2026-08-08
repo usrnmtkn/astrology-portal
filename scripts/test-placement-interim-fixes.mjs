@@ -159,7 +159,11 @@ for (const planet of [
     const rendered = sky.renderSkyPlacement({
       planet,
       sign,
-      ...(planet === "sun" ? { entryDate: "July 22", exitDate: "August 23" } : {})
+      ...(planet === "sun"
+        ? { entryDate: "July 22", exitDate: "August 23" }
+        : planet === "moon"
+          ? { entryDate: "August 4", exitDate: "August 7" }
+          : {})
     });
     assert.doesNotMatch(rendered.body, /\{\{|\}\}/u);
     skyRenderCount++;

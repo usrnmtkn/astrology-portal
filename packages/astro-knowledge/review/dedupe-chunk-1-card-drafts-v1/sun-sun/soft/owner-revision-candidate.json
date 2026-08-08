@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-sun-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-sun/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "2982272d36e04c176505bf2305d48b28b755d9c685b09da5cb731e509c1a5a62",
+  "payload": {
+    "body_you": "When you state what matters to you or choose a direction, {{holder2}} tends to meet you without asking you to tone yourself down. {{holder2}} shows the same confidence in who they are, and you respond by backing their direction rather than competing with it. Because this support feels natural, either of you can assume you are aligned without saying where your goals differ.",
+    "body_they": "When {{holder1}} states what matters to them or chooses a direction, you tend to meet them without asking them to tone themselves down. You show the same confidence in who you are, and {{holder1}} responds by backing your direction rather than competing with it. Because this support feels natural, either of you can assume you are aligned without saying where your goals differ.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "bd9be91d5dc8911163b45e64296b2a8b61a048d79dae11198eb0cd7b0e2164d5",
+    "writerProviderResponseSha256": "a009ceeae0269925766a428474d5011b9ac6a18ce5cf96d167d5f3ca68dfd733"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-sun/soft/exact-approval.json"
+}

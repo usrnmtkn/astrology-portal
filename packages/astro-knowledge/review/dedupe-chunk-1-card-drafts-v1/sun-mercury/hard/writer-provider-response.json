@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0e73b6c0390d2cf9006a7295ba513c81a29af746ecba9ea6af",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 797,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 463,
+    "output_tokens_details": {
+      "reasoning_tokens": 310
+    },
+    "total_tokens": 1260
+  },
+  "output_text": "{\"body_you\":\"{{holder2}}'s questions and strong opinions can feel like challenges to who you are or where you are going. You may respond by defending yourself or pushing back on how {{holder2}} thinks, which can make them more insistent about explaining their point. Even basic conversations can turn tense, leaving both of you feeling misunderstood.\",\"body_they\":\"{{holder1}} can take your questions and strong opinions as challenges to who they are or where they are going. They may respond by defending themselves or pushing back on how you think, which can make you more insistent about explaining your point. Even basic conversations can turn tense, leaving both of you feeling misunderstood.\",\"warmthSource\":null,\"labels\":[]}"
+}

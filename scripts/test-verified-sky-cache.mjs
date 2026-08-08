@@ -173,6 +173,24 @@ try {
     ),
     "Cache keys must isolate timezone interpretations."
   );
+  const natalCacheKey = cache.natalSkySnapshotCacheKey(
+    location,
+    new Date("1990-04-12T14:30:00.000Z")
+  );
+  assert.match(natalCacheKey, /:natal-1990-04-12T14:30:00\.000Z:/);
+  assert.equal(
+    cache.writeCachedSkySnapshot(natalCacheKey, snapshot, { now, storage }),
+    true,
+    "A verified natal snapshot should use the same validated cache envelope."
+  );
+  assert.ok(
+    cache.readCachedSkySnapshot(natalCacheKey, {
+      now: now + 7 * 24 * 60 * 60 * 1000,
+      maxAgeMs: cache.VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS,
+      storage
+    }),
+    "An immutable natal snapshot should remain available across visits."
+  );
 
   const boundedStorage = new MemoryStorage();
   for (let index = 0; index <= cache.VERIFIED_SKY_CACHE_MAX_ENTRIES; index += 1) {

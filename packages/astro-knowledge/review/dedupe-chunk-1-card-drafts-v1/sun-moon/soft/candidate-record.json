@@ -1,0 +1,9 @@
+{
+  "target": "sun-moon-soft",
+  "status": "needs_review",
+  "payloadSha256": "711727f56af0f5654c9e3037534775547ae9df484cbd3c64bcb79e176abaebdb",
+  "harvest_mode": "matched",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

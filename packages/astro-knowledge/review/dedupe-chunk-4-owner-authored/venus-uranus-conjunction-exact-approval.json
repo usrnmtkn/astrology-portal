@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-uranus-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/uranus/conjunction",
+  "payloadSha256": "6b44f5a42b7041cef128b3a80576efe1047dba4e7b337544b39f720f2d31ae15",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} makes affection feel exciting and completely unforced. It is exhilarating to receive, but nearly impossible to put on a schedule.",
+    "body_they": "{{holder2}} makes affection feel exciting and completely unforced. It is exhilarating to receive, but nearly impossible to put on a schedule.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

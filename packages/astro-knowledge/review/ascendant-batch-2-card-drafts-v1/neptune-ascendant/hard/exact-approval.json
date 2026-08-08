@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "neptune-ascendant-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b2c1c9702fc02a7244d0e2204f52692260359e00178bbc9ab95167c28d963ac6",
+  "payload": {
+    "body_you": "You may admire a version of {{holder2}} that fits your hopes, and {{holder2}} may not be able to tell what you actually think of them. {{holder2}} may respond by becoming more careful around you and adjusting how they come across based on whether you seem pleased, which can leave them feeling unseen. They want to be seen not just for their dreams but for their willingness to feel everything so deeply.",
+    "body_they": "{{holder1}} may admire a version of you that fits their hopes, and you may not be able to tell what they actually think of you. You may respond by becoming more careful around {{holder1}} and adjusting how you come across based on whether they seem pleased, which can leave you feeling unseen. You want to be seen not just for your dreams but for your willingness to feel everything so deeply.",
+    "warmthSource": {
+      "usedForm": {
+        "body_you": "They want to be seen not just for their dreams but for their willingness to feel everything so deeply.",
+        "body_they": "You want to be seen not just for your dreams but for your willingness to feel everything so deeply."
+      },
+      "sourceArticleId": "full-moon-eclipse-in-pisces-2025",
+      "originalLine": "To be seen not just for our dreams but for our willingness to feel everything so deeply."
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

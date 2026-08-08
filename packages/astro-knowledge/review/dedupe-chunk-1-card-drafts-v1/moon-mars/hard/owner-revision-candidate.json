@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-mars-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "929a1940b2bae8e8a98fbd52d65190bf328de1c0f1d472c64ee6da895c2da465",
+  "payload": {
+    "body_you": "When your feelings show, {{holder2}} can get defensive or impatient before the conversation is even finished. They may answer sharply or push harder, which hurts you and intensifies your reaction. A small misstep can become a heated argument very quickly.",
+    "body_they": "When {{holder1}}'s feelings show, you can get defensive or impatient before the conversation is even finished. You may answer sharply or push harder, which hurts {{holder1}} and intensifies their reaction. A small misstep can become a heated argument very quickly.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "22aa66fb30fe09c83718de6250a684856fba47f6f0baf8cdb7e9b5081bf120b0",
+    "writerProviderResponseSha256": "072e994eac2f5d64f8e7613d715469bd55938d21567185f4fc9d56390cf95934"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/hard/exact-approval.json"
+}

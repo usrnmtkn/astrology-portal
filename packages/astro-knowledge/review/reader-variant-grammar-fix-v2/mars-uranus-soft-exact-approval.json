@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-uranus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/uranus/soft",
+  "payloadSha256": "68da270512df9cbb3fa463d28ec8beb642933938177fd3a243385f7377e4f93c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You can act without making {{holder2}} feel crowded, and {{holder2}} can change direction without leaving you stranded. Neither person has to disappear or take over to keep the plan moving.",
+    "body_they": "{{holder1}} can act without making you feel crowded, and you can change direction without leaving {{holder1}} stranded. Neither person has to disappear or take over to keep the plan moving.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

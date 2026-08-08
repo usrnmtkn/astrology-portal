@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0e61eece00b4f84f006a729d30f92c8191acb7ffd73af95f59",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1238,
+    "input_tokens_details": {
+      "cache_write_tokens": 1235,
+      "cached_tokens": 0
+    },
+    "output_tokens": 512,
+    "output_tokens_details": {
+      "reasoning_tokens": 356
+    },
+    "total_tokens": 1750
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the fixed direction: {{holder1}}'s talking acts on {{holder2}}'s way of loving, while {{holder2}}'s warmth keeps {{holder1}} talking. The middle sentence creates a recognizable loop, with pressing or overexplaining making {{holder2}} feel their preferences or worth are picked apart, which leads to more talking. The variants are closely parallel and stay within the governed boundary. However, the final standalone line, \\\"We don't have to choose between being loved and being ourselves,\\\" reads as a broad second conclusion rather than an integrated turn from the described loop, even though it is correctly traced to a supplied foundation line.\"}"
+}

@@ -284,6 +284,10 @@ const PATTERN_DISPLAY_NAMES = Object.freeze({
   yod: "Yod",
   mystic_rectangle: "Mystic Rectangle"
 });
+const ACTIVATION_PATTERN_DISPLAY_NAMES = Object.freeze({
+  ...PATTERN_DISPLAY_NAMES,
+  grand_square: "Grand Square"
+});
 const AUTHORED_ASPECT_PATTERN_RECORDS = Object.freeze(buildAuthoredAspectPatternRecords());
 const GOVERNED_COPY_RECORDS = Object.freeze(buildDefaultCopyRecords());
 const GOVERNED_ACTIVATION_COPY_RECORDS = Object.freeze(buildDefaultActivationCopyRecords());
@@ -1954,12 +1958,12 @@ function aspectPatternActivationCopySlots(context) {
   const primary = primaryTriggerContext(context);
   const role = primary.targetRoles && primary.targetRoles[0] ? primary.targetRoles[0] : "";
   const additionalMovingBodies = (context.activationSummary.movingBodies || []).filter((body) => body !== primary.movingBody);
-  const linkedPatternNames = patternNameListFromIds(context.activationSummary.linkedPatternIds || []);
-  const parentPatternNames = (context.display.parentPatternIds || []).map(patternNameFromId);
-  const childPatternNames = (context.display.childPatternIds || []).map(patternNameFromId);
+  const linkedPatternNames = patternNameListFromIds(context.activationSummary.linkedPatternIds || [], ACTIVATION_PATTERN_DISPLAY_NAMES);
+  const parentPatternNames = (context.display.parentPatternIds || []).map((patternId) => patternNameFromId(patternId, ACTIVATION_PATTERN_DISPLAY_NAMES));
+  const childPatternNames = (context.display.childPatternIds || []).map((patternId) => patternNameFromId(patternId, ACTIVATION_PATTERN_DISPLAY_NAMES));
   const aspectName = lowerToken(primary.aspectType);
   const slots = {
-    pattern_name: PATTERN_DISPLAY_NAMES[context.patternType] || titleToken(context.patternType),
+    pattern_name: ACTIVATION_PATTERN_DISPLAY_NAMES[context.patternType] || titleToken(context.patternType),
     primary_moving_body: titleToken(primary.movingBody),
     primary_target_planet: titleToken(primary.targetNatalPlanet),
     primary_aspect_name: aspectName,
@@ -2142,8 +2146,8 @@ function buildAuthoredAspectPatternActivationRecords() {
     }),
     authoredActivationRecord("grand_square", "opposition_axis", {
       route: "member",
-      headline: "{{primary_moving_body}} is contacting one corner of your Grand Cross",
-      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}} inside your Grand Cross. One corner of the four-part setup may stand out without reducing the pattern to one component.",
+      headline: "{{primary_moving_body}} is contacting one corner of your Grand Square",
+      overview: "{{primary_moving_body}} is contacting {{primary_target_planet}} inside your Grand Square. One corner of the four-part setup may stand out without reducing the pattern to one component.",
       role: "{{primary_target_planet}} is one member of the four-planet structure. It is a doorway into the wider pattern, not a single outlet.",
       watch: "Notice which corner asks for attention first, without assuming all four sides have the same volume."
     }),
@@ -2314,7 +2318,7 @@ function activationTemplatesForPattern(patternType, level) {
 
 function activationOverview(patternType) {
   if (patternType === "t_square") return "{{primary_moving_body}} is contacting the {{primary_target_role}} in your T-square, so you may notice more around how this pattern handles pressure.";
-  if (patternType === "grand_square") return "{{primary_moving_body}} is contacting one member of your Grand Cross, so one doorway into the wider four-part setup may stand out for now.";
+  if (patternType === "grand_square") return "{{primary_moving_body}} is contacting one member of your Grand Square, so one doorway into the wider four-part setup may stand out for now.";
   if (patternType === "grand_trine") return "{{primary_moving_body}} may make an already familiar response inside your Grand Trine easier to notice or use.";
   if (patternType === "kite") return "{{primary_moving_body}} is contacting your Kite without removing either part of its structure: the underlying Grand Trine and the opposition.";
   if (patternType === "yod") return "{{primary_moving_body}} may make the timing and adjustment work in your Yod more noticeable without making it a fixed outcome.";
@@ -2370,6 +2374,9 @@ function resolveLegacyAspectPatternCopies(contexts, options = {}) {
 }
 
 function resolveAspectPatternCopy(context, options = {}) {
+  // The reader contract is locked to V3, even when older callers pass stale
+  // record arrays. Admin previews and persisted production overrides opt into
+  // the governed record-aware resolver explicitly.
   if (options.useLegacyResolver === true) {
     return resolveLegacyAspectPatternCopy(context, options);
   }
@@ -2992,15 +2999,15 @@ function confidenceTemplate() {
   return "Because this pattern is {{confidence}}, keep the wording flexible; the widest link is {{maximum_orb}}.";
 }
 
-function patternNameFromId(patternId) {
+function patternNameFromId(patternId, displayNames = PATTERN_DISPLAY_NAMES) {
   const match = String(patternId).match(/^aspect-pattern:([^:]+)/);
-  return match ? PATTERN_DISPLAY_NAMES[match[1]] || titleToken(match[1]) : "related pattern";
+  return match ? displayNames[match[1]] || titleToken(match[1]) : "related pattern";
 }
 
-function patternNameListFromIds(patternIds) {
+function patternNameListFromIds(patternIds, displayNames = PATTERN_DISPLAY_NAMES) {
   const counts = new Map();
   for (const patternId of patternIds) {
-    const name = patternNameFromId(patternId);
+    const name = patternNameFromId(patternId, displayNames);
     counts.set(name, (counts.get(name) || 0) + 1);
   }
   return [...counts.entries()].map(([name, count]) => count > 1 ? `${numberWord(count)} ${pluralizePatternName(name)}` : name);

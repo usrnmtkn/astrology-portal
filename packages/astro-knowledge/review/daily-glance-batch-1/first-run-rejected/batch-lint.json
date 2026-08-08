@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "passed": false,
+  "rules": {
+    "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
+    "DG-R7": "No body opener construction may repeat within the batch."
+  },
+  "checks": [
+    {
+      "id": "batch-output-count",
+      "passed": true,
+      "details": "7/7 outputs"
+    },
+    {
+      "id": "DG-R1-recurring-sentence-frame",
+      "passed": false,
+      "details": [
+        {
+          "frame": "for the next",
+          "keys": [
+            "conjunction/mars",
+            "opposition/sun",
+            "conjunction/north-node"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DG-R7-opener-variety",
+      "passed": false,
+      "details": [
+        {
+          "frame": "for the",
+          "keys": [
+            "conjunction/mars",
+            "opposition/sun",
+            "conjunction/north-node"
+          ]
+        }
+      ]
+    }
+  ],
+  "openerConstructions": [
+    {
+      "key": "square/moon",
+      "frame": "you may"
+    },
+    {
+      "key": "conjunction/mars",
+      "frame": "for the"
+    },
+    {
+      "key": "opposition/sun",
+      "frame": "for the"
+    },
+    {
+      "key": "conjunction/lilith",
+      "frame": "as you"
+    },
+    {
+      "key": "soft/pluto",
+      "frame": "over the"
+    },
+    {
+      "key": "conjunction/north-node",
+      "frame": "for the"
+    },
+    {
+      "key": "opposition/south-node",
+      "frame": "when someone"
+    }
+  ],
+  "repeatedFrames": [
+    {
+      "frame": "for the next",
+      "keys": [
+        "conjunction/mars",
+        "opposition/sun",
+        "conjunction/north-node"
+      ]
+    }
+  ],
+  "repeatedOpeners": [
+    {
+      "frame": "for the",
+      "keys": [
+        "conjunction/mars",
+        "opposition/sun",
+        "conjunction/north-node"
+      ]
+    }
+  ]
+}

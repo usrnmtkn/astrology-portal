@@ -104,13 +104,13 @@ export async function getAuthAccount() {
     return null;
   }
 
-  const { data, error } = await supabase.auth.getUser();
+  const user = await getVerifiedAuthUser(supabase);
 
-  if (error || !data.user) {
+  if (!user) {
     return null;
   }
 
-  return authAccountFromUser(data.user);
+  return authAccountFromUser(user);
 }
 
 export function onAuthAccountChange(callback: (account: AuthAccount | null) => void) {

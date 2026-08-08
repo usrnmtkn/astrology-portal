@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-sun-jupiter-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
+  "payloadSha256": "7dc8e870a1781ebcb4ca4922a4e607c5c31c29d480ed156a636297d43fe334e3",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may feel as though the current version of you is never quite exciting enough for {{holder2}}. {{holder2}} thinks they are waving you toward a larger life, but you hear disappointment with the life already being lived. Soon you are chasing the brighter title, louder entrance, or more impressive answer, wondering when who you are now will finally receive a standing ovation.",
+    "body_they": "{{holder1}} may feel as though the current version of them is never quite exciting enough for you. You think you are waving {{holder1}} toward a larger life, but {{holder1}} hears disappointment with the life already being lived. Soon {{holder1}} is chasing the brighter title, louder entrance, or more impressive answer, wondering when who they are now will finally receive a standing ovation.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

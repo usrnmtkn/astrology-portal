@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mars-saturn-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/saturn/hard",
+  "payloadSha256": "3c962deaa34c1a33b32b9462669e1143f4226df213a79441784dc7d880c9b536",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} feels blocked or judged, while {{holder2}} sees a reckless drive that needs reining in. Every decision devolves into an argument over timing.",
+    "body_they": "{{holder1}} feels blocked or judged, while {{holder2}} sees a reckless drive that needs reining in. Every decision devolves into an argument over timing.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

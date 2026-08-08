@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "neptune-ascendant-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "91f6efc2105acce579f55447477fd6912d445a9c6f566d1a7fa36644008d39fb",
+  "payload": {
+    "body_you": "You tend to interpret the way {{holder2}} comes across generously, even when you are not fully sure what they mean. {{holder2}} then monitors themselves less and acts more naturally around you. This ease can leave your assumptions about them untested.",
+    "body_they": "{{holder1}} tends to interpret the way you come across generously, even when they are not fully sure what you mean. You then monitor yourself less and act more naturally around {{holder1}}. This ease can leave their assumptions about you untested.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

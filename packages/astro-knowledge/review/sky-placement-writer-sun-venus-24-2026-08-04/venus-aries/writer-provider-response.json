@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0737aa5f4fd6756b006a7292a9f69c819f881219a84bc9df6a",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8170,
+    "input_tokens_details": {
+      "cache_write_tokens": 8167,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5840,
+    "output_tokens_details": {
+      "reasoning_tokens": 5456
+    },
+    "total_tokens": 14010
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Aries on {{entryDate}}, and attraction stops hinting and starts making the first move. A preference gets said before anyone asks. A flirtation gets named. An item left in the cart suddenly feels worth buying. Venus in Aries makes desire visible: we reach for what we like and say why.\",\"tension\":\"That speed clears away mixed signals, but it can make waiting feel like evidence that the spark is gone. A delayed answer starts to look like rejection. A difference in taste becomes something to win. We may buy fast for the pleasure of choosing, then wonder why the thing itself matters less once it is ours. In connection, a bold beginning can cool as soon as attention is returned. When pursuit carries more of the feeling than intimacy, desire needs fresh resistance to stay alive.\",\"development\":\"Venus last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The first rush still has to meet ordinary life. A direct invitation becomes a real exchange, and now both sides have preferences. The quick purchase still has to be worth its price after the thrill of choosing it. A new look still has to feel right after the compliments stop. If the first rush becomes the standard, ordinary pleasure starts to look flat. We start another chase, spend again, or turn a difference into a contest because intensity is easier to recognize than contentment.\",\"close\":\"Before {{exitDate}}, some attractions deepen once the answer is yes, and others fade because the chase was carrying the feeling.\",\"try_this\":[\"We can give one clear compliment that names exactly what caught our attention.\",\"We can return one impulse purchase that felt more exciting at checkout than it does at home.\"]}"
+}

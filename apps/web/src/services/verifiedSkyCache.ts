@@ -4,6 +4,7 @@ import { validateAstrologyFacts } from "./astrologyFacts";
 export const VERIFIED_SKY_CACHE_SCHEMA = "tldrastro-verified-sky-v1";
 export const VERIFIED_SKY_CACHE_PREFIX = "tldrastro:verifiedSky:v1";
 export const VERIFIED_SKY_CACHE_MAX_AGE_MS = 30 * 60 * 1000;
+export const VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 export const VERIFIED_SKY_CACHE_MAX_ENTRIES = 24;
 
 type StorageLike = Pick<
@@ -131,6 +132,10 @@ export function skySnapshotCacheKey(location: LocationInput, date: string) {
   const longitude = Number.isFinite(location.longitude) ? location.longitude.toFixed(3) : "0";
 
   return `${VERIFIED_SKY_CACHE_PREFIX}:${date}:${latitude}:${longitude}:${location.timeZone ?? ""}`;
+}
+
+export function natalSkySnapshotCacheKey(location: LocationInput, birthDateTime: Date) {
+  return skySnapshotCacheKey(location, `natal-${birthDateTime.toISOString()}`);
 }
 
 export function readCachedSkySnapshot(

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-mercury-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "3c9bc5e3b50672e55c5a483e41d2d2e5de1eefdd6203c83c84c26ea3e5c1865b",
+  "payload": {
+    "body_you": "Your mood quickly shapes how {{holder2}} thinks and talks. {{holder2}} can put your feelings into words, sometimes before you are ready to hear them out loud. When the words fit, you feel understood; when they come too soon, you can feel exposed, and {{holder2}} then responds to that reaction too.",
+    "body_they": "{{holder1}}'s mood quickly shapes how you think and talk. You can put {{holder1}}'s feelings into words, sometimes before {{holder1}} is ready to hear them out loud. When your words fit, {{holder1}} feels understood; when they come too soon, {{holder1}} can feel exposed, and you then respond to that reaction too.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "278d66b214201f4cc9de0db43d8c1c4a997e2b7d803118412397825c04434df9",
+    "writerProviderResponseSha256": "ff911bfe6d7f5655865af0d5b162e17b5a17c21724cff2ca4210a35a6761b872"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/conjunction/exact-approval.json"
+}

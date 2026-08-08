@@ -1,0 +1,24 @@
+{
+  "id": "jupiter-chiron",
+  "planetA": "jupiter",
+  "planetB": "chiron",
+  "traditional": "Growth amplifies both the wound and the medicine; hard to tell which is loudest.",
+  "modern": {
+    "blend": "Expansion surfaces old grief and larger access in the same season.",
+    "harmonious": "Generosity toward pain that used to be hidden; the teacher whose lesson lands where it heals.",
+    "hard": "The growth spurt that reopens the sore spot; more feeling mistaken for more damage.",
+    "business": "Stretch roles press on old inadequacy; the stretch is usually the treatment."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Expansion surfaces old grief and larger access in the same season.",
+  "harmonious": "Generosity toward pain that used to be hidden; the teacher whose lesson lands where it heals.",
+  "hard": "The growth spurt that reopens the sore spot; more feeling mistaken for more damage.",
+  "business": "Stretch roles press on old inadequacy; the stretch is usually the treatment."
+}
