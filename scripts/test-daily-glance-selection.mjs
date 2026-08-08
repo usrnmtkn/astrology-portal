@@ -77,5 +77,20 @@ assert.doesNotMatch(
   /natalTransitTargets/u,
   "Ascendant and Descendant must not enter the Daily At-a-Glance contact race."
 );
+assert.match(
+  appSource,
+  /function friendDailyGlance\([\s\S]*?dailyGlanceDriver\(currentSky, natalSky\)[\s\S]*?renderDailyGlance/u,
+  "Friends must use the same chart-specific daily driver and authored renderer as You."
+);
+assert.match(
+  appSource,
+  /author 2–3 approved variants per[\s\S]*?chart id \+ date \+ driver/u,
+  "The approved deterministic copy-variant follow-up must remain recorded without changing today's driver."
+);
+assert.match(
+  appSource,
+  /"North Node": "South Node"[\s\S]*?"South Node": "North Node"/u,
+  "Transit deduplication must treat the lunar nodes as a single axis."
+);
 
 console.log("daily At-a-Glance applying-selection checks passed");

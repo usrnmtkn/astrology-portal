@@ -503,7 +503,7 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
   return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
-export function renderTransitAspect({ transiting, natal, aspect, variant, sign, isRetrograde, window: win, voice = "you" }) {
+export function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }) {
   // voice: "you" (reader) or a friend's display name. The authored library is reader-voice,
   // so friend view renders fallback-only in authored friend-voice rows (never pronoun swaps).
   const v = voice === "you" ? "you" : "they";
@@ -528,6 +528,10 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   const groupsToTry = [g, ...(SHARE[g] ?? [])];
   const tryKeys = [];
   const push = (a, b) => {
+    if (pass && pass >= 1 && pass <= 3) {
+      tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
+      if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
+    }
     if (variant) {
       tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
       if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
@@ -578,6 +582,8 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
       const authoredHeadline = v === "you"
         ? (c.headline || "")
         : `${title(transiting)} ${aspect} ${voice}'s ${title(natal)}`;
+      const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+      if (passHook) aBody = `${aBody}\n\n${passHook}`;
       return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
     }
   }
@@ -643,6 +649,8 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
     const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
     if (retroLine) body = `${body} ${fill(retroLine, ctx)}`;
   }
+  const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+  if (passHook) body = `${body}\n\n${passHook}`;
   return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
@@ -1115,18 +1123,19 @@ export function renderPairDaily({ reader, friend, shared = { kind: null }, varia
   const sourceKeys = [openerKey, readerClauseKey, friendClauseKey];
 
   if (shared?.kind === "bond") {
-    if (!shared.family || !shared.bondClauseKey) {
+    const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+    if (!shared.family || !transiting) {
       throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
     }
+    const bondClauseKey = `fallback-hook/pair-daily/bond-clause/${shared.family}/${transiting}`;
     const frameKey = pairDailyVariantKey(
       `fallback-hook/pair-daily/shared-bond/${shared.family}`,
       variant
     );
     parts.push(pairDailyFill(pairDailyBody(frameKey, "you"), {
-      bondClause: pairDailyBody(shared.bondClauseKey, "you")
+      bondClause: pairDailyBody(bondClauseKey, "you")
     }));
-    sourceKeys.push(frameKey, shared.bondClauseKey);
-    const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+    sourceKeys.push(frameKey, bondClauseKey);
     if (shared.family === "hard" && ["saturn", "mercury"].includes(transiting)) {
       const closeKey = "fallback-hook/pair-daily/close/hard";
       parts.push(pairDailyBody(closeKey, "you"));
@@ -1914,25 +1923,27 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
 // card by swapping perspective (never by editing this output). ----
 // facts: transiting, aspect (transit's aspect TO the contact), planetA (reader's), planetB
 // (friend's), natalAspect (the synastry aspect between A and B), otherName, sign?, window?
-export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, window: win }) {
+export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, duplicateIndex, window: win }) {
   if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
     throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
   }
   const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
   const g = GROUP[aspect] ?? aspect;
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-  // Exact aspect copy wins. Legacy soft/hard rows remain the fallback lane for nodes,
-  // Lilith, missing exact rows, and their existing repeat-viewer variant rotation.
+  // Exact aspect copy wins the first card. Later cards on the same view sharing this
+  // transiting planet + exact aspect rotate to the family lane so no two cards repeat
+  // the same effect paragraph. Legacy soft/hard rows remain the fallback lane for
+  // nodes, Lilith, missing exact rows, and their repeat-viewer variant rotation.
   const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
   const variantEffectKey = variant
     ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`
     : null;
   const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
-  const effectKey = hooks.get(exactEffectKey)?.body_you
-    ? exactEffectKey
-    : variantEffectKey && hooks.get(variantEffectKey)?.body_you
-      ? variantEffectKey
-      : familyEffectKey;
+  const effectCandidates = duplicateIndex && duplicateIndex > 0
+    ? [variantEffectKey, familyEffectKey, exactEffectKey]
+    : [exactEffectKey, variantEffectKey, familyEffectKey];
+  const effectKey = effectCandidates.find((key) => key && hooks.get(key)?.body_you)
+    ?? familyEffectKey;
   const effect = hooks.get(effectKey)?.body_you;
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);

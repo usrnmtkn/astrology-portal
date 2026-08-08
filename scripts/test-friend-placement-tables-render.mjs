@@ -313,6 +313,12 @@ try {
       effectBody: "The connection feels more serious today.",
       activationBody: "Patience reveals what needs attention."
     }],
+    dailyForecast: {
+      headline: "An opening just appeared.",
+      body: "Alex gets an answer sooner than expected and can use the opening while it is here."
+    },
+    dailyDoItems: ["Name the plan", "Keep it practical", "Leave room"],
+    dailyDontItems: ["Force an answer", "Assume the worst", "Overpromise"],
     friendName: "Alex",
     houseTransits: [{
       id: "house-1",
@@ -345,10 +351,34 @@ try {
       }]
     }]
   }));
-  assert.match(populatedTransitsHtml, /Between you two right now/);
+  assert.match(populatedTransitsHtml, /friend-profile-copy-column"><section class="daily-horoscope-summary friend-daily-forecast"/);
+  assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
+  assert.match(populatedTransitsHtml, /An opening just appeared/);
+  assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
+  assert.doesNotMatch(populatedTransitsHtml, /most relevant transit|friend-transit-focus/);
+  assert.doesNotMatch(populatedTransitsHtml, /current weather|Start here|near-term theme|shared theme/);
+  assert.match(populatedTransitsHtml, /Between you two/);
   assert.match(populatedTransitsHtml, /Saturn through Alex&#x27;s 2nd house/);
-  assert.match(populatedTransitsHtml, /Short-term themes/);
+  assert.match(populatedTransitsHtml, /Where it lands/);
   assert.match(populatedTransitsHtml, /Mars trine Moon/);
+  assert.match(populatedTransitsHtml, /Emotional momentum is easier to use/);
+  assert.doesNotMatch(populatedTransitsHtml, /Read what this means/);
+  assert.doesNotMatch(populatedTransitsHtml, /friend-transit-focus-card/);
+  assert.match(populatedTransitsHtml, /Today for Alex/);
+  assert.match(populatedTransitsHtml, /Name the plan/);
+  assert.match(populatedTransitsHtml, /Force an answer/);
+  assert.ok(
+    populatedTransitsHtml.indexOf("An opening just appeared") < populatedTransitsHtml.indexOf("Name the plan"),
+    "The chart-specific daily write-up should lead the friend's daily guidance."
+  );
+  assert.ok(
+    populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Mars trine Moon"),
+    "Relationship context should lead the ranked short-term transit list."
+  );
+  assert.ok(
+    populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Where it lands"),
+    "Relationship context should remain distinct from the friend's life-area transits."
+  );
   assert.doesNotMatch(populatedTransitsHtml, /No prioritized transits are active/);
 
   const socialTableRow = natalChartTableRowFromSocial({

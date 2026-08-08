@@ -762,7 +762,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const body = fill(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
     return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
-  function renderTransitAspect({ transiting, natal, aspect, variant, sign, isRetrograde, window: win, voice = "you" }) {
+  function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }) {
     const v = voice === "you" ? "you" : "they";
     const otherPoss = v === "they" ? `${voice}'s` : null;
     const g = GROUP[aspect] ?? aspect;
@@ -776,6 +776,10 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
     const push = (a, b) => {
+      if (pass && pass >= 1 && pass <= 3) {
+        tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
+        if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
+      }
       if (variant) {
         tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
         if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
@@ -817,6 +821,10 @@ ${insBody}`;
 ${fogNote}`;
         }
         const authoredHeadline = v === "you" ? c.headline || "" : `${title2(transiting)} ${aspect} ${voice}'s ${title2(natal)}`;
+        const passHook2 = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+        if (passHook2) aBody = `${aBody}
+
+${passHook2}`;
         return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
       }
     }
@@ -871,6 +879,10 @@ ${fogNote}`;
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
       if (retroLine) body = `${body} ${fill(retroLine, ctx)}`;
     }
+    const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+    if (passHook) body = `${body}
+
+${passHook}`;
     return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
   function renderTransitRetro({ planet, sign, window: win, format }) {
@@ -1786,18 +1798,19 @@ ${fogNote}`;
     const parts = [pairDailyFill(opener, ctx)];
     const sourceKeys = [openerKey, readerClauseKey, friendClauseKey];
     if (shared?.kind === "bond") {
-      if (!shared.family || !shared.bondClauseKey) {
+      const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+      if (!shared.family || !transiting) {
         throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
       }
+      const bondClauseKey = `fallback-hook/pair-daily/bond-clause/${shared.family}/${transiting}`;
       const frameKey = pairDailyVariantKey(
         `fallback-hook/pair-daily/shared-bond/${shared.family}`,
         variant
       );
       parts.push(pairDailyFill(pairDailyBody(frameKey, "you"), {
-        bondClause: pairDailyBody(shared.bondClauseKey, "you")
+        bondClause: pairDailyBody(bondClauseKey, "you")
       }));
-      sourceKeys.push(frameKey, shared.bondClauseKey);
-      const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+      sourceKeys.push(frameKey, bondClauseKey);
       if (shared.family === "hard" && ["saturn", "mercury"].includes(transiting)) {
         const closeKey = "fallback-hook/pair-daily/close/hard";
         parts.push(pairDailyBody(closeKey, "you"));
@@ -1927,6 +1940,7 @@ ${fogNote}`;
     friendPossessivePronoun,
     sign,
     variant,
+    duplicateIndex,
     window: win
   }) {
     if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
@@ -1937,7 +1951,8 @@ ${fogNote}`;
     const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
     const variantEffectKey = variant ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}` : null;
     const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
-    const effectKey = hooks.get(exactEffectKey)?.body_you ? exactEffectKey : variantEffectKey && hooks.get(variantEffectKey)?.body_you ? variantEffectKey : familyEffectKey;
+    const effectCandidates = duplicateIndex && duplicateIndex > 0 ? [variantEffectKey, familyEffectKey, exactEffectKey] : [exactEffectKey, variantEffectKey, familyEffectKey];
+    const effectKey = effectCandidates.find((key) => Boolean(key && hooks.get(key)?.body_you)) ?? familyEffectKey;
     const effect = hooks.get(effectKey)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
@@ -2099,7 +2114,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-07d";
+var PACKAGE_VERSION = "v3-2026-08-08d";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
