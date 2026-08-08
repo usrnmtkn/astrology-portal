@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -303,7 +303,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -1786,18 +1786,19 @@ ${fogNote}`;
     const parts = [pairDailyFill(opener, ctx)];
     const sourceKeys = [openerKey, readerClauseKey, friendClauseKey];
     if (shared?.kind === "bond") {
-      if (!shared.family || !shared.bondClauseKey) {
+      const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+      if (!shared.family || !transiting) {
         throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
       }
+      const bondClauseKey = `fallback-hook/pair-daily/bond-clause/${shared.family}/${transiting}`;
       const frameKey = pairDailyVariantKey(
         `fallback-hook/pair-daily/shared-bond/${shared.family}`,
         variant
       );
       parts.push(pairDailyFill(pairDailyBody(frameKey, "you"), {
-        bondClause: pairDailyBody(shared.bondClauseKey, "you")
+        bondClause: pairDailyBody(bondClauseKey, "you")
       }));
-      sourceKeys.push(frameKey, shared.bondClauseKey);
-      const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+      sourceKeys.push(frameKey, bondClauseKey);
       if (shared.family === "hard" && ["saturn", "mercury"].includes(transiting)) {
         const closeKey = "fallback-hook/pair-daily/close/hard";
         parts.push(pairDailyBody(closeKey, "you"));
@@ -2100,8 +2101,8 @@ ${fogNote}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-08b";
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-08-08c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

@@ -17225,32 +17225,29 @@ function ManualChartsPanel({
     if (!readerDriver || !friendDriver) return null;
 
     const driverSelection = { readerDriver, friendDriver, pairVariant };
+    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
+    const element = moon ? pairDailyMoonElement(moon.sign) : null;
+    const fallbackShared = readerDriver.kind === "aspect" && friendDriver.kind === "aspect" && element
+      ? { kind: "moon" as const, element }
+      : { kind: null };
 
     const selectedBondTransit = selectedBondTransitCards[0];
-    if (selectedBondTransit?.effectContentKey) {
+    if (selectedBondTransit) {
       return {
         ...driverSelection,
         shared: {
           kind: "bond" as const,
           family: selectedBondTransit.effectFamily,
-          bondClauseKey: selectedBondTransit.effectContentKey,
           transiting: selectedBondTransit.transitPlanet
-        }
-      };
-    }
-
-    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
-    const element = moon ? pairDailyMoonElement(moon.sign) : null;
-    if (readerDriver.kind === "aspect" && friendDriver.kind === "aspect" && element) {
-      return {
-        ...driverSelection,
-        shared: { kind: "moon" as const, element }
+        },
+        fallbackShared
       };
     }
 
     return {
       ...driverSelection,
-      shared: { kind: null }
+      shared: fallbackShared,
+      fallbackShared: { kind: null }
     };
   }, [
     currentSky,
@@ -17268,8 +17265,8 @@ function ManualChartsPanel({
 
     const isoDate = currentSky.generatedAt.slice(0, 10);
 
-    try {
-      const rendered = transitSynastryFallbackRendererV3.renderPairDaily({
+    const renderShared = (shared: typeof selectedPairDailySelection.shared) => (
+      transitSynastryFallbackRendererV3.renderPairDaily({
         reader: {
           handle: profileHandle,
           clauseKey: pairDailyClauseKey(selectedPairDailySelection.readerDriver)
@@ -17279,9 +17276,24 @@ function ManualChartsPanel({
           displayName: selectedChart.displayName,
           clauseKey: pairDailyClauseKey(selectedPairDailySelection.friendDriver)
         },
-        shared: selectedPairDailySelection.shared,
+        shared,
         variant: selectedPairDailySelection.pairVariant
-      });
+      })
+    );
+
+    try {
+      let rendered;
+      try {
+        rendered = renderShared(selectedPairDailySelection.shared);
+      } catch (error) {
+        if (
+          !(error instanceof FallbackV3SourceGapError)
+          || selectedPairDailySelection.shared.kind !== "bond"
+        ) {
+          throw error;
+        }
+        rendered = renderShared(selectedPairDailySelection.fallbackShared);
+      }
 
       return rendered.body
         ? { body: rendered.body, dateLabel: formatPairDailyDate(isoDate) }
