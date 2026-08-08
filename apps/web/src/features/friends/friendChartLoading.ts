@@ -44,3 +44,28 @@ export function scheduleFriendChartRepair(
   const timeoutTask = scheduler.setTimeout(callback, FRIEND_CHART_REPAIR_FALLBACK_DELAY_MS);
   return () => scheduler.clearTimeout(timeoutTask);
 }
+
+export async function enhanceFriendChartsAtomically<Chart>(
+  charts: Chart[],
+  enhance: (chart: Chart) => Promise<Chart | null>,
+  commit: (charts: Chart[]) => void,
+  cancelled: () => boolean = () => false
+) {
+  const enhanced = await Promise.all(charts.map(async (chart) => {
+    try {
+      return await enhance(chart);
+    } catch {
+      return null;
+    }
+  }));
+
+  if (cancelled()) {
+    return;
+  }
+
+  const completed = enhanced.filter((chart) => chart !== null) as Chart[];
+
+  if (completed.length > 0) {
+    commit(completed);
+  }
+}

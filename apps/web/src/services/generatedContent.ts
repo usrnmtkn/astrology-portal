@@ -1713,7 +1713,8 @@ export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentRea
 
 export async function loadLiveGeneratedContentForSurfaces(
   requestedSurfaces: string[],
-  targetDate?: string
+  targetDate?: string,
+  previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
 ) {
   const supabase = await getSupabaseClient();
 
@@ -1761,7 +1762,7 @@ export async function loadLiveGeneratedContentForSurfaces(
     }
   }
 
-  return generatedContentMapFromRows(rows);
+  return generatedContentMapFromRows(rows, previewMode);
 }
 
 export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
@@ -1803,9 +1804,11 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
   return generatedContentMapFromRows(rows);
 }
 
-function generatedContentMapFromRows(rows: GeneratedContentRow[]) {
+function generatedContentMapFromRows(
+  rows: GeneratedContentRow[],
+  previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
+) {
   const byKey = new Map<string, LiveGeneratedContent>();
-  const previewMode = readGeneratedContentPreviewMode();
 
   for (const row of rows) {
     if (!isGeneratedContentReaderBoundaryAllowed(row)) {
