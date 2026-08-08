@@ -162,7 +162,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-08a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -469,6 +469,18 @@ assert.equal(
   "The connection has real depth without the undertow. You feel important to Sofia, not monitored or claimed."
 );
 assert.doesNotMatch(outerConnection.body, /\byou (?:feels|is|has|does)\b/iu);
+
+const venusMidheavenConnection = transitRenderer.renderSynastryAspect({
+  planetA: "venus",
+  planetB: "midheaven",
+  aspect: "trine",
+  otherName: "Chris"
+});
+assert.equal(venusMidheavenConnection.headline, "Your Venus trine Chris's Midheaven");
+assert.equal(
+  venusMidheavenConnection.body,
+  "When Venus aligns with the Midheaven, affection becomes a practical asset for a career. Success gets marked and celebrated out loud, turning appreciation into real stamina for the work ahead. Ambition rarely thrives in a vacuum, and this connection puts warmth and professional drive on the exact same side without anyone having to fake it."
+);
 
 const connectionTransit = transitRenderer.renderBondTransit({
   transiting: "saturn",
