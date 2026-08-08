@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "sky-placement-teaching-lines-owner-approved-runtime-v2",
+  "approvalSourceCommit": "4d8566d83bea15601ec95054e4ee050db193aeaa",
+  "approvalBasis": "Owner-approved teaching-line and placement revisions recorded in the source commit. This manifest pins the exact serving articles without rewriting the historical batch approvals.",
+  "articleCount": 56,
+  "articlesSha256": "76c813f1f5a6d84125b18fa267aa0a551e0be2cfdad171c4aa5115cd45b67c17"
+}

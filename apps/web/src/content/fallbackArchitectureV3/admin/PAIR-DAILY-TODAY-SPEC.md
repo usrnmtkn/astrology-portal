@@ -78,7 +78,9 @@ truth for that profile and does not rotate.
   resolvers' voice parameter (`body_they` path). NEVER pronoun substitution
   (DECOMMISSION-OLD-FALLBACKS.md, confirmed live bug).
 - One hedge maximum across the whole paragraph (FRIENDS-CIRCLE-FEED-SPEC rule).
-- Length cap: ~65 words / 4 sentences. Co-Star's runs ~50–60.
+- Length cap: ~75 words (amended 2026-08-07: the owner-approved compressed bond
+  clauses run to ~30 words and were approved as written, which supersedes the
+  original ~65-word cap). Co-Star's runs ~50–60.
 - The paragraph must read as authored prose — connectives live inside the approved
   frames, not in app-side string glue. App code only fills slots.
 - Window words: "today" only; this surface never shows date ranges (the transit lists
@@ -137,7 +139,7 @@ an approver.
 ## Renderer API (proposal)
 
 `renderPairDaily({ reader: { handle, clauseKey }, friend: { handle, clauseKey },
-shared: { kind: "bond" | "moon" | null, family?, element?, bondClauseKey? }, variant })` in the
+ shared: { kind: "bond" | "moon" | null, family?, element?, transiting? }, variant })` in the
 transit-synastry resolver, exported like `renderCircleStory`. Throws `SourceGapError`
 when any required frame or clause row is missing → app hides the surface. Both `.mjs`
 and `.browser.ts` + dist rebuild, tests alongside `test-daily-glance-selection`.
@@ -145,7 +147,8 @@ and `.browser.ts` + dist rebuild, tests alongside `test-daily-glance-selection`.
 ## Placement
 
 Friend profile → Compatibility tab, above the compatibility list, replacing nothing.
-Eyebrow: "Today between you two" + date. No feedback widget in v1.
+Eyebrow: "Today - <weekday>, <date>" using the current Sky date; no separate
+date sublabel. No feedback widget in v1.
 
 ## Out of scope (v1)
 
@@ -161,3 +164,23 @@ Eyebrow: "Today between you two" + date. No feedback widget in v1.
    A+B into one "you both" clause, or keep two clauses? (Needs one extra frame row.)
 3. Should slot C prefer the bond transit even when it's a months-long window, or
    prefer the Moon because this surface is a daily? (Spec currently says bond first.)
+
+
+## Bridge rule and bond-clause compression (ratified 2026-08-07, owner review of live output)
+
+Bridge rule: the first shared sentence (slot C frame) must open with an
+unmistakably relational subject or construction — "The two of you…", "You
+both…", "Neither of you…", "between you", "You get each other…" — so the
+paragraph's turn from two individual days to the relationship is explicit.
+Three frames were revised to comply (shared-bond soft/variant-6,
+soft/variant-10, hard/variant-2; prior wording preserved on the rows).
+
+Bond-clause compression: {bondClause} is served from the new
+`fallback-hook/pair-daily/bond-clause/{soft|hard}/{transiting}` family (28
+owner-authored rows), NOT the full bond-card effect body. The full effect
+bodies carry timescale words ("this month", "for a while") and second
+sentences that break this surface's today-focus and ~75-word cap; the
+compressed rows are today-scale, single-sentence, and traced to their
+bond-effect source rows via source_key. Bond cards elsewhere keep their full
+copy unchanged. Missing compressed row -> SourceGapError for the shared
+sentence (fall through to shared-moon, then omit), never the full body.

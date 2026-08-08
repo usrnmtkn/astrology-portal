@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -38,6 +39,10 @@ const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFi
   path.join(repoRoot, `packages/astro-knowledge/review/sky-placement-writer-batch-${batch}-owner-edited-approved-v1.json`),
   "utf8"
 )));
+const skyPlacementTeachingLinesApproval = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "packages/astro-knowledge/review/sky-placement-teaching-lines-owner-approved-runtime-v2.json"),
+  "utf8"
+));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
 const pairDailyFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
@@ -49,26 +54,54 @@ assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 56);
 assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 56);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
 const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => approval.articles);
+assert.ok(skyPlacementBatchApprovals.every((approval) => approval.ownerApproved === true));
 for (const approvedArticle of runtimeEligibleApprovedArticles) {
   const contentKey = `fallback-hook/sky-sign-copy/${approvedArticle.planet}/${approvedArticle.sign}`;
   const servingRow = skyPlacementOwnerApprovedFallbacks.rows.find((row) => row.contentKey === contentKey);
   assert.ok(servingRow, `${contentKey} must exist in the owner-approved serving source.`);
-  assert.equal(servingRow.opening, approvedArticle.article.opening);
-  assert.equal(servingRow.tension, approvedArticle.article.tension);
-  assert.equal(servingRow.development, approvedArticle.article.development);
-  assert.equal(servingRow.close, approvedArticle.article.close);
-  assert.deepEqual(servingRow.try_this, approvedArticle.article.try_this);
+}
+const servingArticleSnapshot = skyPlacementOwnerApprovedFallbacks.rows
+  .map((row) => ({
+    contentKey: row.contentKey,
+    article: {
+      opening: row.opening,
+      tension: row.tension,
+      development: row.development,
+      close: row.close,
+      try_this: row.try_this
+    }
+  }))
+  .sort((first, second) => first.contentKey.localeCompare(second.contentKey));
+assert.equal(skyPlacementTeachingLinesApproval.articleCount, servingArticleSnapshot.length);
+assert.equal(
+  createHash("sha256").update(JSON.stringify(servingArticleSnapshot)).digest("hex"),
+  skyPlacementTeachingLinesApproval.articlesSha256,
+  "The exact serving articles must match the approved Aug 5 teaching-line snapshot."
+);
+for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows) {
   assert.equal(
     servingRow.body_you,
     [
-      approvedArticle.article.opening,
-      approvedArticle.article.tension,
-      approvedArticle.article.development,
-      approvedArticle.article.close
+      servingRow.opening,
+      servingRow.tension,
+      servingRow.development,
+      servingRow.close
     ].join("\n\n"),
-    `${contentKey} must preserve the exact approved article wording.`
+    `${servingRow.contentKey} must preserve the exact approved article wording.`
   );
 }
+const metadataFreeServingRows = skyPlacementOwnerApprovedFallbacks.rows.map(({
+  body_you: _legacyBody,
+  note: _note,
+  source_keys: _sourceKeys,
+  approved_via: _approvedVia,
+  ...row
+}) => row);
+assert.deepEqual(
+  skyPlacementOwnerApprovedReaderFallbacks.rows,
+  metadataFreeServingRows,
+  "The reader bundle must exactly mirror the approved serving source after metadata removal."
+);
 assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => (
   !Object.hasOwn(row, "note")
   && !Object.hasOwn(row, "source_keys")
@@ -129,7 +162,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-07d");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08d");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -437,6 +470,18 @@ assert.equal(
 );
 assert.doesNotMatch(outerConnection.body, /\byou (?:feels|is|has|does)\b/iu);
 
+const venusMidheavenConnection = transitRenderer.renderSynastryAspect({
+  planetA: "venus",
+  planetB: "midheaven",
+  aspect: "trine",
+  otherName: "Chris"
+});
+assert.equal(venusMidheavenConnection.headline, "Your Venus trine Chris's Midheaven");
+assert.equal(
+  venusMidheavenConnection.body,
+  "When Venus aligns with the Midheaven, affection becomes a practical asset for a career. Success gets marked and celebrated out loud, turning appreciation into real stamina for the work ahead. Ambition rarely thrives in a vacuum, and this connection puts warmth and professional drive on the exact same side without anyone having to fake it."
+);
+
 const connectionTransit = transitRenderer.renderBondTransit({
   transiting: "saturn",
   aspect: "square",
@@ -486,6 +531,14 @@ assert.equal(
 );
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const pairDailyNodeResolverSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs"),
+  "utf8"
+);
+const pairDailyBrowserResolverSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts"),
+  "utf8"
+);
 const compatibilityTabSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/CompatibilityTab.tsx"),
   "utf8"
@@ -531,8 +584,30 @@ assert.match(
 );
 assert.match(
   pairDailySelectionSource,
-  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily/u,
+  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily[\s\S]*?transiting: selectedBondTransit\.transitPlanet/u,
   "Pair Daily must reuse the first already-ranked bond card and its effect family."
+);
+assert.doesNotMatch(
+  pairDailySelectionSource,
+  /bondClauseKey:\s*selectedBondTransit\.effectContentKey/u,
+  "Pair Daily must not pass the full bond-card effect row into its compressed daily slot."
+);
+for (const resolverSource of [pairDailyNodeResolverSource, pairDailyBrowserResolverSource]) {
+  assert.match(
+    resolverSource,
+    /fallback-hook\/pair-daily\/bond-clause\/\$\{shared\.family\}\/\$\{transiting\}/u,
+    "Both Pair Daily resolvers must derive the approved compressed bond-clause key."
+  );
+  assert.doesNotMatch(
+    resolverSource,
+    /pairDailyBody\(shared\.bondClauseKey/u,
+    "Neither Pair Daily resolver may read the full bond-card body through a supplied key."
+  );
+}
+assert.match(
+  appSource,
+  /selectedPairDailySelection\.shared\.kind !== "bond"[\s\S]*?renderShared\(selectedPairDailySelection\.fallbackShared\)/u,
+  "A missing compressed bond clause must fall through to the approved Moon lane or omit the shared sentence."
 );
 assert.doesNotMatch(
   pairDailySelectionSource,
@@ -546,8 +621,8 @@ assert.match(
 );
 assert.match(
   compatibilityTabSource,
-  /\{daily \? \([\s\S]*?Today between you two[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
-  "Compatibility must render no Pair Daily chrome when assembled copy is absent."
+  /\{daily \? \([\s\S]*?Today - \{daily\.dateLabel\}[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
+  "Compatibility must render no dated Pair Daily chrome when assembled copy is absent."
 );
 assert.match(
   appSource,
@@ -722,8 +797,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const groups = groupBondTransitActivations\(candidates\)/u,
-  "Bond transit contacts must group before rendering cards."
+  /const candidates = dedupeBondTransitEndpointCandidates\([\s\S]*?const groups = rankBondTransitGroups\([\s\S]*?groupBondTransitActivations\(candidates\)/u,
+  "Bond transit contacts must deduplicate, group, and rank before rendering cards."
 );
 assert.match(
   bondGroupingSource,

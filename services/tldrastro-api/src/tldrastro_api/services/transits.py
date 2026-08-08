@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 import swisseph as swe
@@ -16,6 +16,8 @@ from tldrastro_api.models import (
 from tldrastro_api.services.chart import (
     ASPECT_DEFINITIONS,
     CANONICAL_HOUSE_SYSTEM,
+    _bisect_aspect_exact,
+    _estimated_days_to_exact,
     angular_separation,
     aspect_orbs,
     julian_day_for,
@@ -113,6 +115,54 @@ def _score_hit(
     return max(0, round(score))
 
 
+def _datetime_from_julian(julian_day: float) -> datetime:
+    year, month, day, hour = swe.revjul(julian_day)
+    return datetime(year, month, day, tzinfo=timezone.utc) + timedelta(seconds=round(hour * 3600))
+
+
+def _upcoming_exact_days(
+    transit_position: Position,
+    natal_position: Position,
+    exact_angle: float,
+    transit_julian_day: float,
+    request: TransitChartRequest,
+) -> Optional[float]:
+    estimated = _estimated_days_to_exact(
+        transit_position,
+        natal_position,
+        exact_angle,
+        transit_julian_day,
+        request.settings,
+        move_first=True,
+        move_second=False,
+    )
+    if estimated is not None:
+        return estimated
+    if transit_position.point == "South Node":
+        return None
+
+    # A station can make the endpoint-based estimate miss a later exact pass.
+    # Scan small brackets so every reversal retains a bisection opportunity.
+    step_days = 1 if abs(transit_position.speed or 0) >= 0.1 else 5
+    lower = transit_julian_day
+    for elapsed in range(step_days, 2001, step_days):
+        upper = transit_julian_day + elapsed
+        exact_julian_day = _bisect_aspect_exact(
+            lower,
+            upper,
+            transit_position,
+            natal_position,
+            exact_angle,
+            request.settings,
+            move_first=True,
+            move_second=False,
+        )
+        if exact_julian_day is not None:
+            return exact_julian_day - transit_julian_day
+        lower = upper
+    return None
+
+
 def _transit_hit(
     transit_position: Position,
     natal_position: Position,
@@ -140,6 +190,17 @@ def _transit_hit(
         request.settings,
         transit_julian_day,
     )
+    exact_at = None
+    if phase == "applying":
+        estimated_days = _upcoming_exact_days(
+            transit_position,
+            natal_position,
+            exact_angle,
+            transit_julian_day,
+            request,
+        )
+        if estimated_days is not None:
+            exact_at = _datetime_from_julian(transit_julian_day + estimated_days).isoformat()
     return TransitHit(
         id=f"{transit_slug}-{aspect_slug}-{natal_slug}",
         transitPlanet=transit_position.point,
@@ -154,7 +215,7 @@ def _transit_hit(
         phase=phase,
         strength=strength,
         score=_score_hit(transit_position, natal_position, aspect_type, orb, max_orb, phase),
-        exactAt=None,
+        exactAt=exact_at,
         knowledgeIds=[
             f"transit-natal-{transit_slug}-{aspect_slug}-{natal_slug}",
             f"{transit_slug}-{aspect_slug}-{natal_slug}",

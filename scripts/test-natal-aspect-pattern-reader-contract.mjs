@@ -33,8 +33,12 @@ assert.match(service, /VITE_ENABLE_NATAL_ASPECT_PATTERN_ACTIVATION/, "Activation
 assert.match(service, /natalAspectPatternActivationFlagStorageKey = "tldrastro:natalAspectPatternActivation"/, "Activation local dev override must be narrow.");
 assert.match(service, /if \(!natalAspectPatternReaderEnabled\(\)\) return false/, "Activation must require the permanent natal pattern reader.");
 assert.match(app, /if \(showNatalAspectPatterns\) {\s*fetchNatalAspectPatternsWithCopy\(birthLocation, birthDateTime, \{ includeActivationCopy: showNatalAspectPatternActivation, timeKnown: !unknownBirthTime \}\)/s, "Natal aspect-pattern copy must load only when the feature is enabled and must declare whether the birth time is known.");
-assert.match(app, /setProfileNatalAspectPatternStatus\(showNatalAspectPatterns \? "loading" : "idle"\)/, "Pattern loading must not block the natal chart.");
-assert.match(app, /skyWithNatalAspectPatternCopy\(currentSky, aspectPatterns\)/, "Aspect patterns must be attached by copying the sky snapshot.");
+assert.match(
+  app,
+  /setProfileNatalAspectPatternStatus\(\s*showNatalAspectPatterns\s*\?\s*natalSky\.aspectPatterns\?\.interpretationContexts\s*\?\s*"ready"\s*:\s*"loading"\s*:\s*"idle"\s*\)/s,
+  "Cached pattern copy may resolve immediately; otherwise pattern loading must not block the natal chart."
+);
+assert.match(app, /skyWithNatalAspectPatternCopy\(natalSky, aspectPatterns\)/, "Aspect patterns must be attached by copying the sky snapshot.");
 assert.match(app, /showNatalAspectPatterns\s*\?\s*natalAspectPatternReaderItems\(natalSky\)/, "Reader items must be derived only when enabled.");
 assert.match(app, /natalAspectPatternStatus={natalAspectPatternStatus}/, "YouPage must receive an explicit reader status.");
 assert.match(app, /showFriendNatalAspectPatterns\s*=\s*natalAspectPatternReaderEnabled\(\)/, "Friends natal charts must use the same guarded reader flag.");

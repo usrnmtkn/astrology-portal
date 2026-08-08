@@ -660,6 +660,10 @@ try {
   assert.match(youPage, /\{weeklyTransitRows\}/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__reading/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__aspect/u);
+  assert.doesNotMatch(youPage, />Aspect</u);
+  assert.doesNotMatch(youPage, />Your horoscope</u);
   assert.doesNotMatch(youPage, />Current house pass</u);
   assert.match(app, /className="updates-aspect-row weekly-transit-row"/u);
   assert.match(app, /weeklyTransitDisplayTitle\(reading, house\)/u);
@@ -677,8 +681,8 @@ try {
   );
   assert.match(
     weeklySource,
-    /includeTransitWindows/u,
-    "Weekly snapshots must request governed station timing windows for house-specific station copy."
+    /stationEventPositions[\s\S]*includeTransitWindows/u,
+    "Exact station cards need the active house-pass window for the shared transit-card timing row."
   );
   assert.match(
     weeklySource,
@@ -893,6 +897,32 @@ try {
     location,
     new Date("2026-07-27T16:00:00Z")
   );
+  const mondayNeptune = mondaySky.positions.find((position) => position.planet === "Neptune");
+  assert.ok(mondayNeptune && typeof mondayNeptune.longitude === "number");
+  const forcedNeptuneSelfContactNatal = {
+    ...natalSky,
+    positions: natalSky.positions.map((position) => (
+      position.planet === "Neptune"
+        ? { ...position, longitude: mondayNeptune.longitude }
+        : position
+    ))
+  };
+  const neptuneSelfContactWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-neptune-self-contact-fixture",
+    natalSky: forcedNeptuneSelfContactNatal,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-07-29T12:00:00Z")
+  });
+  const neptuneReadings = [neptuneSelfContactWeek.horoscope, ...neptuneSelfContactWeek.aspects];
+  assert.ok(
+    neptuneReadings.every((reading) => !reading.sourceUnits.includes("return:neptune")),
+    "A Neptune self-conjunction must never produce a return row."
+  );
+  assert.ok(
+    neptuneSelfContactWeek.sourceGaps.every((gap) => !gap.includes("transit-return/neptune")),
+    "A Neptune self-conjunction must be excluded before return-card lookup and emit no return SOURCE_GAP."
+  );
   const mondaySaturn = mondaySky.positions.find((position) => position.planet === "Saturn");
   assert.ok(mondaySaturn && typeof mondaySaturn.longitude === "number");
   const forcedSaturnVenusNatal = {
@@ -925,7 +955,7 @@ try {
     "Aspect copy must render in its own standalone card."
   );
 
-  console.log("weekly horoscope assembly checks passed: event-time ruler condition, stale-sky guard, macro, and standalone aspect cards");
+  console.log("weekly horoscope assembly checks passed: event-time ruler condition, stale-sky guard, Neptune return exclusion, macro, and standalone aspect cards");
 } finally {
   await vite.close();
 }
