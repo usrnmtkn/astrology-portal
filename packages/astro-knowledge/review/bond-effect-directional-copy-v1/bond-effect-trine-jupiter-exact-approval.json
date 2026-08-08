@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-trine-jupiter",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-trine/jupiter",
+  "payloadSha256": "0839404e548e3fdd1802a1123a20a3716c0afeba0ae26e7313cdab1ab66b31c0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} sends you the opening, introduces you to someone, or reminds you to apply for something you had already started talking yourself out of. The opportunity was there. {{holder1}} makes it easier for you to take yourself seriously enough to go after it.",
+    "body_they": "You send {{holder1}} the opportunity, make the introduction, or tell them to submit the work they have been sitting on. {{holder1}} may finally do something they already wanted because your confidence makes the risk feel more manageable."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

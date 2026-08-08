@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-north-node-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-2",
+  "payloadSha256": "c97f027358f1c9706b6293ca62ab1775e4a533236966c6a47cc35ddf6d64b026",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "An agreement with {{holder1}} that used to work starts feeling too small. The old version is familiar, but you are no longer sure you want the same role in it.",
+    "body_they": "{{holder1}} starts wanting something different from an arrangement that used to work. The change can affect both of you even though the need for it belongs to {{holder1}}."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

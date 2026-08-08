@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-trine-venus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-trine/venus",
+  "payloadSha256": "a29814fe7a2b4fa353751f7c435aa5724829c480332df7dd2abd0da50b5bd6ce",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} remembers what you like, follows through on the plan, or takes care of one small detail that makes the day easier. You do not have to search for proof that {{holder1}} was paying attention.",
+    "body_they": "You remember the detail {{holder1}} mentioned last week, pick the place they actually like, or make one part of their day easier. {{holder1}} notices the effort because it is specific to them."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

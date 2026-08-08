@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-neptune-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-2",
+  "payloadSha256": "1dc97441dcefdb346f2c1b1b3ec1ebae15028fff7cc0369ba70461303e2e4979",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "A misunderstanding with {{holder1}} becomes easier to let go once you realize neither person meant what the other heard. The relief is simple.",
+    "body_they": "{{holder1}} may be more willing to move past a misunderstanding once the two of you realize the problem was mostly in how the message landed."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

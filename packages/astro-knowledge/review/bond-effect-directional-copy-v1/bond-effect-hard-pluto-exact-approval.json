@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-pluto",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/pluto",
+  "payloadSha256": "c49d0cdf17f4aba58c01db8329264892ba54d2c0ab448e8ea76d31e8180e0471",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} has the information and you are expected to wait. Or {{holder1}} makes the decision and tells you afterward. The part that bothers you most is how little say you had before the answer became final.",
+    "body_they": "You have more information or more control over the outcome, and {{holder1}} notices. {{holder1}} may push hard for details because waiting means accepting a decision they had very little part in making."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

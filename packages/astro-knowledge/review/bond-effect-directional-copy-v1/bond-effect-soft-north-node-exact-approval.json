@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-north-node",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/north-node",
+  "payloadSha256": "17ee1dbb787156b3f368ad6e9836847862679382a635e47fcdb439edc2a2ff7d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} introduces you to an option you would not have considered on your own. You are interested enough to try it even though you do not know yet how far you want to take it.",
+    "body_they": "You introduce {{holder1}} to something new and {{holder1}} is willing to try. The first step can be useful without requiring a decision about the whole future."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

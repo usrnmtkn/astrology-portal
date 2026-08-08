@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-neptune",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/neptune",
+  "payloadSha256": "9cd3ba7b12e4532e32d7130bc2edb61a68437a7a13787291269442865a110b55",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} has not answered yet, and your mind has already decided why. You imagine rejection, disappointment, or a problem before you have one fact.",
+    "body_they": "You take longer to answer and {{holder1}} fills the silence with an explanation of their own. By the time you reply, {{holder1}} may already be responding to a problem that never happened."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

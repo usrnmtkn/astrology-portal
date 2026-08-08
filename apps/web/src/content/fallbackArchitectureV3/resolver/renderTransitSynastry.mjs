@@ -1944,7 +1944,13 @@ export function renderBondTransit({ transiting, aspect, endpointPlanet, endpoint
     : [exactEffectKey, variantEffectKey, familyEffectKey];
   const effectKey = effectCandidates.find((key) => key && hooks.get(key)?.body_you)
     ?? familyEffectKey;
-  const effect = hooks.get(effectKey)?.body_you;
+  const effectRow = hooks.get(effectKey);
+  const authoredEffect = endpointOwner === "reader"
+    ? effectRow?.body_you
+    : effectRow?.body_they ?? effectRow?.body_you;
+  const effect = authoredEffect
+    ?.replaceAll("{{holder1}}'s", `${otherName}'s`)
+    .replaceAll("{{holder1}}", otherName);
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
   const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";

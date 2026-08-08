@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-mars",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/mars",
+  "payloadSha256": "742b448a4076848db33086eda0e3d7f95319bd6bbea3ae68a5df6c14dc46d262",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} is ten minutes late and you are already annoyed before they arrive. The rest of the evening can become a fight about respect when the first problem was simply that you were left waiting.",
+    "body_they": "You are late, change the time, or keep {{holder1}} waiting. {{holder1}} is irritated before the two of you even start whatever you planned to do."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

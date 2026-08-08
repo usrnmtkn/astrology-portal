@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-chiron",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/chiron",
+  "payloadSha256": "92ddba9428635e4f61b8e71978356d457e2042d3a7085d47aed412e91f1dd5d2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} says something differently this time, and the usual argument does not start. You can explain why a joke, silence, or reaction bothered you without spending half the conversation proving that it had a right to bother you.",
+    "body_they": "{{holder1}} tells you why a certain comment or habit has been bothering them. The conversation goes differently because {{holder1}} can talk about the effect without having to fight about your intention first."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

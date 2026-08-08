@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-north-node-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-3",
+  "payloadSha256": "8df6f5a27dfceba30b7be467fcb7e2d4d40ca6f77412a6a182caff759c8d8d4e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} makes it harder to ignore that an old habit is not working anymore. You can see the next option even if you are not ready to choose it yet.",
+    "body_they": "{{holder1}} may realize through the relationship that an old response no longer fits. They are trying something less familiar, and that can change how the two of you relate."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

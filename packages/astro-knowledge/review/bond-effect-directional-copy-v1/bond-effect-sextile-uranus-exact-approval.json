@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-uranus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/uranus",
+  "payloadSha256": "de2e09cf2b5c9321267de8285adba1fe91195fa53d76a9956be5856bebd95d1a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} try the place neither of you normally chooses, change the route, or talk about something that rarely comes up. The small change is enough to keep the two of you from repeating the same day again.",
+    "body_they": "You and {{holder1}} try the place neither of you normally chooses, change the route, or talk about something that rarely comes up. The small change is enough to keep the two of you from repeating the same day again."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

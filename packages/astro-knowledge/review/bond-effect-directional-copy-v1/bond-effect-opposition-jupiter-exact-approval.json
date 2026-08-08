@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-jupiter",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/jupiter",
+  "payloadSha256": "764de20332dd6be7fa54ca01fe8ab579ccf60bf15cf63823d0f1c578dd54fadd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You want to add another night, spend a little more, or take the bigger chance. {{holder1}} is already looking at the calendar and the cost. Their limit can feel frustrating when you are excited, even when it is the part that keeps the plan affordable.",
+    "body_they": "{{holder1}} wants the bigger version of the plan while you are figuring out what it actually costs. The idea may be good. The disagreement starts over how much money, time, or effort the two of you can realistically give it."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

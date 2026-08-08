@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-uranus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/uranus",
+  "payloadSha256": "097f3a0c20a4e43b044be9aaecba18eb50b4264b52222eb8fc63a29599f50cd7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You want more freedom just as {{holder1}} wants an answer. You change the plan because you need room to think, and {{holder1}} is frustrated because they already arranged their time around the old one.",
+    "body_they": "{{holder1}} changes direction at the exact moment you want something confirmed. {{holder1}} needs more room; you need to know what you can rely on. Both of you may leave the conversation feeling like the other person is asking for too much."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

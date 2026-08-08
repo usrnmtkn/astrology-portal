@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-neptune",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/neptune",
+  "payloadSha256": "192eaf53ec235e876977f11b01360372a084c6a1e97a759dbefc578eb72dd215",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} gives you a little more patience when you are tired, distracted, or not explaining yourself well. You get through the day without one imperfect moment becoming a larger problem between you.",
+    "body_they": "{{holder1}} is tired, distracted, or quieter than usual, and you do not immediately assume the worst. That extra patience can keep a bad day from becoming an unnecessary relationship problem."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

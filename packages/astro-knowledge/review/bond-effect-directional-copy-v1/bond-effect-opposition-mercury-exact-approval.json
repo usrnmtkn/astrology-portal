@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-mercury",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/mercury",
+  "payloadSha256": "b2c83b51203ee8ee2c934c6a9719a76fb00dd029b1aa0e75981d828211279250",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You leave a conversation with {{holder1}} convinced they said one thing. {{holder1}} thinks they said something completely different. Both of you can be arguing from a version of the conversation the other person does not recognize.",
+    "body_they": "{{holder1}} hears a meaning you did not intend and answers that instead. You think you were clear. {{holder1}} thinks the point was obvious too. The disagreement grows because both of you are responding to different sentences."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

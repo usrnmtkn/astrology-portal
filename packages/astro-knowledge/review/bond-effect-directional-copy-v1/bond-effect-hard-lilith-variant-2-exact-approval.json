@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-lilith-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/lilith/variant-2",
+  "payloadSha256": "837fa45e70dbcd734b56277d81f69654e5c02d76259986f0a6f800308432fa02",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You keep an opinion to yourself because you know {{holder1}} will disagree. Then it comes out as sarcasm, distance, or irritation over something smaller. The disagreement was already there.",
+    "body_they": "{{holder1}} stops mentioning an opinion because the two of you never agree on it. The subject can return later through sarcasm or a sharper response that seems unrelated at first."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

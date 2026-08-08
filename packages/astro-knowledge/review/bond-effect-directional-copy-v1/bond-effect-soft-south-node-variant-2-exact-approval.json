@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-south-node-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/south-node/variant-2",
+  "payloadSha256": "07f6b62289f9d528bf69ed98ab55bdb2d98ea387930bcc95301655f55d3f18bb",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} know each other well enough to skip half the explanation. That can make the day easy. It can also mean both of you assume an old answer still applies without asking.",
+    "body_they": "{{holder1}} may assume you already know what they want because you used to. Familiarity can save time until one person has changed and the other has not noticed yet."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

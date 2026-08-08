@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-moon",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/moon",
+  "payloadSha256": "ee3fc38551c309d74534e304794eda98734b9e9f06a2597a82d3b08b3f0c6172",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} checks in at exactly the right time. They ask how you are and wait for the real answer. It is a small exchange, but you feel remembered.",
+    "body_they": "You notice {{holder1}} is off and ask how they are before they have to make it obvious. {{holder1}} may tell you more because they did not have to work so hard to get your attention."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-neptune",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/neptune",
+  "payloadSha256": "08968af0ce3955965cc916e2a0f79ba3d62df931d8e069588ed6b1fcb165ef6c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} is tired, distracted, or not explaining themselves perfectly, and you do not immediately turn it into a larger story. One off day stays one off day.",
+    "body_they": "{{holder1}} may be less worried about saying exactly the right thing around you. A clumsy sentence does not have to become a relationship problem."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

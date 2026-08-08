@@ -10,6 +10,7 @@ const sourcePath = sourceArgIndex === -1
   ? path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json")
   : path.resolve(args[sourceArgIndex + 1]);
 const synastryPrefix = "fallback-hook/synastry-pair/";
+const bondEffectPrefix = "fallback-hook/bond-effect-";
 const obliquePlaceholderAllowlist = new Set([
   `${synastryPrefix}mars/ascendant/conjunction`,
   `${synastryPrefix}mars/ascendant/hard`,
@@ -27,15 +28,18 @@ const validDirectYouTokensEndingInS = new Set([
   "cautious",
   "express",
   "less",
+  "miss",
   "press",
   "process",
   "second-guess",
+  "always",
 ]);
 const nonSubjectYouContexts = [
   /\b(?:both|each|either|neither|one|part|side|version)\s+of\s*$/iu,
   /\binterest\s+in\s*$/iu,
   /\bground\s+beneath\s*$/iu,
   /\baccepted\s+by\s*$/iu,
+  /\b(?:by|between|costing|from|make|to)\s*$/iu,
 ];
 const irregularThirdPersonForms = new Set(["does", "has", "is", "was"]);
 
@@ -92,10 +96,45 @@ for (const row of rows) {
   }
 }
 
+function bondGrammarViolations(row) {
+  const violations = [];
+  for (const field of ["body_you", "body_they"]) {
+    const text = row[field];
+    if (typeof text !== "string") {
+      violations.push(`${field}: must be a string`);
+      continue;
+    }
+    for (const violation of grammarViolations(text)) violations.push(`${field}: ${violation}`);
+    if (text.includes("{{holder2}}")) violations.push(`${field}: forbidden {{holder2}} placeholder`);
+    if (/\bone of you\b/iu.test(text)) violations.push(`${field}: forbidden "one of you" phrase`);
+    if (/(?:^|[.!?]\s+|\n)[("'“‘]*you\b/gu.test(text)) {
+      violations.push(`${field}: sentence-initial lowercase "you"`);
+    }
+  }
+  return violations;
+}
+
+const bondRows = source.hookRows.filter((row) => row.contentKey?.startsWith(bondEffectPrefix));
+assert.equal(bondRows.length, 139, "Expected 139 bond-effect rows");
+for (const row of bondRows) {
+  for (const violation of bondGrammarViolations(row)) {
+    failures.push(`${row.contentKey} ${violation}`);
+  }
+}
+assert.deepEqual(
+  bondGrammarViolations({ body_you: "You and {{holder1}} agree.", body_they: "{{holder1}} agrees with you." }),
+  [],
+  "Bond grammar gate must permit the authored {{holder1}} slot.",
+);
+assert.ok(
+  bondGrammarViolations({ body_you: "{{holder2}} agrees.", body_they: "It affects one of you." }).length === 2,
+  "Bond grammar gate must fail closed on {{holder2}} and one-of-you defects.",
+);
+
 if (failures.length > 0) {
   console.error(`Synastry reader-variant grammar gate failed (${failures.length}):`);
   for (const failure of failures) console.error(`  ${failure}`);
   process.exit(1);
 }
 
-console.log(`Synastry reader-variant grammar gate passed (${rows.length} rows).`);
+console.log(`Synastry reader-variant grammar gate passed (${rows.length} synastry rows; ${bondRows.length} bond-effect rows).`);

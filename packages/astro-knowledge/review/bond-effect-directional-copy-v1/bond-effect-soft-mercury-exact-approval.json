@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-mercury",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/mercury",
+  "payloadSha256": "6b672c04ac8ee09141effda523cfe425b233b8164b6a2f671bdbfca72a39a3a2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You tell {{holder1}} what you mean and the sentence comes out the way you intended. No five-paragraph text. No second explanation ten minutes later.",
+    "body_they": "{{holder1}} tells you exactly what they mean. You do not have to pull the answer out of them or guess what was left unsaid."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

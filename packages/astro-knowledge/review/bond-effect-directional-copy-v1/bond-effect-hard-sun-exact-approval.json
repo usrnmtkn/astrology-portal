@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-sun",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/sun",
+  "payloadSha256": "27ca7d04a01c2135e15107f6832f1e8c1f6fac269541a5debbdd6fd50374c810",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} gets the credit and your work disappears from the story. You want to celebrate the result, but it is difficult when no one seems to remember what you contributed.",
+    "body_they": "Your work gets noticed while {{holder1}} is barely mentioned. {{holder1}} may be less upset by your recognition than by the fact that their work is being treated as invisible."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

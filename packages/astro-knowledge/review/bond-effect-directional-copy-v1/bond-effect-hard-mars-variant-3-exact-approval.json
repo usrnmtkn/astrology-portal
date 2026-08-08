@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-mars-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/mars/variant-3",
+  "payloadSha256": "4759d2e0c1697724993c4fac5774f31d6936b0c47d4f351720c5da5a021768ba",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} try to finish a simple job and end up arguing about who is doing more, who is too slow, or who should be in charge. The task takes longer because neither of you wants to be directed by the other.",
+    "body_they": "You and {{holder1}} try to finish a simple job and end up arguing about who is doing more, who is too slow, or who should be in charge. The task takes longer because neither of you wants to be directed by the other."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

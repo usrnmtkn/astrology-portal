@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-lilith-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/lilith/variant-2",
+  "payloadSha256": "20a414d272d215a4c6ea1a808eb83a41ec8ce70d302cc66297a698f0aecb0e95",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You disagree with {{holder1}} and neither of you has to turn it into a larger problem. You can have a different opinion and still stay in the conversation.",
+    "body_they": "{{holder1}} may be more direct about an opinion they normally soften around you. The difference is easier to handle because it is being said before frustration builds."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

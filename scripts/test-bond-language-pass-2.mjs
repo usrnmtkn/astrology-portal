@@ -126,7 +126,9 @@ const gatedRows = {
 const gatedRenderer = createTransitSynastryRenderer(transit, templates, gatedRows);
 assert.equal(
   gatedRenderer.renderBondTransit(facts).parts[0],
-  baseByKey.get(key).body_you,
+  baseByKey.get(key).body_you
+    .replaceAll("{{holder1}}'s", "Chris's")
+    .replaceAll("{{holder1}}", "Chris"),
   "A review-gated pass-2 row must fall back to its older serving twin."
 );
 

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-venus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/venus",
+  "payloadSha256": "8060438f1397414ba83a31d24b06964ef6cc4f073c2a840c834b45a982e68186",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} want completely different versions of a good day. One wants the crowded restaurant and another round of drinks; the other wants takeout and an early night. Compromise can still leave both of you wishing you had done what you actually wanted.",
+    "body_they": "You and {{holder1}} want completely different versions of a good day. One wants the crowded restaurant and another round of drinks; the other wants takeout and an early night. Compromise can still leave both of you wishing you had done what you actually wanted."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

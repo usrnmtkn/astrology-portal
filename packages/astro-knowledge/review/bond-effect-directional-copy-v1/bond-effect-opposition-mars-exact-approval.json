@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-mars",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/mars",
+  "payloadSha256": "3308c0edf48feba04cf42e58359c82a18c7b9b967e644ffd792eacd2cdf8c066",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You push, {{holder1}} pushes back, and a basic decision becomes a contest. Neither of you wants to be the person who gives in. The original problem can disappear under the fight over who gets their way.",
+    "body_they": "You push, {{holder1}} pushes back, and a basic decision becomes a contest. Neither of you wants to be the person who gives in. The original problem can disappear under the fight over who gets their way."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
