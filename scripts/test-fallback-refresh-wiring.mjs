@@ -591,8 +591,8 @@ assert.match(
 );
 assert.match(
   compatibilityTabSource,
-  /\{daily \? \([\s\S]*?Today between you two[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
-  "Compatibility must render no Pair Daily chrome when assembled copy is absent."
+  /\{daily \? \([\s\S]*?Today - \{daily\.dateLabel\}[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
+  "Compatibility must render no dated Pair Daily chrome when assembled copy is absent."
 );
 assert.match(
   appSource,
