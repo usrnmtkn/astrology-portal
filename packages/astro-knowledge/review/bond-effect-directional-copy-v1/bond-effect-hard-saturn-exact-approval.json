@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-saturn",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/saturn",
+  "payloadSha256": "7f50de0fae52050d23d7531ef044697a20b3780833bc0ca4c10bdb0c531ec285",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} make plans, but you are the one checking the time, making the reservation, and remembering what needs to happen next. The relationship starts taking more work from you than you expected.",
+    "body_they": "{{holder1}} may be the person handling the practical details more often. A pattern of missed calls, changed plans, or unfinished responsibilities can leave {{holder1}} doing more than their share."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

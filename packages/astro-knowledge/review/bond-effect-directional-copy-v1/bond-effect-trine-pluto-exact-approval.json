@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-trine-pluto",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-trine/pluto",
+  "payloadSha256": "4ba8998d72277313596ba9a2a95da32ef5d5c33d2a0797cc41ac2d0c88faeb0c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} finally talk about the money, jealousy, resentment, privacy, or decision that has been sitting between you. Neither of you has to pretend the subject is smaller than it is. The relief comes from finally saying the part both of you already knew.",
+    "body_they": "{{holder1}} tells you what they have been keeping to themselves. It may be uncomfortable, but it is clear. {{holder1}} no longer has to spend energy pretending the issue is gone."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

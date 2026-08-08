@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-chiron",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/chiron",
+  "payloadSha256": "20a30b269e126645d3f8452b1e5faf60fbb69eee416d77490a2bf4b0296c6d5e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You tell {{holder1}} about something that normally makes you defensive, and the conversation does not turn into an argument about why you feel that way. You get to finish.",
+    "body_they": "{{holder1}} tells you about something they normally keep to themselves. They may say more because they do not have to defend the reaction while explaining it."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

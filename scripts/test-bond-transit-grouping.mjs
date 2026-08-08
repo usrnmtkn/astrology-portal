@@ -83,6 +83,14 @@ const joseCard = renderer.renderBondTransit({
 });
 assert.equal(joseCard.headline, "Saturn sextile Jose's Mars");
 assert.equal(joseCard.parts.length, 2);
+const saturnSextileEffect = sourceRows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/bond-effect-sextile/saturn"
+);
+assert.equal(
+  joseCard.parts[0],
+  saturnSextileEffect.body_they.replaceAll("{{holder1}}'s", "Jose's").replaceAll("{{holder1}}", "Jose"),
+  "Friend-endpoint cards must select body_they and resolve the friend's name."
+);
 assert.equal(
   joseCard.parts[1],
   "Saturn in Aries is sextile Jose's Mars through November 13, activating the connections his Mars makes with your Moon, your Midheaven, and your Lilith."
@@ -135,6 +143,14 @@ const chrisCard = renderer.renderBondTransit({
   window: "Until November 13"
 });
 assert.equal(chrisCard.headline, "Saturn square your Venus");
+const saturnSquareEffect = sourceRows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/bond-effect-square/saturn"
+);
+assert.equal(
+  chrisCard.parts[0],
+  saturnSquareEffect.body_you.replaceAll("{{holder1}}'s", "Chris's").replaceAll("{{holder1}}", "Chris"),
+  "Reader-endpoint cards must select body_you and resolve the friend's name."
+);
 assert.equal(
   chrisCard.parts[1],
   "Saturn in Aries is square your Venus through November 13, activating the connections it makes with Chris's Mercury, Saturn, and Midheaven."
@@ -157,6 +173,12 @@ assert.equal(
   single.parts[1],
   "Saturn in Aries is sextile Jose's Mars through November 13, activating the connection it makes with your Moon."
 );
+assert.equal(
+  single.parts[0],
+  saturnSextileEffect.body_you.replaceAll("{{holder1}}'s", "Jose's").replaceAll("{{holder1}}", "Jose"),
+  "A mutual row may be identical in both directions but must still resolve its authored friend slot."
+);
+assert.doesNotMatch(single.body, /\{\{/u, "Rendered bond copy must retain the unresolved-slot fail-closed boundary.");
 
 const differentEndpoints = groupBondTransitActivations([
   candidate({
@@ -345,4 +367,4 @@ assert.notEqual(
   "Cards sharing a transiting planet and exact aspect must rotate the effect body."
 );
 
-console.log("bond transit grouping passed: friend endpoint, reader endpoint, single contact, separate endpoints, both-endpoint dedupe, ranking, and duplicate rotation");
+console.log("bond transit grouping passed: directional effects, friend-name substitution, mutual row, separate endpoints, both-endpoint dedupe, ranking, and duplicate rotation");

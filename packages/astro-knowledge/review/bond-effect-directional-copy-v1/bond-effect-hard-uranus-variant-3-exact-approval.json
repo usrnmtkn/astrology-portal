@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-uranus-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-3",
+  "payloadSha256": "ddef56c81ee5179a2bb0d06cc9195fcb01a2ff70c620c2182c8bb8ef01a34241",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "The routine you and {{holder1}} relied on stops working. The problem is not that anything is wrong. The old arrangement simply no longer fits the way one or both of you are living.",
+    "body_they": "{{holder1}} needs a different schedule, more room, or another way of doing something you used to do together. The change can be inconvenient even when it makes sense."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

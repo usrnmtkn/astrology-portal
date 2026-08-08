@@ -15,6 +15,8 @@ const manifestPath = path.join(
   "packages/astro-knowledge/review/synastry-provenance-restatus-manifest-2026-08-04.json",
 );
 const synastryPrefix = "fallback-hook/synastry-pair/";
+const bondEffectPrefix = "fallback-hook/bond-effect-";
+const bondApprovalPrefix = "packages/astro-knowledge/review/bond-effect-directional-copy-v1/";
 const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
   "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
@@ -160,6 +162,36 @@ assert.equal(manifest.hashes.readerPayloadSha256Before, manifest.hashes.readerPa
 assert.equal(manifest.statusChanges.length, 351);
 assert.equal(manifest.approvalReferencesAdded.length, 129);
 
+const bondRows = source.hookRows.filter((row) => row.contentKey?.startsWith(bondEffectPrefix));
+assert.equal(bondRows.length, 139, "Expected 139 bond-effect serving rows");
+
+function assertExactBondApproval(row) {
+  assert.equal(row.review_status, "approved", `${row.contentKey}: bond-effect row must be approved`);
+  assert.equal(row.approval?.approvalLevel, "exact_owner_approved", `${row.contentKey}: bond-effect approval level mismatch`);
+  assert.match(row.approval?.approvedAt ?? "", datePattern, `${row.contentKey}: bond-effect approval date missing`);
+  assert.ok(
+    row.approval?.recordPath?.startsWith(bondApprovalPrefix),
+    `${row.contentKey}: bond-effect approval record must use ${bondApprovalPrefix}`,
+  );
+  assert.match(row.approval?.payloadSha256 ?? "", shaPattern, `${row.contentKey}: bond-effect payload hash missing`);
+  const recordPath = path.join(repoRoot, row.approval.recordPath);
+  assert.ok(fs.existsSync(recordPath), `${row.contentKey}: bond-effect approval record missing`);
+  const record = JSON.parse(fs.readFileSync(recordPath, "utf8"));
+  assert.equal(record.authorship, "owner_authored", `${row.contentKey}: bond-effect authorship mismatch`);
+  assert.equal(record.contentKey, row.contentKey, `${row.contentKey}: bond-effect record contentKey mismatch`);
+  assert.equal(record.payloadSha256, row.approval.payloadSha256, `${row.contentKey}: bond-effect record hash mismatch`);
+  assert.equal(sha256(JSON.stringify(record.payload)), row.approval.payloadSha256, `${row.contentKey}: bond-effect record payload hash mismatch`);
+  assert.equal(record.payload.body_you, row.body_you, `${row.contentKey}: bond-effect body_you differs from exact record`);
+  assert.equal(record.payload.body_they, row.body_they, `${row.contentKey}: bond-effect body_they differs from exact record`);
+}
+
+for (const row of bondRows) assertExactBondApproval(row);
+assert.throws(
+  () => assertExactBondApproval({ ...bondRows[0], review_status: "reviewed" }),
+  /bond-effect row must be approved/u,
+  "Bond provenance gate must fail closed when an approved row is restated as reviewed.",
+);
+
 console.log("Synastry approval provenance coverage:");
 console.log(`  rows: ${rows.length}`);
 console.log(`  approved: ${statusCounts.approved}`);
@@ -167,3 +199,4 @@ console.log(`  reviewed: ${statusCounts.reviewed}`);
 console.log(`  exact_owner_approved: ${levelCounts.exact_owner_approved}`);
 console.log(`  exact approval records resolved: ${exactApprovalRecordsResolved}`);
 console.log(`  owner_signoff_untraced: ${levelCounts.owner_signoff_untraced}`);
+console.log(`  bond-effect exact_owner_approved: ${bondRows.length}`);

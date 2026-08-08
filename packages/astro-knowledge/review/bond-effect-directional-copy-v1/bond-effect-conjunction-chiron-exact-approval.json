@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-chiron",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/chiron",
+  "payloadSha256": "d4c9730f50f318e8d347b6d6cf56bd4d4e853769481ccaa442e9513266a0bf41",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "A reply from {{holder1}} takes longer than you expected, and suddenly you are wondering if you said too much or got the relationship wrong. A joke about something you are already self-conscious about can do the same. {{holder1}} may not realize why it bothered you because the insecurity was already there before this happened.",
+    "body_they": "A reply from you comes later than {{holder1}} expected, or a joke lands on something {{holder1}} is already insecure about. What looked minor to you can leave {{holder1}} wondering how you really see them. The reaction is bigger because this is not the first time {{holder1}} has felt this way."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

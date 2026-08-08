@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-saturn",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/saturn",
+  "payloadSha256": "e52312c0d614152321877f95b6771867ebcf9637720adcc0f5698fdc7577cee2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} says they will call, make the reservation, send the information, or handle their part. You are paying attention to what happens next. A promise means less when you are still the person following up, remembering the date, or fixing the part that did not get done.",
+    "body_they": "{{holder1}} is paying attention to what you actually do. You keep the plan, return the call, remember the date, or handle your part without {{holder1}} having to remind you. That can matter more than another conversation about what you intended to do."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

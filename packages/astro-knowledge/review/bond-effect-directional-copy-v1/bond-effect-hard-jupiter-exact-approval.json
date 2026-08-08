@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-jupiter",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/jupiter",
+  "payloadSha256": "e1835f1233ddc6be2e42949c6f215002a8f686ca776f20ae8deec947c8706161",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} suggests adding another night, another stop, or another expense, and you agree because the plan sounds good. Later you are the one staring at the total and wondering how the weekend became this expensive.",
+    "body_they": "You make the plan bigger and {{holder1}} goes along with it. Later, {{holder1}} may realize they agreed to spend more money or time than they wanted."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-trine-mercury",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-trine/mercury",
+  "payloadSha256": "4ee4e3f9074327f07d0d170a5b9059bae5aa504d0fbf267ee8eb059c77c42687",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You tell {{holder1}} what you mean without rehearsing five different versions first. A plan gets settled, a misunderstanding clears, or the conversation you expected to be awkward is surprisingly simple.",
+    "body_they": "{{holder1}} tells you what they mean without making you pull the answer out of them. The important part gets said early enough that neither of you has to spend the rest of the conversation guessing."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-lilith",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/lilith",
+  "payloadSha256": "09842006ac64d6d60fccab2c983189b13255e48c5f2fedc63b73f87b14a798d4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You have been saying you are fine with a plan you actually dislike. By the third or fourth time {{holder1}} suggests it, your answer comes out much sharper. The irritation has had time to build.",
+    "body_they": "{{holder1}} has been agreeing to something they do not really want. Eventually the answer comes out bluntly, and you may wonder why this suddenly became such a problem."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

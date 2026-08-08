@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-neptune",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/neptune",
+  "payloadSha256": "4d78040b52aa2e8a68c750c081c9183461eb1fa6ed3aa62e15ab314040600908",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You keep telling yourself {{holder1}} probably means more than they are saying, even though the plan never gets confirmed and the follow-through keeps changing. You may be holding onto the version you hoped for while {{holder1}} is giving you much less to work with.",
+    "body_they": "{{holder1}} starts planning around something they thought you meant, even though the two of you never clearly agreed to it. By the time you realize the difference, {{holder1}} may already feel disappointed by a promise you did not know you made."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

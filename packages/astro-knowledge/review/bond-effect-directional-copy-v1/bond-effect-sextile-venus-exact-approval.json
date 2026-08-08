@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-venus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/venus",
+  "payloadSha256": "3da4c19dcc11c3d0b9a7a0c639d611d19b0eaafbad9a2bfbb215d7210d28d676",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} covers the coffee, sends you something they knew you would like, or notices work you assumed no one saw. The effort matters because it is personal.",
+    "body_they": "You remember something {{holder1}} mentioned, save them a seat, or take care of one small detail before they have to ask. {{holder1}} knows you were listening."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

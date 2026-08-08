@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-chiron",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/chiron",
+  "payloadSha256": "738d9423342b589474db9c832adde624f99c90e383de349d9d5fcb8c5fa4d449",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} makes a joke and you spend the rest of the night wondering if they meant more by it. A slow reply can make you feel easy to forget. The argument may be about today, but the feeling is familiar.",
+    "body_they": "Something you say casually can leave {{holder1}} wondering if you meant more by it. A delayed reply can make {{holder1}} feel ignored. You may be dealing with one conversation while {{holder1}} is remembering every other time they felt this way."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

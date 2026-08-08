@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-venus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/venus",
+  "payloadSha256": "86f79d61344cd16a693340929597c469b44d14616a6e7bafd6e96aedb7ac1c59",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You reach for {{holder1}} and they have less time or energy than you expected. You may know {{holder1}} is busy and still feel disappointed that the evening did not become what you wanted.",
+    "body_they": "{{holder1}} reaches for you when you have less time or energy to give. They may understand the reason and still wish you had more available."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

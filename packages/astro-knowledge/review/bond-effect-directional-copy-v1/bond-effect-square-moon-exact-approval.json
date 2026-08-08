@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-moon",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/moon",
+  "payloadSha256": "7867ea093b85ae0893729ce3843394f95395a032516de975671293475145a4e0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You want {{holder1}} to stay and talk at the exact moment they want an hour alone. Their quiet can feel like rejection when you are already tired. {{holder1}} may only be trying to get through their own mood.",
+    "body_they": "{{holder1}} wants more from you at a moment when you are already done for the day. You go quiet, and {{holder1}} assumes the distance means something about the relationship. Neither of you has much left, but both of you notice what the other person cannot give."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

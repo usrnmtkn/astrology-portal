@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-trine-saturn",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-trine/saturn",
+  "payloadSha256": "a96efd2b5b841e132cd80128c5c0a18ffcb4f6c91c26043287eec91eb1e5cad0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} says they will call and they call. The plan stays on the calendar. Their part gets handled without you checking twice. Reliability feels simple because it is.",
+    "body_they": "You keep the plan, return the call, or handle what you said you would handle. {{holder1}} notices that they did not have to follow up. That matters."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

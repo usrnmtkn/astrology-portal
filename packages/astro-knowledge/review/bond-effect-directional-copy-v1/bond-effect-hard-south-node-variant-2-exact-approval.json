@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-south-node-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/south-node/variant-2",
+  "payloadSha256": "6de55ba4132e39bcd5f711c12b613d78195f5d570f1e0894a3ce28a1846ad4c9",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} know how this argument goes. You know who gets louder, who goes quiet, who gives in, and how the night ends. Familiarity can make repetition feel inevitable.",
+    "body_they": "{{holder1}} may respond exactly the way they have before because the role is familiar. The two of you can be halfway through the same argument before anyone notices how predictable it has become."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

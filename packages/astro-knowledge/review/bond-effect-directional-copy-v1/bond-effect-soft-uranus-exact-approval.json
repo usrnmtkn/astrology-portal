@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-uranus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/uranus",
+  "payloadSha256": "7303e59bfcc7f40dce3d6dfa274d3f174f62f4fa78e5a4b096d1aad4870a4950",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} suggests something you would not normally choose, and you say yes. The new place, crowd, or plan suits you better than expected.",
+    "body_they": "You suggest something different and {{holder1}} is more willing to try it. The change gives {{holder1}} a break from a routine they were already tired of."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

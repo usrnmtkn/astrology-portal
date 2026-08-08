@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-jupiter",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/jupiter",
+  "payloadSha256": "f5d265d9bc7c9d4a648b559bcd19d2fa01fad381730cf34be8a9e7c4be188050",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} sends you something and you realize the opportunity actually fits. The job, trip, class, or project connects to something you already wanted instead of becoming another random possibility.",
+    "body_they": "You send {{holder1}} an opportunity that fits something they have already been talking about. {{holder1}} may be more willing to try because the timing finally makes sense."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

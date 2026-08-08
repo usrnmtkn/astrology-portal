@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-mercury-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-3",
+  "payloadSha256": "5eea1f371d59465b3aca80a2cd9213a902602d3e7f18499f892abc3737ab9a4b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "One confusing conversation with {{holder1}} can make you want an answer immediately. The harder you push for clarity, the more complicated the conversation becomes.",
+    "body_they": "{{holder1}} wants to settle the issue while both of you are still misunderstanding the basic facts. A decision made from the confusion can last longer than the confusion itself."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
