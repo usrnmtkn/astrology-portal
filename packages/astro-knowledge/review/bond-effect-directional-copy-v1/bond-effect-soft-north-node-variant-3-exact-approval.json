@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-north-node-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/north-node/variant-3",
+  "payloadSha256": "a954cc52f5c1c1b49a3f41f76e2637e2506439e274054796cef36ec8d71503d8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You respond differently to {{holder1}} than you normally do. You say no sooner, ask for help earlier, or let them make a decision you usually take over. The small change matters because it is not your usual first move.",
+    "body_they": "{{holder1}} responds differently than you expected. They may speak up sooner, ask for more room, or stop doing a job they usually take on automatically."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

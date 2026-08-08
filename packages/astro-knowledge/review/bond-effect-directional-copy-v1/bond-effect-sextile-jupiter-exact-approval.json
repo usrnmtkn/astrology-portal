@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-jupiter",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/jupiter",
+  "payloadSha256": "e362cb1cefe8485071d81e2b5495a5e4791f0464a40102b7ed22252060f6704f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} sends you a job, introduces you to someone useful, or invites you into something that already fits where you want to go. It is not a random opportunity. It connects to a plan you were already trying to move forward.",
+    "body_they": "You send {{holder1}} the opening, make an introduction, or include them in a plan that fits something they already want. One useful connection can give {{holder1}} a practical next step."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

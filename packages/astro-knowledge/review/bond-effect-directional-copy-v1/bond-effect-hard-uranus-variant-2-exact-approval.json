@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-uranus-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-2",
+  "payloadSha256": "58abe5047fd3e8a17cece304c46391e0bf5ea88023bd543c2a0e78c37bedb70e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} changes direction before you have caught up with the first change. You may start wondering how much of your own schedule has become temporary.",
+    "body_they": "You move quickly from one plan to another and {{holder1}} has barely adjusted to the first. {{holder1}} may need more time than you do before another change feels manageable."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

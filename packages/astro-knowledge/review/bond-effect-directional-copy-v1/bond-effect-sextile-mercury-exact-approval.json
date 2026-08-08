@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-mercury",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/mercury",
+  "payloadSha256": "200b040354dff2c8eae4e81f8a76b4b67ada3cda0204e2c92107852e1937c35c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You ask {{holder1}} the question you have been rehearsing instead of trying to predict the answer first. The real conversation is shorter and clearer than the one you have been having in your head.",
+    "body_they": "{{holder1}} finally asks the question, makes the proposal, or says the apology they have been rehearsing. The direct version gives both of you something real to respond to."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

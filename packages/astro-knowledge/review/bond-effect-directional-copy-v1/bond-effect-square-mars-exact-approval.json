@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-mars",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/mars",
+  "payloadSha256": "6610f2ce9372354723d01816c2f5126c0d6f172f40369c377b0756d72e967c65",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} is late, interrupts you, changes the route, or starts doing the job in a way that makes you want to take over. You are annoyed before the real conversation even starts. A ten-minute inconvenience can become a much larger fight once respect gets pulled into it.",
+    "body_they": "You move ahead before {{holder1}} is ready, change the plan without much notice, or answer more sharply than you intended. {{holder1}} gets irritated and pushes back. The fight may start over timing, but it quickly becomes about who keeps expecting the other person to adjust."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

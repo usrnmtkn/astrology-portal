@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-moon",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/moon",
+  "payloadSha256": "03a2d89bae91529a2a218c699c572e9bb9175359087be4187e307b07d5fb41b2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You come home tired and {{holder1}} already knows you are not in the mood for a long conversation. They bring food, sit with you, or give you an hour without asking what is wrong. Small changes in {{holder1}}'s mood also register faster, and a quiet evening can feel more personal than it normally would.",
+    "body_they": "{{holder1}} may be easier to read. You notice that they need food, quiet, company, or a little more patience before {{holder1}} has to explain it. A small act can mean a lot because {{holder1}} knows you were paying attention."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

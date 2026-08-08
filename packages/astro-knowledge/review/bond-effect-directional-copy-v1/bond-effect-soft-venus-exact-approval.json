@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-venus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/venus",
+  "payloadSha256": "6652eeb40faec64083c58e2ca27c0e64c6a9843a6a50c16f25d8d6e42d46b1f8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} remembers what you like, checks in, makes room for you in the plan, or handles one small task before it becomes another errand on your list. What matters is that {{holder1}} was paying attention.",
+    "body_they": "You remember what {{holder1}} likes, choose the place they prefer, or take care of one small detail before they have to ask. {{holder1}} feels appreciated because the effort was specific to them."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-saturn",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/saturn",
+  "payloadSha256": "a2d634b096569bf73b0b3df9d891d2a3359df7e0426e2bb145a7edc0b6d93743",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "The plan with {{holder1}} changes again. The call does not happen, the reservation is still not made, or another responsibility quietly becomes yours. After a while, an explanation does not change the fact that you are the person doing the extra work.",
+    "body_they": "{{holder1}} keeps track of the date, follows up, or finishes the part that did not get done. Another apology may not mean much if {{holder1}} is still losing time because the same responsibility keeps ending up with them."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

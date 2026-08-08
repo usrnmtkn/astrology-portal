@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-mercury",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/mercury",
+  "payloadSha256": "1335ffd0ef31cbdd53b582a3db474fced0045c7c7093041986cdbead6dc78eab",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} sends a short reply and you spend twenty minutes deciding what the tone means. By the time you answer, you may already be annoyed about a meaning {{holder1}} never intended.",
+    "body_they": "You send a quick reply and {{holder1}} reads distance into it. What took you ten seconds to type can occupy much more of {{holder1}}'s afternoon."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

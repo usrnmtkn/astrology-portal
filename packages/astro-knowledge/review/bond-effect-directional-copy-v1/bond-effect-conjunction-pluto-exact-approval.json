@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-pluto",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/pluto",
+  "payloadSha256": "becd69dc17c2a7e9f4109b8a9a84df103c1aaef34738f11fc56caf105d160caa",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "By the time {{holder1}} tells you the plan changed, everyone else already knows. The decision is made, and now you are expected to adjust. You are angry because your opinion only mattered after there was nothing left to decide.",
+    "body_they": "By the time {{holder1}} realizes the plan has changed, most of the decision has already been made. {{holder1}} may push back harder than you expect because they are not only reacting to the plan. They are angry that everyone else had more say in it than they did."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

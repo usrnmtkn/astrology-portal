@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-mercury-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-3",
+  "payloadSha256": "59e30618e712760a6f952f77429518a2e889aa21d3350629335803c9882245a0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You finally have the conversation with {{holder1}} that you kept rehearsing. It is easier once you are talking to the real person instead of every possible version of their response.",
+    "body_they": "{{holder1}} brings up a conversation they have been postponing. The words come more easily than {{holder1}} expected once the two of you actually start talking."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

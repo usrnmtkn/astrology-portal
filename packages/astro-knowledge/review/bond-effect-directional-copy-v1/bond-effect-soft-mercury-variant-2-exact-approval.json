@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-mercury-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-2",
+  "payloadSha256": "f55f9627067736f72a465b4de3d7e1175751fdbd09bde5f0063d9057768b9ed6",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "The plan with {{holder1}} gets made quickly because both of you answer the actual question. The time, place, and important detail are all clear by the end of the conversation.",
+    "body_they": "{{holder1}} gives you the information you needed without making you ask three different ways. A practical conversation stays practical."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

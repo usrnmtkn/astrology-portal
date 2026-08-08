@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-neptune-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/neptune/variant-3",
+  "payloadSha256": "f3b0da96294c0a35ecd4944c24e8b87c11aea876a8a9b54c0058036d1e33d003",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You keep telling yourself {{holder1}} probably meant something kinder, clearer, or more committed than what was actually said. Hope can fill in a lot of missing information.",
+    "body_they": "{{holder1}} may hear more certainty in your words than you intended. A friendly idea can become an expectation before either of you notices the difference."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

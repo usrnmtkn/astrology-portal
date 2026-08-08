@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-venus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/venus",
+  "payloadSha256": "efab78ef5548901720bb2c6fdd9a4dfc1e8a9d33a61da1f89c009d1b0b5d139c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You want an evening with {{holder1}}, and {{holder1}} wants to stay home alone. Or you want time together and {{holder1}} keeps offering help with errands instead. The problem is not a lack of feeling. The two of you are reaching for different kinds of closeness.",
+    "body_they": "{{holder1}} wants more time with you than you have to give, or wants a kind of attention you are not offering. You can both care about each other and still end the day disappointed because what {{holder1}} wanted and what you had available were not the same."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

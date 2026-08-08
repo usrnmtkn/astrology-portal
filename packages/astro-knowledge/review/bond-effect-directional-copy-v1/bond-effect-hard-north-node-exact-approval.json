@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-north-node",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/north-node",
+  "payloadSha256": "a9e81c3ff75ed6d1f0ff437e21cc83ad4dc8454db4586ef87d69e87ebbfb6eec",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} introduces you to a person, place, job, or option you would not have found on your own. The opportunity is unfamiliar enough to make you nervous, but interesting enough that you keep thinking about it.",
+    "body_they": "You introduce {{holder1}} to an option they had not considered. {{holder1}} may be interested and uncomfortable at the same time because the choice requires them to do something differently."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

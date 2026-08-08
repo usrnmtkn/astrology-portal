@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-mercury",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/mercury",
+  "payloadSha256": "68e8f7589a7e2e54e554ed098e2faefbc13fbf8a4d35a77738eb7e08a50c9843",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You finally say the sentence you have been rehearsing in your head. A plan that took six texts to explain yesterday gets settled with {{holder1}} in ten minutes, or you find a simpler way to explain what you meant. Conversation moves fast enough that you may assume a detail was understood when it was never actually said.",
+    "body_they": "{{holder1}} finally says something they have been rehearsing or clears up a point that kept getting lost in texts. You may get a much more direct answer than you expected. {{holder1}} can also move so quickly that one important detail never gets said out loud."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

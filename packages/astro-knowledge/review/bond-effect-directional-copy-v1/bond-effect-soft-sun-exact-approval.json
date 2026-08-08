@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-sun",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/sun",
+  "payloadSha256": "3971a1846df20609da70ba0570b880cc3bb9e9390cf3b687792edcd836bd3b2e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} notices what you did and says it out loud. They give you credit, celebrate the result, or remind you that the work mattered. You feel appreciated instead of having to ask for recognition.",
+    "body_they": "You notice {{holder1}}'s contribution and say so. {{holder1}} knows exactly what you valued because you were specific."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
