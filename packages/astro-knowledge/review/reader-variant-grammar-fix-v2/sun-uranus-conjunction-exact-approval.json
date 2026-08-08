@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-sun-uranus-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/uranus/conjunction",
+  "payloadSha256": "5e7aad9a8d6fd5c505f678853ee257aa57626a36938696c5ec10367578db1e91",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Around {{holder2}}, you may feel freer to admit the preference, idea, or version of yourself that usually stays backstage. {{holder2}} makes detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script.",
+    "body_they": "Around you, {{holder1}} may feel freer to admit the preference, idea, or version of themselves that usually stays backstage. You make detours feel possible and old rules feel negotiable. The electricity is real, but nobody should mistake it for a promise that tomorrow will follow today's script.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

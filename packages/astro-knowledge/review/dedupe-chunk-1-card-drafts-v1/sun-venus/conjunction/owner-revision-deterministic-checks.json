@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "sourceProviderResponsePreserved": true,
+  "exactlyMatchesOriginalDraft": false,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "status": "pass",
+    "body_you": 2,
+    "body_they": 2
+  },
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "asciiPunctuation": "pass",
+  "emOrEnDash": "pass",
+  "exclusions": "pass",
+  "stockCloser": "pass",
+  "warmthSource": "preserved_unchanged",
+  "warmthSourcePassed": true,
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "ownerDecisionOperation": "delete_final_sentence_both_variants",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "2a427f56e6180fc03d487d872ebd4b4c78b439fd7154020b16176fd9f0ebc4e2",
+  "ownerApprovedPayloadSha256": "2a427f56e6180fc03d487d872ebd4b4c78b439fd7154020b16176fd9f0ebc4e2",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-venus/conjunction/exact-approval.json",
+  "ownerExactApproval": "pass"
+}

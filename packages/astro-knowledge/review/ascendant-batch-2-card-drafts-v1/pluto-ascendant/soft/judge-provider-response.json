@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0d0dd207456ff1d6006a7282ccd0c081928ddfe9f05c445f27",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1178,
+    "input_tokens_details": {
+      "cache_write_tokens": 1175,
+      "cached_tokens": 0
+    },
+    "output_tokens": 401,
+    "output_tokens_details": {
+      "reasoning_tokens": 230
+    },
+    "total_tokens": 1579
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the required direction: {{holder1}} watches and seeks depth around how the Ascendant holder presents themselves, while {{holder2}} becomes more open. The middle sequence creates a recognizable behavior-and-cost loop in \\\"their openness makes you want to understand them more deeply\\\" and \\\"Your focus can feel controlling if you press for more than {{holder2}} has chosen to share.\\\" However, the closing \\\"Still\\\" sentence is largely a restatement of the approved human-moment input rather than a developed turn grounded in one of the supplied owner foundation lines. The two versions are meaningfully parallel and avoid excluded claims, but the draft does not earn a 3 because its reader-facing reassurance is not traceably supported by the matched foundation material.\"}"
+}

@@ -1,0 +1,9 @@
+{
+  "target": "neptune-ascendant-hard",
+  "renamesOnly": true,
+  "normalized": [
+    "warmthSource.ownerFoundationSource -> sourceArticleId",
+    "warmthSource.ownerFoundationLine -> originalLine",
+    "warmthSource.ownerFoundationLineIndex removed"
+  ]
+}

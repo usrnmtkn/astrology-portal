@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-jupiter-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "97a389e9f17bec1a68bb71dae1c23c686dbeff7b115b8955220bb9ae59ff0672",
+  "payload": {
+    "body_you": "Around {{holder2}}, {{holder1}} feels invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. {{holder1}} may agree to the bigger role, expense, or commitment because {{holder2}} believes in it, then realize the plan arrived with considerably more luggage than expected.",
+    "body_they": "Around {{holder2}}, {{holder1}} feels invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. {{holder1}} may agree to the bigger role, expense, or commitment because {{holder2}} believes in it, then realize the plan arrived with considerably more luggage than expected.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-jupiter/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

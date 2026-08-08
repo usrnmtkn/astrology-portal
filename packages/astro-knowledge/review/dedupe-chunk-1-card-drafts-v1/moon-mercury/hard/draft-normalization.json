@@ -1,0 +1,11 @@
+{
+  "target": "moon-mercury-hard",
+  "renamesOnly": true,
+  "normalized": [
+    "body_you: typographic punctuation -> ASCII",
+    "body_they: typographic punctuation -> ASCII",
+    "warmthSource.originalLine: typographic punctuation -> ASCII",
+    "warmthSource.usedForm.body_you: typographic punctuation -> ASCII",
+    "warmthSource.usedForm.body_they: typographic punctuation -> ASCII"
+  ]
+}

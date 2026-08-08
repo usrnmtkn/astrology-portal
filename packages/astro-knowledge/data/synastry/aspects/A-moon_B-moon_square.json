@@ -5,6 +5,7 @@
   "planetB": "moon",
   "aspect": "square",
   "plainTranslation": "Your emotional needs clash at the root. You both feel strongly but in incompatible ways - what soothes one unsettles the other. Failure mode: two reactive people triggering each other with no neutral ground. Learn each other's actual needs instead of assuming yours apply; this one takes translation work.",
+  "humanMoment": "What settles {{holder1}}'s nervous system actively rattles {{holder2}}'s, and vice versa. Both feel deeply, and both keep getting thrown when comfort fails to translate.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
   "voiceNeutral": true,

@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_051d02f43fc2f244006a7296345cac819ca0cdb5a51b365edb",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 882,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 834,
+    "output_tokens_details": {
+      "reasoning_tokens": 683
+    },
+    "total_tokens": 1716
+  },
+  "output_text": "{\"body_you\":\"When {{holder2}} moves quickly or pushes a choice, you can take their momentum as a challenge to your authority. You push back or try to take control, so {{holder2}} presses harder, turning ordinary decisions into arguments about who is in charge. The intensity can also feel energizing to both of you.\",\"body_they\":\"When you move quickly or push a choice, {{holder1}} can take your momentum as a challenge to their authority. {{holder1}} pushes back or tries to take control, so you press harder, turning ordinary decisions into arguments about who is in charge. The intensity can also feel energizing to both of you.\",\"warmthSource\":null,\"labels\":[]}"
+}

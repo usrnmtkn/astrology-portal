@@ -158,7 +158,7 @@ assert.equal(repairedCard, repairedExample);
 
 const missingSource = await generator.generateCard({
   a: "sun",
-  b: "north-node",
+  b: "sun",
   aspect: "conjunction",
   signA: "leo",
   signB: "leo"
@@ -192,7 +192,7 @@ assert.deepEqual(missingWarmthCore.flags, [{
   reason: "Aspect entry has no human-moment beat. This is editorial data completeness; flag for editorial work. Do not request new owner prose."
 }]);
 
-const stub = await generator.generateCard({
+const landedChironSource = await generator.generateCard({
   a: "sun",
   b: "chiron",
   aspect: "square",
@@ -200,12 +200,12 @@ const stub = await generator.generateCard({
   signB: "taurus"
 }, {
   generateFn: async () => {
-    throw new Error("The Chiron stub must never reach the model.");
+    throw new Error("A Chiron pair without an approved human moment must not reach the model.");
   }
 });
 
-assert.equal(stub.status, "skipped");
-assert.ok(["missing-source", "source-review-required"].includes(stub.reason));
+assert.equal(landedChironSource.status, "skipped");
+assert.equal(landedChironSource.reason, "aspect-warmth-editorial-required");
 
 let calls = 0;
 const retried = await generator.generateCard({
@@ -414,12 +414,12 @@ const gatedNodeSource = await generator.generateCard({
   signB: "aquarius"
 }, {
   generateFn: async () => {
-    throw new Error("A needs_review pair source must not reach production generation.");
+    throw new Error("A pair without an approved human moment must not reach production generation.");
   }
 });
 
 assert.equal(gatedNodeSource.status, "skipped");
-assert.equal(gatedNodeSource.reason, "missing-source");
+assert.equal(gatedNodeSource.reason, "aspect-warmth-editorial-required");
 
 const reviewNodePrompt = generator.buildPrompt({
   a: "moon",

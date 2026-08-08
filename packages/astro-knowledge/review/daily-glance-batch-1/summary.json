@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "status": "owner-review-required",
+  "lintExistingOnly": false,
+  "immutableRawOutputs": true,
+  "revisionsMade": 0,
+  "callsMadeThisRun": 7,
+  "calls": {
+    "writer": 7,
+    "judge": 0,
+    "terra": 0,
+    "total": 7
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-1-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 7,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "results": [
+    {
+      "key": "square/moon",
+      "lintPassed": true,
+      "responseId": "resp_00b3b0024d21971b006a72948d6a208192bb939444a7891a1c",
+      "usage": {
+        "inputTokens": 1689,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1686,
+        "outputTokens": 5533,
+        "reasoningTokens": 5427,
+        "totalTokens": 7222
+      },
+      "estimatedCostUsd": 0.1765425,
+      "latencyMs": 96980
+    },
+    {
+      "key": "conjunction/mars",
+      "lintPassed": false,
+      "responseId": "resp_0ad13a053a574510006a7294ee3b6481a38eca7924c86a3ac2",
+      "usage": {
+        "inputTokens": 1715,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1712,
+        "outputTokens": 1660,
+        "reasoningTokens": 1552,
+        "totalTokens": 3375
+      },
+      "estimatedCostUsd": 0.060515,
+      "latencyMs": 30976
+    },
+    {
+      "key": "opposition/sun",
+      "lintPassed": false,
+      "responseId": "resp_06c752d7f4c6d37b006a72950d3e30819c9058d09e369030dd",
+      "usage": {
+        "inputTokens": 1637,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1634,
+        "outputTokens": 5347,
+        "reasoningTokens": 5240,
+        "totalTokens": 6984
+      },
+      "estimatedCostUsd": 0.1706375,
+      "latencyMs": 86536
+    },
+    {
+      "key": "conjunction/lilith",
+      "lintPassed": false,
+      "responseId": "resp_00646288a00e157b006a729563c854819faedfda4b3dbe686f",
+      "usage": {
+        "inputTokens": 1664,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1661,
+        "outputTokens": 6383,
+        "reasoningTokens": 6281,
+        "totalTokens": 8047
+      },
+      "estimatedCostUsd": 0.20188625,
+      "latencyMs": 137490
+    },
+    {
+      "key": "soft/pluto",
+      "lintPassed": false,
+      "responseId": "resp_058e7601e6d1e98a006a7295ed3ef08191a1bd9435b367f5a0",
+      "usage": {
+        "inputTokens": 1652,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1649,
+        "outputTokens": 3539,
+        "reasoningTokens": 3433,
+        "totalTokens": 5191
+      },
+      "estimatedCostUsd": 0.11649125,
+      "latencyMs": 59286
+    },
+    {
+      "key": "conjunction/north-node",
+      "lintPassed": false,
+      "responseId": "resp_00a3ef6605e891b1006a7296289bd881a197859ef293686715",
+      "usage": {
+        "inputTokens": 1648,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1645,
+        "outputTokens": 5572,
+        "reasoningTokens": 5472,
+        "totalTokens": 7220
+      },
+      "estimatedCostUsd": 0.17745625,
+      "latencyMs": 100675
+    },
+    {
+      "key": "opposition/south-node",
+      "lintPassed": false,
+      "responseId": "resp_08be16142601007e006a72968d37508191b1944f5c84118503",
+      "usage": {
+        "inputTokens": 1655,
+        "cachedInputTokens": 0,
+        "cacheWriteTokens": 1652,
+        "outputTokens": 4122,
+        "reasoningTokens": 4016,
+        "totalTokens": 5777
+      },
+      "estimatedCostUsd": 0.134,
+      "latencyMs": 74730
+    }
+  ],
+  "batchLint": {
+    "schemaVersion": 1,
+    "passed": false,
+    "rules": {
+      "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
+      "DG-R7": "No body opener construction may repeat within the batch."
+    },
+    "checks": [
+      {
+        "id": "batch-output-count",
+        "passed": true,
+        "details": "7/7 outputs"
+      },
+      {
+        "id": "DG-R1-recurring-sentence-frame",
+        "passed": false,
+        "details": [
+          {
+            "frame": "for the next",
+            "keys": [
+              "conjunction/mars",
+              "soft/pluto",
+              "conjunction/north-node",
+              "opposition/south-node"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "DG-R7-opener-variety",
+        "passed": false,
+        "details": [
+          {
+            "frame": "for the",
+            "keys": [
+              "conjunction/mars",
+              "soft/pluto",
+              "conjunction/north-node",
+              "opposition/south-node"
+            ]
+          },
+          {
+            "frame": "you may",
+            "keys": [
+              "opposition/sun",
+              "conjunction/lilith"
+            ]
+          }
+        ]
+      }
+    ],
+    "openerConstructions": [
+      {
+        "key": "square/moon",
+        "frame": "for a"
+      },
+      {
+        "key": "conjunction/mars",
+        "frame": "for the"
+      },
+      {
+        "key": "opposition/sun",
+        "frame": "you may"
+      },
+      {
+        "key": "conjunction/lilith",
+        "frame": "you may"
+      },
+      {
+        "key": "soft/pluto",
+        "frame": "for the"
+      },
+      {
+        "key": "conjunction/north-node",
+        "frame": "for the"
+      },
+      {
+        "key": "opposition/south-node",
+        "frame": "for the"
+      }
+    ],
+    "repeatedFrames": [
+      {
+        "frame": "for the next",
+        "keys": [
+          "conjunction/mars",
+          "soft/pluto",
+          "conjunction/north-node",
+          "opposition/south-node"
+        ]
+      }
+    ],
+    "repeatedOpeners": [
+      {
+        "frame": "for the",
+        "keys": [
+          "conjunction/mars",
+          "soft/pluto",
+          "conjunction/north-node",
+          "opposition/south-node"
+        ]
+      },
+      {
+        "frame": "you may",
+        "keys": [
+          "opposition/sun",
+          "conjunction/lilith"
+        ]
+      }
+    ]
+  },
+  "totals": {
+    "inputTokens": 11660,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 11639,
+    "outputTokens": 32156,
+    "reasoningTokens": 31421,
+    "totalTokens": 43816,
+    "estimatedCostUsd": 1.0375287499999999
+  },
+  "pricing": {
+    "currency": "USD",
+    "unit": "per_1m_tokens",
+    "retrievedAt": "2026-08-02",
+    "source": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+    "shortContextMaximumInputTokens": 272000,
+    "shortContext": {
+      "input": 5,
+      "cachedInput": 0.5,
+      "cacheWrite": 6.25,
+      "output": 30
+    },
+    "longContext": {
+      "input": 10,
+      "cachedInput": 1,
+      "cacheWrite": 12.5,
+      "output": 45
+    }
+  }
+}

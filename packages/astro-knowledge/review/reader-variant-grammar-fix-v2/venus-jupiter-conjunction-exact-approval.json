@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-venus-jupiter-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/jupiter/conjunction",
+  "payloadSha256": "9e5db96be05c7b511d9368d8f7647700515b933c4ffe6f82dd2059e3cda36160",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} makes pleasure, affection, and generosity feel larger around you. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after you and {{holder2}} have stopped checking what you can realistically sustain.",
+    "body_they": "You make pleasure, affection, and generosity feel larger around {{holder1}}. Time together can lead to bigger plans, longer celebrations, more spending, and the sense that whatever feels good should be given more room. Neither person is eager to be the one who calls an end to it. The generosity is sincere, but the bill, promise, or commitment may keep growing after {{holder1}} and you have stopped checking what you can realistically sustain.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "sky-placement-sun-venus-chiron-nodes-26-serving-approval-2026-08-04",
+  "recordedAt": "2026-08-05T03:21:09.800Z",
+  "proposalId": "sky-placement-sun-venus-chiron-nodes-26-serving-diff-proposal-2026-08-04",
+  "proposalSource": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-serving-diff-proposal-2026-08-04.json",
+  "statement": "I confirm the 26-key serving diff as proposed, including the Sun in Leo payload replacement.",
+  "ownerApprovedServing": true,
+  "exactKeyCount": 26,
+  "approvedKeys": [
+    "fallback-hook/sky-sign-copy/sun/aries",
+    "fallback-hook/sky-sign-copy/sun/taurus",
+    "fallback-hook/sky-sign-copy/sun/gemini",
+    "fallback-hook/sky-sign-copy/sun/cancer",
+    "fallback-hook/sky-sign-copy/sun/leo",
+    "fallback-hook/sky-sign-copy/sun/virgo",
+    "fallback-hook/sky-sign-copy/sun/libra",
+    "fallback-hook/sky-sign-copy/sun/scorpio",
+    "fallback-hook/sky-sign-copy/sun/sagittarius",
+    "fallback-hook/sky-sign-copy/sun/capricorn",
+    "fallback-hook/sky-sign-copy/sun/aquarius",
+    "fallback-hook/sky-sign-copy/sun/pisces",
+    "fallback-hook/sky-sign-copy/venus/aries",
+    "fallback-hook/sky-sign-copy/venus/taurus",
+    "fallback-hook/sky-sign-copy/venus/gemini",
+    "fallback-hook/sky-sign-copy/venus/cancer",
+    "fallback-hook/sky-sign-copy/venus/leo",
+    "fallback-hook/sky-sign-copy/venus/virgo",
+    "fallback-hook/sky-sign-copy/venus/libra",
+    "fallback-hook/sky-sign-copy/venus/scorpio",
+    "fallback-hook/sky-sign-copy/venus/sagittarius",
+    "fallback-hook/sky-sign-copy/venus/capricorn",
+    "fallback-hook/sky-sign-copy/venus/aquarius",
+    "fallback-hook/sky-sign-copy/venus/pisces",
+    "fallback-hook/sky-sign-copy/chiron/aries",
+    "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+  ],
+  "sunLeoReplacementApproved": true,
+  "removedKeys": [],
+  "runtimeEligibilityFlips": [
+    {
+      "id": "chiron-aries",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/chiron-aries.json",
+      "status": "REVIEWED",
+      "before": {
+        "runtimeEligible": false
+      },
+      "after": {
+        "runtimeEligible": true
+      }
+    },
+    {
+      "id": "north-node-aquarius",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/north-node-aquarius.json",
+      "status": "REVIEWED",
+      "before": {
+        "runtimeEligible": false
+      },
+      "after": {
+        "runtimeEligible": true
+      }
+    },
+    {
+      "id": "south-node-leo",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/south-node-leo.json",
+      "status": "REVIEWED",
+      "before": {
+        "runtimeEligible": false
+      },
+      "after": {
+        "runtimeEligible": true
+      }
+    }
+  ],
+  "transition": "staged_to_serving",
+  "deploymentEvidenceUsedAsMigrationGate": {
+    "status": "verified",
+    "deployedPackageVersion": "v3-2026-08-04g",
+    "verifiedAt": "2026-08-04",
+    "source": "Vercel dpl_Cc7eZBaDB4qgWB7TtxxXncS4fhXW",
+    "mergeCommit": "2a4b3dffd8ab648a5982eb4c2a7a0e5b761a474f",
+    "deployedFallbackContentHash": "91d393e81ef6d9cc2242dcc20dc28cb8",
+    "keyManifestHash": "388652c251d27bfe839cb88410247812",
+    "runtimeCapability": "sky-placement-on-demand-v1"
+  },
+  "appliedLocally": true,
+  "generatedPackage": {
+    "packageVersion": "v3-2026-08-04i",
+    "contentHash": "2f1811eed694b90a0d2d236c8578071e",
+    "keyManifestHash": "9e1e875ac25e3a0685d7ba70aa77218a",
+    "keyCount": 7243,
+    "skyPlacementContentHash": "3cafd90c8e314d00cd5cc90ee670655c",
+    "skyPlacementKeyManifestHash": "9558df3d3d590e89330472fbd6af07cd",
+    "skyPlacementKeyCount": 929
+  },
+  "merged": true,
+  "productionDeployed": true,
+  "productionVerification": {
+    "status": "verified_26_of_26",
+    "verifiedAt": "2026-08-05T12:48:30.423Z",
+    "mergeCommit": "600e74748f2778d2e14fbc3f837e03266daf0c03",
+    "deploymentId": "dpl_CQzZh1nZo8JtCuZTnar3FG2RfB3p",
+    "source": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-production-deployment-evidence-2026-08-05.json"
+  }
+}

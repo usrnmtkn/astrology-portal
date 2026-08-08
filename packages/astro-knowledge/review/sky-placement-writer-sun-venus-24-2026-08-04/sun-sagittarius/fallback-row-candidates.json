@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Sagittarius on {{entryDate}}, and the focus shifts toward what else there is to learn. A question that seemed settled opens again. We pick up a subject we once ignored, speak more plainly about what we believe, or feel energy return when an idea gives the day a larger meaning.",
+      "tension": "The trouble starts when a wide view becomes a way around the detail that does not fit. We make the claim bigger, skip the fact that weakens it, and call the whole thing honesty. Restlessness adds pressure. A new question feels alive, while the answer that asks something of us begins to feel small and tedious. The Sun in Sagittarius brings confidence to what we say matters. Without follow-through, our beliefs start doing more work than our choices.",
+      "development": "The Sun last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Under this transit, the gap between conviction and conduct gets easier to see. We start another book before the difficult chapter is finished, turn one vivid experience into a rule for everyone, or explain the principle behind a decision instead of owning the result. Each move protects the larger story for a moment. Then the unfinished work remains, the claim cannot hold, and what we say carries less weight.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, each belief used to excuse a choice widens the distance between what we say and what we have actually lived.",
+      "try_this": [
+        "We can finish the next chapter of a book or the next lesson of a course already underway.",
+        "We can correct one exaggeration out loud as soon as we notice that the sharper version has taken over."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Sagittarius on {{entryDate}}, and the focus shifts toward what else there is to learn. A question that seemed settled opens again. We pick up a subject we once ignored, speak more plainly about what we believe, or feel energy return when an idea gives the day a larger meaning.\n\nThe trouble starts when a wide view becomes a way around the detail that does not fit. We make the claim bigger, skip the fact that weakens it, and call the whole thing honesty. Restlessness adds pressure. A new question feels alive, while the answer that asks something of us begins to feel small and tedious. The Sun in Sagittarius brings confidence to what we say matters. Without follow-through, our beliefs start doing more work than our choices.\n\nThe Sun last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Under this transit, the gap between conviction and conduct gets easier to see. We start another book before the difficult chapter is finished, turn one vivid experience into a rule for everyone, or explain the principle behind a decision instead of owning the result. Each move protects the larger story for a moment. Then the unfinished work remains, the claim cannot hold, and what we say carries less weight.\n\nBefore {{exitDate}}, each belief used to excuse a choice widens the distance between what we say and what we have actually lived.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Sagittarius on {{entryDate}}, and the focus shifts toward what else there is to learn. A question that seemed settled opens again. We pick up a subject we once ignored, speak more plainly about what we believe, or feel energy return when an idea gives the day a larger meaning.\n\nThe trouble starts when a wide view becomes a way around the detail that does not fit. We make the claim bigger, skip the fact that weakens it, and call the whole thing honesty. Restlessness adds pressure. A new question feels alive, while the answer that asks something of us begins to feel small and tedious. The Sun in Sagittarius brings confidence to what we say matters. Without follow-through, our beliefs start doing more work than our choices.\n\nThe Sun last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Under this transit, the gap between conviction and conduct gets easier to see. We start another book before the difficult chapter is finished, turn one vivid experience into a rule for everyone, or explain the principle behind a decision instead of owning the result. Each move protects the larger story for a moment. Then the unfinished work remains, the claim cannot hold, and what we say carries less weight.\n\nBefore {{exitDate}}, each belief used to excuse a choice widens the distance between what we say and what we have actually lived.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sun-sagittarius"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

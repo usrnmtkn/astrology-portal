@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-mercury-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/mercury/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "2a5f60ed6f30f02781a82c9fb6fb51ae6be323a3708ce8c14bed253bb8798225",
+  "payload": {
+    "body_you": "You can tell {{holder2}} what you feel before you have sorted it into careful words. {{holder2}} usually follows the emotion behind what you say and responds without turning it into a debate. This ease can leave some details unspoken because you both assume the meaning is already clear. Even so, being understood without polishing every feeling brings a quiet steadiness between you.",
+    "body_they": "{{holder1}} can tell you what they feel before they have sorted it into careful words. You usually follow the emotion behind what they say and respond without turning it into a debate. This ease can leave some details unspoken because you both assume the meaning is already clear. Even so, understanding {{holder1}} without requiring every feeling to be polished brings a quiet steadiness between you.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mercury/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

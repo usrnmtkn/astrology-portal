@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-chiron-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",
+  "payloadSha256": "a342549fa45cf32b1602fb138f4cb4fe379f0b2fa178e6bce1bb1d0ebe318cbf",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You notice where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while you may also know when to ease up without making {{holder2}} explain every reaction.",
+    "body_they": "{{holder1}} notices where you are more sensitive than you appear. That attention can feel comforting, but it can also leave you feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making you explain every reaction.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

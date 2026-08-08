@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-mars-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/mars/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "45c00cbb35352193200d046b6e5f21f575601984c61989299b3007635a726d10",
+  "payload": {
+    "body_you": "{{holder1}} and {{holder2}} may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. {{holder1}} and {{holder2}} can start using intensity as proof of connection even when neither person feels fully understood.",
+    "body_they": "{{holder1}} and {{holder2}} may feel attracted to each other and irritated with each other in the same moment. A disagreement carries extra heat, and the heat can make the conflict feel more intimate than it actually is. Fights may turn into closeness before the original problem has been addressed, then the same problem returns. {{holder1}} and {{holder2}} can start using intensity as proof of connection even when neither person feels fully understood.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-mars/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

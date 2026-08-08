@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-saturn-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/saturn/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "8b12268605e666678c828ac99456e4f4d46c6a82576e1eb7f3bc2c85d81225ec",
+  "payload": {
+    "body_you": "{{holder1}} knows {{holder2}} will still be there tomorrow. {{holder2}} does not panic over every mood, and {{holder1}} can rely on their patience through difficult periods. The quiet can feel safe, though affection may sit unopened for too long when both assume the commitment already says enough.",
+    "body_they": "{{holder1}} knows {{holder2}} will still be there tomorrow. {{holder2}} does not panic over every mood, and {{holder1}} can rely on their patience through difficult periods. The quiet can feel safe, though affection may sit unopened for too long when both assume the commitment already says enough.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-saturn/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

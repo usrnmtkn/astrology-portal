@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-south-node-ascendant-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/soft",
+  "payloadSha256": "deb68a379c43277757c819816ab859386435bb85e6f7cf142799e04c31edb975",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} understand each other's habits quickly. They know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new.",
+    "body_they": "{{holder1}} and you understand each other's habits quickly. They know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

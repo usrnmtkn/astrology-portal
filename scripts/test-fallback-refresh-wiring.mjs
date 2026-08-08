@@ -40,17 +40,15 @@ const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFi
 )));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
+const pairDailyFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
+const pairDailyClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json");
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
-assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 30);
-assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 30);
+assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 56);
+assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 56);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
-const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => (
-  approval.id.includes("batch-4")
-    ? approval.articles.filter((article) => !["chiron-aries", "nodes-aquarius-leo"].includes(article.sourceRunId))
-    : approval.articles
-));
+const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => approval.articles);
 for (const approvedArticle of runtimeEligibleApprovedArticles) {
   const contentKey = `fallback-hook/sky-sign-copy/${approvedArticle.planet}/${approvedArticle.sign}`;
   const servingRow = skyPlacementOwnerApprovedFallbacks.rows.find((row) => row.contentKey === contentKey);
@@ -85,6 +83,42 @@ assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => !/\b(?:yo
   ...(row.try_this ?? [])
 ].join("\n"))), "Legacy body_you storage must not introduce second-person Current Sky copy.");
 
+const moonTaurusEntry = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-hook/moon/taurus"
+));
+const moonTaurusLived = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-lived/moon/taurus"
+));
+const moonTaurusClose = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-turn/moon/taurus"
+));
+const moonTaurusMoves = sourceRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sky-placement-moves/moon/taurus"
+));
+assert.equal(moonTaurusEntry?.render_policy, "sky-placement-moon-entry-v1");
+assert.equal(
+  moonTaurusEntry?.body_you,
+  "The Moon moves into Taurus on {{entryDate}}, and the collective pace slows. Answers take longer. Plans are less likely to change at the last minute. A feeling may need time to become clear before anyone is ready to talk about it."
+);
+assert.deepEqual(moonTaurusEntry?.moon_entry_aspect_units, [{
+  planets: ["moon", "jupiter"],
+  signs: { moon: "taurus", jupiter: "leo" },
+  aspect: "square",
+  body: "The Moon in Taurus squares Jupiter in Leo on {{aspectDate}}. Feelings run bigger, and one small need can quickly become a large promise, purchase, or plan. It may feel good to say yes in the moment and exhausting to carry all of it later. Choose one priority before agreeing to five."
+}]);
+assert.equal(
+  moonTaurusLived?.body_you,
+  "For the next two and a half days, what feels comfortable and manageable matters more than speed. We may want a familiar meal, a quieter room, or enough uninterrupted time to finish what is already in front of us. Work that produces a visible result can feel more satisfying than another round of discussion.\n\nThis can help us stop reacting to every update and return to what is already working. It can also make us hold on after the routine has stopped helping. A plan stays in place because changing it feels inconvenient. A decision gets delayed because the familiar answer feels easier than the honest one. Patience supports a better choice. Refusing to adjust keeps the same problem going."
+);
+assert.equal(
+  moonTaurusClose?.body_you,
+  "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong. By {{exitDate}}, the mood has moved on."
+);
+assert.equal(
+  moonTaurusMoves?.body_you,
+  "Eat one meal without working or scrolling.\nFinish one task before opening another.\nFix one small source of discomfort in the room you use most."
+);
+
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
 const counts = {
@@ -95,7 +129,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-04g");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-07d");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -397,8 +431,11 @@ const outerConnection = transitRenderer.renderSynastryAspect({
   otherName: "Sofia"
 });
 assert.equal(outerConnection.headline, "Your Venus trine Sofia's Pluto");
-assert.match(outerConnection.body, /the attraction between you runs hotter and deeper than either expected/u);
-assert.match(outerConnection.body, /Build the trust to match the heat/u);
+assert.equal(
+  outerConnection.body,
+  "The connection has real depth without the undertow. You feel important to Sofia, not monitored or claimed."
+);
+assert.doesNotMatch(outerConnection.body, /\byou (?:feels|is|has|does)\b/iu);
 
 const connectionTransit = transitRenderer.renderBondTransit({
   transiting: "saturn",
@@ -449,6 +486,10 @@ assert.equal(
 );
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const compatibilityTabSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/CompatibilityTab.tsx"),
+  "utf8"
+);
 const bondGroupingSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/bondTransitGrouping.ts"),
   "utf8"
@@ -465,6 +506,68 @@ const runtimeSource = fs.readFileSync(
 const generatedContentSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
   "utf8"
+);
+const fallbackManifestGeneratorSource = fs.readFileSync(
+  path.join(repoRoot, "scripts/generate-fallback-package-manifest.mjs"),
+  "utf8"
+);
+const pairDailySelectionStart = appSource.indexOf("const selectedPairDailySelection = useMemo(");
+const pairDailySelectionEnd = appSource.indexOf("\n  const selectedPairDaily = useMemo(", pairDailySelectionStart);
+const pairDailySelectionSource = appSource.slice(pairDailySelectionStart, pairDailySelectionEnd);
+
+assert.ok(
+  pairDailySelectionStart >= 0 && pairDailySelectionEnd > pairDailySelectionStart,
+  "Pair Daily must have a dedicated friend-profile selection memo."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const pairVariant = stablePairDailyVariant\([\s\S]*?const readerDriver = pairDailyDriver\(currentSky, profileNatalSky, pairVariant\);[\s\S]*?const friendDriver = pairDailyDriver\(currentSky, selectedChart\.natalChart, pairVariant\);/u,
+  "Pair Daily must use one stable pair seed for both chart-driver rotations."
+);
+assert.match(
+  appSource,
+  /function pairDailyDriver\([\s\S]*?selectDailyGlanceDriverPool\([\s\S]*?house,[\s\S]*?5,[\s\S]*?3[\s\S]*?selectPairDailyDriver\(drivers, variant\)/u,
+  "Pair Daily must reuse the Daily At-a-Glance applying selector and cap its pool at three."
+);
+assert.match(
+  pairDailySelectionSource,
+  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily/u,
+  "Pair Daily must reuse the first already-ranked bond card and its effect family."
+);
+assert.doesNotMatch(
+  pairDailySelectionSource,
+  /rank|sort\(|dailyTransitQualifies/u,
+  "Pair Daily must not introduce a parallel driver or shared-condition ranking system."
+);
+assert.match(
+  pairDailySelectionSource,
+  /if \(!readerDriver \|\| !friendDriver\) return null;/u,
+  "Pair Daily must hide when either person's daily driver is absent."
+);
+assert.match(
+  compatibilityTabSource,
+  /\{daily \? \([\s\S]*?Today between you two[\s\S]*?\{daily\.body\}[\s\S]*?: null\}/u,
+  "Compatibility must render no Pair Daily chrome when assembled copy is absent."
+);
+assert.match(
+  appSource,
+  /reader:\s*\{[\s\S]*?handle:\s*profileHandle,[\s\S]*?clauseKey:\s*pairDailyClauseKey\(selectedPairDailySelection\.readerDriver\)/u,
+  "Pair Daily must pass the reader handle directly while keeping the reader clause in second-person voice."
+);
+assert.match(
+  appSource,
+  /const selectedPairDaily = useMemo\([\s\S]*?fallbackArchitectureV3Version,[\s\S]*?profileHandle,/u,
+  "Pair Daily must retry assembly after the deferred approved-row bundle is installed."
+);
+assert.match(
+  fallbackManifestGeneratorSource,
+  /pair-daily-frames-v1\.json[\s\S]*?pair-daily-clauses-v1\.json[\s\S]*?deferredCoreRows/u,
+  "The generated deferred runtime bundle must include both approved Pair Daily row files."
+);
+assert.match(
+  dashboardImportSource,
+  /pair-daily-frames-v1\.json[\s\S]*?pair-daily-clauses-v1\.json[\s\S]*?pairDailyFrames[\s\S]*?pairDailyClauses/u,
+  "Dashboard materialization must carry both approved Pair Daily row files."
 );
 
 assert.match(
@@ -743,6 +846,8 @@ try {
         ...skyAspectPhrasebook.hookRows,
         ...skyPlanetFrames.rows,
         ...skySignCopySun.rows,
+        ...pairDailyFrames.rows,
+        ...pairDailyClauses.rows,
         ...skyPlacementOwnerApprovedReaderFallbacks.rows
       ],
       vocabularyRows: [
@@ -797,6 +902,19 @@ try {
   for (const row of skySignCopySun.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    const ownerReplacement = skyPlacementOwnerApprovedFallbacks.rows.find((candidate) => (
+      candidate.contentKey === row.contentKey
+    ));
+    if (ownerReplacement) {
+      assert.equal(
+        materializedRow.body,
+        ownerReplacement.body_you,
+        `${row.contentKey} must use the explicitly approved owner replacement.`
+      );
+      assert.equal(materializedRow.source_snapshot.review_status, "approved");
+      assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+      continue;
+    }
     assert.equal(materializedRow.body, row.body_you);
     assert.equal(materializedRow.status, "DRAFT");
     assert.equal(materializedRow.source_snapshot.review_status, "approved");
@@ -814,7 +932,9 @@ try {
   for (const row of skySignCopySun.superseded_rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} supersession must remain in dashboard history.`);
-    if (row.contentKey === "fallback-hook/sky-sign-copy/sun/leo") {
+    if (skyPlacementOwnerApprovedFallbacks.rows.some((candidate) => (
+      candidate.contentKey === row.contentKey
+    ))) {
       assert.equal(materializedRow.source_snapshot.review_status, "approved");
       continue;
     }

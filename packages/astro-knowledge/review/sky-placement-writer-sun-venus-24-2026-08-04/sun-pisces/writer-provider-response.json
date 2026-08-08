@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_06b37f53ff03bc27006a7292470748819e93cbeb3aa0e771d4",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8036,
+    "input_tokens_details": {
+      "cache_write_tokens": 8033,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5613,
+    "output_tokens_details": {
+      "reasoning_tokens": 5178
+    },
+    "total_tokens": 13649
+  },
+  "outputText": "{\"opening\":\"The Sun in Pisces makes the feeling underneath a choice harder to ignore. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Pisces on {{entryDate}}, and attention moves toward what cannot be measured. A song stays with us all morning. An idea arrives before the reasons for it do. We notice strain in a familiar voice and change course before anyone asks.\",\"tension\":\"The Sun in Pisces can recognize meaning before it can explain it. That helps us follow a creative impulse or respond with compassion when a need has not been said aloud. It also makes every impression feel important and every need feel like ours to carry. A small request takes the time we meant to keep. Someone is disappointed, so we soften a clear no into an open-ended maybe. A difficult feeling rises, so we scroll, daydream, or get busy helping until it passes. By evening, we have tended to every signal except the one that says we are tired.\",\"development\":\"The Sun last moved through Pisces from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure builds each time sensitivity replaces a clear choice. We sense that something is off, but do not name what we want. We imagine a better version of the day, then leave the actual one half-lived. We take in another mood, another request, and another unfinished concern. The creative impulse that felt vivid in the morning is hard to find by night. Pisces keeps the edges open, while the Sun needs enough shape to recognize a life as its own.\",\"close\":\"Before {{exitDate}}, the request, mood, or distraction that reaches us first can keep deciding where the day goes.\",\"try_this\":[\"We can make one small thing from the image or idea that keeps returning and finish it in a single sitting.\",\"We can say no to one request that would take time already reserved for sleep, a meal, or quiet.\",\"We can take a ten-minute walk with no audio when scrolling has stopped being interesting but keeps going.\"]}"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-jupiter-saturn-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/jupiter/saturn/soft",
+  "payloadSha256": "e80ad6c0430966413c4bb670b0bf03eb6f8cc74ded39e2fa0eed515a423ef294",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} brings the larger possibility, and {{holder2}} helps give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail.",
+    "body_they": "{{holder1}} brings the larger possibility, and {{holder2}} helps give it enough time, money, and structure to last. The idea gets a foundation instead of a lecture on why it will fail.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

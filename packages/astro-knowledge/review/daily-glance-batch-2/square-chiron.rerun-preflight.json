@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "authority": "packages/astro-knowledge/review/daily-glance-rebuild-plan-2026-08-04.md#batch-2-sitting-rulings",
+  "key": "square/chiron",
+  "packetSelfLintPassed": true,
+  "samePacketExceptNewRules": true,
+  "addedRules": [
+    "DG-R16",
+    "DG-R17"
+  ],
+  "maxOutputTokens": 24000,
+  "priorResponseId": "resp_017ffcb05dd06eee006a72a418c078819da526b4110d5869de",
+  "preservedProviderPath": "review/daily-glance-batch-2/square-chiron.provider.failed-max-output-8000.json",
+  "callsAuthorized": 1,
+  "revisionsAuthorized": 0,
+  "retriesAuthorized": 0
+}

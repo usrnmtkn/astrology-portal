@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "runId": "venus-leo",
+  "recordedAt": "2026-08-05T01:41:39.371Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "venus",
+    "sign": "leo"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:leo-season-2025:p092:window-1-3",
+      "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:venus-in-cancer:p009:window-3-4",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": false,
+      "prohibitedMatch": "you"
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 1,
+      "fails": 2,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "current-sky-person",
+          "term": "second-person",
+          "match": "you",
+          "reason": "Current Sky placement copy is collective; second person belongs to transit-to-natal copy"
+        },
+        {
+          "severity": "fail",
+          "source": "compiled-editorial-decision",
+          "decisionId": "ED-003",
+          "slot": null,
+          "term": "regex",
+          "match": "you",
+          "reason": "Current Sky is collective; second person belongs to natal or transit-to-natal copy."
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": false
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Venus in Leo makes affection easier to see. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus arrives in Leo on {{entryDate}}, and affection becomes more openly expressive. A compliment gets said while it still matters. A finished creative effort gets more than a quick nod. Warmth takes a visible form.",
+    "tension": "The pressure begins when appreciation has to arrive with applause. A private thank-you feels too small, and a modest response can look like indifference. We make the gesture bigger, spend beyond what feels comfortable, or turn a missed compliment into drama so the reaction will prove that love is present. Warmth is still being offered, but now it carries a test nobody agreed to take.",
+    "development": "Venus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This return brings the same pressure back into view. A gift stops feeling generous when its worth depends on the response. A creative choice that began as pleasure gets remade for approval. In a relationship, a quiet act of care gets overlooked because it did not arrive in a dramatic form. Then admiration becomes the measure of connection, and ordinary affection starts to register as absence. The more proof we demand, the harder it becomes to recognize what is already real.",
+    "close": "Before {{exitDate}}, the demand for visible proof can leave grand gestures everywhere while ordinary care goes unnoticed.",
+    "try_this": [
+      "We can tell someone exactly what we admire about something they made, without waiting for a special occasion.",
+      "We can set a spending limit before choosing a gift or outfit meant to make an impression."
+    ]
+  }
+}

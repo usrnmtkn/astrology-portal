@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "cancer",
+  "timeZone": "America/New_York",
+  "transitStart": "June 21, 2027",
+  "transitEnd": "July 22, 2027",
+  "transitStartIso": "2027-06-21T14:10:50.999Z",
+  "transitEndIso": "2027-07-23T01:04:40.999Z",
+  "priorSign": "gemini",
+  "priorSignEntryDate": "May 21, 2027",
+  "priorSignExitDate": "June 21, 2027",
+  "previousResidency": {
+    "sign": "cancer",
+    "entryDate": "June 20, 2025",
+    "exitDate": "July 22, 2025",
+    "entryDateIso": "2025-06-21T02:42:15.999Z",
+    "exitDateIso": "2025-07-22T13:29:27.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-square-neptune-2027-06-28t12:50:48.999z",
+      "body": "sun-square-neptune",
+      "bodies": [
+        "sun",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "June 28, 2027",
+      "dateIso": "2027-06-28T12:50:48.999Z",
+      "rank": 1,
+      "meaning": "Identity meets imagination and idealism. Heightened sensitivity, imagination, and a pull toward the ideal. Psychologically the square is inner tension to integrate: Susceptibility to illusion and escapism, and to the rescuer/rescued dynamic. The self can get foggy. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-neptune.json"
+    },
+    {
+      "id": "aspect-sun-square-saturn-2027-07-20t10:48:54.999z",
+      "body": "sun-square-saturn",
+      "bodies": [
+        "sun",
+        "saturn"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "July 20, 2027",
+      "dateIso": "2027-07-20T10:48:54.999Z",
+      "rank": 2,
+      "meaning": "Identity meets limit and discipline. The self is built slowly, under weight, and tested against duty and consequence. Psychologically the square is inner tension to integrate: A heavy self-concept: difficulty with authority figures, self-doubt, and a chronic sense of falling short. The remedy is steady, useful work. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-saturn.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-square-neptune.json",
+      "packages/astro-knowledge/data/transits/sun-square-saturn.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

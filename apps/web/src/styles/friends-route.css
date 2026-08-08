@@ -970,7 +970,7 @@
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: var(--weight-medium);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-compact-label);
   text-transform: uppercase;
 }
 
@@ -1113,7 +1113,7 @@
   font-family: var(--font-mono);
   font-size: 0.64rem;
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-compact-pill);
   line-height: 1;
   white-space: nowrap;
 }
@@ -1658,7 +1658,7 @@
 .friends-invite-history-row strong {
   font-family: var(--font-mono);
   font-size: 0.9rem;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-pill);
 }
 
 .friends-invite-history-link {

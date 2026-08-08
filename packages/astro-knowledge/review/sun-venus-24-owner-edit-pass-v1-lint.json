@@ -1,0 +1,352 @@
+{
+  "articleCount": 24,
+  "scoreCounts": {
+    "1": 2,
+    "2": 5,
+    "3": 17
+  },
+  "totalFails": 2,
+  "totalWarns": 5,
+  "articles": [
+    {
+      "id": "sun-aries",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close",
+        "hook is long (75 words); the hook is the sendable line, not a paragraph",
+        "closer is long; end on a shorter line with bite"
+      ]
+    },
+    {
+      "id": "sun-taurus",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sun-gemini",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sun-cancer",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sun-leo",
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "compiled-editorial-decision",
+          "decisionId": "CF-001",
+          "slot": null,
+          "term": "regex",
+          "match": "people",
+          "reason": "Name the group, role, action, message, or decision instead of generic people."
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "hook is long (77 words); the hook is the sendable line, not a paragraph"
+      ]
+    },
+    {
+      "id": "sun-virgo",
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "\\bvitality\\b",
+          "match": "vitality",
+          "reason": "OV-044 flagged term; check whether ordinary wording names the actual energy or condition"
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sun-libra",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sun-scorpio",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "sun-sagittarius",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "sun-capricorn",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sun-aquarius",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "sun-pisces",
+      "score": 1,
+      "fails": 1,
+      "warns": 0,
+      "findings": [
+        {
+          "severity": "fail",
+          "source": "compiled-editorial-decision",
+          "decisionId": "CF-001",
+          "slot": null,
+          "term": "regex",
+          "match": "people",
+          "reason": "Name the group, role, action, message, or decision instead of generic people."
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-aries",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-taurus",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-gemini",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 6 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-cancer",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-leo",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "venus-virgo",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-libra",
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "\\breciprocity\\b",
+          "match": "reciprocity",
+          "reason": "OV-044 flagged term; name what is or is not being returned"
+        }
+      ],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4"
+      ]
+    },
+    {
+      "id": "venus-scorpio",
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "\\battachment\\b",
+          "match": "attachment",
+          "reason": "OV-044 flagged term when used as therapeutic jargon; literal relationship context may be retained by owner review"
+        }
+      ],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-sagittarius",
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "\\bcandor\\b",
+          "match": "candor",
+          "reason": "OV-044 flagged term; prefer ordinary wording such as honesty when it fits"
+        }
+      ],
+      "notes": [
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-capricorn",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-aquarius",
+      "score": 2,
+      "fails": 0,
+      "warns": 1,
+      "findings": [
+        {
+          "severity": "warn",
+          "source": "sky-placement",
+          "term": "\\bpreset role\\b",
+          "match": "preset role",
+          "reason": "OV-044 flagged phrase; name the role or expectation"
+        }
+      ],
+      "notes": [
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    {
+      "id": "venus-pisces",
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close"
+      ]
+    }
+  ],
+  "batchRepetition": {
+    "passed": true,
+    "maxOccurrences": 1,
+    "occurrenceCount": 0,
+    "occurrences": [],
+    "findings": []
+  }
+}

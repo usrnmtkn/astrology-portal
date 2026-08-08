@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "The Sun in Aries makes a clean decision feel like a return to life. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aries on {{entryDate}}, and what was still taking shape becomes something we can act on. A stalled idea gets its first real attempt. A choice that has been waiting for approval gets made. We choose the version that feels alive instead of copying what already worked for someone else.",
+      "tension": "Action brings confidence quickly, which can make any pause feel like a loss of nerve. The first impulse sounds honest, so we treat it as complete. When the first result disappoints us, we push harder instead of checking the direction. Questions start to sound like resistance. Independence narrows into self-focus, and the energy that could have opened a path gets spent proving that the path we chose first must be the right one.",
+      "development": "The Sun last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the same pressure returns whenever movement becomes the quickest way to feel certain. An idea gets launched because beginning feels alive. A challenge gets accepted because backing down feels worse. Self-trust gets confused with loyalty to the first answer. We keep pushing after the purpose has gone flat, and a brave beginning becomes an obligation to a choice that no longer gives anything back.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, some of the strongest momentum may be carrying us toward a choice we no longer want simply because stopping would expose how quickly it was made.",
+      "try_this": [
+        "We can take a brisk walk before breakfast on three mornings this week without timing the route.",
+        "We can make one small creative piece in a style we have never tried and show it to someone before the week ends."
+      ],
+      "aspect_units": [],
+      "body_you": "The Sun in Aries makes a clean decision feel like a return to life. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aries on {{entryDate}}, and what was still taking shape becomes something we can act on. A stalled idea gets its first real attempt. A choice that has been waiting for approval gets made. We choose the version that feels alive instead of copying what already worked for someone else.\n\nAction brings confidence quickly, which can make any pause feel like a loss of nerve. The first impulse sounds honest, so we treat it as complete. When the first result disappoints us, we push harder instead of checking the direction. Questions start to sound like resistance. Independence narrows into self-focus, and the energy that could have opened a path gets spent proving that the path we chose first must be the right one.\n\nThe Sun last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the same pressure returns whenever movement becomes the quickest way to feel certain. An idea gets launched because beginning feels alive. A challenge gets accepted because backing down feels worse. Self-trust gets confused with loyalty to the first answer. We keep pushing after the purpose has gone flat, and a brave beginning becomes an obligation to a choice that no longer gives anything back.\n\nBefore {{exitDate}}, some of the strongest momentum may be carrying us toward a choice we no longer want simply because stopping would expose how quickly it was made.",
+      "body_they": "The Sun in Aries makes a clean decision feel like a return to life. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aries on {{entryDate}}, and what was still taking shape becomes something we can act on. A stalled idea gets its first real attempt. A choice that has been waiting for approval gets made. We choose the version that feels alive instead of copying what already worked for someone else.\n\nAction brings confidence quickly, which can make any pause feel like a loss of nerve. The first impulse sounds honest, so we treat it as complete. When the first result disappoints us, we push harder instead of checking the direction. Questions start to sound like resistance. Independence narrows into self-focus, and the energy that could have opened a path gets spent proving that the path we chose first must be the right one.\n\nThe Sun last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the same pressure returns whenever movement becomes the quickest way to feel certain. An idea gets launched because beginning feels alive. A challenge gets accepted because backing down feels worse. Self-trust gets confused with loyalty to the first answer. We keep pushing after the purpose has gone flat, and a brave beginning becomes an obligation to a choice that no longer gives anything back.\n\nBefore {{exitDate}}, some of the strongest momentum may be carrying us toward a choice we no longer want simply because stopping would expose how quickly it was made.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "sun-aries"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-jupiter-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "66c48c4ed2da783a7ac824bacd6e079fbfb9178e411f299290895c15a9a61f22",
+  "payload": {
+    "body_you": "{{holder1}} may feel as though the current version of them is never quite exciting enough for {{holder2}}. {{holder2}} thinks they are waving {{holder1}} toward a larger life, but {{holder1}} hears disappointment with the life already being lived. Soon {{holder1}} is chasing the brighter title, louder entrance, or more impressive answer, wondering when who they are now will finally receive a standing ovation.",
+    "body_they": "{{holder1}} may feel as though the current version of them is never quite exciting enough for {{holder2}}. {{holder2}} thinks they are waving {{holder1}} toward a larger life, but {{holder1}} hears disappointment with the life already being lived. Soon {{holder1}} is chasing the brighter title, louder entrance, or more impressive answer, wondering when who they are now will finally receive a standing ovation.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-jupiter/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

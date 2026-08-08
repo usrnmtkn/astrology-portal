@@ -1,0 +1,9 @@
+{
+  "target": "moon-venus-conjunction",
+  "status": "needs_review",
+  "payloadSha256": "8c911062cb2e16790d76c2604f3ef751c9cdf6d42c5d00848741b0db59b79b2c",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

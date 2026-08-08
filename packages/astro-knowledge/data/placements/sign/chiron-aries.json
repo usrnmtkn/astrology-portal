@@ -20,7 +20,7 @@
   ],
   "scenarioPolicy": "generational wound carried in one recognizable person-scale moment.",
   "note": "Owner-approved fact boundary from the 2026-08-04 missing-hook sign-off sheet.",
-  "runtimeEligible": false,
+  "runtimeEligible": true,
   "voiceNeutral": true,
   "status": "REVIEWED"
 }

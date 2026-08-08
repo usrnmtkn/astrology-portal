@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-uranus-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/uranus/conjunction",
+  "payloadSha256": "d195f82820978a499dcb10ec199869a556bac04cdfaa434e649cc970d62019b0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} keeps you emotionally awake. Around you, you may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make you wonder which version of the closeness will be waiting at the door.",
+    "body_they": "You keep {{holder1}} emotionally awake. Around them, {{holder1}} may discover feelings, preferences, and reactions that do not follow the usual map. The surprise keeps the connection alive, but it can also make {{holder1}} wonder which version of the closeness will be waiting at the door.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

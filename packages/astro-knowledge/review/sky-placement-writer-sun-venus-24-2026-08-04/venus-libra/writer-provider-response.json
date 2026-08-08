@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0e056897ad249367006a72952bda2481a2b032598c97d964f2",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8217,
+    "input_tokens_details": {
+      "cache_write_tokens": 8214,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4012,
+    "output_tokens_details": {
+      "reasoning_tokens": 3624
+    },
+    "total_tokens": 12229
+  },
+  "outputText": "{\"opening\":\"Venus in Libra makes it easier to tell when care is being returned. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and attraction starts to organize itself around reciprocity and shared taste. The tone softens. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when effort is returned without being requested.\",\"tension\":\"Venus in Libra can find terms that leave both sides feeling considered. The cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.\",\"development\":\"Venus last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and questions about reciprocity may return in a different form. The issue may be a relationship where one side always chooses the harmless answer, a shared expense left unequal because naming the amount feels ungracious, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.\",\"close\":\"Before {{exitDate}}, an arrangement may strain when one side can no longer keep agreeing to what it does not want.\",\"try_this\":[\"We can state our preferred option before asking anyone else to choose.\",\"We can total one shared expense and request the exact amount still owed.\"]}"
+}

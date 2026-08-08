@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "Venus in Leo makes affection easier to see. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus arrives in Leo on {{entryDate}}, and affection becomes more openly expressive. A compliment gets said while it still matters. A finished creative effort gets more than a quick nod. Warmth takes a visible form.",
+      "tension": "The pressure begins when appreciation has to arrive with applause. A private thank-you feels too small, and a modest response can look like indifference. We make the gesture bigger, spend beyond what feels comfortable, or turn a missed compliment into drama so the reaction will prove that love is present. Warmth is still being offered, but now it carries a test nobody agreed to take.",
+      "development": "Venus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This return brings the same pressure back into view. A gift stops feeling generous when its worth depends on the response. A creative choice that began as pleasure gets remade for approval. In a relationship, a quiet act of care gets overlooked because it did not arrive in a dramatic form. Then admiration becomes the measure of connection, and ordinary affection starts to register as absence. The more proof we demand, the harder it becomes to recognize what is already real.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, the demand for visible proof can leave grand gestures everywhere while ordinary care goes unnoticed.",
+      "try_this": [
+        "We can tell someone exactly what we admire about something they made, without waiting for a special occasion.",
+        "We can set a spending limit before choosing a gift or outfit meant to make an impression."
+      ],
+      "aspect_units": [],
+      "body_you": "Venus in Leo makes affection easier to see. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus arrives in Leo on {{entryDate}}, and affection becomes more openly expressive. A compliment gets said while it still matters. A finished creative effort gets more than a quick nod. Warmth takes a visible form.\n\nThe pressure begins when appreciation has to arrive with applause. A private thank-you feels too small, and a modest response can look like indifference. We make the gesture bigger, spend beyond what feels comfortable, or turn a missed compliment into drama so the reaction will prove that love is present. Warmth is still being offered, but now it carries a test nobody agreed to take.\n\nVenus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This return brings the same pressure back into view. A gift stops feeling generous when its worth depends on the response. A creative choice that began as pleasure gets remade for approval. In a relationship, a quiet act of care gets overlooked because it did not arrive in a dramatic form. Then admiration becomes the measure of connection, and ordinary affection starts to register as absence. The more proof we demand, the harder it becomes to recognize what is already real.\n\nBefore {{exitDate}}, the demand for visible proof can leave grand gestures everywhere while ordinary care goes unnoticed.",
+      "body_they": "Venus in Leo makes affection easier to see. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus arrives in Leo on {{entryDate}}, and affection becomes more openly expressive. A compliment gets said while it still matters. A finished creative effort gets more than a quick nod. Warmth takes a visible form.\n\nThe pressure begins when appreciation has to arrive with applause. A private thank-you feels too small, and a modest response can look like indifference. We make the gesture bigger, spend beyond what feels comfortable, or turn a missed compliment into drama so the reaction will prove that love is present. Warmth is still being offered, but now it carries a test nobody agreed to take.\n\nVenus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. This return brings the same pressure back into view. A gift stops feeling generous when its worth depends on the response. A creative choice that began as pleasure gets remade for approval. In a relationship, a quiet act of care gets overlooked because it did not arrive in a dramatic form. Then admiration becomes the measure of connection, and ordinary affection starts to register as absence. The more proof we demand, the harder it becomes to recognize what is already real.\n\nBefore {{exitDate}}, the demand for visible proof can leave grand gestures everywhere while ordinary care goes unnoticed.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-leo"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

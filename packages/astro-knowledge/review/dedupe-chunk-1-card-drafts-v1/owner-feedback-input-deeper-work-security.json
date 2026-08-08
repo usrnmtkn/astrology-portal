@@ -1,0 +1,20 @@
+{
+  "id": "synastry-foundation-deeper-work-security-disconnected-closer-rejection",
+  "feedbackKind": "rejection",
+  "surface": "synastry-aspect",
+  "articleBeat": "warmth-foundation-disconnected-closer",
+  "ownerStatement": "The 'deeper work lies in redefining what makes you feel secure' line is owner-rejected as a card closer when disconnected from the described loop; it appeared twice in this chunk, and future harvest runs must flag foundation-line reuse across shipped or in-flight cards.",
+  "before": "But the deeper work lies in redefining what makes you feel secure.",
+  "beforeIsRejected": true,
+  "whatChanged": "Removed the line from Moon-Moon hard and Moon-Venus conjunction, cleared their warmth provenance, and recorded a future non-blocking editorial flag for foundation-line reuse across shipped or in-flight cards.",
+  "ownerReason": "The line is disconnected from the described interaction loop in both contexts and was reused twice within one in-flight chunk.",
+  "failureTags": [
+    "foundation-line-disconnected-closer",
+    "foundation-line-reuse"
+  ],
+  "sourcePaths": [
+    "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/hard/draft.json",
+    "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-venus/conjunction/draft.json",
+    "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-jupiter-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/jupiter/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "5258f3cec5736ef6f711e28867ce7c2c345fa3b612160b0d6c77f9dcf09d9d7f",
+  "payload": {
+    "body_you": "{{holder2}} keeps reaching for more while {{holder1}} is trying to protect what already matters. {{holder2}} may see {{holder1}} as cautious, withholding, or unwilling to enjoy the moment. {{holder1}} may see {{holder2}} as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. {{holder2}} wants it to grow, while {{holder1}} wants to know that the existing care will not be lost in the push for more.",
+    "body_they": "{{holder2}} keeps reaching for more while {{holder1}} is trying to protect what already matters. {{holder2}} may see {{holder1}} as cautious, withholding, or unwilling to enjoy the moment. {{holder1}} may see {{holder2}} as excessive or careless with money, time, and promises. Both may believe they are protecting the relationship. {{holder2}} wants it to grow, while {{holder1}} wants to know that the existing care will not be lost in the push for more.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-jupiter/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

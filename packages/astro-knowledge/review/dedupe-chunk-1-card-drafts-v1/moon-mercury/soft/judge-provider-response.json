@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_05eb7290a6ce2cea006a729c91f1d4819c8cece9b777c28741",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1131,
+    "input_tokens_details": {
+      "cache_write_tokens": 1128,
+      "cached_tokens": 0
+    },
+    "output_tokens": 328,
+    "output_tokens_details": {
+      "reasoning_tokens": 202
+    },
+    "total_tokens": 1459
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the fixed direction: {{holder1}} voices feelings, while {{holder2}} follows the emotion and responds without debate. The first two sentences establish the approved human moment, and the third sentence supplies a recognizable cost loop: ease can leave details unspoken because meaning is assumed. The final sentence resolves that tension with the governed idea of quiet steadiness rather than introducing an excluded claim or a separate conclusion. The two versions remain meaningfully parallel, and neither adds unsupported advice or imitation warmth from the owner lines.\"}"
+}

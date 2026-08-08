@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-mars-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "c2166c39c0653f3ecbff45e449f655306d4df9bb4a2159c3f62465a8a55b4051",
+  "payload": {
+    "body_you": "{{holder2}} can move quickly or speak directly without making you pull back. Your emotional reactions help shape what {{holder2}} does next, while your moods do not make them stop to calm you down. Neither of you has to spend much effort managing the other's pace or response.",
+    "body_they": "You can move quickly or speak directly without making {{holder1}} pull back. Their emotional reactions help shape what you do next, while their moods do not make you stop to calm them down. Neither of you has to spend much effort managing the other's pace or response.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "4163ffe356159d086b0597913038b0f39c8c52da694362ca6cb9c0adb2647007",
+    "writerProviderResponseSha256": "1d40a2fd87823f98071893508d55e5078e6a88d4e33a3c6b78906e99ca8ead83"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/soft/exact-approval.json"
+}

@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0a8b7ffd4098c2b0006a7295f5b5e081a3ad1f07be5783a1ff",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 953,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 844,
+    "output_tokens_details": {
+      "reasoning_tokens": 641
+    },
+    "total_tokens": 1797
+  },
+  "output_text": "{\n  \"body_you\": \"{{holder2}} tends to show affection by praising qualities they value, but those are not always the parts of you that you most want recognized. When you seem disappointed or pull back, {{holder2}} may try harder in the same way, leaving you feeling unseen and them confused about why their care does not land. Even so, {{holder2}} is trying to care for you, not dismiss you.\",\n  \"body_they\": \"You tend to show affection by praising qualities you value in {{holder1}}, but those are not always the parts that {{holder1}} most wants you to recognize. When {{holder1}} seems disappointed or pulls back, you may try harder in the same way, leaving {{holder1}} feeling unseen and you confused about why your care does not land. Even so, you are trying to care for {{holder1}}, not dismiss them.\",\n  \"warmthSource\": null,\n  \"labels\": []\n}"
+}

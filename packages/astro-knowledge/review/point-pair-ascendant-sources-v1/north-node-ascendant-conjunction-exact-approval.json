@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "point-pair-ascendant-sources-v1-north-node-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/conjunction",
+  "payloadSha256": "a5e01957e67a07f2f8e91d1040160f38d9132881e0442ff6d09cce738221304f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Around {{holder1}}, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. {{holder1}} can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+    "body_they": "Around {{holder1}}, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. {{holder1}} can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

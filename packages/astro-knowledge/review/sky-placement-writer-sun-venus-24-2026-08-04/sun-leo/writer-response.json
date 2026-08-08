@@ -1,0 +1,66 @@
+{
+  "responseId": "resp_0d676ec405bfd109006a72902ef5d8819ebd82d5fb114c64f5",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:leo-season-2025:p092:window-1-3",
+    "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:sun-leo",
+    "planet": "sun",
+    "sign": "leo",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8214,
+    "input_tokens_details": {
+      "cache_write_tokens": 8211,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4220,
+    "output_tokens_details": {
+      "reasoning_tokens": 3807
+    },
+    "total_tokens": 12434
+  },
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Leo on {{entryDate}}, and attention turns toward what is ready to be seen. A half-finished idea gets shown. We put a name on work we are proud of. Someone steps forward to lead because leaving the idea unclaimed now feels worse than taking the risk. This transit builds confidence through clear expression, especially when visibility serves more than personal attention.",
+    "tension": "Attention can become a running score. We share the idea, watch the response, and shape the next choice around whatever gets the biggest reaction. A quiet response feels like a verdict. Someone else's success feels like lost ground. We interrupt to reclaim the focus, overstate what happened, or keep a disagreement alive because backing down feels like disappearing. Soon the bold work is no longer getting bolder. It is getting easier to applaud.",
+    "development": "The Sun last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Familiar patterns can return: the way a generous gesture starts waiting for thanks, the way leadership becomes control, the way a creative risk gets edited toward applause. This pressure changes what we make and how we claim it. We choose the version that earns praise over the one we mean, add drama when the work could stand on its own, or stop creating once recognition slows. Praise can give real energy. When it becomes the only fuel, purpose gets replaced by the need to keep attention from moving.",
+    "close": "Before {{exitDate}}, attention moves again, and choices made only to hold it can leave the real idea unfinished.",
+    "try_this": [
+      "We can finish one small creative piece this week and put our name on it.",
+      "We can thank someone in front of others for a specific contribution without turning the praise back toward ourselves.",
+      "We can choose one visible detail on something we are making without asking anyone else to approve it."
+    ]
+  }
+}

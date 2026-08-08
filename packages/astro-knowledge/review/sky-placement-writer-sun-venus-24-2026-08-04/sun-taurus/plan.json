@@ -1,0 +1,169 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "sun",
+  "sign": "taurus",
+  "outDir": "/private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/sun-taurus",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:gemini-season-2025:p018:window-2-3"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:sun-taurus",
+    "planet": "sun",
+    "sign": "taurus",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/sun-taurus.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With the Sun in Taurus, the core self strengthens through patience, consistency, beauty, and tangible creation. You are here to build a life that can be felt, held, enjoyed, and trusted."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/sun.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "The Sun describes identity, vitality, creative force, visibility, and the part of life that wants to be lived with purpose. It shows where someone builds confidence, recognizes what gives them energy, and learns to act from the center of themselves rather than from imitation or approval. The Sun moves through all twelve signs once each year and spends about one month in each sign. Its sign describes the style of identity and vitality; its house shows where that life force seeks expression and recognition. As a Taurus Sun, you exude steadiness, reliability, and a deep connection with the physical world. You appreciate beauty and comfort, and you’re likely to build a life that engages your senses. You show your tenacity in achieving goals and can be quite unyielding once your mind is set."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "aries",
+          "priorSignEntryDate": "March 20, 2027",
+          "priorSignExitDate": "April 20, 2027",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "renderOwner": "engine",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 1 year",
+          "typicalSignStay": "about 1 month per sign",
+          "variabilityNote": null
+        }
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": [
+          "eventsDuringTransit"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "aspect_insert",
+        "renderOwner": "engine",
+        "maxEvents": 2,
+        "facts": {
+          "eventsDuringTransit": [
+            {
+              "id": "aspect-sun-square-pluto-2027-04-27t15:24:48.999z",
+              "date": "April 27, 2027",
+              "body": "sun-square-pluto",
+              "eventType": "exact-aspect",
+              "meaning": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Psychologically the square is inner tension to integrate: Power runs to extremes and relationships tip into control struggles. The growth is owning both sides instead of splitting them.",
+              "meaningSource": "packages/astro-knowledge/data/transits/sun-square-pluto.json"
+            },
+            {
+              "id": "aspect-sun-square-jupiter-2027-05-08t19:37:39.999z",
+              "date": "May 8, 2027",
+              "body": "sun-square-jupiter",
+              "eventType": "exact-aspect",
+              "meaning": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate. Psychologically the square is inner tension to integrate: The same confidence overreaches. Sooner or later the luck gets pushed too far. The growth is owning both sides instead of splitting them.",
+              "meaningSource": "packages/astro-knowledge/data/transits/sun-square-jupiter.json"
+            }
+          ]
+        }
+      },
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": [
+          "previousResidencyEntryDate",
+          "previousResidencyExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "renderOwner": "writer",
+        "facts": {
+          "sign": "taurus",
+          "entryDate": "April 19, 2025",
+          "exitDate": "May 20, 2025",
+          "renderTokens": {
+            "entryDate": "{{previousResidencyEntryDate}}",
+            "exitDate": "{{previousResidencyExitDate}}"
+          }
+        }
+      }
+    ],
+    "inactive": []
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet sun --sign taurus --engine-facts /private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/sun-taurus/engine-facts.json --out /private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/sun-taurus"
+}

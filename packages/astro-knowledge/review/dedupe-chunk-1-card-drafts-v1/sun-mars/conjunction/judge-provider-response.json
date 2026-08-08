@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0eca48c75f235be2006a7296304f4081a1a5e4f722d79eed26",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1170,
+    "input_tokens_details": {
+      "cache_write_tokens": 1167,
+      "cached_tokens": 0
+    },
+    "output_tokens": 275,
+    "output_tokens_details": {
+      "reasoning_tokens": 158
+    },
+    "total_tokens": 1445
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the required direction: the Sun holder gives direction, while the Mars holder responds by accelerating and pulls the Sun holder into faster commitment. The second sentence supplies a clear behavior-and-cost loop, where mutual escalation rushes decisions before mutual agreement is checked and disagreement becomes a contest. The final sentence stays within the governed shared-energy boundary rather than introducing an outside claim, and the two versions preserve parallel meaning. No excluded material or unsupported owner-foundation-style turn is introduced.\"}"
+}

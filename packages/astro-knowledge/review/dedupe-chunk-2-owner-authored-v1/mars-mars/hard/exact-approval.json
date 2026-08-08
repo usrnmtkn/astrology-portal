@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mars-mars-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mars/mars/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "59e912fedf9bc8ca49154829d8733a922b85b5be3343f5c0ecbf94219b4a2ee2",
+  "payload": {
+    "body_you": "{{holder1}} and {{holder2}} can provoke each other almost immediately. Irritation sits close to attraction, competition, or admiration, which can make conflict feel charged even when the original issue is small. Once the disagreement starts, winning can become more important than solving the problem. {{holder1}} pushes because {{holder2}} will not move, and {{holder2}} pushes harder for the same reason.",
+    "body_they": "{{holder1}} and {{holder2}} can provoke each other almost immediately. Irritation sits close to attraction, competition, or admiration, which can make conflict feel charged even when the original issue is small. Once the disagreement starts, winning can become more important than solving the problem. {{holder1}} pushes because {{holder2}} will not move, and {{holder2}} pushes harder for the same reason.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mars-mars/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mercury-neptune-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/neptune/soft",
+  "payloadSha256": "658e27bbbb7cf498008c80ab6353f336750c8ff71a16cd64b5c4469ae686ca21",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} catches the meaning beneath {{holder1}}'s words, and {{holder1}} gives shape to what {{holder2}} can only hint at. They understand each other before every detail has been explained.",
+    "body_they": "{{holder2}} catches the meaning beneath {{holder1}}'s words, and {{holder1}} gives shape to what {{holder2}} can only hint at. They understand each other before every detail has been explained.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,9 @@
+{
+  "target": "neptune-ascendant-hard",
+  "status": "needs_review",
+  "payloadSha256": "b2c1c9702fc02a7244d0e2204f52692260359e00178bbc9ab95167c28d963ac6",
+  "harvest_mode": "matched",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

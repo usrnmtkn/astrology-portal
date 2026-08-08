@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0edab480dd2dbff7006a72917a860c819e8565b0fa9595f35b",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8200,
+    "input_tokens_details": {
+      "cache_write_tokens": 8197,
+      "cached_tokens": 0
+    },
+    "output_tokens": 3453,
+    "output_tokens_details": {
+      "reasoning_tokens": 3082
+    },
+    "total_tokens": 11653
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Sagittarius on {{entryDate}}, and the focus shifts toward what else there is to learn. A question that seemed settled opens again. We pick up a subject we once ignored, speak more plainly about what we believe, or feel energy return when an idea gives the day a larger meaning.\",\"tension\":\"The trouble starts when a wide view becomes a way around the detail that does not fit. We make the claim bigger, skip the fact that weakens it, and call the whole thing honesty. Restlessness adds pressure. A new question feels alive, while the answer that asks something of us begins to feel small and tedious. The Sun in Sagittarius brings confidence to what we say matters. Without follow-through, our beliefs start doing more work than our choices.\",\"development\":\"The Sun last moved through Sagittarius from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Under this transit, the gap between conviction and conduct gets easier to see. We start another book before the difficult chapter is finished, turn one vivid experience into a rule for everyone, or explain the principle behind a decision instead of owning the result. Each move protects the larger story for a moment. Then the unfinished work remains, the claim cannot hold, and what we say carries less weight.\",\"close\":\"Before {{exitDate}}, each belief used to excuse a choice widens the distance between what we say and what we have actually lived.\",\"try_this\":[\"We can finish the next chapter of a book or the next lesson of a course already underway.\",\"We can correct one exaggeration out loud as soon as we notice that the sharper version has taken over.\"]}"
+}
