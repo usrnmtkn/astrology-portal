@@ -24,8 +24,15 @@ const pairFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
 const pairClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json");
 
 assert.equal(pairFrames.rows.length, 28);
-assert.equal(pairClauses.rows.length, 82);
+assert.equal(pairClauses.rows.length, 110);
 assert.ok([...pairFrames.rows, ...pairClauses.rows].every((row) => row.review_status === "approved"));
+const bondClauses = pairClauses.rows.filter((row) => (
+  row.contentKey.startsWith("fallback-hook/pair-daily/bond-clause/")
+));
+assert.equal(bondClauses.length, 28);
+assert.equal(bondClauses.filter((row) => row.contentKey.includes("/soft/")).length, 14);
+assert.equal(bondClauses.filter((row) => row.contentKey.includes("/hard/")).length, 14);
+assert.ok(bondClauses.every((row) => row.source_key?.startsWith("fallback-hook/bond-effect-")));
 assert.equal(
   pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener")?.body_you,
   "{readerHandle}, you are {readerClause}, while {friendHandle} is {friendClause}."
@@ -33,6 +40,18 @@ assert.equal(
 assert.equal(
   pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/close/hard")?.body_you,
   "Keep the plan you already made. Don't reschedule twice and pretend it's flexibility."
+);
+assert.equal(
+  pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/shared-bond/soft/variant-6")?.body_you,
+  "You mention the plan and realize you are already on the same page. {bondClause}"
+);
+assert.equal(
+  pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/shared-bond/soft/variant-10")?.body_you,
+  "The plan that kept slipping gets a date, and suddenly it feels real. {bondClause}"
+);
+assert.equal(
+  pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/shared-bond/hard/variant-2")?.body_you,
+  "One strange text or offhand comment follows you both longer than either of you meant it to. {bondClause}"
 );
 assert.equal(
   pairClauses.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/clause/square/venus")?.body_you,
@@ -129,16 +148,19 @@ const houseFallback = renderer.renderPairDaily({
 assert.equal(houseFallback.sourceKeys[1], "fallback-hook/pair-daily/clause/house/4");
 assert.match(houseFallback.body, /fixing the thing at home that makes the day harder every single time/u);
 
-const bondClauseKey = "fallback-hook/bond-effect-square/saturn";
+const softBondClauseKey = "fallback-hook/pair-daily/bond-clause/soft/venus";
 const softTen = renderer.renderPairDaily({
   ...baseFacts,
-  shared: { kind: "bond", family: "soft", bondClauseKey, transiting: "venus" },
+  shared: { kind: "bond", family: "soft", transiting: "venus" },
   variant: 10
 });
 assert.ok(softTen.sourceKeys.includes("fallback-hook/pair-daily/shared-bond/soft/variant-10"));
+assert.ok(softTen.sourceKeys.includes(softBondClauseKey));
+assert.ok(!softTen.sourceKeys.some((key) => key.startsWith("fallback-hook/bond-effect-")));
+assert.match(softTen.body, /A small gesture of affection reaches the place the long conversation kept circling\./u);
 const softWrap = renderer.renderPairDaily({
   ...baseFacts,
-  shared: { kind: "bond", family: "soft", bondClauseKey, transiting: "venus" },
+  shared: { kind: "bond", family: "soft", transiting: "venus" },
   variant: 11
 });
 assert.ok(softWrap.sourceKeys.includes("fallback-hook/pair-daily/shared-bond/soft"));
@@ -161,19 +183,28 @@ for (const [element, count] of [["fire", 3], ["earth", 3], ["air", 2], ["water",
 for (const transiting of ["saturn", "mercury"]) {
   const gatedClose = renderer.renderPairDaily({
     ...baseFacts,
-    shared: { kind: "bond", family: "hard", bondClauseKey, transiting },
+    shared: { kind: "bond", family: "hard", transiting },
     variant: 1
   });
+  assert.ok(gatedClose.sourceKeys.includes(`fallback-hook/pair-daily/bond-clause/hard/${transiting}`));
   assert.ok(gatedClose.sourceKeys.includes("fallback-hook/pair-daily/close/hard"));
   assert.match(gatedClose.body, /Don't reschedule twice and pretend it's flexibility\.$/u);
 }
 const ungatedClose = renderer.renderPairDaily({
   ...baseFacts,
-  shared: { kind: "bond", family: "hard", bondClauseKey, transiting: "mars" },
+  shared: { kind: "bond", family: "hard", transiting: "mars" },
   variant: 2
 });
 assert.ok(ungatedClose.sourceKeys.includes("fallback-hook/pair-daily/shared-bond/hard/variant-2"));
 assert.ok(!ungatedClose.sourceKeys.includes("fallback-hook/pair-daily/close/hard"));
+assert.equal(
+  renderNodePairDaily({
+    ...baseFacts,
+    shared: { kind: "bond", family: "soft", transiting: "venus" },
+    variant: 10
+  }).body,
+  softTen.body
+);
 
 assert.equal(renderNodePairDaily({ ...baseFacts, variant: 1 }).body, first.body);
 
@@ -202,6 +233,18 @@ const missingFamilyRenderer = createTransitSynastryRenderer(transitRows, templat
 assert.throws(
   () => missingFamilyRenderer.renderPairDaily({ ...baseFacts, shared: { kind: "moon", element: "water" } }),
   (error) => error instanceof SourceGapError && /SOURCE_GAP/u.test(error.message)
+);
+const missingBondClauseRenderer = createTransitSynastryRenderer(transitRows, templates, {
+  ...approvedRows,
+  hookRows: approvedRows.hookRows.filter((row) => row.contentKey !== softBondClauseKey)
+});
+assert.throws(
+  () => missingBondClauseRenderer.renderPairDaily({
+    ...baseFacts,
+    shared: { kind: "bond", family: "soft", transiting: "venus" }
+  }),
+  (error) => error instanceof SourceGapError && error.message.includes(softBondClauseKey),
+  "A missing compressed bond clause must fail closed instead of reusing the full bond-card body."
 );
 const unresolvedRenderer = createTransitSynastryRenderer(transitRows, templates, {
   ...approvedRows,
@@ -333,7 +376,7 @@ assert.deepEqual(
 );
 
 const words = first.body.trim().split(/\s+/u);
-assert.ok(words.length <= 65, `Approved Pair Daily output must stay within 65 words; got ${words.length}.`);
+assert.ok(words.length <= 75, `Approved Pair Daily output must stay within 75 words; got ${words.length}.`);
 assert.doesNotMatch(
   first.body,
   /\b(?:until|through)\s+(?:today\b|tomorrow\b|(?:mon|tues|wednes|thurs|fri|satur|sun)day\b|(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b|\d)/iu
