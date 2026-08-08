@@ -1,0 +1,129 @@
+{
+  "id": "sky-placement-batches-2-through-4-production-deployment-evidence-2026-08-04",
+  "scope": "PR #69 exact 19-key Sky Placement serving set",
+  "verified_at": "2026-08-05T00:51:40.724Z",
+  "pull_request": {
+    "number": 69,
+    "url": "https://github.com/usrnmtkn/astrology-portal/pull/69",
+    "state": "MERGED",
+    "head_commit": "cd390566d798c5dbb8f01bf9ebe14db2ab1e3c58",
+    "merge_commit": "2a4b3dffd8ab648a5982eb4c2a7a0e5b761a474f",
+    "merged_at": "2026-08-05T00:43:33Z",
+    "admin_bypass_used": false
+  },
+  "required_check_resolution": {
+    "required_context": "nasa-jpl-freshness",
+    "workflow_name": "Ephemeris release gate",
+    "app_id": 15368,
+    "strict_up_to_date_required": true,
+    "workflow_run_id": 30963841961,
+    "job_id": 92173406536,
+    "conclusion": "SUCCESS",
+    "configuration_changed": false,
+    "diagnosis": "The required context name and GitHub Actions app binding already matched the workflow that runs. The stale expected state was caused by the PR head being behind a newer main commit under strict branch protection.",
+    "resolution": "Merge the current main branch into the PR branch, push the updated head, and allow the required workflow to report on that exact head.",
+    "policy": "Do not bypass or weaken the required check. Update the PR head from main before rerunning checks when strict protection reports an expected check against an outdated merge base."
+  },
+  "checks": [
+    {
+      "name": "nasa-jpl-freshness",
+      "workflow": "Ephemeris release gate",
+      "conclusion": "SUCCESS",
+      "run_id": 30963841961,
+      "job_id": 92173406536
+    },
+    {
+      "name": "visual-smoke",
+      "workflow": "Visual smoke",
+      "conclusion": "SUCCESS",
+      "run_id": 30963841938,
+      "job_id": 92173406404
+    },
+    {
+      "name": "Vercel",
+      "conclusion": "SUCCESS"
+    }
+  ],
+  "deployment": {
+    "provider": "Vercel",
+    "deployment_id": "dpl_Cc7eZBaDB4qgWB7TtxxXncS4fhXW",
+    "deployment_url": "https://tldrastro-lwew4s88n-usrnmtkns-projects.vercel.app",
+    "target": "production",
+    "ready_state": "READY",
+    "git_ref": "main",
+    "git_commit": "2a4b3dffd8ab648a5982eb4c2a7a0e5b761a474f",
+    "aliases": [
+      "https://tldrastro.vercel.app",
+      "https://astrology-portal.vercel.app",
+      "https://tldrastro-usrnmtkns-projects.vercel.app",
+      "https://tldrastro-git-main-usrnmtkns-projects.vercel.app"
+    ],
+    "health": {
+      "ok": true,
+      "status": "ok",
+      "checked_at": "2026-08-05T00:51:40.724Z",
+      "ephemeris": true,
+      "content_generation": true,
+      "time_zone": "America/New_York"
+    }
+  },
+  "deployed_fallback_package": {
+    "package_version": "v3-2026-08-04g",
+    "content_hash": "91d393e81ef6d9cc2242dcc20dc28cb8",
+    "key_manifest_hash": "388652c251d27bfe839cb88410247812",
+    "key_count": 904,
+    "asset_url": "https://tldrastro.vercel.app/assets/fallback-content-sky-placement-C3E0X7Hz.js",
+    "asset_sha256": "365db9e601e7336f2b5716fc2b3f54efa2c8d513e2661acf209a9f15fbd57ec4"
+  },
+  "serving_verification": {
+    "method": "Downloaded the production Sky Placement fallback partition, imported its runtime payload, and compared each approved serving row with the exact bundled row at the merged commit. Runtime/deferred parity and the 19-key serving gate were then run against the same merged source.",
+    "production_partition_loaded": true,
+    "all_19_keys_present": true,
+    "all_19_payloads_exact": true,
+    "all_19_review_status_approved": true,
+    "all_19_render_policy_continuous_v2": true,
+    "runtime_parity_passed": true,
+    "deferred_runtime_parity_passed": true,
+    "serving_gate_passed": true,
+    "reader_route_note": "Only placements active in current ephemeris data can be rendered as live reader routes at one time. Production verification therefore combines the deployed payload comparison with the deterministic renderer and deferred-runtime contract tests; it does not force off-current signs through mismatched current transit dates."
+  },
+  "serving_keys": [
+    "fallback-hook/sky-sign-copy/mercury/aries",
+    "fallback-hook/sky-sign-copy/mercury/taurus",
+    "fallback-hook/sky-sign-copy/mercury/cancer",
+    "fallback-hook/sky-sign-copy/mercury/leo",
+    "fallback-hook/sky-sign-copy/mercury/libra",
+    "fallback-hook/sky-sign-copy/mercury/scorpio",
+    "fallback-hook/sky-sign-copy/mercury/sagittarius",
+    "fallback-hook/sky-sign-copy/mercury/capricorn",
+    "fallback-hook/sky-sign-copy/mercury/aquarius",
+    "fallback-hook/sky-sign-copy/mars/taurus",
+    "fallback-hook/sky-sign-copy/mars/gemini",
+    "fallback-hook/sky-sign-copy/mars/cancer",
+    "fallback-hook/sky-sign-copy/mars/leo",
+    "fallback-hook/sky-sign-copy/mars/virgo",
+    "fallback-hook/sky-sign-copy/mars/sagittarius",
+    "fallback-hook/sky-sign-copy/mars/aquarius",
+    "fallback-hook/sky-sign-copy/mars/pisces",
+    "fallback-hook/sky-sign-copy/neptune/aries",
+    "fallback-hook/sky-sign-copy/pluto/aquarius"
+  ],
+  "excluded_rows": [
+    {
+      "content_key": "fallback-hook/sky-sign-copy/chiron/aries",
+      "present_in_production_partition": false,
+      "reason": "runtimeEligible remains false pending separate serving review"
+    },
+    {
+      "content_key": "fallback-hook/sky-sign-copy/north-node/aquarius",
+      "present_in_production_partition": false,
+      "reason": "runtimeEligible remains false pending separate serving review"
+    },
+    {
+      "content_key": "fallback-hook/sky-sign-copy/south-node/leo",
+      "present_in_production_partition": false,
+      "reason": "runtimeEligible remains false pending separate serving review"
+    }
+  ],
+  "dashboard_sync_performed": false
+}
