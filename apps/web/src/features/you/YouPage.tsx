@@ -9,6 +9,7 @@ import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from ".
 import type { SkySnapshot } from "../../types";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
+import { generatedContentParagraphs, generatedContentSections, type LiveGeneratedContent } from "../../services/generatedContent";
 import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
 import {
   NatalAspectPatternActivationsSection,
@@ -81,6 +82,7 @@ export type YouTransitArticle = {
     label: string;
     value: string;
   }>;
+  generatedContent?: LiveGeneratedContent | null;
 };
 
 export type YouPageProps = {
@@ -787,23 +789,48 @@ function YouTransitArticlePage({
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [article.id]);
 
-  const summary = cleanArticleText(article.summary);
-  const introParagraphs = article.bodyBeforeSections
-    ? dedupeArticleParagraphs((article.body ?? [])
+  const generated = article.generatedContent?.status === "LIVE" ? article.generatedContent : null;
+  const generatedSections = generatedContentSections(generated);
+  const generatedParagraphs = generatedContentParagraphs(
+    generatedSections.length && generated ? { ...generated, sections: {} } : generated
+  );
+  const generatedHeadline = generated?.headline && isReaderFacingCopy(generated.headline)
+    ? cleanArticleHeading(generated.headline)
+    : "";
+  const generatedSummary = generated?.summary && isReaderFacingCopy(generated.summary)
+    ? cleanArticleText(generated.summary)
+    : "";
+  const displayArticle: YouTransitArticle = generated && (generatedParagraphs.length || generatedSections.length)
+    ? {
+        ...article,
+        title: generatedHeadline || article.title,
+        summary: generatedSummary,
+        bodyBeforeSections: generatedParagraphs.length > 0,
+        body: generatedParagraphs,
+        sections: generatedSections.map((section) => ({
+          heading: section.heading,
+          tldr: "",
+          body: section.body
+        }))
+      }
+    : article;
+  const summary = cleanArticleText(displayArticle.summary);
+  const introParagraphs = displayArticle.bodyBeforeSections
+    ? dedupeArticleParagraphs((displayArticle.body ?? [])
       .map((paragraph) => (typeof paragraph === "string" ? cleanArticleText(paragraph) : ""))
       .filter(Boolean))
     : [];
-  const summaryHeading = cleanArticleText(article.summaryHeading) || "Overview";
-  const rawSectionTldr = article.sections
+  const summaryHeading = cleanArticleText(displayArticle.summaryHeading) || "Overview";
+  const rawSectionTldr = displayArticle.sections
     .map((section) => cleanArticleText(section.tldr))
     .find((value) => value && value.toLowerCase() !== "tldr" && !contentSourceQaTag(value)) ?? "";
   const authoredBodyCopies = [
     summary,
     ...introParagraphs,
-    ...article.sections.flatMap((section) => articleParagraphs(section.body))
+    ...displayArticle.sections.flatMap((section) => articleParagraphs(section.body))
   ].map(normalizedArticleCopy).filter(Boolean);
   // TLDR is an authored slot. Never infer it from subtitle, summary, or body.
-  const articleTldrCandidate = cleanArticleText(article.tldr || rawSectionTldr);
+  const articleTldrCandidate = cleanArticleText(displayArticle.tldr || rawSectionTldr);
   const normalizedTldrCandidate = normalizedArticleCopy(articleTldrCandidate);
   const articleTldr = articleTldrCandidate && !authoredBodyCopies.some((body) => (
     body === normalizedTldrCandidate || body.startsWith(normalizedTldrCandidate)
@@ -819,7 +846,7 @@ function YouTransitArticlePage({
   const displaySummaryHeading = displaySummary
     ? dedupeArticleSectionHeadings([{ heading: summaryHeading }], article.title)[0].heading
     : "";
-  const rawSections = article.sections
+  const rawSections = displayArticle.sections
     .map((section) => {
       const tldr = cleanArticleText(section.tldr);
       const sourceTag = contentSourceQaTag(section.sourceTag) || contentSourceQaTag(section.tldr);
@@ -841,7 +868,7 @@ function YouTransitArticlePage({
     .filter((section) => section.tldr || section.bodyParagraphs.length);
   const sections = dedupeArticleSectionHeadings(
     rawSections,
-    [article.title, ...(displaySummaryHeading ? [displaySummaryHeading] : [])]
+    [displayArticle.title, ...(displaySummaryHeading ? [displaySummaryHeading] : [])]
   );
   const mainSections = sections.filter((section) => section.role !== "aspect");
   const aspectSections = sections.filter((section) => section.role === "aspect");
@@ -853,13 +880,14 @@ function YouTransitArticlePage({
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
   const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
-  const eyebrowLabel = articleEyebrowLabel(article.title, article.meta);
-  const eyebrowGlyphs = articleEyebrowGlyphs(article);
+  const passKeyDates = displayArticle.meta.filter((row) => /^Pass \d+$/u.test(row.label) && cleanArticleText(row.value));
+  const eyebrowLabel = articleEyebrowLabel(displayArticle.title, displayArticle.meta);
+  const eyebrowGlyphs = articleEyebrowGlyphs(displayArticle);
 
   return (
     <section
       className="article-page sky-detail-page you-transit-article-page"
-      aria-label={`${article.title} article`}
+      aria-label={`${displayArticle.title} article`}
       aria-labelledby="you-transit-article-title"
     >
       <button className="sky-detail-back floating-back-button" type="button" aria-label={backAriaLabel} onClick={onClose}>
@@ -882,7 +910,7 @@ function YouTransitArticlePage({
                 </>
               ) : null}
             </div>
-            <h1 className="article-title" id="you-transit-article-title">{article.title}</h1>
+            <h1 className="article-title" id="you-transit-article-title">{displayArticle.title}</h1>
             {articleTldr ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
@@ -896,19 +924,19 @@ function YouTransitArticlePage({
           {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
-              {article.lensHint ? (
+              {displayArticle.lensHint ? (
                 <aside className="article-lens-hint" aria-label="Placement lens">
-                  {typeof article.lensHint === "string" ? <p>{cleanArticleText(article.lensHint)}</p> : article.lensHint}
+                  {typeof displayArticle.lensHint === "string" ? <p>{cleanArticleText(displayArticle.lensHint)}</p> : displayArticle.lensHint}
                 </aside>
               ) : null}
               {displayIntroParagraphs.length ? (
-                <section className={`article-section sky-detail-section ${article.plainBody ? "sky-detail-plain-section" : "sky-detail-intro-section"}`}>
+                <section className={`article-section sky-detail-section ${displayArticle.plainBody ? "sky-detail-plain-section" : "sky-detail-intro-section"}`}>
                   {displayIntroParagraphs.map((paragraph, index) => (
                     <p key={`intro-${index}`}>{paragraph}</p>
                   ))}
                 </section>
               ) : null}
-              {displaySummary && !article.bodyBeforeSections ? (
+              {displaySummary && !displayArticle.bodyBeforeSections ? (
                 <section className="article-section sky-detail-section">
                   {displaySummaryHeading ? <h3>{displaySummaryHeading}</h3> : null}
                   <p>{displaySummary}</p>
@@ -928,11 +956,24 @@ function YouTransitArticlePage({
                 </section>
                 );
               })}
-              {article.relatedAspects?.rows.length ? (
-                <section className="article-related-aspects" aria-label={article.relatedAspects.heading}>
-                  <span className="eyebrow section-label article-related-aspects__label">{article.relatedAspects.heading}</span>
+              {passKeyDates.length ? (
+                <section className="article-section sky-detail-section sky-placement-key-dates" aria-label="Key dates">
+                  <h3>Key dates</h3>
+                  <dl>
+                    {passKeyDates.map((row) => (
+                      <div key={`${row.label}-${row.value}`}>
+                        <dt>{cleanArticleText(row.value)}</dt>
+                        <dd>{row.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              ) : null}
+              {displayArticle.relatedAspects?.rows.length ? (
+                <section className="article-related-aspects" aria-label={displayArticle.relatedAspects.heading}>
+                  <span className="eyebrow section-label article-related-aspects__label">{displayArticle.relatedAspects.heading}</span>
                   <div className="article-related-aspects__list aspect-row-list">
-                    {article.relatedAspects.rows.map((row, index) => (
+                    {displayArticle.relatedAspects.rows.map((row, index) => (
                       isRelatedAspectRow(row)
                         ? <Fragment key={row.key || `related-aspect-${index}`}>{row.node}</Fragment>
                         : <Fragment key={`related-aspect-${index}`}>{row}</Fragment>

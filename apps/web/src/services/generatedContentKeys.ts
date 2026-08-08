@@ -186,6 +186,7 @@ export function transitToNatalAspectInstanceContentKey(
     transitingSign?: string | null;
     natalSign?: string | null;
     natalHouse?: string | number | null;
+    pass?: number | null;
     targetDate?: string | null;
   } = {}
 ) {
@@ -194,6 +195,7 @@ export function transitToNatalAspectInstanceContentKey(
     options.transitingSign ? aspectPart(options.transitingSign) : "",
     options.natalSign ? aspectPart(options.natalSign) : "",
     options.natalHouse ? `house_${aspectPart(String(options.natalHouse))}` : "",
+    options.pass && options.pass > 0 ? `pass_${Math.trunc(options.pass)}` : "",
     options.targetDate ? slugContentPart(options.targetDate) : ""
   ].filter(Boolean);
 
