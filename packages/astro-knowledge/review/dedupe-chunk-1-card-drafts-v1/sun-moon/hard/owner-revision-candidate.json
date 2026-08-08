@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-moon-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "ee31044d043ce2f9aa9cfad7b8522a462350c0b0e338416faee01e59ace45033",
+  "payload": {
+    "body_you": "When you push ahead with what you want to build, {{holder2}} can feel that their need for reassurance or rest is getting in your way. They may go quiet and adjust around you, which leaves them tense and leaves you unsure why they are pulling back.",
+    "body_they": "When {{holder1}} pushes ahead with what they want to build, you can feel that your need for reassurance or rest is getting in their way. You may go quiet and adjust around them, which leaves you tense and leaves {{holder1}} unsure why you are pulling back.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "There is room for what you are building and for what {{holder2}} needs, without either of you becoming smaller so the other can feel secure.",
+      "There is room for what {{holder1}} is building and for what you need, without either of you becoming smaller so the other can feel secure."
+    ],
+    "warmthSourceDisposition": "set_null_and_labels_cleared",
+    "approvedAsDraftedRecorded": false,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "83bdad6fb304bf676993cb53f5fd3c55a49f7f99851ef66be72762c33cd61ff2",
+    "writerProviderResponseSha256": "8f31274516970d4295c50db5ff2165a8f917b9c9474789ac9fe86ccd76d17b5b"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/hard/exact-approval.json"
+}

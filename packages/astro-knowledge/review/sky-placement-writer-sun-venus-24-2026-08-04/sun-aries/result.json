@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "runId": "sun-aries",
+  "recordedAt": "2026-08-05T01:17:29.989Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "sun",
+    "sign": "aries"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:gemini-new-moon-2025:p004:window-2-3",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close",
+        "hook is long (74 words); the hook is the sendable line, not a paragraph",
+        "closer is long; end on a shorter line with bite"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "The Sun in Aries makes a clean decision feel like a return to life. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Aries on {{entryDate}}, and what was still taking shape becomes something we can act on. A stalled idea gets its first real attempt. A choice that has been waiting for approval gets made. We choose the version that feels alive instead of copying what already worked for someone else.",
+    "tension": "Action brings confidence quickly, which can make any pause feel like a loss of nerve. The first impulse sounds honest, so we treat it as complete. When the first result disappoints us, we push harder instead of checking the direction. Questions start to sound like resistance. Independence narrows into self-focus, and the energy that could have opened a path gets spent proving that the path we chose first must be the right one.",
+    "development": "The Sun last moved through Aries from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the same pressure returns whenever movement becomes the quickest way to feel certain. An idea gets launched because beginning feels alive. A challenge gets accepted because backing down feels worse. Self-trust gets confused with loyalty to the first answer. We keep pushing after the purpose has gone flat, and a brave beginning becomes an obligation to a choice that no longer gives anything back.",
+    "close": "Before {{exitDate}}, some of the strongest momentum may be carrying us toward a choice we no longer want simply because stopping would expose how quickly it was made.",
+    "try_this": [
+      "We can take a brisk walk before breakfast on three mornings this week without timing the route.",
+      "We can make one small creative piece in a style we have never tried and show it to someone before the week ends."
+    ]
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/lilith",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+    "required": false
+  },
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "9 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "4 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "62 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": true,
+      "details": "1 detected instruction(s); final sentence: Complete the sentence “What I want is…” without adding a justification."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": true,
+      "details": "No prohibited match."
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": true,
+      "details": {
+        "saturationCue": true,
+        "target": "lilith"
+      }
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "passed": true,
+      "details": "Body uses a non-fixed opener."
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "passed": true,
+      "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "passed": true,
+      "details": "No time-anchor phrase used."
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "passed": false,
+      "details": [
+        "may spend a few hours repeatedly noticing what you’d choose"
+      ]
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "passed": true,
+      "details": {
+        "originalConjunctionGrammar": true,
+        "otherGrammar": false,
+        "softGrammar": false,
+        "squareGrammar": false
+      }
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    }
+  ],
+  "findings": [],
+  "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 62,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 2
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-pluto-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/pluto/conjunction",
+  "payloadSha256": "f31949ac4fdf3d9c2ed495325ea6a92fbbbd990526b9a0eae772285f5f2d39ac",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}}'s interest in {{holder1}} is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access.",
+    "body_they": "{{holder2}}'s interest in {{holder1}} is intense and impossible to mistake. That attention can feel intoxicating until closeness starts coming with rules about privacy, distance, or who else gets access.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

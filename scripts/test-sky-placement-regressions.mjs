@@ -54,11 +54,19 @@ const renderer = createTransitSynastryRenderer(
     vocabularyRows: [...fallbackSourceRows.vocabularyRows, ...skyArticleV1.vocabularyRows]
   }
 );
-const sunLeo = renderer.renderSkyPlacement({
+const sunLeoFacts = {
   planet: "sun",
   sign: "leo",
-  entryDate: "July 22",
-  exitDate: "August 23",
+  entryDate: "July 22, 2026",
+  exitDate: "August 23, 2026",
+  priorSign: "cancer",
+  priorSignEntryDate: "June 21, 2026",
+  priorSignExitDate: "July 22, 2026",
+  previousResidencyEntryDate: "July 22, 2025",
+  previousResidencyExitDate: "August 22, 2025"
+};
+const sunLeo = renderer.renderSkyPlacement({
+  ...sunLeoFacts,
   events: [{
     type: "aspect",
     a: "sun",
@@ -71,10 +79,7 @@ const sunLeo = renderer.renderSkyPlacement({
   }]
 });
 const sunLeoReference = renderSkyPlacementReference({
-  planet: "sun",
-  sign: "leo",
-  entryDate: "July 22",
-  exitDate: "August 23",
+  ...sunLeoFacts,
   events: [{
     type: "aspect",
     a: "sun",
@@ -87,10 +92,7 @@ const sunLeoReference = renderSkyPlacementReference({
   }]
 });
 const sunLeoMoonOpposition = renderer.renderSkyPlacement({
-  planet: "sun",
-  sign: "leo",
-  entryDate: "July 22",
-  exitDate: "August 23",
+  ...sunLeoFacts,
   events: [{
     type: "aspect",
     a: "sun",
@@ -100,6 +102,64 @@ const sunLeoMoonOpposition = renderer.renderSkyPlacement({
     aspect: "opposition",
     exactDate: "July 29",
     applying: true
+  }]
+});
+const moonTaurusFacts = {
+  planet: "moon",
+  sign: "taurus",
+  entryDate: "August 4, 2026",
+  exitDate: "August 7, 2026"
+};
+const moonTaurus = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: []
+});
+const moonTaurusSquareJupiter = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "square",
+    exactDate: "August 6, 2026"
+  }]
+});
+const moonTaurusUndatedSquare = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "square",
+    dateLine: "This week"
+  }]
+});
+const moonTaurusWrongSignSquare = renderer.renderSkyPlacement({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "virgo",
+    aspect: "square",
+    exactDate: "August 6, 2026"
+  }]
+});
+const moonTaurusReference = renderSkyPlacementReference({
+  ...moonTaurusFacts,
+  events: [{
+    type: "aspect",
+    a: "moon",
+    aSign: "taurus",
+    b: "jupiter",
+    bSign: "leo",
+    aspect: "square",
+    exactDate: "August 6, 2026"
   }]
 });
 const lilithAries = renderer.renderSkyPlacement({
@@ -361,14 +421,13 @@ assert.ok(
 );
 assert.match(
   sunLeo.body,
-  /^July 22 to August 23\n\nThe Sun moves into Leo on July 22,/u,
-  "Package Sun-in-Leo copy must lead with the engine-filled fact line and lived opening."
+  /^July 22 to August 23, 2026\n\nAfter moving through Cancer from June 21 to July 22, the Sun enters Leo on July 22,/u,
+  "Package Sun-in-Leo copy must lead with the engine-filled fact line and exact owner-approved opening."
 );
-assert.match(sunLeo.body, /A birthday, launch, or personal win becomes harder to treat like an ordinary day\./u);
-assert.match(sunLeo.body, /Not every project needs an audience, but the work you want recognized has to leave your desk eventually\./u);
-assert.match(sunLeo.body, /The encouraging response may be real\. It still does not mean the budget, deadline, or workload can stretch forever\./u);
-assert.match(sunLeo.body, /Take the good response seriously, then check the calendar, the cost, and who is doing the work\./u);
-assert.match(sunLeo.body, /Before August 23, choose one piece of work, decision, or role you are ready to stand behind\. Share the part that is ready now\. People can see what you made before every detail is perfect\./u);
+assert.match(sunLeo.body, /the work reaches the audience it was made for\./u);
+assert.match(sunLeo.body, /We are making it easier to approve\./u);
+assert.doesNotMatch(sunLeo.body, /last moved through/u, "Annual Sun ingress carries no look-back (owner rule 2026-08-05).");
+assert.match(sunLeo.body, /What we name during Leo season is what Virgo season will ask us to build\./u);
 assert.doesNotMatch(
   sunLeo.body,
   /Somewhere along the way|rescheduling a decision|version of yourself|The useful version|The distortion|Wishing you|Leo is the fifth sign|The Leo trap/iu,
@@ -376,13 +435,13 @@ assert.doesNotMatch(
 );
 assert.match(
   sunLeo.body,
-  /The problem begins when attention becomes the only proof that the work matters\./u,
+  /The problem begins when the response starts deciding what we make next\./u,
   "Sun-in-Leo must keep the owner-approved central tension."
 );
-assert.match(
+assert.doesNotMatch(
   sunLeo.body,
   /On July 29, the Sun meets Jupiter in Leo\./u,
-  "Sun-in-Leo must render the owner-approved aspect opportunity with the engine date."
+  "The exact owner-approved Sun-in-Leo fallback must not inherit the superseded aspect insert."
 );
 assert.doesNotMatch(
   sunLeoMoonOpposition.body,
@@ -394,23 +453,77 @@ assert.doesNotMatch(
   /\b(?:conjunction|square|trine|sextile|opposition|applying|separating|orb)\b/iu,
   "Sky placement bodies must not expose aspect jargon."
 );
-assert.throws(
-  () => renderer.renderSkyPlacement({
-    planet: "sun",
-    sign: "aries",
-    entryDate: "March 20",
-    exitDate: "April 20"
-  }),
-  /SOURCE_GAP: continuous sky placement sign copy sun\/aries/u,
-  "Superseded Sun-in-Aries modules must stay dark until its replacement is approved."
+assert.equal(moonTaurus.templateKey, "sky-placement-moon-entry-v1");
+assert.equal(moonTaurus.contentKey, "fallback-hook/sky-placement-hook/moon/taurus");
+assert.equal(moonTaurus.tagline, null, "Moon sign entries must not render the retired tagline row.");
+assert.match(
+  moonTaurus.body,
+  /^The Moon moves into Taurus on August 4, and the collective pace slows\./u,
+  "Moon in Taurus must fill its entry date from the engine-owned slot."
 );
+assert.match(moonTaurus.body, /By August 7, the mood has moved on\.$/u);
+assert.doesNotMatch(
+  moonTaurus.body,
+  /squares Jupiter|August 6/u,
+  "The optional aspect paragraph must stay absent without a matching engine fact."
+);
+assert.match(
+  moonTaurusSquareJupiter.body,
+  /The Moon in Taurus squares Jupiter in Leo on August 6\./u,
+  "A matching exact engine aspect must activate the owner-approved insert."
+);
+assert.ok(
+  moonTaurusSquareJupiter.parts.indexOf("The Moon in Taurus squares Jupiter in Leo on August 6. Feelings run bigger, and one small need can quickly become a large promise, purchase, or plan. It may feel good to say yes in the moment and exhausting to carry all of it later. Choose one priority before agreeing to five.")
+    > moonTaurusSquareJupiter.parts.indexOf("This can help us stop reacting to every update and return to what is already working. It can also make us hold on after the routine has stopped helping. A plan stays in place because changing it feels inconvenient. A decision gets delayed because the familiar answer feels easier than the honest one. Patience supports a better choice. Refusing to adjust keeps the same problem going."),
+  "The aspect insert must follow the ordinary-reaction and distortion paragraphs."
+);
+assert.doesNotMatch(moonTaurusUndatedSquare.body, /squares Jupiter|This week/u);
+assert.doesNotMatch(moonTaurusWrongSignSquare.body, /squares Jupiter|August 6/u);
+assert.deepEqual(moonTaurus.moves, [
+  "Eat one meal without working or scrolling.",
+  "Finish one task before opening another.",
+  "Fix one small source of discomfort in the room you use most."
+]);
+assert.deepEqual(
+  {
+    articleSections: moonTaurusSquareJupiter.articleSections,
+    body: moonTaurusSquareJupiter.body,
+    contentKey: moonTaurusSquareJupiter.contentKey,
+    moves: moonTaurusSquareJupiter.moves,
+    parts: moonTaurusSquareJupiter.parts,
+    templateKey: moonTaurusSquareJupiter.templateKey
+  },
+  {
+    articleSections: moonTaurusReference.articleSections,
+    body: moonTaurusReference.body,
+    contentKey: moonTaurusReference.contentKey,
+    moves: moonTaurusReference.moves,
+    parts: moonTaurusReference.parts,
+    templateKey: moonTaurusReference.templateKey
+  },
+  "Browser and Node Moon sign-entry assembly must remain byte-identical."
+);
+const sunAries = renderer.renderSkyPlacement({
+  planet: "sun",
+  sign: "aries",
+  entryDate: "March 20, 2027",
+  exitDate: "April 20, 2027",
+  priorSign: "pisces",
+  priorSignEntryDate: "February 18, 2027",
+  priorSignExitDate: "March 20, 2027",
+  previousResidencyEntryDate: "March 20, 2026",
+  previousResidencyExitDate: "April 20, 2026",
+  events: []
+});
+assert.equal(sunAries.contentKey, "fallback-hook/sky-sign-copy/sun/aries");
+assert.match(sunAries.body, /The Sun in Aries makes a clean decision feel like a return to life\./u);
 assert.equal(sunLeo.tagline, null, "The continuous unit must not append the retired quote-style tagline.");
 assert.deepEqual(
   sunLeo.moves,
   [
-    "Put one piece of work you are proud of where other people can see it.",
-    "Give someone else clear credit for what they contributed.",
-    "Ask directly for the support, recognition, or opportunity you need."
+    "We can finish one small project this week and put our name on it.",
+    "We can thank someone in front of others for a specific contribution without turning the praise back toward ourselves.",
+    "We can choose one visible detail on something we are making without asking anyone else to approve it."
   ],
   "Sun-in-Leo must expose the owner's optional Try this list verbatim."
 );
@@ -515,7 +628,7 @@ assert.deepEqual(
   "Browser and Node continuous Sun fallback assembly must remain byte-identical."
 );
 
-assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 18);
+assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 56);
 const ownerFallbackDateFacts = {
   entryDate: "August 24, 2028",
   exitDate: "September 24, 2029",

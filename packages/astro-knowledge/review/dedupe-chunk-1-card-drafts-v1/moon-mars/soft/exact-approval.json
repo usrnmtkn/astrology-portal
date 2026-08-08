@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-mars-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/mars/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "c2166c39c0653f3ecbff45e449f655306d4df9bb4a2159c3f62465a8a55b4051",
+  "payload": {
+    "body_you": "{{holder2}} can move quickly or speak directly without making you pull back. Your emotional reactions help shape what {{holder2}} does next, while your moods do not make them stop to calm you down. Neither of you has to spend much effort managing the other's pace or response.",
+    "body_they": "You can move quickly or speak directly without making {{holder1}} pull back. Their emotional reactions help shape what you do next, while their moods do not make you stop to calm them down. Neither of you has to spend much effort managing the other's pace or response.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

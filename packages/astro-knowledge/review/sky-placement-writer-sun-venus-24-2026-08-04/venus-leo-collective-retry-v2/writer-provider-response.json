@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_02c21ebf72e65cf0006a729c36ef9481a289d85aac8ff33389",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8212,
+    "input_tokens_details": {
+      "cache_write_tokens": 8209,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2973,
+    "output_tokens_details": {
+      "reasoning_tokens": 2588
+    },
+    "total_tokens": 11185
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Leo on {{entryDate}}, and affection becomes easier to see. The compliment gets specific. The invitation feels like an occasion. We dress with more nerve, choose gifts with a flourish, and want love to arrive with enough warmth that its meaning is unmistakable. Venus in Leo draws us toward what feels proud, creative, generous, and fully alive.\",\"tension\":\"Visible appreciation gives affection a form. Soon, only the biggest response feels convincing. We give more than was asked, spend more than planned, or turn a simple celebration into a test of how much someone cares. If the reaction is smaller than expected, generosity hardens into scorekeeping. A quiet kindness can disappear beside a grand gesture, and admiration starts carrying more weight than the relationship itself.\",\"development\":\"Venus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and old questions about attention, taste, and worth can return in a different setting. This time, the pressure may show up in several places at once. A beautiful purchase can feel satisfying until the bill remains after the pleasure fades. A creative offering can feel free until a muted response makes the effort seem worthless. In love, steady care may be overlooked because it does not arrive with ceremony. We start choosing what reflects admiration back to us and miss what has been real without being loud.\",\"close\":\"By {{exitDate}}, Venus in Leo can leave real affection sitting in plain sight while the search for a bigger reaction continues.\",\"try_this\":[\"We can name one quiet act of care that mattered and thank the person who did it.\",\"We can set a spending limit before buying a gift, then choose the most personal option under that amount.\"]}"
+}

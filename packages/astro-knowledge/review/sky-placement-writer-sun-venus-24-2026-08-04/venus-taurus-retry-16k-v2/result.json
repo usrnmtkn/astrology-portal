@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "runId": "venus-taurus-retry-16k-v2",
+  "recordedAt": "2026-08-05T02:13:02.212Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "venus",
+    "sign": "taurus"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:venus-in-cancer:p009:window-3-4",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:gemini-new-moon-2025:p004:window-2-3"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found",
+    "writerRunOverrides": {
+      "maxOutputTokens": 16000
+    }
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Taurus on {{entryDate}}, and a spark matters less if it cannot be trusted to last. We notice what holds up. A promise is kept without a reminder. Money goes toward the thing that will be used often rather than the thing that creates a brief rush. Affection feels real when care shows up again tomorrow.",
+    "tension": "Consistency feels safe, but repetition can hide the point when something no longer feels good. We keep paying for a comfort we barely notice because it is part of the routine. We keep a connection in the same shape because the familiar pattern feels safer than finding out what has changed. When affection arrives differently, we ask for the same reassurance again and read any difference as withdrawal. More money goes toward restoring the old feeling, and more care comes with an expectation that was never said aloud.",
+    "development": "Venus last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Familiarity cannot tell us whether something still holds value. A costly comfort bought for a quick lift leaves the expense behind after the pleasure fades. Soon, an ordinary change in affection feels like a test of loyalty. We notice who returned each favor and who did not. The body is comfortable, but desire has gone quiet.",
+    "close": "By {{exitDate}}, what looked like stability may be a routine that costs money, trust, and desire to preserve.",
+    "try_this": [
+      "We can total the last four comfort purchases and mark the one that was actually worth the money.",
+      "We can clean one worn pair of shoes and put it back into regular use.",
+      "We can keep one small promise exactly as made, especially one that makes daily life easier for someone close."
+    ]
+  }
+}

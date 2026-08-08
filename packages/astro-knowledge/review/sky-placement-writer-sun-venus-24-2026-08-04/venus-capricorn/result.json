@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "runId": "venus-capricorn",
+  "recordedAt": "2026-08-05T01:49:24.418Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "venus",
+    "sign": "capricorn"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:venus-in-cancer:p009:window-3-4",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:gemini-new-moon-2025:p004:window-2-3"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "Venus enters Capricorn on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and consistency begins to matter more than first impressions. Plans get confirmed. Money goes toward what will last. Interest grows when someone handles an errand, returns a call, or keeps a promise after the first excitement passes. What feels worth choosing now has a future attached to it.",
+    "tension": "The need for reliability can become a test we never admit is underway. We notice who pays, who calls back, and who makes time, then start keeping a private account of every uneven exchange. Affection is held back until enough proof arrives. A shared plan starts to feel like security, so a change of mind reads as a broken promise. Control may keep disappointment at a distance, but it also makes connection feel conditional.",
+    "development": "Venus last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same questions about what deserves time, money, and loyalty return in a new form. A wanted purchase gets dismissed because pleasure alone does not feel like enough reason. A dependable connection can carry more expectation than we have said aloud. We may stay with an arrangement because time has already been invested, and call that commitment. When every act of care creates an obligation, support becomes another form of debt.",
+    "close": "By {{exitDate}}, some promises will still be kept, but the connection around them may feel more like an obligation than a choice.",
+    "try_this": [
+      "We can wear one thing chosen for beauty rather than usefulness.",
+      "We can thank someone for one repeated act that has made care feel reliable.",
+      "We can cancel one recurring charge that no longer brings enough use or pleasure to justify its cost."
+    ]
+  }
+}

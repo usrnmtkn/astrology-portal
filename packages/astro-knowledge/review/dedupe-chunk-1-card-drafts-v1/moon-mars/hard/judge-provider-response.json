@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_036c85eeb4f942a9006a729cf4b908819ea2bed4c344a02e0c",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 837,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 312,
+    "output_tokens_details": {
+      "reasoning_tokens": 157
+    },
+    "total_tokens": 1149
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the required direction: {{holder1}}'s feelings trigger {{holder2}}'s defensiveness or impatience, and the response then hurts or intensifies the Moon holder's reaction. The draft also preserves parallel meaning and a clear escalation loop in \\\"They may answer sharply or push harder, which hurts you and intensifies your reaction.\\\" However, nearly all of the language and progression closely paraphrase the approved human-moment input, especially the defensiveness-before-the-sentence-ends and tiny-misstep-escalation beats. It is accurate and compliant, but it does not add enough distinctive editorial shaping beyond the supplied material for a 3.\"}"
+}

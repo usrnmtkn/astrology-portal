@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "runId": "sun-pisces",
+  "recordedAt": "2026-08-05T01:32:24.756Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "sun",
+    "sign": "pisces"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:pisces-season-2025:p043:window-2-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:full-moon-in-taurus:p027:window-4-2"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 7 sentences; spec says 2-4",
+        "turn is 7 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "The Sun in Pisces makes the feeling underneath a choice harder to ignore. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Pisces on {{entryDate}}, and attention moves toward what cannot be measured. A song stays with us all morning. An idea arrives before the reasons for it do. We notice strain in a familiar voice and change course before anyone asks.",
+    "tension": "The Sun in Pisces can recognize meaning before it can explain it. That helps us follow a creative impulse or respond with compassion when a need has not been said aloud. It also makes every impression feel important and every need feel like ours to carry. A small request takes the time we meant to keep. Someone is disappointed, so we soften a clear no into an open-ended maybe. A difficult feeling rises, so we scroll, daydream, or get busy helping until it passes. By evening, we have tended to every signal except the one that says we are tired.",
+    "development": "The Sun last moved through Pisces from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the pressure builds each time sensitivity replaces a clear choice. We sense that something is off, but do not name what we want. We imagine a better version of the day, then leave the actual one half-lived. We take in another mood, another request, and another unfinished concern. The creative impulse that felt vivid in the morning is hard to find by night. Pisces keeps the edges open, while the Sun needs enough shape to recognize a life as its own.",
+    "close": "Before {{exitDate}}, the request, mood, or distraction that reaches us first can keep deciding where the day goes.",
+    "try_this": [
+      "We can make one small thing from the image or idea that keeps returning and finish it in a single sitting.",
+      "We can say no to one request that would take time already reserved for sleep, a meal, or quiet.",
+      "We can take a ten-minute walk with no audio when scrolling has stopped being interesting but keeps going."
+    ]
+  }
+}

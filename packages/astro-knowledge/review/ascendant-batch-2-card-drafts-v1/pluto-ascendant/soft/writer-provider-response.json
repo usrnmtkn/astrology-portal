@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_067fa773097f2c9f006a7282ac07d481a08ae5ad6967176086",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 940,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1735,
+    "output_tokens_details": {
+      "reasoning_tokens": 1552
+    },
+    "total_tokens": 2675
+  },
+  "output_text": "{\"body_you\":\"You pay close attention to how {{holder2}} presents themselves and enters situations. Because your interest feels natural to them, they show you more of themselves, and their openness makes you want to understand them more deeply. Your focus can feel controlling if you press for more than {{holder2}} has chosen to share. Still, {{holder2}} can be more open around you without immediately feeling exposed.\",\"body_they\":\"{{holder1}} pays close attention to how you present yourself and enter situations. Because their interest feels natural to you, you show them more of yourself, and your openness makes {{holder1}} want to understand you more deeply. Their focus can feel controlling if they press for more than you have chosen to share. Still, you can be more open around {{holder1}} without immediately feeling exposed.\",\"warmthSource\":null,\"labels\":[]}"
+}

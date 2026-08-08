@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-moon-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/moon/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "711727f56af0f5654c9e3037534775547ae9df484cbd3c64bcb79e176abaebdb",
+  "payload": {
+    "body_you": "Your way of being puts {{holder2}} at ease, and they show you what they feel without much explanation. You respond naturally to their feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around you, {{holder2}} does not need to prove they are worthy.",
+    "body_they": "{{holder1}}'s way of being puts you at ease, and you show them what you feel without much explanation. They respond naturally to your feelings, so closeness builds quickly. Because the fit feels easy, you can both become passive and stop showing care. Around {{holder1}}, you do not need to prove you are worthy.",
+    "warmthSource": {
+      "sourceArticleId": "sagittarius-full-moon-2025",
+      "originalLine": "You don’t need to prove you’re worthy.",
+      "usedForm": {
+        "body_you": "Around you, {{holder2}} does not need to prove they are worthy.",
+        "body_they": "Around {{holder1}}, you do not need to prove you are worthy."
+      }
+    },
+    "labels": [
+      "owner-corpus-derived"
+    ]
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

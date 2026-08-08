@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "key": "square/chiron",
+  "editorialStatus": "superseded_miskeyed_record",
+  "recordStatus": "SUPERSEDED",
+  "authorityClass": "exact_owner_approved",
+  "approvalScope": "daily-glance-opposition-chiron-exact-wording-miskeyed-as-square-chiron",
+  "approvalDate": "2026-08-05",
+  "ownerStatement": "this is an owner-approved replacement",
+  "authority": "packages/astro-knowledge/review/daily-glance-batch-2-square-chiron-approval-2026-08-05.md",
+  "supersededBy": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md",
+  "supersessionReason": "Owner-confirmed key correction: this wording belongs to opposition/chiron, not square/chiron.",
+  "correctKey": "opposition/chiron",
+  "mustNotLandAs": "square/chiron",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "supersedesCandidateResponseId": "resp_0fc1b5c83e48fbc1006a72aade400c81a29b60a117697a7b05",
+  "immutableProviderArtifact": "packages/astro-knowledge/review/daily-glance-batch-2/square-chiron.provider.json",
+  "headline": "You can leave a need unsaid and still expect them to understand.",
+  "body": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan.",
+  "sha256": {
+    "headline": "96e74ecf83208a10e0364e38524192c3cc4d1bae8f74bcb6e9e1f5a28686522f",
+    "body": "737e0be306590447e56387b58fc912e29b0bb4e17d05269e9773802a2325e7a4",
+    "combined": "c3de286cef171e77c4949d585ee2392b61c1a02c385f6eada2de1fbb943629de"
+  },
+  "deterministicLint": {
+    "passed": false,
+    "hardFailures": [
+      "B1-L3+L4-headline-group-grammar"
+    ],
+    "outputBanFindings": [],
+    "dgR16Passed": true,
+    "dgR17Passed": true,
+    "ownSpecificityPassed": true,
+    "siblingSwapAdvisoryPassed": false,
+    "swappableTo": [
+      "opposition/chiron"
+    ]
+  },
+  "productionContentChanged": false
+}

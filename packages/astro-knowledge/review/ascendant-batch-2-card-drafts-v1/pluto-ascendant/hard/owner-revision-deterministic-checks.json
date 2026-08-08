@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "sourceProviderResponsePreserved": true,
+  "exactlyMatchesOriginalDraft": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "status": "pass",
+    "body_you": 3,
+    "body_they": 3
+  },
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "asciiPunctuation": "pass",
+  "emOrEnDash": "pass",
+  "exclusions": "pass",
+  "stockCloser": "pass",
+  "warmthSource": "none_found_null_unchanged",
+  "warmthSourcePassed": true,
+  "evidenceLabels": [],
+  "ownerDecisionOperation": "approve_as_drafted",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "893bb3b215f8859a08283211f81e280193097411fbb07a2ed6749a2464973cda",
+  "ownerExactApproval": "pass",
+  "ownerApprovedPayloadSha256": "893bb3b215f8859a08283211f81e280193097411fbb07a2ed6749a2464973cda",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/hard/exact-approval.json"
+}

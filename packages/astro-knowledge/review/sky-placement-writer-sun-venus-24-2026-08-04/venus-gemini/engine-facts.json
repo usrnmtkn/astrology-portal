@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "gemini",
+  "timeZone": "America/New_York",
+  "transitStart": "June 8, 2027",
+  "transitEnd": "July 2, 2027",
+  "transitStartIso": "2027-06-08T12:32:32.999Z",
+  "transitEndIso": "2027-07-03T02:01:31.999Z",
+  "priorSign": "taurus",
+  "priorSignEntryDate": "May 14, 2027",
+  "priorSignExitDate": "June 8, 2027",
+  "previousResidency": {
+    "sign": "gemini",
+    "entryDate": "April 24, 2026",
+    "exitDate": "May 18, 2026",
+    "entryDateIso": "2026-04-24T04:03:25.999Z",
+    "exitDateIso": "2026-05-19T01:05:17.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-trine-pluto-2027-06-14t04:03:15.999z",
+      "body": "venus-trine-pluto",
+      "bodies": [
+        "venus",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "trine",
+      "date": "June 14, 2027",
+      "dateIso": "2027-06-14T04:03:15.999Z",
+      "rank": 1,
+      "meaning": "Love and value meet intensity. All-or-nothing attraction, deep desire, and a strong pull toward control in relationships. The trine makes this a natural strength: Depth and devotion in love, used deliberately. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-trine-pluto.json"
+    },
+    {
+      "id": "aspect-venus-sextile-neptune-2027-06-13t19:57:07.999z",
+      "body": "venus-sextile-neptune",
+      "bodies": [
+        "venus",
+        "neptune"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "sextile",
+      "date": "June 13, 2027",
+      "dateIso": "2027-06-13T19:57:07.999Z",
+      "rank": 2,
+      "meaning": "Love and value meet imagination. Heightened artistic sensibility and romantic idealism. The sextile makes this a natural strength: Refined aesthetic and tender, imaginative affection. The growth edge is not to coast on the ease.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-sextile-neptune.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-trine-pluto.json",
+      "packages/astro-knowledge/data/transits/venus-sextile-neptune.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

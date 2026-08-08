@@ -27,7 +27,7 @@ The underlying warmth-harvest flag remains:
 }
 ```
 
-This is a packet-metadata correction only. `generationAllowed: false` remains the controlling fail-closed gate, and `failedHarvest()` keeps its current internal mode value to avoid widening the downstream schema change.
+This is a packet-metadata correction only. `generationAllowed: false` remains the controlling fail-closed gate. `failedHarvest()` records `harvest_mode: null`; `matched`, `vocabulary_only`, and `none_found` are reserved for harvests that actually ran.
 
 ## Re-derived full-card counts
 
@@ -52,6 +52,7 @@ The previously reported `117 matched / 108 none_found` split sums to 225 and doe
 ## Required regression assertions
 
 - A blocked writing packet never reports `insertWarmthBeat: true`.
+- Its nested `warmthHarvest.harvest_mode` is `null`.
 - Its packet-level `scaleRule.harvest_mode` is `null`.
 - Ready full-card mode counts are exactly `{ matched: 198, none_found: 0 }`.
 - Ready full-card mode counts sum to 198.

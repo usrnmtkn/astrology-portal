@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "runId": "sun-cancer",
+  "recordedAt": "2026-08-05T01:21:49.782Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "sun",
+    "sign": "cancer"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:cancer-new-moon-2025:p015:window-1-2",
+      "owner-article:full-moon-in-taurus:p027:window-4-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-active:TLDR-Article-Edition-Uranus-Direct-Taurus-2025-OWNER:e008"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "hook is 5 sentences; spec says 2-4",
+        "lived is 6 sentences; spec says 2-4",
+        "turn is 6 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Cancer on {{entryDate}}, and what matters starts to feel personal. We notice who sounds tired. We remember the date that carries weight. A familiar place gets more comfortable before anyone asks. Under the Sun in Cancer, protecting what feels tender can give the day a clear center.",
+    "tension": "The cost appears when care becomes the safest way to hide a need. We track everyone else's moods, keep things comfortable, and say nothing about what would help us. Then an ordinary change can feel like rejection. We defend an old arrangement because it once kept someone safe. We hold close to a role that no longer fits because being needed has become part of who we are. The support is real, but resentment builds when nobody notices what was never said.",
+    "development": "The Sun last moved through Cancer from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. A memory from that passage may feel immediate again, even if the present situation is different. The pattern repeats in the way concern becomes extra caretaking, a need becomes silence, and silence becomes proof that nobody understands. We may take a change of tone personally, retreat before asking what happened, or keep doing what has always been done because altering it feels disloyal. A feeling contains information, but we may treat it as proof before anything has been confirmed. At home or with someone close, we start working around a possible upset while the need underneath remains untouched.",
+    "close": "Before {{exitDate}}, an unspoken need can harden into resentment toward someone who never knew it was there.",
+    "try_this": [
+      "We can name one need at home before saying yes to another request.",
+      "We can ask what support is actually wanted before taking over a family task."
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-neptune-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/neptune/conjunction",
+  "payloadSha256": "84294cf8d883d7bd28b2b6c7d4c7fe854b822e2dae30c6e3537c7e7982a2a7b2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} sees something luminous in you, and you may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn you into the lead character of a story {{holder2}} started writing before learning all the facts.",
+    "body_they": "You see something luminous in {{holder1}}, and {{holder1}} may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn {{holder1}} into the lead character of a story you started writing before learning all the facts.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

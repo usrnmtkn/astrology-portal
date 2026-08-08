@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "taurus",
+  "timeZone": "America/New_York",
+  "transitStart": "May 14, 2027",
+  "transitEnd": "June 8, 2027",
+  "transitStartIso": "2027-05-14T21:01:30.999Z",
+  "transitEndIso": "2027-06-08T12:32:32.999Z",
+  "priorSign": "aries",
+  "priorSignEntryDate": "April 19, 2027",
+  "priorSignExitDate": "May 14, 2027",
+  "previousResidency": {
+    "sign": "taurus",
+    "entryDate": "March 30, 2026",
+    "exitDate": "April 24, 2026",
+    "entryDateIso": "2026-03-30T16:00:52.999Z",
+    "exitDateIso": "2026-04-24T04:03:25.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-square-pluto-2027-05-20t18:02:53.999z",
+      "body": "venus-square-pluto",
+      "bodies": [
+        "venus",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "May 20, 2027",
+      "dateIso": "2027-05-20T18:02:53.999Z",
+      "rank": 1,
+      "meaning": "Love and value meet intensity. All-or-nothing attraction, deep desire, and a strong pull toward control in relationships. Psychologically the square is inner tension to integrate: Power struggles, jealousy, and treating happiness as a kind of vulnerability to be guarded against. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-pluto.json"
+    },
+    {
+      "id": "aspect-venus-square-jupiter-2027-05-31t14:46:40.999z",
+      "body": "venus-square-jupiter",
+      "bodies": [
+        "venus",
+        "jupiter"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "May 31, 2027",
+      "dateIso": "2027-05-31T14:46:40.999Z",
+      "rank": 2,
+      "meaning": "Pleasure meets expansion. Gentleness, generosity, sensitivity, and a great deal of ease. Psychologically the square is inner tension to integrate: Play-before-work and indulgence undercut accomplishment. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-jupiter.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-square-pluto.json",
+      "packages/astro-knowledge/data/transits/venus-square-jupiter.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

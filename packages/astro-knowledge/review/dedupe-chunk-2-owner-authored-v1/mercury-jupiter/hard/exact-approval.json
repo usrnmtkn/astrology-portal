@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-jupiter-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "69e1f2ec5baa550fd95c3c735045fd1d517a860cb9feb286d169077a0ec4a1c5",
+  "payload": {
+    "body_you": "{{holder2}} tends to enlarge the conversation, while {{holder1}} is trying to keep the point precise. {{holder1}} may offer one fact or concern, and {{holder2}} responds with a larger theory, a bigger plan, or a reason the detail should not matter so much. {{holder1}} can leave these conversations feeling talked past. {{holder2}} may feel that {{holder1}} is focusing on limitations. More gets discussed, but the point {{holder1}} was trying to make becomes harder to find.",
+    "body_they": "{{holder2}} tends to enlarge the conversation, while {{holder1}} is trying to keep the point precise. {{holder1}} may offer one fact or concern, and {{holder2}} responds with a larger theory, a bigger plan, or a reason the detail should not matter so much. {{holder1}} can leave these conversations feeling talked past. {{holder2}} may feel that {{holder1}} is focusing on limitations. More gets discussed, but the point {{holder1}} was trying to make becomes harder to find.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-jupiter/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

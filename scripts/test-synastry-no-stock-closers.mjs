@@ -15,9 +15,47 @@ const manifestPath = path.join(
 );
 const synastryPrefix = "fallback-hook/synastry-pair/";
 const batchExactKeys = new Set(
-  ["sun", "moon", "mercury", "venus", "saturn"].flatMap((planet) =>
+  [
+    ...["sun", "moon", "mercury", "venus", "saturn", "neptune", "pluto"].map(
+      (planet) => [planet, "ascendant"],
+    ),
+    ["sun", "moon"],
+    ["sun", "sun"],
+    ["sun", "mercury"],
+    ["sun", "venus"],
+    ["sun", "mars"],
+    ["moon", "moon"],
+    ["moon", "mercury"],
+    ["moon", "venus"],
+    ["moon", "mars"],
+    ["mercury", "venus"],
+    ["mercury", "mercury"],
+    ["mercury", "mars"],
+    ["mercury", "jupiter"],
+    ["mercury", "saturn"],
+    ["venus", "venus"],
+    ["venus", "mars"],
+    ["venus", "jupiter"],
+    ["venus", "saturn"],
+    ["mars", "mars"],
+    ["mars", "jupiter"],
+    ["sun", "jupiter"],
+    ["sun", "saturn"],
+    ["sun", "uranus"],
+    ["sun", "neptune"],
+    ["sun", "pluto"],
+    ["moon", "jupiter"],
+    ["moon", "saturn"],
+    ["moon", "uranus"],
+    ["moon", "neptune"],
+    ["moon", "pluto"],
+    ["chiron", "ascendant"],
+    ["lilith", "ascendant"],
+    ["north-node", "ascendant"],
+    ["south-node", "ascendant"],
+  ].flatMap(([planetA, planetB]) =>
     ["conjunction", "hard", "soft"].map(
-      (group) => `${synastryPrefix}${planet}/ascendant/${group}`,
+      (group) => `${synastryPrefix}${planetA}/${planetB}/${group}`,
     ),
   ),
 );

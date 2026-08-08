@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-moon-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b487e32275f554303e9b909e71516cce666a543f5c4a7eac5ac97684107c47a5",
+  "payload": {
+    "body_you": "What you want often matches what {{holder2}} needs before either of you says much. When you act on a plan, {{holder2}} often feels settled by it, and their ease encourages you to keep going. The cost is that you can both assume this match will handle everything, then miss when your priorities split or stop building on what you share. {{holder2}} can feel deeply understood by you without having to explain every feeling.",
+    "body_they": "What {{holder1}} wants often matches what you need before either of you says much. When {{holder1}} acts on a plan, you often feel settled by it, and your ease encourages them to keep going. The cost is that you can both assume this match will handle everything, then miss when your priorities split or stop building on what you share. You can feel deeply understood by {{holder1}} without having to explain every feeling.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "4f02212f1959fbab5a7f2ba41fe4d9768631545abc993bf1c2469573e3195edc",
+    "writerProviderResponseSha256": "a63f3c13f1b9e8046b11150cba49467149de782ad0ab53834117dc2749c1270b"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/conjunction/exact-approval.json"
+}
