@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
+import { resolveFriendChartLoadingState } from "../apps/web/src/features/friends/friendChartLoading.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
@@ -31,21 +32,66 @@ assert.match(
   /getVerifiedAuthUser\(supabase\)/,
   "Friend chart database QA must reuse the shared remote-user verification."
 );
-assert.match(
-  appSource,
-  /chartsReady=\{remoteAccountId \? remoteProfileReady : authAccountChecked\}/,
-  "Friends chart UI must not query/replace with remote database rows until the remote profile and migration step are ready."
-);
-assert.doesNotMatch(
-  appSource,
-  /chartsReady=\{Boolean\(remoteAccountId\) \|\| authAccountChecked\}/,
-  "Friends chart UI must not treat an auth account id alone as database readiness."
-);
-assert.match(
-  appSource,
-  /allowCachedChartsWhileLoading=\{!isAuthConfigured \|\| authAccountChecked\}/,
-  "Friends chart UI must hide cached charts until configured Supabase auth resolves."
-);
+const loadingStateCases = [
+  {
+    name: "local auth without Supabase",
+    input: {
+      authAccountChecked: false,
+      isAuthConfigured: false,
+      remoteAccountId: null,
+      remoteProfileReady: false
+    },
+    expected: { allowCachedChartsWhileLoading: true, chartsReady: false }
+  },
+  {
+    name: "configured auth before account resolution",
+    input: {
+      authAccountChecked: false,
+      isAuthConfigured: true,
+      remoteAccountId: null,
+      remoteProfileReady: false
+    },
+    expected: { allowCachedChartsWhileLoading: false, chartsReady: false }
+  },
+  {
+    name: "configured auth with no remote account",
+    input: {
+      authAccountChecked: true,
+      isAuthConfigured: true,
+      remoteAccountId: null,
+      remoteProfileReady: false
+    },
+    expected: { allowCachedChartsWhileLoading: true, chartsReady: true }
+  },
+  {
+    name: "remote account before profile migration",
+    input: {
+      authAccountChecked: true,
+      isAuthConfigured: true,
+      remoteAccountId: "account-1",
+      remoteProfileReady: false
+    },
+    expected: { allowCachedChartsWhileLoading: false, chartsReady: false }
+  },
+  {
+    name: "remote account after profile migration",
+    input: {
+      authAccountChecked: true,
+      isAuthConfigured: true,
+      remoteAccountId: "account-1",
+      remoteProfileReady: true
+    },
+    expected: { allowCachedChartsWhileLoading: true, chartsReady: true }
+  }
+];
+
+for (const testCase of loadingStateCases) {
+  assert.deepEqual(
+    resolveFriendChartLoadingState(testCase.input),
+    testCase.expected,
+    `Friends chart loading state failed for ${testCase.name}.`
+  );
+}
 assert.doesNotMatch(
   manualChartsControllerSource,
   /const cachedCharts = listCachedManualCharts\(\[\s*chartOwnerUserId,\s*profileId,\s*\.\.\.listLocalManualChartUserIds\(\)/,
