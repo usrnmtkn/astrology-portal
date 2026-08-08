@@ -1340,10 +1340,9 @@ function findStations(
     swe.SE_SATURN,
     swe.SE_URANUS,
     swe.SE_NEPTUNE,
-    swe.SE_PLUTO,
-    SE_CHIRON
+    swe.SE_PLUTO
   ];
-  const stationPlanets = planets.slice(2, 11);
+  const stationPlanets = planets.slice(2, 10);
   const events: LunarCalendarEvent[] = [];
   const stepMs = 12 * 60 * 60_000;
 
