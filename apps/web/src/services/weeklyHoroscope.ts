@@ -5,6 +5,7 @@ import {
   transitSynastryFallbackRendererV3
 } from "../content/fallbackArchitectureV3Runtime";
 import type { LocationInput, PlanetPosition, SkySnapshot } from "../types";
+import { isEligibleTransitReturn } from "./transitReturns";
 import type { LunarCalendarEvent } from "./ephemeris";
 
 export type WeeklyHoroscopeWeekType =
@@ -1280,6 +1281,21 @@ export async function buildWeeklyHoroscope({
   const weekType = weekTypeFor(events, contacts);
   const sourceGaps: string[] = [];
   const candidates: WeeklySectionCandidate[] = [];
+  const returnTimingEntries = [...closestContacts.entries()].filter(([, { contact }]) => (
+    isEligibleTransitReturn(contact.transiting, contact.natal, contact.aspect)
+  ));
+  const { natalTransitTimingFor } = await import("./ephemeris");
+  const returnTimings = new Map(await Promise.all(returnTimingEntries.map(async ([key, { contact, dayIndex }]) => {
+    const natal = natalTargets.find((position) => normalizeId(position.planet) === contact.natal);
+    const timing = typeof natal?.longitude === "number"
+      ? await natalTransitTimingFor(title(contact.transiting), natal.longitude, snapshots[dayIndex]?.generatedAt ?? now, {
+          aspectDegrees: 0,
+          presentationDegrees: 1,
+          timeZone
+        })
+      : null;
+    return [key, timing] as const;
+  })));
 
   events
     .filter((event) => isPrincipalLunation(event) || isExactStation(event))
@@ -1332,10 +1348,9 @@ export async function buildWeeklyHoroscope({
       }
     });
 
-  [...closestContacts.values()].forEach(({ contact, dayIndex }) => {
-    const isReturn = contact.aspect === "conjunction"
-      && contact.transiting === contact.natal
-      && contact.orb <= 0.25;
+  [...closestContacts.entries()].forEach(([contactKey, { contact, dayIndex }]) => {
+    const returnTiming = returnTimings.get(contactKey);
+    const isReturn = Boolean(returnTiming);
     const isHeavy = ["saturn", "uranus", "neptune", "pluto"].includes(contact.transiting)
       && contact.orb <= 0.25;
     if (!isReturn && !isHeavy) return;
@@ -1354,6 +1369,9 @@ export async function buildWeeklyHoroscope({
           : `${title(contact.transiting)} ${aspectRelations[contact.aspect]} your ${title(contact.natal)}`,
         body: weeklyVoice(rendered.body),
         tag: source === "return" ? "Return" : `${title(contact.aspect)} · ${contact.orb.toFixed(2)}°`,
+        timing: source === "return" && returnTiming
+          ? `${returnTiming.engagementStart.slice(0, 10)} – ${returnTiming.engagementEnd.slice(0, 10)}`
+          : undefined,
         accented: false,
         source: rendered.source,
         unit: source === "return"
