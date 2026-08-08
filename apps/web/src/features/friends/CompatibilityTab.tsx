@@ -180,9 +180,8 @@ export function CompatibilityTab({
     <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${friendName} compatibility`}>
       <div className="friend-profile-copy-column compatibility-column">
         {daily ? (
-          <section className="daily-horoscope-summary friend-daily-forecast" aria-label="Today between you two">
-            <span className="eyebrow section-label friend-section-label">Today between you two</span>
-            <span className="friend-section-sublabel">{daily.dateLabel}</span>
+          <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Today - ${daily.dateLabel}`}>
+            <span className="eyebrow section-label friend-section-label">Today - {daily.dateLabel}</span>
             <p>{daily.body}</p>
           </section>
         ) : null}
