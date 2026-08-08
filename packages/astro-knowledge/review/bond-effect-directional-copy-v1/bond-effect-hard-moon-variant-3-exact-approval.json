@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-moon-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/moon/variant-3",
+  "payloadSha256": "4a8a8f11c551ff6bf34c020c28dd214380ea24e705b28348bcabb6c76882c57d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} is quiet and you notice immediately. The silence starts feeling personal before {{holder1}} has actually said anything is wrong.",
+    "body_they": "{{holder1}} may be quieter than usual, tired, or easily irritated. Their mood can change the atmosphere between you even when it has very little to do with you."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

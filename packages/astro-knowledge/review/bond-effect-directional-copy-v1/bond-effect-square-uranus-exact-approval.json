@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-uranus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/uranus",
+  "payloadSha256": "a32a77ca2e56096271f66dfdabb1a2932d6c7a90fd561a1fdb48631c9766835a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} changes the plan after you already moved your day around it. Then it happens again. One surprise is easy to absorb; repeated changes start costing you time.",
+    "body_they": "You change the time, cancel, or decide you need a different plan after {{holder1}} has already arranged their day. {{holder1}} may be less upset by the change itself than by always being the person expected to adjust."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

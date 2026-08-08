@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-jupiter-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-2",
+  "payloadSha256": "8f7d42d9c658abc11da2f9a695a1680484c0121cd4c9e40a90f58ecd3ea5addc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} start talking about a project and end the night with a list twice as long as the original idea. The excitement is real. So is the extra work.",
+    "body_they": "{{holder1}} gets excited about something the two of you could build together. By the next day, {{holder1}} may be looking at a workload they did not mean to volunteer for."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

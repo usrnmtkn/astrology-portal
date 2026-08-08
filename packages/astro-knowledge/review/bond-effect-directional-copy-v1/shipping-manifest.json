@@ -1,0 +1,844 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1",
+  "approvedAt": "2026-08-07",
+  "payloadSource": "packages/astro-knowledge/review/bond-effect-directional-payloads.json",
+  "provenanceSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "rowCount": 139,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/chiron",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-chiron-exact-approval.json",
+      "payloadSha256": "d4c9730f50f318e8d347b6d6cf56bd4d4e853769481ccaa442e9513266a0bf41",
+      "previousPayloadSha256": "60b44c724878223c64f7f5e41ce99dbf3a956402563d33c8a48504384db67ee7"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/jupiter",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-jupiter-exact-approval.json",
+      "payloadSha256": "df3f38e40b61fbc30e950f43ce991566b49317a148b5209a887cd8339a33e3c4",
+      "previousPayloadSha256": "ec473e9cda90e77e7d2b705ac8842b01a026c6d4866fc28a5e1c7e15579e9042"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/mars",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-mars-exact-approval.json",
+      "payloadSha256": "867910755d53c0a269d6adf9d0ffc6e531a4ece5551337b92b1df225e0fb9f5d",
+      "previousPayloadSha256": "c2c2b39e7473b3c7dba7580cb2ba11feca862a0d0c42496a1400b2c2b4f216d9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/mercury",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-mercury-exact-approval.json",
+      "payloadSha256": "68e8f7589a7e2e54e554ed098e2faefbc13fbf8a4d35a77738eb7e08a50c9843",
+      "previousPayloadSha256": "bc728363f0b8f2a5448bee9bf30e276585cf7a1c3b67efc583611cfb95181915"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/moon",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-moon-exact-approval.json",
+      "payloadSha256": "03a2d89bae91529a2a218c699c572e9bb9175359087be4187e307b07d5fb41b2",
+      "previousPayloadSha256": "0e6efb11b90ed5a16450dfd1722a5f66b425b3f18cb19ab724eb3c3ac35b5f2b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/neptune",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-neptune-exact-approval.json",
+      "payloadSha256": "07f40967e201a324277881cb9269315e2ec79fe538f2f85d66d21ecb87ed3017",
+      "previousPayloadSha256": "ec6967abab0f4b7a1f8e807575210a542442a7157c018d895b22959fcdc89704"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/pluto",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-pluto-exact-approval.json",
+      "payloadSha256": "becd69dc17c2a7e9f4109b8a9a84df103c1aaef34738f11fc56caf105d160caa",
+      "previousPayloadSha256": "0ab267c49eac069712bbeeaec7d0ba6ac21d539cf109fef0b266ef3b6d779cec"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/saturn",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-saturn-exact-approval.json",
+      "payloadSha256": "e52312c0d614152321877f95b6771867ebcf9637720adcc0f5698fdc7577cee2",
+      "previousPayloadSha256": "c5c43d0c80cb3051d20f5356857d1a18478a7334c344cc30637be95fc7c10ac2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/sun",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-sun-exact-approval.json",
+      "payloadSha256": "19c6e08f831e95b74578b21a490e69256a57d581d3d490e9a5562cf96c16f6da",
+      "previousPayloadSha256": "163c81d05e3b9fded3fa060067eaf4e4002ed929eb196ea4209e3654d73a7643"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/uranus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-uranus-exact-approval.json",
+      "payloadSha256": "dcc7596121db2720131424cbe3fdbc10ec1225c5b885862755aac9f9e3067883",
+      "previousPayloadSha256": "4e9569596e11822304fdbe1ada6b843d7bfa5a6161a7094242838d5c628c194a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/venus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-conjunction-venus-exact-approval.json",
+      "payloadSha256": "99bbfe30df170bd77468c137b7c9b0883dd2566f4eb2125de3c9da8ee93ae680",
+      "previousPayloadSha256": "d855b378c3569cba35c6654701c4b555e4703df7edb8464a2d9fafce91d21099"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/chiron",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-chiron-exact-approval.json",
+      "payloadSha256": "738d9423342b589474db9c832adde624f99c90e383de349d9d5fcb8c5fa4d449",
+      "previousPayloadSha256": "7839e4723b35c787b15af60e633e5f4d3de8df310ce41adeef4746fbea818a24"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/jupiter",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-jupiter-exact-approval.json",
+      "payloadSha256": "cab16e3e7d540005a4bedf971e01d8ee6a6ad7b79a65580d104b348619b5825c",
+      "previousPayloadSha256": "525c360b30096288778885978243c19fe32988dbdcb3de7d7c0b468809e956bc"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/mars",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-mars-exact-approval.json",
+      "payloadSha256": "6610f2ce9372354723d01816c2f5126c0d6f172f40369c377b0756d72e967c65",
+      "previousPayloadSha256": "d48424c21a13fed61bd9cfbcfa5dff19b6488ee4614359658d117c26a8707c3f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/mercury",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-mercury-exact-approval.json",
+      "payloadSha256": "84db9c6c0b34454cd64ece99154737a7922f0b456092fbb4078c68131f0fdc77",
+      "previousPayloadSha256": "9bed94658b7a9298fccfdde76f58aa53faac8b2714abbafac543a466c45f7a14"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/moon",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-moon-exact-approval.json",
+      "payloadSha256": "7867ea093b85ae0893729ce3843394f95395a032516de975671293475145a4e0",
+      "previousPayloadSha256": "e69f39f5fe472d70e7c9aa871d4ad73c42041e0e24e66649f6ab89a923919e38"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/neptune",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-neptune-exact-approval.json",
+      "payloadSha256": "98630ab4b3df05bbc81047eab8fe1cb82582e877f15e7ebf9be9c981f59dce68",
+      "previousPayloadSha256": "5df826a58b794ecf2156a7412a09ce191e63d736f9fd4a993a2c77ab0ae3e5f1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/pluto",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-pluto-exact-approval.json",
+      "payloadSha256": "56472843a7ad39c21c5a6c87d5d3c29eb9f41288201a653f02203b2614e8539b",
+      "previousPayloadSha256": "41afae901cdf0cb08e7b02c0ab6781e696df6b41a17246e00e4a1e8a6eb78466"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/saturn",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-saturn-exact-approval.json",
+      "payloadSha256": "a2d634b096569bf73b0b3df9d891d2a3359df7e0426e2bb145a7edc0b6d93743",
+      "previousPayloadSha256": "1bb24661b20d02b2e9d4377b5bb187c8c87d8523d2e10530d77221aaeff8b907"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/sun",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-sun-exact-approval.json",
+      "payloadSha256": "df95cdfb939e338bbcba9b615147315ecb59ea64017941955072c6f221361fb8",
+      "previousPayloadSha256": "3137bc833fa1dee5b470e405c8438c31a251446ad2ef04f7f7247a6ab9ede433"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/uranus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-uranus-exact-approval.json",
+      "payloadSha256": "a32a77ca2e56096271f66dfdabb1a2932d6c7a90fd561a1fdb48631c9766835a",
+      "previousPayloadSha256": "3ed1b4c8246e37bfe82d50afc10574bd5cad72c03e52841d7855f4a789d17ef3"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/venus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-square-venus-exact-approval.json",
+      "payloadSha256": "efab78ef5548901720bb2c6fdd9a4dfc1e8a9d33a61da1f89c009d1b0b5d139c",
+      "previousPayloadSha256": "fdaf966bd069efe6fa39d6789a039309e1414f0a93a28bb5cd941eb4b35a3560"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/chiron",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-chiron-exact-approval.json",
+      "payloadSha256": "ad1e36eb03c909787adc9fda2f3f0f061554d3906dfc9b29ddb10cd11237ab51",
+      "previousPayloadSha256": "6093cb2ee5a0afd18698610a0f405af2629b00c16bf63457d20aaf2414a2e0c2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/jupiter",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-jupiter-exact-approval.json",
+      "payloadSha256": "0839404e548e3fdd1802a1123a20a3716c0afeba0ae26e7313cdab1ab66b31c0",
+      "previousPayloadSha256": "ce02b154f9a01ecaae4cc63d7ba83a00cf2ab069ab67551581851bd6792b60ff"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/mars",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-mars-exact-approval.json",
+      "payloadSha256": "3c93ab5e42d7ce51caa91d6b6a233a0e586e4778ac5db37aba8474f24a4e5d41",
+      "previousPayloadSha256": "65b5ca99dc26fabd4fb01363a8119977413256126785a11b72c6b165a9b8376e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/mercury",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-mercury-exact-approval.json",
+      "payloadSha256": "4ee4e3f9074327f07d0d170a5b9059bae5aa504d0fbf267ee8eb059c77c42687",
+      "previousPayloadSha256": "ce0ae8caab4978fe5707319565a49d1e27dd74fe47f1da2f4d41392cf4b1c2a4"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/moon",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-moon-exact-approval.json",
+      "payloadSha256": "f1b2173c1da6681840e45f2a349e19c81ddee1a1a82f727c3f4801b3b1c46f71",
+      "previousPayloadSha256": "33bdccc4e51e0ddd8cbca5ebc097749626647ab04a198e651a5bbdfcef79d959"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/neptune",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-neptune-exact-approval.json",
+      "payloadSha256": "933e0d8a7324d0bd52f550302625085cfe88b0f7e4d6f34dacfad9a5ffa3d7f8",
+      "previousPayloadSha256": "cc2adce462464b6cd2c155b664d029d0180e63f505dde4a593995f8facf8a2b9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/pluto",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-pluto-exact-approval.json",
+      "payloadSha256": "4ba8998d72277313596ba9a2a95da32ef5d5c33d2a0797cc41ac2d0c88faeb0c",
+      "previousPayloadSha256": "48a2b5a102e744cb71566c72ab62f849f9b30c1dcce161660d8b3bb4f9fa725b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/saturn",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-saturn-exact-approval.json",
+      "payloadSha256": "a96efd2b5b841e132cd80128c5c0a18ffcb4f6c91c26043287eec91eb1e5cad0",
+      "previousPayloadSha256": "bc378132449f99e678eb87572e875cd0c241e67e8daae00811e9ae67200276f6"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/sun",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-sun-exact-approval.json",
+      "payloadSha256": "54f0bde0c4b63b8267c1edaa0e16ad52240f1a0d9edce047622a0436f685a99c",
+      "previousPayloadSha256": "ab4662162a3c14df152e8d95640b1eda5b677129e190fdd113196f8be9fb0c4e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/uranus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-uranus-exact-approval.json",
+      "payloadSha256": "865164ade2bc61665782fd8979e0f396d13b3e9f9f1353dfa0e3d12ed91617ab",
+      "previousPayloadSha256": "fe6bd8852a88f789731015e435b3ab873510ae1300a1d44eacff81c0801723fd"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/venus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-trine-venus-exact-approval.json",
+      "payloadSha256": "a29814fe7a2b4fa353751f7c435aa5724829c480332df7dd2abd0da50b5bd6ce",
+      "previousPayloadSha256": "f2c09644df65d1acf83bd5268b61eb9731eaed755803b2aad4b215ab40675e41"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/chiron",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-chiron-exact-approval.json",
+      "payloadSha256": "92ddba9428635e4f61b8e71978356d457e2042d3a7085d47aed412e91f1dd5d2",
+      "previousPayloadSha256": "f9d2a6f852b7484c1eb5830d29c1147fc564d4a82442226406dfb4ef8bdccaa7"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/jupiter",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-jupiter-exact-approval.json",
+      "payloadSha256": "e362cb1cefe8485071d81e2b5495a5e4791f0464a40102b7ed22252060f6704f",
+      "previousPayloadSha256": "664eadc2906039cfb5375094e0280348edf73ffe73d42ff79254a4c6aea6046e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/mars",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-mars-exact-approval.json",
+      "payloadSha256": "6bb03ffd16878f74646e7b41b1f6c14f06a34afe44889ed4674591d061908964",
+      "previousPayloadSha256": "a3ad47ead2f2301c0d25cff9fafe6c303a864b87c43d6259cdb6f0c401ef59db"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/mercury",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-mercury-exact-approval.json",
+      "payloadSha256": "200b040354dff2c8eae4e81f8a76b4b67ada3cda0204e2c92107852e1937c35c",
+      "previousPayloadSha256": "6cd1edf2e07a40024ff0d0d604ee5cf17f9f8ec27465657cb96e58e01cb3901e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/moon",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-moon-exact-approval.json",
+      "payloadSha256": "ee3fc38551c309d74534e304794eda98734b9e9f06a2597a82d3b08b3f0c6172",
+      "previousPayloadSha256": "470f2609c7bddf1da72c86257cb1be84c9144d1eb2b8fc7955ae8b9ab8d4f052"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/neptune",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-neptune-exact-approval.json",
+      "payloadSha256": "192eaf53ec235e876977f11b01360372a084c6a1e97a759dbefc578eb72dd215",
+      "previousPayloadSha256": "4510c5729be513132a0f26d91fb5ea8e110bb8c63f1c96c015ceed7c1bfb043f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/pluto",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-pluto-exact-approval.json",
+      "payloadSha256": "927a347b51099d7b453e3e5f5c0cc2bd7c0c369329289a8828444dbdb034d890",
+      "previousPayloadSha256": "efd6500a42fdfc6aaaa46398526d7ab9de7088310ed31bf247c9694f8e828875"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/saturn",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-saturn-exact-approval.json",
+      "payloadSha256": "5cd9a07dc4fd01f76cc09758c4abfe0e8fd55f19be7f26dee8af2a9d8e2f9ba6",
+      "previousPayloadSha256": "ce66a8497cb77725141d64bde10253801b9c4ff646f81b80ad25570b9f2007c0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/sun",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-sun-exact-approval.json",
+      "payloadSha256": "effce77d620cad9d6670d61d9a230140e6e9cd7a5c0d2a186f88a0f86a46adcc",
+      "previousPayloadSha256": "89a7678c6145dc871486fde71132585419210021985b02c4894cec470024e5d5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/uranus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-uranus-exact-approval.json",
+      "payloadSha256": "de2e09cf2b5c9321267de8285adba1fe91195fa53d76a9956be5856bebd95d1a",
+      "previousPayloadSha256": "d9855abe75d7c2015fb3a3a6a1f71088e875e3aa22258ededd85cfd4354e7a56"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/venus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-sextile-venus-exact-approval.json",
+      "payloadSha256": "3da4c19dcc11c3d0b9a7a0c639d611d19b0eaafbad9a2bfbb215d7210d28d676",
+      "previousPayloadSha256": "f6cdc2f05ef04ce2286702609ae11b1e4f4517ba2da6ef3a14e5bce431ce1371"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/chiron",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-chiron-exact-approval.json",
+      "payloadSha256": "8d282d824f880c34a04fce403ce64c1b87e16a7db37ef5d5ffd058220bc73312",
+      "previousPayloadSha256": "6065e8517b752a040312e66eab6ad794e03704e8fb92945e93f2d3a7acab1897"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/jupiter",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-jupiter-exact-approval.json",
+      "payloadSha256": "764de20332dd6be7fa54ca01fe8ab579ccf60bf15cf63823d0f1c578dd54fadd",
+      "previousPayloadSha256": "add8a55a0e9ce54609de34b7f373694033d40bad07c3bbc88b6c8f38ad1d460b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/mars",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-mars-exact-approval.json",
+      "payloadSha256": "3308c0edf48feba04cf42e58359c82a18c7b9b967e644ffd792eacd2cdf8c066",
+      "previousPayloadSha256": "100f8a4061631105028806a00502ae22f1485f437b59f77569fa4020b79b3285"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/mercury",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-mercury-exact-approval.json",
+      "payloadSha256": "b2c83b51203ee8ee2c934c6a9719a76fb00dd029b1aa0e75981d828211279250",
+      "previousPayloadSha256": "ae652d272e4d284024eee78a2ec80d5444e30dd5fa2e573e04a3b6357b778425"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/moon",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-moon-exact-approval.json",
+      "payloadSha256": "f8308e1ce3497f3ecadbc3753d57e12a2accf53feb552ddd7c7d036153f08191",
+      "previousPayloadSha256": "b59953850099797fc261abbbe8d53b498b7e53f30b9bee9e401c584b406111fc"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/neptune",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-neptune-exact-approval.json",
+      "payloadSha256": "4d78040b52aa2e8a68c750c081c9183461eb1fa6ed3aa62e15ab314040600908",
+      "previousPayloadSha256": "2494a69d06a7a68cea3109b17b7dca902bdba390380d7b4b8a2071d2c2597514"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/pluto",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-pluto-exact-approval.json",
+      "payloadSha256": "35883639d68a9878b6877200d963fcd7ad6e9ee47102950e6231119185f7ca12",
+      "previousPayloadSha256": "63978e0fdb0aca9faa3b5a8fe8193a932fcd0f45362cd74d88f517f7a74e2c1f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/saturn",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-saturn-exact-approval.json",
+      "payloadSha256": "4a4477b1734932e5fdc3c5e44044be15efe4ac25080456c78ca3cfe03c0d3345",
+      "previousPayloadSha256": "7961a09aa34b7d1e7670573bc07ed736d72bad1b1648c55034959b9ffb6f3857"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/sun",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-sun-exact-approval.json",
+      "payloadSha256": "08d5228d90a2032c140bea0db986d1b7a8f576b4f0c1951e112aa2b34697f379",
+      "previousPayloadSha256": "b9df14189dd4939b817b4fda1d659110639fb57b1b81d1b48ed1e319f1bc46c2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/uranus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-uranus-exact-approval.json",
+      "payloadSha256": "097f3a0c20a4e43b044be9aaecba18eb50b4264b52222eb8fc63a29599f50cd7",
+      "previousPayloadSha256": "ce8d651c1d0e1a48b5c9e07f50c5cb5b22526b5a0669f9897044fb5e8e9d461c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/venus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-opposition-venus-exact-approval.json",
+      "payloadSha256": "8060438f1397414ba83a31d24b06964ef6cc4f073c2a840c834b45a982e68186",
+      "previousPayloadSha256": "ede79f4a743c5edd076895e330f4f35038207ebab8a6a0248effe4474c61335c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-chiron-exact-approval.json",
+      "payloadSha256": "4008a06dd6f34590f106f4cc22987d36b667dae040804f55803b8fca410fb236",
+      "previousPayloadSha256": "8acaed5b2904f71fe204215c8a0c027c5e6e74c5273a649ef00995816d3d2a18"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-chiron-variant-2-exact-approval.json",
+      "payloadSha256": "cb4cfeed0fbbc4411d9e6b3620b22d918f7af34f81d8bfa45146504cf115986c",
+      "previousPayloadSha256": "630484b66f6669301728b89ca7d7d3664d7c12487a57d55a8992f0882b5b374f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-chiron-variant-3-exact-approval.json",
+      "payloadSha256": "8d665c48a30c54e44e8cf38bcf83756407c93d351c6bb65a3adde55f4a2dd893",
+      "previousPayloadSha256": "4e9928de05876f93fa43d469537967e9a3521a7e99aabbb1854c9897babebbe5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-jupiter-exact-approval.json",
+      "payloadSha256": "e1835f1233ddc6be2e42949c6f215002a8f686ca776f20ae8deec947c8706161",
+      "previousPayloadSha256": "ee51067b3363698bcd120549a7ab472fdecfad39adbc278e3584ba6eb435d6aa"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-jupiter-variant-2-exact-approval.json",
+      "payloadSha256": "8f7d42d9c658abc11da2f9a695a1680484c0121cd4c9e40a90f58ecd3ea5addc",
+      "previousPayloadSha256": "4009d091258a00510f929ced89444059e268c990ae95cb59c26b604bf2931d8d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-jupiter-variant-3-exact-approval.json",
+      "payloadSha256": "8f03ab640a57e9558055e61ff5aa88ed05b3c5c5fd68e5efc26ffd6dd5401f0b",
+      "previousPayloadSha256": "cf4968835a0958fd760dc8c11157cedd683bd1f8dd5f058aecdc698764b63b9a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-lilith-exact-approval.json",
+      "payloadSha256": "09842006ac64d6d60fccab2c983189b13255e48c5f2fedc63b73f87b14a798d4",
+      "previousPayloadSha256": "9adafc08b5c99d285015e5745d25e6d7b0feb87c32a065641f83d69d66ae09c9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-lilith-variant-2-exact-approval.json",
+      "payloadSha256": "837fa45e70dbcd734b56277d81f69654e5c02d76259986f0a6f800308432fa02",
+      "previousPayloadSha256": "9484e0fb81f9d85d55c2a7933a71c01723643a1bb263a661bdad1b67c021fbde"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-lilith-variant-3-exact-approval.json",
+      "payloadSha256": "12048132745132b5915c69321712337321ca968356c548a35abede6dff7b0fe1",
+      "previousPayloadSha256": "61cce4b03f85c41d87b2da6145c37d23944f33967e0d225010613c258917b465"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-mars-exact-approval.json",
+      "payloadSha256": "742b448a4076848db33086eda0e3d7f95319bd6bbea3ae68a5df6c14dc46d262",
+      "previousPayloadSha256": "227e6398d8a8a7401354e89f5112abb1b3a1059f2518fc51386dcd4ab81e6a6d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-mars-variant-2-exact-approval.json",
+      "payloadSha256": "3afbcf0d58021d17dd75ad054e459ac62e798d0cae92505bc05b68ea436c6eee",
+      "previousPayloadSha256": "9efa5696ac021727187db116aa7439d2d3df888dbe2fc5d692bcf97452724d20"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-mars-variant-3-exact-approval.json",
+      "payloadSha256": "4759d2e0c1697724993c4fac5774f31d6936b0c47d4f351720c5da5a021768ba",
+      "previousPayloadSha256": "67338e3bf3afbb68205eb0ea067f725800eb2be8e7fa89135376882bc6e02e28"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-mercury-exact-approval.json",
+      "payloadSha256": "1335ffd0ef31cbdd53b582a3db474fced0045c7c7093041986cdbead6dc78eab",
+      "previousPayloadSha256": "e74f7099406d2aeebc9e010b0ca7ba9e59a719605b6068ccc3095f0b310b4e2f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-mercury-variant-2-exact-approval.json",
+      "payloadSha256": "e2cceef4f8d18f29cc6e0a1372fc34396276e6847eb43283a81a080afc2a7230",
+      "previousPayloadSha256": "431f74fe55f360581a01b20d3f1b5dec1a2fad92d4d7217b27c2928155e32fbd"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-mercury-variant-3-exact-approval.json",
+      "payloadSha256": "5eea1f371d59465b3aca80a2cd9213a902602d3e7f18499f892abc3737ab9a4b",
+      "previousPayloadSha256": "738cf1fc56ef3f2481e8e6d5918df5e4c7395173e2604faccc3dad5704c05734"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-moon-exact-approval.json",
+      "payloadSha256": "f61067987048e5623a24069d3f8d5d669bd190e86f2ffab7444fac2850fe9a20",
+      "previousPayloadSha256": "bfb8bb815b2832c74689bbb88529bb1dbb25cf65db30e6c83c3a30604bdb88de"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-moon-variant-2-exact-approval.json",
+      "payloadSha256": "9f815dceb6928c0e14db55b913c2622f042823eecf58fcd8e2f6e19c2a46c574",
+      "previousPayloadSha256": "6cac1cdf90c359753c53d54884ce9fc92b2909465210629090be40667bd69f9e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-moon-variant-3-exact-approval.json",
+      "payloadSha256": "4a8a8f11c551ff6bf34c020c28dd214380ea24e705b28348bcabb6c76882c57d",
+      "previousPayloadSha256": "8958db585c613111066e331bea8842732def0894476697c8a8835c01c3ca6adb"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-neptune-exact-approval.json",
+      "payloadSha256": "9cd3ba7b12e4532e32d7130bc2edb61a68437a7a13787291269442865a110b55",
+      "previousPayloadSha256": "e0f3f0da21a9d48d9b3eb81b9a20952de99d1c50f4c3f518edabdf547334f50b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-neptune-variant-2-exact-approval.json",
+      "payloadSha256": "fd60d26b0705abd56ffc6bb271949614b8a2ee754880d614827a350394be2ba5",
+      "previousPayloadSha256": "10eeef46e794808d3924056b432dddf0f4bb390ee4ddc38791b6088b6b44e95f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-neptune-variant-3-exact-approval.json",
+      "payloadSha256": "f3b0da96294c0a35ecd4944c24e8b87c11aea876a8a9b54c0058036d1e33d003",
+      "previousPayloadSha256": "fc9e6ef06c05825b1f992a0b46684ec1a2f281913456d790e8b586eb3f3e0210"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-north-node-exact-approval.json",
+      "payloadSha256": "a9e81c3ff75ed6d1f0ff437e21cc83ad4dc8454db4586ef87d69e87ebbfb6eec",
+      "previousPayloadSha256": "d6d639e6f1bdbbc9dc15d2f665e7e805696fce78dfd1da27255c9bf676ffdaa2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-north-node-variant-2-exact-approval.json",
+      "payloadSha256": "c97f027358f1c9706b6293ca62ab1775e4a533236966c6a47cc35ddf6d64b026",
+      "previousPayloadSha256": "1b2ddeb1a811fdb5a54209278fe5d7ddbe04131de83aad98158a5b9597d4c3b0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-north-node-variant-3-exact-approval.json",
+      "payloadSha256": "8df6f5a27dfceba30b7be467fcb7e2d4d40ca6f77412a6a182caff759c8d8d4e",
+      "previousPayloadSha256": "88100ea7d5c552aeb901007ba51f88c587a57ef0738bc47e6937c1e0728c1941"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-pluto-exact-approval.json",
+      "payloadSha256": "c49d0cdf17f4aba58c01db8329264892ba54d2c0ab448e8ea76d31e8180e0471",
+      "previousPayloadSha256": "b68e1ec754f9533b9a31dc87cea48834f5c8dda6f363d15c68c4316937a94ece"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-pluto-variant-2-exact-approval.json",
+      "payloadSha256": "02cafaa4b95b73a0eed17bd9cbeb60a605aa966e2af1fc6d2c6422b5bf767c13",
+      "previousPayloadSha256": "f57084abbf734c934191c22dcd906beedc0398c3399bea5c569b097740b394d1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-pluto-variant-3-exact-approval.json",
+      "payloadSha256": "3ca1c027afd351642ee4ffc6cf47747a48bbec2d1b7d56a1144b8e5a113c1b1c",
+      "previousPayloadSha256": "7bb75599c30083a037ca4185511d4761370601ed97acd2a7e2460485f635a08c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-saturn-exact-approval.json",
+      "payloadSha256": "7f50de0fae52050d23d7531ef044697a20b3780833bc0ca4c10bdb0c531ec285",
+      "previousPayloadSha256": "e8025de16b45927d6c5c3af42474a5235d3b5bcc28b49b632247d59cf0ab31a2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-saturn-variant-2-exact-approval.json",
+      "payloadSha256": "cbb08bf6c97dceb192f2dc29b5ca5764514e080ef60d023f9c044f4ed45e71f7",
+      "previousPayloadSha256": "94788946fe5df6610fff5a11a8ea3428bc0a0e620ed8930587f2440a542e904a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-saturn-variant-3-exact-approval.json",
+      "payloadSha256": "8866bd6742f8d1dd80096ae66830b0cc6a4060e84fbe9c5db7464e711f5644c0",
+      "previousPayloadSha256": "bdafee8fdc43b453f70be2e98c567fe0a81733c21e199f5feaa99fbce23ba4ad"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-south-node-exact-approval.json",
+      "payloadSha256": "b710e39f5e9a1e71d2c41e8e0aedc19b871be652da716e128fb90da6e15cc266",
+      "previousPayloadSha256": "86b193ba4d05fd01e838b1d6c0f48693e3bee29ae3fbcc4d7f5713d788c8e939"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-south-node-variant-2-exact-approval.json",
+      "payloadSha256": "6de55ba4132e39bcd5f711c12b613d78195f5d570f1e0894a3ce28a1846ad4c9",
+      "previousPayloadSha256": "81c0246b9b63ff35616fa326d151fe1d92ebf63b9ce7a43c79e2a43e54849dc1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-south-node-variant-3-exact-approval.json",
+      "payloadSha256": "563667f63457e0c64ccdc988989968060ece62f350a544bdcba6610bbe0e45b5",
+      "previousPayloadSha256": "2531b57a6a71d7270e94ab9cbdbf356c21da3be13b995b7e535159272e3adf74"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-sun-exact-approval.json",
+      "payloadSha256": "27ca7d04a01c2135e15107f6832f1e8c1f6fac269541a5debbdd6fd50374c810",
+      "previousPayloadSha256": "31b2b770ea01dedfe7888703af6fc9dc36d49d6b591a226e5f31fbf0c0055da1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-sun-variant-2-exact-approval.json",
+      "payloadSha256": "48430657cebabe429e81a9668ec934d3a6f4368d2db5541641c7e997277f05f3",
+      "previousPayloadSha256": "f2d3cd192007f4b9522d4118ca0312c384445dcaf6c51de6601635e2785c7352"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-sun-variant-3-exact-approval.json",
+      "payloadSha256": "b458925b3fcd4c6f22d8b5f99c5c035fb04bb481c4469833772aa88225e126a6",
+      "previousPayloadSha256": "8051f7d83ccad4102c4eaeca0277b75aa8e7523600b9ed3970cd609045d197e5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-uranus-exact-approval.json",
+      "payloadSha256": "9a96f15f35814828c63ffd1be679ef89e116226c16a5dd0191314fa4ac508464",
+      "previousPayloadSha256": "eece7770d062adde056355d78529447069305463647c7c95050434452f0c4164"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-uranus-variant-2-exact-approval.json",
+      "payloadSha256": "58abe5047fd3e8a17cece304c46391e0bf5ea88023bd543c2a0e78c37bedb70e",
+      "previousPayloadSha256": "5bb88d9ae9dcce9153999521d82cf629083488eb932711de6dcdb48f19d2982d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-uranus-variant-3-exact-approval.json",
+      "payloadSha256": "ddef56c81ee5179a2bb0d06cc9195fcb01a2ff70c620c2182c8bb8ef01a34241",
+      "previousPayloadSha256": "2e1662cf9c632b03c23130a69f9881c845be8b21a08f7c03cf67679cee9ebd0a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-venus-exact-approval.json",
+      "payloadSha256": "86f79d61344cd16a693340929597c469b44d14616a6e7bafd6e96aedb7ac1c59",
+      "previousPayloadSha256": "93ecdb3084360d015380f5fd554579e234a6bb59ff3c69d97f48d65980bde920"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-venus-variant-2-exact-approval.json",
+      "payloadSha256": "ce441a2cc686800ae7360341dfefeb8e3276fe98c2438f8896f0981cac2e9acd",
+      "previousPayloadSha256": "62051b323e79a609e2d10539e3ed27698f35652b0c9e1dce297415f144aab3ef"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-hard-venus-variant-3-exact-approval.json",
+      "payloadSha256": "860b5f706341f6066447c8f7b5a853e052867cc686b3672692506b128cd9f722",
+      "previousPayloadSha256": "1860b16adc2d70de38d04dc47deb433f5e0a932546186a1420d837e672d33950"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-chiron-exact-approval.json",
+      "payloadSha256": "20a30b269e126645d3f8452b1e5faf60fbb69eee416d77490a2bf4b0296c6d5e",
+      "previousPayloadSha256": "eb8cc6509aa5bc29cc98865250b6def13d0369dad5dcb600b898c9f23161b400"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-chiron-variant-2-exact-approval.json",
+      "payloadSha256": "6c111042251474ef7a240af355172fa7cb723c27e4344d84768a8f79d44ac302",
+      "previousPayloadSha256": "73fcf2d0a55e03fe6685a3862f03da34c2e517d8d4ce1383d684793f221fc1f1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-chiron-variant-3-exact-approval.json",
+      "payloadSha256": "90c04db7422f116f26f7ab620573155be5137ac8a12c997cde478750867e9ca0",
+      "previousPayloadSha256": "85edbd331a8ac0d6c38bf2c6551ee5c3d4461272bc1503637d42c5800f5afdfd"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-jupiter-exact-approval.json",
+      "payloadSha256": "f5d265d9bc7c9d4a648b559bcd19d2fa01fad381730cf34be8a9e7c4be188050",
+      "previousPayloadSha256": "b27fc5d769f37bb60769787ad9be9b4dc065d1be3c27b107c713610c53605dde"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-jupiter-variant-2-exact-approval.json",
+      "payloadSha256": "07dc6f12f46cf1ba6d2c089c562a21364bef46380008211591a6361c9db15d02",
+      "previousPayloadSha256": "2911690730a4e50cb84ed4e9d0d063613bd716c840df7f2e9faabfcdf2a81c38"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-jupiter-variant-3-exact-approval.json",
+      "payloadSha256": "3178e7eb3da58b85b3f7bdefe1bcc98ca58a43996ee36635e23541af9eb105bd",
+      "previousPayloadSha256": "247b7790802f1b90830fb6a9c20f74edd5fa540d13b15b202e57244b1784b5ee"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-lilith-exact-approval.json",
+      "payloadSha256": "84d950da76e3b13543f42c76196ec540e75aa5cb5cffded02f15f539303cb976",
+      "previousPayloadSha256": "d1500632a5010f3acb5c668e57af73860d67471867b32b576e70b54eda2c06f2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-lilith-variant-2-exact-approval.json",
+      "payloadSha256": "20a414d272d215a4c6ea1a808eb83a41ec8ce70d302cc66297a698f0aecb0e95",
+      "previousPayloadSha256": "2841919ffc53342343dd3465c622a9f01f89e701acb602af8bdf75a6a707f046"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-lilith-variant-3-exact-approval.json",
+      "payloadSha256": "a3bdbe2cd94fbb19632a3ff874ce2a6b90aad98710876e541f295472923a42b8",
+      "previousPayloadSha256": "c94a804c7a567b48322fca133db399f56757c05ce10e274e44ff1c046c70a787"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-mars-exact-approval.json",
+      "payloadSha256": "667a2f6a07fb77dbea53ff6f3595b68037ff50ed8b64f5cc5d4143cb1cbac8b5",
+      "previousPayloadSha256": "1ae282c1b8a792c8022ab7a67a86baac2f32d4d4a17eac05fff6039e2196a4e5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-mars-variant-2-exact-approval.json",
+      "payloadSha256": "3695a662d64595473088d4b08c46f879d3be34a528166f94038d17dfab10f73d",
+      "previousPayloadSha256": "417a7dc80eb8dbcc596f79cd68d7102d12bcd584d587fbe5541901011f63a1da"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-mars-variant-3-exact-approval.json",
+      "payloadSha256": "fe586dac6227d364f39625541401e1007986bc88fc226ab7fb2bad5586974ed1",
+      "previousPayloadSha256": "3be4db2d94471ab7cf0834eb9214489860ab63c984550a1a45f44f644383dd1c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-mercury-exact-approval.json",
+      "payloadSha256": "6b672c04ac8ee09141effda523cfe425b233b8164b6a2f671bdbfca72a39a3a2",
+      "previousPayloadSha256": "a625b2b014354f3e86a8143dcb47e6e5a072b91a3016d36afa22228f1d4bd260"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-mercury-variant-2-exact-approval.json",
+      "payloadSha256": "f55f9627067736f72a465b4de3d7e1175751fdbd09bde5f0063d9057768b9ed6",
+      "previousPayloadSha256": "24dcea4f32ef89eab6ece051c9cdc910c7e2eaf65d576401b7145f1a799149fb"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-mercury-variant-3-exact-approval.json",
+      "payloadSha256": "59e30618e712760a6f952f77429518a2e889aa21d3350629335803c9882245a0",
+      "previousPayloadSha256": "fb12fdebd2ef3ec19ad8dccbf2ab6170aaedd21729bae4fb5fe038c9698832b4"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-moon-exact-approval.json",
+      "payloadSha256": "81af0c42f9f454821d1067c6a90ea7d4f9787c9fb01ce76f40211a409e2759ef",
+      "previousPayloadSha256": "780fe0008177d7e51d5a3d2bf9f8671ae025aa8d2829edd07ec752196b20b92b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-moon-variant-2-exact-approval.json",
+      "payloadSha256": "2c784e396780b511f17e12917ca73274693bc070807a5c94d8afaa85f35cc121",
+      "previousPayloadSha256": "8f6555527a0c47813b2fb80e43559bccff90cd9491ed1c408db7c7c1735401ea"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-moon-variant-3-exact-approval.json",
+      "payloadSha256": "16d644b31b03c22a97f0ecb0eba0355a0cc9333ae05e7b2958a147339c42781b",
+      "previousPayloadSha256": "b3e9bc60f4e422911f1d770dd25db93d4d3d8888a323158ee5d264b8784cccdb"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-neptune-exact-approval.json",
+      "payloadSha256": "08968af0ce3955965cc916e2a0f79ba3d62df931d8e069588ed6b1fcb165ef6c",
+      "previousPayloadSha256": "62046731d26d29eaf63995b3ba62cf4fb21adee61c0bc0d6475728f1c4982814"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-neptune-variant-2-exact-approval.json",
+      "payloadSha256": "1dc97441dcefdb346f2c1b1b3ec1ebae15028fff7cc0369ba70461303e2e4979",
+      "previousPayloadSha256": "995512160016c2c8961051b49d0641813031f62ca314cc5a865de8e7ecda2d20"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-neptune-variant-3-exact-approval.json",
+      "payloadSha256": "c1dd7f79653ec63a6b973dd2141f4c479f11d3af2c829cbeece938d88c39f32a",
+      "previousPayloadSha256": "c353c78b8c6b3b6832570cd351f67b8193427aeda831670bd8b3a55dea962ea9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-north-node-exact-approval.json",
+      "payloadSha256": "17ee1dbb787156b3f368ad6e9836847862679382a635e47fcdb439edc2a2ff7d",
+      "previousPayloadSha256": "5f658a92e48acba3d0377523024e71f101cb3ec38328004efa45956a89a226d3"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-north-node-variant-2-exact-approval.json",
+      "payloadSha256": "a5d2f2b00a9d00375396138617e9452f64553c8b5db7199399133e78e03bc90b",
+      "previousPayloadSha256": "c1a71355256739490ba5856850e5f4c15313821fe77176e0747c6dccf92452d7"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-north-node-variant-3-exact-approval.json",
+      "payloadSha256": "a954cc52f5c1c1b49a3f41f76e2637e2506439e274054796cef36ec8d71503d8",
+      "previousPayloadSha256": "86d94670401554b609445893d5e25dce8e986471d249e5e465949fbe098a1b3e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-pluto-exact-approval.json",
+      "payloadSha256": "0f7d12ea2950ac05f3f70322d010d4ec571e6972bf70f760d1377c73814a4726",
+      "previousPayloadSha256": "5658df8999f247e8b17d2e79c79ec2f43a7a58ec134fa7e871c929245113bced"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-pluto-variant-2-exact-approval.json",
+      "payloadSha256": "12fe8d07c40234d00f389593892b6290e8893ba41936572ef208f1af01f2925a",
+      "previousPayloadSha256": "9adebf89a44ff82b3a62450fca23b72370e148a86d3234f355d0be588bee0156"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-pluto-variant-3-exact-approval.json",
+      "payloadSha256": "100903b3c6f8babba831dddfc7bb7752a5c2ad3154a4543a222d9ef67d289fbd",
+      "previousPayloadSha256": "59216c3c53e8ebd030d7ddd9122ae3d967b46fe01ea7313e95fadb21a34a5c20"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-saturn-exact-approval.json",
+      "payloadSha256": "d2287e5642c20c13c7f88fd9e4db6db596ea9190f343de95834b7579d26f1d28",
+      "previousPayloadSha256": "a2f9d0be1461f7557e84044ae8309fdced47a99e9f9617c724aefcd7c0e137ef"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-saturn-variant-2-exact-approval.json",
+      "payloadSha256": "403804522edca8ac8a15409671a3b9e62ec38e0f3b3de5cd4a4e2673f3fed0d2",
+      "previousPayloadSha256": "266f974beb76fd35b651897c84566a3bfc22b7e6f22f7fe716bfa625eed36ca9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-saturn-variant-3-exact-approval.json",
+      "payloadSha256": "e3cda72288566abf8c2518ce657ca87249038748030f3d81b8d7022ad1c82cee",
+      "previousPayloadSha256": "f86dcd82d60a768ecc76433877feb7250e87421667a6203230e48546212e75a9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-south-node-exact-approval.json",
+      "payloadSha256": "1d64f8a706e46788f604ff70ef6ec5c0bda420df4b34632b8e0f3c193705773e",
+      "previousPayloadSha256": "e8a84f6bc3f27ed1fc17239a6866c0e62d11ce050900c24601c9c4d416d8497b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-south-node-variant-2-exact-approval.json",
+      "payloadSha256": "07f6b62289f9d528bf69ed98ab55bdb2d98ea387930bcc95301655f55d3f18bb",
+      "previousPayloadSha256": "2ec7fe263a68816cd59cfee95d44805c05eb441b6e4e8fa16f0df6b54f949e1d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-south-node-variant-3-exact-approval.json",
+      "payloadSha256": "2a6c56ddf90b3cc88535c6d7b841105fd193cadc953accd79a72683d4efba005",
+      "previousPayloadSha256": "09db0b5b194bb04d03801abebb5e8ff61cef0d0b74c523ce4f697877ebbbf55e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-sun-exact-approval.json",
+      "payloadSha256": "3971a1846df20609da70ba0570b880cc3bb9e9390cf3b687792edcd836bd3b2e",
+      "previousPayloadSha256": "13bce5a2dffd83f4562b46cdddb29ef8fc56c472f932de13b477fff460556249"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-sun-variant-2-exact-approval.json",
+      "payloadSha256": "d329b1b0bff5fa1d3f1b5b4f2f00022c4d532ac92c15d7c36001cab966af709b",
+      "previousPayloadSha256": "51980e2f47e97002bc484ee2695487406a3a25217c5d5b8168acc89f3a801796"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-sun-variant-3-exact-approval.json",
+      "payloadSha256": "88c18548f176b7d980d5bb64853ec06c534fe9683d6aeda243e75ff95fa51826",
+      "previousPayloadSha256": "cb4a50060b511be6b16a43cbaf58a2f9a676b8579e4854730b966178d4e5e66d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/uranus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-uranus-exact-approval.json",
+      "payloadSha256": "7303e59bfcc7f40dce3d6dfa274d3f174f62f4fa78e5a4b096d1aad4870a4950",
+      "previousPayloadSha256": "67027e51d052164f6373d4bb768fdbf8363e703e4ca021985fba26ab50476b46"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/uranus/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-uranus-variant-2-exact-approval.json",
+      "payloadSha256": "8a15e17026e70b3b69a154817d952688213fdd0b04d9c6b6f776231adbf8d06b",
+      "previousPayloadSha256": "6631f4ebdcbf1e845b0c456278439b1492deed290d6d3dec5de26354e71286bb"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/uranus/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-uranus-variant-3-exact-approval.json",
+      "payloadSha256": "f1fded08a009971c6c6828e0ed04fd17548d0ef851deb097f85082227655e9b4",
+      "previousPayloadSha256": "a7be9d9e729241d8815447afa1467f39d495398da8324c1754930d5508f869eb"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-venus-exact-approval.json",
+      "payloadSha256": "6652eeb40faec64083c58e2ca27c0e64c6a9843a6a50c16f25d8d6e42d46b1f8",
+      "previousPayloadSha256": "5551b32191ad309479daab9a660956303efcca8630d45202f508425d6c56138c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus/variant-2",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-venus-variant-2-exact-approval.json",
+      "payloadSha256": "546fe88652f65972f86a8e341753965d53c1811865e9d49d373e1c191c4ecfb6",
+      "previousPayloadSha256": "7e97d46fdceddb63024e5fac679d93db9fda07612f5259553312dc426d46308e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus/variant-3",
+      "recordPath": "packages/astro-knowledge/review/bond-effect-directional-copy-v1/bond-effect-soft-venus-variant-3-exact-approval.json",
+      "payloadSha256": "4b4e2cf454572ceff6daec6c9732cfd1c188910aec2a10ecf4b65437de119bd5",
+      "previousPayloadSha256": "db4c2b6369ca717e2e5ba35486e21f8aec9e7a4125f5a16a3a571b7732be4367"
+    }
+  ]
+}

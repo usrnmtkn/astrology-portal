@@ -112,12 +112,11 @@ const relationshipRows = [
 for (const row of relationshipRows) {
   for (const field of ["body", "body_you", "body_they", "body_sky"]) {
     const body = String(row[field] ?? "");
-    const withoutLicensedRolodexSense = body.replaceAll(
-      "Shortcuts, contacts, been-there calm",
-      ""
-    );
+    const withoutLicensedEverydaySenses = body
+      .replaceAll("Shortcuts, contacts, been-there calm", "")
+      .replaceAll("amount of contact", "");
     assert.doesNotMatch(
-      withoutLicensedRolodexSense,
+      withoutLicensedEverydaySenses,
       /\bcontacts?\b/iu,
       `${row.contentKey}.${field} must say connection, not contact, on relationship surfaces.`
     );
@@ -496,7 +495,9 @@ for (const row of synastryReaderRows) {
     if (typeof row[field] !== "string") continue;
     licensedCareerContactsCount += row[field].split(licensedCareerContactsPhrase).length - 1;
     assert.doesNotMatch(
-      row[field].replaceAll(licensedCareerContactsPhrase, ""),
+      row[field]
+        .replaceAll(licensedCareerContactsPhrase, "")
+        .replaceAll("amount of contact", ""),
       /\bcontacts?\b/iu,
       `${row.contentKey} ${field} must say connection, not contact.`
     );

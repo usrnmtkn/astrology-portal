@@ -1953,7 +1953,9 @@ ${passHook}`;
     const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
     const effectCandidates = duplicateIndex && duplicateIndex > 0 ? [variantEffectKey, familyEffectKey, exactEffectKey] : [exactEffectKey, variantEffectKey, familyEffectKey];
     const effectKey = effectCandidates.find((key) => Boolean(key && hooks.get(key)?.body_you)) ?? familyEffectKey;
-    const effect = hooks.get(effectKey)?.body_you;
+    const effectRow = hooks.get(effectKey);
+    const authoredEffect = endpointOwner === "reader" ? effectRow?.body_you : effectRow?.body_they ?? effectRow?.body_you;
+    const effect = authoredEffect?.replaceAll("{{holder1}}'s", `${otherName}'s`).replaceAll("{{holder1}}", otherName);
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
@@ -2114,7 +2116,7 @@ ${passHook}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-08d";
+var PACKAGE_VERSION = "v3-2026-08-08e";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

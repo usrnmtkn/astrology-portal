@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-uranus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/uranus",
+  "payloadSha256": "dcc7596121db2720131424cbe3fdbc10ec1225c5b885862755aac9f9e3067883",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} suggests a different restaurant, changes the usual plan, or introduces you to somewhere you would never have picked yourself. You may also realize that a routine the two of you have followed for months no longer works for you. Being around {{holder1}} makes it harder to keep doing something just because it is familiar.",
+    "body_they": "{{holder1}} changes the schedule, suggests something unexpected, or suddenly wants more time to themselves. The change can catch you off guard, but {{holder1}} may simply be less willing to keep following a routine that no longer fits."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

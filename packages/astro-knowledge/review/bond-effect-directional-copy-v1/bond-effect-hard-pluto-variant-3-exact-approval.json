@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-pluto-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/pluto/variant-3",
+  "payloadSha256": "3ca1c027afd351642ee4ffc6cf47747a48bbec2d1b7d56a1144b8e5a113c1b1c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You become more controlling with {{holder1}} when you are afraid the arrangement is changing. You want the answer, the password, the plan, or some proof that you still have a say.",
+    "body_they": "{{holder1}} may start pushing for more information or influence when they are afraid something is changing without them. The tighter {{holder1}} tries to hold the arrangement, the more obvious the fear becomes."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

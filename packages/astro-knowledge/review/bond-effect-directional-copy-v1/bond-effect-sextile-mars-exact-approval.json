@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-mars",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/mars",
+  "payloadSha256": "6bb03ffd16878f74646e7b41b1f6c14f06a34afe44889ed4674591d061908964",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} stop talking about the errand, repair, project, or walk and actually do it. The tension between you is easier to handle once some of that energy has somewhere to go.",
+    "body_they": "You and {{holder1}} stop talking about the errand, repair, project, or walk and actually do it. The tension between you is easier to handle once some of that energy has somewhere to go."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

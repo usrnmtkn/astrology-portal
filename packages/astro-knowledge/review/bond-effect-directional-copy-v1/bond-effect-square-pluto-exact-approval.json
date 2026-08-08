@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-pluto",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/pluto",
+  "payloadSha256": "56472843a7ad39c21c5a6c87d5d3c29eb9f41288201a653f02203b2614e8539b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} changes a plan, makes the reservation, or agrees to something that affects both of you before asking what you think. You are angry because your opinion is being requested after the useful part of the decision is already over.",
+    "body_they": "You make the plan, commit the money, or settle an issue before {{holder1}} has much input. {{holder1}} may fight harder over a small detail because the detail is the only part they still have any say in."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

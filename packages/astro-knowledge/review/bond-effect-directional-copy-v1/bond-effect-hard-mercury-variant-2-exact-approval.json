@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-mercury-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-2",
+  "payloadSha256": "e2cceef4f8d18f29cc6e0a1372fc34396276e6847eb43283a81a080afc2a7230",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You keep answering a point {{holder1}} is not making. {{holder1}} keeps correcting you. Both of you get more frustrated because neither person feels understood.",
+    "body_they": "{{holder1}} responds to something you did not mean. You clarify, but {{holder1}} is still answering the first version they heard."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

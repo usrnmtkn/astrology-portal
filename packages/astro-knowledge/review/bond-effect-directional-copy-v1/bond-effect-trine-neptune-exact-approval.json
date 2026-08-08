@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-trine-neptune",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-trine/neptune",
+  "payloadSha256": "933e0d8a7324d0bd52f550302625085cfe88b0f7e4d6f34dacfad9a5ffa3d7f8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} misses a cue or says something awkward, and you understand that they are tired without turning it into proof that they do not care. You have more room for imperfection without pretending nothing happened.",
+    "body_they": "{{holder1}} may have an easier time being imperfect around you. They can be tired, distracted, or not quite know what to say without assuming one bad moment is going to become the story of the relationship."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

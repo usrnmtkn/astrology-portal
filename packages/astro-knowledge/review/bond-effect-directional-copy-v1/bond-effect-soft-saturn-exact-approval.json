@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-saturn",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/saturn",
+  "payloadSha256": "d2287e5642c20c13c7f88fd9e4db6db596ea9190f343de95834b7579d26f1d28",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} follows through. The plan happens, the call comes when promised, or the responsibility gets handled without you checking twice. You know what you can rely on because you have evidence.",
+    "body_they": "You do what you said you would do and {{holder1}} notices. They do not have to remind you, chase the answer, or prepare a backup plan."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

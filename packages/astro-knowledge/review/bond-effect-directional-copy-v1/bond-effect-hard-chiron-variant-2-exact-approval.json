@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-chiron-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-2",
+  "payloadSha256": "cb4cfeed0fbbc4411d9e6b3620b22d918f7af34f81d8bfa45146504cf115986c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} makes a joke about something you are already self-conscious about. Everyone else moves on, but you keep thinking about it. {{holder1}} may not know the subject was sensitive.",
+    "body_they": "A joke or casual comment from you lands on something {{holder1}} is already insecure about. You may forget the comment five minutes later while {{holder1}} is still thinking about it that night."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
