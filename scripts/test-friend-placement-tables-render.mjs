@@ -359,7 +359,7 @@ try {
   assert.doesNotMatch(populatedTransitsHtml, /current weather|Start here|near-term theme|shared theme/);
   assert.match(populatedTransitsHtml, /Between you two/);
   assert.match(populatedTransitsHtml, /Saturn through Alex&#x27;s 2nd house/);
-  assert.match(populatedTransitsHtml, /Life areas in motion/);
+  assert.match(populatedTransitsHtml, /Where it lands/);
   assert.match(populatedTransitsHtml, /Mars trine Moon/);
   assert.match(populatedTransitsHtml, /Emotional momentum is easier to use/);
   assert.doesNotMatch(populatedTransitsHtml, /Read what this means/);
@@ -376,7 +376,7 @@ try {
     "Relationship context should lead the ranked short-term transit list."
   );
   assert.ok(
-    populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Life areas in motion"),
+    populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Where it lands"),
     "Relationship context should remain distinct from the friend's life-area transits."
   );
   assert.doesNotMatch(populatedTransitsHtml, /No prioritized transits are active/);
