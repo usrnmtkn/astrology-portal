@@ -25,6 +25,7 @@ import {
   manualChartFormFromChart
 } from "./manualChartForm";
 import type { ManualChartForm } from "./manualChartForm";
+import { scheduleFriendChartRepair } from "./friendChartLoading";
 
 type ManualChartsStatus = "idle" | "loading" | "saving" | "deleting";
 
@@ -265,13 +266,13 @@ export function useManualChartsController({
           .sort((first, second) => first.displayName.localeCompare(second.displayName));
       });
     };
-    const repairTimer = window.setTimeout(() => {
+    const cancelScheduledRepair = scheduleFriendChartRepair(() => {
       void repairCharts();
-    }, 1_500);
+    });
 
     return () => {
       cancelled = true;
-      window.clearTimeout(repairTimer);
+      cancelScheduledRepair();
     };
   }, [chartOwnerUserId, charts, chartsReady, showNatalAspectPatterns]);
 
