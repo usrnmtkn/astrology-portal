@@ -94,12 +94,13 @@
       "contentKey": "fallback-hook/pair-daily/shared-bond/soft/variant-6",
       "content_role": "fallback_hook",
       "grammar_frame": "slot_frame",
-      "body_you": "The plan comes together without either of you having to sell the other on it. {bondClause}",
-      "body_they": "The plan comes together without either of you having to sell the other on it. {bondClause}",
+      "body_you": "You mention the plan and realize you are already on the same page. {bondClause}",
+      "body_they": "You mention the plan and realize you are already on the same page. {bondClause}",
       "review_status": "approved",
-      "drafted_via": "owner final cut 2026-08-06 (doing-together set pruned 6 to 4); not owner voice evidence until explicitly approved",
+      "drafted_via": "owner bridge-rule revision 2026-08-07 (relational-subject rule; prior approved wording preserved in superseded_wording); needs explicit approval",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
-      "approved_via": "owner approval, cowork session 2026-08-06: 'i approve' given for the full 28-row set as written"
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approve' given for the bridge-rule revisions and 28 compressed bond clauses as staged",
+      "superseded_wording": "The plan comes together without either of you having to sell the other on it. {bondClause}"
     },
     {
       "contentKey": "fallback-hook/pair-daily/shared-bond/soft/variant-7",
@@ -138,12 +139,13 @@
       "contentKey": "fallback-hook/pair-daily/shared-bond/soft/variant-10",
       "content_role": "fallback_hook",
       "grammar_frame": "slot_frame",
-      "body_you": "The plan you kept pushing off finally finds its place on the calendar. {bondClause}",
-      "body_they": "The plan you kept pushing off finally finds its place on the calendar. {bondClause}",
+      "body_you": "The plan that kept slipping gets a date, and suddenly it feels real. {bondClause}",
+      "body_they": "The plan that kept slipping gets a date, and suddenly it feels real. {bondClause}",
       "review_status": "approved",
-      "drafted_via": "owner-restored 2026-08-06 (returned after the 6-to-4 prune); not owner voice evidence until explicitly approved",
+      "drafted_via": "owner bridge-rule revision 2026-08-07 (relational-subject rule; prior approved wording preserved in superseded_wording); needs explicit approval",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
-      "approved_via": "owner approval, cowork session 2026-08-06: 'i approve' given for the full 28-row set as written"
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approve' given for the bridge-rule revisions and 28 compressed bond clauses as staged",
+      "superseded_wording": "The plan you kept pushing off finally finds its place on the calendar. {bondClause}"
     },
     {
       "contentKey": "fallback-hook/pair-daily/shared-bond/hard",
@@ -160,12 +162,13 @@
       "contentKey": "fallback-hook/pair-daily/shared-bond/hard/variant-2",
       "content_role": "fallback_hook",
       "grammar_frame": "slot_frame",
-      "body_you": "A small misunderstanding can linger longer than either of you expects. {bondClause}",
-      "body_they": "A small misunderstanding can linger longer than either of you expects. {bondClause}",
+      "body_you": "One strange text or offhand comment follows you both longer than either of you meant it to. {bondClause}",
+      "body_they": "One strange text or offhand comment follows you both longer than either of you meant it to. {bondClause}",
       "review_status": "approved",
-      "drafted_via": "owner wording pass 2026-08-06 (owner-supplied exact wording); not owner voice evidence until explicitly approved",
+      "drafted_via": "owner bridge-rule revision 2026-08-07 (relational-subject rule; prior approved wording preserved in superseded_wording); needs explicit approval",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
-      "approved_via": "owner approval, cowork session 2026-08-06: 'i approve' given for the full 28-row set as written"
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approve' given for the bridge-rule revisions and 28 compressed bond clauses as staged",
+      "superseded_wording": "A small misunderstanding can linger longer than either of you expects. {bondClause}"
     },
     {
       "contentKey": "fallback-hook/pair-daily/shared-moon/fire",

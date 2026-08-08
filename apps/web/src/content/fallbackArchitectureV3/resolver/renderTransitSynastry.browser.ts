@@ -164,7 +164,6 @@ export interface PairDailyFacts {
     kind: "bond" | "moon" | null;
     family?: "soft" | "hard";
     element?: "fire" | "earth" | "air" | "water";
-    bondClauseKey?: string;
     transiting?: string | null;
   };
   variant?: number | null;
@@ -1986,18 +1985,19 @@ export function createTransitSynastryRenderer(
     const sourceKeys = [openerKey, readerClauseKey, friendClauseKey];
 
     if (shared?.kind === "bond") {
-      if (!shared.family || !shared.bondClauseKey) {
+      const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+      if (!shared.family || !transiting) {
         throw new SourceGapError("SOURCE_GAP: pair daily bond facts");
       }
+      const bondClauseKey = `fallback-hook/pair-daily/bond-clause/${shared.family}/${transiting}`;
       const frameKey = pairDailyVariantKey(
         `fallback-hook/pair-daily/shared-bond/${shared.family}`,
         variant
       );
       parts.push(pairDailyFill(pairDailyBody(frameKey, "you"), {
-        bondClause: pairDailyBody(shared.bondClauseKey, "you")
+        bondClause: pairDailyBody(bondClauseKey, "you")
       }));
-      sourceKeys.push(frameKey, shared.bondClauseKey);
-      const transiting = (shared.transiting ?? "").toString().trim().toLowerCase();
+      sourceKeys.push(frameKey, bondClauseKey);
       if (shared.family === "hard" && ["saturn", "mercury"].includes(transiting)) {
         const closeKey = "fallback-hook/pair-daily/close/hard";
         parts.push(pairDailyBody(closeKey, "you"));
