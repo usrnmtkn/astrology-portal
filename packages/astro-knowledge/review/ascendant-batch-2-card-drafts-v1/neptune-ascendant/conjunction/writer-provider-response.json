@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0f1ccd9184205563006a7280d880b8819f8058aebe809e61cf",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 859,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 1315,
+    "output_tokens_details": {
+      "reasoning_tokens": 1127
+    },
+    "total_tokens": 2174
+  },
+  "output_text": "{\n  \"body_you\": \"You see something special in {{holder2}}, and your hopes about them affect how freely they present themselves around you. If you show the most interest when they match the person you imagine, they may start adjusting how they act to keep that image intact and become less sure what feels natural. At its best, your belief in them can make them feel encouraged to enter situations with more openness.\",\n  \"body_they\": \"{{holder1}} sees something special in you, and their hopes about you affect how freely you present yourself around them. If they show the most interest when you match the person they imagine, you may start adjusting how you act to keep that image intact and become less sure what feels natural. At its best, their belief in you can make you feel encouraged to enter situations with more openness.\",\n  \"warmthSource\": null,\n  \"labels\": []\n}"
+}

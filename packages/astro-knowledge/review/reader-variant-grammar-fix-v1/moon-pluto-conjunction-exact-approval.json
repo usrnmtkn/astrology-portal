@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-pluto-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/pluto/conjunction",
+  "payloadSha256": "96a259db8952b947198fdf8270a956910af7b939ca1e0a388d97d3330477676e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} reaches feelings you usually keeps behind several locked doors. You may feel exposed, understood, and intensely attached in very little time because {{holder2}} notices emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins.",
+    "body_they": "You reach feelings {{holder1}} usually keeps behind several locked doors. {{holder1}} may feel exposed, understood, and intensely attached in very little time because you notice emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

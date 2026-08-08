@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "sky-placement-sun-venus-chiron-nodes-26-production-deployment-evidence-2026-08-05",
+  "recordedAt": "2026-08-05T12:48:30.423Z",
+  "releaseId": "sky-placement-sun-venus-chiron-nodes-26",
+  "proposalSource": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-serving-diff-proposal-2026-08-04.json",
+  "approvalSource": "packages/astro-knowledge/review/sky-placement-sun-venus-chiron-nodes-26-serving-approval-2026-08-04.json",
+  "merge": {
+    "pullRequest": "https://github.com/usrnmtkn/astrology-portal/pull/78",
+    "testedHead": "fd881ad16f13a57b31940c2a983aaac41b8033c5",
+    "mergeCommit": "600e74748f2778d2e14fbc3f837e03266daf0c03",
+    "mergedAt": "2026-08-05T12:43:28Z",
+    "ephemerisReleaseGate": "success",
+    "visualSmoke": "success"
+  },
+  "deployment": {
+    "provider": "Vercel",
+    "deploymentId": "dpl_CQzZh1nZo8JtCuZTnar3FG2RfB3p",
+    "deploymentUrl": "https://tldrastro-pto55j1gi-usrnmtkns-projects.vercel.app",
+    "target": "production",
+    "readyState": "READY",
+    "createdAt": "2026-08-05T12:43:32.962Z",
+    "gitRef": "main",
+    "gitCommit": "600e74748f2778d2e14fbc3f837e03266daf0c03",
+    "aliases": [
+      "https://tldrastro.vercel.app",
+      "https://astrology-portal.vercel.app",
+      "https://tldrastro-usrnmtkns-projects.vercel.app",
+      "https://tldrastro-git-main-usrnmtkns-projects.vercel.app"
+    ]
+  },
+  "productionPackage": {
+    "bundleUrl": "https://tldrastro.vercel.app/assets/fallback-content-sky-placement-CEdjpGY3.js",
+    "packageVersion": "v3-2026-08-04i",
+    "contentHash": "3cafd90c8e314d00cd5cc90ee670655c",
+    "keyManifestHash": "9558df3d3d590e89330472fbd6af07cd",
+    "keyCount": 929,
+    "matchesMergedManifest": true
+  },
+  "verification": {
+    "verifiedAt": "2026-08-05T12:48:07.585Z",
+    "method": "Imported the exact production on-demand Sky Placement bundle and compared every reader payload field against the owner-approved serving proposal.",
+    "expectedKeyCount": 26,
+    "presentKeyCount": 26,
+    "exactPayloadMatchCount": 26,
+    "missingKeys": [],
+    "mismatchedKeys": [],
+    "editorialMetadataLeakCount": 0,
+    "legacyRenderFieldCount": 0,
+    "excludedReaderFieldsConfirmed": [
+      "note",
+      "notes",
+      "source_keys",
+      "approved_via",
+      "body_you",
+      "body_they"
+    ],
+    "verifiedKeys": [
+      "fallback-hook/sky-sign-copy/sun/aries",
+      "fallback-hook/sky-sign-copy/sun/taurus",
+      "fallback-hook/sky-sign-copy/sun/gemini",
+      "fallback-hook/sky-sign-copy/sun/cancer",
+      "fallback-hook/sky-sign-copy/sun/leo",
+      "fallback-hook/sky-sign-copy/sun/virgo",
+      "fallback-hook/sky-sign-copy/sun/libra",
+      "fallback-hook/sky-sign-copy/sun/scorpio",
+      "fallback-hook/sky-sign-copy/sun/sagittarius",
+      "fallback-hook/sky-sign-copy/sun/capricorn",
+      "fallback-hook/sky-sign-copy/sun/aquarius",
+      "fallback-hook/sky-sign-copy/sun/pisces",
+      "fallback-hook/sky-sign-copy/venus/aries",
+      "fallback-hook/sky-sign-copy/venus/taurus",
+      "fallback-hook/sky-sign-copy/venus/gemini",
+      "fallback-hook/sky-sign-copy/venus/cancer",
+      "fallback-hook/sky-sign-copy/venus/leo",
+      "fallback-hook/sky-sign-copy/venus/virgo",
+      "fallback-hook/sky-sign-copy/venus/libra",
+      "fallback-hook/sky-sign-copy/venus/scorpio",
+      "fallback-hook/sky-sign-copy/venus/sagittarius",
+      "fallback-hook/sky-sign-copy/venus/capricorn",
+      "fallback-hook/sky-sign-copy/venus/aquarius",
+      "fallback-hook/sky-sign-copy/venus/pisces",
+      "fallback-hook/sky-sign-copy/chiron/aries",
+      "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+    ]
+  },
+  "liveRenderCheck": {
+    "url": "https://tldrastro.vercel.app/#sky/placement/sun/leo",
+    "heading": "The Sun in Leo",
+    "articleRendered": true,
+    "structuralFactsResolved": true,
+    "unresolvedTemplateTokens": false,
+    "sunLeoApprovedReplacementConfirmed": "helps the work reach who it was made for"
+  },
+  "health": {
+    "url": "https://tldrastro.vercel.app/api/health",
+    "checkedAt": "2026-08-05T12:48:30.423Z",
+    "ok": true,
+    "status": "ok",
+    "ephemeris": "ok",
+    "timeZone": "America/New_York",
+    "contentGeneration": "ok"
+  },
+  "result": "verified_26_of_26"
+}

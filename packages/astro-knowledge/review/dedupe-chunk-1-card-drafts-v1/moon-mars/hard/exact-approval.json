@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-mars-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/mars/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "929a1940b2bae8e8a98fbd52d65190bf328de1c0f1d472c64ee6da895c2da465",
+  "payload": {
+    "body_you": "When your feelings show, {{holder2}} can get defensive or impatient before the conversation is even finished. They may answer sharply or push harder, which hurts you and intensifies your reaction. A small misstep can become a heated argument very quickly.",
+    "body_they": "When {{holder1}}'s feelings show, you can get defensive or impatient before the conversation is even finished. You may answer sharply or push harder, which hurts {{holder1}} and intensifies their reaction. A small misstep can become a heated argument very quickly.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-mars/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

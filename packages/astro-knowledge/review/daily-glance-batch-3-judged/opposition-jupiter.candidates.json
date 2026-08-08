@@ -1,0 +1,1010 @@
+[
+ {
+  "sample": 1,
+  "candidate": {
+   "headline": "You can agree to too much when someone else wants a bigger night.",
+   "body": "Notice when someone keeps adding to an invitation, and accept only the part you can afford in time and money. Within ten minutes, they add drinks, another stop, and a shared tab you never budgeted for. You may feel stingy for keeping the original plan. One yes is enough. You are not rejecting them when you keep dinner to dinner."
+  },
+  "raw": "{\"headline\":\"You can agree to too much when someone else wants a bigger night.\",\"body\":\"Notice when someone keeps adding to an invitation, and accept only the part you can afford in time and money. Within ten minutes, they add drinks, another stop, and a shared tab you never budgeted for. You may feel stingy for keeping the original plan. One yes is enough. You are not rejecting them when you keep dinner to dinner.\"}",
+  "writerUsage": {
+   "inputTokens": 3573,
+   "cachedInputTokens": 0,
+   "cacheWriteTokens": 3570,
+   "outputTokens": 4239,
+   "reasoningTokens": 4142,
+   "totalTokens": 7812
+  },
+  "responseId": "resp_06fdd732a9347d70006a736ab76c0481a292942da0b7682edd",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/jupiter",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "13 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "60 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: You are not rejecting them when you keep dinner to dinner."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": false,
+      "target": "jupiter"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "Opposition headline names another-person pressure."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "One yes is enough."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": true,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/jupiter",
+       "matches": [
+        "other-person",
+        "excess"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "Within ten minutes, they add drinks, another stop, and a shared tab you never budgeted for.",
+      "You are not rejecting them when you keep dinner to dinner."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 13,
+    "headlineSentences": 1,
+    "bodyWords": 60,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 2
+   }
+  },
+  "judge": {
+   "key": "opposition/jupiter",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples: plain, conversational, and true to the owner's voice. It names a clear stake—time and money spent beyond what was planned—and the consequence of feeling stingy or guilty. The truth arrives early and is supported by a concrete example of an invitation growing beyond the original plan. The ending completes the thought with a clear instruction that respects boundaries without rejection. Hedging is minimal (only 'may' once). There is no formulaic or templated language, and the line about feeling stingy but still saying yes to only part of the plan is a strong, relatable insight that someone might save or share. The specificity is clear to this key's social and financial negotiation context.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You may feel stingy for keeping the original plan.",
+    "why": "This line names a common but often unspoken feeling of guilt or social pressure when setting limits, capturing a nuanced emotional truth that resonates deeply and invites reflection without judgment."
+   },
+   "usage": {
+    "input_tokens": 1184,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 271,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1455
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 2,
+  "candidate": {
+   "headline": "Someone else's enthusiasm makes too much seem reasonable.",
+   "body": "Notice when you reconsider the plan because another person wants to add more, then repeat that dinner was the only thing you agreed to. You are reaching for your card to cover another round and checking if you can fit brunch into the free morning you meant to keep. You may feel ungenerous when they ask one more time. You were clear. Their disappointment does not make the additions your responsibility."
+  },
+  "raw": "{\"headline\":\"Someone else's enthusiasm makes too much seem reasonable.\",\"body\":\"Notice when you reconsider the plan because another person wants to add more, then repeat that dinner was the only thing you agreed to. You are reaching for your card to cover another round and checking if you can fit brunch into the free morning you meant to keep. You may feel ungenerous when they ask one more time. You were clear. Their disappointment does not make the additions your responsibility.\"}",
+  "writerUsage": {
+   "inputTokens": 3573,
+   "cachedInputTokens": 3570,
+   "cacheWriteTokens": 0,
+   "outputTokens": 10902,
+   "reasoningTokens": 10802,
+   "totalTokens": 14475
+  },
+  "responseId": "resp_0ae447c9b31ba5b8006a736b161e7c819dab06d49605c89511",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/jupiter",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "71 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: Their disappointment does not make the additions your responsibility."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": false,
+      "target": "jupiter"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "Opposition headline names another-person pressure."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You were clear."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/jupiter",
+       "matches": [
+        "other-person",
+        "excess"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "house/5",
+        "matches": [
+         "creativity-play"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You may feel ungenerous when they ask one more time."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 71,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "opposition/jupiter",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well: it is plain and conversational, naming a clear consequence (overspending time and money, feeling ungenerous) early and supporting it with a lived example. The ending completes the thought with a firm boundary. There is only one hedge ('may feel'), no formulaic language, and the specificity is strong to this transit's theme of external enthusiasm pushing beyond limits. The best line is 'You were clear. Their disappointment does not make the additions your responsibility.' It succinctly names a common but unspoken truth about personal boundaries and responsibility that readers will recognize and appreciate.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You were clear. Their disappointment does not make the additions your responsibility.",
+    "why": "This line bluntly states a boundary that many feel but hesitate to claim, capturing the essence of the message without softening or over-explaining. It anchors the entire piece and offers a clear takeaway that readers can save or share."
+   },
+   "usage": {
+    "input_tokens": 1187,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 266,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1453
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 3,
+  "candidate": {
+   "headline": "They keep asking for more after you say yes.",
+   "body": "Watch for the moment a quick dinner becomes drinks and another stop, then keep the end time you first agreed to. They order another round and ask you to stay out longer because the night is going well. You have an early start, and each added stop costs you sleep. You may feel stingy for leaving while they are still having fun. You are not spoiling the night. Their wish for more does not change the time you agreed to give."
+  },
+  "raw": "{\"headline\":\"They keep asking for more after you say yes.\",\"body\":\"Watch for the moment a quick dinner becomes drinks and another stop, then keep the end time you first agreed to. They order another round and ask you to stay out longer because the night is going well. You have an early start, and each added stop costs you sleep. You may feel stingy for leaving while they are still having fun. You are not spoiling the night. Their wish for more does not change the time you agreed to give.\"}",
+  "writerUsage": {
+   "inputTokens": 3573,
+   "cachedInputTokens": 3570,
+   "cacheWriteTokens": 0,
+   "outputTokens": 3136,
+   "reasoningTokens": 3023,
+   "totalTokens": 6709
+  },
+  "responseId": "resp_0aa8a6fab8a877da006a736be38e80819db6bfbfe1a2170656",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/jupiter",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "9 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "6 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "81 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: Their wish for more does not change the time you agreed to give."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": false,
+      "target": "jupiter"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "Opposition headline names another-person pressure."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You are not spoiling the night."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/jupiter",
+       "matches": [
+        "other-person",
+        "excess"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "house/5",
+        "matches": [
+         "creativity-play"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "They order another round and ask you to stay out longer because the night is going well.",
+      "You may feel stingy for leaving while they are still having fun.",
+      "Their wish for more does not change the time you agreed to give."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 81,
+    "bodySentences": 6,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 3
+   }
+  },
+  "judge": {
+   "key": "opposition/jupiter",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well with plain, conversational truth and a clear, early statement of stakes (losing sleep). The structure is tight, with the lived example supporting the main point early and the ending completing the thought by affirming the reader's right to leave. Hedging is minimal and the formula avoids mechanical or templated phrasing. The sentence 'You are not spoiling the night.' is a strong screenshot line that names a common but unspoken feeling clearly. The specificity is good, as the scenario and tone fit the opposition/jupiter key's register of social boundary-setting and personal limits.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You are not spoiling the night.",
+    "why": "This sentence captures a common internal conflict—feeling guilty for leaving early while others continue having fun—in a simple, direct way that validates the reader's boundary without apology. It names an unspoken emotional truth clearly and memorably, making it a strong takeaway that someone would save or share."
+   },
+   "usage": {
+    "input_tokens": 1200,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 272,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1472
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 4,
+  "candidate": {
+   "headline": "Their bigger plan starts taking over your evening.",
+   "body": "Watch for the moment you agree to dinner and someone adds one more stop, another round, and a favor on the way home. You may feel difficult for objecting after you already said yes to the first plan. That is a new ask. Name the part you agreed to, decline the additions, and leave the larger plan with them. Your first yes does not cover every extra they add."
+  },
+  "raw": "{\"headline\":\"Their bigger plan starts taking over your evening.\",\"body\":\"Watch for the moment you agree to dinner and someone adds one more stop, another round, and a favor on the way home. You may feel difficult for objecting after you already said yes to the first plan. That is a new ask. Name the part you agreed to, decline the additions, and leave the larger plan with them. Your first yes does not cover every extra they add.\"}",
+  "writerUsage": {
+   "inputTokens": 3573,
+   "cachedInputTokens": 3570,
+   "cacheWriteTokens": 0,
+   "outputTokens": 1866,
+   "reasoningTokens": 1766,
+   "totalTokens": 5439
+  },
+  "responseId": "resp_01d2f7d6e9fc5e0c006a736c2d7d3081a0a89ae2cb29e96952",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/jupiter",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "69 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: Your first yes does not cover every extra they add."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": false,
+      "target": "jupiter"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "Opposition headline names another-person pressure."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "That is a new ask."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": true,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/jupiter",
+       "matches": [
+        "other-person",
+        "excess"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You may feel difficult for objecting after you already said yes to the first plan.",
+      "Your first yes does not cover every extra they add."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 69,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 2
+   }
+  },
+  "judge": {
+   "key": "opposition/jupiter",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples: plain, conversational, and naming a clear consequence (feeling difficult for objecting, managing added asks). The truth arrives early, supported by a lived example, and the ending completes the thought with a clear instruction. There is no hedging, no formulaic language, and the specificity fits the opposition/jupiter key's register of social negotiation and boundary-setting. The screenshot line is strong and relatable.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Your first yes does not cover every extra they add.",
+    "why": "This line crisply names a common but often unspoken boundary issue: that agreeing once doesn't mean agreeing to all subsequent additions. It captures a feeling many have but rarely articulate so clearly, making it memorable and shareable."
+   },
+   "usage": {
+    "input_tokens": 1187,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 227,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1414
+   },
+   "advisoryOnly": true
+  }
+ }
+]

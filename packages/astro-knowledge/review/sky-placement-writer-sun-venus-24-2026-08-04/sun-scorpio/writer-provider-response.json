@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0107c0bb00dded30006a72912f327c8191b982b3581fda1722",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8154,
+    "input_tokens_details": {
+      "cache_write_tokens": 8151,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4226,
+    "output_tokens_details": {
+      "reasoning_tokens": 3878
+    },
+    "total_tokens": 12380
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Scorpio on {{entryDate}}, and what has been politely avoided becomes hard to ignore. A vague unease gets a direct question. An old hurt is finally given its real name. The Sun in Scorpio keeps looking after an easy answer stops working. That focus can restore energy once the real problem is named.\",\"tension\":\"That focus has a cost when uncertainty starts to feel intolerable. We study a short reply for what it left out, ask another question after a clear answer, or keep a crucial feeling private while waiting for someone else to prove they can be trusted. The search for truth becomes a test that was never explained. Each guarded response then looks like evidence that there was something to hide.\",\"development\":\"The Sun last moved through Scorpio from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Whatever came into view then may show where honesty restored strength and where pain hardened into control. The same pattern returns in smaller moments now. We say less, watch more, and call the distance protection. A real concern becomes suspicion once every gap is filled with the worst explanation. Then the conversation shifts away from what happened and toward defending against an accusation.\",\"close\":\"By {{exitDate}}, repeated tests and withheld answers can leave the original concern unresolved and make us more guarded than before.\",\"try_this\":[\"We can ask one direct question about something we have been guessing at, then listen to the full answer.\",\"We can tell someone we trust what has been painful before deciding what someone else's silence means.\"]}"
+}

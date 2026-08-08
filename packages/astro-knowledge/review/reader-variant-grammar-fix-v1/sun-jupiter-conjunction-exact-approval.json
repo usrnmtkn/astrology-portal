@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-jupiter-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
+  "payloadSha256": "de5c8564e22eed3aca742e3c41bca9c38f300d71fe2fb5a0e3e871bf46c9dc21",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Around {{holder2}}, you feel invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. You may agree to the bigger role, expense, or commitment because {{holder2}} believes in it, then realize the plan arrived with considerably more luggage than expected.",
+    "body_they": "Around you, {{holder1}} feels invited to take up more room. The encouragement can bring back confidence that had gone quiet, but it can also make every larger plan feel worth saying yes to. {{holder1}} may agree to the bigger role, expense, or commitment because you believe in it, then realize the plan arrived with considerably more luggage than expected.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

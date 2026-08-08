@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-saturn-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/saturn/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "28776667c583a8905ad0037f8b13678ac5332b2e55820ce4dd913c0e8e9b93ac",
+  "payload": {
+    "body_you": "{{holder2}} helps {{holder1}} slow down long enough to make the idea useful, while {{holder1}} keeps {{holder2}} from relying on an answer simply because it has worked before. Their conversations tend to produce something concrete. {{holder1}} brings the current information, and {{holder2}} gives the idea enough structure to be finished rather than endlessly discussed.",
+    "body_they": "{{holder2}} helps {{holder1}} slow down long enough to make the idea useful, while {{holder1}} keeps {{holder2}} from relying on an answer simply because it has worked before. Their conversations tend to produce something concrete. {{holder1}} brings the current information, and {{holder2}} gives the idea enough structure to be finished rather than endlessly discussed.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-saturn/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

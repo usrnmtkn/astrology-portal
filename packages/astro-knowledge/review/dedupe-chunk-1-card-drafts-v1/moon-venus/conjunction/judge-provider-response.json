@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0a828f628dddde95006a729caf699c819cb713bae0864dd338",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1265,
+    "input_tokens_details": {
+      "cache_write_tokens": 1262,
+      "cached_tokens": 0
+    },
+    "output_tokens": 313,
+    "output_tokens_details": {
+      "reasoning_tokens": 159
+    },
+    "total_tokens": 1578
+  },
+  "output_text": "{\"score\":2,\"verdict\":\"borderline\",\"reasoning\":\"Both variants hold the fixed direction: {{holder2}}'s affection affects {{holder1}}'s sense of care, while {{holder1}}'s warmth helps {{holder2}} feel safe. The first two sentences create a recognizable governed loop, where ease in gentleness can lead them to \\\"smooth over discomfort and leave harder feelings unspoken.\\\" The variants are meaningfully parallel and contain no excluded claims. However, \\\"But the deeper work lies in redefining what makes you feel secure\\\" functions as a broad, stock-like concluding turn rather than extending the specific behavior-and-cost loop, even though it is properly traced verbatim to the supplied owner line.\"}"
+}

@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0b25d62e65dba8b8006a7296467404819d800a35763cb21c6c",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 775,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 478,
+    "output_tokens_details": {
+      "reasoning_tokens": 333
+    },
+    "total_tokens": 1253
+  },
+  "output_text": "{\"body_you\":\"When you decide what you want to make happen, {{holder2}} is quick to put energy behind it. Their readiness to act gets you moving, while your direction gives their drive a clear focus. The easy momentum can carry both of you into action before either of you has paused to check the pace.\",\"body_they\":\"When {{holder1}} decides what they want to make happen, you are quick to put energy behind it. Your readiness to act gets them moving, while their direction gives your drive a clear focus. The easy momentum can carry both of you into action before either of you has paused to check the pace.\",\"warmthSource\":null,\"labels\":[]}"
+}

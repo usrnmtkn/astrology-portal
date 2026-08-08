@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0f88357bbdd42bbe006a72958f3a7081a1a0173c37789c3416",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 841,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 300,
+    "output_tokens_details": {
+      "reasoning_tokens": 176
+    },
+    "total_tokens": 1141
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the same reciprocal direction: each person experiences the other's direction as crowding and responds by protecting their own. The second sentence provides a recognizable behavior-and-cost loop, where insisting leads to pushback, which leads to pressing harder. The final sentence, \\\"Disagreements can become contests over whose judgment and priorities will lead,\\\" stays within the supplied friction and contest-of-wills boundary rather than introducing an excluded claim or advice. The variants are meaningfully parallel without inventing warmth or an outside scenario.\"}"
+}

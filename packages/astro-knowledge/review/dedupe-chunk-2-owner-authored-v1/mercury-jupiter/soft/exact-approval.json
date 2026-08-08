@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-jupiter-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/jupiter/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "140b7db1fa36eba0bba5c75d1109d03d2fb6958158923d7df7faeb604a92eb11",
+  "payload": {
+    "body_you": "{{holder2}} helps {{holder1}} see beyond the immediate question, while {{holder1}} gives {{holder2}} the facts and distinctions that keep the larger idea useful. Conversation between them can feel hopeful without becoming empty. {{holder2}} reminds {{holder1}} that the idea could go further, and {{holder1}} helps explain how that growth might actually work.",
+    "body_they": "{{holder2}} helps {{holder1}} see beyond the immediate question, while {{holder1}} gives {{holder2}} the facts and distinctions that keep the larger idea useful. Conversation between them can feel hopeful without becoming empty. {{holder2}} reminds {{holder1}} that the idea could go further, and {{holder1}} helps explain how that growth might actually work.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-jupiter/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

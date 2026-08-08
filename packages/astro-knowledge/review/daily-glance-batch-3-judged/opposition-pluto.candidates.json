@@ -1,0 +1,1013 @@
+[
+ {
+  "sample": 1,
+  "candidate": {
+   "headline": "A simple request exposes who expects to make the rules.",
+   "body": "You see what this is really about when you bring up a shared expense and they start talking about ownership, rules, and the consequences of giving up control. You may feel pushed to explain the fear and history behind your request, giving them more details to challenge. You stop discussing the amount. Your vulnerability is not a weakness. In your next reply, state the amount you need and ask for a direct yes or no."
+  },
+  "raw": "{\"headline\":\"A simple request exposes who expects to make the rules.\",\"body\":\"You see what this is really about when you bring up a shared expense and they start talking about ownership, rules, and the consequences of giving up control. You may feel pushed to explain the fear and history behind your request, giving them more details to challenge. You stop discussing the amount. Your vulnerability is not a weakness. In your next reply, state the amount you need and ask for a direct yes or no.\"}",
+  "writerUsage": {
+   "inputTokens": 3804,
+   "cachedInputTokens": 0,
+   "cacheWriteTokens": 3801,
+   "outputTokens": 4825,
+   "reasoningTokens": 4718,
+   "totalTokens": 8629
+  },
+  "responseId": "resp_0a549c90ef64ff6a006a736c562f14819d9f138c8bc7adba79",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/pluto",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "10 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "75 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: In your next reply, state the amount you need and ask for a direct yes or no."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": true,
+      "target": "pluto"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": "Opposition headline does not use the approved another-person grammar."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You stop discussing the amount.",
+      "Your vulnerability is not a weakness."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/pluto",
+       "matches": [
+        "other-person",
+        "power-control"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "opposition/jupiter",
+        "matches": [
+         "other-person",
+         "excess"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 75,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "opposition/pluto",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well: it opens with a clear truth about the stakes (control and vulnerability in shared expenses), delivers the interpretation early, and supports it with a lived example. The ending completes the thought with a direct instruction that respects the reader's agency. The voice is plain and conversational without AI polish or formulaic phrasing. Hedging is minimal, and the specificity is strong, keyed to the opposition/pluto transit's themes of power and control. The screenshot-worthy line is 'Your vulnerability is not a weakness,' which names a feeling often unspoken but deeply felt.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Your vulnerability is not a weakness.",
+    "why": "This line captures a core emotional truth that many feel but rarely say so plainly. It reframes vulnerability from a liability to a strength, which is a powerful and validating insight that resonates deeply with the transit's themes of power struggles and control."
+   },
+   "usage": {
+    "input_tokens": 1161,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 257,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1418
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 2,
+  "candidate": {
+   "headline": "Their answer makes the power struggle impossible to miss.",
+   "body": "You ask to use shared money for a bill, and they point out whose name is on the account and what they already covered. You see the condition when they insist on keeping the final say. Your vulnerability is not a weakness. You answer each reminder, and within minutes, you are defending your whole history instead of discussing the bill. Restate the amount and due date, then ask for a direct answer before you spend more time defending your right to ask."
+  },
+  "raw": "{\"headline\":\"Their answer makes the power struggle impossible to miss.\",\"body\":\"You ask to use shared money for a bill, and they point out whose name is on the account and what they already covered. You see the condition when they insist on keeping the final say. Your vulnerability is not a weakness. You answer each reminder, and within minutes, you are defending your whole history instead of discussing the bill. Restate the amount and due date, then ask for a direct answer before you spend more time defending your right to ask.\"}",
+  "writerUsage": {
+   "inputTokens": 3804,
+   "cachedInputTokens": 3801,
+   "cacheWriteTokens": 0,
+   "outputTokens": 6061,
+   "reasoningTokens": 5947,
+   "totalTokens": 9865
+  },
+  "responseId": "resp_0d3b818c897b259e006a736cbd9d8c819faa77ba5a8c34a7f4",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/pluto",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "9 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "82 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Restate the amount and due date, then ask for a direct answer before you spend more time defending your right to ask."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": false,
+      "target": "pluto"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": "Opposition headline names another-person pressure."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "Your vulnerability is not a weakness."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/pluto",
+       "matches": [
+        "other-person"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "opposition/jupiter",
+        "matches": [
+         "other-person",
+         "excess"
+        ],
+        "passed": true
+       },
+       {
+        "key": "house/5",
+        "matches": [
+         "creativity-play"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You see the condition when they insist on keeping the final say."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 82,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "opposition/pluto",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples: plain, conversational, and naming a clear, relatable cost (defending your history and time lost). The truth arrives early (power struggle over shared money), supported by a lived example, and the ending completes the thought with a clear instruction. Hedging is minimal, no formulaic language or time anchors, and the specificity fits the opposition/pluto key well. The screenshot-worthy line names a common but often unspoken dynamic in shared finances and power.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Your vulnerability is not a weakness.",
+    "why": "This sentence cuts through the tension of a power struggle by naming a truth that many feel but hesitate to admit. It reframes vulnerability in a way that feels supportive and empowering, fitting the owner's voice of plain conversational truth without softening or over-explaining."
+   },
+   "usage": {
+    "input_tokens": 1168,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 241,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1409
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 3,
+  "candidate": {
+   "headline": "A practical request exposes who expects the final say.",
+   "body": "You explain why you need to use the shared account, and they start listing conditions and reminding you whose name is on it. Your vulnerability is not a weakness. You may feel pushed into proving your judgment, which leaves the actual request untouched. You can see the power struggle now. Ask them to answer the request itself before you spend the whole exchange defending why you asked."
+  },
+  "raw": "{\"headline\":\"A practical request exposes who expects the final say.\",\"body\":\"You explain why you need to use the shared account, and they start listing conditions and reminding you whose name is on it. Your vulnerability is not a weakness. You may feel pushed into proving your judgment, which leaves the actual request untouched. You can see the power struggle now. Ask them to answer the request itself before you spend the whole exchange defending why you asked.\"}",
+  "writerUsage": {
+   "inputTokens": 3804,
+   "cachedInputTokens": 3801,
+   "cacheWriteTokens": 0,
+   "outputTokens": 2166,
+   "reasoningTokens": 2070,
+   "totalTokens": 5970
+  },
+  "responseId": "resp_0df12f67b18d434e006a736d3a26ac81929b5eb567d5f935e5",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/pluto",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "9 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "67 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask them to answer the request itself before you spend the whole exchange defending why you asked."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": true,
+      "target": "pluto"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": "Opposition headline does not use the approved another-person grammar."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "Your vulnerability is not a weakness.",
+      "You can see the power struggle now."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": true,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/pluto",
+       "matches": [
+        "other-person",
+        "power-control"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 67,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "opposition/pluto",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate aligns well with the owner's voice: it opens with a clear truth about a power dynamic, names the stakes (vulnerability, proving judgment, power struggle), and delivers a lived example that supports the interpretation early. The ending completes the thought with a clear instruction. Hedging is minimal and the phrasing avoids formulaic templates. The sentence 'Your vulnerability is not a weakness' is a strong, shareable line that names a common but unspoken feeling. The specificity fits the opposition/pluto key, focusing on power and control in shared resources.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Your vulnerability is not a weakness.",
+    "why": "This sentence captures a profound truth that many feel but rarely say so plainly. It reframes vulnerability from a liability to a strength, which resonates deeply in the context of a power struggle. It is concise, emotionally impactful, and would be a memorable takeaway for readers."
+   },
+   "usage": {
+    "input_tokens": 1150,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 255,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1405
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 4,
+  "candidate": {
+   "headline": "One request shows who expects to keep the final say.",
+   "body": "You hear the control when they answer your request by reminding you whose name is on the account. You explain the fear and history behind it, and they keep returning to ownership, rules, and what they can withhold. You are not weak for saying why the need matters. You see the terms. While the exchange is fresh, you may feel pressure to defend the need instead of questioning the condition attached to their help. Ask them to state what they expect in return before you agree."
+  },
+  "raw": "{\"headline\":\"One request shows who expects to keep the final say.\",\"body\":\"You hear the control when they answer your request by reminding you whose name is on the account. You explain the fear and history behind it, and they keep returning to ownership, rules, and what they can withhold. You are not weak for saying why the need matters. You see the terms. While the exchange is fresh, you may feel pressure to defend the need instead of questioning the condition attached to their help. Ask them to state what they expect in return before you agree.\"}",
+  "writerUsage": {
+   "inputTokens": 3804,
+   "cachedInputTokens": 3801,
+   "cacheWriteTokens": 0,
+   "outputTokens": 5816,
+   "reasoningTokens": 5696,
+   "totalTokens": 9620
+  },
+  "responseId": "resp_022f218d9fd9cb2c006a736d6c5bac819e840148fac47b7076",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "opposition/pluto",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "10 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "6 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "86 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask them to state what they expect in return before you agree."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "otherPersonCue": true,
+      "otherFrictionCue": true,
+      "target": "pluto"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": "Opposition headline does not use the approved another-person grammar."
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You see the terms."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": true,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "opposition/pluto",
+       "matches": [
+        "other-person",
+        "power-control"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You hear the control when they answer your request by reminding you whose name is on the account.",
+      "While the exchange is fresh, you may feel pressure to defend the need instead of questioning the condition attached to their help."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 86,
+    "bodySentences": 6,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 2
+   }
+  },
+  "judge": {
+   "key": "opposition/pluto",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples with a plain, conversational truth about control and negotiation dynamics. It names clear stakes—the pressure to defend your need and the risk of agreeing under conditions—early in the body. The structure is tight: the interpretation arrives immediately, supported by a lived example, and the ending completes the thought with a clear instruction. Hedging is minimal and the formula avoids template phrases or mechanical time anchors. The line about feeling pressure to defend the need instead of questioning the condition is a strong screenshot line that names a common but unspoken experience. The specificity to the opposition/Pluto key is clear in the focus on control, ownership, and power dynamics in requests.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "While the exchange is fresh, you may feel pressure to defend the need instead of questioning the condition attached to their help.",
+    "why": "This sentence captures a subtle but real dynamic in power struggles over requests, naming a feeling many experience but rarely articulate so clearly. It highlights the internal conflict between asserting your needs and the external pressure to accept conditions, making it a memorable and sharable insight that anchors the entire horoscope."
+   },
+   "usage": {
+    "input_tokens": 1174,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 301,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1475
+   },
+   "advisoryOnly": true
+  }
+ }
+]

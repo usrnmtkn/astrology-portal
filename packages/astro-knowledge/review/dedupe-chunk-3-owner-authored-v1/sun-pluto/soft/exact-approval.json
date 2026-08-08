@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-pluto-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/pluto/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "0b59b1cbebf31babb68fc1a40b462fac0218826d4c9431b95be0506a371125dc",
+  "payload": {
+    "body_you": "{{holder2}} takes {{holder1}} seriously without trying to edit the person standing in front of them. {{holder1}} can feel stronger under that attention because the depth does not come with a takeover plan. The intensity reads as loyalty, not pressure, because {{holder2}} supports what matters without trying to own it.",
+    "body_they": "{{holder2}} takes {{holder1}} seriously without trying to edit the person standing in front of them. {{holder1}} can feel stronger under that attention because the depth does not come with a takeover plan. The intensity reads as loyalty, not pressure, because {{holder2}} supports what matters without trying to own it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-pluto/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

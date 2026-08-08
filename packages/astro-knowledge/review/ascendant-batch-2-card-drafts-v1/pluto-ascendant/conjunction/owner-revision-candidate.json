@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "pluto-ascendant-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "bc47d7f3ab41bd529f608294f80764c4741c59ac063f5c9d5845e65d62348708",
+  "payload": {
+    "body_you": "You notice every shift in how {{holder2}} acts, and you may press them to reveal more or try to influence how they come across. Your close attention can feel intimate at first, but {{holder2}} may grow guarded when it starts to feel like constant scrutiny. They can end up feeling watched rather than known.",
+    "body_they": "{{holder1}} notices every shift in how you act, and they may press you to reveal more or try to influence how you come across. Their close attention can feel intimate at first, but you may grow guarded when it starts to feel like constant scrutiny. You can end up feeling watched rather than known.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "4becfa92657be9d7f78de95cd66d9d0b3f9d2ae2b1226ff347a98d156096c4f8",
+    "writerProviderResponseSha256": "ca6190078f35aaf6735a145d4129f41f0c0bd8f42f5303ff76656b9e35d39b8a"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/pluto-ascendant/conjunction/exact-approval.json"
+}

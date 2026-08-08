@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "point-pair-ascendant-sources-v1-north-node-ascendant-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/hard",
+  "payloadSha256": "64af9ef0789fde12d578754493f82bf93e5cbc71089bc22752cdd8d2c69920f0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} keeps challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+    "body_they": "{{holder1}} keeps challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

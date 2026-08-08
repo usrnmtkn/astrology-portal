@@ -261,14 +261,14 @@ function scoreLine(record, searchTerms) {
   };
 }
 
-function failedHarvest({ surface, format, core, flag, searchTerms = [] }) {
+function failedHarvest({ surface, core, flag, searchTerms = [] }) {
   return {
     schemaVersion: 1,
     status: "editorial_required",
     generationAllowed: false,
     surface,
     voice: surfaceVoice(surface),
-    harvest_mode: harvestMode(format),
+    harvest_mode: null,
     humanMoment: core || null,
     searchTerms,
     ownerFoundationLines: [],
@@ -397,10 +397,10 @@ function lintAspectWarmthUsage(draftText, harvest) {
   const sentences = sentenceSegments(draftText);
   const matches = matchingWarmthSentences(draftText, harvest?.ownerFoundationLines || []);
   const findings = [];
-  if (harvest?.harvest_mode === "vocabulary_only" && matches.length) {
+  if (harvest?.generationAllowed && harvest.status === "ready" && harvest.harvest_mode === "vocabulary_only" && matches.length) {
     findings.push({ severity: "fail", field: "body", reason: "vocabulary_only packet inserted an owner foundation line" });
   }
-  if (harvest?.harvest_mode === "matched") {
+  if (harvest?.generationAllowed && harvest.status === "ready" && harvest.harvest_mode === "matched") {
     if (matches.length > 1) {
       findings.push({ severity: "fail", field: "body", reason: `expected at most one warmth beat; found ${matches.length}` });
     }

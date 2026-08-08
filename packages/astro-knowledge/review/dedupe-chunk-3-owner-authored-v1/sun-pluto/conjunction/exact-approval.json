@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-pluto-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/pluto/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "7dba2ffba30d95cd2d80993cf85d2dcd11d8aaff9b2509c36bb89ca6fb455aa3",
+  "payload": {
+    "body_you": "{{holder2}} pays close attention to who {{holder1}} is, what drives them, and what they might become. At first, that focus can feel magnetic, like {{holder1}} has finally entered a room where nothing important goes unnoticed. Over time, being unforgettable to {{holder2}} can begin to feel less like devotion and more like having someone else's name written across the deed.",
+    "body_they": "{{holder2}} pays close attention to who {{holder1}} is, what drives them, and what they might become. At first, that focus can feel magnetic, like {{holder1}} has finally entered a room where nothing important goes unnoticed. Over time, being unforgettable to {{holder2}} can begin to feel less like devotion and more like having someone else's name written across the deed.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-pluto/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

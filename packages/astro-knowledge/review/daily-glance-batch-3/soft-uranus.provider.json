@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "key": "soft/uranus",
+  "responseId": "resp_032e9354f9e20a99006a733b3de96881a3bce81ec06484cd65",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "requestedMaxOutputTokens": 24000,
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 36297,
+  "usage": {
+    "inputTokens": 2283,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 2280,
+    "outputTokens": 2157,
+    "reasoningTokens": 2070,
+    "totalTokens": 4440
+  },
+  "estimatedCostUsd": 0.078975,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "fcc844faea48571ba989436fe1b4869cc351ae0b6b1e6a647311f18fcdf1f0b8",
+  "incompleteDetails": null
+}

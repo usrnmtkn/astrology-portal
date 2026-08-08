@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "additionalBilledCalls": 0,
+  "sourceDraftPreserved": true,
+  "sourceProviderResponsePreserved": true,
+  "exactlyMatchesOriginalDraft": true,
+  "exactOutputShape": true,
+  "sentenceCount": {
+    "status": "pass",
+    "body_you": 4,
+    "body_they": 4
+  },
+  "bodyYouDirection": "pass",
+  "bodyTheyDirection": "pass",
+  "allowedPlaceholders": "pass",
+  "asciiPunctuation": "pass",
+  "emOrEnDash": "pass",
+  "exclusions": "pass",
+  "stockCloser": "pass",
+  "warmthSource": "preserved_unchanged",
+  "warmthSourcePassed": true,
+  "evidenceLabels": [
+    "owner-corpus-derived"
+  ],
+  "ownerDecisionOperation": "approve_as_drafted",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "711727f56af0f5654c9e3037534775547ae9df484cbd3c64bcb79e176abaebdb",
+  "ownerApprovedPayloadSha256": "711727f56af0f5654c9e3037534775547ae9df484cbd3c64bcb79e176abaebdb",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/soft/exact-approval.json",
+  "ownerExactApproval": "pass"
+}

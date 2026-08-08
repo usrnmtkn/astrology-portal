@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "key": "opposition/jupiter",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+    "required": false
+  },
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "9 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "5 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "59 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": true,
+      "details": "1 detected instruction(s); final sentence: Tell them you can do the errand, not the add-ons."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": true,
+      "details": "No prohibited match."
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": true,
+      "details": {
+        "otherPersonCue": true,
+        "otherFrictionCue": true,
+        "target": "jupiter"
+      }
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "passed": true,
+      "details": "Body uses a non-fixed opener."
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "passed": true,
+      "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "passed": true,
+      "details": [
+        "For the next few hours"
+      ]
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "passed": false,
+      "details": [
+        "may make your own limit feel ungenerous"
+      ]
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "passed": true,
+      "details": "Opposition headline names another-person pressure."
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    },
+    {
+      "id": "DG-R11-unhedged-headline",
+      "passed": true,
+      "details": "Headline makes an unhedged claim."
+    },
+    {
+      "id": "DG-R12-no-time-anchor-opener",
+      "passed": true,
+      "details": "Body opens inside the scene."
+    },
+    {
+      "id": "DG-R13-may-max-once",
+      "passed": true,
+      "details": "1 may usage(s)"
+    },
+    {
+      "id": "DG-R14-scene-not-biographical",
+      "passed": true,
+      "details": "No biographical anchor detected."
+    },
+    {
+      "id": "DG-R15-action-repairs-moment",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R16-owner-reserved-construction",
+      "passed": true,
+      "details": []
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-max-one",
+      "passed": true,
+      "details": "No quoted-dialogue line used."
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+      "passed": true,
+      "advisory": true,
+      "details": "No quoted-dialogue judgment needed."
+    },
+    {
+      "id": "OWNER-DIRECTIVE-short-blunt-line",
+      "passed": true,
+      "details": [
+        "It isn't."
+      ]
+    },
+    {
+      "id": "OWNER-TEST-specificity",
+      "passed": false,
+      "advisory": false,
+      "details": {
+        "own": {
+          "key": "opposition/jupiter",
+          "matches": [
+            "other-person",
+            "excess"
+          ],
+          "required": 2,
+          "passed": true
+        },
+        "comparisonScope": [
+          "conjunction/jupiter",
+          "conjunction/mercury",
+          "conjunction/sun",
+          "conjunction/saturn",
+          "square/mars",
+          "square/venus",
+          "square/uranus",
+          "opposition/pluto",
+          "soft/mercury",
+          "soft/uranus",
+          "soft/chiron",
+          "house/5",
+          "house/12"
+        ],
+        "swappableTo": [
+          {
+            "key": "conjunction/mercury",
+            "matches": [
+              "feeling-thinking",
+              "words"
+            ],
+            "passed": true
+          },
+          {
+            "key": "opposition/pluto",
+            "matches": [
+              "other-person",
+              "power-control"
+            ],
+            "passed": true
+          },
+          {
+            "key": "house/5",
+            "matches": [
+              "creativity-play"
+            ],
+            "passed": true
+          }
+        ],
+        "advisorySwappableTo": []
+      }
+    },
+    {
+      "id": "OWNER-TEST-morning-read",
+      "passed": true,
+      "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "passed": true,
+      "details": [
+        "A friend turns one quick errand into lunch and another stop, and you agree before checking what your afternoon already holds.",
+        "For the next few hours, you risk rushing work you already accepted if you add more."
+      ]
+    }
+  ],
+  "findings": [],
+  "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 59,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 2
+  }
+}

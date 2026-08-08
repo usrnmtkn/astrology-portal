@@ -1,0 +1,1050 @@
+[
+ {
+  "sample": 1,
+  "candidate": {
+   "headline": "Help is easier to receive before the problem is solved.",
+   "body": "You pause before saying you can manage alone when a coworker offers to take the next call while you correct a mistake. You may feel more exposed accepting help than doing both jobs yourself because you learned to refuse after an old hurt you never deserved. You take longer to refuse right now. You’re not weak for needing care. Accept the offer and send them the call details."
+  },
+  "raw": "{\"headline\":\"Help is easier to receive before the problem is solved.\",\"body\":\"You pause before saying you can manage alone when a coworker offers to take the next call while you correct a mistake. You may feel more exposed accepting help than doing both jobs yourself because you learned to refuse after an old hurt you never deserved. You take longer to refuse right now. You’re not weak for needing care. Accept the offer and send them the call details.\"}",
+  "writerUsage": {
+   "inputTokens": 3661,
+   "cachedInputTokens": 0,
+   "cacheWriteTokens": 3658,
+   "outputTokens": 3087,
+   "reasoningTokens": 2989,
+   "totalTokens": 6748
+  },
+  "responseId": "resp_0bfcb42036cc94e1006a737077f7d081a0a5a8366678d3c46c",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/chiron",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "10 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "68 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 0 detected instruction(s); final sentence: Accept the offer and send them the call details."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": false,
+     "details": [
+      {
+       "id": "VC-016-minus-pronouns",
+       "term": "right now",
+       "reason": "owner ban on this surface; the pace line carries the timing",
+       "match": "right now"
+      }
+     ]
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "chiron"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": {
+      "softGrammar": true,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You take longer to refuse right now.",
+      "You’re not weak for needing care."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/chiron",
+       "matches": [
+        "care-old-hurt",
+        "mild-ease"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "opposition/jupiter",
+        "matches": [
+         "other-person",
+         "excess"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You’re not weak for needing care."
+     ]
+    }
+   ],
+   "findings": [
+    {
+     "id": "VC-016-minus-pronouns",
+     "term": "right now",
+     "reason": "owner ban on this surface; the pace line carries the timing",
+     "match": "right now"
+    }
+   ],
+   "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 68,
+    "bodySentences": 5,
+    "instructions": 0,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "soft/chiron",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate aligns well with the owner's voice: it opens with a clear truth about hesitation to accept help, names the emotional cost (feeling exposed due to past hurt), and offers a direct instruction to accept help. The voice is plain and conversational, without hedging except one 'may,' and no formulaic phrases or time anchors. The ending completes the thought with a clear action. The specificity to a workplace scenario with a coworker and a call grounds it in this key's register. The best line names a common but unspoken feeling: 'You may feel more exposed accepting help than doing both jobs yourself because you learned to refuse after an old hurt you never deserved.'",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You may feel more exposed accepting help than doing both jobs yourself because you learned to refuse after an old hurt you never deserved.",
+    "why": "This sentence captures a subtle emotional truth about vulnerability and past trauma that explains the hesitation to accept help. It names a recognizable internal cost (feeling exposed) and a backstory (old hurt) that many readers will relate to but rarely articulate so clearly. It grounds the advice in lived experience rather than abstract permission, making it the strongest, most shareable line."
+   },
+   "usage": {
+    "input_tokens": 1166,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 318,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1484
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 2,
+  "candidate": {
+   "headline": "A friend’s help is not proof that you failed.",
+   "body": "You may still expect someone to judge how you got stuck before they offer help. Your car will not start, so a friend offers a ride to work and you can say yes before explaining yourself. If you refuse, you face paying for another ride or missing the shift. You’re not weak for needing care. Send your pickup address and the time you need to leave."
+  },
+  "raw": "{\"headline\":\"A friend’s help is not proof that you failed.\",\"body\":\"You may still expect someone to judge how you got stuck before they offer help. Your car will not start, so a friend offers a ride to work and you can say yes before explaining yourself. If you refuse, you face paying for another ride or missing the shift. You’re not weak for needing care. Send your pickup address and the time you need to leave.\"}",
+  "writerUsage": {
+   "inputTokens": 3661,
+   "cachedInputTokens": 3658,
+   "cacheWriteTokens": 0,
+   "outputTokens": 7681,
+   "reasoningTokens": 7584,
+   "totalTokens": 11342
+  },
+  "responseId": "resp_0b86a732d23614d5006a7370bb9be0819db2af077793973be8",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/chiron",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "9 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "66 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send your pickup address and the time you need to leave."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "mildEaseCue": false,
+      "target": "chiron"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": false,
+     "details": "Future outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": false,
+     "details": [
+      "may still expect someone to judge how you got stuck before they "
+     ]
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "softGrammar": false,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You’re not weak for needing care."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/chiron",
+       "matches": [
+        "care-old-hurt"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "opposition/jupiter",
+        "matches": [
+         "other-person",
+         "excess"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You may still expect someone to judge how you got stuck before they offer help.",
+      "You’re not weak for needing care."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 66,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 2
+   }
+  },
+  "judge": {
+   "key": "soft/chiron",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well: it states a plain, relatable truth early (expecting judgment before help), supports it with a clear, lived example (car won't start, friend offers ride), and names real stakes (paying for another ride or missing work). The ending completes the thought with a practical instruction. Hedging is minimal (only 'may'), and the phrasing avoids formulaic templates or permission frames. The line about expecting judgment before help is a strong, shareable insight. The specificity to the 'soft/chiron' key is clear in the tone and scenario.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You may still expect someone to judge how you got stuck before they offer help.",
+    "why": "This sentence captures a common but often unspoken emotional barrier to accepting help, naming a vulnerability that many feel but rarely articulate so clearly. It sets the tone for the rest of the piece and invites empathy, making it the strongest, most memorable line."
+   },
+   "usage": {
+    "input_tokens": 1165,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 268,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1433
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 3,
+  "candidate": {
+   "headline": "Help is easier to accept before the problem is solved.",
+   "body": "You pause before saying no to help while you are still correcting a mistake at work. A colleague offers to send the follow-up email, and you may recognize the old fear that accepting means you cannot handle your own mistake. You’re not weak for needing care. For now, accepting one offer does not prove you cannot handle the work. Forward the email thread and ask them to send the reply."
+  },
+  "raw": "{\"headline\":\"Help is easier to accept before the problem is solved.\",\"body\":\"You pause before saying no to help while you are still correcting a mistake at work. A colleague offers to send the follow-up email, and you may recognize the old fear that accepting means you cannot handle your own mistake. You’re not weak for needing care. For now, accepting one offer does not prove you cannot handle the work. Forward the email thread and ask them to send the reply.\"}",
+  "writerUsage": {
+   "inputTokens": 3661,
+   "cachedInputTokens": 3658,
+   "cacheWriteTokens": 0,
+   "outputTokens": 4244,
+   "reasoningTokens": 4142,
+   "totalTokens": 7905
+  },
+  "responseId": "resp_066a7a26694cbc38006a73715d77e0819db3cd484837307ec2",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/chiron",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "10 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "71 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 0 detected instruction(s); final sentence: Forward the email thread and ask them to send the reply."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "chiron"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": false,
+     "details": [
+      "may recognize the old fear that accepting means you cannot handl"
+     ]
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": {
+      "softGrammar": true,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You’re not weak for needing care."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/chiron",
+       "matches": [
+        "care-old-hurt",
+        "mild-ease"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "opposition/pluto",
+        "matches": [
+         "other-person",
+         "power-control"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You pause before saying no to help while you are still correcting a mistake at work.",
+      "You’re not weak for needing care.",
+      "For now, accepting one offer does not prove you cannot handle the work."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 71,
+    "bodySentences": 5,
+    "instructions": 0,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 3
+   }
+  },
+  "judge": {
+   "key": "soft/chiron",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 2,
+   "dimScore": 6,
+   "verdict": {
+    "score": 2,
+    "verdict": "The candidate reads mostly in voice with plain conversational truth and a clear stakes dimension (fear of appearing weak, managing a work mistake). The structure is mostly solid with the truth arriving early and a supportive example, but the ending feels slightly incomplete and could better complete the thought or offer a clearer instruction. Hedging is minimal and acceptable. The formula is mostly fresh, though the phrase 'You’re not weak for needing care' edges toward a permission frame that might feel slightly formulaic. The screenshot line is present but not especially striking or unique. Specificity is good, keyed to a work mistake and a colleague's offer. Overall, it needs a bit more polish and a stronger ending to fully meet the rubric.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": false,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "You pause before saying no to help while you are still correcting a mistake at work.",
+    "why": "This sentence clearly names a relatable internal moment of hesitation tied to a specific context (correcting a mistake at work), capturing a feeling many have but might not articulate. It sets the scene and stakes immediately, anchoring the rest of the body in a lived experience that feels authentic and conversational."
+   },
+   "usage": {
+    "input_tokens": 1170,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 301,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1471
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 4,
+  "candidate": {
+   "headline": "Help arrives before you have explained the whole problem.",
+   "body": "You may still expect an offer of help to become a review of everything you did wrong. Over the next few hours, you hear someone offer to check a surprise bill before you start explaining how it happened. If you give the full account first, you turn a ten-minute check into another hour alone with the total. You are not careless for needing a second set of eyes. You can explain later. Send the bill and ask them to verify the charge with you."
+  },
+  "raw": "{\"headline\":\"Help arrives before you have explained the whole problem.\",\"body\":\"You may still expect an offer of help to become a review of everything you did wrong. Over the next few hours, you hear someone offer to check a surprise bill before you start explaining how it happened. If you give the full account first, you turn a ten-minute check into another hour alone with the total. You are not careless for needing a second set of eyes. You can explain later. Send the bill and ask them to verify the charge with you.\"}",
+  "writerUsage": {
+   "inputTokens": 3661,
+   "cachedInputTokens": 3658,
+   "cacheWriteTokens": 0,
+   "outputTokens": 7883,
+   "reasoningTokens": 7768,
+   "totalTokens": 11544
+  },
+  "responseId": "resp_08ed097d7fd7dd6d006a7371af97ac8191900aa5d87cb1c01e",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/chiron",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "9 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "6 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "85 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send the bill and ask them to verify the charge with you."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "mildEaseCue": false,
+      "target": "chiron"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": [
+      "Over the next few hours"
+     ]
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": false,
+     "details": [
+      "may still expect an offer of help to become a review of everythi"
+     ]
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "softGrammar": false,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You can explain later."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/chiron",
+       "matches": [
+        "care-old-hurt"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You may still expect an offer of help to become a review of everything you did wrong.",
+      "You are not careless for needing a second set of eyes."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 85,
+    "bodySentences": 6,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 2
+   }
+  },
+  "judge": {
+   "key": "soft/chiron",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well: it opens with a clear truth, names a recognizable cost (time lost in overexplaining), and offers a practical, specific instruction. The voice is plain and conversational without AI polish or formulaic phrasing. The stakes are concrete (turning a quick check into an hour alone with the bill). The structure delivers the interpretation early and supports it with a lived example, ending with a complete thought and a clear action. Hedging is minimal and appropriate. The line about turning a ten-minute check into another hour alone with the total is a strong screenshot-worthy insight. The specificity is solid, keyed to the soft/chiron transit's register of vulnerability and self-judgment.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "If you give the full account first, you turn a ten-minute check into another hour alone with the total.",
+    "why": "This sentence crisply names a common but unspoken experience—how overexplaining can multiply the time and emotional cost of a simple task. It captures the tension between wanting to be understood and the practical need to limit exposure, which fits the transit's theme of vulnerability and self-criticism. It's a line readers would save or share because it puts a clear frame on a familiar feeling."
+   },
+   "usage": {
+    "input_tokens": 1183,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 327,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1510
+   },
+   "advisoryOnly": true
+  }
+ }
+]

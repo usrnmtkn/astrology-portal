@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-saturn-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/saturn/hard",
+  "payloadSha256": "8e9de68bc34bde50456e41480d9480b39e846980a1f25bd83d74fcf1013a4444",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You reach for warmth, reassurance, or a little softness, and {{holder2}} responds with caution, practical help, silence, or the next responsibility on the list. {{holder2}} believes reliability should make the care obvious, while you begin feeling guilty for needing something less useful and more human. The relationship can become excellent in an emergency and strangely lonely on an ordinary Tuesday.",
+    "body_they": "{{holder1}} reaches for warmth, reassurance, or a little softness, and you respond with caution, practical help, silence, or the next responsibility on the list. You believe reliability should make the care obvious, while {{holder1}} begins feeling guilty for needing something less useful and more human. The relationship can become excellent in an emergency and strangely lonely on an ordinary Tuesday.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

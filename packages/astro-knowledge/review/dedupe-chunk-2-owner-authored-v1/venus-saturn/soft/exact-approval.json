@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-saturn-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/saturn/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "42a25f1402e0ff43d5cced564129a16709b715053e28c7797e04740282fba46f",
+  "payload": {
+    "body_you": "{{holder1}} knows what to expect from {{holder2}}, and {{holder2}} gives {{holder1}} something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. {{holder1}} and {{holder2}} can trust the commitment while still assuming that warmth does not need to be spoken or shown very often.",
+    "body_they": "{{holder1}} knows what to expect from {{holder2}}, and {{holder2}} gives {{holder1}} something lasting. The relationship can handle responsibility, time, and ordinary life without every difficult period becoming a threat. The affection may remain quiet. {{holder1}} and {{holder2}} can trust the commitment while still assuming that warmth does not need to be spoken or shown very often.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-saturn/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}
