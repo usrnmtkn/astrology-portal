@@ -181,7 +181,7 @@ export function FriendTransitsTab({
         ) : null}
         {houseTransits.length > 0 && (
           <section className="friend-transit-group" aria-label="House transits">
-            <span className="eyebrow section-label friend-section-label">Life areas in motion</span>
+            <span className="eyebrow section-label friend-section-label">Where it lands</span>
             <div className="updates-aspect-list friend-transit-list">
               {houseTransits.map((card) => (
                 <button
