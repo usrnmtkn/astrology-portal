@@ -897,6 +897,32 @@ try {
     location,
     new Date("2026-07-27T16:00:00Z")
   );
+  const mondayNeptune = mondaySky.positions.find((position) => position.planet === "Neptune");
+  assert.ok(mondayNeptune && typeof mondayNeptune.longitude === "number");
+  const forcedNeptuneSelfContactNatal = {
+    ...natalSky,
+    positions: natalSky.positions.map((position) => (
+      position.planet === "Neptune"
+        ? { ...position, longitude: mondayNeptune.longitude }
+        : position
+    ))
+  };
+  const neptuneSelfContactWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-neptune-self-contact-fixture",
+    natalSky: forcedNeptuneSelfContactNatal,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-07-29T12:00:00Z")
+  });
+  const neptuneReadings = [neptuneSelfContactWeek.horoscope, ...neptuneSelfContactWeek.aspects];
+  assert.ok(
+    neptuneReadings.every((reading) => !reading.sourceUnits.includes("return:neptune")),
+    "A Neptune self-conjunction must never produce a return row."
+  );
+  assert.ok(
+    neptuneSelfContactWeek.sourceGaps.every((gap) => !gap.includes("transit-return/neptune")),
+    "A Neptune self-conjunction must be excluded before return-card lookup and emit no return SOURCE_GAP."
+  );
   const mondaySaturn = mondaySky.positions.find((position) => position.planet === "Saturn");
   assert.ok(mondaySaturn && typeof mondaySaturn.longitude === "number");
   const forcedSaturnVenusNatal = {
@@ -929,7 +955,7 @@ try {
     "Aspect copy must render in its own standalone card."
   );
 
-  console.log("weekly horoscope assembly checks passed: event-time ruler condition, stale-sky guard, macro, and standalone aspect cards");
+  console.log("weekly horoscope assembly checks passed: event-time ruler condition, stale-sky guard, Neptune return exclusion, macro, and standalone aspect cards");
 } finally {
   await vite.close();
 }

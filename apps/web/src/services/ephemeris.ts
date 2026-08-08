@@ -1777,6 +1777,29 @@ function refineAspectEvent(
 type SkyAspectRecord = SkySnapshot["aspects"][number];
 type SkyAspectTiming = NonNullable<SkyAspectRecord["timing"]>;
 
+export type NatalTransitTiming = {
+  group: SkyAspectTiming["group"];
+  phase: SkyAspectTiming["phase"];
+  engagementStart: string;
+  engagementEnd: string;
+  timeZone?: string;
+  passIndex: number;
+  exactPasses: Array<{
+    exactAt: string;
+    firstMotion: "direct" | "retrograde";
+    secondMotion: "fixed";
+  }>;
+  stationNearNatal: boolean;
+};
+
+export type NatalTransitTimingOptions = {
+  aspectDegrees?: number;
+  presentationDegrees?: number;
+  timeZone?: string;
+};
+
+const natalTransitTimingCache = new Map<string, Promise<NatalTransitTiming | null>>();
+
 function skyPointPlanetId(swe: SwissEphInstance, point: string) {
   const ids: Record<string, number> = {
     Sun: swe.SE_SUN,
@@ -1794,6 +1817,195 @@ function skyPointPlanetId(swe: SwissEphInstance, point: string) {
     "North Node": swe.SE_TRUE_NODE
   };
   return ids[point] ?? null;
+}
+
+function fixedNatalResidualsAt(
+  swe: SwissEphInstance,
+  planetId: number,
+  natalLongitude: number,
+  date: Date,
+  targetDegrees: number
+) {
+  const directed = shortestAngleDistance(exactPlanetLongitude(swe, planetId, date) - natalLongitude);
+  const residuals = [shortestAngleDistance(directed - targetDegrees)];
+  if (targetDegrees !== 0 && targetDegrees !== 180) {
+    residuals.push(shortestAngleDistance(directed + targetDegrees));
+  }
+  return residuals;
+}
+
+type AspectResidualsAt = (date: Date) => number[];
+
+function refineResidualPass(
+  residualsAt: AspectResidualsAt,
+  branch: number,
+  lowerInput: Date,
+  upperInput: Date
+) {
+  let lower = lowerInput;
+  let upper = upperInput;
+  let lowerResidual = residualsAt(lower)[branch];
+  for (let index = 0; index < 54; index += 1) {
+    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
+    const midpointResidual = residualsAt(midpoint)[branch];
+    if (lowerResidual === 0 || lowerResidual * midpointResidual <= 0) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+      lowerResidual = midpointResidual;
+    }
+  }
+  return new Date((lower.getTime() + upper.getTime()) / 2);
+}
+
+function scanResidualPasses(
+  residualsAt: AspectResidualsAt,
+  start: Date,
+  end: Date,
+  stepDays: number,
+  branchFilter: number | null = null
+) {
+  const passes: Date[] = [];
+  let previousDate = start;
+  let previous = residualsAt(previousDate);
+  const stepMs = Math.max(60 * 60_000, stepDays * 86_400_000);
+  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+    const currentDate = new Date(time);
+    const current = residualsAt(currentDate);
+    current.forEach((residual, branch) => {
+      if (branchFilter !== null && branch !== branchFilter) return;
+      const prior = previous[branch];
+      if (!Number.isFinite(prior) || Math.abs(residual - prior) > 180) return;
+      if (prior === 0 || residual === 0 || prior * residual < 0) {
+        const exact = refineResidualPass(residualsAt, branch, previousDate, currentDate);
+        if (!passes.some((pass) => Math.abs(pass.getTime() - exact.getTime()) < 6 * 60 * 60_000)) {
+          passes.push(exact);
+        }
+      }
+    });
+    previousDate = currentDate;
+    previous = current;
+  }
+  return passes.sort((first, second) => first.getTime() - second.getTime());
+}
+
+function findResidualBoundary(
+  residualsAt: AspectResidualsAt,
+  presentationDegrees: number,
+  from: Date,
+  direction: -1 | 1,
+  stepDays: number,
+  maxDays: number
+) {
+  let near = from;
+  for (let elapsed = stepDays; elapsed <= maxDays; elapsed += stepDays) {
+    const far = addDays(from, direction * elapsed);
+    if (Math.min(...residualsAt(far).map(Math.abs)) > presentationDegrees) {
+      let inside = near;
+      let outside = far;
+      for (let index = 0; index < 45; index += 1) {
+        const midpoint = new Date((inside.getTime() + outside.getTime()) / 2);
+        if (Math.min(...residualsAt(midpoint).map(Math.abs)) <= presentationDegrees) {
+          inside = midpoint;
+        } else {
+          outside = midpoint;
+        }
+      }
+      return new Date((inside.getTime() + outside.getTime()) / 2);
+    }
+    near = far;
+  }
+  return addDays(from, direction * maxDays);
+}
+
+function stationFallsNearNatal(
+  swe: SwissEphInstance,
+  planetId: number,
+  natalLongitude: number,
+  start: Date,
+  end: Date
+) {
+  const stepMs = 12 * 60 * 60_000;
+  let previousDate = start;
+  let previousSpeed = exactPlanetSpeed(swe, planetId, previousDate);
+  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+    const currentDate = new Date(time);
+    const currentSpeed = exactPlanetSpeed(swe, planetId, currentDate);
+    if (previousSpeed === 0 || previousSpeed * currentSpeed < 0) {
+      const station = refineStationEvent(swe, planetId, previousDate, currentDate);
+      if (angularSeparation(exactPlanetLongitude(swe, planetId, station), natalLongitude) <= 1.5) return true;
+    }
+    previousDate = currentDate;
+    previousSpeed = currentSpeed;
+  }
+  return false;
+}
+
+async function calculateNatalTransitTiming(
+  transitingPlanet: string,
+  natalLongitude: number,
+  aroundDate: Date,
+  options: NatalTransitTimingOptions
+): Promise<NatalTransitTiming | null> {
+  const swe = await getSwissEph();
+  const planetId = skyPointPlanetId(swe, transitingPlanet);
+  if (planetId === null || transitingPlanet === "South Node") return null;
+  const targetDegrees = options.aspectDegrees ?? 0;
+  const presentationDegrees = options.presentationDegrees ?? 1.5;
+  const residualsAt = (date: Date) => fixedNatalResidualsAt(swe, planetId, natalLongitude, date, targetDegrees);
+  const speed = Math.max(0.002, Math.abs(exactPlanetSpeed(swe, planetId, aroundDate)));
+  const slowSeriesFloorDays = ["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron"].includes(transitingPlanet)
+    ? 400
+    : 10;
+  const series = aspectPassSeriesTiming({
+    residualsAt,
+    motionIsRetrogradeAt: (date) => exactPlanetSpeed(swe, planetId, date) < 0,
+    reference: aroundDate,
+    presentationDegrees,
+    relativeSpeed: speed,
+    fastestSpeed: speed,
+    maxBoundaryCapDays: 1800,
+    seriesFloorDays: slowSeriesFloorDays,
+    horizonMinDays: 120,
+    horizonMaxDays: 2200
+  });
+  if (!series) return null;
+  const { engagementEnd, engagementPasses, engagementStart, group, passIndex, phase } = series;
+  return {
+    group,
+    phase,
+    engagementStart: engagementStart.toISOString(),
+    engagementEnd: engagementEnd.toISOString(),
+    timeZone: options.timeZone,
+    passIndex: passIndex + 1,
+    exactPasses: engagementPasses.map((pass) => ({
+      exactAt: pass.toISOString(),
+      firstMotion: exactPlanetSpeed(swe, planetId, pass) < 0 ? "retrograde" : "direct",
+      secondMotion: "fixed"
+    })),
+    stationNearNatal: stationFallsNearNatal(swe, planetId, natalLongitude, engagementStart, engagementEnd)
+  };
+}
+
+/** Memoized fixed-natal counterpart to skyAspectTimingFor. */
+export function natalTransitTimingFor(
+  transitingPlanet: string,
+  natalLongitude: number,
+  aroundDateInput: Date | string,
+  options: NatalTransitTimingOptions = {}
+) {
+  const aroundDate = aroundDateInput instanceof Date ? aroundDateInput : new Date(aroundDateInput);
+  if (!Number.isFinite(natalLongitude) || Number.isNaN(aroundDate.getTime())) return Promise.resolve(null);
+  const day = aroundDate.toISOString().slice(0, 10);
+  const key = [transitingPlanet, normalizeDegrees(natalLongitude).toFixed(4), day, options.aspectDegrees ?? 0, options.presentationDegrees ?? 1.5, options.timeZone ?? ""].join("|");
+  const cached = natalTransitTimingCache.get(key);
+  if (cached) return cached;
+  const pending = calculateNatalTransitTiming(transitingPlanet, normalizeDegrees(natalLongitude), aroundDate, options);
+  natalTransitTimingCache.set(key, pending);
+  void pending.catch(() => {
+    if (natalTransitTimingCache.get(key) === pending) natalTransitTimingCache.delete(key);
+  });
+  return pending;
 }
 
 function skyAspectPresentationOrb(aspect: SkyAspectRecord) {
@@ -1820,31 +2032,6 @@ function directedAspectResidualsAt(
   return residuals;
 }
 
-function refineDirectedAspectPass(
-  swe: SwissEphInstance,
-  firstPlanetId: number,
-  secondPlanetId: number,
-  targetDegrees: number,
-  branch: number,
-  lowerInput: Date,
-  upperInput: Date
-) {
-  let lower = lowerInput;
-  let upper = upperInput;
-  let lowerDistance = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees)[branch];
-  for (let index = 0; index < 54; index += 1) {
-    const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
-    const midpointDistance = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, midpoint, targetDegrees)[branch];
-    if (lowerDistance === 0 || lowerDistance * midpointDistance <= 0) {
-      upper = midpoint;
-    } else {
-      lower = midpoint;
-      lowerDistance = midpointDistance;
-    }
-  }
-  return new Date((lower.getTime() + upper.getTime()) / 2);
-}
-
 function scanExactAspectPasses(
   swe: SwissEphInstance,
   firstPlanetId: number,
@@ -1855,37 +2042,13 @@ function scanExactAspectPasses(
   stepDays: number,
   branchFilter: number | null = null
 ) {
-  const passes: Date[] = [];
-  let previousDate = start;
-  let previous = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, previousDate, targetDegrees);
-  const stepMs = Math.max(60 * 60_000, stepDays * 86_400_000);
-
-  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
-    const currentDate = new Date(time);
-    const current = directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, currentDate, targetDegrees);
-    current.forEach((distance, branch) => {
-      if (branchFilter !== null && branch !== branchFilter) return;
-      const prior = previous[branch];
-      if (!Number.isFinite(prior) || Math.abs(distance - prior) > 180) return;
-      if (prior === 0 || distance === 0 || prior * distance < 0) {
-        const exact = refineDirectedAspectPass(
-          swe,
-          firstPlanetId,
-          secondPlanetId,
-          targetDegrees,
-          branch,
-          previousDate,
-          currentDate
-        );
-        if (!passes.some((pass) => Math.abs(pass.getTime() - exact.getTime()) < 6 * 60 * 60_000)) {
-          passes.push(exact);
-        }
-      }
-    });
-    previousDate = currentDate;
-    previous = current;
-  }
-  return passes.sort((first, second) => first.getTime() - second.getTime());
+  return scanResidualPasses(
+    (date) => directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees),
+    start,
+    end,
+    stepDays,
+    branchFilter
+  );
 }
 
 function directedAspectBranchAt(
@@ -1901,38 +2064,6 @@ function directedAspectBranchAt(
   ), 0);
 }
 
-function aspectPresentationDistanceAt(
-  swe: SwissEphInstance,
-  firstPlanetId: number,
-  secondPlanetId: number,
-  date: Date,
-  targetDegrees: number
-) {
-  return Math.min(...directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees).map(Math.abs));
-}
-
-function refineAspectBoundary(
-  swe: SwissEphInstance,
-  firstPlanetId: number,
-  secondPlanetId: number,
-  targetDegrees: number,
-  presentationDegrees: number,
-  nearInput: Date,
-  farInput: Date
-) {
-  let near = nearInput;
-  let far = farInput;
-  for (let index = 0; index < 45; index += 1) {
-    const midpoint = new Date((near.getTime() + far.getTime()) / 2);
-    if (aspectPresentationDistanceAt(swe, firstPlanetId, secondPlanetId, midpoint, targetDegrees) <= presentationDegrees) {
-      near = midpoint;
-    } else {
-      far = midpoint;
-    }
-  }
-  return new Date((near.getTime() + far.getTime()) / 2);
-}
-
 function findAspectBoundary(
   swe: SwissEphInstance,
   firstPlanetId: number,
@@ -1944,15 +2075,14 @@ function findAspectBoundary(
   stepDays: number,
   maxDays: number
 ) {
-  let near = from;
-  for (let elapsed = stepDays; elapsed <= maxDays; elapsed += stepDays) {
-    const far = addDays(from, direction * elapsed);
-    if (aspectPresentationDistanceAt(swe, firstPlanetId, secondPlanetId, far, targetDegrees) > presentationDegrees) {
-      return refineAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, near, far);
-    }
-    near = far;
-  }
-  return addDays(from, direction * maxDays);
+  return findResidualBoundary(
+    (date) => directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees),
+    presentationDegrees,
+    from,
+    direction,
+    stepDays,
+    maxDays
+  );
 }
 
 function clusterAspectPasses(passes: Date[], maxGapDays: number) {
@@ -1966,6 +2096,58 @@ function clusterAspectPasses(passes: Date[], maxGapDays: number) {
     }
   }
   return clusters;
+}
+
+function aspectPassSeriesTiming({
+  residualsAt,
+  motionIsRetrogradeAt,
+  reference,
+  presentationDegrees,
+  relativeSpeed,
+  fastestSpeed,
+  maxBoundaryCapDays,
+  seriesFloorDays = 10,
+  horizonMinDays = 60,
+  horizonMaxDays = 5000
+}: {
+  residualsAt: AspectResidualsAt;
+  motionIsRetrogradeAt: (date: Date) => boolean;
+  reference: Date;
+  presentationDegrees: number;
+  relativeSpeed: number;
+  fastestSpeed: number;
+  maxBoundaryCapDays: number;
+  seriesFloorDays?: number;
+  horizonMinDays?: number;
+  horizonMaxDays?: number;
+}) {
+  const estimatedDurationDays = (presentationDegrees * 2) / relativeSpeed;
+  const boundaryStepDays = Math.max(0.125, Math.min(5, presentationDegrees / (fastestSpeed * 4)));
+  const maxBoundaryDays = Math.max(60, Math.min(maxBoundaryCapDays, estimatedDurationDays * 4));
+  const currentStart = findResidualBoundary(residualsAt, presentationDegrees, reference, -1, boundaryStepDays, maxBoundaryDays);
+  const currentEnd = findResidualBoundary(residualsAt, presentationDegrees, reference, 1, boundaryStepDays, maxBoundaryDays);
+  const passStepDays = Math.max(1 / 24, Math.min(2, presentationDegrees / (fastestSpeed * 8)));
+  const currentPasses = scanResidualPasses(residualsAt, currentStart, currentEnd, passStepDays);
+  if (!currentPasses.length) return null;
+  const passResiduals = residualsAt(currentPasses[0]);
+  const branch = passResiduals.reduce((best, residual, index) => Math.abs(residual) < Math.abs(passResiduals[best]) ? index : best, 0);
+  const currentDurationDays = Math.max(1, (currentEnd.getTime() - currentStart.getTime()) / 86_400_000);
+  const maxSeriesGapDays = Math.max(seriesFloorDays, Math.min(550, currentDurationDays * 4));
+  const horizonDays = Math.max(horizonMinDays, Math.min(horizonMaxDays, maxSeriesGapDays * 8));
+  const allPasses = scanResidualPasses(residualsAt, addDays(reference, -horizonDays), addDays(reference, horizonDays), passStepDays, branch);
+  const seedTimes = new Set(currentPasses.map((pass) => Math.round(pass.getTime() / 60_000)));
+  const linkedPasses = clusterAspectPasses(allPasses, maxSeriesGapDays).find((cluster) => cluster.some((pass) => seedTimes.has(Math.round(pass.getTime() / 60_000)))) ?? currentPasses;
+  const engagementPasses = linkedPasses.length > 1 && !linkedPasses.some(motionIsRetrogradeAt) ? currentPasses : linkedPasses;
+  const engagementStart = findResidualBoundary(residualsAt, presentationDegrees, engagementPasses[0], -1, boundaryStepDays, maxBoundaryDays);
+  const engagementEnd = findResidualBoundary(residualsAt, presentationDegrees, engagementPasses.at(-1)!, 1, boundaryStepDays, maxBoundaryDays);
+  const durationDays = Math.max(0, (engagementEnd.getTime() - engagementStart.getTime()) / 86_400_000);
+  const group: SkyAspectTiming["group"] = durationDays <= 10 ? "this-week" : durationDays < 365 ? "this-season" : "undercurrent";
+  const closestIndex = engagementPasses.reduce((best, pass, index) => Math.abs(pass.getTime() - reference.getTime()) < Math.abs(engagementPasses[best].getTime() - reference.getTime()) ? index : best, 0);
+  const nextIndex = engagementPasses.findIndex((pass) => pass.getTime() > reference.getTime());
+  const exact = Math.abs(engagementPasses[closestIndex].getTime() - reference.getTime()) <= 12 * 3_600_000;
+  const phase: SkyAspectTiming["phase"] = exact ? "exact" : nextIndex >= 0 ? "building" : "fading";
+  const passIndex = exact ? closestIndex : nextIndex >= 0 ? nextIndex : engagementPasses.length - 1;
+  return { branch, engagementEnd, engagementPasses, engagementStart, estimatedDurationDays, group, passIndex, passStepDays, phase };
 }
 
 function skyAspectTimingFor(
@@ -1988,69 +2170,28 @@ function skyAspectTimingFor(
   const relativeSpeed = Math.max(0.002, Math.abs(firstPosition.speed - secondPosition.speed));
   const fastestSpeed = Math.max(0.02, Math.abs(firstPosition.speed), Math.abs(secondPosition.speed));
   const presentationDegrees = skyAspectPresentationOrb(aspect);
-  const estimatedDurationDays = (presentationDegrees * 2) / relativeSpeed;
-  const boundaryStepDays = Math.max(0.125, Math.min(5, presentationDegrees / (fastestSpeed * 4)));
-  const maxBoundaryDays = Math.max(60, Math.min(5500, estimatedDurationDays * 4));
-  const currentWindowStart = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, reference, -1, boundaryStepDays, maxBoundaryDays);
-  const currentWindowEnd = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, reference, 1, boundaryStepDays, maxBoundaryDays);
-  const passScanStepDays = Math.max(1 / 24, Math.min(2, presentationDegrees / (fastestSpeed * 8)));
-  const currentWindowPasses = scanExactAspectPasses(
-    swe,
-    firstPlanetId,
-    secondPlanetId,
-    targetDegrees,
-    currentWindowStart,
-    currentWindowEnd,
-    passScanStepDays
-  );
-  if (!currentWindowPasses.length) return null;
-  const engagementBranch = directedAspectBranchAt(
-    swe,
-    firstPlanetId,
-    secondPlanetId,
-    targetDegrees,
-    currentWindowPasses[0]
-  );
-
-  const currentWindowDurationDays = Math.max(0, (currentWindowEnd.getTime() - currentWindowStart.getTime()) / 86_400_000);
-  const maxSeriesGapDays = Math.max(10, Math.min(550, currentWindowDurationDays * 4));
-  const seriesHorizonDays = Math.max(60, Math.min(5000, maxSeriesGapDays * 8));
-  const allPasses = scanExactAspectPasses(
-    swe,
-    firstPlanetId,
-    secondPlanetId,
-    targetDegrees,
-    addDays(reference, -seriesHorizonDays),
-    addDays(reference, seriesHorizonDays),
-    passScanStepDays,
-    engagementBranch
-  );
-  const seedPassTimes = new Set(currentWindowPasses.map((pass) => Math.round(pass.getTime() / 60_000)));
-  const linkedPasses = clusterAspectPasses(allPasses, maxSeriesGapDays).find((cluster) => (
-    cluster.some((pass) => seedPassTimes.has(Math.round(pass.getTime() / 60_000)))
-  )) ?? currentWindowPasses;
-  const hasRetrogradeRehit = linkedPasses.some((pass) => (
-    exactPlanetSpeed(swe, firstPlanetId, pass) < 0 || exactPlanetSpeed(swe, secondPlanetId, pass) < 0
-  ));
-  const engagementPasses = linkedPasses.length > 1 && !hasRetrogradeRehit
-    ? currentWindowPasses
-    : linkedPasses;
-  const engagementStart = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, engagementPasses[0], -1, boundaryStepDays, maxBoundaryDays);
-  const engagementEnd = findAspectBoundary(swe, firstPlanetId, secondPlanetId, targetDegrees, presentationDegrees, engagementPasses.at(-1)!, 1, boundaryStepDays, maxBoundaryDays);
-
-  const durationDays = Math.max(0, (engagementEnd.getTime() - engagementStart.getTime()) / 86_400_000);
-  const group: SkyAspectTiming["group"] = durationDays <= 10 ? "this-week" : durationDays < 365 ? "this-season" : "undercurrent";
-  const closestPassIndex = engagementPasses.reduce((best, pass, index) => (
-    Math.abs(pass.getTime() - reference.getTime()) < Math.abs(engagementPasses[best].getTime() - reference.getTime()) ? index : best
-  ), 0);
-  const nextPassIndex = engagementPasses.findIndex((pass) => pass.getTime() > reference.getTime());
-  const exactDistanceHours = Math.abs(engagementPasses[closestPassIndex].getTime() - reference.getTime()) / 3_600_000;
-  const phase: SkyAspectTiming["phase"] = exactDistanceHours <= 12
-    ? "exact"
-    : nextPassIndex >= 0 ? "building" : "fading";
-  const passIndex = phase === "exact"
-    ? closestPassIndex
-    : nextPassIndex >= 0 ? nextPassIndex : engagementPasses.length - 1;
+  const residualsAt = (date: Date) => directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees);
+  const series = aspectPassSeriesTiming({
+    residualsAt,
+    motionIsRetrogradeAt: (date) => exactPlanetSpeed(swe, firstPlanetId, date) < 0 || exactPlanetSpeed(swe, secondPlanetId, date) < 0,
+    reference,
+    presentationDegrees,
+    relativeSpeed,
+    fastestSpeed,
+    maxBoundaryCapDays: 5500
+  });
+  if (!series) return null;
+  const {
+    branch: engagementBranch,
+    engagementEnd,
+    engagementPasses,
+    engagementStart,
+    estimatedDurationDays,
+    group,
+    passIndex,
+    passStepDays: passScanStepDays,
+    phase
+  } = series;
 
   let cycleLocation: SkyAspectTiming["cycleLocation"] = null;
   const hasNode = aspect.from.includes("Node") || aspect.to.includes("Node");

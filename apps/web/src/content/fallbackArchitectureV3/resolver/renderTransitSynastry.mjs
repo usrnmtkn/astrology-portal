@@ -503,7 +503,7 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
   return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
-export function renderTransitAspect({ transiting, natal, aspect, variant, sign, isRetrograde, window: win, voice = "you" }) {
+export function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }) {
   // voice: "you" (reader) or a friend's display name. The authored library is reader-voice,
   // so friend view renders fallback-only in authored friend-voice rows (never pronoun swaps).
   const v = voice === "you" ? "you" : "they";
@@ -528,6 +528,10 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
   const groupsToTry = [g, ...(SHARE[g] ?? [])];
   const tryKeys = [];
   const push = (a, b) => {
+    if (pass && pass >= 1 && pass <= 3) {
+      tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
+      if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
+    }
     if (variant) {
       tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
       if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
@@ -578,6 +582,8 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
       const authoredHeadline = v === "you"
         ? (c.headline || "")
         : `${title(transiting)} ${aspect} ${voice}'s ${title(natal)}`;
+      const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+      if (passHook) aBody = `${aBody}\n\n${passHook}`;
       return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
     }
   }
@@ -643,6 +649,8 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, sign, 
     const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
     if (retroLine) body = `${body} ${fill(retroLine, ctx)}`;
   }
+  const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
+  if (passHook) body = `${body}\n\n${passHook}`;
   return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
