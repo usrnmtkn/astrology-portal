@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-moon-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/moon/variant-3",
+  "payloadSha256": "16d644b31b03c22a97f0ecb0eba0355a0cc9333ae05e7b2958a147339c42781b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} are in a similar mood for once. Neither person has to convince the other to go out, stay home, talk, or be quiet.",
+    "body_they": "You and {{holder1}} are in a similar mood for once. Neither person has to convince the other to go out, stay home, talk, or be quiet."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

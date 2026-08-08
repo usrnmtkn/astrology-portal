@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-uranus-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/uranus/variant-3",
+  "payloadSha256": "f1fded08a009971c6c6828e0ed04fd17548d0ef851deb097f85082227655e9b4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "The two of you stop repeating the same weekend. A new place, new subject, or different schedule is enough to remind you that the relationship does not have to run on habit.",
+    "body_they": "The two of you stop repeating the same weekend. A new place, new subject, or different schedule is enough to remind you that the relationship does not have to run on habit."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

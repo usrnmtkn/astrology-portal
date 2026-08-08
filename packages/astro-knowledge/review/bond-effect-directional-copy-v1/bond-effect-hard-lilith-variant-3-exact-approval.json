@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-lilith-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/lilith/variant-3",
+  "payloadSha256": "12048132745132b5915c69321712337321ca968356c548a35abede6dff7b0fe1",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You agree to the restaurant, the plan, or the favor again, even though you already know you do not want it. By the time you finally say no, you are angry that you had to say yes so many times first.",
+    "body_they": "{{holder1}} may finally refuse something they have agreed to several times before. The no can sound stronger because it is carrying every earlier yes they did not mean."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

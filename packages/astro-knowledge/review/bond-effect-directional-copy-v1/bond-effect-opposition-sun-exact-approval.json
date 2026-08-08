@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-sun",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/sun",
+  "payloadSha256": "08d5228d90a2032c140bea0db986d1b7a8f576b4f0c1951e112aa2b34697f379",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}}'s plans keep getting protected while yours are the ones that move. You understand that their work matters. You are still frustrated that your time keeps being treated as the flexible part of the schedule.",
+    "body_they": "Your work, plans, or responsibilities keep taking precedence, and {{holder1}} is the one adjusting. {{holder1}} may believe you when you say their priorities matter. The calendar may be telling them something different."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

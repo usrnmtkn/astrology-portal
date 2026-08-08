@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-chiron-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/chiron/variant-3",
+  "payloadSha256": "90c04db7422f116f26f7ab620573155be5137ac8a12c997cde478750867e9ca0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "A subject that usually makes you tense around {{holder1}} is easier to discuss. You can say why it bothers you without preparing for a fight first.",
+    "body_they": "{{holder1}} may finally explain why something has bothered them for so long. The conversation is easier because {{holder1}} does not have to fight to be taken seriously."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

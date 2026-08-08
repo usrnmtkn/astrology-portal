@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-moon",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/moon",
+  "payloadSha256": "f8308e1ce3497f3ecadbc3753d57e12a2accf53feb552ddd7c7d036153f08191",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You want {{holder1}} close at the exact moment they need to be alone. Their need for quiet can feel like rejection when you are already looking for reassurance. Both needs are real, but they do not fit neatly into the same hour.",
+    "body_they": "{{holder1}} reaches for you when you have nothing left. You need quiet; {{holder1}} wants company. If both of you are exhausted, neither person gets what they hoped the other would provide."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

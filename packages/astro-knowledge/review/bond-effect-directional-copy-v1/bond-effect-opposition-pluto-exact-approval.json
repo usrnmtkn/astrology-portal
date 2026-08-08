@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-pluto",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/pluto",
+  "payloadSha256": "35883639d68a9878b6877200d963fcd7ad6e9ee47102950e6231119185f7ca12",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} has the password, the information, the money, or the final say. You are expected to trust a decision you had very little part in making. The more unequal the arrangement feels, the harder it becomes to treat the disagreement like a small one.",
+    "body_they": "You have more information, access, money, or control over what happens next. {{holder1}} notices. What looks like stubbornness can be anger about an arrangement where one person keeps having more power than the other."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-saturn-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/saturn/variant-2",
+  "payloadSha256": "403804522edca8ac8a15409671a3b9e62ec38e0f3b3de5cd4a4e2673f3fed0d2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} finally settle a recurring detail that kept creating unnecessary work. The date goes on the calendar, the amount gets agreed on, or each person knows what they are responsible for.",
+    "body_they": "You and {{holder1}} finally settle a recurring detail that kept creating unnecessary work. The date goes on the calendar, the amount gets agreed on, or each person knows what they are responsible for."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

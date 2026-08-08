@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-venus-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/venus/variant-2",
+  "payloadSha256": "ce441a2cc686800ae7360341dfefeb8e3276fe98c2438f8896f0981cac2e9acd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You want time together and {{holder1}} keeps offering practical help. The effort is real, but it is not the kind of attention you wanted.",
+    "body_they": "{{holder1}} wants time with you and you keep trying to make their day easier instead. {{holder1}} may appreciate the help and still miss the actual company."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

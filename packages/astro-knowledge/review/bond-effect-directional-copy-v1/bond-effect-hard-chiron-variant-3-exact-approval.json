@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-chiron-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-3",
+  "payloadSha256": "8d665c48a30c54e44e8cf38bcf83756407c93d351c6bb65a3adde55f4a2dd893",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You start arguing with {{holder1}} about what happened today and realize you are also angry about the last two times it happened. The current disagreement is carrying more history than either of you expected.",
+    "body_they": "{{holder1}} brings up an older example during a current disagreement. To you, the situations may seem unrelated. To {{holder1}}, this feels like the same problem happening again."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

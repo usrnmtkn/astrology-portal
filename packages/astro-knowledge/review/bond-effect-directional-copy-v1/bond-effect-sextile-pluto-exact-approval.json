@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-pluto",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/pluto",
+  "payloadSha256": "927a347b51099d7b453e3e5f5c0cc2bd7c0c369329289a8828444dbdb034d890",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You tell {{holder1}} that you felt left out of the decision, the money arrangement is not working, or you are still angry about something everyone has been pretending is finished. Saying it plainly changes the conversation.",
+    "body_they": "{{holder1}} finally says they felt left out, resentful, jealous, or tired of carrying more than their share. The problem is easier to understand once {{holder1}} stops speaking around it."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

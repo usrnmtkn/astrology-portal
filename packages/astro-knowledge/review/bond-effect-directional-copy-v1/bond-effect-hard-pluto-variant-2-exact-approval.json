@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-pluto-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/pluto/variant-2",
+  "payloadSha256": "02cafaa4b95b73a0eed17bd9cbeb60a605aa966e2af1fc6d2c6422b5bf767c13",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You find out everyone else knew before you did. The exclusion can make you angrier than the actual news.",
+    "body_they": "{{holder1}} finds out late and realizes other people were included before they were. The anger is not only about the information. It is about where {{holder1}} ranked in the decision."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

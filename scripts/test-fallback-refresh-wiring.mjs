@@ -162,7 +162,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-08d");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08e");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -495,8 +495,11 @@ const exactSaturnSquareBond = sourceRows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/bond-effect-square/saturn"
 );
 assert.ok(exactSaturnSquareBond, "The exact Saturn-square bond row must exist.");
-assert.ok(
-  connectionTransit.body.startsWith(exactSaturnSquareBond.body_you),
+assert.equal(
+  connectionTransit.parts[0],
+  exactSaturnSquareBond.body_you
+    .replaceAll("{{holder1}}'s", "Sofia's")
+    .replaceAll("{{holder1}}", "Sofia"),
   "Exact aspect copy must supersede the legacy hard-family fallback."
 );
 assert.match(
