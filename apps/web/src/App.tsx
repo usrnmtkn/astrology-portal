@@ -2011,13 +2011,6 @@ function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapsh
   }
 }
 
-const dailyGlanceImperativeVerbs = [
-  "accept", "answer", "ask", "bring", "catch", "change", "check", "choose", "confirm", "correct",
-  "cross", "decide", "do", "drop", "enjoy", "finish", "fix", "give", "handle", "keep", "let", "make",
-  "name", "notice", "organize", "pause", "pay", "pick", "protect", "put", "remember", "remove", "replace",
-  "say", "send", "speak", "start", "state", "stop", "take", "tell", "use", "watch", "write"
-];
-
 const dailyGlancePresentVerbs = new Set([
   "absorb", "aim", "answer", "ask", "belong", "bring", "build", "carry", "catch", "choose", "come",
   "communicate", "decide", "do", "double", "draw", "earn", "ease", "escape", "expect", "explain", "fall",
@@ -2027,15 +2020,6 @@ const dailyGlancePresentVerbs = new Set([
   "see", "send", "shine", "show", "soak", "speak", "spot", "start", "stop", "survive", "swing", "take", "talk",
   "tend", "think", "translate", "transform", "try", "understand", "value", "walk", "want", "watch", "work"
 ]);
-
-function directedDailyGlanceAdvice(value: string) {
-  const verbs = dailyGlanceImperativeVerbs.join("|");
-  const sentenceOpening = new RegExp(`(^|[.!?]\\s+)(?:(${verbs}))\\b`, "giu");
-
-  return value.replace(sentenceOpening, (_match, boundary: string, verb: string) => (
-    `${boundary}You should ${verb.toLowerCase()}`
-  ));
-}
 
 function thirdPersonPresentVerb(verb: string) {
   if (verb === "do") return "does";
@@ -2082,7 +2066,7 @@ function friendDailyGlance(
     const ownerAwareCopy = createNatalGeneratedCopyForOwnerConverter(ownerName, "person", ownerPronouns);
     const headline = ownerAwareCopy(rendered.headline ?? "");
     const body = repairSingularOwnerVerbAgreement(
-      ownerAwareCopy(directedDailyGlanceAdvice(rendered.body ?? "")),
+      ownerAwareCopy(rendered.body ?? ""),
       ownerName,
       ownerPronouns
     );
