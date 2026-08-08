@@ -162,7 +162,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-08b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08c");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -531,6 +531,14 @@ assert.equal(
 );
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const pairDailyNodeResolverSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs"),
+  "utf8"
+);
+const pairDailyBrowserResolverSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts"),
+  "utf8"
+);
 const compatibilityTabSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/CompatibilityTab.tsx"),
   "utf8"
@@ -576,8 +584,30 @@ assert.match(
 );
 assert.match(
   pairDailySelectionSource,
-  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily/u,
+  /const selectedBondTransit = selectedBondTransitCards\[0\];[\s\S]*?family: selectedBondTransit\.effectFamily[\s\S]*?transiting: selectedBondTransit\.transitPlanet/u,
   "Pair Daily must reuse the first already-ranked bond card and its effect family."
+);
+assert.doesNotMatch(
+  pairDailySelectionSource,
+  /bondClauseKey:\s*selectedBondTransit\.effectContentKey/u,
+  "Pair Daily must not pass the full bond-card effect row into its compressed daily slot."
+);
+for (const resolverSource of [pairDailyNodeResolverSource, pairDailyBrowserResolverSource]) {
+  assert.match(
+    resolverSource,
+    /fallback-hook\/pair-daily\/bond-clause\/\$\{shared\.family\}\/\$\{transiting\}/u,
+    "Both Pair Daily resolvers must derive the approved compressed bond-clause key."
+  );
+  assert.doesNotMatch(
+    resolverSource,
+    /pairDailyBody\(shared\.bondClauseKey/u,
+    "Neither Pair Daily resolver may read the full bond-card body through a supplied key."
+  );
+}
+assert.match(
+  appSource,
+  /selectedPairDailySelection\.shared\.kind !== "bond"[\s\S]*?renderShared\(selectedPairDailySelection\.fallbackShared\)/u,
+  "A missing compressed bond clause must fall through to the approved Moon lane or omit the shared sentence."
 );
 assert.doesNotMatch(
   pairDailySelectionSource,

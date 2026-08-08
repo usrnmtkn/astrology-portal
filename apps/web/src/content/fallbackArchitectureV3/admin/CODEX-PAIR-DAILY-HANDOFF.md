@@ -85,5 +85,5 @@ owner pipeline (marie-satori-writer), not this task.
 - With zero `pair-daily/*` rows present: app renders exactly as today (surface
   absent), full test suite unaffected.
 - With test-fixture rows marked approved in a test-local bundle: paragraph renders
-  per spec shape, ≤65 words, friend as @handle, no seams (no double spaces, no
+  per spec shape, ≤75 words, friend as @handle, no seams (no double spaces, no
   dangling connectives when slot C/D omitted).
