@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-moon-pluto-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/pluto/conjunction",
+  "payloadSha256": "f89e6dadbb1d2c8038c0ad2b7b6edfadb75d561f6e2c601aab4682c2ed70f7be",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} reaches feelings you usually keep behind several locked doors. You may feel exposed, understood, and intensely attached in very little time because {{holder2}} notices emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins.",
+    "body_they": "You reach feelings {{holder1}} usually keeps behind several locked doors. {{holder1}} may feel exposed, understood, and intensely attached in very little time because you notice emotional shifts that others miss. The depth can feel devotional, though it may become difficult to tell where closeness ends and need begins.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

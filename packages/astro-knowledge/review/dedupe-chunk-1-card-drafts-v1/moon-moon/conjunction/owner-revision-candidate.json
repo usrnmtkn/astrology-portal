@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-moon-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "7d1bfd222864c291a5d23b5d289dd25d71eaa0ec8b6d1011f902127e21e4f114",
+  "payload": {
+    "body_you": "You respond to {{holder2}}'s feelings with the kind of comfort you also need, and {{holder2}} responds to you in the same way. You and {{holder2}} tend to react to stress and recover from it in the same way. If one of you sinks into a low mood or avoids a difficult feeling, the other can follow, leaving neither of you to steady the moment.",
+    "body_they": "{{holder1}} responds to your feelings with the kind of comfort {{holder1}} also needs, and you respond to {{holder1}} in the same way. You and {{holder1}} tend to react to stress and recover from it in the same way. If one of you sinks into a low mood or avoids a difficult feeling, the other can follow, leaving neither of you to steady the moment.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "f134cdb586c845678dd9c2657efbb7e39b79f557f7954044ceb714edafcdbcef",
+    "writerProviderResponseSha256": "3e0d5c75117519de2cbe73262b2e5108a69427ec2f859e6a6b71c696f32b1c93"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/conjunction/exact-approval.json"
+}

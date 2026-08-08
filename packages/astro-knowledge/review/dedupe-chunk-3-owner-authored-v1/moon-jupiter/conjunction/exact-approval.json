@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-jupiter-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/jupiter/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d3e8133d96174be80dc2262ad83d25bded343bbc35b30b57814b7e0d5fc91f71",
+  "payload": {
+    "body_you": "{{holder2}} makes {{holder1}} feel that every emotion is welcome at the table. {{holder1}} may become more open, expressive, and hopeful around them, especially after keeping a feeling packed away for too long. The trouble begins when {{holder2}} turns one difficult afternoon into a motivational seminar and {{holder1}} only wanted someone to stay for the weather.",
+    "body_they": "{{holder2}} makes {{holder1}} feel that every emotion is welcome at the table. {{holder1}} may become more open, expressive, and hopeful around them, especially after keeping a feeling packed away for too long. The trouble begins when {{holder2}} turns one difficult afternoon into a motivational seminar and {{holder1}} only wanted someone to stay for the weather.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-jupiter/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

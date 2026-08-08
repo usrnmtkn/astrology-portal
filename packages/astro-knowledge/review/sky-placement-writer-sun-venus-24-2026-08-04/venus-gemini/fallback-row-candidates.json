@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Gemini on {{entryDate}}, and attraction starts with conversation. A joke opens a door. A sharp question makes an ordinary meeting feel charged. An old connection feels new when the subject changes. We notice who brings fresh ideas, who listens well, and where there is still something to learn. Affection gets easier to show when words are moving.",
+      "tension": "The conversation changes just as it needs to become clear. We flirt past the point of clarity, turn a serious question into a joke, or keep comparing one real connection with imagined alternatives. Each move preserves possibility. It also leaves someone else guessing. Mixed signals can feel harmless while every option is still interesting, but they make trust harder to build. Knowing how to keep an exchange alive is not the same as saying what we want from it.",
+      "development": "Venus last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The pattern can be easy to miss because nothing looks openly wrong. Plans stay vague. Affection stays verbal. A difficult answer gets replaced by another question, and attention fades as soon as novelty does. A lively exchange may reveal real compatibility, but it cannot carry a connection when interest keeps moving before affection has time to become dependable. The words that first created closeness then make the missing follow-through harder to ignore.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "Before {{exitDate}}, a connection sustained by possibility can lose its charge when another good conversation still does not bring a clear answer.",
+      "try_this": [
+        "We can take a phone-free walk with someone and stay with one subject long enough to learn what they actually think.",
+        "We can name one attraction plainly and follow it with a specific invitation for this week."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Gemini on {{entryDate}}, and attraction starts with conversation. A joke opens a door. A sharp question makes an ordinary meeting feel charged. An old connection feels new when the subject changes. We notice who brings fresh ideas, who listens well, and where there is still something to learn. Affection gets easier to show when words are moving.\n\nThe conversation changes just as it needs to become clear. We flirt past the point of clarity, turn a serious question into a joke, or keep comparing one real connection with imagined alternatives. Each move preserves possibility. It also leaves someone else guessing. Mixed signals can feel harmless while every option is still interesting, but they make trust harder to build. Knowing how to keep an exchange alive is not the same as saying what we want from it.\n\nVenus last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The pattern can be easy to miss because nothing looks openly wrong. Plans stay vague. Affection stays verbal. A difficult answer gets replaced by another question, and attention fades as soon as novelty does. A lively exchange may reveal real compatibility, but it cannot carry a connection when interest keeps moving before affection has time to become dependable. The words that first created closeness then make the missing follow-through harder to ignore.\n\nBefore {{exitDate}}, a connection sustained by possibility can lose its charge when another good conversation still does not bring a clear answer.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Gemini on {{entryDate}}, and attraction starts with conversation. A joke opens a door. A sharp question makes an ordinary meeting feel charged. An old connection feels new when the subject changes. We notice who brings fresh ideas, who listens well, and where there is still something to learn. Affection gets easier to show when words are moving.\n\nThe conversation changes just as it needs to become clear. We flirt past the point of clarity, turn a serious question into a joke, or keep comparing one real connection with imagined alternatives. Each move preserves possibility. It also leaves someone else guessing. Mixed signals can feel harmless while every option is still interesting, but they make trust harder to build. Knowing how to keep an exchange alive is not the same as saying what we want from it.\n\nVenus last moved through Gemini from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The pattern can be easy to miss because nothing looks openly wrong. Plans stay vague. Affection stays verbal. A difficult answer gets replaced by another question, and attention fades as soon as novelty does. A lively exchange may reveal real compatibility, but it cannot carry a connection when interest keeps moving before affection has time to become dependable. The words that first created closeness then make the missing follow-through harder to ignore.\n\nBefore {{exitDate}}, a connection sustained by possibility can lose its charge when another good conversation still does not bring a clear answer.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-gemini"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

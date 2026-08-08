@@ -15,17 +15,67 @@ const manifestPath = path.join(
   "packages/astro-knowledge/review/synastry-provenance-restatus-manifest-2026-08-04.json",
 );
 const synastryPrefix = "fallback-hook/synastry-pair/";
-const batchApprovalPrefix = "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/";
+const batchApprovalPrefixes = [
+  "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
+  "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
+  "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/",
+  "packages/astro-knowledge/review/dedupe-chunk-2-owner-authored-v1/",
+  "packages/astro-knowledge/review/dedupe-chunk-3-owner-authored-v1/",
+  "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+];
 const batchExactKeys = new Set(
-  ["sun", "moon", "mercury", "venus", "saturn"].flatMap((planet) =>
+  [
+    ...["sun", "moon", "mercury", "venus", "saturn", "neptune", "pluto"].map(
+      (planet) => [planet, "ascendant"],
+    ),
+    ["sun", "moon"],
+    ["sun", "sun"],
+    ["sun", "mercury"],
+    ["sun", "venus"],
+    ["sun", "mars"],
+    ["moon", "moon"],
+    ["moon", "mercury"],
+    ["moon", "venus"],
+    ["moon", "mars"],
+    ["mercury", "venus"],
+    ["mercury", "mercury"],
+    ["mercury", "mars"],
+    ["mercury", "jupiter"],
+    ["mercury", "saturn"],
+    ["venus", "venus"],
+    ["venus", "mars"],
+    ["venus", "jupiter"],
+    ["venus", "saturn"],
+    ["mars", "mars"],
+    ["mars", "jupiter"],
+    ["sun", "jupiter"],
+    ["sun", "saturn"],
+    ["sun", "uranus"],
+    ["sun", "neptune"],
+    ["sun", "pluto"],
+    ["moon", "jupiter"],
+    ["moon", "saturn"],
+    ["moon", "uranus"],
+    ["moon", "neptune"],
+    ["moon", "pluto"],
+  ].flatMap(([planetA, planetB]) =>
     ["conjunction", "hard", "soft"].map(
-      (group) => `${synastryPrefix}${planet}/ascendant/${group}`,
+      (group) => `${synastryPrefix}${planetA}/${planetB}/${group}`,
     ),
   ),
 );
 const allowedLevels = new Set(["exact_owner_approved", "owner_signoff_untraced"]);
 const datePattern = /^\d{4}-\d{2}-\d{2}$/u;
 const shaPattern = /^[a-f0-9]{64}$/u;
+const readerVariantV2Manifest = JSON.parse(fs.readFileSync(
+  path.join(
+    repoRoot,
+    "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/shipping-manifest.json",
+  ),
+  "utf8",
+));
+assert.equal(readerVariantV2Manifest.rows.length, 102, "Expected 102 V2 per-row approvals");
+for (const row of readerVariantV2Manifest.rows) batchExactKeys.add(row.contentKey);
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -42,6 +92,7 @@ const rows = source.hookRows.filter((row) => row.contentKey?.startsWith(synastry
 const statusCounts = {};
 const levelCounts = { exact_owner_approved: 0, owner_signoff_untraced: 0 };
 const batchExactRows = new Set();
+let exactApprovalRecordsResolved = 0;
 
 assert.equal(rows.length, 483, "Expected 483 synastry serving rows");
 
@@ -69,15 +120,17 @@ for (const row of rows) {
 
   assert.equal(typeof approval.recordPath, "string", `${row.contentKey}: exact approval lacks recordPath`);
   assert.match(approval.payloadSha256, shaPattern, `${row.contentKey}: exact approval lacks payload hash`);
-  if (approval.recordPath.startsWith(batchApprovalPrefix)) batchExactRows.add(row.contentKey);
+  if (batchApprovalPrefixes.some((prefix) => approval.recordPath.startsWith(prefix))) batchExactRows.add(row.contentKey);
   const recordPath = path.join(repoRoot, approval.recordPath);
   assert.ok(fs.existsSync(recordPath), `${row.contentKey}: approval record does not exist: ${approval.recordPath}`);
+  exactApprovalRecordsResolved += 1;
 
   if (approval.recordPath.endsWith(".json")) {
     const record = JSON.parse(fs.readFileSync(recordPath, "utf8"));
+    assert.equal(Array.isArray(record.rows), false, `${row.contentKey}: exact approval must use a per-row record`);
     assert.equal(record.approvalLevel, "exact_owner_approved", `${row.contentKey}: record level mismatch`);
-    assert.equal(record.contentKey, row.contentKey, `${row.contentKey}: record contentKey mismatch`);
     assert.equal(record.approvedAt, approval.approvedAt, `${row.contentKey}: record date mismatch`);
+    assert.equal(record.contentKey, row.contentKey, `${row.contentKey}: record contentKey mismatch`);
     assert.equal(record.payloadSha256, approval.payloadSha256, `${row.contentKey}: record hash mismatch`);
     assert.equal(sha256(JSON.stringify(record.payload)), approval.payloadSha256, `${row.contentKey}: record payload hash mismatch`);
     assert.equal(record.payload.body_you, row.body_you, `${row.contentKey}: body_you differs from exact record`);
@@ -92,8 +145,9 @@ for (const row of rows) {
   }
 }
 
-assert.deepEqual(statusCounts, { approved: 147, reviewed: 336 });
-assert.deepEqual(levelCounts, { exact_owner_approved: 24, owner_signoff_untraced: 123 });
+assert.deepEqual(statusCounts, { approved: 165, reviewed: 318 });
+assert.deepEqual(levelCounts, { exact_owner_approved: 165, owner_signoff_untraced: 0 });
+assert.equal(exactApprovalRecordsResolved, 165);
 assert.deepEqual(batchExactRows, batchExactKeys);
 assert.equal(manifest.totals.synastryRows, 483);
 assert.equal(manifest.totals.approved, 132);
@@ -111,4 +165,5 @@ console.log(`  rows: ${rows.length}`);
 console.log(`  approved: ${statusCounts.approved}`);
 console.log(`  reviewed: ${statusCounts.reviewed}`);
 console.log(`  exact_owner_approved: ${levelCounts.exact_owner_approved}`);
+console.log(`  exact approval records resolved: ${exactApprovalRecordsResolved}`);
 console.log(`  owner_signoff_untraced: ${levelCounts.owner_signoff_untraced}`);

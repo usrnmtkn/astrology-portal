@@ -13,7 +13,11 @@ const signupViewSource = fs.readFileSync(
 );
 const manualChartsPanelSource = appSource.slice(appSource.indexOf("function ManualChartsPanel"));
 const profileViewSource = appSource.slice(appSource.indexOf("function ProfileView"), appSource.indexOf("function ManualChartsPanel"));
+const natalSkyEffectStart = appSource.indexOf("    const natalSkyRequestKey = [");
+const natalSkyEffectEnd = appSource.indexOf("\n\n  useEffect(() => {", natalSkyEffectStart);
+const natalSkyEffectSource = appSource.slice(natalSkyEffectStart, natalSkyEffectEnd);
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
+const indexSource = fs.readFileSync(path.join(repoRoot, "apps/web/index.html"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
@@ -134,6 +138,26 @@ const styleWaitIndex = mainSource.indexOf('await import("./styles.css")');
 assert.ok(appImportIndex >= 0, "Startup must create an App import promise.");
 assert.ok(styleWaitIndex >= 0, "Startup must await its reader stylesheet entry.");
 assert.ok(appImportIndex < styleWaitIndex, "The App download must start before startup waits for CSS.");
+assert.match(
+  indexSource,
+  /addEventListener\("vite:preloadError"/u,
+  "The document bootstrap must recover when a stale deployment preload fails."
+);
+assert.match(
+  indexSource,
+  /The calendar needs a fresh load/u,
+  "A repeated startup failure must render a visible reload action instead of a blank page."
+);
+assert.match(
+  indexSource,
+  /addEventListener\("unhandledrejection"[\s\S]*root"\)\?\.firstElementChild\) recover\(\)/u,
+  "The document bootstrap must recover from startup imports that reject before React mounts."
+);
+assert.match(
+  indexSource,
+  /sessionStorage\.setItem\(recoveryKey[\s\S]*location\.reload\(\)/u,
+  "Startup recovery must retry once before showing its manual reload action."
+);
 assert.doesNotMatch(mainSource, /setInterval\s*\(/u, "Blank-restore recovery must not keep a lifetime polling interval.");
 assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Startup must keep bounded blank-mount checks.");
 assert.match(viteSource, /fallback-content-core/u, "Core fallback content must have a stable cache chunk.");
@@ -358,6 +382,47 @@ assert.match(
   youPageSource,
   /id="wheel-natal"[\s\S]*id="wheel-updates-transits"/u,
   "The deferred You page must own natal and transit wheel presentation."
+);
+assert.ok(natalSkyEffectStart >= 0 && natalSkyEffectEnd > natalSkyEffectStart, "The natal-sky effect must remain inspectable.");
+assert.doesNotMatch(
+  natalSkyEffectSource,
+  /userProfile\?\.(?:sun|moon|rising),/u,
+  "Derived Big Three updates must not retrigger the natal ephemeris calculation."
+);
+assert.match(
+  appSource,
+  /profileNatalSkyRequestRef = useRef<\{ key: string; request: Promise<SkySnapshot> \} \| null>\(null\)/u,
+  "Natal ephemeris calculations must retain an in-flight or resolved request for the same birth inputs."
+);
+assert.match(
+  natalSkyEffectSource,
+  /profileNatalSkyRequestRef\.current\?\.key === natalSkyRequestKey[\s\S]*profileNatalSkyRequestRef\.current = \{ key: natalSkyRequestKey, request: natalSkyRequest \}/u,
+  "Repeated effect runs must reuse the natal ephemeris request when birth inputs are unchanged."
+);
+assert.match(
+  natalSkyEffectSource,
+  /userProfile\?\.charts\[0\]\?\.birthDate,[\s\S]*userProfile\?\.charts\[0\]\?\.birthTime,[\s\S]*userProfile\?\.charts\[0\]\?\.birthLocation\?\.latitude,[\s\S]*userProfile\?\.charts\[0\]\?\.birthLocation\?\.longitude,[\s\S]*userProfile\?\.charts\[0\]\?\.birthLocation\?\.timeZone,/u,
+  "Birth date, time, and location must continue to retrigger the natal ephemeris calculation."
+);
+assert.match(
+  profileViewSource,
+  /const weeklyAssemblyFrame = window\.requestAnimationFrame\(\(\) => \{[\s\S]*weeklyAssemblyTimer = window\.setTimeout\(\(\) => \{[\s\S]*void buildWeeklyHoroscope\(\{[\s\S]*if \(!cancelled\) setWeeklyHoroscopeAssembly\(assembly\);[\s\S]*\}, 0\);[\s\S]*window\.cancelAnimationFrame\(weeklyAssemblyFrame\);[\s\S]*window\.clearTimeout\(weeklyAssemblyTimer\);/u,
+  "Weekly horoscope assembly must yield a browser paint, then start and ignore results after navigation."
+);
+assert.doesNotMatch(
+  profileViewSource,
+  /\}, 1_000\);/u,
+  "The Horoscope tab must not add an artificial one-second delay before assembly starts."
+);
+assert.doesNotMatch(
+  appSource,
+  /\}, \[location, mode, skyDate, skyRefreshKey\]\);/u,
+  "Switching app sections must not restart the same current-sky calculation."
+);
+assert.match(
+  appSource,
+  /getAstrodienstSky\(skyLocation, selectedDateTime\)[\s\S]*requestAnimationFrame[\s\S]*getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: true \}\)/u,
+  "Core sky data must paint before expensive transit-window enrichment starts."
 );
 assert.doesNotMatch(
   appSource,

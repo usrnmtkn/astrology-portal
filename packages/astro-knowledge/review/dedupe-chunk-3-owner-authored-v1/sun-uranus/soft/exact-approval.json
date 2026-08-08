@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-uranus-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/uranus/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "ee9bdaf28b3d513fce37875e530660de41148263340cc0b71328362b024d7828",
+  "payload": {
+    "body_you": "{{holder2}} gives {{holder1}} room to be unusual without turning the difference into a problem to solve. {{holder1}} can change their mind, question expectations, and keep the odd little details that make them recognizable. {{holder2}} gets freedom too, because closeness here does not require either person to become smaller or more predictable.",
+    "body_they": "{{holder2}} gives {{holder1}} room to be unusual without turning the difference into a problem to solve. {{holder1}} can change their mind, question expectations, and keep the odd little details that make them recognizable. {{holder2}} gets freedom too, because closeness here does not require either person to become smaller or more predictable.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-uranus/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

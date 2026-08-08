@@ -1,0 +1,9 @@
+{
+  "target": "moon-mercury-conjunction",
+  "status": "needs_review",
+  "payloadSha256": "3c9bc5e3b50672e55c5a483e41d2d2e5de1eefdd6203c83c84c26ea3e5c1865b",
+  "harvest_mode": "none_found",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

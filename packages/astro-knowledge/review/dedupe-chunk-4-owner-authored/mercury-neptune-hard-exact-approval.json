@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mercury-neptune-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/neptune/hard",
+  "payloadSha256": "13812764ac69ac1ef65eedd71ff46dda34f306d68013673d82aa026f238f880a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} hears what they hoped {{holder2}} meant instead of what {{holder2}} actually said. The plan quietly changes shape, and neither person can point to the sentence where the agreement disappeared.",
+    "body_they": "{{holder1}} hears what they hoped {{holder2}} meant instead of what {{holder2}} actually said. The plan quietly changes shape, and neither person can point to the sentence where the agreement disappeared.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

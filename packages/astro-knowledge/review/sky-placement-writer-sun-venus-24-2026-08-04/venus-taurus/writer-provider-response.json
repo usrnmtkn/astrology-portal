@@ -1,0 +1,27 @@
+{
+  "responseId": "resp_04b3919d9c60052c006a72930bb1a4819180cafabaee2477d2",
+  "status": "incomplete",
+  "incompleteDetails": {
+    "reason": "max_output_tokens"
+  },
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8157,
+    "input_tokens_details": {
+      "cache_write_tokens": 8154,
+      "cached_tokens": 0
+    },
+    "output_tokens": 12000,
+    "output_tokens_details": {
+      "reasoning_tokens": 11912
+    },
+    "total_tokens": 20157
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Taurus on {{entryDate}} and trades quick pursuit for care that can be seen, touched, and repeated. Plans get kept. A worn object gets repaired. Affection shows up through reliable gestures instead of one grand promise. Pleasure has"
+}

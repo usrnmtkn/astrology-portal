@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-neptune-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/neptune/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "ca5ca31adbd70795d3f09c29586f19ed89e6b3aad4c44b6cad51b011f3373eda",
+  "payload": {
+    "body_you": "{{holder2}} sees something luminous in {{holder1}}, and {{holder1}} may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn {{holder1}} into the lead character of a story {{holder2}} started writing before learning all the facts.",
+    "body_they": "{{holder2}} sees something luminous in {{holder1}}, and {{holder1}} may begin living toward that picture because it feels so good to be seen through generous eyes. The vision can draw out creativity, tenderness, or courage that had been waiting for an invitation. It can also turn {{holder1}} into the lead character of a story {{holder2}} started writing before learning all the facts.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-neptune/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

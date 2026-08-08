@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-uranus-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/uranus/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "cb8a377c4f3283f7c35c6db82dbe84abe752827a6a84ddd519ebcc2fae789571",
+  "payload": {
+    "body_you": "Just as {{holder1}} begins trusting the arrangement, {{holder2}} changes the rhythm, questions the plan, or needs a different amount of space. {{holder2}} experiences the shift as necessary freedom, while {{holder1}} experiences it as the chair being pulled away the moment they sat down. After enough sudden changes, {{holder1}} starts bracing before anything has even happened.",
+    "body_they": "Just as {{holder1}} begins trusting the arrangement, {{holder2}} changes the rhythm, questions the plan, or needs a different amount of space. {{holder2}} experiences the shift as necessary freedom, while {{holder1}} experiences it as the chair being pulled away the moment they sat down. After enough sudden changes, {{holder1}} starts bracing before anything has even happened.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "sun-uranus/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

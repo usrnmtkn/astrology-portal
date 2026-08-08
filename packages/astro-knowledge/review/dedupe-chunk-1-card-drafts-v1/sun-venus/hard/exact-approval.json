@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-venus-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/venus/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "a54cfc797dcda4f050012ebb4cd12f63f17d82beeb6b15e8e5d1349eacb728f3",
+  "payload": {
+    "body_you": "{{holder2}} tends to show affection by praising qualities they value, but those are not always the parts of you that you most want recognized. When you seem disappointed or pull back, {{holder2}} may try harder in the same way, leaving you feeling unseen and them confused about why their care does not land.",
+    "body_they": "You tend to show affection by praising qualities you value in {{holder1}}, but those are not always the parts that {{holder1}} most wants you to recognize. When {{holder1}} seems disappointed or pulls back, you may try harder in the same way, leaving {{holder1}} feeling unseen and you confused about why your care does not land.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-venus/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

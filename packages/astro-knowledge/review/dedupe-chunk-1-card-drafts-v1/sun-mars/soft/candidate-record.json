@@ -1,0 +1,9 @@
+{
+  "target": "sun-mars-soft",
+  "status": "needs_review",
+  "payloadSha256": "12bd51a361482547aa809c25efc4af60a250fd373e61f2ce7b905c143ae2e4b5",
+  "harvest_mode": "none_found",
+  "terraScore": 3,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

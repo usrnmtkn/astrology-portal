@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "point-pair-ascendant-sources-v1-south-node-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/conjunction",
+  "payloadSha256": "c2d968934235ba68e05b44d5a94a129203a42e70b4081bea51e8afdcd677eb4d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} feels familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+    "body_they": "{{holder1}} feels familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

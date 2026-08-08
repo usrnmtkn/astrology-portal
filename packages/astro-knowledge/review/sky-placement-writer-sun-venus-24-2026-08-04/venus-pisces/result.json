@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "runId": "venus-pisces",
+  "recordedAt": "2026-08-05T01:51:50.951Z",
+  "status": "needs_review",
+  "editorialStatus": "writer_candidate_unreviewed",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidence": false,
+  "editorialFlags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ],
+  "calls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "target": {
+    "planet": "venus",
+    "sign": "pisces"
+  },
+  "writerRouting": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+    "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+    "retrievedOwnerSourceIds": [
+      "owner-article:pisces-season-2025:p043:window-2-2",
+      "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+      "owner-article:venus-retrograde-2025:p073:window-4-2",
+      "owner-article:venus-in-cancer:p009:window-3-4",
+      "owner-article:cancer-new-moon-2025:p053:window-2-4",
+      "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2"
+    ],
+    "warmthOwnerSourceIds": [],
+    "harvestMode": "none_found"
+  },
+  "judgeRouting": null,
+  "deterministicChecks": {
+    "astrology": {
+      "passed": true,
+      "planetNamed": true,
+      "signNamed": true,
+      "note": "Deterministic checks verify placement naming and surface rules. Terra reviews semantic fidelity to the verified astrology packet."
+    },
+    "engineSlots": {
+      "passed": true,
+      "entryDateInOpening": true,
+      "exitDateInClose": true
+    },
+    "pronouns": {
+      "passed": true,
+      "prohibitedMatch": null
+    },
+    "cycleFactsInProse": {
+      "passed": true,
+      "prohibitedMatch": null,
+      "note": "Reviewed cycle facts render in the engine-owned fact line under the date range, not in writer prose."
+    },
+    "surfaceLint": {
+      "score": 3,
+      "fails": 0,
+      "warns": 0,
+      "findings": [],
+      "notes": [
+        "lived is 5 sentences; spec says 2-4",
+        "turn is 9 sentences; spec says 2-5 with one close"
+      ]
+    },
+    "overallPassed": true
+  },
+  "terraReview": null,
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Pisces on {{entryDate}}, and attraction becomes softer, more imaginative, and harder to separate from hope. A small kindness can feel deeply intimate. A song brings back a longing. We notice beauty in what is unfinished, and affection moves through gestures that ask for no credit.",
+    "tension": "That openness also makes missing information easy to decorate. We explain away mixed signals, spend past our limit to make something lovely, or help before anyone has asked. Each act feels generous on its own. Together, they can build a bond around what we hope is there rather than what is being returned. The rescue reflex keeps us focused on someone else's pain, so we call our own disappointment patience and keep giving.",
+    "development": "Venus last moved through Pisces from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. During this transit, affection can stay attached to possibility after the facts have changed. We cover the cost again, accept a vague answer, or keep making exceptions because each choice seems small. The total is not small. Generosity stops creating connection and starts protecting an ideal from evidence. Art and tenderness can deepen a mutual bond. In a one-sided exchange, the same gestures can keep the imbalance looking meaningful. What has someone actually offered? What have we supplied because the imagined version felt too beautiful to lose?",
+    "close": "By {{exitDate}}, sympathy and imagined potential can leave us doing all the work for a connection that only felt mutual.",
+    "try_this": [
+      "We can ask what kind of help is wanted before stepping in to solve anything.",
+      "We can set a cash limit before buying a gift or covering someone else's expense.",
+      "We can play one album while drawing, cooking, or arranging a shelf only for pleasure."
+    ]
+  }
+}

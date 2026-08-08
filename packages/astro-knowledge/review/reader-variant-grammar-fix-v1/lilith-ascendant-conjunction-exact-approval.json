@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-lilith-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/conjunction",
+  "payloadSha256": "bc7c007ed33424cba7d0b5e1fb30300276476c2c89f07835007670ef35f6b4d7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You bring out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+    "body_they": "{{holder1}} brings out the side of you that is less interested in keeping the peace at your own expense. You may speak more bluntly, admit what you want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}
