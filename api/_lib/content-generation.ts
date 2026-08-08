@@ -8,8 +8,8 @@ import { generatedApprovalState, markPipelineReady } from "../../src/astro-writi
 import { writeGenerationMetadata } from "../../src/astro-writing/generationMetadata.mjs";
 import { callOpenAIResponses } from "../../src/astro-writing/openAIResponses.cjs";
 
-type ContentMode = "feed" | "in_depth" | "article";
-type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type ContentMode = "feed" | "in_depth" | "article" | "report";
+type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "year_ahead";
 type Planet = "Sun" | "Moon" | "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
 
 export type GenerateContentInput = {
