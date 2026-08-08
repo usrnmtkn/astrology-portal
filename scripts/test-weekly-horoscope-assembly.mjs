@@ -865,13 +865,17 @@ try {
   );
   assert.match(
     quarterMoonWeek.horoscope.headline,
-    /Chiron stations retrograde in your 12th house/u,
-    "The Aug 3 station must name the house calculated from the event sign and rising sign."
+    /Weekly Moon: Aries/u,
+    "The Monday-Sunday fixture must not pull the preceding Sunday's Chiron station into the week."
   );
-  assert.match(
-    quarterMoonWeek.horoscope.body,
-    /Chiron in your 12th house brings quiet grief/u,
-    "The Aug 3 station write-up must include the approved personalized transit-house layer."
+  assert.doesNotMatch(
+    [
+      quarterMoonWeek.horoscope.headline,
+      quarterMoonWeek.horoscope.driverLabel,
+      quarterMoonWeek.horoscope.body
+    ].join("\n"),
+    /Chiron stations retrograde/u,
+    "A station outside the local Monday-Sunday boundary must stay outside the weekly reading."
   );
   assert.match(
     personalizedChironStation.headline,
