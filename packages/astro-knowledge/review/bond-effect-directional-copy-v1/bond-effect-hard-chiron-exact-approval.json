@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-chiron",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/chiron",
+  "payloadSha256": "4008a06dd6f34590f106f4cc22987d36b667dae040804f55803b8fca410fb236",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "A late reply from {{holder1}} leaves you wondering if you said too much. By the time {{holder1}} answers, you have already replayed the last conversation several times. The insecurity arrives before you have any new information.",
+    "body_they": "{{holder1}} waits longer than expected for an answer from you and starts wondering if something changed. What looks like impatience may be an insecurity {{holder1}} already knows well."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

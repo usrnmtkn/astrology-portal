@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-jupiter-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-3",
+  "payloadSha256": "8f03ab640a57e9558055e61ff5aa88ed05b3c5c5fd68e5efc26ffd6dd5401f0b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "The idea sounds easy while you and {{holder1}} are talking over dinner. It looks different when the deadline, price, or travel time gets added the next morning.",
+    "body_they": "{{holder1}} may be ready to say yes before the details are clear. The practical cost can change how good the idea feels once the conversation is over."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

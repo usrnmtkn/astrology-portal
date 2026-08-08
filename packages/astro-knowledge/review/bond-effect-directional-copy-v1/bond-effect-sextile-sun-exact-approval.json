@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-sextile-sun",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-sextile/sun",
+  "payloadSha256": "effce77d620cad9d6670d61d9a230140e6e9cd7a5c0d2a186f88a0f86a46adcc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Someone sends the text and the plan finally happens. You and {{holder1}} make time for the catch-up, introduction, celebration, or shared project that kept getting pushed behind everything else.",
+    "body_they": "Someone sends the text and the plan finally happens. You and {{holder1}} make time for the catch-up, introduction, celebration, or shared project that kept getting pushed behind everything else."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

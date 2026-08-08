@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-south-node",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/south-node",
+  "payloadSha256": "1d64f8a706e46788f604ff70ef6ec5c0bda420df4b34632b8e0f3c193705773e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Being with {{holder1}} drops you into an old rhythm quickly. You know what they will order, which joke is coming, and who will make the plan. The familiarity can feel good even if part of the routine no longer fits.",
+    "body_they": "{{holder1}} falls into an old rhythm around you without thinking about it. The role is easy because {{holder1}} has played it before."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

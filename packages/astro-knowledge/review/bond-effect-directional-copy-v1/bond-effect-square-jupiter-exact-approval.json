@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-jupiter",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/jupiter",
+  "payloadSha256": "cab16e3e7d540005a4bedf971e01d8ee6a6ad7b79a65580d104b348619b5825c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} adds another stop, another night, or another expense to a plan that was already getting bigger. It still sounds fun, so you agree. The problem arrives later when the bill is higher, the weekend is gone, or you realize you volunteered for more work than you wanted.",
+    "body_they": "Your idea keeps getting bigger and {{holder1}} goes along with it in the moment. Later, {{holder1}} may realize the plan costs more money, time, or effort than they expected. Excitement can make the yes come before the math."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

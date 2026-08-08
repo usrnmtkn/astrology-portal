@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-moon",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/moon",
+  "payloadSha256": "f61067987048e5623a24069d3f8d5d669bd190e86f2ffab7444fac2850fe9a20",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} catches you at the end of a bad day and a small comment bothers you more than it normally would. You know you are tired. You are still upset.",
+    "body_they": "{{holder1}} is having a harder day than you realize. A small disappointment from you can get a reaction that seems much bigger than the moment."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

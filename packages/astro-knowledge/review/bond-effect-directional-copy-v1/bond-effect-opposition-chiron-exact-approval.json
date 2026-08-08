@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-chiron",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/chiron",
+  "payloadSha256": "8d282d824f880c34a04fce403ce64c1b87e16a7db37ef5d5ffd058220bc73312",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} says something that upsets you, then starts explaining what they meant. The more {{holder1}} explains, the more you feel like the actual problem is disappearing. You want them to understand why it bothered you before the conversation becomes a defense of their intention.",
+    "body_they": "Something you say upsets {{holder1}}, and your first instinct may be to explain what you meant. {{holder1}} is still trying to tell you why it bothered them. The two of you can end up having completely different conversations at the same time."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-mars",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/mars",
+  "payloadSha256": "867910755d53c0a269d6adf9d0ffc6e531a4ece5551337b92b1df225e0fb9f5d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} decide to move the shelf, clear the errands, finish the project, or take care of the job both of you have been avoiding. You get more done because neither of you wants to sit around talking about it. If there is nothing useful to do, that same energy can turn into irritation over who is driving too slowly, taking too long, or doing the job wrong.",
+    "body_they": "You and {{holder1}} decide to move the shelf, clear the errands, finish the project, or take care of the job both of you have been avoiding. You get more done because neither of you wants to sit around talking about it. If there is nothing useful to do, that same energy can turn into irritation over who is driving too slowly, taking too long, or doing the job wrong."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

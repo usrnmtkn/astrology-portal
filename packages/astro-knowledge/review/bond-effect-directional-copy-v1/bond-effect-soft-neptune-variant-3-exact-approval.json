@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-neptune-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-3",
+  "payloadSha256": "c1dd7f79653ec63a6b973dd2141f4c479f11d3af2c829cbeece938d88c39f32a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Time with {{holder1}} can feel especially good. A long conversation, a quiet night, or an afternoon with no real agenda can be enough without needing to decide what it means later.",
+    "body_they": "{{holder1}} may enjoy being around you without needing the day to lead somewhere. The time together can matter without becoming a promise about the future."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

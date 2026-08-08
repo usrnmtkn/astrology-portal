@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-opposition-saturn",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-opposition/saturn",
+  "payloadSha256": "4a4477b1734932e5fdc3c5e44044be15efe4ac25080456c78ca3cfe03c0d3345",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Every conversation with {{holder1}} turns into schedules, bills, work, or another responsibility that needs attention. You miss the part where the two of you enjoyed each other. A relationship can start feeling like another job when there is always something to manage.",
+    "body_they": "{{holder1}} may feel like most of your attention goes to what needs to be handled. The schedule gets discussed, the bill gets paid, the task gets assigned. {{holder1}} can still end the day wondering when the two of you last spent time together without an agenda."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

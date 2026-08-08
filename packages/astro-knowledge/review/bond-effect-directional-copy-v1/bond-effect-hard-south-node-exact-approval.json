@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-south-node",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/south-node",
+  "payloadSha256": "b710e39f5e9a1e71d2c41e8e0aedc19b871be652da716e128fb90da6e15cc266",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Around {{holder1}}, you start doing the job you always used to do. You make the plan, smooth over the disagreement, apologize first, or wait for {{holder1}} to decide. It happens quickly because both of you already know this version of the relationship.",
+    "body_they": "{{holder1}} falls back into a role they know well around you. They chase, withdraw, apologize first, or take responsibility before anyone asks. The pattern can return before either of you realizes it."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

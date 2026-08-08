@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-pluto-variant-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/pluto/variant-3",
+  "payloadSha256": "100903b3c6f8babba831dddfc7bb7752a5c2ad3154a4543a222d9ef67d289fbd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "A conversation with {{holder1}} gets past small talk and into the subject both of you usually avoid. You may learn something important because neither person changes the subject this time.",
+    "body_they": "{{holder1}} tells you something they normally keep private. The trust is in the fact that they chose to tell you."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

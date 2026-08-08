@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-trine-uranus",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-trine/uranus",
+  "payloadSha256": "865164ade2bc61665782fd8979e0f396d13b3e9f9f1353dfa0e3d12ed91617ab",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} suggests the place you would never choose, introduces you to a new crowd, or changes the usual Saturday plan. You end up having more fun because the two of you did not repeat the same routine again.",
+    "body_they": "Your suggestion gets {{holder1}} out of a routine they were already bored with. A different place, subject, or plan can bring out a side of {{holder1}} that does not get much room in the usual schedule."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

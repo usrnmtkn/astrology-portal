@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-soft-mars-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-soft/mars/variant-2",
+  "payloadSha256": "3695a662d64595473088d4b08c46f879d3be34a528166f94038d17dfab10f73d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder1}} start the job that has been sitting there for weeks. Once you begin, it is much less annoying than continuing to talk about when somebody will do it.",
+    "body_they": "You and {{holder1}} start the job that has been sitting there for weeks. Once you begin, it is much less annoying than continuing to talk about when somebody will do it."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

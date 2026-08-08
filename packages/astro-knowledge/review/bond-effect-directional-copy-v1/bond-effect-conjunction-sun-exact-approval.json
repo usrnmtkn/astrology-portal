@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-conjunction-sun",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-conjunction/sun",
+  "payloadSha256": "19c6e08f831e95b74578b21a490e69256a57d581d3d490e9a5562cf96c16f6da",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} gives you credit in front of other people, notices how much work went into something, or celebrates a win you were already starting to dismiss. You know {{holder1}} noticed. That recognition can matter more than you expected.",
+    "body_they": "You mention what {{holder1}} contributed, introduce them properly, or notice the work behind something they accomplished. {{holder1}} may be especially affected by hearing you say it out loud. Being appreciated by you matters."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

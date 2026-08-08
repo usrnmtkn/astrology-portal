@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-square-mercury",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-square/mercury",
+  "payloadSha256": "84db9c6c0b34454cd64ece99154737a7922f0b456092fbb4078c68131f0fdc77",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} sends a short reply and you read it as cold. They answer the practical question but ignore the part you actually cared about. By the time the two of you talk again, you may already be responding to a meaning {{holder1}} never intended.",
+    "body_they": "You send a quick reply and {{holder1}} hears distance in it. You answered the logistics, but {{holder1}} is still waiting for an answer to the part that mattered. A few missing words can change the whole tone of the conversation."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

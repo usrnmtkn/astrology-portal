@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "bond-effect-directional-copy-v1-bond-effect-hard-saturn-variant-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored directional bond-effect copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "approvalSource": "packages/astro-knowledge/review/bond-effect-owner-rewrite-raw-2026-08-07.md",
+  "contentKey": "fallback-hook/bond-effect-hard/saturn/variant-2",
+  "payloadSha256": "cbb08bf6c97dceb192f2dc29b5ca5764514e080ef60d023f9c044f4ed45e71f7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} changes the plan again and you are the one moving appointments, rearranging work, or giving up another evening. The explanation may be reasonable. You still lose the time.",
+    "body_they": "You change the plan and {{holder1}} has to rearrange their schedule again. Even a reasonable change can become exhausting when the same person always absorbs it."
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
