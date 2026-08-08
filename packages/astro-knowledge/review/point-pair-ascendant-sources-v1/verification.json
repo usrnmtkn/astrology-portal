@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "provenanceAnnotation": {
+    "retainedFromPullRequest": 75,
+    "supersededByPullRequest": 85,
+    "supersedingMergeCommit": "220c03bcded4caccb8ed6938d3b4e28eb2b148ca",
+    "note": "This verification records PR #75's original draft-candidate state. PR #85 shipped owner-reviewed canonical entries with different plainTranslation, summaryShort, and summaryDeep fields plus an added note field. Current entries, approval records, and serving rows on main are authoritative."
+  },
+  "branch": "codex/point-pair-ascendant-source-entries",
+  "baseCommit": "7ce90c4d086ae70356a0ae61f87f19d90744a0b3",
+  "scope": {
+    "pairs": [
+      "chiron-ascendant",
+      "lilith-ascendant",
+      "north-node-ascendant",
+      "south-node-ascendant"
+    ],
+    "entryCount": 12,
+    "aspectsPerPair": [
+      "conjunction",
+      "square",
+      "trine"
+    ],
+    "sextileIncluded": false,
+    "oppositionIncluded": false,
+    "humanMomentCount": 0,
+    "servingRowsChanged": 0,
+    "resolverFilesChanged": 0,
+    "bundledArtifactsChanged": 0,
+    "billedCalls": 0
+  },
+  "planetARegistration": "not_required_schema_and_validator_accept_string_values",
+  "validation": {
+    "schemaValidation": "pass",
+    "packetBuilder": {
+      "entriesChecked": 12,
+      "status": "editorial_required",
+      "generationAllowed": false,
+      "requiredFlag": "missing-human-moment-beat",
+      "blockedScaleRule": {
+        "harvest_mode": null,
+        "insertWarmthBeat": false
+      }
+    },
+    "aspectWarmthHarvestRegression": "pass",
+    "skyExactAspectPipeline": {
+      "status": "pass",
+      "ownerCalibrationEntries": 225,
+      "readyFullCardTargets": 198,
+      "matched": 198,
+      "noneFound": 0,
+      "failClosedMissingCores": 42
+    },
+    "gitDiffCheck": "pass"
+  },
+  "reviewStatus": "owner_review_required"
+}
