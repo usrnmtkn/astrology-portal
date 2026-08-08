@@ -660,6 +660,10 @@ try {
   assert.match(youPage, /\{weeklyTransitRows\}/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__reading/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__aspect/u);
+  assert.doesNotMatch(youPage, />Aspect</u);
+  assert.doesNotMatch(youPage, />Your horoscope</u);
   assert.doesNotMatch(youPage, />Current house pass</u);
   assert.match(app, /className="updates-aspect-row weekly-transit-row"/u);
   assert.match(app, /weeklyTransitDisplayTitle\(reading, house\)/u);
@@ -677,8 +681,8 @@ try {
   );
   assert.match(
     weeklySource,
-    /includeTransitWindows/u,
-    "Weekly snapshots must request governed station timing windows for house-specific station copy."
+    /stationEventPositions[\s\S]*includeTransitWindows/u,
+    "Exact station cards need the active house-pass window for the shared transit-card timing row."
   );
   assert.match(
     weeklySource,

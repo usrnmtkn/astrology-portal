@@ -1927,6 +1927,7 @@ ${fogNote}`;
     friendPossessivePronoun,
     sign,
     variant,
+    duplicateIndex,
     window: win
   }) {
     if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
@@ -1937,7 +1938,8 @@ ${fogNote}`;
     const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
     const variantEffectKey = variant ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}` : null;
     const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
-    const effectKey = hooks.get(exactEffectKey)?.body_you ? exactEffectKey : variantEffectKey && hooks.get(variantEffectKey)?.body_you ? variantEffectKey : familyEffectKey;
+    const effectCandidates = duplicateIndex && duplicateIndex > 0 ? [variantEffectKey, familyEffectKey, exactEffectKey] : [exactEffectKey, variantEffectKey, familyEffectKey];
+    const effectKey = effectCandidates.find((key) => Boolean(key && hooks.get(key)?.body_you)) ?? familyEffectKey;
     const effect = hooks.get(effectKey)?.body_you;
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
@@ -2099,7 +2101,7 @@ ${fogNote}`;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-07d";
+var PACKAGE_VERSION = "v3-2026-08-08a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
