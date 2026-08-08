@@ -25,7 +25,10 @@ import {
   manualChartFormFromChart
 } from "./manualChartForm";
 import type { ManualChartForm } from "./manualChartForm";
-import { scheduleFriendChartRepair } from "./friendChartLoading";
+import {
+  enhanceFriendChartsAtomically,
+  scheduleFriendChartRepair
+} from "./friendChartLoading";
 
 type ManualChartsStatus = "idle" | "loading" | "saving" | "deleting";
 
@@ -203,69 +206,61 @@ export function useManualChartsController({
     }
 
     let cancelled = false;
-    const repairCharts = async () => {
-      const repairedCharts: ManualChart[] = [];
-
-      for (const chart of chartsToRepair) {
+    const repairCharts = () => enhanceFriendChartsAtomically(
+      chartsToRepair,
+      async (chart) => {
         if (cancelled) {
-          return;
+          return null;
         }
 
-        try {
-          const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
-          if (!birthLocation) {
-            continue;
-          }
-
-          if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
-            continue;
-          }
-
-          const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
-          const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
-          const calculatedNatalChart = await calculateSky(birthLocation, birthDateTime);
-          const natalChart = await natalSkyWithAspectPatternsForStorage(
-            calculatedNatalChart,
-            birthLocation,
-            birthDateTime,
-            !chart.birthTimeUnknown,
-            showNatalAspectPatterns
-          );
-          const input: ManualChartInput = {
-            chartType: chart.chartType,
-            displayName: chart.displayName,
-            firstName: chart.firstName ?? null,
-            lastName: chart.lastName ?? null,
-            pronouns: chart.pronouns,
-            relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
-            birthDate: chart.birthDate,
-            birthTime: chart.birthTime,
-            birthTimeUnknown: chart.birthTimeUnknown,
-            birthPlace: chart.birthPlace,
-            birthLocation,
-            natalChart,
-            notes: chart.notes ?? null
-          };
-          const repairedChart = await updateManualChart(chartOwnerUserId, chart.id, input);
-
-          repairedCharts.push(repairedChart);
-        } catch {
-          // Keep incomplete charts usable while a background repair retries later.
+        const birthLocation = await resolvedManualChartBirthLocationForRepair(chart);
+        if (!birthLocation) {
+          return null;
         }
-      }
 
-      if (cancelled || repairedCharts.length === 0) {
-        return;
-      }
+        if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
+          return null;
+        }
 
-      setCharts((currentCharts) => {
-        const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
+        const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
+        const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
+        const calculatedNatalChart = await calculateSky(birthLocation, birthDateTime);
+        const natalChart = await natalSkyWithAspectPatternsForStorage(
+          calculatedNatalChart,
+          birthLocation,
+          birthDateTime,
+          !chart.birthTimeUnknown,
+          showNatalAspectPatterns
+        );
+        const input: ManualChartInput = {
+          chartType: chart.chartType,
+          displayName: chart.displayName,
+          firstName: chart.firstName ?? null,
+          lastName: chart.lastName ?? null,
+          pronouns: chart.pronouns,
+          relationshipType: chart.chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
+          birthDate: chart.birthDate,
+          birthTime: chart.birthTime,
+          birthTimeUnknown: chart.birthTimeUnknown,
+          birthPlace: chart.birthPlace,
+          birthLocation,
+          natalChart,
+          notes: chart.notes ?? null
+        };
 
-        return currentCharts
-          .map((chart) => repairedById.get(chart.id) ?? chart)
-          .sort((first, second) => first.displayName.localeCompare(second.displayName));
-      });
-    };
+        return updateManualChart(chartOwnerUserId, chart.id, input);
+      },
+      (repairedCharts) => {
+        setCharts((currentCharts) => {
+          const repairedById = new Map(repairedCharts.map((chart) => [chart.id, chart]));
+
+          return currentCharts
+            .map((chart) => repairedById.get(chart.id) ?? chart)
+            .sort((first, second) => first.displayName.localeCompare(second.displayName));
+        });
+      },
+      () => cancelled
+    );
     const cancelScheduledRepair = scheduleFriendChartRepair(() => {
       void repairCharts();
     });
