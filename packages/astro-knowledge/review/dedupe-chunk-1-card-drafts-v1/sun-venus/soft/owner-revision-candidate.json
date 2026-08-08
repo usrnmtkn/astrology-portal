@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-venus-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-venus/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d438e7c716f415fce882a0142e41f36b65f18deec5df0c51e655059c23edb269",
+  "payload": {
+    "body_you": "You readily respond to the way {{holder2}} shows affection, which leaves you feeling noticed and appreciated. Your response makes {{holder2}} feel comfortable showing care without having to work at it. Because getting along takes so little effort, both of you may stop actively engaging and let the connection become routine.",
+    "body_they": "{{holder1}} readily responds to the way you show affection, which leaves {{holder1}} feeling noticed and appreciated. That response makes you feel comfortable showing care without having to work at it. Because getting along takes so little effort, both of you may stop actively engaging and let the connection become routine.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "f0803677b7f199e24a3d4d777b8dbec51ad9534ad0d611b24290d5cbf3eb5e47",
+    "writerProviderResponseSha256": "58684bd142e518efbb8e9b22e3b4f9fa31d7dddbeee8356f04bb046789a507f2"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-venus/soft/exact-approval.json"
+}

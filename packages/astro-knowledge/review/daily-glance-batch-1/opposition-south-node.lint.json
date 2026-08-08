@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "key": "opposition/south-node",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+    "required": false
+  },
+  "checks": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "passed": true,
+      "details": "1 sentence(s)"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "passed": true,
+      "details": "11 words"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "passed": true,
+      "details": "4 sentences"
+    },
+    {
+      "id": "P4-body-word-count",
+      "passed": true,
+      "details": "65 words"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "passed": true,
+      "details": "1 detected instruction(s); final sentence: Tell your friend you cannot take on the errand."
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "passed": true,
+      "details": "Body does not repeat the full headline."
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "passed": true,
+      "details": "No prohibited match."
+    },
+    {
+      "id": "DG-R2-register",
+      "passed": true,
+      "details": {
+        "otherPersonCue": true,
+        "otherFrictionCue": true,
+        "target": "south-node"
+      }
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "passed": true,
+      "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "passed": true,
+      "details": "No deterministic outcome promise detected."
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "passed": false,
+      "details": "Retired fixed body opener detected."
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "passed": true,
+      "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "passed": true,
+      "details": [
+        "For the next few hours"
+      ]
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "passed": true,
+      "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "passed": true,
+      "details": "Opposition headline names another-person pressure."
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "passed": true,
+      "details": "No diagnostic reader-history frame detected."
+    }
+  ],
+  "findings": [],
+  "counts": {
+    "headlineWords": 11,
+    "headlineSentences": 1,
+    "bodyWords": 65,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 1,
+    "mayUsages": 1
+  }
+}

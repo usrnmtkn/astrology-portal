@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-venus-saturn-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/saturn/conjunction",
+  "payloadSha256": "1f8ffac09da52f5e537d2d8764b754ac1d9903a7d803a632f4c9bf8c10f8b79b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} shows up, keeps promises, and gives you something reliable. You may trust that {{holder2}} will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. You may know that {{holder2}} is committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience.",
+    "body_they": "You show up, keeps promises, and gives {{holder1}} something reliable. {{holder1}} may trust that you will still be there after the excitement passes, especially when other relationships have felt less dependable. That reliability does not always feel warm. {{holder1}} may know that you are committed and still miss being openly praised, desired, or reassured. Loved and adored are not the same experience.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

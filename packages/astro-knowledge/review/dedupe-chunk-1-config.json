@@ -1,0 +1,294 @@
+{
+  "batch": "dedupe-chunk-1",
+  "authorization": "exactly 30 successful Sol writer calls and exactly 30 successful Terra judge calls; one per target; any failure stops the batch for owner direction",
+  "outputDir": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1",
+  "expectedCalls": {
+    "writer": 30,
+    "judge": 30,
+    "total": 60
+  },
+  "models": {
+    "writer": {
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "high",
+      "maxOutputTokens": 12000
+    },
+    "judge": {
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "low",
+      "maxOutputTokens": 4000
+    }
+  },
+  "targets": [
+    {
+      "id": "sun-moon-conjunction",
+      "planet": "sun",
+      "planetB": "moon",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Moon holder's feelings, needs, and sense of emotional safety",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-moon_conjunction.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-moon-hard",
+      "planet": "sun",
+      "planetB": "moon",
+      "aspectLabel": "hard",
+      "actsOn": "the Moon holder's feelings, needs, and sense of emotional safety",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-moon_square.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-moon-soft",
+      "planet": "sun",
+      "planetB": "moon",
+      "aspectLabel": "soft",
+      "actsOn": "the Moon holder's feelings, needs, and sense of emotional safety",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-moon_trine.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-sun-conjunction",
+      "planet": "sun",
+      "planetB": "sun",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Sun holder's sense of identity, confidence, and direction",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-sun_conjunction.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "sun-sun-hard",
+      "planet": "sun",
+      "planetB": "sun",
+      "aspectLabel": "hard",
+      "actsOn": "the Sun holder's sense of identity, confidence, and direction",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-sun_square.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "sun-sun-soft",
+      "planet": "sun",
+      "planetB": "sun",
+      "aspectLabel": "soft",
+      "actsOn": "the Sun holder's sense of identity, confidence, and direction",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-sun_trine.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "sun-mercury-conjunction",
+      "planet": "sun",
+      "planetB": "mercury",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Mercury holder's thinking and way of talking",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-mercury_conjunction.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-mercury-hard",
+      "planet": "sun",
+      "planetB": "mercury",
+      "aspectLabel": "hard",
+      "actsOn": "the Mercury holder's thinking and way of talking",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-mercury_square.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "sun-mercury-soft",
+      "planet": "sun",
+      "planetB": "mercury",
+      "aspectLabel": "soft",
+      "actsOn": "the Mercury holder's thinking and way of talking",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-mercury_trine.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "sun-venus-conjunction",
+      "planet": "sun",
+      "planetB": "venus",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-venus_conjunction.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-venus-hard",
+      "planet": "sun",
+      "planetB": "venus",
+      "aspectLabel": "hard",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-venus_square.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-venus-soft",
+      "planet": "sun",
+      "planetB": "venus",
+      "aspectLabel": "soft",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-venus_trine.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "sun-mars-conjunction",
+      "planet": "sun",
+      "planetB": "mars",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Mars holder's drive, pace, and way of acting",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-mars_conjunction.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-mars-hard",
+      "planet": "sun",
+      "planetB": "mars",
+      "aspectLabel": "hard",
+      "actsOn": "the Mars holder's drive, pace, and way of acting",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-mars_square.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "sun-mars-soft",
+      "planet": "sun",
+      "planetB": "mars",
+      "aspectLabel": "soft",
+      "actsOn": "the Mars holder's drive, pace, and way of acting",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-sun_B-mars_trine.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "moon-moon-conjunction",
+      "planet": "moon",
+      "planetB": "moon",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Moon holder's feelings, needs, and sense of emotional safety",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-moon_conjunction.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "moon-moon-hard",
+      "planet": "moon",
+      "planetB": "moon",
+      "aspectLabel": "hard",
+      "actsOn": "the Moon holder's feelings, needs, and sense of emotional safety",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-moon_square.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "moon-moon-soft",
+      "planet": "moon",
+      "planetB": "moon",
+      "aspectLabel": "soft",
+      "actsOn": "the Moon holder's feelings, needs, and sense of emotional safety",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-moon_trine.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "moon-mercury-conjunction",
+      "planet": "moon",
+      "planetB": "mercury",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Mercury holder's thinking and way of talking",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-mercury_conjunction.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "moon-mercury-hard",
+      "planet": "moon",
+      "planetB": "mercury",
+      "aspectLabel": "hard",
+      "actsOn": "the Mercury holder's thinking and way of talking",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-mercury_square.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "moon-mercury-soft",
+      "planet": "moon",
+      "planetB": "mercury",
+      "aspectLabel": "soft",
+      "actsOn": "the Mercury holder's thinking and way of talking",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-mercury_trine.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "moon-venus-conjunction",
+      "planet": "moon",
+      "planetB": "venus",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-venus_conjunction.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "moon-venus-hard",
+      "planet": "moon",
+      "planetB": "venus",
+      "aspectLabel": "hard",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-venus_square.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "moon-venus-soft",
+      "planet": "moon",
+      "planetB": "venus",
+      "aspectLabel": "soft",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-venus_trine.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "moon-mars-conjunction",
+      "planet": "moon",
+      "planetB": "mars",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Mars holder's drive, pace, and way of acting",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-mars_conjunction.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "moon-mars-hard",
+      "planet": "moon",
+      "planetB": "mars",
+      "aspectLabel": "hard",
+      "actsOn": "the Mars holder's drive, pace, and way of acting",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-mars_square.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "moon-mars-soft",
+      "planet": "moon",
+      "planetB": "mars",
+      "aspectLabel": "soft",
+      "actsOn": "the Mars holder's drive, pace, and way of acting",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-moon_B-mars_trine.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "mercury-venus-conjunction",
+      "planet": "mercury",
+      "planetB": "venus",
+      "aspectLabel": "conjunction",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-venus_conjunction.json",
+      "expectedMode": "matched"
+    },
+    {
+      "id": "mercury-venus-hard",
+      "planet": "mercury",
+      "planetB": "venus",
+      "aspectLabel": "hard",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-venus_square.json",
+      "expectedMode": "none_found"
+    },
+    {
+      "id": "mercury-venus-soft",
+      "planet": "mercury",
+      "planetB": "venus",
+      "aspectLabel": "soft",
+      "actsOn": "the Venus holder's affection, preferences, and way of caring",
+      "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-venus_trine.json",
+      "expectedMode": "none_found"
+    }
+  ]
+}

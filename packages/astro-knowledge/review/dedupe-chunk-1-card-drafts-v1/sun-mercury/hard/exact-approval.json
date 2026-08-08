@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-mercury-hard-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/mercury/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "84acf46e4845aec1b7d83650a5108def8e0b8a73048cdb53df093bbb90c9e3ec",
+  "payload": {
+    "body_you": "{{holder2}}'s questions and strong opinions can feel like challenges to who you are or where you are going. You may respond by defending yourself or pushing back on how {{holder2}} thinks, which can make them more insistent about explaining their point. Even basic conversations can turn tense, leaving both of you feeling misunderstood.",
+    "body_they": "{{holder1}} can take your questions and strong opinions as challenges to who they are or where they are going. They may respond by defending themselves or pushing back on how you think, which can make you more insistent about explaining your point. Even basic conversations can turn tense, leaving both of you feeling misunderstood.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/hard/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

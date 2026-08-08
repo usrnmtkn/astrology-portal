@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_09e052d47e4cbb78006a72966aae54819192ee2d82120e21e4",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 944,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 214,
+    "output_tokens_details": {
+      "reasoning_tokens": 84
+    },
+    "total_tokens": 1158
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants preserve the fixed reciprocal direction: \\\"You respond to {{holder2}}'s feelings\\\" is correctly mirrored by \\\"{{holder1}} responds to your feelings.\\\" The second sentence establishes the shared behavior pattern around stress and recovery, while the third gives a clear cost loop: one person's low mood or avoidance can pull the other in, leaving \\\"neither of you to steady the moment.\\\" The variants are meaningfully parallel, remain within the supplied emotional-resonance boundary, and make no excluded claims or unsupported turn toward the reader.\"}"
+}

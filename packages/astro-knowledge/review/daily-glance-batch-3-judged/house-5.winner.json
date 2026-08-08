@@ -1,0 +1,243 @@
+{
+ "key": "house/5",
+ "advisoryOnly": true,
+ "winner": {
+  "headline": "Playing it cool erases the fun you wanted.",
+  "body": "You edit the joke out of a message and replace it with a neutral reply. You lose the part that made responding fun. You have a little room over the next few hours to show one clear sign of interest and keep the rest private. Send the playful line you almost deleted."
+ },
+ "judge": {
+  "key": "house/5",
+  "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+  "judgeModel": "gpt-4.1-mini",
+  "score": 3,
+  "dimScore": 7,
+  "verdict": {
+   "score": 3,
+   "verdict": "This candidate fits the owner's voice well: it is plain and conversational, naming a recognizable cost (loss of fun and engagement) early and clearly. The structure is tight, with the truth stated upfront and supported by a concrete example. Hedging is minimal, with a confident tone. The formula avoids clichés or mechanical phrasing, and the line about 'playing it cool erases the fun you wanted' is a strong, relatable insight that someone might save or share. The specificity is good, as it captures the subtle social dynamic of messaging in this house/key.",
+   "dimensions": {
+    "voice": true,
+    "stakes": true,
+    "structure": true,
+    "hedging": true,
+    "formula": true,
+    "screenshot_line": true,
+    "specificity": true
+   },
+   "best_line": "Playing it cool erases the fun you wanted.",
+   "why": "This sentence crisply names a common but often unspoken feeling—the cost of self-censorship in casual communication—making it a memorable and sharable insight that embodies the owner's voice and the key's emotional register."
+  },
+  "usage": {
+   "input_tokens": 1126,
+   "input_tokens_details": {
+    "cache_write_tokens": 0,
+    "cached_tokens": 0
+   },
+   "output_tokens": 249,
+   "output_tokens_details": {
+    "reasoning_tokens": 0
+   },
+   "total_tokens": 1375
+  },
+  "advisoryOnly": true
+ },
+ "lint": {
+  "schemaVersion": 1,
+  "key": "house/5",
+  "passed": false,
+  "immutableRawOutput": true,
+  "revisionsMade": 0,
+  "ownerPlacementApproval": {
+   "required": false
+  },
+  "checks": [
+   {
+    "id": "P4-headline-one-declarative-sentence",
+    "passed": true,
+    "details": "1 sentence(s)"
+   },
+   {
+    "id": "P4-headline-word-count",
+    "passed": true,
+    "details": "8 words"
+   },
+   {
+    "id": "P4-body-sentence-count",
+    "passed": true,
+    "details": "4 sentences"
+   },
+   {
+    "id": "P4-body-word-count",
+    "passed": true,
+    "details": "52 words"
+   },
+   {
+    "id": "P4-one-final-instruction",
+    "passed": true,
+    "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send the playful line you almost deleted."
+   },
+   {
+    "id": "P4-body-supports-without-repeating",
+    "passed": true,
+    "details": "Body does not repeat the full headline."
+   },
+   {
+    "id": "global+VC-016+DG+SM-output-bans",
+    "passed": true,
+    "details": "No prohibited match."
+   },
+   {
+    "id": "DG-R2-register",
+    "passed": false,
+    "details": "No detectable friendship/group/hope/community cue."
+   },
+   {
+    "id": "DG-R3-no-slogan-or-restatement-closer",
+    "passed": true,
+    "details": "No known slogan or full-headline restatement detected."
+   },
+   {
+    "id": "DG-R4-no-outcome-promise",
+    "passed": true,
+    "details": "No deterministic outcome promise detected."
+   },
+   {
+    "id": "DG-R7-varied-opener",
+    "passed": true,
+    "details": "Body uses a non-fixed opener."
+   },
+   {
+    "id": "DG-R9-enumerated-instruction-allowed",
+    "passed": true,
+    "details": "No enumerated one-X/one-Y instruction present."
+   },
+   {
+    "id": "B1-L1-time-anchor-max-once",
+    "passed": true,
+    "details": [
+     "over the next few hours"
+    ]
+   },
+   {
+    "id": "B1-L2-may-inner-states-only",
+    "passed": true,
+    "details": "Every may clause is an inner state, or may is absent."
+   },
+   {
+    "id": "B1-L3+L4-headline-group-grammar",
+    "passed": true,
+    "details": "No aspect-group headline grammar applies."
+   },
+   {
+    "id": "SM-DG-2-no-diagnostic-history",
+    "passed": true,
+    "details": "No diagnostic reader-history frame detected."
+   },
+   {
+    "id": "DG-R11-unhedged-headline",
+    "passed": true,
+    "details": "Headline makes an unhedged claim."
+   },
+   {
+    "id": "DG-R12-no-time-anchor-opener",
+    "passed": true,
+    "details": "Body opens inside the scene."
+   },
+   {
+    "id": "DG-R13-may-max-once",
+    "passed": true,
+    "details": "0 may usage(s)"
+   },
+   {
+    "id": "DG-R14-scene-not-biographical",
+    "passed": true,
+    "details": "No biographical anchor detected."
+   },
+   {
+    "id": "DG-R15-action-repairs-moment",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R16-owner-reserved-construction",
+    "passed": true,
+    "details": []
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-max-one",
+    "passed": true,
+    "details": "No quoted-dialogue line used."
+   },
+   {
+    "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+    "passed": true,
+    "advisory": true,
+    "details": "No quoted-dialogue judgment needed."
+   },
+   {
+    "id": "OWNER-DIRECTIVE-short-blunt-line",
+    "passed": true,
+    "details": [
+     "You lose the part that made responding fun.",
+     "Send the playful line you almost deleted."
+    ]
+   },
+   {
+    "id": "OWNER-TEST-specificity",
+    "passed": false,
+    "advisory": false,
+    "details": {
+     "own": {
+      "key": "house/5",
+      "matches": [
+       "creativity-play"
+      ],
+      "required": 1,
+      "passed": true
+     },
+     "comparisonScope": [
+      "square/mars",
+      "square/uranus",
+      "opposition/jupiter",
+      "opposition/pluto",
+      "soft/mercury",
+      "soft/uranus",
+      "soft/chiron"
+     ],
+     "swappableTo": [
+      {
+       "key": "soft/mercury",
+       "matches": [
+        "communication",
+        "mild-ease"
+       ],
+       "passed": true
+      }
+     ],
+     "advisorySwappableTo": []
+    }
+   },
+   {
+    "id": "OWNER-TEST-morning-read",
+    "passed": true,
+    "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+   },
+   {
+    "id": "OWNER-TEST-screenshot",
+    "passed": false,
+    "details": "No candidate body line detected."
+   }
+  ],
+  "findings": [],
+  "counts": {
+   "headlineWords": 8,
+   "headlineSentences": 1,
+   "bodyWords": 52,
+   "bodySentences": 4,
+   "instructions": 1,
+   "timeAnchors": 1,
+   "mayUsages": 0,
+   "quotedDialogueLines": 0,
+   "screenshotCandidateLines": 0
+  }
+ }
+}

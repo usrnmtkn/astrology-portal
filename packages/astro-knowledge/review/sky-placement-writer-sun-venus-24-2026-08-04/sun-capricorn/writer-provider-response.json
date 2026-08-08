@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0e1d588009b99898006a7291b9d02c8192ac39721b474d410e",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8208,
+    "input_tokens_details": {
+      "cache_write_tokens": 8205,
+      "cached_tokens": 0
+    },
+    "output_tokens": 3288,
+    "output_tokens_details": {
+      "reasoning_tokens": 2966
+    },
+    "total_tokens": 11496
+  },
+  "outputText": "{\"opening\":\"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Capricorn on {{entryDate}}, and loose intentions become firm plans. We decide what comes first. We keep a promise after the excitement wears off. Confidence grows when the effort produces something solid.\",\"tension\":\"That discipline has a cost when every hour has to prove its worth. We take on extra responsibility because being dependable feels safer than admitting our limits. A finished task gets another round of improvement. Rest gets pushed behind one more milestone. We grow harder to reach, and achievement becomes the only evidence that we are doing enough.\",\"development\":\"The Sun last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure returns wherever competence has become the price of being taken seriously. We answer every request because refusing one might expose a limit. We keep correcting work that already holds because completion leaves no standard left to chase. The structure may be sound, yet our lives narrow around maintaining it. By the time the result arrives, there is less energy for the creative purpose that made the effort matter.\",\"close\":\"Before {{exitDate}}, the result may be finished while we remain tired, harder to reach, and no more certain of our worth.\",\"try_this\":[\"We can finish one task at the standard it actually requires, without adding another round to prove commitment.\",\"We can eat one full meal away from work and leave the phone in another room.\"]}"
+}

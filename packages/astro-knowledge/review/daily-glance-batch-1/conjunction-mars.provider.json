@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/mars",
+  "responseId": "resp_0ad13a053a574510006a7294ee3b6481a38eca7924c86a3ac2",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 30976,
+  "usage": {
+    "inputTokens": 1715,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 1712,
+    "outputTokens": 1660,
+    "reasoningTokens": 1552,
+    "totalTokens": 3375
+  },
+  "estimatedCostUsd": 0.060515,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "ed06ae8d0d1910892aa6ebea88b7668b2b4d550331e9f5d3c8b616ff27e073a3",
+  "incompleteDetails": null
+}

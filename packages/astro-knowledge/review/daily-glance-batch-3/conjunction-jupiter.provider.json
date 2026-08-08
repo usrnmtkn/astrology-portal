@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/jupiter",
+  "responseId": "resp_0b45d69b75ba17e9006a7338bf8a3c81a2a2d79fd6460f3b70",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "requestedMaxOutputTokens": 24000,
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 48389,
+  "usage": {
+    "inputTokens": 2308,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 2305,
+    "outputTokens": 3273,
+    "reasoningTokens": 3165,
+    "totalTokens": 5581
+  },
+  "estimatedCostUsd": 0.11261125,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "324d32c034acbcc1e020362feaf58090720f8f75e81acfe008a88784e9843d42",
+  "incompleteDetails": null
+}

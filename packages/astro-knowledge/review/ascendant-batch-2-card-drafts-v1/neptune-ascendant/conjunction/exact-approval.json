@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "neptune-ascendant-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "8ef56d0d1b532d87dd8041dffd1bd89b74a8f5d384770327bd81440335f49e38",
+  "payload": {
+    "body_you": "You see something special in {{holder2}}, and your hopes about them affect how freely they present themselves around you. If you show the most interest when they match the person you imagine, they may start adjusting how they act to keep that image intact and become less sure what feels natural.",
+    "body_they": "{{holder1}} sees something special in you, and their hopes about you affect how freely you present yourself around them. If they show the most interest when you match the person they imagine, you may start adjusting how you act to keep that image intact and become less sure what feels natural.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/neptune-ascendant/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "sun-moon-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/sun/moon/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "b487e32275f554303e9b909e71516cce666a543f5c4a7eac5ac97684107c47a5",
+  "payload": {
+    "body_you": "What you want often matches what {{holder2}} needs before either of you says much. When you act on a plan, {{holder2}} often feels settled by it, and their ease encourages you to keep going. The cost is that you can both assume this match will handle everything, then miss when your priorities split or stop building on what you share. {{holder2}} can feel deeply understood by you without having to explain every feeling.",
+    "body_they": "What {{holder1}} wants often matches what you need before either of you says much. When {{holder1}} acts on a plan, you often feel settled by it, and your ease encourages them to keep going. The cost is that you can both assume this match will handle everything, then miss when your priorities split or stop building on what you share. You can feel deeply understood by {{holder1}} without having to explain every feeling.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-moon/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

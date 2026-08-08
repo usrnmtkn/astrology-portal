@@ -130,6 +130,17 @@ async function main() {
   assert.ok(badMoves.findings.some((f) => f.term === "moves-count"), "single move must fail");
   const genericMoves = lintArticle({ ...good, moves: ["Trust the process and see.", "Embrace the change fully."], planet: "mars" });
   assert.ok(genericMoves.fails >= 1, "generic coaching moves must trip the ban list");
+  for (const bannedTimingFormula of [
+    "This is not a passing mood.",
+    "This is a longer chapter, not a passing mood.",
+    "This is a slow chapter, not a single event."
+  ]) {
+    const result = lintArticle({ ...good, hook: `${good.hook} ${bannedTimingFormula}`, planet: "mars" });
+    assert.ok(
+      result.findings.some((finding) => finding.severity === "fail" && finding.source === "sky-placement"),
+      `banned timing formula must fail mechanically: ${bannedTimingFormula}`
+    );
+  }
   const quoteWithoutMeaning = lintArticle({ ...good, hook: "You are already answering the next question.", planet: "mars" });
   assert.ok(
     quoteWithoutMeaning.findings.some((finding) => finding.term === "missing-meaning-after-quote"),

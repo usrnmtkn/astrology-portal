@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mars-jupiter-conjunction-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mars/jupiter/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "74a307e00ae6ce195350dc0a393227e7858b27486648ee80213efc0b3a19bcad",
+  "payload": {
+    "body_you": "{{holder2}} makes {{holder1}} feel more capable, more confident, and more justified in acting now. Together, they can turn a modest plan into something larger before either person has checked the time, money, or responsibility involved. {{holder1}} feels encouraged by {{holder2}}, and {{holder2}} enjoys giving the push. Second thoughts tend to arrive after the commitment has already been made.",
+    "body_they": "{{holder2}} makes {{holder1}} feel more capable, more confident, and more justified in acting now. Together, they can turn a modest plan into something larger before either person has checked the time, money, or responsibility involved. {{holder1}} feels encouraged by {{holder2}}, and {{holder2}} enjoys giving the push. Second thoughts tend to arrive after the commitment has already been made.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mars-jupiter/conjunction",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

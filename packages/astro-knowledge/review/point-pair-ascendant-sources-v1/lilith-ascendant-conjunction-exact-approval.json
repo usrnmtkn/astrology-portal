@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "point-pair-ascendant-sources-v1-lilith-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/conjunction",
+  "payloadSha256": "e263b48f61e0e9d2d1eefcef989e9263fc01d85e53879dae4ce16ada230d4ec3",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} brings out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+    "body_they": "{{holder1}} brings out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

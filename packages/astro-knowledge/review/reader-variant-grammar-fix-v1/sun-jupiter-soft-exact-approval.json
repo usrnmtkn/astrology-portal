@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-jupiter-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/jupiter/soft",
+  "payloadSha256": "67a7ddb53cf29407968659eeb9da71cb28ef0fb3209b4e5efec4c447eac43697",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} believes in you without treating you like a renovation project. The support opens doors without shoving you through you. {{holder2}} can celebrate the future taking shape while still appreciating the person already here.",
+    "body_they": "You believe in {{holder1}} without treating them like a renovation project. The support opens doors without shoving {{holder1}} through them. You can celebrate the future taking shape while still appreciating the person already here.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

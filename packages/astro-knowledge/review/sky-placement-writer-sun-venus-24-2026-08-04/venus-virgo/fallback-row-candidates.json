@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/virgo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Virgo on {{entryDate}}, and the small proof of care starts carrying more weight. Someone mentions a sticking cabinet door, and it gets fixed that afternoon. A shared expense gets checked before it grows. Affection feels more convincing when it is attentive, useful, and real enough to improve daily life.",
+      "tension": "The pressure begins when every detail starts looking like a test. We notice what is unfinished or slightly off, then correct it before anyone asks. We remember every need, take over every repair, and quietly expect the effort to prove how much we care. The same attention then turns on the response. If thanks are late or the result is imperfect, criticism takes the place of the request we never made. Love begins to feel earned through flawless usefulness, while pleasure and help are treated as things to repay.",
+      "development": "Venus last moved through Virgo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the usefulness test may be easier to spot. Someone fixes a shared problem and resents that nobody noticed. We redo work already handled because it was not done exactly right. A kind offer gets refused, then care feels one-sided. Venus in Virgo can make receiving feel strangely exposed, because accepting help means letting care arrive without controlling its form. Criticism grows where a clear request could have been made, and closeness narrows to a list of what still needs improvement. Every detail may be handled well. The connection can still go thin when being needed feels safer than receiving.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "By {{exitDate}}, a bond organized around flawless usefulness can contain plenty of care while leaving us unable to receive any of it.",
+      "try_this": [
+        "We can accept one offered favor this week without returning it immediately or listing what we owe.",
+        "We can name one need in a full sentence instead of correcting how someone tried to help.",
+        "We can take one item we already value in for repair and put it back into use."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Virgo on {{entryDate}}, and the small proof of care starts carrying more weight. Someone mentions a sticking cabinet door, and it gets fixed that afternoon. A shared expense gets checked before it grows. Affection feels more convincing when it is attentive, useful, and real enough to improve daily life.\n\nThe pressure begins when every detail starts looking like a test. We notice what is unfinished or slightly off, then correct it before anyone asks. We remember every need, take over every repair, and quietly expect the effort to prove how much we care. The same attention then turns on the response. If thanks are late or the result is imperfect, criticism takes the place of the request we never made. Love begins to feel earned through flawless usefulness, while pleasure and help are treated as things to repay.\n\nVenus last moved through Virgo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the usefulness test may be easier to spot. Someone fixes a shared problem and resents that nobody noticed. We redo work already handled because it was not done exactly right. A kind offer gets refused, then care feels one-sided. Venus in Virgo can make receiving feel strangely exposed, because accepting help means letting care arrive without controlling its form. Criticism grows where a clear request could have been made, and closeness narrows to a list of what still needs improvement. Every detail may be handled well. The connection can still go thin when being needed feels safer than receiving.\n\nBy {{exitDate}}, a bond organized around flawless usefulness can contain plenty of care while leaving us unable to receive any of it.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Virgo on {{entryDate}}, and the small proof of care starts carrying more weight. Someone mentions a sticking cabinet door, and it gets fixed that afternoon. A shared expense gets checked before it grows. Affection feels more convincing when it is attentive, useful, and real enough to improve daily life.\n\nThe pressure begins when every detail starts looking like a test. We notice what is unfinished or slightly off, then correct it before anyone asks. We remember every need, take over every repair, and quietly expect the effort to prove how much we care. The same attention then turns on the response. If thanks are late or the result is imperfect, criticism takes the place of the request we never made. Love begins to feel earned through flawless usefulness, while pleasure and help are treated as things to repay.\n\nVenus last moved through Virgo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Now the usefulness test may be easier to spot. Someone fixes a shared problem and resents that nobody noticed. We redo work already handled because it was not done exactly right. A kind offer gets refused, then care feels one-sided. Venus in Virgo can make receiving feel strangely exposed, because accepting help means letting care arrive without controlling its form. Criticism grows where a clear request could have been made, and closeness narrows to a list of what still needs improvement. Every detail may be handled well. The connection can still go thin when being needed feels safer than receiving.\n\nBy {{exitDate}}, a bond organized around flawless usefulness can contain plenty of care while leaving us unable to receive any of it.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-virgo"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-moon-neptune-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
+  "payloadSha256": "a7ab99840e08b41759a6e9067ec324ea68db27486a411831530ae4dd6dc5641f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} often knows when you need gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves you feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+    "body_they": "You often know when {{holder1}} needs gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves {{holder1}} feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

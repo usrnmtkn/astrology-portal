@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "packetVersion": "daily-glance-writer-packet-v1:owner-six+key-facts+p4+sm-dg",
+  "promptVersion": "daily-glance-writer-v1:owner-reset-pilots",
+  "target": {
+    "key": "opposition/mars",
+    "register": "other-friction",
+    "emotionalCore": "reacting quickly when another person pushes"
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-pilot-v1",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 3,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "verifiedAstrology": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/pairs/moon-mars.json",
+      "selector": "modern.hard",
+      "text": "Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+      "selector": "F2.opposition",
+      "text": "the other side comes fully into view; awareness- and relationship-oriented; friction arrives through another person (other-friction register)."
+    }
+  ],
+  "format": {
+    "fields": [
+      "headline",
+      "body"
+    ],
+    "headline": {
+      "sentences": 1,
+      "minimumWords": 4,
+      "maximumWords": 16,
+      "terminal": "."
+    },
+    "body": {
+      "minimumSentences": 3,
+      "maximumSentences": 5,
+      "minimumWords": 40,
+      "maximumWords": 65,
+      "maximumInstructions": 1,
+      "instructionPosition": "final-sentence"
+    },
+    "engineHiddenTerms": [
+      "sun",
+      "moon",
+      "mercury",
+      "venus",
+      "lilith",
+      "mars",
+      "jupiter",
+      "saturn",
+      "uranus",
+      "neptune",
+      "pluto",
+      "chiron",
+      "node",
+      "nodes",
+      "aries",
+      "taurus",
+      "gemini",
+      "cancer",
+      "leo",
+      "virgo",
+      "libra",
+      "scorpio",
+      "sagittarius",
+      "capricorn",
+      "aquarius",
+      "pisces",
+      "square",
+      "opposition",
+      "conjunction",
+      "trine",
+      "sextile",
+      "aspect",
+      "house",
+      "eleventh",
+      "11th",
+      "planet",
+      "natal",
+      "transit"
+    ]
+  },
+  "styleMarkers": [
+    {
+      "id": "SM-DG-1",
+      "rule": "The reader is the grammatical subject; abstractions do not act."
+    },
+    {
+      "id": "SM-DG-2",
+      "rule": "Inner states are offered with may, never asserted as diagnosis."
+    },
+    {
+      "id": "SM-DG-3",
+      "rule": "Alternatives are real options, not images; use no metaphor in this register."
+    },
+    {
+      "id": "SM-DG-4",
+      "rule": "Rhythm is even and comma-joined; use no staccato punch sentences."
+    },
+    {
+      "id": "SM-DG-5",
+      "rule": "The word whether is not owner language and must not appear."
+    },
+    {
+      "id": "SM-DG-6",
+      "rule": "Ambient-force energy language is banned; ordinary effort-cost use remains allowed."
+    }
+  ],
+  "outputPolicy": {
+    "ids": [
+      "global",
+      "VC-016-minus-pronouns",
+      "DG-R1",
+      "DG-R2",
+      "DG-R3",
+      "DG-R4",
+      "DG-R5",
+      "DG-R6",
+      "SM-DG-5",
+      "SM-DG-6",
+      "engine-hidden"
+    ],
+    "pronounsAllowed": [
+      "you",
+      "your",
+      "yours",
+      "yourself",
+      "yourselves"
+    ],
+    "noNegativeExamples": true,
+    "noJudgeReports": true,
+    "noRejectedCopy": true
+  },
+  "ownerPassages": [
+    {
+      "sourceId": "daily-glance-soft-mars-owner-headline",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-reference-pair-soft-mars-2026-08-04.md",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "daily-glance-voice-anchor-and-structural-model",
+      "text": "It takes less energy to do the thing than to keep putting it off.",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true
+    },
+    {
+      "sourceId": "daily-glance-soft-mars-owner-body",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-reference-pair-soft-mars-2026-08-04.md",
+      "authorityClass": "exact_owner_approved",
+      "approvalScope": "daily-glance-voice-anchor-and-structural-model",
+      "text": "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again.",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true
+    },
+    {
+      "sourceId": "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "It’s exhausting to keep adapting just to get through a world that seems to demand you be everything to everyone. It takes real strength to keep choosing growth when staying the same would feel so much easier. Think about what your willingness to change has already asked you to let go of."
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "This kind of attention is a form of love that our culture barely recognizes. It's noticing that your partner always chooses the corner table at restaurants. It's remembering that your friend gets anxious in crowded spaces. It's seeing when someone is tired before they have to tell you."
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "And if someone’s trying to rush you? If there’s pressure to respond, to fix, to say yes before you’re ready? That’s your cue to pause."
+    },
+    {
+      "sourceId": "owner-article:virgo-season-2025:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/virgo-season-2025.md",
+      "authorityClass": "owner_authored_final",
+      "approvalScope": "register-only-never-runtime-facts",
+      "ownerAuthored": true,
+      "useAsPositiveVoiceEvidence": true,
+      "text": "Each of us needs to be recognized for the invisible labor of maintaining order in disorder. To be seen for the thousand micro-decisions that keep life functioning. It's human to want someone to notice that you remembered everyone's appointments, that you kept the bills paid while navigating your own storms. It's our responsibility to honor this in ourselves."
+    }
+  ]
+}

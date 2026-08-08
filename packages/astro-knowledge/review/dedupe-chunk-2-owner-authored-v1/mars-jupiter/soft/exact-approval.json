@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mars-jupiter-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mars/jupiter/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "81508c5a80ed589a2f4b1fab0e9b1895550fc4fa9c522d3aae321e4eaa6c262b",
+  "payload": {
+    "body_you": "{{holder2}} gives {{holder1}} more confidence to act, while {{holder1}} gives {{holder2}}'s optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. {{holder1}} and {{holder2}} may not notice how much larger the plan has become until they are already responsible for carrying it.",
+    "body_they": "{{holder2}} gives {{holder1}} more confidence to act, while {{holder1}} gives {{holder2}}'s optimism a real direction. Plans tend to grow once they begin because both people see the next possibility quickly. The momentum feels natural and productive. {{holder1}} and {{holder2}} may not notice how much larger the plan has become until they are already responsible for carrying it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mars-jupiter/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

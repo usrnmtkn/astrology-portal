@@ -1,0 +1,9 @@
+{
+  "target": "moon-mercury-hard",
+  "status": "needs_review",
+  "payloadSha256": "66371fe1e52a29ef56d886ceff638fffd08dc599899c027dc651c7c1c2952f34",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

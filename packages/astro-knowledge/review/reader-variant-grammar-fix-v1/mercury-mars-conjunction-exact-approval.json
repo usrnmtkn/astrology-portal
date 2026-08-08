@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-mars-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mars/conjunction",
+  "payloadSha256": "d29f96491cbd8fc56a8dff0d48cd2a8684ed17f405084b083b26b50dd7e952c1",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "When you have an idea, {{holder2}} is ready to do something with it. You give language to the plan, and {{holder2}} adds speed, urgency, and the willingness to act before the moment passes. This can make you feel sharper and more decisive around {{holder2}}. It can also make disagreements escalate quickly. {{holder2}} reacts while you are still explaining, and a conversation that began with one idea can end with both defending how they spoke.",
+    "body_they": "When {{holder1}} has an idea, you are ready to do something with it. {{holder1}} gives language to the plan, and you add speed, urgency, and the willingness to act before the moment passes. This can make {{holder1}} feel sharper and more decisive around you. It can also make disagreements escalate quickly. You react while {{holder1}} is still explaining, and a conversation that began with one idea can end with both defending how they spoke.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

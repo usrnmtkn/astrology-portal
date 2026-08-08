@@ -75,6 +75,56 @@ if (batch2.distribution_state === "staged") {
   assert.match(batch2.migration_gate?.source ?? "", /dpl_GxWYk5B8bKdxEices36VEmf1G2mA/u);
 }
 
+const expectedBatch3Keys = [
+  "fallback-hook/sky-sign-copy/mercury/capricorn",
+  "fallback-hook/sky-sign-copy/mercury/aquarius",
+  "fallback-hook/sky-sign-copy/mars/taurus",
+  "fallback-hook/sky-sign-copy/mars/gemini",
+  "fallback-hook/sky-sign-copy/mars/cancer",
+  "fallback-hook/sky-sign-copy/mars/leo",
+  "fallback-hook/sky-sign-copy/mars/virgo"
+];
+const expectedBatch4Keys = [
+  "fallback-hook/sky-sign-copy/mars/sagittarius",
+  "fallback-hook/sky-sign-copy/mars/aquarius",
+  "fallback-hook/sky-sign-copy/mars/pisces",
+  "fallback-hook/sky-sign-copy/neptune/aries",
+  "fallback-hook/sky-sign-copy/pluto/aquarius"
+];
+for (const [batch, expectedKeys] of [["3", expectedBatch3Keys], ["4", expectedBatch4Keys]]) {
+  const release = manifest.releases.find((candidate) => String(candidate.release_batch) === batch);
+  assert.ok(release, `Batch ${batch} must have an explicit serving-manifest release.`);
+  assert.equal(release.distribution_state, "serving");
+  assert.deepEqual(release.approved_keys, expectedKeys);
+  assert.deepEqual(release.owner_approval?.approved_keys, expectedKeys);
+  assert.match(release.owner_approval?.statement ?? "", /exact 12-key batches 3 and 4 staged_to_serving diff/u);
+  assert.equal(release.migration_gate?.deployed_package_version, "v3-2026-08-04b");
+}
+assert.equal([...expectedBatch2Keys, ...expectedBatch3Keys, ...expectedBatch4Keys].length, 19);
+const combined26 = manifest.releases.find((release) => release.release_id === "sky-placement-sun-venus-chiron-nodes-26");
+const expectedCombined26Keys = [
+  ...["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"].map((sign) => `fallback-hook/sky-sign-copy/sun/${sign}`),
+  ...["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"].map((sign) => `fallback-hook/sky-sign-copy/venus/${sign}`),
+  "fallback-hook/sky-sign-copy/chiron/aries",
+  "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
+];
+assert.ok(combined26, "The combined Sun/Venus/Chiron/Nodes release must exist.");
+assert.equal(combined26.distribution_state, "serving");
+assert.equal(combined26.transition, "staged_to_serving");
+assert.equal(combined26.required_runtime_capability, manifest.runtime_capability);
+assert.equal(combined26.migration_gate?.status, "verified");
+assert.equal(combined26.migration_gate?.deployed_package_version, "v3-2026-08-04g");
+assert.match(combined26.migration_gate?.source ?? "", /dpl_Cc7eZBaDB4qgWB7TtxxXncS4fhXW/u);
+assert.deepEqual(combined26.approved_keys, expectedCombined26Keys);
+assert.deepEqual(combined26.owner_approval?.approved_keys, expectedCombined26Keys);
+assert.match(combined26.owner_approval?.statement ?? "", /confirm the 26-key serving diff as proposed/u);
+assert.ok(expectedCombined26Keys.every((contentKey) => approvedKeys.has(contentKey)));
+const legacySunLeo = manifest.releases.find((release) => release.release_id === "pre-manifest-sun-leo-serving");
+assert.equal(legacySunLeo.distribution_state, "superseded");
+assert.deepEqual(legacySunLeo.approved_keys, []);
+assert.deepEqual(legacySunLeo.superseded_keys, ["fallback-hook/sky-sign-copy/sun/leo"]);
+assert.equal(legacySunLeo.superseded_by, combined26.release_id);
+
 const runtimeSource = readSource("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
 const placementBundleSource = readSource("apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts");
 const appSource = readSource("apps/web/src/App.tsx");
@@ -91,4 +141,4 @@ assert.match(materializerSource, /serving-awaiting-owner-approval/u);
 assert.match(importerSource, /distribution_state: "staged"/u);
 assert.match(importerSource, /Editorial approval does not authorize serving/u);
 
-console.log(`Sky Placement serving gate passed with batch 2 ${batch2.distribution_state}.`);
+console.log("Sky Placement serving gate passed with 19 approved batches 2-4 keys plus the combined 26-key Sun/Venus/Chiron/Nodes release.");

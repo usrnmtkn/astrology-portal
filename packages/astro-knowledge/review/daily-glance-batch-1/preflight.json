@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "status": "packet-self-lint-passed-for-existing-raws",
+  "calls": {
+    "plannedWriter": 7,
+    "plannedJudge": 0,
+    "billedMade": 0
+  },
+  "routing": {
+    "laneId": "writer:daily-glance",
+    "registrySourceLane": "writer:sky-placement",
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-1-v2",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "writerCalls": 7,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "revisionsEnabled": false,
+    "retriesEnabled": false
+  },
+  "keys": [
+    {
+      "key": "square/moon",
+      "ownerSourceIds": [
+        "daily-glance-square-lilith-owner-headline",
+        "daily-glance-square-lilith-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-moon.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.square"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "tldr-astro-phrasebank/phrasebank/reviewed-clauses.json#home.moon-in-cancer.gemini-rising#slots.expandedNarrative:s2"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "c259153bd9303224579f7f5a87d757b5e7d98ec0e947aa3eb0b67052cc4091e2",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/mars",
+      "ownerSourceIds": [
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003",
+        "owner-article:venus-in-virgo-2025:p018",
+        "owner-article:mercury-in-taurus-2025:p040"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-mars.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "tldr-astro-phrasebank/copy/MARIE-VOICE-CALIBRATION.md#aphorism-library:A5:some-truths-are-felt"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.conjunction.mars"
+      ],
+      "modelInputSha256": "e317bdc37f5e8e216ac6a5067cc1bb760dd268886d3b2d14b797e50d275335d9",
+      "packetLintPassed": true
+    },
+    {
+      "key": "opposition/sun",
+      "ownerSourceIds": [
+        "daily-glance-opposition-mars-owner-headline",
+        "daily-glance-opposition-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/sun-moon.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.opposition"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "tldr-astro-phrasebank/phrasebank/reviewed-clauses.json#daily.gemini-rising.example#slots.livedScenario:s2"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "3daf657c001f5ecd7dabf925fd7b14baf01e8946c7eb52972bb1d1fb6774469f",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/lilith",
+      "ownerSourceIds": [
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003",
+        "owner-article:venus-in-virgo-2025:p018",
+        "owner-article:mercury-in-taurus-2025:p040"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-lilith.json#modern.blend",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-new-moon-2025.md#owner-reference:leo-new-moon-2025:you-are-allowed-to-want-more"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "98002d28ef1a1bbfc15be755067717e6e9563c230b3f2a75523b72a25898cae6",
+      "packetLintPassed": true
+    },
+    {
+      "key": "soft/pluto",
+      "ownerSourceIds": [
+        "daily-glance-soft-mars-owner-headline",
+        "daily-glance-soft-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-pluto.json#modern.harmonious",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.soft"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md#owner-reference:libra-season-autumn-equinox:affected-by-emotions"
+      ],
+      "sceneMode": "owner-five-beat",
+      "sceneSources": [
+        "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json#sky.moon.trine.pluto"
+      ],
+      "modelInputSha256": "e1f8b79b8d4e39e1ff66f516afe85cbe641b250cb1e49f1ed8ad8f12e4a8d565",
+      "packetLintPassed": true
+    },
+    {
+      "key": "conjunction/north-node",
+      "ownerSourceIds": [
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003",
+        "owner-article:venus-in-virgo-2025:p018",
+        "owner-article:mercury-in-taurus-2025:p040"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-nodes.json#traditional",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.conjunction"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/gemini-season-2025.md#owner-reference:gemini-season-2025:change-your-direction"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "840ad028227b354d483928ce797c190f5b09553149390eaf58a4ce44726f1cc2",
+      "packetLintPassed": true
+    },
+    {
+      "key": "opposition/south-node",
+      "ownerSourceIds": [
+        "daily-glance-opposition-mars-owner-headline",
+        "daily-glance-opposition-mars-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "factSelectors": [
+        "packages/astro-knowledge/data/pairs/moon-nodes.json#modern.hard",
+        "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md#F2.opposition"
+      ],
+      "harvestMode": "matched",
+      "warmthSources": [
+        "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/leo-new-moon-2025.md#owner-reference:leo-new-moon-2025:earn-love-through-service"
+      ],
+      "sceneMode": "invented_allowed",
+      "sceneSources": [
+        "OV-028"
+      ],
+      "modelInputSha256": "6c2647415e064134c9d4992b6d126eb1a83d486b86c0019dfc13c11d6449c219",
+      "packetLintPassed": true
+    }
+  ]
+}

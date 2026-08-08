@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-moon-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "98f319f86cac906daa647086fbf8d905d429ebda90071268c10a37f30931dd85",
+  "payload": {
+    "body_you": "You quickly pick up on what {{holder2}} is feeling and respond to what they need, and they do the same for you. Your moods tend to settle when you are together, so comfort and emotional safety come easily. Because this feels so comfortable, both of you may avoid hard conversations or changes that would challenge the relationship.",
+    "body_they": "{{holder1}} quickly picks up on what you are feeling and responds to what you need, and you do the same for them. Your moods tend to settle when you are together, so comfort and emotional safety come easily. Because this feels so comfortable, both of you may avoid hard conversations or changes that would challenge the relationship.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "e5849121e1c786e0bc13cdbc029e74cb3291361fe656cf39b40ddd897d6867f0",
+    "writerProviderResponseSha256": "4aeb0c549dd1f61edcc52ad8d86d1d5b2fe2148214642ed88523c9c192f34853"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-moon/soft/exact-approval.json"
+}

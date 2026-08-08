@@ -1,0 +1,9 @@
+{
+  "target": "moon-venus-soft",
+  "status": "needs_review",
+  "payloadSha256": "9333e2906d3e71157bbb765e28153991581091d4324fdf6a9fd0ce005ed7b281",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

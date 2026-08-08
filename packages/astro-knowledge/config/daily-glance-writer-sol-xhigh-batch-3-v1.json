@@ -1,0 +1,305 @@
+{
+  "$extends": "daily-glance-writer-sol-xhigh-batch-2-v1.json",
+  "schemaVersion": 1,
+  "configId": "daily-glance-writer-sol-xhigh-batch-3-v1",
+  "packetVersion": "daily-glance-writer-packet-v6:batch-3+owner-directive+warmth+scene+owner-six+key-facts+p4+sm-dg+dg-r1-r17+owner-tests",
+  "promptVersion": "daily-glance-writer-v6:owner-directive-batch-3",
+  "status": "owner-authorized-batch",
+  "authorities": [
+    "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md"
+  ],
+  "routing": {
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-batch-3-v1",
+    "writerCalls": 14,
+    "maxOutputTokens": 24000
+  },
+  "ownerFinalTests": [
+    { "id": "OWNER-TEST-specificity", "rule": "The body must fail a mechanical swap against the other thirteen batch keys; same-target sibling swaps are advisory only." },
+    { "id": "OWNER-TEST-morning-read", "rule": "Every sentence must parse half-awake; mechanical guard caps body sentences at 28 words and flags semicolons or parentheses." },
+    { "id": "OWNER-TEST-screenshot", "rule": "At least one body sentence must be a candidate line worth saving because it names a recognizable experience clearly." }
+  ],
+  "referencePassagesAppend": [
+    { "sourceId": "daily-glance-conjunction-moon-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "A sudden change of plans can quickly wear down your patience." },
+    { "sourceId": "daily-glance-conjunction-moon-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-conjunction-register-evidence", "text": "When someone asks to reschedule, you might catch yourself getting irritated or defensive before you even process the ask. Instead of listing every reason their idea is inconvenient, just say what you can and cannot do. You do not have to manage everyone else's feelings today. Give them a straight answer and let the rest go." },
+    { "sourceId": "daily-glance-square-chiron-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-square-register-evidence", "text": "Expecting someone to guess what you need won't tell you how much they care." },
+    { "sourceId": "daily-glance-square-chiron-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-square-register-evidence", "text": "Notice when you drop a hint, leave out the actual ask, and wait to see if they guess what you need. When you text that the milk is gone, delete the line asking them to stop at the store, and get a reply about dinner instead, it is easy to feel ignored, even though you never actually asked. Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail." },
+    { "sourceId": "daily-glance-opposition-chiron-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-opposition-register-evidence", "text": "You can leave a need unsaid and still expect them to understand." },
+    { "sourceId": "daily-glance-opposition-chiron-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-opposition-register-evidence", "text": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan." },
+    { "sourceId": "daily-glance-soft-lilith-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-soft-register-evidence", "text": "Saying nothing is not the same as wanting nothing." },
+    { "sourceId": "daily-glance-soft-lilith-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-soft-register-evidence", "text": "When your partner opens the grocery order and asks what to add, you may worry that one extra snack will seem demanding. So you say \"nothing,\" which leaves the item on your phone instead of in the shared cart. You're allowed to want more. One snack does not turn the order into a crisis. Send the snack's name and price before they check out." },
+    { "sourceId": "daily-glance-house-1-owner-headline", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-house-register-evidence", "text": "Blending in is not worth a first impression you do not recognize." },
+    { "sourceId": "daily-glance-house-1-owner-body", "sourcePath": "packages/astro-knowledge/review/daily-glance-batch-2-approval-2026-08-05.md", "authorityClass": "exact_owner_approved", "approvalScope": "daily-glance-house-register-evidence", "text": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. Nobody can know you from the version that never shows up. Tell one person the detail you almost kept to yourself." }
+  ],
+  "keys": [
+    {
+      "key": "conjunction/jupiter",
+      "register": "saturation",
+      "emotionalCore": "optimism and generosity expanding until they fill the decision",
+      "groupGuidance": "Hope, buoyancy, and generosity arrive at full volume; keep expansion ordinary and avoid promises.",
+      "exemplarPolicy": "the approved conjunction/moon pair supplies conjunction-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:venus-in-cancer#let-yourself-enjoy-it", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md", "selector": "exact-sentence", "text": "Let yourself enjoy it." },
+      "sceneEvidence": { "mode": "owner-five-beat", "sourceId": "sky.moon.conjunction.jupiter#humanMoment+developmentDetail", "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json", "recordId": "sky.moon.conjunction.jupiter", "humanMoment": "A private need becomes a much larger public response overnight.", "developmentDetail": "One story brings donations, visitors, media attention, or family involvement faster than the person at the center can decide what kind of help they want." },
+      "specificityAdvisoryKeys": ["opposition/jupiter"],
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "optimism-generosity", "pattern": "\\b(?:optimis|hope|generous|generosity|give|buoyan|bright|encourag|confiden)\\w*\\b" },
+        { "id": "expansion", "pattern": "\\b(?:more|bigger|expand|extra|abundan|larger|full|say yes|take on)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-jupiter.json", "selector": "modern.blend", "text": "Feelings meet optimism and expansion. A resilient inner buoyancy that recovers no matter what, plus real generosity." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.conjunction", "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day." }
+      ]
+    },
+    {
+      "key": "conjunction/mercury",
+      "register": "saturation",
+      "emotionalCore": "feelings and thoughts arriving together and pressing toward words",
+      "groupGuidance": "The inner response and its wording arrive together; keep the saturation centered on one ordinary exchange.",
+      "exemplarPolicy": "the approved conjunction/moon pair supplies conjunction-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:chiron-retrograde-in-aries#heard-and-understood", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md", "selector": "exact-sentence", "text": "You don’t have to explain everything perfectly to be heard and understood." },
+      "sceneEvidence": { "mode": "owner-five-beat", "sourceId": "sky.moon.conjunction.mercury#humanMoment+developmentDetail", "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json", "recordId": "sky.moon.conjunction.mercury", "humanMoment": "A private admission changes the tone and direction of the entire conversation.", "developmentDetail": "News about a family problem, health concern, housing loss, or old hurt is spoken at the same moment a decision has to be made." },
+      "specificityAdvisoryKeys": ["soft/mercury"],
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "feeling-thinking", "pattern": "\\b(?:feel|mood|emotion|think|thought|mind|inside|gut)\\w*\\b" },
+        { "id": "words", "pattern": "\\b(?:say|tell|word|message|text|reply|explain|speak|conversation|answer)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-mercury.json", "selector": "modern.blend", "text": "Emotion meets mind. How feeling and thinking inform each other, and how readily the inner life gets put into words." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.conjunction", "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day." }
+      ]
+    },
+    {
+      "key": "conjunction/sun",
+      "register": "saturation",
+      "emotionalCore": "the presented self and the private need becoming impossible to separate",
+      "groupGuidance": "Identity and feeling occupy the same moment; use one decision where the outer answer and inner need meet.",
+      "exemplarPolicy": "the approved conjunction/moon pair supplies conjunction-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:leo-season-2025#individuality-strength", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/adjacent-formats/leo-season-2025.md", "selector": "exact-sentence", "text": "Your individuality is a strength, but meaningful connection requires learning how to share it." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "The owner five-beat record contains a globally banned output term, so it cannot enter the positive packet." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "identity-presentation", "pattern": "\\b(?:yourself|who you are|show up|present|image|identity|name|public)\\b" },
+        { "id": "feeling-need", "pattern": "\\b(?:feel|mood|emotion|need|want|inside|private)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/sun-moon.json", "selector": "modern.blend", "text": "Identity and emotion, the outer self and the inner life. How who you present yourself to be lines up (or doesn't) with what you actually feel and need." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.conjunction", "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day." }
+      ]
+    },
+    {
+      "key": "conjunction/saturn",
+      "register": "saturation",
+      "emotionalCore": "feeling and responsibility arriving together with no room to pretend the limit is elsewhere",
+      "groupGuidance": "Duty, reserve, and the private response fill the same moment; keep the limit concrete and brief.",
+      "exemplarPolicy": "the approved conjunction/moon pair supplies conjunction-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-conjunction-moon-owner-headline", "daily-glance-conjunction-moon-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:chiron-retrograde-in-aries#prove-strong", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md", "selector": "exact-sentence", "text": "You don’t have to prove how strong you are anymore." },
+      "sceneEvidence": { "mode": "owner-five-beat", "sourceId": "sky.moon.conjunction.saturn#humanMoment+developmentDetail", "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json", "recordId": "sky.moon.conjunction.saturn", "humanMoment": "A private responsibility becomes the condition attached to every other decision.", "developmentDetail": "Caregiving, grief, housing, or family duty takes over the schedule and requires a commitment that cannot be postponed or delegated easily." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "duty-limit", "pattern": "\\b(?:duty|responsib|obligation|limit|must|deadline|task|commit|schedule)\\w*\\b" },
+        { "id": "reserve-brace", "pattern": "\\b(?:brace|hold back|serious|quiet|heavy|worst|reserve|strong)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-saturn.json", "selector": "modern.blend", "text": "Emotion meets limit and duty. Emotional reserve, seriousness, and a habit of bracing for the worst." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.conjunction", "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day." }
+      ]
+    },
+    {
+      "key": "square/mars",
+      "register": "self-friction",
+      "emotionalCore": "a fast defensive reaction creating friction inside the reader's own day",
+      "groupGuidance": "Keep the conflict inside the reader's response and build toward one adjustment before reaction becomes action.",
+      "exemplarPolicy": "the approved square/chiron pair supplies square-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-square-chiron-owner-headline", "daily-glance-square-chiron-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-square-chiron-owner-headline", "daily-glance-square-chiron-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:mars-direct-in-cancer#carry-every-fight", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md", "selector": "exact-sentence", "text": "You don’t have to carry every fight home with you." },
+      "sceneEvidence": { "mode": "owner-five-beat", "sourceId": "sky.moon.square.mars#humanMoment+developmentDetail", "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json", "recordId": "sky.moon.square.mars", "humanMoment": "A last-minute demand turns an already strained household or team into a fight.", "developmentDetail": "Someone pushes for an immediate answer, while the person carrying care, exhaustion, or private stress reacts to being treated as though they have unlimited capacity." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "reactivity", "pattern": "\\b(?:anger|angry|temper|snap|react|defens|fight|irritat|argument)\\w*\\b" },
+        { "id": "self-friction", "pattern": "\\b(?:yourself|hold back|too quick|before|urge|nothing is wrong|assume|channel)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-mars.json", "selector": "modern.hard", "text": "Short temper and reactive conflict, defensiveness even when nothing is wrong. The emotions need channeling." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.square", "text": "friction that builds toward an adjustment; malefic-leaning; the friction is internal to the person's own day (self-friction register per DG-R2)." }
+      ]
+    },
+    {
+      "key": "square/venus",
+      "register": "self-friction",
+      "emotionalCore": "wanting comfort or approval and then turning the desire against yourself",
+      "groupGuidance": "Keep spending, pleasure, or feeling liked inside the reader's own friction and end with one measured adjustment.",
+      "exemplarPolicy": "the approved square/chiron pair supplies square-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-square-chiron-owner-headline", "daily-glance-square-chiron-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-square-chiron-owner-headline", "daily-glance-square-chiron-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:venus-in-cancer#simple-to-be-loved", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md", "selector": "exact-sentence", "text": "You don’t have to be simple to be loved." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "The owner five-beat record contains a globally banned output term, so it cannot enter the positive packet." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "pleasure-approval", "pattern": "\\b(?:spend|buy|comfort|treat|liked|unliked|approval|pleasure|want|indulge)\\w*\\b" },
+        { "id": "self-friction", "pattern": "\\b(?:guilt|regret|too much|without cause|prove|earn|second-guess|yourself)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-venus.json", "selector": "modern.hard", "text": "Feelings expressed erratically, a tendency to overspend or overindulge, and feeling unliked without cause." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.square", "text": "friction that builds toward an adjustment; malefic-leaning; the friction is internal to the person's own day (self-friction register per DG-R2)." }
+      ]
+    },
+    {
+      "key": "square/uranus",
+      "register": "self-friction",
+      "emotionalCore": "a sudden mood shift recoiling against the routine from inside the reader's own day",
+      "groupGuidance": "Let change and confinement create internal friction; the final action adjusts the plan without glorifying rupture.",
+      "exemplarPolicy": "the approved square/chiron pair supplies square-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-square-chiron-owner-headline", "daily-glance-square-chiron-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-square-chiron-owner-headline", "daily-glance-square-chiron-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:chiron-retrograde-in-aries#change-direction", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md", "selector": "exact-sentence", "text": "You’re allowed to change your direction as you learn more about who you are." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "The owner five-beat record contains a globally banned output term, so it cannot enter the positive packet." },
+      "specificityAdvisoryKeys": ["soft/uranus"],
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "disruption", "pattern": "\\b(?:change|routine|plan|schedule|sudden|different|unexpected|mood)\\w*\\b" },
+        { "id": "recoil", "pattern": "\\b(?:trapped|confined|restless|recoil|push back|resist|bolt|yourself|volatile)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-uranus.json", "selector": "modern.hard", "text": "Emotional volatility, sudden moods, and a recoil from anything that feels confining." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.square", "text": "friction that builds toward an adjustment; malefic-leaning; the friction is internal to the person's own day (self-friction register per DG-R2)." }
+      ]
+    },
+    {
+      "key": "opposition/jupiter",
+      "register": "other-friction",
+      "emotionalCore": "another person's appetite for more pulling the reader toward excess or overcommitment",
+      "groupGuidance": "Let another person bring the excess into view; keep the friction relational and the limit practical.",
+      "exemplarPolicy": "the approved opposition/chiron pair supplies opposition-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-opposition-chiron-owner-headline", "daily-glance-opposition-chiron-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-opposition-chiron-owner-headline", "daily-glance-opposition-chiron-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "none_found", "emotionalCore": "another person's appetite for more pulling the reader toward excess or overcommitment" },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "The owner five-beat record contains a globally banned output term, so it cannot enter the positive packet." },
+      "specificityAdvisoryKeys": ["conjunction/jupiter"],
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "other-person", "pattern": "\\b(?:someone|another person|they|them|friend|partner|coworker|loved one)\\b" },
+        { "id": "excess", "pattern": "\\b(?:more|extra|overcommit|take on|too much|promise|yes|bigger|indulge)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-jupiter.json", "selector": "modern.hard", "text": "Emotional and physical excess; overindulgence and overcommitment." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.opposition", "text": "the other side comes fully into view; awareness- and relationship-oriented; friction arrives through another person (other-friction register)." }
+      ]
+    },
+    {
+      "key": "opposition/pluto",
+      "register": "other-friction",
+      "emotionalCore": "another person's control or intensity bringing the power struggle fully into view",
+      "groupGuidance": "Keep power, jealousy, or compulsion in one ordinary exchange with another person; do not promise transformation.",
+      "exemplarPolicy": "the approved opposition/chiron pair supplies opposition-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-opposition-chiron-owner-headline", "daily-glance-opposition-chiron-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-opposition-chiron-owner-headline", "daily-glance-opposition-chiron-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:mercury-retrograde-in-leo#vulnerability-not-weakness", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md", "selector": "exact-sentence", "text": "Your vulnerability is not a weakness." },
+      "sceneEvidence": { "mode": "owner-five-beat", "sourceId": "sky.moon.opposition.pluto#humanMoment+developmentDetail", "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json", "recordId": "sky.moon.opposition.pluto", "humanMoment": "A private need is brought before the person who controls the money, access, housing, or family decision.", "developmentDetail": "One side describes fear, care, and the history attached to the request; the other points to ownership, rules, and the consequences of giving up control." },
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "other-person", "pattern": "\\b(?:someone|another person|they|them|friend|partner|coworker|loved one|other side)\\b" },
+        { "id": "power-control", "pattern": "\\b(?:power|control|jealous|compuls|own|access|withhold|pressure|rules)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-pluto.json", "selector": "modern.hard", "text": "Emotional power struggles, jealousy, and compulsion." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.opposition", "text": "the other side comes fully into view; awareness- and relationship-oriented; friction arrives through another person (other-friction register)." }
+      ]
+    },
+    {
+      "key": "soft/mercury",
+      "register": "mild-ease",
+      "emotionalCore": "thoughts and words moving with less resistance",
+      "groupGuidance": "Offer a modest opening for clearer expression; ease is available but not automatic.",
+      "exemplarPolicy": "the approved soft/lilith pair supplies soft-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-soft-lilith-owner-headline", "daily-glance-soft-lilith-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-soft-lilith-owner-headline", "daily-glance-soft-lilith-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:chiron-retrograde-in-aries#heard-and-understood", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md", "selector": "exact-sentence", "text": "You don’t have to explain everything perfectly to be heard and understood." },
+      "sceneEvidence": { "mode": "owner-five-beat", "sourceId": "sky.moon.trine.mercury#humanMoment+developmentDetail", "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json", "recordId": "sky.moon.trine.mercury", "humanMoment": "The conversation finally reaches the reason someone was upset in the first place.", "developmentDetail": "A voice note, private meeting, or direct reply names what hurt, what changed, and what answer is needed next without turning the exchange into another argument." },
+      "specificityAdvisoryKeys": ["conjunction/mercury"],
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "communication", "pattern": "\\b(?:thought|communicat|say|tell|word|message|text|reply|speak|conversation|answer|express)\\w*\\b" },
+        { "id": "mild-ease", "pattern": "\\b(?:easier|ease|flow|readily|clear|less effort|less resistance|available|instinctive|fluent)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-mercury.json", "selector": "modern.harmonious", "text": "Thought and communication flow; expression is instinctive and fluent." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.soft", "match": "includes", "text": "a supportive opening is offered, not automatic" }
+      ]
+    },
+    {
+      "key": "soft/uranus",
+      "register": "mild-ease",
+      "emotionalCore": "a change in routine offering more room without requiring a rupture",
+      "groupGuidance": "Make independence and change modestly easier in one ordinary adjustment; do not glorify disruption.",
+      "exemplarPolicy": "the approved soft/lilith pair supplies soft-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-soft-lilith-owner-headline", "daily-glance-soft-lilith-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-soft-lilith-owner-headline", "daily-glance-soft-lilith-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:chiron-retrograde-in-aries#change-direction", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md", "selector": "exact-sentence", "text": "You’re allowed to change your direction as you learn more about who you are." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "The owner five-beat record contains a globally banned output term, so it cannot enter the positive packet." },
+      "specificityAdvisoryKeys": ["square/uranus"],
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "change-independence", "pattern": "\\b(?:change|routine|plan|different|invent|independen|room|new|adjust)\\w*\\b" },
+        { "id": "mild-ease", "pattern": "\\b(?:easier|ease|flow|readily|less effort|less resistance|available|comfortable|at ease)\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-uranus.json", "selector": "modern.harmonious", "text": "Emotional independence and a quick, inventive instinct; at ease with change." },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.soft", "match": "includes", "text": "a supportive opening is offered, not automatic" }
+      ]
+    },
+    {
+      "key": "soft/chiron",
+      "register": "mild-ease",
+      "emotionalCore": "care reaching the old sore place without immediately waking the defense",
+      "groupGuidance": "Offer a modest opening for accepting care while the struggle is still present; never imply a cure.",
+      "exemplarPolicy": "the approved soft/lilith pair supplies soft-register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-soft-lilith-owner-headline", "daily-glance-soft-lilith-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-soft-lilith-owner-headline", "daily-glance-soft-lilith-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:venus-in-cancer#not-weak-for-needing-care", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md", "selector": "exact-sentence", "text": "You’re not weak for needing care." },
+      "sceneEvidence": { "mode": "invented_allowed", "permission": "OV-028", "reason": "No owner-authored Moon-Chiron five-beat entry exists; generated drafts are excluded from positive evidence." },
+      "expectedFactCount": 3,
+      "specificity": { "minimumGroups": 2, "cueGroups": [
+        { "id": "care-old-hurt", "pattern": "\\b(?:care|comfort|help|support|need|hurt|ache|sore|sensitive|wound|tend)\\w*\\b" },
+        { "id": "mild-ease", "pattern": "\\b(?:easier|ease|flow|accept|less effort|less resistance|available|without triggering|mid-struggle)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/pairs/moon-chiron.json", "selector": "modern.harmonious", "text": "Tending flows without triggering the old defense; help gets accepted mid-struggle." },
+        { "sourcePath": "packages/astro-knowledge/data/planetary/chiron.json", "selector": "overview", "match": "includes", "text": "the tender place where an early, unearned hurt shaped a survival response" },
+        { "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md", "selector": "F2.soft", "match": "includes", "text": "a supportive opening is offered, not automatic" }
+      ]
+    },
+    {
+      "key": "house/5",
+      "register": "topic-led",
+      "emotionalCore": "making room for play, creativity, romance, or self-expression in an ordinary moment",
+      "groupGuidance": "Begin from the fifth-house life topic, locate one daily scene, and end at speak-up scale.",
+      "exemplarPolicy": "the approved house/1 pair supplies house-fallback register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-house-1-owner-headline", "daily-glance-house-1-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-house-1-owner-headline", "daily-glance-house-1-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-article:chiron-retrograde-in-aries#earn-joy", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md", "selector": "exact-sentence", "text": "You don’t have to earn joy." },
+      "sceneEvidence": { "mode": "house-context", "sourceId": "phrasebank-house-context:cc/house/5", "sourcePath": "tldr-astro-phrasebank/phrasebank/houses.json", "recordId": "cc/house/5", "scene": "what you make for the joy of it: play, romance, children, creative risk", "refine": "and it shows up in what you make and who you flirt with" },
+      "specificity": { "minimumGroups": 1, "cueGroups": [
+        { "id": "creativity-play", "pattern": "\\b(?:create|creative|make|play|romance|date|flirt|child|joy|fun|express|project)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/primitives/houses.json", "selector": "entries.4.plainTranslation", "text": "Creativity, romance, children, play, self-expression" }
+      ]
+    },
+    {
+      "key": "house/12",
+      "register": "topic-led",
+      "emotionalCore": "protecting rest and privacy before the day fills every quiet space",
+      "groupGuidance": "Begin from rest, privacy, solitude, or retreat; do not use confinement or isolation as advice.",
+      "exemplarPolicy": "the approved house/1 pair supplies house-fallback register evidence only",
+      "matchingExemplarSourceIds": ["daily-glance-house-1-owner-headline", "daily-glance-house-1-owner-body"],
+      "ownerPassageSourceIds": ["daily-glance-house-1-owner-headline", "daily-glance-house-1-owner-body", "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001", "owner-article:venus-in-virgo-2025:p009", "owner-article:mercury-in-taurus-2025:p005", "owner-article:virgo-season-2025:p003"],
+      "warmthHarvest": { "harvest_mode": "matched", "lane": "owner-corpus", "sourceId": "owner-reference:sagittarius-full-moon-2025#silence-not-weakness", "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/sagittarius-full-moon-2025.md", "selector": "exact-sentence", "text": "Silence isn’t weakness." },
+      "sceneEvidence": { "mode": "house-context", "sourceId": "phrasebank-house-context:cc/house/12", "sourcePath": "tldr-astro-phrasebank/phrasebank/houses.json", "recordId": "cc/house/12", "scene": "the private, the unseen, rest, and what you keep behind closed doors", "refine": "and it happens quietly, out of view, in your own inner rooms" },
+      "specificity": { "minimumGroups": 1, "cueGroups": [
+        { "id": "rest-privacy", "pattern": "\\b(?:rest|private|privacy|quiet|silence|alone|solitude|retreat|closed door|step away|unseen)\\w*\\b" }
+      ] },
+      "facts": [
+        { "sourcePath": "packages/astro-knowledge/data/primitives/houses.json", "selector": "entries.11.plainTranslation", "text": "The unconscious, solitude, hidden things, retreat, confinement, isolation" }
+      ]
+    }
+  ]
+}

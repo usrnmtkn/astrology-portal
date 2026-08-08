@@ -1,0 +1,24 @@
+{
+  "id": "jupiter-nodes",
+  "planetA": "jupiter",
+  "planetB": "nodes",
+  "traditional": "Growth in every direction meets growth along the path; size is not the measure, direction is.",
+  "modern": {
+    "blend": "Opportunities split into big-and-backward versus small-and-forward.",
+    "harmonious": "Luck concentrates once the direction is chosen; the right door opens easily.",
+    "hard": "The yes that is large and points the wrong way; expansion as avoidance.",
+    "business": "Evaluate offers by direction first, size second."
+  },
+  "cyclicNote": "Node entries read to the axis: contact with one node is always contact with both; never render separate NN and SN cards for one event.",
+  "provenance": {
+    "traditional": "TLDR pair sources, verified against folder references (Greene, Black Moon Lilith texts, Rudhyar)",
+    "modern": "TLDR editorial (Marie Satori voice system)"
+  },
+  "sourceNote": "TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md",
+  "voiceNeutral": true,
+  "status": "DRAFT",
+  "blend": "Opportunities split into big-and-backward versus small-and-forward.",
+  "harmonious": "Luck concentrates once the direction is chosen; the right door opens easily.",
+  "hard": "The yes that is large and points the wrong way; expansion as avoidance.",
+  "business": "Evaluate offers by direction first, size second."
+}

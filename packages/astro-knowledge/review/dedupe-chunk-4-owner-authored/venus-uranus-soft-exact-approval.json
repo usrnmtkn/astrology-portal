@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-venus-uranus-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/uranus/soft",
+  "payloadSha256": "f978014f8ca9cd952f14e79230050f1a784cf54f0b100a7460ef8e5a71649ea9",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} can rely on {{holder2}}'s affection without requiring constant reassurance, and {{holder2}} can keep their independence without disappearing whenever the connection becomes familiar.",
+    "body_they": "{{holder1}} can rely on {{holder2}}'s affection without requiring constant reassurance, and {{holder2}} can keep their independence without disappearing whenever the connection becomes familiar.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

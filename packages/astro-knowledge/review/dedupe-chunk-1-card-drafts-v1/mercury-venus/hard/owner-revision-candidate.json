@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "mercury-venus-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/mercury-venus/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "3ebd69ad21ac335d8ccef4361ad5547e2c22da42a2510aed164284ef73816b4a",
+  "payload": {
+    "body_you": "The way you question or explain things can rub against {{holder2}}'s sense of tact. A comment you consider casual may feel to {{holder2}} like criticism of what they like or how they show care. When they react more strongly than you expected, you may explain yourself further, which can make them feel even less understood.",
+    "body_they": "{{holder1}}'s way of questioning or explaining things can rub against your sense of tact. A comment they consider casual may feel like criticism of what you like or how you show care. When you react more strongly than they expected, they may explain themselves further, which can make you feel even less understood.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "d98f50cff0ba4c900d3fb04264db65bd53d774585e2c86f2fad0aadf0fa33bd8",
+    "writerProviderResponseSha256": "2e4dcc4c6f92200737972323bbe7f4f6f2065c4425b5d720108cf2bb1a4ed843"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/mercury-venus/hard/exact-approval.json"
+}

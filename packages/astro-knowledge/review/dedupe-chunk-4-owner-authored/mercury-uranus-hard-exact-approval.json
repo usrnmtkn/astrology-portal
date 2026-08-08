@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mercury-uranus-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/uranus/hard",
+  "payloadSha256": "50631e1aa8ac2bf35dc267162edd62d70e76e0ab558c0838230f516b3929bddf",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder1}} tries to finish a thought and {{holder2}} jumps to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed.",
+    "body_they": "{{holder1}} tries to finish a thought and {{holder2}} jumps to a new topic. Talking starts to feel like being cut off by the next idea before the first one has landed.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

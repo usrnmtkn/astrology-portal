@@ -1,0 +1,161 @@
+{
+  "status": "ready_for_owner_authorized_writer_call",
+  "billedCallsMade": 0,
+  "plannedCalls": {
+    "writer": 1,
+    "judge": 0,
+    "total": 1
+  },
+  "planet": "venus",
+  "sign": "pisces",
+  "outDir": "/private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-pisces",
+  "routing": {
+    "laneId": "writer:sky-placement",
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "registryState": "candidate",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoningEffort": "xhigh",
+    "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1"
+  },
+  "positiveEvidencePoolId": "sky-placement-owner-affinity-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:pisces-season-2025:p043:window-2-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:venus-in-cancer:p009:window-3-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:venus-pisces",
+    "planet": "venus",
+    "sign": "pisces",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "factSources": [
+    {
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/venus-pisces.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "With Venus in Pisces, Venus is exalted, so empathy, romance, artistry, and unconditional tenderness can be strong. You value love that feels soulful and kind."
+    },
+    {
+      "sourcePath": "packages/astro-knowledge/data/planetary/venus.json",
+      "status": "REVIEWED",
+      "register": "source_meaning_only_may_be_natal",
+      "personBoundary": "Do not reproduce second-person or natal address from this source.",
+      "text": "Venus describes attraction, pleasure, beauty, values, money, comfort, desire, and the conditions that help connection feel worth choosing. It shows what someone is drawn toward and what helps affection become real rather than only appealing. Venus moves through all twelve signs in about a year, with retrograde cycles that ask for review around love, value, beauty, money, and desire. Its sign describes the style of relating; its house shows where ease, attraction, and value become active. With Venus in Pisces, your love is compassionate, imaginative, and selfless. You value emotional connection and spiritual bonding, often showing your affection through empathetic selfless acts of kindness. You’re attracted to those who can share in your dreamy, romantic visions."
+    }
+  ],
+  "structuralSlots": {
+    "sourceStatus": "REVIEWED",
+    "fallbackOutputShapeUnchanged": true,
+    "active": [
+      {
+        "id": "prior-sign-handoff",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "requiresFact": [
+          "priorSign",
+          "priorSignEntryDate",
+          "priorSignExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "opening",
+        "renderOwner": "writer",
+        "facts": {
+          "priorSign": "aquarius",
+          "priorSignEntryDate": "March 1, 2027",
+          "priorSignExitDate": "March 26, 2027",
+          "renderTokens": {
+            "priorSign": "{{priorSign}}",
+            "priorSignEntryDate": "{{priorSignEntryDate}}",
+            "priorSignExitDate": "{{priorSignExitDate}}"
+          }
+        }
+      },
+      {
+        "id": "cycle-line",
+        "rule": "The engine renders one reviewed cycle fact line directly under the computed date range. Every number must come from planet-cycle-facts.json. Write 'all twelve signs'; the word 'zodiac' is banned. Do not render this slot for the Moon. The writer must not repeat the cycle line in article prose; duration belongs in prose only when it carries additional meaning.",
+        "requiresFact": [
+          "planetCycleFact"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "engine_fact_line_under_date_range",
+        "renderOwner": "engine",
+        "reviewState": "REVIEWED",
+        "facts": {
+          "sourceId": "planet-cycle-facts",
+          "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+          "sourceStatus": "REVIEWED",
+          "zodiacCircuit": "about 1 year",
+          "typicalSignStay": "roughly 3 weeks to 4 months per sign",
+          "variabilityNote": "A retrograde in the sign can extend the residency."
+        }
+      },
+      {
+        "id": "concurrent-events",
+        "rule": "Between the turn and moves, use one short paragraph explaining how the top one or two engine-ranked events inside the transit window change how the placement lands. Dates come from the engine and meaning comes from the astrology library. If no ranked events exist, omit the slot.",
+        "requiresFact": [
+          "eventsDuringTransit"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "aspect_insert",
+        "renderOwner": "engine",
+        "maxEvents": 2,
+        "facts": {
+          "eventsDuringTransit": [
+            {
+              "id": "aspect-venus-square-uranus-2027-03-28t13:17:56.999z",
+              "date": "March 28, 2027",
+              "body": "venus-square-uranus",
+              "eventType": "exact-aspect",
+              "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. Psychologically the square is inner tension to integrate: Erratic affections, sudden attractions and ruptures, and a refusal to be tied down. The growth is owning both sides instead of splitting them.",
+              "meaningSource": "packages/astro-knowledge/data/transits/venus-square-uranus.json"
+            }
+          ]
+        }
+      },
+      {
+        "id": "cycle-location",
+        "rule": "The article may state the previous residency's date range when the engine supplies both boundaries. Use {{previousResidencyEntryDate}} and {{previousResidencyExitDate}} instead of literal dates. State the dates only; never add celebrity, pop-culture, political, or era characterization.",
+        "requiresFact": [
+          "previousResidencyEntryDate",
+          "previousResidencyExitDate"
+        ],
+        "maxOccurrences": 1,
+        "continuousFallbackTarget": "development",
+        "renderOwner": "writer",
+        "facts": {
+          "sign": "pisces",
+          "entryDate": "February 10, 2026",
+          "exitDate": "March 6, 2026",
+          "renderTokens": {
+            "entryDate": "{{previousResidencyEntryDate}}",
+            "exitDate": "{{previousResidencyExitDate}}"
+          }
+        }
+      }
+    ],
+    "inactive": []
+  },
+  "nextCommand": "node packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js --authorize-live --writer-only --planet venus --sign pisces --engine-facts /private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-pisces/engine-facts.json --out /private/tmp/tldrastro-sun-venus-24/packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-2026-08-04/venus-pisces"
+}

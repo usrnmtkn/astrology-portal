@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "packetType": "aspect-writing-packet",
+  "status": "ready",
+  "generationAllowed": true,
+  "target": {
+    "id": "A-moon_B-moon_trine",
+    "surface": "synastry-aspect",
+    "format": "full-card",
+    "humanMoment": "Emotional energy flows between {{holder1}} and {{holder2}} without a dam, and simply being in the same room settles them both down."
+  },
+  "method": {
+    "id": "corpus-warmth-harvest",
+    "sourcePath": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "required": true
+  },
+  "warmthHarvest": {
+    "schemaVersion": 1,
+    "status": "ready",
+    "generationAllowed": true,
+    "surface": "synastry-aspect",
+    "voice": "second_person",
+    "harvest_mode": "none_found",
+    "humanMoment": "Emotional energy flows between {{holder1}} and {{holder2}} without a dam, and simply being in the same room settles them both down.",
+    "searchTerms": [],
+    "ownerFoundationLines": [],
+    "flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ],
+    "insertInstruction": null,
+    "placementInstruction": null
+  },
+  "promptBlock": "HARVEST MODE: none_found.\nNo qualifying owner foundation line exists for this emotional core. Keep the register plain. Do not invent permission, reassurance, benediction, or a turn-toward-the-reader line. The absence of a warmth beat is acceptable.",
+  "scaleRule": {
+    "harvest_mode": "none_found",
+    "insertWarmthBeat": false,
+    "rule": "No qualifying owner line was found. Keep the register plain and do not invent a permission or reassurance line."
+  },
+  "pronounPolicy": "Second person is allowed; supply owner lines verbatim with pronouns intact.",
+  "candidateRecordContract": {
+    "whenFoundationLineIsUsed": {
+      "requiredLabel": "owner-corpus-derived",
+      "warmthSource": {
+        "sourceArticleId": "required",
+        "originalLine": "required",
+        "usedForm": "required"
+      }
+    },
+    "approvalEffect": "none",
+    "reviewGatesUnchanged": true
+  },
+  "judgeAddition": "The card's turn toward the reader must trace to the supplied owner foundation lines when present. An invented permission or reassurance line in place of the supplied material scores 2; a card with no turn toward the reader at all, when foundation lines were supplied, scores 2. Verbatim or near-verbatim use of a supplied owner line is never penalized as copying - it is the owner's own writing.",
+  "flags": [
+    {
+      "id": "owner-corpus-warmth-none-found",
+      "severity": "info",
+      "blocking": false,
+      "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+    }
+  ]
+}

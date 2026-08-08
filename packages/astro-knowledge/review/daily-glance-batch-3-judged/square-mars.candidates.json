@@ -1,0 +1,1013 @@
+[
+ {
+  "sample": 1,
+  "candidate": {
+   "headline": "A defensive reply gives you more to clean up.",
+   "body": "You are already covering the shared work when someone adds a last-minute task and presses for an immediate answer. You may hear disregard in their urgency and start typing a reply that makes your anger their problem. You risk adding a fight over your tone to the original demand. Replace the opening accusation with one sentence naming your limit and the part you can handle."
+  },
+  "raw": "{\"headline\":\"A defensive reply gives you more to clean up.\",\"body\":\"You are already covering the shared work when someone adds a last-minute task and presses for an immediate answer. You may hear disregard in their urgency and start typing a reply that makes your anger their problem. You risk adding a fight over your tone to the original demand. Replace the opening accusation with one sentence naming your limit and the part you can handle.\"}",
+  "writerUsage": {
+   "inputTokens": 3803,
+   "cachedInputTokens": 0,
+   "cacheWriteTokens": 3800,
+   "outputTokens": 3198,
+   "reasoningTokens": 3106,
+   "totalTokens": 7001
+  },
+  "responseId": "resp_01025975baab2734006a7367d6bdac819ea0ccfd62bed0c83f",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "square/mars",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "9 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "66 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Replace the opening accusation with one sentence naming your limit and the part you can handle."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": "No detectable self-friction cue."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": false,
+     "details": [
+      "may hear disregard in their urgency and start typing a reply tha"
+     ]
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "squareGrammar": false,
+      "otherGrammar": false,
+      "softGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": false,
+     "details": "No 2-8 word body sentence found."
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "square/mars",
+       "matches": [
+        "reactivity",
+        "self-friction"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "house/5",
+        "matches": [
+         "creativity-play"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 9,
+    "headlineSentences": 1,
+    "bodyWords": 66,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "square/mars",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 2,
+   "dimScore": 5,
+   "verdict": {
+    "score": 2,
+    "verdict": "The candidate reads fairly close to the owner's voice with plain conversational truth and a clear lived example early on. However, it hedges twice ('may hear' and 'risk'), which softens the claims more than allowed. The stakes are named (anger turning into a fight), but the ending feels slightly formulaic with a mechanical instruction. It lacks a truly standout screenshot-worthy line that crisply names a common but unspoken feeling. Specificity is decent for the square/Mars key, but the voice could be more direct and less polished.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": false,
+     "formula": true,
+     "screenshot_line": false,
+     "specificity": true
+    },
+    "best_line": "You risk adding a fight over your tone to the original demand.",
+    "why": "This sentence clearly names a recognizable and frustrating consequence of a defensive reply—turning a simple request into a fight over tone. It captures a common but often unspoken escalation dynamic in shared work or relationships, making it the strongest and most relatable insight in the candidate."
+   },
+   "usage": {
+    "input_tokens": 1157,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 258,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1415
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 2,
+  "candidate": {
+   "headline": "Being annoyed doesn't mean something is wrong.",
+   "body": "You may hear criticism when a last-minute task is added to your workload and a teammate asks for an immediate answer. You type a sharp reply. If you send it, you risk turning a timing question into a fight over tone and making your actual workload harder to explain. Before you hit send, say what you can finish and name the task that needs to wait."
+  },
+  "raw": "{\"headline\":\"Being annoyed doesn't mean something is wrong.\",\"body\":\"You may hear criticism when a last-minute task is added to your workload and a teammate asks for an immediate answer. You type a sharp reply. If you send it, you risk turning a timing question into a fight over tone and making your actual workload harder to explain. Before you hit send, say what you can finish and name the task that needs to wait.\"}",
+  "writerUsage": {
+   "inputTokens": 3803,
+   "cachedInputTokens": 3800,
+   "cacheWriteTokens": 0,
+   "outputTokens": 2807,
+   "reasoningTokens": 2714,
+   "totalTokens": 6610
+  },
+  "responseId": "resp_03e36eb4e68ccf21006a7368245c908191b9396720f2a20960",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "square/mars",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "7 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "67 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Before you hit send, say what you can finish and name the task that needs to wait."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": "No detectable self-friction cue."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": false,
+     "details": [
+      "may hear criticism when a last-minute task is added to your work"
+     ]
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "squareGrammar": false,
+      "otherGrammar": false,
+      "softGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You type a sharp reply."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": true,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "square/mars",
+       "matches": [
+        "reactivity",
+        "self-friction"
+       ],
+       "required": 2,
+       "passed": true
+      },
+      "comparisonScope": [
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 7,
+    "headlineSentences": 1,
+    "bodyWords": 67,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "square/mars",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate fits the owner's voice well with plain, conversational truth and a clear, early statement of the stakes (risk of conflict and workload misunderstanding). The structure is tight, with the lived example supporting the initial truth and a complete ending that offers a clear corrective action. Hedging is minimal, and the formula avoids mechanical or templated phrasing. The line about risking turning a timing question into a fight over tone is a strong, relatable insight that someone might save or share. The specificity is good for the square/mars key, focusing on workload and communication tension in a team context.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "If you send it, you risk turning a timing question into a fight over tone and making your actual workload harder to explain.",
+    "why": "This sentence crisply names a common but often unspoken workplace dynamic: how a sharp reply can escalate a simple timing issue into a tone conflict, complicating communication and workload management. It captures a nuanced truth in plain language, making it memorable and shareable."
+   },
+   "usage": {
+    "input_tokens": 1158,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 278,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1436
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 3,
+  "candidate": {
+   "headline": "A defensive answer makes a clear limit harder to hear.",
+   "body": "You may take an urgent demand for an answer as proof that no one sees how much you are already doing. While you finish the work already assigned, someone adds a last-minute task and presses for a decision before you have assessed it. You start typing a reply that would shift attention from the added work to your tone. You have not sent it yet. Delete the first version and tell them when you can assess the task."
+  },
+  "raw": "{\"headline\":\"A defensive answer makes a clear limit harder to hear.\",\"body\":\"You may take an urgent demand for an answer as proof that no one sees how much you are already doing. While you finish the work already assigned, someone adds a last-minute task and presses for a decision before you have assessed it. You start typing a reply that would shift attention from the added work to your tone. You have not sent it yet. Delete the first version and tell them when you can assess the task.\"}",
+  "writerUsage": {
+   "inputTokens": 3803,
+   "cachedInputTokens": 3800,
+   "cacheWriteTokens": 0,
+   "outputTokens": 5236,
+   "reasoningTokens": 5128,
+   "totalTokens": 9039
+  },
+  "responseId": "resp_0d2410c69c595bd7006a7368661fac81a391bd06cb1acaeeff",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "square/mars",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "10 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "79 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 0 detected instruction(s); final sentence: Delete the first version and tell them when you can assess the task."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": "No detectable self-friction cue."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": false,
+     "details": [
+      "may take an urgent demand for an answer as proof that no one see"
+     ]
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "squareGrammar": false,
+      "otherGrammar": false,
+      "softGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You have not sent it yet."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "square/mars",
+       "matches": [
+        "self-friction"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You may take an urgent demand for an answer as proof that no one sees how much you are already doing."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 79,
+    "bodySentences": 5,
+    "instructions": 0,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "square/mars",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples with plain conversational truth and no AI rhythm. It names a clear stake—being pressured into a decision before assessing added work, which can lead to resentment or miscommunication. The truth arrives early, supported by a lived example, and the ending completes the thought with a clear instruction. Hedging is minimal (only 'may'), and there is no formulaic or mechanical phrasing. The line about deleting the first version and telling when you can assess the task is a strong, sharable insight. The specificity fits the square/Mars key's tone of boundary-setting under pressure.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Delete the first version and tell them when you can assess the task.",
+    "why": "This sentence crisply names a common but unspoken impulse—to respond defensively under pressure—and offers a concrete, actionable alternative that respects boundaries and communication. It captures a feeling many have but rarely articulate so clearly, making it memorable and shareable."
+   },
+   "usage": {
+    "input_tokens": 1173,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 269,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1442
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 4,
+  "candidate": {
+   "headline": "Being annoyed doesn't mean something is wrong.",
+   "body": "A last-minute request lands while you are already covering too much, and you start composing a sharper reply before deciding what the request deserves. You may feel cornered when they press for an answer before you have taken stock of your own capacity. You are answering too fast. Sending it now can turn one extra demand into a conflict you also have to manage. Wait ten minutes, then reply with what you can actually take on."
+  },
+  "raw": "{\"headline\":\"Being annoyed doesn't mean something is wrong.\",\"body\":\"A last-minute request lands while you are already covering too much, and you start composing a sharper reply before deciding what the request deserves. You may feel cornered when they press for an answer before you have taken stock of your own capacity. You are answering too fast. Sending it now can turn one extra demand into a conflict you also have to manage. Wait ten minutes, then reply with what you can actually take on.\"}",
+  "writerUsage": {
+   "inputTokens": 3803,
+   "cachedInputTokens": 3800,
+   "cacheWriteTokens": 0,
+   "outputTokens": 1657,
+   "reasoningTokens": 1552,
+   "totalTokens": 5460
+  },
+  "responseId": "resp_067b4d56dbed01cd006a7368ed2464819e840e2e7e7f07e446",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "square/mars",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "7 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "77 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Wait ten minutes, then reply with what you can actually take on."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": "Self-friction cue present."
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "squareGrammar": false,
+      "otherGrammar": false,
+      "softGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "1 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You are answering too fast."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "square/mars",
+       "matches": [
+        "self-friction"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/uranus",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "opposition/jupiter",
+        "matches": [
+         "other-person",
+         "excess"
+        ],
+        "passed": true
+       },
+       {
+        "key": "opposition/pluto",
+        "matches": [
+         "other-person",
+         "power-control"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You may feel cornered when they press for an answer before you have taken stock of your own capacity."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 7,
+    "headlineSentences": 1,
+    "bodyWords": 77,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 1,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "square/mars",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples with plain conversational truth and a clear, early statement of the issue. It names a recognizable cost—responding too quickly can escalate conflict and add emotional labor. The structure is tight: the problem is stated upfront, supported by a lived example, and the ending completes the thought with a clear instruction. Hedging is minimal and appropriate. There is no formulaic or templated feel, and the language fits the direct, somewhat urgent tone expected from the square/mars key. The sentence about answering too fast and turning one extra demand into a conflict is a strong, relatable insight that someone might save or share. The specificity is solid, as the scenario and advice would not fit a different transit or key.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Sending it now can turn one extra demand into a conflict you also have to manage.",
+    "why": "This line crisply names a common but often unspoken consequence of reacting too quickly to pressure: that a small additional request can escalate into a bigger interpersonal problem. It captures the tension and stakes clearly and would resonate with readers who have felt overwhelmed by last-minute demands but struggled to articulate why waiting matters."
+   },
+   "usage": {
+    "input_tokens": 1170,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 309,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1479
+   },
+   "advisoryOnly": true
+  }
+ }
+]

@@ -15,7 +15,7 @@ const transits = createTransitSynastryRenderer(transitLib, templates, rows);
 ```
 
 - `natal`: `renderNatalPlacement`, `renderNatalAngle`, `renderNatalAspect`, `renderNatalEmptyHouse`, `renderProfectionYear`
-- `transits`: `renderTransitAspect`, `renderTransitHouse`, `renderTransitRetro`, `renderTransitReturn`, `renderTransitLabel`, `renderCompat`, `renderSynastryAspect`, `renderSkySeason`, `renderSkyPlacement`, `renderSkyAspectCard`, `renderSkyLunation`, `renderSkyHoroscope`, `renderCalendarPhase`, `renderVoidOfCourse`, `renderSeasonMarker`, `renderWeeklyMoon`, `renderCircleStory`, `formatCircleNames`, `renderBondTransit`
+- `transits`: `renderTransitAspect`, `renderTransitHouse`, `renderTransitRetro`, `renderTransitReturn`, `renderTransitLabel`, `renderCompat`, `renderSynastryAspect`, `renderSkySeason`, `renderSkyPlacement`, `renderSkyAspectCard`, `renderSkyLunation`, `renderSkyHoroscope`, `renderCalendarPhase`, `renderVoidOfCourse`, `renderSeasonMarker`, `renderWeeklyMoon`, `renderCircleStory`, `renderPairDaily`, `formatCircleNames`, `renderBondTransit`
 
 Full API documentation: `admin/CODEX-TRANSIT-HANDOFF.md`. Catch `SourceGapError` and hide the surface (never substitute copy). All rows in this build are owner-approved; keep gating on `review_status` for future drafts.
 

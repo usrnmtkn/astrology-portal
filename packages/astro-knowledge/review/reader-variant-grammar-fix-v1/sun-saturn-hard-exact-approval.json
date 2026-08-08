@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-sun-saturn-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/sun/saturn/hard",
+  "payloadSha256": "d25d7b685f58c98d1a0f79837e0e52371874900a1861d96ad4125f59dbcb64ce",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may feel judged before you have had the chance to show what you can do. {{holder2}} thinks they are pointing out the loose floorboard before anyone steps on it, while you hear another reason the whole idea should stay in the basement. You resent being stopped, and {{holder2}} feels like they have to intervene before the decision creates a problem neither wants to clean up.",
+    "body_they": "{{holder1}} may feel judged before they have had the chance to show what they can do. You think you are pointing out the loose floorboard before anyone steps on it, while {{holder1}} hears another reason the whole idea should stay in the basement. {{holder1}} resents being stopped, and you feel like you have to intervene before the decision creates a problem neither wants to clean up.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

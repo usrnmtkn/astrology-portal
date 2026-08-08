@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-pluto-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/pluto/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "500de93b0c4788a0cb26f4c99cbcfc6f581fc8c65ac9243cdaec0bbaefc06840",
+  "payload": {
+    "body_you": "{{holder1}} may feel watched even when nobody is speaking. {{holder2}} notices the changed tone, delayed reply, or private reaction and wants an answer before {{holder1}} is ready to give one. {{holder1}} guards more because {{holder2}} keeps looking, and {{holder2}} looks harder because the door keeps closing.",
+    "body_they": "{{holder1}} may feel watched even when nobody is speaking. {{holder2}} notices the changed tone, delayed reply, or private reaction and wants an answer before {{holder1}} is ready to give one. {{holder1}} guards more because {{holder2}} keeps looking, and {{holder2}} looks harder because the door keeps closing.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk3-owner-authored-payloads.json",
+  "sourcePayloadKey": "moon-pluto/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_owner_authorized_pull_request",
+  "servingAuthorization": "owner_chat_2026-08-05_authorizes_ready_merge_and_normal_production_deployment"
+}

@@ -1,0 +1,69 @@
+{
+  "responseId": "resp_02c21ebf72e65cf0006a729c36ef9481a289d85aac8ff33389",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:leo-season-2025:p092:window-1-3",
+    "owner-article:mercury-retrograde-in-leo:p033:window-6-3",
+    "owner-article:venus-retrograde-2025:p073:window-4-2",
+    "owner-article:venus-in-cancer:p009:window-3-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:venus-leo",
+    "planet": "venus",
+    "sign": "leo",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "writerRunOverrides": {
+    "maxOutputTokens": 12000,
+    "collectiveVoiceSteer": "Collective voice is mandatory in every field: do not use you, your, yours, yourself, or yourselves, including inside quoted or imagined speech."
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8212,
+    "input_tokens_details": {
+      "cache_write_tokens": 8209,
+      "cached_tokens": 0
+    },
+    "output_tokens": 2973,
+    "output_tokens_details": {
+      "reasoning_tokens": 2588
+    },
+    "total_tokens": 11185
+  },
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Leo on {{entryDate}}, and affection becomes easier to see. The compliment gets specific. The invitation feels like an occasion. We dress with more nerve, choose gifts with a flourish, and want love to arrive with enough warmth that its meaning is unmistakable. Venus in Leo draws us toward what feels proud, creative, generous, and fully alive.",
+    "tension": "Visible appreciation gives affection a form. Soon, only the biggest response feels convincing. We give more than was asked, spend more than planned, or turn a simple celebration into a test of how much someone cares. If the reaction is smaller than expected, generosity hardens into scorekeeping. A quiet kindness can disappear beside a grand gesture, and admiration starts carrying more weight than the relationship itself.",
+    "development": "Venus last moved through Leo from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}, and old questions about attention, taste, and worth can return in a different setting. This time, the pressure may show up in several places at once. A beautiful purchase can feel satisfying until the bill remains after the pleasure fades. A creative offering can feel free until a muted response makes the effort seem worthless. In love, steady care may be overlooked because it does not arrive with ceremony. We start choosing what reflects admiration back to us and miss what has been real without being loud.",
+    "close": "By {{exitDate}}, Venus in Leo can leave real affection sitting in plain sight while the search for a bigger reaction continues.",
+    "try_this": [
+      "We can name one quiet act of care that mattered and thank the person who did it.",
+      "We can set a spending limit before buying a gift, then choose the most personal option under that amount."
+    ]
+  }
+}

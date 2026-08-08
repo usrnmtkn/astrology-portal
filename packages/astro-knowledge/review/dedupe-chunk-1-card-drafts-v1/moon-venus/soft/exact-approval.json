@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-venus-soft-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/venus/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "0239de252236254f2968d0447b5c75f46febfe80c218cd54b825ca93550a5392",
+  "payload": {
+    "body_you": "When {{holder2}} shows care or shares what feels good to them, you soften and respond with warmth, which makes it easier for {{holder2}} to keep showing affection. The ease between you can let difficult differences go unspoken because staying comfortable feels simpler than challenging each other.",
+    "body_they": "When you show care or share what feels good to you, {{holder1}} softens and responds with warmth, which makes it easier for you to keep showing affection. The ease between you can let difficult differences go unspoken because staying comfortable feels simpler than challenging each other.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-venus/soft/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

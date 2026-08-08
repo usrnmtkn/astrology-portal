@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "passed": false,
+  "rule": "DG-R1 recurring sentence frame may not appear in more than two pilot outputs.",
+  "repeatedFrames": [
+    {
+      "frame": "for the next",
+      "keys": [
+        "square/lilith",
+        "opposition/mars",
+        "house/11"
+      ]
+    }
+  ]
+}

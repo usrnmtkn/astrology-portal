@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-mercury-hard-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/hard/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "84acf46e4845aec1b7d83650a5108def8e0b8a73048cdb53df093bbb90c9e3ec",
+  "payload": {
+    "body_you": "{{holder2}}'s questions and strong opinions can feel like challenges to who you are or where you are going. You may respond by defending yourself or pushing back on how {{holder2}} thinks, which can make them more insistent about explaining their point. Even basic conversations can turn tense, leaving both of you feeling misunderstood.",
+    "body_they": "{{holder1}} can take your questions and strong opinions as challenges to who they are or where they are going. They may respond by defending themselves or pushing back on how you think, which can make you more insistent about explaining your point. Even basic conversations can turn tense, leaving both of you feeling misunderstood.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "2aa8047fbbdc767e13706dc7a302d86bde2ed32c593c854cbceba3497f7ec4aa",
+    "writerProviderResponseSha256": "56b9713ec638be108f59e430e6ebed0f8f33fb840fa9157a5667b5571aa64c6f"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/hard/exact-approval.json"
+}

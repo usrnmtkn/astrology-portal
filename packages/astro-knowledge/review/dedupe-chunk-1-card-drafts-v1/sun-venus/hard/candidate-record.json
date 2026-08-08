@@ -1,0 +1,9 @@
+{
+  "target": "sun-venus-hard",
+  "status": "needs_review",
+  "payloadSha256": "9ddb2999c0bc19676a319c274d4cdfae8ae6c5f65cec1aa89f160d7753b757e8",
+  "harvest_mode": "matched",
+  "terraScore": 2,
+  "approvalEffect": "none",
+  "note": "Candidate for owner exact-wording review. Not approved, promoted, or serving."
+}

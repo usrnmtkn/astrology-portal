@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-mars-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mars/hard",
+  "payloadSha256": "b43e6fa17abe65ff6c5559a26f98688c66c1d6d1dbbfeaa29af20ea504b6393a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You may feel rushed, interrupted, or pushed into answering before the thought is finished. {{holder2}} may experience your need to explain as delay, avoidance, or an attempt to keep the conversation going long after the point seems clear. The frustration becomes personal quickly. You start defending the right to finish, while {{holder2}} starts defending the right to react. Soon the argument is no longer about the original decision.",
+    "body_they": "{{holder1}} may feel rushed, interrupted, or pushed into answering before the thought is finished. You may experience {{holder1}}'s need to explain as delay, avoidance, or an attempt to keep the conversation going long after the point seems clear. The frustration becomes personal quickly. {{holder1}} starts defending the right to finish, while you start defending the right to react. Soon the argument is no longer about the original decision.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

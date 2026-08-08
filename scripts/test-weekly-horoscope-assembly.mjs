@@ -146,6 +146,45 @@ try {
   assert.notEqual(gatedStation.body, rows[0].body, "Needs-review station copy must stay out of reader view.");
   assert.equal(approvedStation.body, rows[0].body, "Approval must switch station copy without a code change.");
 
+  const personalizedChironStation = weekly.resolveWeeklyStationCopy({
+    ...stationEvent,
+    id: "station-chiron-retrograde-test",
+    title: "Chiron stations retrograde",
+    planet: "Chiron",
+    sign: "Taurus"
+  }, rows, "Gemini", {
+    planet: "Chiron",
+    glyph: "⚷",
+    sign: "Taurus",
+    signGlyph: "♉",
+    degree: 0,
+    house: 12,
+    motion: "retrograde",
+    transitStart: "2026-06-19T08:00:00.000Z",
+    transitEnd: "2026-09-17T12:00:00.000Z"
+  }, "America/New_York");
+  assert.equal(
+    personalizedChironStation.headline,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.equal(
+    personalizedChironStation.driverLabel,
+    "Chiron stations retrograde in your 12th house"
+  );
+  assert.equal(
+    personalizedChironStation.house,
+    12,
+    "The station renderer must expose the calculated house as structured presentation data."
+  );
+  assert.match(
+    personalizedChironStation.body,
+    /Chiron in your 12th house brings quiet grief, old anxieties, and unspoken losses back to the surface/u
+  );
+  assert.equal(
+    personalizedChironStation.timing,
+    "June 19, 2026 – September 17, 2026"
+  );
+
   const lunationEvent = {
     id: "new-moon-test",
     type: "lunation",
@@ -612,19 +651,23 @@ try {
     path.join(repoRoot, "apps/web/src/services/weeklyHoroscope.ts"),
     "utf8"
   );
-  assert.match(youPage, /\{ value: "daily", label: "Daily" \}/u);
-  assert.match(youPage, /\{ value: "weekly", label: "Weekly" \}/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.sections\.map/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
-  assert.match(youPage, /weekly-horoscope__reading daily-horoscope-summary/u);
   assert.match(youPage, /weekly-horoscope__macro daily-horoscope-summary/u);
-  assert.match(youPage, /weekly-horoscope__aspect daily-horoscope-summary/u);
   assert.match(youPage, />The macro view</u);
-  assert.match(youPage, />Aspect</u);
-  assert.match(youPage, />Your horoscope</u);
-  assert.match(youPage, /Based on \{weeklyHoroscopeAssembly\.horoscope\.driverLabel\}/u);
+  assert.match(youPage, /updates-aspect-list weekly-horoscope__transits/u);
+  assert.match(youPage, /\{weeklyTransitRows\}/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
+  assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
+  assert.doesNotMatch(youPage, />Current house pass</u);
+  assert.match(app, /className="updates-aspect-row weekly-transit-row"/u);
+  assert.match(app, /weeklyTransitDisplayTitle\(reading, house\)/u);
+  assert.match(app, /title: displayTitle/u);
+  assert.match(app, /activeTransitAspectIdentities/u);
+  assert.match(app, /weeklyTransitAspectParts\(reading\.driverLabel\)/u);
   assert.match(app, /buildWeeklyHoroscope\(\{/u);
+  assert.doesNotMatch(app, /weeklyHoroscopeRequested/u);
   assert.match(weeklySource, /getLunarCalendarRangeEvents/u);
   assert.match(weeklySource, /weeklyEphemerisCache/u);
   assert.doesNotMatch(
@@ -829,6 +872,21 @@ try {
     ].join("\n"),
     /Chiron stations retrograde/u,
     "A station outside the local Monday-Sunday boundary must stay outside the weekly reading."
+  );
+  assert.match(
+    personalizedChironStation.headline,
+    /Chiron stations retrograde in your 12th house/u,
+    "The station headline must name the house calculated from the event sign and rising sign."
+  );
+  assert.match(
+    personalizedChironStation.body,
+    /Chiron in your 12th house brings quiet grief/u,
+    "The station write-up must include the approved personalized transit-house layer."
+  );
+  assert.match(
+    personalizedChironStation.timing ?? "",
+    /^[A-Z][a-z]+ \d{1,2}, 2026 – [A-Z][a-z]+ \d{1,2}, 2026$/u,
+    "The station write-up must expose its current computed house-pass window."
   );
 
   const mondaySky = await ephemeris.getAstrodienstSky(

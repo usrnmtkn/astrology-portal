@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mercury-pluto-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/pluto/conjunction",
+  "payloadSha256": "644235e1a2276eddacd11f00962577703f0ac336817b0a6fd5deb6f03a931cea",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Conversations with {{holder2}} skip the pleasantries and go deep immediately. {{holder1}} can feel recognized or thoroughly interrogated, often in the same breath.",
+    "body_they": "Conversations with {{holder2}} skip the pleasantries and go deep immediately. {{holder1}} can feel recognized or thoroughly interrogated, often in the same breath.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

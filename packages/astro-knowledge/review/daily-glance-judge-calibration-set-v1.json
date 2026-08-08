@@ -1,0 +1,381 @@
+{
+ "schemaVersion": 1,
+ "evalSetId": "daily-glance-owner-calibration-v1",
+ "generatedAt": "2026-08-05",
+ "note": "Golds are exact-owner-approved pairs (GR-001 provenance in the named review files). Negatives are Sol raws the owner rejected wholesale in chat (batch-3 v1 'really flat'; batch-1 v1 'flat, not lived, not her voice'). Judge calibration must separate the sets. No score grants approval (GR-003). Negative families: (1) Sol flat (batch-1/3 v1 rejections), (2) Copy Batch A register (aphorism/coaching/meme, owner-demoted wholesale), (3) Co-Star competitor register (mind-reading, therapy-causal, punchy cynicism; from the owner's format-model screenshots - format transferred, voice explicitly not).",
+ "golds": [
+  {
+   "key": "soft/mars",
+   "headline": "It takes less energy to do the thing than to keep putting it off.",
+   "body": "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again.",
+   "source": "reference-pair",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "square/lilith",
+   "headline": "Comfort is a quick substitute for admitting what you actually want.",
+   "body": "Pay attention to every trip to the kitchen today, because hunger is rarely the whole story. Before reaching for another snack, put a name on whatever desire you are trying to quiet down, even if it feels inconvenient, disruptive, or unlikely. If food is still what you want after that, enjoy it. Just stop using it to answer questions you are avoiding.",
+   "source": "pilots-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "opposition/mars",
+   "headline": "Someone else's pressure can easily bait you into overreacting.",
+   "body": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their edge can make instantaneous defense feel like self-preservation before you even hear them out. Ask one clear question, let them answer without interruption, and only then decide how much weight to give it.",
+   "source": "pilots-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "house/11",
+   "headline": "Keeping the peace is not worth inheriting everyone else's priorities.",
+   "body": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
+   "source": "pilots-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "square/moon",
+   "headline": "The plan is not more important than the energy you actually have.",
+   "body": "You may get halfway through the errands and realize the rest of the list is too much. Forcing the original schedule can turn a normal day into a fight with yourself. Changing the plan does not make you unreliable. Remove one nonessential task before you start resenting everything that remains.",
+   "source": "batch-1-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/mars",
+   "headline": "The feeling hits, and you are already doing something about it.",
+   "body": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide whether you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
+   "source": "batch-1-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "opposition/sun",
+   "headline": "You can say yes in public and regret it in private.",
+   "body": "Someone asks for more, and the answer that keeps the peace comes out before you check what it will cost you. An hour later, you are resentful about a commitment you never wanted. Correct the answer. Tell them you agreed too quickly and need to revise what you can take on.",
+   "source": "batch-1-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/lilith",
+   "headline": "The want you keep explaining away is still there.",
+   "body": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is…\" and stop before the justification.",
+   "source": "batch-1-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "soft/pluto",
+   "headline": "It takes less effort to acknowledge a feeling than to keep minimizing it.",
+   "body": "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
+   "source": "batch-1-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/north-node",
+   "headline": "You keep reopening the next step you said you were not ready for.",
+   "body": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. It does mean the choice deserves more than another closed tab. Write one sentence naming why you want it.",
+   "source": "batch-1-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "opposition/south-node",
+   "headline": "The automatic yes is getting harder to live with.",
+   "body": "Someone asks for one more favor, and you feel yourself agreeing before you check the time you saved for yourself. The yes may keep them happy and leave you resentful. You do not have to prove care by taking on every errand. Tell them you cannot do this one.",
+   "source": "batch-1-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/chiron",
+   "headline": "The care is being offered, but the old hurt makes it hard to accept.",
+   "body": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. The need for care and the fear of being disappointed arrive at the same time, so refusing can feel safer than asking. Replace \"I'm fine\" with a quick check-in.",
+   "source": "batch-2-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "square/chiron",
+   "headline": "Expecting someone to guess what you need won't tell you how much they care.",
+   "body": "Notice when you drop a hint, leave out the actual ask, and wait to see if they guess what you need. When you text that the milk is gone, delete the line asking them to stop at the store, and get a reply about dinner instead, it is easy to feel ignored, even though you never actually asked. Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail.",
+   "source": "batch-2-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "opposition/chiron",
+   "headline": "You can leave a need unsaid and still expect them to understand.",
+   "body": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan.",
+   "source": "batch-2-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/moon",
+   "headline": "A sudden change of plans can quickly wear down your patience.",
+   "body": "When someone asks to reschedule, you might catch yourself getting irritated or defensive before you even process the ask. Instead of listing every reason their idea is inconvenient, just say what you can and cannot do. You do not have to manage everyone else's feelings today. Give them a straight answer and let the rest go.",
+   "source": "batch-2-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "soft/lilith",
+   "headline": "Saying nothing is not the same as wanting nothing.",
+   "body": "When your partner opens the grocery order and asks what to add, you may worry that one extra snack will seem demanding. So you say \"nothing,\" which leaves the item on your phone instead of in the shared cart. You're allowed to want more. One snack does not turn the order into a crisis. Send the snack's name and price before they check out.",
+   "source": "batch-2-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/uranus",
+   "headline": "You keep reconsidering the whole routine after one unwelcome change.",
+   "body": "You open a familiar service, find a higher price, and lose time comparing replacements. You may feel too restless to accept the new terms. You start questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before changing the service.",
+   "source": "batch-2-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "house/1",
+   "headline": "Blending in is not worth a first impression you do not recognize.",
+   "body": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. Nobody can know you from the version that never shows up. Tell one person the detail you almost kept to yourself.",
+   "source": "batch-2-approval",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "square/venus",
+   "headline": "A delayed reply can make a quiet phone feel like a final verdict.",
+   "body": "You send a warm text and get silence back, and within ten minutes you are wondering if you were too much, while an impulse purchase in your cart starts looking like a reasonable fix for your feelings. Put the phone down and step away from the checkout screen. A slow reply does not get to decide what you are worth.",
+   "source": "batch-3-owner-authored",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/jupiter",
+   "headline": "Help becomes extra work when everyone shows up at the same time.",
+   "body": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the single offer that makes your day simpler, say a polite no to the rest, and move on.",
+   "source": "batch-3-owner-authored",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/saturn",
+   "headline": "Taking care of family is rarely just about the task itself.",
+   "body": "It is the energy spent rebuilding your whole day around it. A text confirms an appointment, so you reschedule a work call and squeeze your remaining hours into a tight corner. Then another ask comes in before you have even settled the first change. The weight does not just come from showing up. It comes from constantly tearing down and rearranging your life whenever someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
+   "source": "batch-3-owner-authored",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "house/12",
+   "headline": "Answering messages too early gives away the only private part of your day.",
+   "body": "You wake up, reach for your phone, and start clearing requests before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and your mind is already multi-tasking the problems that could have waited. The cost is not only the time spent replying. It is how difficult it becomes to return to yourself. Send one message, put the phone down, and keep the morning you meant to have.",
+   "source": "batch-3-owner-authored",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/mercury",
+   "headline": "Once you admit what you are worried about, the whole conversation can come out at once.",
+   "body": "You are trying to decide who can take a family member to an appointment when you finally say that you do not think they should go alone. Then the rest spills out: the work you would miss, who else could help, and why this keeps becoming your responsibility. Decide who is going with them first. Then come back to why the responsibility keeps falling on you.",
+   "source": "batch-3-owner-authored",
+   "authority": "exact_owner_approved"
+  },
+  {
+   "key": "conjunction/sun",
+   "headline": "What you want is obvious today, especially when you try to pretend you do not care.",
+   "body": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
+   "source": "batch-3-owner-authored",
+   "authority": "exact_owner_approved"
+  }
+ ],
+ "negatives": [
+  {
+   "key": "conjunction/jupiter",
+   "headline": "A small request can quickly bring more help than you can sort.",
+   "body": "You ask for a ride, then three offers and a meal plan arrive before you decide what help you want. You may feel so encouraged that you accept everything, leaving you to coordinate more help than the errand needs. Let yourself enjoy it. You are not ungrateful for setting limits. Reply with the offer you want, and tell everyone else you will check back later.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "conjunction/mercury",
+   "headline": "A private admission can quickly change the whole conversation.",
+   "body": "While deciding who will cover a family errand, you may feel worried enough to admit it and explain every reason at once. For a few hours, you can keep talking to make everything clear. You have a harder time choosing. You don’t have to explain everything perfectly to be heard and understood. State the one fact that changes the plan before you assign it.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "conjunction/saturn",
+   "headline": "One family responsibility sets the terms for the next few hours.",
+   "body": "You move a work call when a family message confirms that you must take someone to an appointment. You may feel cornered. You leave the next request unanswered because you already know you cannot fit it in. You don’t have to prove how strong you are anymore. Send one brief reply naming the plan you cannot keep and when you can revisit it.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "conjunction/sun",
+   "headline": "A casual answer can expose what you actually want.",
+   "body": "You open the group chat to pick a café and type that anywhere is fine, though you may need the quieter place. For the next few hours, you can spend extra time editing a simple reply because each easygoing version still sounds more personal than you intended. That does not make you difficult. Reply with the quieter café as your choice for the group.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "house/12",
+   "headline": "Answering messages immediately is not worth your private time.",
+   "body": "Behind a closed door, you reach for your phone and start clearing messages before anyone asks. You can give those private minutes to other people and find it harder to return to the rest you meant to take. Silence isn’t weakness. Send one message saying you’ll reply after breakfast.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "house/5",
+   "headline": "Playing it safe edits the fun out of flirting.",
+   "body": "You type a playful message to someone you like, then delete the line that sounds most like you. For the next few hours, you can sound so careful that the conversation stops being fun. You don’t have to earn joy. Put the playful line back and send it.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "opposition/jupiter",
+   "headline": "You can match their enthusiasm and overcommit your afternoon.",
+   "body": "A friend turns one quick errand into lunch and another stop, and you agree before checking what your afternoon already holds. Their enthusiasm may make your own limit feel ungenerous. It isn't. For the next few hours, you risk rushing work you already accepted if you add more. Tell them you can do the errand, not the add-ons.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "opposition/pluto",
+   "headline": "Their answer makes the power struggle impossible to miss.",
+   "body": "You ask for money from a shared budget and explain the need, but the person in charge points to ownership, rules, and consequences. Over the next few hours, you can spend the whole exchange defending yourself instead of getting an answer. You are not weak for saying why it matters. Name the amount and purpose, then ask for a yes or no.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "soft/chiron",
+   "headline": "You can accept help before the struggle is over.",
+   "body": "You’re rewriting a difficult message when a friend offers to read it before you send it. You may type “I’ve got it,” because being seen stuck feels worse than losing another hour to the sentence. You’re not weak for needing care. Their help does not make the message less yours. Send them the draft and ask for one note on the sentence holding you up.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "soft/mercury",
+   "headline": "Naming what hurt is not the same as starting another argument.",
+   "body": "You open a direct reply and finally name why the last exchange hurt. The words can come more easily over the next few hours, but adding every detail can pull the conversation back into an argument. You don’t have to explain everything perfectly to be heard and understood. Be specific. Name what hurt, what changed, and the answer you need next before you send.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "soft/uranus",
+   "headline": "Moving one errand does not require a new routine.",
+   "body": "You open the calendar and notice the usual grocery run fits into a newly empty hour. You may hesitate because the old time is familiar, even though it leaves only twenty minutes before your next appointment. Only one entry changes. Update the calendar by moving the grocery run into the open hour.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "square/mars",
+   "headline": "Defending your limits too fast makes more work for you.",
+   "body": "You are finishing work when someone adds a last-minute task and demands an immediate answer. You may hear disrespect and reply sharply, turning the task into an argument. You lose more time. You don’t have to carry every fight home with you. For the next few hours, tell them when you can do the task before you address how they asked.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "square/uranus",
+   "headline": "Scrapping the plan won't tell you which part needs changing.",
+   "body": "As you open the next task, you may suddenly feel trapped by your schedule for the next few hours. You close it again before starting. In that sharp mood, you can mistake one routine obligation for proof that the entire plan is wrong. You can change one task without cancelling the rest. Move only that task to a later slot on your list.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "square/venus",
+   "headline": "Buying a treat won't settle what an unanswered message means.",
+   "body": "You send a warm message, get no reply, and may suddenly feel hard to like. You add a candle you did not plan to buy to your cart, then scold yourself for wanting reassurance or comfort. You don’t have to be simple to be loved. Wait a few hours before sending another message or buying the candle.",
+   "source": "batch-3-v1-owner-rejected-flat"
+  },
+  {
+   "key": "conjunction/lilith",
+   "headline": "Today, you may find your strongest preference harder to dismiss.",
+   "body": "As you follow a pleasant, familiar routine over the next few hours, you may keep checking alternatives or wonder why it does not quite satisfy. Rather than abandon what works, you may keep returning to the same specific want as you reconsider each choice. At your next familiar choice, ask yourself what you would order if you did not have to make it sound reasonable.",
+   "source": "batch-1-v1-owner-rejected-no-harvest"
+  },
+  {
+   "key": "conjunction/mars",
+   "headline": "You may act almost as soon as you feel today.",
+   "body": "For the next few hours, you may answer irritation or excitement by sending the message, taking over the task, or pressing a point. You are not losing judgment, you may simply have less distance between the feeling and your next move, so you can pause to keep your choice open. For your next irritated reply, keep it in drafts for ten minutes before sending.",
+   "source": "batch-1-v1-owner-rejected-no-harvest"
+  },
+  {
+   "key": "conjunction/north-node",
+   "headline": "You keep encountering an unfamiliar next step.",
+   "body": "For the next few hours, you may postpone one new responsibility as you handle familiar obligations, yet you may check its details again and again. You can treat that repetition as a reason to give this forward choice deliberate attention, not as a demand to overhaul your plans. Spend ten minutes on the first practical action you can take.",
+   "source": "batch-1-v1-owner-rejected-no-harvest"
+  },
+  {
+   "key": "opposition/south-node",
+   "headline": "Another person makes your familiar retreat harder to excuse.",
+   "body": "When someone questions your position over the next few hours, you may agree too quickly or end the conversation. You do not have to treat their objection as proof that withdrawal is sensible, and you may recognize how quickly you rely on this habit under stress. Before you step away, state the one concern you would usually leave unsaid.",
+   "source": "batch-1-v1-owner-rejected-no-harvest"
+  },
+  {
+   "key": "opposition/sun",
+   "headline": "You can mistake someone’s expectations for your own obligations.",
+   "body": "For the next few hours, you may be tempted to answer someone as they prefer and keep your private needs out of view. You may adjust your tone to seem considerate, but you can state a position you do not hold. You can hear their objection without treating their preference as your decision. Tell them one request you cannot accept as stated.",
+   "source": "batch-1-v1-owner-rejected-no-harvest"
+  },
+  {
+   "key": "soft/pluto",
+   "headline": "You can give a deeper feeling your honest attention.",
+   "body": "Over the next few hours, you may have enough steadiness to consider an emotion without dismissing it too quickly. You do not need to solve or explain it perfectly, and you can take it seriously without reorganizing your day. Write one sentence naming the feeling and the immediate situation in which you noticed it.",
+   "source": "batch-1-v1-owner-rejected-no-harvest"
+  },
+  {
+   "key": "square/moon",
+   "headline": "You may struggle to keep your original schedule today.",
+   "body": "You may notice your mood changing once the next few hours are already arranged, and you may keep going despite needing more time, space, or rest. You may blame yourself for slowing down, but you may simply need to revise one plan instead of demanding your usual pace from yourself. Move one nonessential task to later in the day.",
+   "source": "batch-1-v1-owner-rejected-no-harvest"
+  },
+  {
+   "key": "soft/jupiter",
+   "headline": "Today your luck is better than your plans deserve.",
+   "body": "Things break your way today - timing, moods, the small yes from the right person - and there's no catch to wait for. Take the meeting, send the ask, buy the ticket. Luck likes a moving target; give it one.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "square/jupiter",
+   "headline": "You don't have to say yes today to prove you're generous.",
+   "body": "Your appetite is bigger than your calendar today. Stop promising things future-you has to pay for. One real commitment beats five eager almost-yeses, and people remember which ones you kept. Pick the one that matters. Decline the rest kindly.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "conjunction/venus",
+   "headline": "Today you notice what you love and what you've only been tolerating.",
+   "body": "Your taste is turned all the way up today: people, rooms, plans, everything gets felt as beautiful or wrong. Stop calling it pickiness. Knowing what you actually enjoy is a skill most people never build. Choose one real pleasure on purpose today. Skip the obligatory one.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "opposition/neptune",
+   "headline": "You don't have to guess what someone is feeling to be close to them.",
+   "body": "Today you're filling in someone's blanks with your own fears. Stop treating your guess about them as a fact you're being brave about. The story in your head is always more dramatic than the person in front of you. Ask the direct question. Believe the answer.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "house/2",
+   "headline": "Today you can tell the difference between what you have and what you need.",
+   "body": "Money, comfort, and what things are worth sit front of mind today. Stop measuring your worth with someone else's ruler. Enough is a number you get to define. Handle one small money thing and then enjoy something you already own. Both are wealth.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "soft/sun",
+   "headline": "Today you get to be yourself without negotiating for it.",
+   "body": "The day meets you halfway: people cooperate, plans click, your presence lands. Stop saving your best requests for a harder day - ease isn't a trap, it's a window. Ask for the thing you've been sitting on; asking is the part you control.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "square/south-node",
+   "headline": "You can love your comfort zone and still notice it shrinking.",
+   "body": "Today the familiar option looks better than it is. Stop choosing the known thing just because you already know it. Comfort is a fine place to rest and a bad place to live. Do one thing the new way today. Just one.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "opposition/uranus",
+   "headline": "You can need space from someone without needing an exit.",
+   "body": "Today you want room and someone reads that as leaving. Stop apologizing for needing air, and don't make them guess what it means. Space asked for plainly is just space; space taken suddenly reads as escape. Say when you're coming back. Then actually come back.",
+   "source": "copy-batch-A-owner-demoted-2026-08-04"
+  },
+  {
+   "key": "cs/1",
+   "headline": "Loyalty doesn't mean letting them get away with it.",
+   "body": "You've confused silence with loyalty. That person keeps crossing lines because you let them. The situation won't improve by itself. Standing up isn't betrayal, it's the only way things might actually change.",
+   "source": "co-star-format-model-competitor-register"
+  },
+  {
+   "key": "cs/2",
+   "headline": "You are not your doubts.",
+   "body": "Stop confusing introspection with insight. Your doubts aren't prophecies, they're just thoughts with good PR. While you've been interrogating yourself, opportunities walk by unnoticed. Look up. Move forward. The stakes are lower than you think.",
+   "source": "co-star-format-model-competitor-register"
+  },
+  {
+   "key": "cs/3",
+   "headline": "Your anxiety may come from not having your needs met when you were very little.",
+   "body": "That constant knot in your stomach isn't your fault. It formed when someone who should have caught you let you fall. Stop blaming yourself for bracing against impact. What protected you then restricts you now. Let someone earn your trust.",
+   "source": "co-star-format-model-competitor-register"
+  },
+  {
+   "key": "cs/4",
+   "headline": "You deserve a great love.",
+   "body": "You've made yourself smaller to fit what was offered. Dimmed your light to keep others comfortable. Stop accepting the scraps from those who can't handle your fire. The love you've been giving is the love you should receive.",
+   "source": "co-star-format-model-competitor-register"
+  }
+ ],
+ "acceptance": {
+  "goldMeanMin": 2.6,
+  "negativeMeanMax": 1.9,
+  "negativeScoreThreeMax": 0
+ }
+}

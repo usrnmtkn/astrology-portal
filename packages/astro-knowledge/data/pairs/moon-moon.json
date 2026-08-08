@@ -1,0 +1,22 @@
+{
+  "id": "moon-moon",
+  "planetA": "moon",
+  "planetB": "moon",
+  "traditional": "About once a month, the Moon returns to the same place in the zodiac it held when you were born. For a few hours, your feelings are easier to notice. You may realize what you need, what has been weighing on you, and what feels different from last month.",
+  "modern": {
+    "blend": "Your feelings arrive quickly and take up more space than usual. It is hard to ignore what you need, and your mood may shape how you answer, decide, or react for the next few hours.",
+    "harmonious": "You feel more comfortable in your own skin. The day makes room for what you need, and it is easier to move through your routine without feeling pulled away from yourself.",
+    "hard": "You have plans, but your mood shifts and suddenly you need more time, space, or rest than the day allows. You may get irritated when someone rushes you, ignores what you need, or expects you to keep going as if nothing changed."
+  },
+  "sourceNote": "This is the transiting-Moon-to-natal-Moon source; the moon-moon matching library (compatibility) remains a separate collection. No separate business wording was approved; the required business field reuses the approved hard text.",
+  "provenance": {
+    "traditional": "daily-glance-fact-boundaries-2026-08-04.md F7/P8, owner-approved 2026-08-04",
+    "modern": "daily-glance-fact-boundaries-2026-08-04.md F7/P8, owner-approved 2026-08-04"
+  },
+  "voiceNeutral": true,
+  "status": "REVIEWED",
+  "blend": "Your feelings arrive quickly and take up more space than usual. It is hard to ignore what you need, and your mood may shape how you answer, decide, or react for the next few hours.",
+  "harmonious": "You feel more comfortable in your own skin. The day makes room for what you need, and it is easier to move through your routine without feeling pulled away from yourself.",
+  "hard": "You have plans, but your mood shifts and suddenly you need more time, space, or rest than the day allows. You may get irritated when someone rushes you, ignores what you need, or expects you to keep going as if nothing changed.",
+  "business": "You have plans, but your mood shifts and suddenly you need more time, space, or rest than the day allows. You may get irritated when someone rushes you, ignores what you need, or expects you to keep going as if nothing changed."
+}

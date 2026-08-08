@@ -1,0 +1,25 @@
+{
+  "responseId": "resp_0aacc1d7f1c70d34006a7296275d0481a0b83b6644d238e48a",
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 8164,
+    "input_tokens_details": {
+      "cache_write_tokens": 8161,
+      "cached_tokens": 0
+    },
+    "output_tokens": 7505,
+    "output_tokens_details": {
+      "reasoning_tokens": 7127
+    },
+    "total_tokens": 15669
+  },
+  "outputText": "{\"opening\":\"Venus enters Capricorn on {{entryDate}} after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and consistency begins to matter more than first impressions. Plans get confirmed. Money goes toward what will last. Interest grows when someone handles an errand, returns a call, or keeps a promise after the first excitement passes. What feels worth choosing now has a future attached to it.\",\"tension\":\"The need for reliability can become a test we never admit is underway. We notice who pays, who calls back, and who makes time, then start keeping a private account of every uneven exchange. Affection is held back until enough proof arrives. A shared plan starts to feel like security, so a change of mind reads as a broken promise. Control may keep disappointment at a distance, but it also makes connection feel conditional.\",\"development\":\"Venus last moved through Capricorn from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same questions about what deserves time, money, and loyalty return in a new form. A wanted purchase gets dismissed because pleasure alone does not feel like enough reason. A dependable connection can carry more expectation than we have said aloud. We may stay with an arrangement because time has already been invested, and call that commitment. When every act of care creates an obligation, support becomes another form of debt.\",\"close\":\"By {{exitDate}}, some promises will still be kept, but the connection around them may feel more like an obligation than a choice.\",\"try_this\":[\"We can wear one thing chosen for beauty rather than usefulness.\",\"We can thank someone for one repeated act that has made care feel reliable.\",\"We can cancel one recurring charge that no longer brings enough use or pleasure to justify its cost.\"]}"
+}

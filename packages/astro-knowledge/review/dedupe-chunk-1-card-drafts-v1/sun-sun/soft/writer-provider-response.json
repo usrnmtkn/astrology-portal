@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0a32675a5ff7f134006a729593eb44819183762139a39f4883",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 771,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 572,
+    "output_tokens_details": {
+      "reasoning_tokens": 399
+    },
+    "total_tokens": 1343
+  },
+  "output_text": "{\"body_you\":\"When you state what matters to you or choose a direction, {{holder2}} tends to meet you without asking you to tone yourself down. {{holder2}} shows the same confidence in who they are, and you respond by backing their direction rather than competing with it. Because this support feels natural, either of you can assume you are aligned without saying where your goals differ.\",\"body_they\":\"When {{holder1}} states what matters to them or chooses a direction, you tend to meet them without asking them to tone themselves down. You show the same confidence in who you are, and {{holder1}} responds by backing your direction rather than competing with it. Because this support feels natural, either of you can assume you are aligned without saying where your goals differ.\",\"warmthSource\":null,\"labels\":[]}"
+}

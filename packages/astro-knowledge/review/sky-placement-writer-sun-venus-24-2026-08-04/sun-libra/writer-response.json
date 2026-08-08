@@ -1,0 +1,65 @@
+{
+  "responseId": "resp_09b5e4e4491e25d9006a7290cd4ea8819db4eff7ec5f5dacbe",
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:sky-placement",
+  "promptVersion": "sky-placement-writer-v15:cross-batch-move-variety-v1",
+  "packetVersion": "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1",
+  "retrievedOwnerSourceIds": [
+    "owner-article:libra-season-autumn-equinox:p005:window-5-3",
+    "owner-article:libra-new-moon:p004:window-4-4",
+    "owner-article:full-moon-in-taurus:p027:window-4-2",
+    "owner-article:pisces-total-lunar-eclipse:p038:window-6-4",
+    "owner-article:cancer-new-moon-2025:p053:window-2-4",
+    "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e024:window-2-2"
+  ],
+  "warmthOwnerSourceIds": [],
+  "ownerCorpusWarmthEvidence": {
+    "id": "owner-corpus-warmth-none-found:sun-libra",
+    "planet": "sun",
+    "sign": "libra",
+    "harvest_mode": "none_found",
+    "emotionalCore": null,
+    "searchTerms": [],
+    "primary": null,
+    "supporting": [],
+    "alternates": [],
+    "authorityClass": "owner_corpus_no_match",
+    "maxWarmthBeats": 0,
+    "method": "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md",
+    "sourceIds": [],
+    "editorial_flags": [
+      {
+        "id": "owner-corpus-warmth-none-found",
+        "severity": "info",
+        "blocking": false,
+        "reason": "No qualifying owner-corpus warmth line is available for this core. Revisit if future owner writing covers it; do not invent imitation warmth."
+      }
+    ]
+  },
+  "routingMatchStatus": "matched",
+  "usage": {
+    "input_tokens": 8220,
+    "input_tokens_details": {
+      "cache_write_tokens": 8217,
+      "cached_tokens": 0
+    },
+    "output_tokens": 5702,
+    "output_tokens_details": {
+      "reasoning_tokens": 5292
+    },
+    "total_tokens": 13922
+  },
+  "article": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Libra on {{entryDate}}, and agreement starts to feel more energizing than going it alone. We revise a choice after another view catches what we missed. A hard conversation gets less defensive when both sides are heard. The Sun in Libra draws confidence from that exchange, especially when the result feels balanced without flattening either side.",
+    "tension": "That openness has a cost when every preference gets held up for approval. We add another option, soften the answer that might disappoint someone, and wait for a sign that everyone is comfortable. The decision still gets made, but now it belongs to the strongest opinion or the nearest deadline. This is the approval loop: treating agreement as proof that the choice is right. Confidence thins when nobody can tell what we wanted before everyone else answered.",
+    "development": "The Sun last moved through Libra from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pressure can spread through different parts of life: a creative idea is revised until its sharpest part disappears; a shared decision drags because the honest objection stays polite and partial; a relationship looks calm because the same side keeps adjusting. Each move preserves contact in the moment. It also makes the eventual correction more expensive. Once no one trusts the first answer, even simple choices require another round of checking. Resentment gathers around agreements we technically made. The Sun in Libra builds confidence through relationship, but constant adjustment leaves those relationships without a clear answer about what we want.",
+    "close": "Before {{exitDate}}, the cost of a withheld preference shows up as delay, quiet resentment, or a decision that belongs to whoever spoke first.",
+    "try_this": [
+      "We can state one preference before hearing the rest of the group's answers.",
+      "We can choose one visible detail, such as a color or outfit, without asking whether everyone likes it."
+    ]
+  }
+}

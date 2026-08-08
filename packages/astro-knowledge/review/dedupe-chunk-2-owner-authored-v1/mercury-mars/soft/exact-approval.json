@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "mercury-mars-soft-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mars/soft",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "26219a839056002edbd1d7266b8d83a4c5338ca094053e7548703fa712e59631",
+  "payload": {
+    "body_you": "{{holder1}} and {{holder2}} can move from discussion to action with very little delay. {{holder1}} names the problem clearly, and {{holder2}} knows what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. {{holder1}} helps {{holder2}} act with a clearer purpose, while {{holder2}} keeps {{holder1}} from thinking past the moment when action would help.",
+    "body_they": "{{holder1}} and {{holder2}} can move from discussion to action with very little delay. {{holder1}} names the problem clearly, and {{holder2}} knows what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. {{holder1}} helps {{holder2}} act with a clearer purpose, while {{holder2}} keeps {{holder1}} from thinking past the moment when action would help.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "mercury-mars/soft",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_074a44a169345924006a72956f7e04819ea2b9547a5f5db9c3",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1177,
+    "input_tokens_details": {
+      "cache_write_tokens": 1174,
+      "cached_tokens": 0
+    },
+    "output_tokens": 146,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 1323
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants hold the required direction: {{holder1}}'s way of being affects {{holder2}}'s ease, emotional expression, and sense of safety. The draft contains a recognizable governed loop: \\\"Because the fit feels easy, you can both become passive and stop showing care,\\\" which names the comfort-to-passivity cost without importing outside doctrine. The two versions are meaningfully parallel, with holder roles correctly swapped for the reader-facing variant. The final reassurance, \\\"does not need to prove they are worthy,\\\" is directly traced to the supplied owner foundation line and functions as a supported reader turn rather than an invented claim.\"}"
+}

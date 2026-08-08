@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "venus",
+  "sign": "pisces",
+  "timeZone": "America/New_York",
+  "transitStart": "March 26, 2027",
+  "transitEnd": "April 19, 2027",
+  "transitStartIso": "2027-03-26T08:16:32.999Z",
+  "transitEndIso": "2027-04-20T03:57:05.999Z",
+  "priorSign": "aquarius",
+  "priorSignEntryDate": "March 1, 2027",
+  "priorSignExitDate": "March 26, 2027",
+  "previousResidency": {
+    "sign": "pisces",
+    "entryDate": "February 10, 2026",
+    "exitDate": "March 6, 2026",
+    "entryDateIso": "2026-02-10T10:18:38.999Z",
+    "exitDateIso": "2026-03-06T10:45:45.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-venus-square-uranus-2027-03-28t13:17:56.999z",
+      "body": "venus-square-uranus",
+      "bodies": [
+        "venus",
+        "uranus"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "March 28, 2027",
+      "dateIso": "2027-03-28T13:17:56.999Z",
+      "rank": 1,
+      "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. Psychologically the square is inner tension to integrate: Erratic affections, sudden attractions and ruptures, and a refusal to be tied down. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/venus-square-uranus.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/venus-square-uranus.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "factOwner": "app-engine",
+  "planet": "sun",
+  "sign": "taurus",
+  "timeZone": "America/New_York",
+  "transitStart": "April 20, 2027",
+  "transitEnd": "May 21, 2027",
+  "transitStartIso": "2027-04-20T07:17:37.999Z",
+  "transitEndIso": "2027-05-21T06:18:14.999Z",
+  "priorSign": "aries",
+  "priorSignEntryDate": "March 20, 2027",
+  "priorSignExitDate": "April 20, 2027",
+  "previousResidency": {
+    "sign": "taurus",
+    "entryDate": "April 19, 2025",
+    "exitDate": "May 20, 2025",
+    "entryDateIso": "2025-04-19T19:56:01.999Z",
+    "exitDateIso": "2025-05-20T18:54:38.999Z"
+  },
+  "eventsDuringTransit": [
+    {
+      "id": "aspect-sun-square-pluto-2027-04-27t15:24:48.999z",
+      "body": "sun-square-pluto",
+      "bodies": [
+        "sun",
+        "pluto"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "April 27, 2027",
+      "dateIso": "2027-04-27T15:24:48.999Z",
+      "rank": 1,
+      "meaning": "Identity meets power and intensity. A magnetic, high-voltage presence that others react to immediately. Psychologically the square is inner tension to integrate: Power runs to extremes and relationships tip into control struggles. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-pluto.json"
+    },
+    {
+      "id": "aspect-sun-square-jupiter-2027-05-08t19:37:39.999z",
+      "body": "sun-square-jupiter",
+      "bodies": [
+        "sun",
+        "jupiter"
+      ],
+      "eventType": "exact-aspect",
+      "aspect": "square",
+      "date": "May 8, 2027",
+      "dateIso": "2027-05-08T19:37:39.999Z",
+      "rank": 2,
+      "meaning": "Identity meets optimism, expansion, and luck. Confidence to venture and a sense that the odds will cooperate. Psychologically the square is inner tension to integrate: The same confidence overreaches. Sooner or later the luck gets pushed too far. The growth is owning both sides instead of splitting them.",
+      "meaningSource": "packages/astro-knowledge/data/transits/sun-square-jupiter.json"
+    }
+  ],
+  "provenance": {
+    "calculationSource": "local-swisseph-wasm",
+    "zodiac": "tropical",
+    "requestedReferenceDate": "2026-08-05T00:00:00.000Z",
+    "locatedTransitReferenceDate": "2026-08-05T00:00:00.000Z",
+    "dateRenderingTimeZone": "America/New_York",
+    "meanings": [
+      "packages/astro-knowledge/data/transits/sun-square-pluto.json",
+      "packages/astro-knowledge/data/transits/sun-square-jupiter.json"
+    ]
+  },
+  "serving": false,
+  "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+}

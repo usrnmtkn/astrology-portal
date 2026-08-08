@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "key": "square/lilith",
+  "responseId": "resp_015de390548c7508006a728142fce0819f9717a5e2f7e24fdf",
+  "status": "completed",
+  "httpStatus": 200,
+  "requestedModel": "gpt-5.6-sol",
+  "actualModel": "gpt-5.6-sol",
+  "requestedReasoningEffort": "xhigh",
+  "actualReasoningEffort": "xhigh",
+  "laneId": "writer:daily-glance",
+  "writerOnly": true,
+  "terraCalls": 0,
+  "latencyMs": 40991,
+  "usage": {
+    "inputTokens": 1036,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 1033,
+    "outputTokens": 2169,
+    "reasoningTokens": 2070,
+    "totalTokens": 3205
+  },
+  "estimatedCostUsd": 0.07154125,
+  "pricingSource": "packages/astro-knowledge/config/sky-placement-judge-ab-evaluation-v1.json#pricing",
+  "rawOutputSha256": "25c99390cacae80d2869580c9f7eef706a5d3023e6378be5b30c0fa7b9dbd8ff",
+  "incompleteDetails": null
+}

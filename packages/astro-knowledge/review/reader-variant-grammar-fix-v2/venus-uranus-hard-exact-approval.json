@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-venus-uranus-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/uranus/hard",
+  "payloadSha256": "04b4bd7cca660e8275f6bab01b6d54d15a0caef2cd2e1677a02873f0bc017dda",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You reach for consistency, and {{holder2}} pulls back at that exact moment. Asking for certainty is the quickest way to get less of it.",
+    "body_they": "{{holder1}} reaches for consistency, and you pull back at that exact moment. Asking for certainty is the quickest way to get less of it.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

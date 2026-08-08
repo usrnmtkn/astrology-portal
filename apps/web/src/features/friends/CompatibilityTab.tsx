@@ -48,6 +48,7 @@ export type CompatibilityDynamic = {
 
 export type CompatibilityTabProps = {
   cards: CompatibilityPlanetCard[];
+  daily?: { body: string; dateLabel: string } | null;
   dynamics: CompatibilityDynamic[];
   friendName: string;
   onOpenCard?: (card: CompatibilityPlanetCard, paragraphs: string[]) => void;
@@ -161,6 +162,7 @@ function compatibilityPreviewParagraphs(paragraphs: string[]) {
 
 export function CompatibilityTab({
   cards,
+  daily,
   dynamics,
   friendName,
   onOpenCard
@@ -177,6 +179,13 @@ export function CompatibilityTab({
   return (
     <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${friendName} compatibility`}>
       <div className="friend-profile-copy-column compatibility-column">
+        {daily ? (
+          <section className="daily-horoscope-summary friend-daily-forecast" aria-label="Today between you two">
+            <span className="eyebrow section-label friend-section-label">Today between you two</span>
+            <span className="friend-section-sublabel">{daily.dateLabel}</span>
+            <p>{daily.body}</p>
+          </section>
+        ) : null}
         <section className="compatibility-card-list" aria-label="Planet comparisons">
           {cards.map((card) => {
             const writeup = card.goDeeper;
