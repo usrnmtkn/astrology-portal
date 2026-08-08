@@ -94,6 +94,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [suppressUnrelatedMonorepoHotUpdatesPlugin(), localApiRoutePlugin(), react()],
     assetsInclude: ["**/*.wasm"],
+    resolve: {
+      dedupe: ["react", "react-dom"]
+    },
     build: {
       manifest: true,
       modulePreload: {
