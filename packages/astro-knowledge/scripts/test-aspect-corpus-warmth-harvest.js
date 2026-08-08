@@ -77,6 +77,7 @@ assert.deepStrictEqual(missingPacket.flags, [{
   reason: "Aspect entry has no human-moment beat. This is editorial data completeness; flag for editorial work. Do not request new owner prose."
 }]);
 assert.deepStrictEqual(missingPacket.warmthHarvest.ownerFoundationLines, []);
+assert.strictEqual(missingPacket.warmthHarvest.harvest_mode, null);
 assert.deepStrictEqual(missingPacket.scaleRule, {
   harvest_mode: null,
   insertWarmthBeat: false,
