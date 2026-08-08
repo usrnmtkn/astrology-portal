@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-venus-mars-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/mars/conjunction",
+  "payloadSha256": "475504668670eb7e109a0e7ff083aa57543dbc6c39e316362b6f8eb5e3d960b2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} makes you feel wanted, noticed, and difficult to ignore. You respond quickly to {{holder2}}'s attention, and the attraction or creative charge between you can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. You and {{holder2}} may feel strongly pulled toward each other before you know how well your daily lives, values, or expectations fit.",
+    "body_they": "You make {{holder1}} feel wanted, noticed, and difficult to ignore. {{holder1}} responds quickly to your attention, and the attraction or creative charge between you can become obvious before either person has decided what the relationship means. The intensity is real, but it does not answer every other question. {{holder1}} and you may feel strongly pulled toward each other before you know how well your daily lives, values, or expectations fit.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

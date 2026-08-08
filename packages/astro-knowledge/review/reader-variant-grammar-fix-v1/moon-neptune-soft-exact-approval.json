@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-moon-neptune-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
+  "payloadSha256": "db421585ba8ce8a251008d94e429cffb8e23bf41f27ff30695ecf447b99cd96d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} often knows when you need gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves you feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+    "body_they": "You often knows when {{holder1}} needs gentleness before the explanation arrives. The response may not identify the exact reason, but it usually leaves {{holder1}} feeling accompanied rather than analyzed. Precision matters less here because the care is soft enough not to crowd the truth.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-mars-pluto-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mars/pluto/conjunction",
+  "payloadSha256": "4cdd86b4e863870d0d965926d8f6f156725eb88abddb3aff8615d39fa940b1fc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Your drive and {{holder2}}'s intensity combine into concentrated force. Directed at a shared goal, you are difficult to stop. Turned against each other, neither person knows how to back down.",
+    "body_they": "{{holder1}}'s drive and your intensity combine into concentrated force. Directed at a shared goal, you are difficult to stop. Turned against each other, neither person knows how to back down.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}
