@@ -32342,14 +32342,14 @@
    "contentKey": "fallback-hook/synastry-pair/venus/midheaven/soft",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "{{holder1PossCap}} Venus favors {{holder2Poss}} Midheaven: an honest fan attached to a real career. Wins get celebrated properly here, and the celebrating is fuel, not flattery. Every ambition needs one voice like this. Be it on purpose.",
-   "body_they": "{{holder1PossCap}} Venus favors {{holder2Poss}} Midheaven: an honest fan attached to a real career. Wins get celebrated properly here, and the celebrating is fuel, not flattery. Every ambition needs one voice like this. Be it on purpose.",
+   "body_you": "When Venus aligns with the Midheaven, affection becomes a practical asset for a career. Success gets marked and celebrated out loud, turning appreciation into real stamina for the work ahead. Ambition rarely thrives in a vacuum, and this connection puts warmth and professional drive on the exact same side without anyone having to fake it.",
+   "body_they": "When Venus aligns with the Midheaven, affection becomes a practical asset for a career. Success gets marked and celebrated out loud, turning appreciation into real stamina for the work ahead. Ambition rarely thrives in a vacuum, and this connection puts warmth and professional drive on the exact same side without anyone having to fake it.",
    "review_status": "reviewed",
    "source_keys": [
     "haydens-synastry/planets-on-angles",
     "package natal-aspect register"
    ],
-   "notes": "Synastry pair copy: planet to Midheaven (both directions via holder slots). Named-holder register per owner feedback 2026-07-23.",
+   "notes": "Synastry pair copy: planet to Midheaven. Owner-approved rewrite 2026-08-01.",
    "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
   },
   {
