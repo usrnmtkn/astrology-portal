@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "needs_review",
+  "renderEligible": false,
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/venus/taurus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Taurus on {{entryDate}}, and a spark matters less if it cannot be trusted to last. We notice what holds up. A promise is kept without a reminder. Money goes toward the thing that will be used often rather than the thing that creates a brief rush. Affection feels real when care shows up again tomorrow.",
+      "tension": "Consistency feels safe, but repetition can hide the point when something no longer feels good. We keep paying for a comfort we barely notice because it is part of the routine. We keep a connection in the same shape because the familiar pattern feels safer than finding out what has changed. When affection arrives differently, we ask for the same reassurance again and read any difference as withdrawal. More money goes toward restoring the old feeling, and more care comes with an expectation that was never said aloud.",
+      "development": "Venus last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Familiarity cannot tell us whether something still holds value. A costly comfort bought for a quick lift leaves the expense behind after the pleasure fades. Soon, an ordinary change in affection feels like a test of loyalty. We notice who returned each favor and who did not. The body is comfortable, but desire has gone quiet.",
+      "aspect_insert": "{{aspectInsert}}",
+      "close": "By {{exitDate}}, what looked like stability may be a routine that costs money, trust, and desire to preserve.",
+      "try_this": [
+        "We can total the last four comfort purchases and mark the one that was actually worth the money.",
+        "We can clean one worn pair of shoes and put it back into regular use.",
+        "We can keep one small promise exactly as made, especially one that makes daily life easier for someone close."
+      ],
+      "aspect_units": [],
+      "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Taurus on {{entryDate}}, and a spark matters less if it cannot be trusted to last. We notice what holds up. A promise is kept without a reminder. Money goes toward the thing that will be used often rather than the thing that creates a brief rush. Affection feels real when care shows up again tomorrow.\n\nConsistency feels safe, but repetition can hide the point when something no longer feels good. We keep paying for a comfort we barely notice because it is part of the routine. We keep a connection in the same shape because the familiar pattern feels safer than finding out what has changed. When affection arrives differently, we ask for the same reassurance again and read any difference as withdrawal. More money goes toward restoring the old feeling, and more care comes with an expectation that was never said aloud.\n\nVenus last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Familiarity cannot tell us whether something still holds value. A costly comfort bought for a quick lift leaves the expense behind after the pleasure fades. Soon, an ordinary change in affection feels like a test of loyalty. We notice who returned each favor and who did not. The body is comfortable, but desire has gone quiet.\n\nBy {{exitDate}}, what looked like stability may be a routine that costs money, trust, and desire to preserve.",
+      "body_they": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Taurus on {{entryDate}}, and a spark matters less if it cannot be trusted to last. We notice what holds up. A promise is kept without a reminder. Money goes toward the thing that will be used often rather than the thing that creates a brief rush. Affection feels real when care shows up again tomorrow.\n\nConsistency feels safe, but repetition can hide the point when something no longer feels good. We keep paying for a comfort we barely notice because it is part of the routine. We keep a connection in the same shape because the familiar pattern feels safer than finding out what has changed. When affection arrives differently, we ask for the same reassurance again and read any difference as withdrawal. More money goes toward restoring the old feeling, and more care comes with an expectation that was never said aloud.\n\nVenus last moved through Taurus from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. Familiarity cannot tell us whether something still holds value. A costly comfort bought for a quick lift leaves the expense behind after the pleasure fades. Soon, an ordinary change in affection feels like a test of loyalty. We notice who returned each favor and who did not. The body is comfortable, but desire has gone quiet.\n\nBy {{exitDate}}, what looked like stability may be a routine that costs money, trust, and desire to preserve.",
+      "review_status": "needs_review",
+      "render_eligible": false,
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "canonical": false,
+      "source_keys": [
+        "venus-taurus-retry-16k-v2"
+      ],
+      "notes": "Unapproved Sol writer candidate. Owner review is required before any runtime import."
+    }
+  ]
+}

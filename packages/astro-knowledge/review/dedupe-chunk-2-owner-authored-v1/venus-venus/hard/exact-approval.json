@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "venus-venus-hard-owner-authored-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-05",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/venus/venus/hard",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "582d397c060c73cabd1dee63987306b4c24586b333ff4fa897cd64ce0512ee2e",
+  "payload": {
+    "body_you": "{{holder1}} and {{holder2}} may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. {{holder1}} keeps offering the kind of care {{holder1}} would want, while {{holder2}} does the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. {{holder1}} may believe the effort is obvious, and {{holder2}} may be waiting for proof that never arrives in a form {{holder2}} recognizes.",
+    "body_they": "{{holder1}} and {{holder2}} may care deeply and still have very different ideas about what love, loyalty, or appreciation should look like. {{holder1}} keeps offering the kind of care {{holder1}} would want, while {{holder2}} does the same from a completely different set of expectations. Both can end up feeling unappreciated while sincerely trying. {{holder1}} may believe the effort is obvious, and {{holder2}} may be waiting for proof that never arrives in a form {{holder2}} recognizes.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourcePayloadPath": "packages/astro-knowledge/review/chunk2-owner-authored-payloads.json",
+  "sourcePayloadKey": "venus-venus/hard",
+  "generationEvidence": {
+    "writerCalls": 0,
+    "judgeCalls": 0,
+    "writerArtifactsExist": false,
+    "judgeArtifactsExist": false,
+    "reason": "The wording was authored and supplied directly by the owner. No Sol writer or Terra judge calls or artifacts exist for this payload."
+  },
+  "ownerApprovalStatementSource": "owner_chat_2026-08-05_hash_bound_exact_wording_approval",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

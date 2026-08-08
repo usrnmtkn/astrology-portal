@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_serving_exact_approval",
+  "approvalId": "moon-venus-conjunction-owner-revision-v1-exact-approval",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "surface": "synastry-aspect",
+  "contentKey": "fallback-hook/synastry-pair/moon/venus/conjunction",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "730ed95115cb7331a42c6400065ca3c6bbabd3e78211c8bb3ce171a30689eff3",
+  "payload": {
+    "body_you": "{{holder2}}'s affection makes you feel cared for, and you respond with warmth that helps {{holder2}} relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken.",
+    "body_they": "Your affection makes {{holder1}} feel cared for, and {{holder1}} responds with warmth that helps you relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "sourceCandidatePath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-venus/conjunction/owner-revision-candidate.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/exact-approval-feedback-input.json",
+  "approvalScope": "exact_wording_only_serving_via_authorized_draft_pr_merge_authorization_required",
+  "servingAuthorization": "this_record_does_not_self_promote_merge_requires_separate_owner_authorization"
+}

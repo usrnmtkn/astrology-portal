@@ -20,17 +20,27 @@ export type WeeklyHoroscopeSection = {
   dayLabel: string;
   headline: string;
   driverLabel: string;
+  timing?: string;
   body: string;
   tag?: string;
   accented: boolean;
   source: "lunation" | "station" | "return" | "heavy" | "weekly-moon";
   unit: string;
+  orb?: number;
+  house?: number;
 };
 
 export type WeeklyHoroscopeReading = {
+  dateKey?: string;
+  dayLabel: string;
   headline: string;
   driverLabel: string;
+  timing?: string;
   body: string;
+  tag?: string;
+  source: WeeklyHoroscopeSection["source"];
+  orb?: number;
+  house?: number;
   sourceUnits: string[];
 };
 
@@ -151,6 +161,7 @@ type WeeklyEphemerisData = {
   events: LunarCalendarEvent[];
   snapshots: SkySnapshot[];
   lunationEventSkies: Map<string, SkySnapshot>;
+  stationEventPositions: Map<string, PlanetPosition>;
 };
 
 type TransitContact = {
@@ -310,6 +321,41 @@ function wholeSignHouse(sign: string, risingSign: string) {
   return signIndex < 0 || risingIndex < 0 ? null : ((signIndex - risingIndex + 12) % 12) + 1;
 }
 
+function ordinalHouse(house: number) {
+  const remainder = house % 100;
+  const suffix = remainder >= 11 && remainder <= 13
+    ? "th"
+    : house % 10 === 1
+      ? "st"
+      : house % 10 === 2
+        ? "nd"
+        : house % 10 === 3
+          ? "rd"
+          : "th";
+  return `${house}${suffix}`;
+}
+
+function stationHouseTiming(
+  event: LunarCalendarEvent,
+  position: PlanetPosition | undefined,
+  timeZone: string
+) {
+  if (
+    !position?.transitStart
+    || !position.transitEnd
+    || normalizeId(position.planet) !== normalizeId(event.planet ?? "")
+    || normalizeId(position.sign) !== normalizeId(event.sign ?? "")
+  ) return undefined;
+
+  const format = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  });
+  return `${format.format(new Date(position.transitStart))} – ${format.format(new Date(position.transitEnd))}`;
+}
+
 function weeklyEphemerisCacheKey(location: LocationInput, window: WeeklyWindow) {
   return [
     window.weekStart,
@@ -345,8 +391,25 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
         await getAstrodienstSky(location, new Date(event.startsAt), { includeTransitWindows: true })
       ] as const))
     );
+    const stationPositionEntries = await Promise.all(
+      events.filter(isExactStation).map(async (event) => {
+        const eventSky = await getAstrodienstSky(
+          location,
+          new Date(event.startsAt),
+          { includeTransitWindows: true }
+        );
+        const planet = normalizeId(event.planet ?? "");
+        const position = eventSky.positions.find((candidate) => normalizeId(candidate.planet) === planet);
+        return position ? [event.id, position] as const : null;
+      })
+    );
+    const stationEventPositions = new Map<string, PlanetPosition>(
+      stationPositionEntries.filter(
+        (entry): entry is readonly [string, PlanetPosition] => entry !== null
+      )
+    );
 
-    return { events, snapshots, lunationEventSkies };
+    return { events, snapshots, lunationEventSkies, stationEventPositions };
   })();
 
   weeklyEphemerisCache.set(key, request);
@@ -472,37 +535,76 @@ function approvedSourceRow(contentKey: string, rows = sourceRows) {
   return rows.find((row) => row.contentKey === contentKey && isReaderEligible(row));
 }
 
-function renderStation(event: LunarCalendarEvent, rows = sourceRows) {
+function renderStation(
+  event: LunarCalendarEvent,
+  risingSign?: string,
+  rows = sourceRows,
+  stationPosition?: PlanetPosition,
+  timeZone = "UTC"
+) {
   const planet = normalizeId(event.planet ?? "");
   const direction = event.direction === "retrograde" ? "rx" : "direct";
   const authored = approvedSourceRow(`authored/station/${planet}/${direction}`, rows);
-
-  if (authored) {
-    return {
+  const station = authored
+    ? {
       headline: authored.headline,
+      driverLabel: event.title,
+      timing: undefined,
       body: authored.body,
-      source: "station" as const
+      source: "station" as const,
+      house: undefined as number | undefined
+    }
+    : (() => {
+      const rendered = transitSynastryFallbackRendererV3.renderTransitRetro({
+        planet,
+        sign: normalizeId(event.sign ?? ""),
+        window: event.direction === "retrograde" ? "Beginning today" : "Turning direct today"
+      });
+      return {
+        headline: rendered.headline,
+        driverLabel: event.title,
+        timing: undefined,
+        body: rendered.body,
+        source: "station" as const,
+        house: undefined as number | undefined
+      };
+    })();
+  const sign = normalizeId(event.sign ?? "");
+  const house = risingSign && sign ? wholeSignHouse(sign, risingSign) : null;
+
+  if (!house) return station;
+  const timing = stationHouseTiming(event, stationPosition, timeZone);
+
+  try {
+    const houseLayer = transitSynastryFallbackRendererV3.renderTransitHouse({
+      planet,
+      house,
+      sign,
+      isRetrograde: event.direction === "retrograde"
+    });
+    const driverLabel = `${event.title} in your ${ordinalHouse(house)} house`;
+    return {
+      headline: `${station.headline} in your ${ordinalHouse(house)} house`,
+      driverLabel,
+      timing,
+      body: `${station.body}\n\n${houseLayer.body}`,
+      source: station.source,
+      house
     };
+  } catch (error) {
+    if (!(error instanceof SourceGapError)) throw error;
+    return station;
   }
-
-  const rendered = transitSynastryFallbackRendererV3.renderTransitRetro({
-    planet,
-    sign: normalizeId(event.sign ?? ""),
-    window: event.direction === "retrograde" ? "Beginning today" : "Turning direct today"
-  });
-
-  return {
-    headline: rendered.headline,
-    body: rendered.body,
-    source: "station" as const
-  };
 }
 
 export function resolveWeeklyStationCopy(
   event: LunarCalendarEvent,
-  rows: WeeklySourceRow[] = sourceRows
+  rows: WeeklySourceRow[] = sourceRows,
+  risingSign?: string,
+  stationPosition?: PlanetPosition,
+  timeZone = "UTC"
 ) {
-  return renderStation(event, rows);
+  return renderStation(event, risingSign, rows, stationPosition, timeZone);
 }
 
 function renderLunation(event: LunarCalendarEvent, risingSign: string, eventSky: SkySnapshot) {
@@ -1092,17 +1194,26 @@ function composeWeeklyReading(sections: WeeklyHoroscopeSection[]): WeeklyHorosco
   const dominant = sections.find((section) => section.accented) ?? sections[0];
   if (!dominant) {
     return {
+      dayLabel: "This week",
       headline: "Your week",
       driverLabel: "this week’s transits to your natal chart",
       body: "No single transit takes over the week. Keep your schedule realistic and leave room to respond to what develops.",
+      source: "weekly-moon",
       sourceUnits: []
     };
   }
 
   return {
+    dateKey: dominant.dateKey,
+    dayLabel: dominant.dayLabel,
     headline: dominant.headline || dominant.driverLabel,
     driverLabel: dominant.driverLabel,
+    timing: dominant.timing,
     body: dominant.body,
+    tag: dominant.tag,
+    source: dominant.source,
+    orb: dominant.orb,
+    house: dominant.house,
     sourceUnits: [dominant.unit]
   };
 }
@@ -1119,9 +1230,16 @@ function composeWeeklyAspects(
       && !primaryUnits.has(section.unit)
     ))
     .map((section) => ({
+      dateKey: section.dateKey,
+      dayLabel: section.dayLabel,
       headline: section.headline || section.driverLabel,
       driverLabel: section.driverLabel,
+      timing: section.timing,
       body: section.body,
+      tag: section.tag,
+      source: section.source,
+      orb: section.orb,
+      house: section.house,
       sourceUnits: [section.unit]
     }));
 }
@@ -1145,7 +1263,7 @@ export async function buildWeeklyHoroscope({
 }): Promise<WeeklyHoroscopeAssembly> {
   const timeZone = location.timeZone || "UTC";
   const window = weeklyWindowFor(now, timeZone);
-  const { events, snapshots, lunationEventSkies } = await loadWeeklyEphemeris(location, window);
+  const { events, snapshots, lunationEventSkies, stationEventPositions } = await loadWeeklyEphemeris(location, window);
   const natalTargets = natalSky.positions.filter((position) => typeof position.longitude === "number");
   const contactsByDay = snapshots.map((snapshot) => allTransitContacts(snapshot, natalTargets));
   const contacts = contactsByDay.flat();
@@ -1185,14 +1303,22 @@ export async function buildWeeklyHoroscope({
             sortTime: event.startsAt
           });
         } else {
-          const rendered = renderStation(event, rows);
+          const rendered = renderStation(
+            event,
+            risingSign,
+            rows,
+            stationEventPositions.get(event.id),
+            timeZone
+          );
           candidates.push({
             dateKey: event.dateKey,
             dayLabel: eventDayLabel(event.dateKey),
             headline: rendered.headline,
-            driverLabel: event.title,
+            driverLabel: rendered.driverLabel,
+            timing: rendered.timing,
             body: weeklyVoice(rendered.body),
             tag: event.direction === "retrograde" ? "Stations retrograde" : "Stations direct",
+            house: rendered.house,
             accented: false,
             source: rendered.source,
             unit: `station:${event.id}`,
@@ -1260,7 +1386,7 @@ export async function buildWeeklyHoroscope({
 
   let sections = capped
     .sort((first, second) => first.sortTime.localeCompare(second.sortTime))
-    .map(({ priority: _priority, sortTime: _sortTime, orb: _orb, ...section }) => section);
+    .map(({ priority: _priority, sortTime: _sortTime, ...section }) => section);
 
   if (sections.length === 0) {
     const mondayMoon = snapshots[0]?.positions.find((position) => position.planet === "Moon");

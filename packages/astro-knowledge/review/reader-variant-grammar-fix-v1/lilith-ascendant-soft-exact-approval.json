@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-lilith-ascendant-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/soft",
+  "payloadSha256": "3832551b22748adf63b7fff784c99ed65882f3f0a36eb1aabfa7bd5dc6652962",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You make it easier for {{holder2}} to be direct about what they want and what they will not accept. {{holder2}} does not have to make their preferences easier for you to hear. There is more room for honesty here without every difference turning into a fight.",
+    "body_they": "{{holder1}} makes it easier for you to be direct about what you want and what you will not accept. You do not have to make your preferences easier for {{holder1}} to hear. There is more room for honesty here without every difference turning into a fight.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

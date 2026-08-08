@@ -35,3 +35,5 @@ When warmthSource is used, it must identify one supplied owner foundation line e
 
 OUTPUT
 Return strict JSON with exactly: body_you, body_they, warmthSource, labels. Do not include commentary.
+warmthSource must be null or exactly this shape, with these exact field names:
+{"sourceArticleId": "<sourceArticleId of the supplied line>", "originalLine": "<the supplied line verbatim>", "usedForm": {"body_you": "<exact sentence as it appears in body_you>", "body_they": "<exact sentence as it appears in body_they>"}}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mercury-pluto-hard",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/pluto/hard",
+  "payloadSha256": "832f41496f37f3655ec87690d90250682367735a04540aa93396baf7a2eef7a4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} probes, and {{holder1}}'s words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition.",
+    "body_they": "{{holder2}} probes, and {{holder1}}'s words get weighed for hidden motives. A normal conversation starts to feel like giving a deposition.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

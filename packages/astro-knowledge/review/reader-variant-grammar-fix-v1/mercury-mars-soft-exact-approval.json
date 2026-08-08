@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-mercury-mars-soft",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/mars/soft",
+  "payloadSha256": "68188c57e4e7a8121832fc0a55b051a9205ad60dc911d61af9cdaa75e7d84a7a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} can move from discussion to action with very little delay. You names the problem clearly, and {{holder2}} knows what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. You help {{holder2}} act with a clearer purpose, while {{holder2}} keeps you from thinking past the moment when action would help.",
+    "body_they": "{{holder1}} and you can move from discussion to action with very little delay. {{holder1}} names the problem clearly, and you know what to do with the information. This works especially well when a decision has been sitting too long or a plan needs momentum. {{holder1}} helps you act with a clearer purpose, while you keep {{holder1}} from thinking past the moment when action would help.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}

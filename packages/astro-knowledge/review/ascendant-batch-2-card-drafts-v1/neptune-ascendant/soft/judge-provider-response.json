@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_0c1c99b38ea172a7006a72827e3b64819ea50108c9bd77a3a5",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 833,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 335,
+    "output_tokens_details": {
+      "reasoning_tokens": 206
+    },
+    "total_tokens": 1168
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants keep the fixed direction: {{holder1}} interprets the Ascendant person's presentation generously, and the Ascendant person responds by monitoring themselves less. The first two sentences form a recognizable behavior loop within the supplied boundary, linking uncertainty about meaning to a more relaxed, natural presentation. The third sentence, \\\"This ease can leave your assumptions about them untested,\\\" supplies a specific cost rather than a stock closing. The two bodies preserve the same meaning cleanly with the holder roles reversed, and neither adds excluded claims or unsupported outcomes.\"}"
+}

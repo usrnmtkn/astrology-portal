@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "moon-venus-conjunction-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-venus/conjunction/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "explicit_owner_deletion_only_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "730ed95115cb7331a42c6400065ca3c6bbabd3e78211c8bb3ce171a30689eff3",
+  "payload": {
+    "body_you": "{{holder2}}'s affection makes you feel cared for, and you respond with warmth that helps {{holder2}} relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken.",
+    "body_they": "Your affection makes {{holder1}} feel cared for, and {{holder1}} responds with warmth that helps you relax and feel emotionally safe. Because being gentle with each other feels so easy, you may both smooth over discomfort and leave harder feelings unspoken.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "delete_final_sentence_both_variants",
+    "deletedText": [
+      "But the deeper work lies in redefining what makes you feel secure.",
+      "But the deeper work lies in redefining what makes you feel secure."
+    ],
+    "warmthSourceDisposition": "set_null_and_labels_cleared",
+    "approvedAsDraftedRecorded": false,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "7ad367a1d71be16d7c4e062059b567b90e5c288f8d52695011042dff0ecfd125",
+    "writerProviderResponseSha256": "dae1c73ef22bcbf63268a7dcab64ce18dda64b6b61b1e7d3e4ba50774b2dfea9"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/moon-venus/conjunction/exact-approval.json"
+}

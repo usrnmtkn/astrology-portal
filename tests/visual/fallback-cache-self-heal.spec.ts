@@ -3,8 +3,7 @@ import { expect, test } from "@playwright/test";
 const cacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const versionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 const staleJupiterHook = "Someone just took the stage without asking if they were invited.";
-const currentJupiterHook = "Jupiter in Leo makes it easier to admit that we want more.";
-const currentSunJupiterAspect = "Confidence opens doors hesitation kept locked";
+const currentJupiterArticle = "Jupiter enters Leo on June 30, and the work we kept private becomes easier to show.";
 
 test("an old Jupiter/Lilith package cache self-heals to the bundled package", async ({ page }) => {
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
@@ -76,8 +75,7 @@ test("an old Jupiter/Lilith package cache self-heals to the bundled package", as
   await page.goto("/#sky/placement/jupiter", { waitUntil: "domcontentloaded" });
   const article = page.locator(".sky-detail-article").first();
   await expect(article).toBeVisible({ timeout: 15_000 });
-  await expect(article).toContainText(currentJupiterHook);
-  await expect(article).toContainText(currentSunJupiterAspect);
+  await expect(article).toContainText(currentJupiterArticle);
   await expect(article).not.toContainText(staleJupiterHook);
 
   await expect.poll(async () => page.evaluate(

@@ -1,0 +1,110 @@
+{
+ "chiron-ascendant/conjunction": {
+  "payload": {
+   "body_you": "{{holder1}} notices where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making {{holder2}} explain every reaction.",
+   "body_they": "{{holder1}} notices where {{holder2}} is more sensitive than they appear. That attention can feel comforting, but it can also leave {{holder2}} feeling exposed. Small comments may land harder than expected, while {{holder1}} may also know when to ease up without making {{holder2}} explain every reaction.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "5f274820f90ae57b07966661b7ed4e9125e491f8b9efd00aef7f11a79b24890e"
+ },
+ "chiron-ascendant/hard": {
+  "payload": {
+   "body_you": "{{holder2}}'s natural way of speaking or reacting can touch a sensitive place for {{holder1}}. {{holder1}} may pull back, become defensive, or take the reaction personally. In turn, {{holder2}} can feel criticized for simply being themselves, and both may become unusually cautious around each other.",
+   "body_they": "{{holder2}}'s natural way of speaking or reacting can touch a sensitive place for {{holder1}}. {{holder1}} may pull back, become defensive, or take the reaction personally. In turn, {{holder2}} can feel criticized for simply being themselves, and both may become unusually cautious around each other.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "c4564353174a6f043db892b99c7005f21fe7db69ef5158d3b9de7c2243469651"
+ },
+ "chiron-ascendant/soft": {
+  "payload": {
+   "body_you": "{{holder1}} tends to understand where {{holder2}} is more vulnerable without making it the center of the relationship. {{holder2}} can relax around them and does not have to explain every reaction. Care shows up in the way {{holder1}} adjusts without drawing unnecessary attention to it.",
+   "body_they": "{{holder1}} tends to understand where {{holder2}} is more vulnerable without making it the center of the relationship. {{holder2}} can relax around them and does not have to explain every reaction. Care shows up in the way {{holder1}} adjusts without drawing unnecessary attention to it.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "71f671345b303d467c040babdfc1d35860c6c5b5b2f1f5fbb71f35c721dd8ac2"
+ },
+ "lilith-ascendant/conjunction": {
+  "payload": {
+   "body_you": "{{holder1}} brings out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+   "body_they": "{{holder1}} brings out the side of {{holder2}} that is less interested in keeping the peace at their own expense. {{holder2}} may speak more bluntly, admit what they want sooner, or stop pretending an arrangement works when it does not. The connection can feel freeing, but it may also become confrontational quickly.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "e263b48f61e0e9d2d1eefcef989e9263fc01d85e53879dae4ce16ada230d4ec3"
+ },
+ "lilith-ascendant/hard": {
+  "payload": {
+   "body_you": "{{holder1}} may see {{holder2}}'s composure as avoidance or an attempt to keep everyone comfortable. {{holder2}} may experience {{holder1}}'s directness as judgment or pressure. {{holder1}} keeps pushing for the full truth, while {{holder2}} wants more care in how that truth is delivered.",
+   "body_they": "{{holder1}} may see {{holder2}}'s composure as avoidance or an attempt to keep everyone comfortable. {{holder2}} may experience {{holder1}}'s directness as judgment or pressure. {{holder1}} keeps pushing for the full truth, while {{holder2}} wants more care in how that truth is delivered.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "836fde498d8a7cf958f8a5b34101f78dbb359d6536f232881dbada8bdfbfabd7"
+ },
+ "lilith-ascendant/soft": {
+  "payload": {
+   "body_you": "{{holder1}} makes it easier for {{holder2}} to be direct about what they want and what they will not accept. {{holder2}} does not have to make their preferences easier for {{holder1}} to hear. There is more room for honesty here without every difference turning into a fight.",
+   "body_they": "{{holder1}} makes it easier for {{holder2}} to be direct about what they want and what they will not accept. {{holder2}} does not have to make their preferences easier for {{holder1}} to hear. There is more room for honesty here without every difference turning into a fight.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "6e2512bb4078d47a1a2e4b89c6c6dd97d18b1ad7685d63f9523ae0e0b349a21e"
+ },
+ "north-node-ascendant/conjunction": {
+  "payload": {
+   "body_you": "Around {{holder1}}, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. {{holder1}} can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+   "body_they": "Around {{holder1}}, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. {{holder1}} can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "a5e01957e67a07f2f8e91d1040160f38d9132881e0442ff6d09cce738221304f"
+ },
+ "north-node-ascendant/hard": {
+  "payload": {
+   "body_you": "{{holder1}} keeps challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+   "body_they": "{{holder1}} keeps challenging the way {{holder2}} usually handles new people and situations. {{holder2}} may feel pushed to move faster, speak up, or take a risk before they feel ready. The connection can be motivating, but it can also leave {{holder2}} feeling that their natural pace is never enough.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "64af9ef0789fde12d578754493f82bf93e5cbc71089bc22752cdd8d2c69920f0"
+ },
+ "north-node-ascendant/soft": {
+  "payload": {
+   "body_you": "{{holder1}} makes unfamiliar choices feel easier for {{holder2}} to try. {{holder2}} may speak up sooner, take a chance, or step into a new role without feeling like they are forcing themselves. Change tends to happen more naturally around {{holder1}}.",
+   "body_they": "{{holder1}} makes unfamiliar choices feel easier for {{holder2}} to try. {{holder2}} may speak up sooner, take a chance, or step into a new role without feeling like they are forcing themselves. Change tends to happen more naturally around {{holder1}}.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "389a534bb3d15214104504b7b58bad897266381373e6122392cff5f7d238d2c1"
+ },
+ "south-node-ascendant/conjunction": {
+  "payload": {
+   "body_you": "{{holder1}} feels familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+   "body_they": "{{holder1}} feels familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "c2d968934235ba68e05b44d5a94a129203a42e70b4081bea51e8afdcd677eb4d"
+ },
+ "south-node-ascendant/hard": {
+  "payload": {
+   "body_you": "{{holder1}} may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+   "body_they": "{{holder1}} may keep responding to an older version of {{holder2}}, even while {{holder2}} is trying to act differently. {{holder2}} can feel misunderstood or boxed into a role they no longer want. The connection may feel warm and familiar while still making change more difficult.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "48b3a8e2321447adc848c03424bc2b0378521782714c6d2f7af6880207476112"
+ },
+ "south-node-ascendant/soft": {
+  "payload": {
+   "body_you": "{{holder1}} and {{holder2}} understand each other's habits quickly. They know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new.",
+   "body_they": "{{holder1}} and {{holder2}} understand each other's habits quickly. They know what to expect, what each person needs, and how to fall into a comfortable rhythm. The ease is real, but the relationship may keep repeating what already works instead of bringing out anything new.",
+   "warmthSource": null,
+   "labels": []
+  },
+  "sha256": "7d1e909cdb20bd1bb3cfbc28e713a6645d134c16d77907dbbd06f9a2a760caf4"
+ }
+}

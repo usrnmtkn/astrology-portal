@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_029e83fc8345103a006a729d39cb8081a28e32f33243dd9f7e",
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "usage": {
+    "input_tokens": 805,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 390,
+    "output_tokens_details": {
+      "reasoning_tokens": 236
+    },
+    "total_tokens": 1195
+  },
+  "output_text": "{\"body_you\":\"The way you question or explain things can rub against {{holder2}}'s sense of tact. A comment you consider casual may feel to {{holder2}} like criticism of what they like or how they show care. When they react more strongly than you expected, you may explain yourself further, which can make them feel even less understood.\",\"body_they\":\"{{holder1}}'s way of questioning or explaining things can rub against your sense of tact. A comment they consider casual may feel like criticism of what you like or how you show care. When you react more strongly than they expected, they may explain themselves further, which can make you feel even less understood.\",\"warmthSource\":null,\"labels\":[]}"
+}

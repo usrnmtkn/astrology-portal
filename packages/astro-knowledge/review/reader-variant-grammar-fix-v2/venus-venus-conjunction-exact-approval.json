@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-venus-venus-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/venus/venus/conjunction",
+  "payloadSha256": "0db7ec77afe05bcadac38434b37cc16857b69fed7af32b25e0268e4b159be9c0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You and {{holder2}} usually recognize the same forms of affection, pleasure, and consideration. You may enjoy similar places, notice the same details, or understand without much explanation what makes the other person feel appreciated. That similarity can make the relationship feel immediately familiar. It can also give you and {{holder2}} the same blind spots. If both avoid the same uncomfortable conversation or expect care to arrive in the same unspoken way, neither person notices what is missing.",
+    "body_they": "{{holder1}} and you usually recognize the same forms of affection, pleasure, and consideration. You may enjoy similar places, notice the same details, or understand without much explanation what makes the other person feel appreciated. That similarity can make the relationship feel immediately familiar. It can also give {{holder1}} and you the same blind spots. If both avoid the same uncomfortable conversation or expect care to arrive in the same unspoken way, neither person notices what is missing.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,997 @@
+[
+ {
+  "sample": 1,
+  "candidate": {
+   "headline": "You have room to change one part of your routine.",
+   "body": "Notice when your usual place to work starts costing you focus. Someone takes a speakerphone call nearby, and you reread the same reply three times before finishing one sentence. You spot an empty desk across the room. Take it for the next hour. You keep the larger plan and work somewhere else for one noisy hour."
+  },
+  "raw": "{\"headline\":\"You have room to change one part of your routine.\",\"body\":\"Notice when your usual place to work starts costing you focus. Someone takes a speakerphone call nearby, and you reread the same reply three times before finishing one sentence. You spot an empty desk across the room. Take it for the next hour. You keep the larger plan and work somewhere else for one noisy hour.\"}",
+  "writerUsage": {
+   "inputTokens": 3745,
+   "cachedInputTokens": 0,
+   "cacheWriteTokens": 3742,
+   "outputTokens": 3374,
+   "reasoningTokens": 3287,
+   "totalTokens": 7119
+  },
+  "responseId": "resp_0c983e302c772ecf006a736f1397c0819dafc3a3524ac75d0f",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/uranus",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "10 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "56 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 2 detected instruction(s); final sentence: You keep the larger plan and work somewhere else for one noisy hour."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "uranus"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "softGrammar": false,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You spot an empty desk across the room.",
+      "Take it for the next hour."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/uranus",
+       "matches": [
+        "change-independence"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 10,
+    "headlineSentences": 1,
+    "bodyWords": 56,
+    "bodySentences": 5,
+    "instructions": 2,
+    "timeAnchors": 0,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "soft/uranus",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 3,
+   "dimScore": 7,
+   "verdict": {
+    "score": 3,
+    "verdict": "This candidate reads like the GOOD examples: plain, conversational, and truthful without AI polish. It names a clear cost—losing focus and rereading replies—which creates stakes. The interpretation arrives early and is supported by a lived example, with a clear, complete ending that offers a simple instruction. Hedging is minimal (none here). The formula avoids templates or mechanical phrasing. The sentence about rereading the same reply three times is a screenshot-worthy moment that captures a common but rarely named frustration. The specificity fits the soft/uranus key well, focusing on a subtle disruption in routine and a practical fix.",
+    "dimensions": {
+     "voice": true,
+     "stakes": true,
+     "structure": true,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "Someone takes a speakerphone call nearby, and you reread the same reply three times before finishing one sentence.",
+    "why": "This line vividly captures a relatable moment of distraction and frustration that many have felt but not articulated so clearly. It grounds the abstract idea of losing focus in a concrete, specific example that makes the stakes real and immediate."
+   },
+   "usage": {
+    "input_tokens": 1189,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 272,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1461
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 2,
+  "candidate": {
+   "headline": "Your routine could use a small shake-up.",
+   "body": "Notice when you are about to spend the ten-minute gap before your next appointment on the slower task, then switch the order. You can stop for the nearby pickup first and return the nonurgent phone call afterward, even if you normally put the call first. You still have the same commitments. You can change direction as you learn more about the timing, keeping those commitments intact."
+  },
+  "raw": "{\"headline\":\"Your routine could use a small shake-up.\",\"body\":\"Notice when you are about to spend the ten-minute gap before your next appointment on the slower task, then switch the order. You can stop for the nearby pickup first and return the nonurgent phone call afterward, even if you normally put the call first. You still have the same commitments. You can change direction as you learn more about the timing, keeping those commitments intact.\"}",
+  "writerUsage": {
+   "inputTokens": 3745,
+   "cachedInputTokens": 3742,
+   "cacheWriteTokens": 0,
+   "outputTokens": 3678,
+   "reasoningTokens": 3582,
+   "totalTokens": 7423
+  },
+  "responseId": "resp_07cbd08799f818d8006a736f746ce0819c86430e91b8e8e2ce",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/uranus",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "67 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: You can change direction as you learn more about the timing, keeping those commitments intact."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "mildEaseCue": false,
+      "target": "uranus"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "softGrammar": false,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "You still have the same commitments."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/uranus",
+       "matches": [
+        "change-independence"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 67,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "soft/uranus",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 2,
+   "dimScore": 4,
+   "verdict": {
+    "score": 2,
+    "verdict": "The candidate reads fairly conversational and avoids formulaic permission frames, which aligns somewhat with the owner's voice. However, the stakes are weakly implied (time management) rather than clearly named as a recognizable cost or consequence. The structure delays the main insight until the middle, and the ending feels incomplete without a clear concluding thought or instruction. Hedging is minimal and formula smell is low, but the screenshot line is not very striking or memorable. Specificity to this key is moderate but could be stronger by naming the unique tension or energy of this transit more clearly.",
+    "dimensions": {
+     "voice": true,
+     "stakes": false,
+     "structure": false,
+     "hedging": true,
+     "formula": true,
+     "screenshot_line": false,
+     "specificity": true
+    },
+    "best_line": "You can change direction as you learn more about the timing, keeping those commitments intact.",
+    "why": "This sentence captures a practical truth about flexibility within constraints, which is a useful insight that someone might save or share. It conveys a clear, actionable idea that resonates with the experience of juggling commitments and adapting plans, reflecting the key's theme of adjusting routine without losing track of responsibilities."
+   },
+   "usage": {
+    "input_tokens": 1198,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 268,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1466
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 3,
+  "candidate": {
+   "headline": "Your routine could use a small shake-up.",
+   "body": "Notice when your usual afternoon check-in cuts into the quiet stretch you need for focused work, then move it by twenty minutes and send a brief update. When you keep the original time, you break up the work you were trying to finish. Twenty minutes is enough. You still respect the person who planned around you. You are adjusting the plan with better information, and the next few hours can stay intact."
+  },
+  "raw": "{\"headline\":\"Your routine could use a small shake-up.\",\"body\":\"Notice when your usual afternoon check-in cuts into the quiet stretch you need for focused work, then move it by twenty minutes and send a brief update. When you keep the original time, you break up the work you were trying to finish. Twenty minutes is enough. You still respect the person who planned around you. You are adjusting the plan with better information, and the next few hours can stay intact.\"}",
+  "writerUsage": {
+   "inputTokens": 3745,
+   "cachedInputTokens": 3742,
+   "cacheWriteTokens": 0,
+   "outputTokens": 3726,
+   "reasoningTokens": 3624,
+   "totalTokens": 7471
+  },
+  "responseId": "resp_0ae05ee58cd7a86b006a736fc5add881a1a7e466c8d35d1d93",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/uranus",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "5 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "73 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: You are adjusting the plan with better information, and the next few hours can stay intact."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": false,
+     "details": {
+      "mildEaseCue": false,
+      "target": "uranus"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": false,
+     "details": {
+      "softGrammar": false,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "Twenty minutes is enough."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/uranus",
+       "matches": [
+        "change-independence"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": true,
+     "details": [
+      "You still respect the person who planned around you."
+     ]
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 73,
+    "bodySentences": 5,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 1
+   }
+  },
+  "judge": {
+   "key": "soft/uranus",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 2,
+   "dimScore": 4,
+   "verdict": {
+    "score": 2,
+    "verdict": "The candidate reads mostly in voice with plain conversational truth and a clear lived example early on. It names a recognizable cost—breaking up focused work time—but the stakes could be stronger by emphasizing the consequence more sharply (e.g., lost productivity or frustration). The structure is mostly solid but the ending feels a bit soft and formulaic, with hedging present in 'could use' and 'can stay intact.' The formula dimension is borderline due to the mild permission frame 'You still respect...' and the mechanical time anchor 'twenty minutes.' The screenshot line is decent but not strikingly unique or memorable. Specificity is good for this key, focusing on a group/target who manages routine and communication. Overall, it needs a rewrite to sharpen stakes, reduce hedging, and avoid formulaic phrasing.",
+    "dimensions": {
+     "voice": true,
+     "stakes": false,
+     "structure": true,
+     "hedging": false,
+     "formula": false,
+     "screenshot_line": true,
+     "specificity": true
+    },
+    "best_line": "When you keep the original time, you break up the work you were trying to finish.",
+    "why": "This sentence clearly names a recognizable and relatable consequence of sticking to the original routine time, making the cost concrete and felt. It is straightforward and conversational, capturing a truth about how small scheduling choices impact focus and productivity."
+   },
+   "usage": {
+    "input_tokens": 1204,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 306,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1510
+   },
+   "advisoryOnly": true
+  }
+ },
+ {
+  "sample": 4,
+  "candidate": {
+   "headline": "A small change gives your routine more room.",
+   "body": "Notice when a plan shifts, and use the gap to start the next task in the order that makes sense to you. When a scheduled call moves back by twenty minutes, you lose that time if you keep waiting for the old order to resume. The wait is optional. You can choose what comes next during the gap and leave the rest of the schedule alone."
+  },
+  "raw": "{\"headline\":\"A small change gives your routine more room.\",\"body\":\"Notice when a plan shifts, and use the gap to start the next task in the order that makes sense to you. When a scheduled call moves back by twenty minutes, you lose that time if you keep waiting for the old order to resume. The wait is optional. You can choose what comes next during the gap and leave the rest of the schedule alone.\"}",
+  "writerUsage": {
+   "inputTokens": 3745,
+   "cachedInputTokens": 3742,
+   "cacheWriteTokens": 0,
+   "outputTokens": 4872,
+   "reasoningTokens": 4779,
+   "totalTokens": 8617
+  },
+  "responseId": "resp_0afb0965ceecadd9006a737015b3948192a06166fabb684688",
+  "lint": {
+   "schemaVersion": 1,
+   "key": "soft/uranus",
+   "passed": false,
+   "immutableRawOutput": true,
+   "revisionsMade": 0,
+   "ownerPlacementApproval": {
+    "required": false
+   },
+   "checks": [
+    {
+     "id": "P4-headline-one-declarative-sentence",
+     "passed": true,
+     "details": "1 sentence(s)"
+    },
+    {
+     "id": "P4-headline-word-count",
+     "passed": true,
+     "details": "8 words"
+    },
+    {
+     "id": "P4-body-sentence-count",
+     "passed": true,
+     "details": "4 sentences"
+    },
+    {
+     "id": "P4-body-word-count",
+     "passed": true,
+     "details": "66 words"
+    },
+    {
+     "id": "P4-one-final-instruction",
+     "passed": true,
+     "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: You can choose what comes next during the gap and leave the rest of the schedule alone."
+    },
+    {
+     "id": "P4-body-supports-without-repeating",
+     "passed": true,
+     "details": "Body does not repeat the full headline."
+    },
+    {
+     "id": "global+VC-016+DG+SM-output-bans",
+     "passed": true,
+     "details": "No prohibited match."
+    },
+    {
+     "id": "DG-R2-register",
+     "passed": true,
+     "details": {
+      "mildEaseCue": true,
+      "target": "uranus"
+     }
+    },
+    {
+     "id": "DG-R3-no-slogan-or-restatement-closer",
+     "passed": true,
+     "details": "No known slogan or full-headline restatement detected."
+    },
+    {
+     "id": "DG-R4-no-outcome-promise",
+     "passed": true,
+     "details": "No deterministic outcome promise detected."
+    },
+    {
+     "id": "DG-R7-varied-opener",
+     "passed": true,
+     "details": "Body uses a non-fixed opener."
+    },
+    {
+     "id": "DG-R9-enumerated-instruction-allowed",
+     "passed": true,
+     "details": "No enumerated one-X/one-Y instruction present."
+    },
+    {
+     "id": "B1-L1-time-anchor-max-once",
+     "passed": true,
+     "details": "No time-anchor phrase used."
+    },
+    {
+     "id": "B1-L2-may-inner-states-only",
+     "passed": true,
+     "details": "Every may clause is an inner state, or may is absent."
+    },
+    {
+     "id": "B1-L3+L4-headline-group-grammar",
+     "passed": true,
+     "details": {
+      "softGrammar": true,
+      "otherGrammar": false
+     }
+    },
+    {
+     "id": "SM-DG-2-no-diagnostic-history",
+     "passed": true,
+     "details": "No diagnostic reader-history frame detected."
+    },
+    {
+     "id": "DG-R11-unhedged-headline",
+     "passed": true,
+     "details": "Headline makes an unhedged claim."
+    },
+    {
+     "id": "DG-R12-no-time-anchor-opener",
+     "passed": true,
+     "details": "Body opens inside the scene."
+    },
+    {
+     "id": "DG-R13-may-max-once",
+     "passed": true,
+     "details": "0 may usage(s)"
+    },
+    {
+     "id": "DG-R14-scene-not-biographical",
+     "passed": true,
+     "details": "No biographical anchor detected."
+    },
+    {
+     "id": "DG-R15-action-repairs-moment",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R16-owner-reserved-construction",
+     "passed": true,
+     "details": []
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-max-one",
+     "passed": true,
+     "details": "No quoted-dialogue line used."
+    },
+    {
+     "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+     "passed": true,
+     "advisory": true,
+     "details": "No quoted-dialogue judgment needed."
+    },
+    {
+     "id": "OWNER-DIRECTIVE-short-blunt-line",
+     "passed": true,
+     "details": [
+      "The wait is optional."
+     ]
+    },
+    {
+     "id": "OWNER-TEST-specificity",
+     "passed": false,
+     "advisory": false,
+     "details": {
+      "own": {
+       "key": "soft/uranus",
+       "matches": [
+        "change-independence"
+       ],
+       "required": 2,
+       "passed": false
+      },
+      "comparisonScope": [
+       "square/mars",
+       "square/uranus",
+       "opposition/jupiter",
+       "opposition/pluto",
+       "soft/mercury",
+       "soft/chiron",
+       "house/5"
+      ],
+      "swappableTo": [
+       {
+        "key": "house/5",
+        "matches": [
+         "creativity-play"
+        ],
+        "passed": true
+       }
+      ],
+      "advisorySwappableTo": []
+     }
+    },
+    {
+     "id": "OWNER-TEST-morning-read",
+     "passed": true,
+     "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+    },
+    {
+     "id": "OWNER-TEST-screenshot",
+     "passed": false,
+     "details": "No candidate body line detected."
+    }
+   ],
+   "findings": [],
+   "counts": {
+    "headlineWords": 8,
+    "headlineSentences": 1,
+    "bodyWords": 66,
+    "bodySentences": 4,
+    "instructions": 1,
+    "timeAnchors": 0,
+    "mayUsages": 0,
+    "quotedDialogueLines": 0,
+    "screenshotCandidateLines": 0
+   }
+  },
+  "judge": {
+   "key": "soft/uranus",
+   "rubricVersion": "daily-glance-voice-v1:owner-directives-1-2+S3",
+   "judgeModel": "gpt-4.1-mini",
+   "score": 2,
+   "dimScore": 4,
+   "verdict": {
+    "score": 2,
+    "verdict": "The candidate has a mostly clear voice and a useful insight about using unexpected gaps to reorder tasks, which fits the key's theme. However, it hedges twice ('Notice when', 'You can choose'), and the stakes dimension is weak because it does not name a recognizable cost or consequence beyond vague 'losing time' if waiting. The structure is mostly fine but the ending feels incomplete, lacking a closing instruction or a stronger wrap-up. The formula is mostly free of templates, and the screenshot line is borderline but not very striking or memorable. Specificity is adequate for the key. Overall, it needs a rewrite to sharpen stakes, reduce hedging, and complete the thought.",
+    "dimensions": {
+     "voice": true,
+     "stakes": false,
+     "structure": true,
+     "hedging": false,
+     "formula": true,
+     "screenshot_line": false,
+     "specificity": true
+    },
+    "best_line": "When a scheduled call moves back by twenty minutes, you lose that time if you keep waiting for the old order to resume.",
+    "why": "This sentence names a concrete, relatable consequence (losing time) tied to a specific scenario (a call moving back), which grounds the abstract advice in lived experience. It captures a subtle frustration many feel but might not articulate, making it the strongest and most shareable line in the candidate."
+   },
+   "usage": {
+    "input_tokens": 1195,
+    "input_tokens_details": {
+     "cache_write_tokens": 0,
+     "cached_tokens": 0
+    },
+    "output_tokens": 303,
+    "output_tokens_details": {
+     "reasoning_tokens": 0
+    },
+    "total_tokens": 1498
+   },
+   "advisoryOnly": true
+  }
+ }
+]

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "dedupe-chunk-4-owner-authored-mercury-uranus-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/mercury/uranus/conjunction",
+  "payloadSha256": "b9040b948eeedc0dc072756c27abcb86c6a48a8ede2c2b4305943c2e0c3244f5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "{{holder2}} completely shakes up how {{holder1}} thinks. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning.",
+    "body_they": "{{holder2}} completely shakes up how {{holder1}} thinks. Breakthrough ideas arrive beside abrupt topic changes and interruptions, often without warning.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-05",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

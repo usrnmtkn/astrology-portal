@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "sun-mars-soft-owner-revision-v1",
+  "sourceDraftPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/soft/draft.json",
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "revisionMethod": "owner_approved_as_drafted_pending_hash_bound_exact_approval",
+  "additionalBilledCalls": 0,
+  "status": "exact_owner_approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "renderEligible": false,
+  "canonical": false,
+  "servingChanged": false,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "12bd51a361482547aa809c25efc4af60a250fd373e61f2ce7b905c143ae2e4b5",
+  "payload": {
+    "body_you": "When you decide what you want to make happen, {{holder2}} is quick to put energy behind it. Their readiness to act gets you moving, while your direction gives their drive a clear focus. The easy momentum can carry both of you into action before either of you has paused to check the pace.",
+    "body_they": "When {{holder1}} decides what they want to make happen, you are quick to put energy behind it. Your readiness to act gets them moving, while their direction gives your drive a clear focus. The easy momentum can carry both of you into action before either of you has paused to check the pace.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "ownerDecision": {
+    "operation": "approve_as_drafted",
+    "deletedText": [],
+    "warmthSourceDisposition": "null_unchanged",
+    "approvedAsDraftedRecorded": true,
+    "hashBoundExactApprovalPending": false,
+    "hashBoundExactApproval": true
+  },
+  "preservedOriginalArtifacts": {
+    "draftSha256": "8857b4e95d7240cd8f26c1a7d9cd29343cb50de106594b9050bd1eacd3ee75b5",
+    "writerProviderResponseSha256": "a33c4f91cc6773bb5a9f0fbada91bd83a10253f40117c03b3a0502f5a371999e"
+  },
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-04",
+  "approvalRecordPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/soft/exact-approval.json"
+}

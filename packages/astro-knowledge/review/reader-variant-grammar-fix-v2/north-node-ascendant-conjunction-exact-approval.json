@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v2-north-node-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/conjunction",
+  "payloadSha256": "44b4ab618df9c02bf29d3d22fcb59ba3733b7a67c3c2f77b1ab87314e3f004a8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "Around you, {{holder2}} may act more boldly than usual. They may take the lead, try a new role, or make a choice they would normally overthink. You can make change feel exciting, though {{holder2}} may also feel exposed while they are still finding their footing.",
+    "body_they": "Around {{holder1}}, you may act more boldly than usual. You may take the lead, try a new role, or make a choice you would normally overthink. {{holder1}} can make change feel exciting, though you may also feel exposed while you are still finding your footing.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-07",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0
+}

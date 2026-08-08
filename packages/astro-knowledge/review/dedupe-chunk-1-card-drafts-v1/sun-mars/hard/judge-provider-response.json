@@ -1,0 +1,18 @@
+{
+  "responseId": "resp_059c6d8cc4661ee2006a72964253e481a2be368722a1325766",
+  "status": "completed",
+  "model": "gpt-5.6-terra",
+  "usage": {
+    "input_tokens": 1074,
+    "input_tokens_details": {
+      "cache_write_tokens": 1071,
+      "cached_tokens": 0
+    },
+    "output_tokens": 226,
+    "output_tokens_details": {
+      "reasoning_tokens": 104
+    },
+    "total_tokens": 1300
+  },
+  "output_text": "{\"score\":3,\"verdict\":\"in-voice\",\"reasoning\":\"Both variants preserve the fixed direction: {{holder2}}'s speed or pressure lands on {{holder1}}'s authority, and {{holder1}} responds by pushing back or taking control. The second sentences build a clear escalation loop with a concrete cost, as ordinary decisions become arguments about who is in charge. The two bodies are meaningfully parallel without introducing excluded claims or outside doctrine. The final sentence stays within the supplied boundary's stimulating intensity and does not add a separate conclusion or unsupported advice.\"}"
+}

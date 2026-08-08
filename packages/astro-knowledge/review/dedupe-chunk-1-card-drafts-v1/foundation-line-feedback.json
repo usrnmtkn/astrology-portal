@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "ownerFeedbackSource": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md",
+  "recordedAt": "2026-08-04",
+  "feedback": [
+    {
+      "id": "ground-beneath-disconnected-closer-rejection",
+      "sourceArticleId": "aquarius-season-2025",
+      "originalLine": "When the ground beneath you feels unstable, it's natural to want to hold tightly to what you know.",
+      "disposition": "owner_rejected_as_disconnected_card_closer",
+      "knownShippedUses": [
+        {
+          "contentKey": "fallback-hook/synastry-pair/moon/ascendant/conjunction",
+          "disposition": "shipped_owner_approved_prior_context"
+        }
+      ],
+      "inFlightUses": [
+        {
+          "target": "moon-mercury-hard",
+          "disposition": "removed_by_owner_direction"
+        }
+      ]
+    },
+    {
+      "id": "deeper-work-security-disconnected-closer-rejection",
+      "sourceArticleId": "cancer-new-moon-2025",
+      "originalLine": "But the deeper work lies in redefining what makes you feel secure.",
+      "disposition": "owner_rejected_as_disconnected_card_closer",
+      "knownShippedUses": [],
+      "inFlightUses": [
+        {
+          "target": "moon-moon-hard",
+          "disposition": "removed_by_owner_direction"
+        },
+        {
+          "target": "moon-venus-conjunction",
+          "disposition": "removed_by_owner_direction"
+        }
+      ]
+    }
+  ],
+  "futureHarvestRequirement": {
+    "id": "flag-foundation-line-reuse-across-shipped-or-in-flight-cards",
+    "severity": "editorial",
+    "blocking": false,
+    "reason": "Foundation-line reuse across shipped or in-flight cards must be flagged for owner review before a new candidate uses the line.",
+    "implementationStatus": "owner_feedback_applied_to_voice_memory; harvest-engine wiring remains outside this shipping change"
+  },
+  "governedVoiceIndexChanged": true,
+  "harvestEngineChanged": false,
+  "voiceMemoryApplied": true,
+  "applyResultPaths": [
+    "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-apply-ground-beneath.json",
+    "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-apply-deeper-work-security.json"
+  ]
+}

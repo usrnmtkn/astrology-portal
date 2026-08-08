@@ -1,0 +1,78 @@
+{
+  "chunk": "point-pair-ascendant-sources-v1",
+  "approvedAt": "2026-08-05",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "5f274820f90ae57b07966661b7ed4e9125e491f8b9efd00aef7f11a79b24890e",
+      "previousBodySha256": "414a3829138226d9814fee34baff35d8a16309b565b95bb22515d22939dbf544"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-hard-exact-approval.json",
+      "payloadSha256": "c4564353174a6f043db892b99c7005f21fe7db69ef5158d3b9de7c2243469651",
+      "previousBodySha256": "6ad4c9eced49ea1922f82f0a9a94ae876d457f4b51107fa1f66914664e3eaa23"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/chiron/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/chiron-ascendant-soft-exact-approval.json",
+      "payloadSha256": "71f671345b303d467c040babdfc1d35860c6c5b5b2f1f5fbb71f35c721dd8ac2",
+      "previousBodySha256": "508c1c15583a389aae9b00855ae410a3f82c0725a6bd023c4f32272bc4bd4dc2"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "e263b48f61e0e9d2d1eefcef989e9263fc01d85e53879dae4ce16ada230d4ec3",
+      "previousBodySha256": "03654c2ed71ef8406d0590b85003a012832a5e96c18ac1ab18a0dbd525c36fb5"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-hard-exact-approval.json",
+      "payloadSha256": "836fde498d8a7cf958f8a5b34101f78dbb359d6536f232881dbada8bdfbfabd7",
+      "previousBodySha256": "681675379a0055b98eee626581c45bf3fd874e79a79006335bf7f63bdbb69f36"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/lilith/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/lilith-ascendant-soft-exact-approval.json",
+      "payloadSha256": "6e2512bb4078d47a1a2e4b89c6c6dd97d18b1ad7685d63f9523ae0e0b349a21e",
+      "previousBodySha256": "1200aeb85e43d0ee0ef7de91e46fd52bd971b241c53f760e44b26c1fde0429c0"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "a5e01957e67a07f2f8e91d1040160f38d9132881e0442ff6d09cce738221304f",
+      "previousBodySha256": "9d744f76bd81259dc0b946fc399e566395af32636d6074fb4203bfbe8672ec62"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-hard-exact-approval.json",
+      "payloadSha256": "64af9ef0789fde12d578754493f82bf93e5cbc71089bc22752cdd8d2c69920f0",
+      "previousBodySha256": "e9d2e9e2d22452ea66094ca062a9abedafdc279d37e2184ece9963ff591c3879"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/north-node/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/north-node-ascendant-soft-exact-approval.json",
+      "payloadSha256": "389a534bb3d15214104504b7b58bad897266381373e6122392cff5f7d238d2c1",
+      "previousBodySha256": "11b9d6ca37563382448f804822e77fa7cdb40a9c4e157d2c59b98f6dc319e025"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/conjunction",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-conjunction-exact-approval.json",
+      "payloadSha256": "c2d968934235ba68e05b44d5a94a129203a42e70b4081bea51e8afdcd677eb4d",
+      "previousBodySha256": "077710f24c0064f99c87493941cd32ba8a3d9be3bb904e6121911a9165cfcd43"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/hard",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-hard-exact-approval.json",
+      "payloadSha256": "48b3a8e2321447adc848c03424bc2b0378521782714c6d2f7af6880207476112",
+      "previousBodySha256": "2fcfb01a91e5cdd0ec4761a8f7c818869b7389ea231065c41396942aad3b7fd6"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/soft",
+      "recordPath": "packages/astro-knowledge/review/point-pair-ascendant-sources-v1/south-node-ascendant-soft-exact-approval.json",
+      "payloadSha256": "7d1e909cdb20bd1bb3cfbc28e713a6645d134c16d77907dbbd06f9a2a760caf4",
+      "previousBodySha256": "7bb4eb262bbd0a48055b967a8ebb1664537f62c570be896069596d3e0dc4bece"
+    }
+  ]
+}

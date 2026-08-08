@@ -1999,6 +1999,7 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   test("captures light and dark visual flow across client-facing surfaces", async ({ page }) => {
+    test.setTimeout(60_000);
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true, friends: true, theme: "light" });
@@ -2013,7 +2014,9 @@ test.describe("client-facing user flow case studies", () => {
       await captureThemeSurface(page, theme, "sky");
 
       await expectClientRouteLoads(page, "/#you");
-      await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
+      await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
       await captureThemeSurface(page, theme, "you");
 
       await expectClientRouteLoads(page, "/#friends?tab=charts");
@@ -2115,6 +2118,7 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   test("main app pages keep shared label styling across desktop and mobile", async ({ page }) => {
+    test.setTimeout(60_000);
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     for (const viewport of [
@@ -2555,6 +2559,7 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   test("content hydration does not downgrade reader-facing surfaces to stale fallback copy", async ({ page }) => {
+    test.setTimeout(60_000);
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, {

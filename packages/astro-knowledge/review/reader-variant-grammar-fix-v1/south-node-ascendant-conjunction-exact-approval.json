@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "reader-variant-grammar-fix-v1-south-node-ascendant-conjunction",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored copy supplied verbatim; no Sol writer or Terra judge artifacts exist for this payload by design.",
+  "contentKey": "fallback-hook/synastry-pair/south-node/ascendant/conjunction",
+  "payloadSha256": "573988f4600e7da51fff3eea41c32e26c7b194cbb2a29509f7a4272e670d4d0d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_you": "You feel familiar to {{holder2}} almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull {{holder2}} back into habits or roles they have been trying to leave behind.",
+    "body_they": "{{holder1}} feels familiar to you almost immediately. Conversation, routines, and roles can fall into place quickly, which makes the connection easy to trust. That same familiarity can pull you back into habits or roles you have been trying to leave behind.",
+    "warmthSource": null,
+    "labels": []
+  },
+  "approvedAt": "2026-08-06",
+  "approvalEffect": "exact_wording_approval",
+  "additionalBilledCalls": 0,
+  "recordStatus": "SUPERSEDED",
+  "supersededBy": "packages/astro-knowledge/review/reader-variant-grammar-fix-v2/",
+  "supersessionReason": "Superseded by the owner-reviewed V2 reader-variant wording; retained as provenance history only.",
+  "renderEligible": false
+}
