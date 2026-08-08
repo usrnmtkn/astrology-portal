@@ -82,7 +82,8 @@ function fromRow(row: UserGeneratedContentRow): LiveGeneratedContent {
     sections: row.sections ?? {},
     provider: row.provider,
     model: row.model,
-    updatedAt: row.updated_at
+    updatedAt: row.updated_at,
+    status: row.status
   };
 }
 
@@ -115,7 +116,7 @@ export async function loadUserGeneratedInterpretation({
 
   let query = supabase
     .from("user_generated_interpretations")
-    .select("id, content_key, surface, mode, event_type, target_date, headline, summary, body, sections, provider, model, updated_at")
+    .select("id, content_key, surface, mode, status, event_type, target_date, headline, summary, body, sections, provider, model, updated_at")
     .eq("user_id", userId)
     .eq("subject_type", subjectType)
     .eq("subject_id", subjectId)

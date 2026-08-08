@@ -69,6 +69,7 @@ export type LiveGeneratedContent = {
   judgeGate?: string | null;
   model: string | null;
   updatedAt: string;
+  status?: "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR" | string;
 };
 
 type GeneratedContentRow = {
