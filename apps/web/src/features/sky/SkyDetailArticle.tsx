@@ -72,8 +72,6 @@ export type SkyDetail = {
   meta: string;
   duration?: string;
   tagline?: string;
-  moves?: string[];
-  movesPresentation?: "list" | "plain";
   keyDates?: SkyDetailKeyDate[];
   closingCharge?: string | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
@@ -577,20 +575,6 @@ export function SkyDetailArticle({
                       ))}
                     </div>
                   ))}
-                </section>
-              ) : null}
-              {detail.moves?.length ? (
-                <section className="article-section sky-detail-section sky-placement-moves" aria-label="Try this">
-                  <h3>Try this</h3>
-                  {detail.movesPresentation === "plain" ? (
-                    <div className="sky-placement-moves-lines">
-                      {detail.moves.map((move) => <p key={move}>{move}</p>)}
-                    </div>
-                  ) : (
-                    <ul>
-                      {detail.moves.map((move) => <li key={move}>{move}</li>)}
-                    </ul>
-                  )}
                 </section>
               ) : null}
               {detail.seriesLine ? (

@@ -41,6 +41,7 @@ const pendingContinuousImports = JSON.parse(read(
   "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-continuous-v2-pending.json"
 ));
 const retiredPlacementFamily = /^fallback-hook\/sky-placement-(?:you|practice)\//u;
+const retiredPlacementMovesFamily = /^fallback-hook\/sky-placement-moves\//u;
 
 assert.equal(
   skyArticleV1.hookRows.filter((row) => retiredPlacementFamily.test(row.contentKey)).length,
@@ -51,6 +52,11 @@ assert.equal(
   skyPlacementOwnerApprovedFallbacksV1.rows.filter((row) => retiredPlacementFamily.test(row.contentKey)).length,
   0,
   "The retired emergency families must never enter the owner-approved placement reader bundle."
+);
+assert.equal(
+  fallbackSourceRows.hookRows.filter((row) => retiredPlacementMovesFamily.test(row.contentKey)).length,
+  0,
+  "No sky-placement-moves contentKey may remain in the approved fallback source."
 );
 for (const [label, source] of [
   ["Node", nodeTransitRenderer],
@@ -268,13 +274,13 @@ const authoredTransitAspectRows = transitSynastryRows.authoredCards.filter((row)
   row.contentKey.startsWith("authored/transit-aspect/")
 );
 const approvedSkyPlacementRows = fallbackSourceRows.hookRows.filter((row) =>
-  /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn|moves)\//u.test(row.contentKey)
+  /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn)\//u.test(row.contentKey)
 );
 const approvedSkyPlacementCoreRows = fallbackSourceRows.hookRows.filter((row) =>
   /^fallback-hook\/sky-placement-(?:hook|lived|turn)\//u.test(row.contentKey)
 );
 const approvedSkyPlacementRowsByFamily = Object.fromEntries(
-  ["tagline", "hook", "lived", "turn", "moves"].map((family) => [
+  ["tagline", "hook", "lived", "turn"].map((family) => [
     family,
     fallbackSourceRows.hookRows.filter((row) =>
       row.contentKey.startsWith(`fallback-hook/sky-placement-${family}/`)
@@ -331,20 +337,18 @@ assert.match(
   /function formatPlacementTransitEndpoint\([\s\S]*month: "long"/u,
   "Planet-in-sign dates must use full month names before entering the canonical renderer."
 );
-assert.match(
-  skyDetailArticle,
-  /detail\.movesPresentation === "plain"[\s\S]*sky-placement-moves-lines[\s\S]*detail\.moves\.map\(\(move\) => <p key=\{move\}>\{move\}<\/p>\)/u,
-  "Canonical Try this actions must render as plain lines instead of list items."
-);
+assert.doesNotMatch(skyDetailArticle, /Try this|sky-placement-moves|detail\.moves/u);
+assert.doesNotMatch(nodeTransitRenderer, /fallback-hook\/sky-placement-moves\//u);
+assert.doesNotMatch(browserTransitRenderer, /fallback-hook\/sky-placement-moves\//u);
 assert.equal(anglePlacementRows.length, 24, "The package must provide all Ascendant and Midheaven placement sentences.");
 assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generic glossary row for every dignity badge.");
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
-assert.equal(approvedSkyPlacementRows.length, 828, "The package must include five approved article slots except for the 12 Moon moves rows retired by owner ruling.");
+assert.equal(approvedSkyPlacementRows.length, 672, "The package must include four approved article slots for all 168 placement pairs.");
 assert.equal(approvedSkyPlacementCoreRows.length, 504, "Every placement pair must have approved hook, lived, and turn rows.");
 for (const [family, rows] of Object.entries(approvedSkyPlacementRowsByFamily)) {
-  assert.equal(rows.length, family === "moves" ? 156 : 168, `Sky placements must have the governed ${family} row count.`);
+  assert.equal(rows.length, 168, `Sky placements must have the governed ${family} row count.`);
 }
 for (const planet of retrogradePlacementPlanets) {
   for (const sign of zodiacSigns) {
@@ -517,18 +521,17 @@ assert.ok(
 );
 assert.doesNotMatch(moonTaurusUndatedSquare.body, /squares Jupiter|This week/u);
 assert.doesNotMatch(moonTaurusWrongSignSquare.body, /squares Jupiter|August 6/u);
-assert.deepEqual(moonTaurus.moves, []);
+assert.equal(Object.hasOwn(moonTaurus, "moves"), false);
 assert.equal(moonSignEntries.length, 12);
 moonSignEntries.forEach((entry) => {
   assert.equal(entry.templateKey, "sky-placement-moon-entry-v1");
-  assert.deepEqual(entry.moves, [], "Moon sign entries must render without a moves row.");
+  assert.equal(Object.hasOwn(entry, "moves"), false, "Moon sign entries must not expose a Try this section.");
 });
 assert.deepEqual(
   {
     articleSections: moonTaurusSquareJupiter.articleSections,
     body: moonTaurusSquareJupiter.body,
     contentKey: moonTaurusSquareJupiter.contentKey,
-    moves: moonTaurusSquareJupiter.moves,
     parts: moonTaurusSquareJupiter.parts,
     templateKey: moonTaurusSquareJupiter.templateKey
   },
@@ -536,7 +539,6 @@ assert.deepEqual(
     articleSections: moonTaurusReference.articleSections,
     body: moonTaurusReference.body,
     contentKey: moonTaurusReference.contentKey,
-    moves: moonTaurusReference.moves,
     parts: moonTaurusReference.parts,
     templateKey: moonTaurusReference.templateKey
   },
@@ -557,23 +559,14 @@ const sunAries = renderer.renderSkyPlacement({
 assert.equal(sunAries.contentKey, "fallback-hook/sky-sign-copy/sun/aries");
 assert.match(sunAries.body, /The Sun in Aries makes a clean decision feel like a return to life\./u);
 assert.equal(sunLeo.tagline, null, "The continuous unit must not append the retired quote-style tagline.");
-assert.deepEqual(
-  sunLeo.moves,
-  [
-    "We can finish one small project this week and put our name on it.",
-    "We can thank someone in front of others for a specific contribution without turning the praise back toward ourselves.",
-    "We can choose one visible detail on something we are making without asking anyone else to approve it."
-  ],
-  "Sun-in-Leo must expose the owner's optional Try this list verbatim."
-);
-assert.equal(sunLeo.movesPresentation, "plain", "Canonical Try this actions must request plain-line presentation.");
+assert.equal(Object.hasOwn(sunLeo, "moves"), false, "Sun-in-Leo must not expose the retired Try this section.");
 assert.equal(lilithAries.tagline, "Don’t let disrespect slide", "Owner-approved Lilith placement taglines must be reader-eligible.");
 assert.match(
   lilithAries.body,
   /^Someone cuts in line or talks over you and suddenly you’re all fire and no filter\./u,
   "Owner-approved Lilith placement copy must render from the promoted pair rows."
 );
-assert.equal(lilithAries.moves?.length, 3, "Owner-approved Lilith placement articles must expose three practical moves.");
+assert.equal(Object.hasOwn(lilithAries, "moves"), false, "Lilith placement articles must not expose a Try this section.");
 assert.doesNotMatch(
   sunLeo.body,
   /this energy|right now|reveals|heals|[\u2013\u2014]/iu,
@@ -652,7 +645,6 @@ assert.deepEqual(
     articleSections: sunLeo.articleSections,
     body: sunLeo.body,
     contentKey: sunLeo.contentKey,
-    moves: sunLeo.moves,
     parts: sunLeo.parts,
     templateKey: sunLeo.templateKey
   },
@@ -660,7 +652,6 @@ assert.deepEqual(
     articleSections: sunLeoReference.articleSections,
     body: sunLeoReference.body,
     contentKey: sunLeoReference.contentKey,
-    moves: sunLeoReference.moves,
     parts: sunLeoReference.parts,
     templateKey: sunLeoReference.templateKey
   },
@@ -707,7 +698,12 @@ for (const row of skyPlacementOwnerApprovedFallbacksV1.rows) {
     fillOwnerFallback(row.development, facts)
   ]);
   assert.equal(rendered.parts.at(-1), fillOwnerFallback(row.close, facts));
-  assert.deepEqual(rendered.moves, row.try_this.map((move) => fillOwnerFallback(move, facts)));
+  assert.equal(Object.hasOwn(rendered, "moves"), false, `${row.contentKey} must not expose a Try this section.`);
+  assert.doesNotMatch(
+    [rendered.headline, rendered.body, ...(rendered.parts ?? [])].join("\n"),
+    /Try this/iu,
+    `${row.contentKey} must not render a Try this section.`
+  );
   assert.doesNotMatch(rendered.body, /\{\{/u);
 }
 
