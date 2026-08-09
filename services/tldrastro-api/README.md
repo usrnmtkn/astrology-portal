@@ -56,7 +56,8 @@ python -m pytest
 
 CI downloads checksum-pinned planet, Moon, and main-asteroid data files from
 the official Swiss Ephemeris repository and validates a Swiss-only profile.
-The main-asteroid file is required by true (osculating) Black Moon Lilith.
+`sepl_18.se1` supplies the planets, `semo_18.se1` supplies the Moon and true
+(osculating) Black Moon Lilith, and `seas_18.se1` supplies asteroids and Chiron.
 To run the same profile locally, configure both values:
 
 ```bash
@@ -67,7 +68,7 @@ python -m pytest
 
 Production requires the Swiss-only profile. `/ready` probes the Sun, Moon, and
 true Black Moon Lilith and rejects fallback when `TLDR_ASTRO_EPHEMERIS_PATH` is
-configured, including when the Lilith-specific data file is absent.
+configured, including when the Moon/true-apogee data file is absent.
 
 ## Timezone Lookup
 
