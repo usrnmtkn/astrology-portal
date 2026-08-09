@@ -195,6 +195,7 @@ import {
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
+import { loadSharedGeneratedContent } from "./services/sharedGeneratedContentCache";
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import { skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
 import { natalTransitGeometry, natalTransitWindowDays } from "./services/natalTransitGeometry";
@@ -11605,7 +11606,18 @@ export function App() {
       };
     }
 
-    loadLiveGeneratedContentForSurfaces(["natal", "you"], skyDate)
+    loadSharedGeneratedContent(
+      {
+        surface: "natal",
+        targetDate: skyDate,
+        previewMode: generatedContentPreviewMode
+      },
+      () => loadLiveGeneratedContentForSurfaces(
+        ["natal", "you"],
+        skyDate,
+        generatedContentPreviewMode
+      )
+    )
       .then((content) => {
         if (!cancelled) {
           setNatalGeneratedContent(content);
@@ -11638,7 +11650,18 @@ export function App() {
       };
     }
 
-    loadLiveGeneratedContentForSurfaces(["relationship", "composite"], skyDate)
+    loadSharedGeneratedContent(
+      {
+        surface: "relationship",
+        targetDate: skyDate,
+        previewMode: generatedContentPreviewMode
+      },
+      () => loadLiveGeneratedContentForSurfaces(
+        ["relationship", "composite"],
+        skyDate,
+        generatedContentPreviewMode
+      )
+    )
       .then((content) => {
         if (!cancelled) {
           setRelationshipGeneratedContent(content);
@@ -18090,6 +18113,21 @@ function ManualChartsPanel({
   }, [friendProfileTab, onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id]);
 
   useEffect(() => {
+    if (resolvedFriendsMainView !== "profile" || !selectedChart) {
+      return;
+    }
+
+    const prefetchAfterPaint = window.requestAnimationFrame(() => {
+      onFriendProfileContentRequest("natal");
+      if (!selectedChartIsEvent) {
+        onFriendProfileContentRequest("synastry");
+      }
+    });
+
+    return () => window.cancelAnimationFrame(prefetchAfterPaint);
+  }, [onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id, selectedChartIsEvent]);
+
+  useEffect(() => {
     function handlePopState() {
       if (!applyFriendsRouteStateFromUrl()) {
         const nextTab = initialFriendsTab();
@@ -18232,6 +18270,7 @@ function ManualChartsPanel({
 
   function openFriendProfile(chart: ManualChart) {
     setOpenChartMenuId(null);
+    onFriendProfileContentRequest(chart.chartType === "event" ? "natal" : "compatibility");
     setSelectedChartId(chart.id);
     setFriendProfileTab(chart.chartType === "event" ? "natal" : "compatibility");
     setRelationshipComparisonChartId("self");
@@ -18255,6 +18294,7 @@ function ManualChartsPanel({
     }
 
     const { chart: savedChart, wasEditing } = result;
+    onFriendProfileContentRequest(savedChart.chartType === "event" ? "natal" : "compatibility");
     setFriendsMainView("profile");
     setFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
     setRelationshipComparisonChartId("self");
