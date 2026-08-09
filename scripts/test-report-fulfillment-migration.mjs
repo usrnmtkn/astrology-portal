@@ -22,9 +22,11 @@ await db.exec(`
     (user_id, report_type, report_domain, report_horizon, subject_id, period_start) nulls not distinct;
 `);
 const migration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809150000_report_fulfillment.sql", import.meta.url), "utf8");
+const personalHealthMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809160000_personal_health_report_domain.sql", import.meta.url), "utf8");
 await db.exec("begin");
 try {
   await db.exec(migration);
+  await db.exec(personalHealthMigration);
   const userId = "00000000-0000-0000-0000-000000000001";
   await db.query("insert into auth.users (id) values ($1)", [userId]);
   await db.query(`insert into public.report_entitlements
@@ -48,6 +50,10 @@ try {
   assert.equal(Number((await db.query("select count(*)::int count from public.report_fulfillment_jobs")).rows[0].count), 1, "Awaiting birth data must not enqueue.");
   assert.equal((await db.query("select fulfillment_status from public.user_reports where entitlement_id = $1", [awaitingId])).rows[0].fulfillment_status, "awaiting_birth_data");
   assert.ok((await db.query("select fulfillment_timestamps ? 'awaiting_birth_data' as recorded from public.user_reports where entitlement_id = $1", [awaitingId])).rows[0].recorded);
+  await db.query(`insert into public.report_entitlements
+    (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, requires_birth_time, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
+    values ($1, 'personal_health_12_months', 'personal_health', '12_months', 'solar_return_display', '2026-02-18', '2027-02-17', true, 'active', 'evt_3', 'cs_4', now())`, [userId]);
+  assert.equal(Number((await db.query("select count(*)::int count from public.user_reports where report_domain = 'personal_health'")).rows[0].count), 1);
   await db.exec("rollback");
 } catch (error) {
   await db.exec("rollback");

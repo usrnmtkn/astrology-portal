@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   assembleReportGenerationPayload,
+  PERSONAL_HEALTH_PROMPT_PATH,
+  reportDomainPromptReadiness,
+  reportDomainRelevanceModel,
   reportFactors,
   reportPromptFromPayload,
   resolveManifestationSets,
@@ -31,6 +34,14 @@ const loveConnectionReference = fs.readFileSync(
   new URL("../artifacts/marie-satori-love-connection-2026-owner-v1.md", import.meta.url),
   "utf8"
 );
+const livedProseStandard = fs.readFileSync(
+  new URL("../tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md", import.meta.url),
+  "utf8"
+);
+const personalHealthReference = fs.readFileSync(
+  new URL("../artifacts/marie-satori-personal-health-2026-owner-v1.md", import.meta.url),
+  "utf8"
+);
 const generatorSource = fs.readFileSync(new URL("../api/_lib/report-generation.ts", import.meta.url), "utf8");
 const endpointSource = fs.readFileSync(new URL("../api/generate-user-content.ts", import.meta.url), "utf8");
 const webServiceSource = fs.readFileSync(new URL("../apps/web/src/services/userGeneratedContent.ts", import.meta.url), "utf8");
@@ -40,6 +51,10 @@ const migrationSource = fs.readFileSync(
 );
 const loveDomainMigrationSource = fs.readFileSync(
   new URL("../apps/web/supabase/migrations/20260809140000_love_connection_report_domain.sql", import.meta.url),
+  "utf8"
+);
+const personalHealthMigrationSource = fs.readFileSync(
+  new URL("../apps/web/supabase/migrations/20260809160000_personal_health_report_domain.sql", import.meta.url),
   "utf8"
 );
 const cases = [
@@ -90,9 +105,16 @@ for (const [reportHorizon, unitId] of cases) {
   }, snapshots[reportHorizon]);
   assert.equal(payload.outputGovernance.status, "DRAFT");
   assert.equal(payload.outputGovernance.review_status, "needs_review");
+  assert.equal(payload.outputGovernance.ownerApproved, false);
+  assert.equal(payload.outputGovernance.promotionAuthorized, false);
   assert.equal(payload.outputGovernance.promotionAllowed, false);
   assert.equal(payload.voiceEvidence[0].sourceType, "owner_authored_final");
-  assert.ok(reportPromptFromPayload(payload).startsWith(canonicalPrompt));
+  assert.equal(payload.livedProseStandard.text, livedProseStandard);
+  const prompt = reportPromptFromPayload(payload);
+  assert.ok(prompt.startsWith(canonicalPrompt));
+  assert.ok(prompt.indexOf("LIVED_PROSE_STANDARD") > prompt.indexOf(canonicalPrompt));
+  assert.ok(prompt.indexOf("INTERNAL PRE-DRAFT EXTRACTION (REQUIRED)") > prompt.indexOf("LIVED_PROSE_STANDARD"));
+  assert.ok(prompt.indexOf("REPORT_GENERATION_PAYLOAD") > prompt.indexOf("INTERNAL PRE-DRAFT EXTRACTION (REQUIRED)"));
 }
 
 assert.ok(!payloads.get("1_month").unit.allowedUnitIds.some((id) => id.includes("winter") || id === "spring"));
@@ -111,6 +133,7 @@ assert.match(endpointSource, /`report:\$\{report\.id\}:\$\{input\.unitId\}`/u);
 assert.match(migrationSource, /report_domain in \('general', 'work_money'\)/u);
 assert.match(migrationSource, /report_horizon in \('1_month', '4_months', '6_months', '12_months'\)/u);
 assert.match(loveDomainMigrationSource, /report_domain in \('general', 'work_money', 'love_connection'\)/u);
+assert.match(personalHealthMigrationSource, /report_domain in \('general', 'work_money', 'love_connection', 'personal_health'\)/u);
 
 const workMoneyPayload = assembleReportGenerationPayload({
   reportId: "00000000-0000-0000-0000-000000000118",
@@ -227,6 +250,78 @@ assert.deepEqual({
   voiceEvidenceSource: loveConnectionPayload.voiceEvidence[0].sourcePath
 }, snapshots.love_connection_12_months);
 
+const personalHealthReadiness = reportDomainPromptReadiness("personal_health");
+assert.deepEqual(personalHealthReadiness, {
+  reportDomain: "personal_health",
+  sourcePath: PERSONAL_HEALTH_PROMPT_PATH,
+  exists: false,
+  ownerApproved: false,
+  ready: false
+});
+assert.throws(() => assembleReportGenerationPayload({
+  reportId: "00000000-0000-0000-0000-000000000120",
+  reportDomain: "personal_health",
+  reportHorizon: "12_months",
+  unitId: "summer",
+  frozenFacts: facts
+}), /REPORT_DOMAIN_PROMPT_PENDING/u);
+const personalHealthModel = reportDomainRelevanceModel("personal_health");
+assert.deepEqual(personalHealthModel.map((tier) => tier.id), [
+  "direct_personal_health",
+  "condition_changers"
+]);
+assert.ok(personalHealthModel.every((tier) => (
+  tier.rules.length && tier.rules.every((rule) => rule.inspectionNotes.length && rule.doNotAssume.length)
+)));
+assert.ok(personalHealthModel.flatMap((tier) => tier.rules).every((rule) => (
+  ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+    .every((guard) => rule.doNotAssume.includes(guard))
+)));
+const personalHealthSelection = selectReportFactors(reportFactors(facts), "personal_health");
+const personalHealthResolved = resolveManifestationSets(
+  personalHealthSelection.factors,
+  "personal_health",
+  personalHealthSelection.selection
+);
+const centralHealthFactor = personalHealthSelection.selection.find((item) => item.factorId === "jupiter-square-moon");
+assert.equal(centralHealthFactor?.tierId, "direct_personal_health");
+assert.equal(centralHealthFactor?.score, Math.max(...personalHealthSelection.selection.map((item) => item.score)));
+assert.ok(centralHealthFactor?.doNotAssume.includes("a diagnosis"));
+assert.ok(personalHealthSelection.selection.find((item) => item.factorId === "lunar-eclipse-2026-03-03-saturn")
+  ?.bridgeConsequences.includes("caregiving"));
+const midheavenHealthBridge = personalHealthSelection.selection.find((item) => item.factorId === "solar-eclipse-2027-02-06-midheaven");
+assert.ok(["hours", "commute", "recovery"].every((term) => midheavenHealthBridge?.bridgeConsequences.includes(term)));
+const personalProjectedReaderMaterial = JSON.stringify(personalHealthResolved.resolved.map(({ record }) => ({
+  domain: record.domain,
+  possibleLivedManifestations: record.possibleLivedManifestations
+}))).toLowerCase();
+assert.doesNotMatch(personalProjectedReaderMaterial, /\b(?:dating|romance|attraction|sex|income|salary|pay|pricing|revenue|profit)\b/u);
+assert.deepEqual({
+  promptReadiness: personalHealthReadiness,
+  factorIds: personalHealthSelection.factors.map((factor) => factor.id),
+  tierIds: [...new Set(personalHealthSelection.selection.map((item) => item.tierId))],
+  homeInspection: {
+    tierId: personalHealthSelection.selection.find((item) => item.factorId === "lunar-eclipse-2026-03-03-saturn")?.tierId,
+    bridgeConsequences: personalHealthSelection.selection.find((item) => item.factorId === "lunar-eclipse-2026-03-03-saturn")?.bridgeConsequences
+  },
+  summerInspection: {
+    score: centralHealthFactor?.score,
+    tierId: centralHealthFactor?.tierId,
+    matchedRuleIds: centralHealthFactor?.matchedRuleIds,
+    healthGuards: centralHealthFactor?.doNotAssume.filter((guard) => ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"].includes(guard))
+  },
+  midheavenInspection: {
+    tierId: midheavenHealthBridge?.tierId,
+    bridgeConsequences: midheavenHealthBridge?.bridgeConsequences
+  },
+  projectedMidheaven: (() => {
+    const record = personalHealthResolved.resolved.find((item) => item.factor.id === "solar-eclipse-2027-02-06-midheaven")?.record;
+    return { domain: record?.domain, possibleLivedManifestations: record?.possibleLivedManifestations };
+  })(),
+  voiceEvidenceSource: "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+  livedProseStandardSource: "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md"
+}, snapshots.personal_health_12_months);
+
 const factors = reportFactors(facts);
 assert.deepEqual(reportFactors({ reportWindow: facts }), factors);
 assert.equal(factors.filter((factor) => factor.id === "jupiter-conjunction-jupiter").length, 1);
@@ -289,6 +384,14 @@ assert.ok(!codes({ body: "FIXTURE_ONLY may. job application." }).includes("possi
 assert.ok(codes({ body: "application application application application" }).includes("lexical_budget"));
 assert.ok(codes({ body: "job application, client request, collaboration, contract, grant, project terms." }).includes("menu_size"));
 assert.ok(codes({ body: "Saturn Return FIXTURE_ONLY." }).includes("saturn_return_non_return_year"));
+for (const phrase of ["this report", "this section is about", "the question becomes", "the point is", "what matters here is", "this distinction matters", "enters this report"]) {
+  assert.ok(codes({ body: `FIXTURE_ONLY ${phrase} FIXTURE_ONLY.` }).includes("writer_note_leakage"));
+}
+for (const phrase of ["listen to your body", "protect your energy", "honor your needs", "prioritize self-care", "trust the evidence"]) {
+  assert.ok(codes({ body: `FIXTURE_ONLY ${phrase}.` }).includes("generic_advice"));
+}
+assert.ok(codes({ body: "ASTROLOGY: FIXTURE_ONLY\nLIVED FACT: FIXTURE_ONLY\nCAUSE: FIXTURE_ONLY\nCONSEQUENCE: FIXTURE_ONLY\nCONTRADICTION: FIXTURE_ONLY\nDO NOT ASSUME: FIXTURE_ONLY" }).includes("internal_scaffold_leakage"));
+assert.ok(!codes({ body: "FIXTURE_ONLY.", sections: [{ heading: "KEY DATES", body: "FIXTURE_ONLY_DATE · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SUMMARY. · *This report attributes the date technically.*" }] }).includes("writer_note_leakage"));
 
 assert.ok(validateReportDraft(
   { sections: [{ heading: "WORK", body: "" }] },
@@ -311,8 +414,8 @@ assert.ok(!validateReportDraft(
 const isolatedDraft = { body: "FIXTURE_ONLY_ONE.\n\nFIXTURE_ONLY_TWO?\n\nFIXTURE_ONLY_THREE." };
 assert.ok(validateReportDraft(isolatedDraft, workMoneyPayload)
   .some((issue) => issue.code === "isolated_one_liners" && issue.severity === "warning"));
-assert.ok(!validateReportDraft(isolatedDraft, payload)
-  .some((issue) => issue.code === "isolated_one_liners"));
+assert.ok(validateReportDraft(isolatedDraft, payload)
+  .some((issue) => issue.code === "isolated_one_liners" && issue.severity === "warning"));
 
 assert.ok(!validateReportDraft({
   sections: [{
@@ -371,4 +474,4 @@ assert.ok(validateReportDraft({
   }]
 }, loveConnectionPayload).some((issue) => issue.code === "deep_dive_key_date_format"));
 
-console.log("Report generation passed: three domains, tiered selection, return dedupe, and domain validators.");
+console.log("Report generation passed: four domains, shared lived-prose standard, tiered selection, return dedupe, and domain validators.");

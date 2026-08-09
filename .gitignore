@@ -11,6 +11,9 @@ ephemeris/
 test-results/
 playwright-report/
 artifacts/
+!artifacts/
+artifacts/*
+!artifacts/marie-satori-personal-health-2026-owner-v1.md
 api/_lib/local-env.js
 
 # Local/generated review artifacts
