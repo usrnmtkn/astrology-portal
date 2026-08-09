@@ -29,6 +29,8 @@ const skyDetailArticle = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
 const adminDashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const debugRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
 const browserResolverIndex = read("apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts");
+const nodeTransitRenderer = read("apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs");
+const browserTransitRenderer = read("apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts");
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const writingSurfaceSourceMap = read("apps/admin/src/writingSurfaceSourceMap.ts");
 const canonicalFallbackTemplate = read("packages/astro-knowledge/voice/tldr-astro/fallback-canonical-template.md");
@@ -38,6 +40,28 @@ const continuousFallbackSchema = JSON.parse(read(
 const pendingContinuousImports = JSON.parse(read(
   "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-continuous-v2-pending.json"
 ));
+const retiredPlacementFamily = /^fallback-hook\/sky-placement-(?:you|practice)\//u;
+
+assert.equal(
+  skyArticleV1.hookRows.filter((row) => retiredPlacementFamily.test(row.contentKey)).length,
+  0,
+  "The 28 retired sky-placement-you/practice emergency rows must remain absent from approved source rows."
+);
+assert.equal(
+  skyPlacementOwnerApprovedFallbacksV1.rows.filter((row) => retiredPlacementFamily.test(row.contentKey)).length,
+  0,
+  "The retired emergency families must never enter the owner-approved placement reader bundle."
+);
+for (const [label, source] of [
+  ["Node", nodeTransitRenderer],
+  ["browser", browserTransitRenderer]
+]) {
+  assert.doesNotMatch(
+    source,
+    /fallback-hook\/sky-placement-(?:you|practice)\//u,
+    `${label} placement rendering must not read or substitute retired emergency copy.`
+  );
+}
 
 const renderer = createTransitSynastryRenderer(
   {
