@@ -2010,7 +2010,7 @@ test.describe("client-facing user flow case studies", () => {
         window.localStorage.setItem("tldrastro:theme", nextTheme);
       }, theme);
       await page.reload();
-      await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: /The sky today|Today, simple/i })).toBeVisible();
       await captureThemeSurface(page, theme, "sky");
 
       await expectClientRouteLoads(page, "/#you");
@@ -2129,7 +2129,7 @@ test.describe("client-facing user flow case studies", () => {
       await seedClientState(page, { profile: true, friends: true });
 
       await expectClientRouteLoads(page, "/#sky");
-      await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: /The sky today|Today, simple/i })).toBeVisible();
       await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible({ timeout: 15_000 });
       await expectSharedLabelContract(page, `${viewport.name} Sky`, { requireLabels: false });
       await expectNoHorizontalOverflow(page, `${viewport.name} Sky label audit`);

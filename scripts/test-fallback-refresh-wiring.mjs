@@ -533,7 +533,10 @@ assert.equal(
   "Exact aspect copy must remain byte-identical instead of rotating legacy family variants."
 );
 
-const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const appSource = [
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8"),
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/ManualChartsPanel.tsx"), "utf8")
+].join("\n");
 const pairDailyNodeResolverSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs"),
   "utf8"

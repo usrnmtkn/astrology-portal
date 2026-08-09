@@ -62,7 +62,10 @@ assert.deepEqual(
   "A tighter angle contact must be ignored in favor of the supported applying contact."
 );
 
-const appSource = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
+const appSource = [
+  fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8"),
+  fs.readFileSync(new URL("../apps/web/src/features/friends/ManualChartsPanel.tsx", import.meta.url), "utf8")
+].join("\n");
 const driverStart = appSource.indexOf("function dailyGlanceDriver(");
 const driverEnd = appSource.indexOf("\nfunction dailyGlanceGeneratedContent(", driverStart);
 const driverSource = appSource.slice(driverStart, driverEnd);

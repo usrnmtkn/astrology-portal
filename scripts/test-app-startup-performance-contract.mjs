@@ -11,8 +11,11 @@ const signupViewSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/auth/SignupView.tsx"),
   "utf8"
 );
-const manualChartsPanelSource = appSource.slice(appSource.indexOf("function ManualChartsPanel"));
-const profileViewSource = appSource.slice(appSource.indexOf("function ProfileView"), appSource.indexOf("function ManualChartsPanel"));
+const manualChartsPanelSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/ManualChartsPanel.tsx"),
+  "utf8"
+);
+const profileViewSource = appSource.slice(appSource.indexOf("function ProfileView"));
 const natalSkyEffectStart = appSource.indexOf("    const natalSkyRequestKey = [");
 const natalSkyEffectEnd = appSource.indexOf("\n\n  useEffect(() => {", natalSkyEffectStart);
 const natalSkyEffectSource = appSource.slice(natalSkyEffectStart, natalSkyEffectEnd);
@@ -260,8 +263,13 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /const loadFriendsWorkspaceShell = \(\) => import\("\.\/features\/friends\/FriendsWorkspaceShell"\)[\s\S]*const FriendsWorkspaceShell = lazy\(\(\) =>\s*loadFriendsWorkspaceShell\(\)/u,
-  "The Friends workspace shell must load only when its route renders."
+  /const loadManualChartsPanel = \(\) => import\("\.\/features\/friends\/ManualChartsPanel"\)[\s\S]*const ManualChartsPanel = lazy\(\(\) =>/u,
+  "Friends orchestration must load only when its route renders."
+);
+assert.match(
+  manualChartsPanelSource,
+  /const FriendsWorkspaceShell = lazy\(\(\) =>\s*import\("\.\/FriendsWorkspaceShell"\)/u,
+  "The Friends workspace shell must remain inside the deferred orchestration boundary."
 );
 assert.match(
   friendsWorkspaceShellSource,
@@ -269,8 +277,8 @@ assert.match(
   "The deferred Friends workspace must own the landing shell, social panel, and chart list."
 );
 assert.match(
-  appSource,
-  /const FriendProfileChartRail = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendDetail"\)/u,
+  manualChartsPanelSource,
+  /const FriendProfileChartRail = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendDetail"\)/u,
   "The Friends profile chart rail must share the deferred Friend Detail boundary."
 );
 assert.match(
@@ -309,8 +317,8 @@ assert.doesNotMatch(
   "CompatibilityTab must not remain a static application-shell dependency."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/CompatibilityTab"\)/u,
+  manualChartsPanelSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/CompatibilityTab"\)/u,
   "CompatibilityTab must load only when its Friends profile surface renders."
 );
 assert.doesNotMatch(
@@ -503,8 +511,8 @@ assert.match(
   "The deferred Friends module must own the synastry placement comparison."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendSynastryTab"\)/u,
+  manualChartsPanelSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendSynastryTab"\)/u,
   "Synastry presentation must load only when its Friends tab renders."
 );
 assert.match(
@@ -513,8 +521,8 @@ assert.match(
   "The deferred Synastry tab must own its placement comparison."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendNatalTab"\)/u,
+  manualChartsPanelSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendNatalTab"\)/u,
   "Natal presentation must load only when its Friends tab renders."
 );
 assert.match(
@@ -523,8 +531,8 @@ assert.match(
   "The deferred Natal tab must own its placement table."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendTransitsTab"\)/u,
+  manualChartsPanelSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendTransitsTab"\)/u,
   "Transit presentation must load only when its Friends tab renders."
 );
 assert.match(
@@ -543,8 +551,8 @@ assert.match(
   "The deferred Friends module must own chart-rail presentation."
 );
 assert.match(
-  appSource,
-  /const FriendProfileChartFullscreen = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/RelationshipChartFullscreen"\)/u,
+  manualChartsPanelSource,
+  /const FriendProfileChartFullscreen = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/RelationshipChartFullscreen"\)/u,
   "Fullscreen relationship charts must load only when opened."
 );
 assert.match(
@@ -558,8 +566,8 @@ assert.doesNotMatch(
   "Relationship API presentation must not remain in the application shell."
 );
 assert.match(
-  appSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/features\/friends\/FriendCompositeTab"\)/u,
+  manualChartsPanelSource,
+  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendCompositeTab"\)/u,
   "Composite presentation must load only when its Friends tab renders."
 );
 assert.match(
@@ -588,7 +596,7 @@ assert.match(
   "The Friends form model must own its chart-type copy."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /useManualChartsController\(\{/u,
   "ManualChartsPanel must delegate chart loading and persistence to its focused controller hook."
 );
@@ -603,7 +611,7 @@ assert.doesNotMatch(
   "ManualChartsPanel must not re-embed chart loading or repair orchestration."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /useRelationshipCompare\(\{/u,
   "ManualChartsPanel must delegate relationship request state to its focused hook."
 );
@@ -633,22 +641,22 @@ assert.match(
   "Leaving profile timing or changing its inputs must abort obsolete API work."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /if \(!friendProfileWork\.synastryContacts/u,
   "Inactive Friends tabs must skip synastry contact calculation."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /friendProfileWork\.composite && selectedChart/u,
   "Composite chart calculation must remain scoped to its active Friends tab."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /friendProfileWork\.transits && currentSky && selectedChart && !selectedChartIsEvent/u,
   "Friends transit calculation must remain scoped to its active tab."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /friendProfileWork\.natal && selectedChart\?\.natalChart/u,
   "Friends natal row calculation must remain scoped to its active tab."
 );
@@ -759,8 +767,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const loadFriendsExperience = \(\) => Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*loadFriendsWorkspaceShell\(\)[\s\S]*const FriendsRoute = lazy\(\(\) =>\s*loadFriendsExperience\(\)/u,
-  "The Friends route and consolidated landing workspace must load in parallel instead of forming a lazy-module waterfall."
+  /const loadFriendsExperience = \(\) => Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*loadManualChartsPanel\(\)[\s\S]*const FriendsRoute = lazy\(\(\) =>\s*loadFriendsExperience\(\)/u,
+  "The Friends route and orchestration module must load in parallel instead of forming a lazy-module waterfall."
 );
 assert.equal(
   appSource.match(/onPointerEnter=\{preloadFriendsExperience\}/gu)?.length,
