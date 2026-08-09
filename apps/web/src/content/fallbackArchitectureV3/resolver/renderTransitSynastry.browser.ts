@@ -112,6 +112,7 @@ export interface SkyPlacementFacts {
   isRetrograde?: boolean;
   isShadowPhase?: boolean;
 }
+export interface SkyPlacementHouseCoreFacts { planet: string; sign: string; house: number }
 export interface SkyArticleKeyDate {
   date: string;
   label: string;
@@ -359,6 +360,35 @@ export function createTransitSynastryRenderer(
   const cards = eligibleRowsByKey(transitLib.authoredCards, allowUnreviewed);
   const vocab = eligibleRowsByKey(rowsFile.vocabularyRows, allowUnreviewed);
   const hooks = eligibleRowsByKey(rowsFile.hookRows ?? [], allowUnreviewed);
+
+  function renderSkyPlacementHouseCore({ planet, sign, house }: SkyPlacementHouseCoreFacts) {
+    const normalizedPlanet = String(planet ?? "").trim().toLowerCase();
+    const normalizedSign = String(sign ?? "").trim().toLowerCase();
+    const normalizedHouse = Number(house);
+    const key = `house-horoscope-core/${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`;
+    const row = hooks.get(key);
+
+    if (
+      normalizedPlanet !== "sun"
+      || normalizedSign !== "leo"
+      || !Number.isInteger(normalizedHouse)
+      || normalizedHouse < 1
+      || normalizedHouse > 12
+      || !row
+      || row.content_role !== "house_horoscope_core"
+      || row.grammar_frame !== "second_person_block"
+      || !row.body_you
+    ) {
+      throw new SourceGapError(`SOURCE_GAP: house horoscope core ${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`);
+    }
+
+    return {
+      body: row.body_you,
+      contentKey: row.contentKey,
+      house: normalizedHouse,
+      templateKey: "house-horoscope-core/sun-leo-v1"
+    };
+  }
 
   const tpl = (key: string) => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
@@ -2338,5 +2368,5 @@ export function createTransitSynastryRenderer(
     };
   }
 
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
