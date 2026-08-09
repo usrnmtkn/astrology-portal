@@ -27,6 +27,12 @@ ineligible. Continuous rows are also distribution-gated: only keys in a
 partition. The on-demand partition may replace the eager standalone floor only
 after it loads and passes package-manifest validation.
 
+Owner ruling 2026-08-09: Sky Placement articles do not render a `Try this`
+section. No placement resolver may read `try_this` arrays or
+`fallback-hook/sky-placement-moves/*` rows. The retired action rows are absent
+from approved source, and no placement render path may read, substitute, or
+display them.
+
 ## Hard runtime rules
 
 - A row with `content_role: fallback_source` reaching any render path is a thrown error, not a skipped row.
