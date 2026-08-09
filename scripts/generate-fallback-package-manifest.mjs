@@ -177,6 +177,8 @@ function fullReaderBundle() {
   const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
   const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
     .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
+  const venusLibraHouseCoreRows = readJson("source-rows/venus-libra-house-cores-v1.json").rows
+    .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templates = readJson("templates/fallback-templates-v3.json");
@@ -204,7 +206,8 @@ function fullReaderBundle() {
         ...skyPlacementRows.rows,
         ...skySignRows,
         ...skyPlacementOwnerApprovedRows.rows,
-        ...sunLeoHouseCoreRows
+        ...sunLeoHouseCoreRows,
+        ...venusLibraHouseCoreRows
       ]),
       vocabularyRows: latestReaderEligible([
         ...sourceRows.vocabularyRows,
@@ -230,6 +233,8 @@ const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventorie
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
 const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
 const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
+  .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
+const venusLibraHouseCoreRows = readJson("source-rows/venus-libra-house-cores-v1.json").rows
   .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
 const skySignCopyRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
 const skyCoreRows = {
@@ -257,7 +262,8 @@ const skyPlacementRows = {
     ...(skyPlacementVoicePassRows.rows ?? []),
     ...skySignCopyRows,
     ...skyPlacementOwnerApprovedRows.rows,
-    ...sunLeoHouseCoreRows
+    ...sunLeoHouseCoreRows,
+    ...venusLibraHouseCoreRows
   ]),
   vocabularyRows: []
 };
