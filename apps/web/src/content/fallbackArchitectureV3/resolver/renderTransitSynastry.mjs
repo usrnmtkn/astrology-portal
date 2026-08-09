@@ -1754,7 +1754,13 @@ export function renderSkyPlacement({
   }
 
   if (pairHook && pairLived && pairTurn) {
-    const parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter(Boolean);
+    let parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter(Boolean);
+    if (planet === "lilith" && sign === "sagittarius") {
+      parts = parts.map((part) => fillKeep(part, { exitDate }));
+      if (parts.some((part) => /\{\{/u.test(part))) {
+        throw new SourceGapError("SOURCE_GAP: sky placement pair slots lilith/sagittarius");
+      }
+    }
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       tagline,
