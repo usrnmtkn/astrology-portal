@@ -125,9 +125,9 @@ def _probe(swe: Any) -> Tuple[List[Dict[str, object]], List[str], List[int]]:
     engines: List[str] = []
     returned_flags: List[int] = []
 
-    # True Black Moon Lilith uses the osculating apogee and requires the
-    # main-asteroid Swiss data file. Probing it here prevents a runtime from
-    # reporting ready when planet and Moon files exist but seas_18.se1 does not.
+    # True Black Moon Lilith uses the osculating apogee from semo_18.se1, the
+    # Moon ephemeris. Probing it here prevents a runtime from reporting ready
+    # when planet data exists but the Moon/true-apogee file is unavailable.
     for label, body_id in (
         ("Sun", swe.SUN),
         ("Moon", swe.MOON),

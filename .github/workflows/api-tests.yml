@@ -43,6 +43,11 @@ jobs:
           echo "TLDR_ASTRO_EPHEMERIS_PATH=$ephemeris_path" >> "$GITHUB_ENV"
           mkdir -p "$ephemeris_path"
           base_url="https://raw.githubusercontent.com/aloistr/swisseph/$SWISS_EPHEMERIS_COMMIT/ephe"
+          # Complete Swiss profile. Empirical isolation (PR #131):
+          #   semo_18.se1 only -> Swiss true-apogee (the Lilith dependency)
+          #   sepl_18.se1 only -> Moshier true-apogee fallback
+          #   seas_18.se1 only -> Moshier true-apogee fallback
+          # sepl = planets, semo = Moon + true apogee, seas = asteroids/Chiron.
           curl -fsSL "$base_url/sepl_18.se1" -o "$ephemeris_path/sepl_18.se1"
           curl -fsSL "$base_url/semo_18.se1" -o "$ephemeris_path/semo_18.se1"
           curl -fsSL "$base_url/seas_18.se1" -o "$ephemeris_path/seas_18.se1"
