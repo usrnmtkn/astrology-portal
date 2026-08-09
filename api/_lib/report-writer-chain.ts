@@ -4,9 +4,19 @@ import { callReportModel, type ReportModelCall, type ReportModelUsage, writerMod
 import { loadVersionedReportPrompt, REPORT_CRITIQUE_PROMPT_PATH } from "./report-prompt-versions.ts";
 import { scopeReportPayloadToUnit } from "./report-unit-scope.ts";
 
-export type ReportDefectCategory =
-  | "astrology_chronology" | "factual_traceability" | "vagueness" | "unnatural_phrasing"
-  | "repeated_generated_syntax" | "emotional_temperature" | "keyword_stack" | "density_violation";
+export const REPORT_DEFECT_CATEGORIES = [
+  "astrology_chronology",
+  "factual_traceability",
+  "unlived_abstraction",
+  "owner_voice_drift",
+  "interpretive_gap",
+  "unnatural_phrasing",
+  "repeated_generated_syntax",
+  "emotional_temperature",
+  "keyword_stack",
+  "density_violation"
+] as const;
+export type ReportDefectCategory = typeof REPORT_DEFECT_CATEGORIES[number];
 
 export type ReportDefect = {
   id: string;
@@ -45,7 +55,7 @@ const critiqueSchema = {
     defects: { type: "array", items: { type: "object", additionalProperties: false,
       required: ["id", "category", "location", "sentence_index", "quote", "evidence", "instruction"],
       properties: {
-        id: { type: "string" }, category: { type: "string", enum: ["astrology_chronology", "factual_traceability", "vagueness", "unnatural_phrasing", "repeated_generated_syntax", "emotional_temperature", "keyword_stack", "density_violation"] },
+        id: { type: "string" }, category: { type: "string", enum: [...REPORT_DEFECT_CATEGORIES] },
         location: { type: "string" }, sentence_index: { type: "integer", minimum: 0 }, quote: { type: "string" }, evidence: { type: "string" }, instruction: { type: "string" }
       }
     } }
@@ -116,7 +126,7 @@ export async function runReportWriterChain(input: {
   calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
   const critiqueResult = await callModel<ReportCritique>({
     ...target,
-    prompt: `${critiquePrompt.text}\n\nSCOPED_FACTS\n${JSON.stringify(payload.frozenFacts)}\n\nDRAFT\n${JSON.stringify(draftResult.value)}`,
+    prompt: `${critiquePrompt.text}\n\nCANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}\n\nSCOPED_FACTS\n${JSON.stringify(payload.frozenFacts)}\n\nOWNER_REFERENCE_EVIDENCE\n${JSON.stringify(payload.voiceEvidence)}\n\nDRAFT\n${JSON.stringify(draftResult.value)}`,
     schemaName: "report_unit_critique",
     schema: critiqueSchema
   });
