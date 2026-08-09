@@ -2129,7 +2129,10 @@ test.describe("client-facing user flow case studies", () => {
       await seedClientState(page, { profile: true, friends: true });
 
       await expectClientRouteLoads(page, "/#sky");
-      await expect(page.getByRole("heading", { level: 1, name: /The sky today|Today, simple/i })).toBeVisible();
+      const responsiveSkyHeading = viewport.name === "mobile"
+        ? page.getByRole("region", { name: "The sky today" }).getByRole("heading", { level: 3, name: "The sky today" })
+        : page.getByRole("heading", { level: 1, name: /The sky today|Today, simple/i });
+      await expect(responsiveSkyHeading).toBeVisible();
       await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible({ timeout: 15_000 });
       await expectSharedLabelContract(page, `${viewport.name} Sky`, { requireLabels: false });
       await expectNoHorizontalOverflow(page, `${viewport.name} Sky label audit`);
