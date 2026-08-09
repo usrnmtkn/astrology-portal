@@ -122,6 +122,16 @@ assert.deepEqual(workMoney.facts, created.facts);
 assert.equal(workMoney.facts_engine, created.facts_engine);
 assert.equal(calls, 1, "A second domain for the same window must reuse the frozen calculation.");
 
+const loveConnection = await composeReportFacts(
+  { ...input, reportDomain: "love_connection" },
+  { envelopeStore: store, astroClient }
+);
+assert.notEqual(loveConnection.id, created.id);
+assert.notEqual(loveConnection.id, workMoney.id);
+assert.equal(loveConnection.report_domain, "love_connection");
+assert.deepEqual(loveConnection.facts, created.facts);
+assert.equal(calls, 1, "A third domain for the same window must reuse the frozen calculation.");
+
 await composeReportFacts({ ...input, regenerate: true }, { envelopeStore: store, astroClient });
 assert.equal(calls, 2);
 

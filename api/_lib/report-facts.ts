@@ -98,7 +98,7 @@ function validateInput(input: ComposeReportFactsInput) {
     throw new ReportFactsInputError("natalSubject, location, reportDomain, reportHorizon, start, and end are required.");
   }
   if (!REPORT_DOMAINS.includes(input.reportDomain)) {
-    throw new ReportFactsInputError("reportDomain must be general or work_money.");
+    throw new ReportFactsInputError("reportDomain must be general, work_money, or love_connection.");
   }
   if (!REPORT_HORIZONS.includes(input.reportHorizon)) {
     throw new ReportFactsInputError("reportHorizon is not supported.");
