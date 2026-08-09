@@ -2,7 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
-import { scheduleFriendChartRepair } from "../apps/web/src/features/friends/friendChartLoading.ts";
+import {
+  enhanceFriendChartsAtomically,
+  scheduleFriendChartRepair
+} from "../apps/web/src/features/friends/friendChartLoading.ts";
+import {
+  clearSharedGeneratedContentCache,
+  loadSharedGeneratedContent,
+  sharedGeneratedContentCacheKey
+} from "../apps/web/src/services/sharedGeneratedContentCache.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
@@ -297,6 +305,21 @@ assert.doesNotMatch(
   /setRelationshipCompareStatus|compareRelationship\(\{/,
   "ManualChartsPanel must not re-embed relationship request state or cancellation."
 );
+assert.match(
+  appSource,
+  /function openFriendProfile\(chart: ManualChart\) \{[\s\S]*onFriendProfileContentRequest\(chart\.chartType === "event" \? "natal" : "compatibility"\);[\s\S]*setSelectedChartId\(chart\.id\);/,
+  "Selecting a chart must start its Compatibility content prefetch before publishing the selection."
+);
+assert.match(
+  appSource,
+  /const prefetchAfterPaint = window\.requestAnimationFrame\(\(\) => \{\s*onFriendProfileContentRequest\("natal"\);\s*if \(!selectedChartIsEvent\) \{\s*onFriendProfileContentRequest\("synastry"\);/,
+  "Natal and Synastry content must prefetch only after the selected profile has painted."
+);
+assert.equal(
+  appSource.match(/loadSharedGeneratedContent\(/g)?.length,
+  2,
+  "Natal and relationship consumers must use the shared content cache."
+);
 let idleCallback = null;
 let idleOptions = null;
 let cancelledIdleTask = null;
@@ -350,10 +373,85 @@ const cancelFallbackRepair = scheduleFriendChartRepair(
 
 assert.equal(timeoutDelay, 16, "Browsers without idle callbacks must use a one-frame fallback delay.");
 assert.ok(timeoutDelay < 100, "The repair fallback must not restore a user-visible fixed delay.");
+assert.notEqual(timeoutDelay, 1_500, "Incomplete-chart enhancement must never wait 1.5 seconds.");
 timeoutCallback?.();
 assert.equal(repairedDuringFallback, true, "The timeout fallback must start incomplete-chart repair.");
 cancelFallbackRepair();
 assert.equal(cancelledTimeoutTask, 42, "Unmounting must cancel a scheduled fallback repair.");
+
+let resolveFirstRepair;
+let resolveSecondRepair;
+const repairCommits = [];
+const atomicRepair = enhanceFriendChartsAtomically(
+  [{ id: "first" }, { id: "second" }],
+  (chart) => new Promise((resolve) => {
+    if (chart.id === "first") resolveFirstRepair = resolve;
+    if (chart.id === "second") resolveSecondRepair = resolve;
+  }),
+  (charts) => repairCommits.push(charts)
+);
+
+resolveFirstRepair?.({ id: "first-repaired" });
+await Promise.resolve();
+assert.equal(repairCommits.length, 0, "Chart enhancement must not publish a partial repair batch.");
+resolveSecondRepair?.({ id: "second-repaired" });
+await atomicRepair;
+assert.deepEqual(
+  repairCommits,
+  [[{ id: "first-repaired" }, { id: "second-repaired" }]],
+  "Incomplete charts must paint their completed enhancements in one atomic commit."
+);
+
+clearSharedGeneratedContentCache();
+const natalRequest = {
+  surface: "natal",
+  targetDate: "2026-08-08",
+  previewMode: "normal"
+};
+let natalLoads = 0;
+let resolveNatal;
+const loadNatal = () => {
+  natalLoads += 1;
+  return new Promise((resolve) => {
+    resolveNatal = resolve;
+  });
+};
+const selectionPrefetch = loadSharedGeneratedContent(natalRequest, loadNatal);
+const profileConsumer = loadSharedGeneratedContent(natalRequest, loadNatal);
+
+assert.equal(selectionPrefetch, profileConsumer, "Prefetch and profile render must share the same in-flight request.");
+assert.equal(natalLoads, 1, "A surface/date/preview-mode tuple must load only once.");
+resolveNatal?.(new Map([["natal-key", { contentKey: "natal-key" }]]));
+await profileConsumer;
+
+for (const request of [
+  { ...natalRequest, previewMode: "hide-emergency-floor" },
+  { ...natalRequest, targetDate: "2026-08-09" },
+  { ...natalRequest, surface: "relationship" }
+]) {
+  await loadSharedGeneratedContent(request, async () => {
+    natalLoads += 1;
+    return new Map();
+  });
+}
+assert.equal(natalLoads, 4, "Surface, date, and preview mode must each partition the shared cache.");
+assert.equal(
+  sharedGeneratedContentCacheKey(natalRequest),
+  "natal:2026-08-08:normal",
+  "The shared cache key must expose all three dimensions."
+);
+
+const failedRequest = { surface: "relationship", targetDate: "2026-08-10", previewMode: "normal" };
+let attempts = 0;
+await assert.rejects(loadSharedGeneratedContent(failedRequest, async () => {
+  attempts += 1;
+  throw new Error("temporary dashboard failure");
+}));
+await loadSharedGeneratedContent(failedRequest, async () => {
+  attempts += 1;
+  return new Map();
+});
+assert.equal(attempts, 2, "A failed shared load must be evicted so the next request can retry.");
 
 console.log(JSON.stringify({
   status: "PASS",
