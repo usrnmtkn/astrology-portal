@@ -14,7 +14,7 @@ export type ReportSku = {
 };
 
 const horizons: ReportHorizon[] = ["1_month", "4_months", "6_months", "12_months"];
-const domains: ReportDomain[] = ["general", "work_money", "love_connection"];
+const domains: ReportDomain[] = ["general", "work_money", "love_connection", "personal_health"];
 
 function envSuffix(domain: ReportDomain, horizon: ReportHorizon) {
   return `${domain}_${horizon}`.toUpperCase();
