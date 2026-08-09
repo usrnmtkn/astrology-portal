@@ -775,8 +775,13 @@ function styleNotesForGeneratedContent(content: GeneratedContent, input: Generat
 }
 
 function generationQualityDiagnostics(content: GeneratedContent, input: GenerateContentInput) {
+  const reportWarnings = input.reportPayload
+    ? validateReportDraft(content, input.reportPayload)
+      .filter((issue) => issue.severity === "warning")
+      .map((issue) => `${issue.code}: ${issue.message}`)
+    : [];
   return {
-    softWarnings: softVoiceWarningFailures(content, input),
+    softWarnings: [...new Set([...softVoiceWarningFailures(content, input), ...reportWarnings])],
     styleNotes: styleNotesForGeneratedContent(content, input)
   };
 }
@@ -4633,7 +4638,8 @@ async function loadApprovedExamples(input: GenerateContentInput) {
 
 function validateGeneratedContentQuality(content: GeneratedContent, input: GenerateContentInput) {
   if (input.reportPayload) {
-    const issues = validateReportDraft(content, input.reportPayload);
+    const issues = validateReportDraft(content, input.reportPayload)
+      .filter((issue) => issue.severity !== "warning");
     if (issues.length) {
       hardEditorialViolation(
         issues.map((issue) => issue.code),
