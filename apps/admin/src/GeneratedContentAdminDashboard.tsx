@@ -22,6 +22,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
 import { AspectPatternWriteups } from "./AspectPatternWriteups";
+import { ReportFulfillmentAdminPanel } from "./ReportFulfillmentAdminPanel";
 import { fallbackArchitectureV3PackageVersion } from "../../web/src/content/fallbackArchitectureV3Runtime";
 import bundledDeferredCoreRowsV3 from "../../web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json";
 import bundledSkyCoreRowsV3 from "../../web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
@@ -49,6 +50,7 @@ type AdminDashboardPage =
   | "aspectPatternActivationCoverage"
   | "aspectDiagnostics"
   | "users"
+  | "reportFulfillment"
   | "releaseNotes";
 type AdminContentClass = "phrasebank" | "generated" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
 type AdminContentClassFilter = AdminContentClass | "all";
@@ -234,6 +236,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   aspectPatternActivationCoverage: "content/aspect-patterns/activation",
   aspectDiagnostics: "diagnostics/aspect-patterns",
   users: "users",
+  reportFulfillment: "report-fulfillment",
   releaseNotes: "release-notes"
 };
 
@@ -280,6 +283,7 @@ const adminNavGroups: Array<{
     items: [
       { page: "connection", label: "Connection", icon: Server },
       { page: "appBehavior", label: "App Behavior", icon: Activity },
+      { page: "reportFulfillment", label: "Report Fulfillment", icon: BarChart3 },
       { page: "aspectDiagnostics", label: "Aspect Diagnostics", icon: BarChart3 },
       { page: "releaseNotes", label: "Release Notes", icon: Archive }
     ]
@@ -396,6 +400,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "aspectPatternActivationCoverage": return "Aspect Pattern Activation";
     case "aspectDiagnostics": return "Aspect Pattern Diagnostics";
     case "users": return "Users";
+    case "reportFulfillment": return "Report Fulfillment";
     case "releaseNotes": return "Release Notes";
     default: return "Content Studio";
   }
@@ -419,6 +424,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "aspectPatternActivationCoverage": return "Admin / Language System / Aspect Pattern Activation";
     case "aspectDiagnostics": return "Admin / Diagnostics / Aspect patterns";
     case "users": return "Admin / Users";
+    case "reportFulfillment": return "Admin / Operations / Report fulfillment";
     case "releaseNotes": return "Admin / Release notes";
     default: return "Admin / Home";
   }
@@ -452,6 +458,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Read-only detector, relationship, and ranking diagnostics for natal aspect patterns.";
     case "users":
       return "Read-mostly user-generated rows by subject, surface, status, and latest update.";
+    case "reportFulfillment":
+      return "Orders, gate pass rates, retries, judge scores, exceptions, delivery time, token spend, and sampled audits.";
     default:
       return "A rebuilt admin dashboard organized around review, the full content library, fallback rows, vocab, and user output.";
   }
@@ -3018,6 +3026,8 @@ export function GeneratedContentAdminDashboard() {
             </div>
           </section>
         )}
+
+        {activePage === "reportFulfillment" && <ReportFulfillmentAdminPanel secret={secret} />}
 
         {activePage === "releaseNotes" && (
           <section className="admin-template-page">
