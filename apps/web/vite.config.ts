@@ -142,6 +142,27 @@ export default defineConfig(({ mode }) => {
               return "fallback-content-core";
             }
             if (id.includes("@tldr/astro-knowledge") || id.includes("packages/astro-knowledge")) {
+              if (id.includes("shared-web.json")) {
+                return "astro-knowledge-shared";
+              }
+              if (id.includes("sky-runtime-web.json")) {
+                return "astro-knowledge-sky";
+              }
+              if (id.includes("natal-insights-web.json")) {
+                return "astro-knowledge-natal-insights";
+              }
+              if (id.includes("natal-transits-web.json")) {
+                return "astro-knowledge-natal-transits";
+              }
+              if (id.includes("natal-placements-web.json")) {
+                return "astro-knowledge-natal-placements";
+              }
+              if (id.includes("relationships-synastry-web.json")) {
+                return "astro-knowledge-relationships-synastry";
+              }
+              if (id.includes("relationships-composite-web.json")) {
+                return "astro-knowledge-relationships-composite";
+              }
               if (id.includes("sky-web.json")) {
                 return "astro-knowledge-sky";
               }
