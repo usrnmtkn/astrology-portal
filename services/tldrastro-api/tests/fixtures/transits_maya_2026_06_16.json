@@ -54,26 +54,25 @@
         "natalHouse": 11
       },
       {
+        "id": "uranus-square-chiron",
+        "transitPlanet": "Uranus",
+        "aspect": "square",
+        "natalPoint": "Chiron",
+        "orb": 0.2359,
+        "phase": "applying",
+        "transitHouse": 10,
+        "natalHouse": 4
+      },
+      {
         "id": "pluto-sextile-mercury",
         "transitPlanet": "Pluto",
         "aspect": "sextile",
         "natalPoint": "Mercury",
-        "orb": 0.3365,
+        "orb": 0.3366,
         "phase": "applying",
         "transitHouse": 6,
         "natalHouse": 11
-      },
-      {
-        "id": "jupiter-trine-pluto",
-        "transitPlanet": "Jupiter",
-        "aspect": "trine",
-        "natalPoint": "Pluto",
-        "orb": 0.4393,
-        "phase": "applying",
-        "transitHouse": 11,
-        "natalHouse": 6
       }
     ]
   }
 }
-

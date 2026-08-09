@@ -44,7 +44,11 @@ assertCanonicalSkyPoints([...planets.map(([planet]) => planet), "South Node"]);
 assertCanonicalSkyPoints([...SKY_ASPECT_POINT_ORDER]);
 
 const SE_CHIRON = 15;
-const SE_MEAN_BLACK_MOON_LILITH = 12;
+// True (osculating) lunar apogee, Swiss Ephemeris SE_OSCU_APOG.
+// Owner decision 2026-08-09 (tldr-astro-lilith-fact-boundary.md): the app uses
+// TRUE Black Moon Lilith. Mean apogee (SE_MEAN_APOG, id 12) is intentionally no
+// longer used; see calculationVersion v3 in astrologyFacts.ts.
+const SE_TRUE_BLACK_MOON_LILITH = 13;
 
 type SwissEphConstructor = typeof import("swisseph-wasm").default;
 type SwissEphInstance = InstanceType<SwissEphConstructor>;
@@ -304,6 +308,7 @@ function isPlanetCazimi(swe: SwissEphInstance, planetId: number, date: Date) {
 
 function transitSearchStepDays(planet: string) {
   if (planet === "Moon") return 0.25;
+  if (planet === "Lilith") return 0.25;
   if (["Sun", "Mercury", "Venus", "Mars"].includes(planet)) return 1;
   if (planet === "Jupiter") return 4;
   if (planet === "Saturn") return 8;
@@ -402,6 +407,91 @@ function signTransitWindowFor(
   };
 }
 
+type SignResidencyPass = {
+  entryDate: string;
+  exitDate: string;
+};
+
+type SignTransitWindow = {
+  transitStart?: string;
+  transitEnd?: string;
+  transitRemainingLabel?: string;
+  residencyPasses?: SignResidencyPass[];
+};
+
+// True/osculating Lilith loops across a sign boundary many times during one
+// residency. A placement's exitDate is therefore the final exit after the
+// short re-entry passes, not the end of the single pass containing `date`.
+// A 45-day closed search is longer than the monthly oscillation and short
+// enough not to join the next long-term sign residency.
+function lilithSignResidencyFor(
+  swe: SwissEphInstance,
+  planetId: number,
+  date: Date,
+  currentSign: string,
+  longitudeOffset = 0
+): SignTransitWindow {
+  const initial = signTransitWindowFor(swe, "Lilith", planetId, date, currentSign, longitudeOffset);
+  if (!initial.transitStart || !initial.transitEnd) return {};
+
+  const passes: SignResidencyPass[] = [{
+    entryDate: initial.transitStart,
+    exitDate: initial.transitEnd
+  }];
+  const maximumGapDays = 45;
+  const scanStepDays = transitSearchStepDays("Lilith");
+
+  function adjacentPass(direction: -1 | 1, boundary: Date) {
+    for (let elapsed = scanStepDays; elapsed <= maximumGapDays; elapsed += scanStepDays) {
+      const sample = addDays(boundary, direction * elapsed);
+      if (exactPlanetSign(swe, planetId, sample, longitudeOffset) !== currentSign) continue;
+      const pass = signTransitWindowFor(swe, "Lilith", planetId, sample, currentSign, longitudeOffset);
+      if (pass.transitStart && pass.transitEnd) {
+        return { entryDate: pass.transitStart, exitDate: pass.transitEnd };
+      }
+    }
+    return null;
+  }
+
+  for (let count = 0; count < 48; count += 1) {
+    const first = passes[0];
+    const previous = adjacentPass(-1, new Date(first.entryDate));
+    if (!previous || previous.exitDate >= first.entryDate) break;
+    passes.unshift(previous);
+  }
+
+  for (let count = 0; count < 48; count += 1) {
+    const last = passes[passes.length - 1];
+    const next = adjacentPass(1, new Date(last.exitDate));
+    if (!next || next.entryDate <= last.exitDate) break;
+    passes.push(next);
+  }
+
+  const transitStart = passes[0].entryDate;
+  const transitEnd = passes[passes.length - 1].exitDate;
+  return {
+    transitStart,
+    transitEnd,
+    transitRemainingLabel: compactDurationLabelFromDays(
+      (new Date(transitEnd).getTime() - date.getTime()) / 86_400_000
+    ),
+    residencyPasses: passes
+  };
+}
+
+function signResidencyWindowFor(
+  swe: SwissEphInstance,
+  planet: string,
+  planetId: number,
+  date: Date,
+  currentSign: string,
+  longitudeOffset = 0
+): SignTransitWindow {
+  return planet === "Lilith"
+    ? lilithSignResidencyFor(swe, planetId, date, currentSign, longitudeOffset)
+    : signTransitWindowFor(swe, planet, planetId, date, currentSign, longitudeOffset);
+}
+
 function previousSameSignResidencyFor(
   swe: SwissEphInstance,
   planet: string,
@@ -411,14 +501,14 @@ function previousSameSignResidencyFor(
   longitudeOffset = 0
 ) {
   const searchYears = placementSearchYears(planet);
-  const minimumGapYears = planet === "Jupiter" ? 6 : 1;
+  const minimumGapYears = planet === "Jupiter" ? 6 : planet === "Lilith" ? 4 : 1;
   const stepDays = transitSearchStepDays(planet);
   const maxIterations = Math.ceil((searchYears * 365.25) / stepDays);
   let sample = addDays(currentStart, -minimumGapYears * 365.25);
 
   for (let index = 0; index < maxIterations; index += 1) {
     if (exactPlanetSign(swe, planetId, sample, longitudeOffset) === sign) {
-      const previousWindow = signTransitWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
+      const previousWindow = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
       if (
         previousWindow.transitStart
         && previousWindow.transitEnd
@@ -444,6 +534,7 @@ const SKY_PLACEMENT_STRUCTURAL_FACT_PLANETS = new Set([
   "Neptune",
   "Pluto",
   "Chiron",
+  "Lilith",
   "North Node"
 ]);
 
@@ -1332,22 +1423,21 @@ function findStations(
   end: Date,
   timeZone: string
 ): LunarCalendarEvent[] {
-  const planetIds = [
-    swe.SE_MERCURY,
-    swe.SE_VENUS,
-    swe.SE_MARS,
-    swe.SE_JUPITER,
-    swe.SE_SATURN,
-    swe.SE_URANUS,
-    swe.SE_NEPTUNE,
-    swe.SE_PLUTO
-  ];
-  const stationPlanets = planets.slice(2, 10);
+  const stationBodies = [
+    ["Mercury", "☿", swe.SE_MERCURY],
+    ["Venus", "♀", swe.SE_VENUS],
+    ["Mars", "♂", swe.SE_MARS],
+    ["Jupiter", "♃", swe.SE_JUPITER],
+    ["Saturn", "♄", swe.SE_SATURN],
+    ["Uranus", "♅", swe.SE_URANUS],
+    ["Neptune", "♆", swe.SE_NEPTUNE],
+    ["Pluto", "♇", swe.SE_PLUTO],
+    ["Lilith", "⚸", SE_TRUE_BLACK_MOON_LILITH]
+  ] as const;
   const events: LunarCalendarEvent[] = [];
   const stepMs = 12 * 60 * 60_000;
 
-  stationPlanets.forEach(([planet, glyph], index) => {
-    const planetId = planetIds[index];
+  stationBodies.forEach(([planet, glyph, planetId]) => {
     let previousDate = start;
     let previousSpeed = exactPlanetSpeed(swe, planetId, previousDate);
 
@@ -1397,17 +1487,17 @@ function findActiveRetrogrades(
   displayEnd: Date,
   timeZone: string
 ): LunarCalendarEvent[] {
-  const planetIds = [
-    swe.SE_MERCURY,
-    swe.SE_VENUS,
-    swe.SE_MARS,
-    swe.SE_JUPITER,
-    swe.SE_SATURN,
-    swe.SE_URANUS,
-    swe.SE_NEPTUNE,
-    swe.SE_PLUTO
-  ];
-  const retrogradePlanets = planets.slice(2, 10);
+  const retrogradeBodies = [
+    ["Mercury", "☿", swe.SE_MERCURY],
+    ["Venus", "♀", swe.SE_VENUS],
+    ["Mars", "♂", swe.SE_MARS],
+    ["Jupiter", "♃", swe.SE_JUPITER],
+    ["Saturn", "♄", swe.SE_SATURN],
+    ["Uranus", "♅", swe.SE_URANUS],
+    ["Neptune", "♆", swe.SE_NEPTUNE],
+    ["Pluto", "♇", swe.SE_PLUTO],
+    ["Lilith", "⚸", SE_TRUE_BLACK_MOON_LILITH]
+  ] as const;
 
   const events: LunarCalendarEvent[] = [];
   const directStationCache = new Map<string, Date | null>();
@@ -1445,8 +1535,7 @@ function findActiveRetrogrades(
     const dateKey = localDateKey(dayStart, timeZone);
     const sampleTime = addDays(dayStart, 0.5);
 
-    retrogradePlanets.forEach(([planet, glyph], index) => {
-      const planetId = planetIds[index];
+    retrogradeBodies.forEach(([planet, glyph, planetId]) => {
       const speed = exactPlanetSpeed(swe, planetId, sampleTime);
 
       if (speed >= -0.0001) {
@@ -1486,6 +1575,9 @@ function findActiveRetrogrades(
 }
 
 function retrogradeSearchWindowDays(planet: string) {
+  if (planet === "Lilith") {
+    return 90;
+  }
   if (["Mercury", "Venus", "Mars"].includes(planet)) {
     return 180;
   }
@@ -1813,7 +1905,7 @@ function skyPointPlanetId(swe: SwissEphInstance, point: string) {
     Neptune: swe.SE_NEPTUNE,
     Pluto: swe.SE_PLUTO,
     Chiron: SE_CHIRON,
-    Lilith: SE_MEAN_BLACK_MOON_LILITH,
+    Lilith: SE_TRUE_BLACK_MOON_LILITH,
     "North Node": swe.SE_TRUE_NODE
   };
   return ids[point] ?? null;
@@ -2309,9 +2401,10 @@ function findSkyAspects(
     swe.SE_SATURN,
     swe.SE_URANUS,
     swe.SE_NEPTUNE,
-    swe.SE_PLUTO
+    swe.SE_PLUTO,
+    SE_TRUE_BLACK_MOON_LILITH
   ];
-  const calendarPlanets = planets.slice(0, planetIds.length);
+  const calendarPlanets = [...planets.slice(0, 10), planets[11]];
   const events: LunarCalendarEvent[] = [];
   const stepMs = 12 * 60 * 60_000;
 
@@ -2721,6 +2814,7 @@ export type SkyPlacementTransitFacts = {
   timeZone: string;
   transitStart: string;
   transitEnd: string;
+  residencyPasses: SignResidencyPass[];
   priorSign: string;
   priorSignEntryDate: string;
   priorSignExitDate: string;
@@ -2742,6 +2836,7 @@ export type SkyPlacementTransitFacts = {
   }>;
   calculationSource: string;
   zodiac: "tropical" | "sidereal";
+  lilithType: "mean" | "true";
 };
 
 function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
@@ -2757,6 +2852,7 @@ function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
     ["neptune", "Neptune", swe.SE_NEPTUNE],
     ["pluto", "Pluto", swe.SE_PLUTO],
     ["chiron", "Chiron", SE_CHIRON],
+    ["lilith", "Lilith", SE_TRUE_BLACK_MOON_LILITH],
     ["north-node", "North Node", swe.SE_TRUE_NODE],
     ["south-node", "South Node", swe.SE_TRUE_NODE]
   ] as const;
@@ -2778,6 +2874,7 @@ function placementSearchYears(planet: string) {
   if (planet === "Uranus") return 90;
   if (planet === "Neptune") return 170;
   if (planet === "Chiron") return 60;
+  if (planet === "Lilith") return 12;
   if (["North Node", "South Node"].includes(planet)) return 22;
   return 260;
 }
@@ -2851,7 +2948,7 @@ export async function getSkyPlacementTransitFacts({
   const { planet, planetId, longitudeOffset } = placementPlanet(swe, requestedPlanet);
   const sign = placementSign(requestedSign);
   const sample = findNextPlacementSample(swe, planet, planetId, sign, referenceDate, longitudeOffset);
-  const window = signTransitWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
+  const window = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
   if (!window.transitStart || !window.transitEnd) {
     throw new Error(`Could not resolve the ${planet} in ${sign} transit boundaries.`);
   }
@@ -2864,9 +2961,21 @@ export async function getSkyPlacementTransitFacts({
     throw new Error(`Could not resolve the prior ${planet} in ${priorSign} transit boundaries.`);
   }
   const previous = previousSameSignResidencyFor(swe, planet, planetId, sign, transitStart, longitudeOffset);
+  const eventPasses = window.residencyPasses ?? [{
+    entryDate: window.transitStart,
+    exitDate: window.transitEnd
+  }];
   const rankedEventsDuringTransit = ["Chiron", "North Node", "South Node"].includes(planet)
     ? []
-    : rankPlacementEvents(findSkyAspects(swe, transitStart, transitEnd, timeZone), planet);
+    : rankPlacementEvents(
+      eventPasses.flatMap((pass) => findSkyAspects(
+        swe,
+        new Date(pass.entryDate),
+        new Date(pass.exitDate),
+        timeZone
+      )),
+      planet
+    );
 
   return {
     planet,
@@ -2875,6 +2984,7 @@ export async function getSkyPlacementTransitFacts({
     timeZone,
     transitStart: window.transitStart,
     transitEnd: window.transitEnd,
+    residencyPasses: eventPasses,
     priorSign,
     priorSignEntryDate: priorWindow.transitStart,
     priorSignExitDate: priorWindow.transitEnd,
@@ -2883,7 +2993,8 @@ export async function getSkyPlacementTransitFacts({
       : null,
     rankedEventsDuringTransit,
     calculationSource: ASTROLOGY_CALCULATION_PROVENANCE.source,
-    zodiac: ASTROLOGY_CALCULATION_PROVENANCE.zodiac
+    zodiac: ASTROLOGY_CALCULATION_PROVENANCE.zodiac,
+    lilithType: ASTROLOGY_CALCULATION_PROVENANCE.lilithType
   };
 }
 
@@ -2932,7 +3043,7 @@ export async function getAstrodienstSky(
     swe.SE_NEPTUNE,
     swe.SE_PLUTO,
     SE_CHIRON,
-    SE_MEAN_BLACK_MOON_LILITH,
+    SE_TRUE_BLACK_MOON_LILITH,
     swe.SE_TRUE_NODE
   ];
   const positions: CalculatedPlanet[] = planets.map(([planet, glyph], index) => {
@@ -2942,7 +3053,7 @@ export async function getAstrodienstSky(
     const { sign, signGlyph, degree } = signForLongitude(longitude);
     const motion = result[3] < -0.0001 ? "retrograde" : "direct";
     const transitWindow = options.includeTransitWindows
-      ? signTransitWindowFor(swe, planet, planetIds[index], date, sign)
+      ? signResidencyWindowFor(swe, planet, planetIds[index], date, sign)
       : {};
     const structuralTransitFacts = options.includeTransitWindows
       ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow)

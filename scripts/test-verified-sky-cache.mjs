@@ -56,7 +56,8 @@ try {
     houseSystem: "whole_sign",
     planetHouseSystem: "whole_sign",
     nodeType: "true",
-    calculationVersion: "tldrastro-calculation-v2"
+    lilithType: "true",
+    calculationVersion: "tldrastro-calculation-v3"
   };
   const fact = {
     id: "fact.position.sun.2026-07-30T11:55:00.000Z",
@@ -99,6 +100,27 @@ try {
     cache.writeCachedSkySnapshot(cacheKey, snapshot, { now, storage }),
     true,
     "A fully validated current-sky snapshot should be cached."
+  );
+  assert.equal(cache.VERIFIED_SKY_CACHE_SCHEMA, "tldrastro-verified-sky-v2");
+
+  const staleMeanLilithKey = cache.skySnapshotCacheKey(location, "2026-07-29");
+  const staleProvenance = {
+    ...provenance,
+    lilithType: "mean",
+    calculationVersion: "tldrastro-calculation-v2"
+  };
+  assert.equal(
+    cache.writeCachedSkySnapshot(
+      staleMeanLilithKey,
+      {
+        ...snapshot,
+        calculationProvenance: staleProvenance,
+        facts: [{ ...fact, provenance: staleProvenance }]
+      },
+      { now, storage }
+    ),
+    false,
+    "A v2 mean-Lilith snapshot must fail closed instead of re-entering the verified cache."
   );
 
   const restored = cache.readCachedSkySnapshot(cacheKey, {

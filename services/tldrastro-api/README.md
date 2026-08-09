@@ -54,10 +54,11 @@ Run the full API suite from the service directory:
 python -m pytest
 ```
 
-Portable CI intentionally validates the known PySwissEph profile available
-without a private ephemeris-data mount: `moshier,swiss`. The relationship
-fixtures assert that profile explicitly, so fallback cannot happen silently.
-To validate against a mounted Swiss-only data set, configure both paths:
+CI downloads checksum-pinned planet, Moon, and main-asteroid data files from
+the official Swiss Ephemeris repository and validates a Swiss-only profile.
+`sepl_18.se1` supplies the planets, `semo_18.se1` supplies the Moon and true
+(osculating) Black Moon Lilith, and `seas_18.se1` supplies asteroids and Chiron.
+To run the same profile locally, configure both values:
 
 ```bash
 TLDR_ASTRO_EPHEMERIS_PATH=/path/to/ephemeris \
@@ -65,8 +66,9 @@ TLDR_ASTRO_TEST_EPHEMERIS_ENGINES=swiss \
 python -m pytest
 ```
 
-Production still requires the Swiss-only profile. `/ready` rejects fallback
-when `TLDR_ASTRO_EPHEMERIS_PATH` is configured.
+Production requires the Swiss-only profile. `/ready` probes the Sun, Moon, and
+true Black Moon Lilith and rejects fallback when `TLDR_ASTRO_EPHEMERIS_PATH` is
+configured, including when the Moon/true-apogee data file is absent.
 
 ## Timezone Lookup
 

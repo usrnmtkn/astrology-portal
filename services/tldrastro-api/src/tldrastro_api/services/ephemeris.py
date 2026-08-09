@@ -125,7 +125,14 @@ def _probe(swe: Any) -> Tuple[List[Dict[str, object]], List[str], List[int]]:
     engines: List[str] = []
     returned_flags: List[int] = []
 
-    for label, body_id in (("Sun", swe.SUN), ("Moon", swe.MOON)):
+    # True Black Moon Lilith uses the osculating apogee from semo_18.se1, the
+    # Moon ephemeris. Probing it here prevents a runtime from reporting ready
+    # when planet data exists but the Moon/true-apogee file is unavailable.
+    for label, body_id in (
+        ("Sun", swe.SUN),
+        ("Moon", swe.MOON),
+        ("True Black Moon Lilith", swe.OSCU_APOG),
+    ):
         try:
             result, actual_flags = swe.calc_ut(PROBE_JULIAN_DAY, body_id, requested_flags)
             engine = _engine_from_flags(swe, actual_flags)

@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -64,6 +65,13 @@ def test_natal_chart_returns_core_chart_shape():
 def test_north_node_uses_true_node_ephemeris_across_dates():
     assert BODY_IDS["North Node"] == swe.TRUE_NODE
     assert BODY_IDS["North Node"] != swe.MEAN_NODE
+
+    # TestClient performs the chart request in a worker thread. Configure the
+    # direct reference calculation in this thread as well so both sides use
+    # the same checksum-pinned Swiss files on every platform.
+    ephemeris_path = os.getenv("TLDR_ASTRO_EPHEMERIS_PATH")
+    if ephemeris_path:
+        swe.set_ephe_path(ephemeris_path)
 
     for date_value, time_value in [("1994-04-12", "08:35"), ("2026-07-31", "12:00")]:
         payload = natal_payload()
