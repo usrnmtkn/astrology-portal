@@ -6,13 +6,21 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildMeaningPlan,
+  CANDIDATE_WRITER,
+  CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
+  CURRENT_PRODUCTION_WRITER,
+  evaluateLilithVerticalSlice,
+  extractNeutralExternalMeaning,
   HARD_REVISE_FIELDS,
   HOUSE_BLEED_NOUNS,
+  MEANING_PLAN_SCHEMA,
+  promoteCandidateWriter,
   REVIEW_FIELDS,
   reviewDraft,
   runWritingPipeline,
+  validateWriterPromotion,
   validateCopy
 } from "../../src/astro-writing/index.mjs";
 
@@ -40,18 +48,24 @@ assert.ok(voiceContract.includes("CODEX INSTRUCTION (owner-designated canonical 
 assert.ok(voiceContract.includes("# Marie voice bank (gold-standard reference)"));
 assert.ok(rubric.includes("STAGE 1: ASTROLOGY MEANING PLAN"));
 assert.ok(rubric.includes("STAGE 6: DETERMINISTIC VALIDATION"));
+assert.ok(read("docs/writing/EDITORIAL-GATE-REVIEWER-PROMPT.md").includes("ASSUME THERE IS A DEFECT UNTIL EACH REQUIRED CHECK PASSES."));
+assert.ok(read("docs/writing/SOURCE_GOVERNANCE.md").includes("That is derivative laundering."));
+assert.ok(read("docs/writing/OWNER_APPROVAL_GOVERNANCE.md").includes("Only an explicit owner ruling may set:"));
+const implementationReport = read("packages/astro-knowledge/review/writing-harness-v2/implementation-report.md");
+for (let item = 1; item <= 17; item += 1) assert.ok(implementationReport.includes(`## ${item}.`), `Implementation report must contain item ${item}.`);
 assert.ok(read("AGENTS.md").includes("skills/tldr-astro-writer/SKILL.md"));
 assert.equal(astrologyContract, read("packages/astro-knowledge/review/writing-harness-v1/TLDR-Horoscope-Template-Canonical.md"));
 assert.equal(literalRules, astrologyContract);
 assert.equal(rubric, read("packages/astro-knowledge/review/writing-harness-v1/TLDR-Writing-Harness-Owner-Spec.md"));
 assert.equal(read("docs/writing/BANNED_PATTERNS.md"), read("tldr-astro-phrasebank/WRITING-STANDARD.md"));
-assert.equal(read("data/writing/OWNER_CORRECTIONS.jsonl"), read("packages/astro-knowledge/review/writing-harness-v1/TLDR-Owner-Corrections-Seed.jsonl"));
+assert.equal(read("data/writing/owner-corrections.jsonl"), read("packages/astro-knowledge/review/writing-harness-v2/owner-corrections.jsonl"));
 assert.ok(voiceContract.startsWith(ownerDoctrine));
 assert.ok(voiceContract.endsWith(read("tldr-astro-phrasebank/MARIE-VOICE-BANK.md")));
 
 const cjs = await import("../../src/astro-writing/canonicalInstructions.cjs");
 assert.equal(cjs.default.canonicalAstrologyWritingInstructions, canonicalAstrologyWritingInstructions);
 assert.equal(cjs.default.canonicalAstrologyReviewInstructions, canonicalAstrologyReviewInstructions);
+assert.equal(cjs.default.CANONICAL_REVIEWER_INSTRUCTIONS_VERSION, CANONICAL_REVIEWER_INSTRUCTIONS_VERSION);
 const ownerCodexInstruction = ownerDoctrine.slice(ownerDoctrine.indexOf("CODEX INSTRUCTION (owner-designated canonical form):")).trim();
 assert.ok(
   canonicalAstrologyWritingInstructions.replace(/\s+/gu, " ").startsWith(ownerCodexInstruction.replace(/\s+/gu, " ")),
@@ -62,8 +76,8 @@ assert.ok(
   "Canonical API instructions must begin with the verbatim owner-designated doctrine."
 );
 
-const corrections = jsonl("data/writing/OWNER_CORRECTIONS.jsonl");
-assert.equal(corrections.length, 13, "All 13 owner correction fixtures must be seeded.");
+const corrections = jsonl("data/writing/owner-corrections.jsonl");
+assert.equal(corrections.length, 20, "All 20 owner correction fixtures must be seeded.");
 for (const fixture of corrections) {
   for (const field of ["bad", "corrected", "category", "why", "family", "rule"]) assert.ok(fixture[field], `Correction fixture missing ${field}.`);
   const review = await reviewDraft({
@@ -75,7 +89,7 @@ for (const fixture of corrections) {
     requiredFields: ["body"]
   });
   assert.equal(review.decision, "REVISE", `Known bad fixture must be rejected: ${fixture.category}`);
-  assert.ok(review.violations.some((violation) => violation.startsWith(`${fixture.category}:`)), `Fixture must retain category ${fixture.category}.`);
+  assert.ok(review.violations.some((violation) => violation.category === fixture.category), `Fixture must retain category ${fixture.category}.`);
   const correctedLint = validateCopy(fixture.corrected, {
     family: fixture.family,
     register: fixture.family === "house-horoscope-core" ? "second_person" : "collective",
@@ -154,11 +168,23 @@ const writerClient = async ({ stage, instructions }) => {
   };
 };
 const reviewValue = (decision) => ({
-  ...Object.fromEntries(REVIEW_FIELDS.map((field) => [field, "PASS"])),
-  ...(decision === "REVISE" ? { literal_first_read_clarity: "REVISE" } : {}),
+  ...Object.fromEntries(REVIEW_FIELDS.map((field) => [field, {
+    status: "PASS",
+    reason: "No defect found for this check."
+  }])),
+  ...(decision === "REVISE" ? { literal_first_read_clarity: {
+    status: "FAIL",
+    reason: "Name the action."
+  } } : {}),
   decision,
-  violations: decision === "REVISE" ? ["literal_first_read_clarity: name the action"] : [],
-  required_revisions: decision === "REVISE" ? [{ field: "hook", instruction: "Name the action." }] : []
+  violations: decision === "REVISE" ? [{
+    category: "literal_first_read_clarity",
+    severity: "blocking",
+    location: "hook",
+    text: "The claim sounds convincing but nobody checks it.",
+    reason: "Name the action.",
+    revision_instruction: "Name the action."
+  }] : []
 });
 const reviewerClient = async ({ instructions }) => {
   assert.equal(instructions, canonicalAstrologyReviewInstructions);
@@ -171,13 +197,15 @@ const pipeline = await runWritingPipeline({
   corrections: [],
   task: "Write one Lilith in Sagittarius placement.",
   writerClient,
-  reviewerClient
+  reviewerClient,
+  reviserClient: writerClient
 });
 assert.ok(pipeline.context.counts.examples > 0, "The default placement pipeline must retrieve owner-approved sky-placement examples.");
 assert.equal(pipeline.draft.hook, "Someone checks the claim before repeating it.");
 assert.equal(pipeline.draft.lived, "A familiar answer keeps getting repeated after the facts change.", "Surgical revision must preserve successful fields.");
 assert.equal(pipeline.draft.ownerApproved, false, "Generated copy must never be labeled owner-approved.");
 assert.equal(pipeline.draft.reviewStatus, "needs_review");
+assert.equal(pipeline.draft.approvalStatus, "owner-review-pending");
 assert.equal(pipeline.report.automaticallyRevised, 1);
 assert.equal(pipeline.report.finalLintStatus, "PASS");
 
@@ -194,15 +222,61 @@ const inconsistentReviewer = await reviewDraft({
   context: { examples: [], corrections: [] },
   modelClient: async () => ({
     ...reviewValue("PASS"),
-    voice_match: "REVISE",
+    voice_match: { status: "FAIL", reason: "The sentence does not match the owner register." },
     decision: "PASS",
-    violations: ["voice_match: the sentence does not match the owner register"],
-    required_revisions: [{ field: "hook", instruction: "Restore the owner register." }]
+    violations: [{
+      category: "voice_match",
+      severity: "nonblocking",
+      location: "hook",
+      text: "The answer changes after the facts do.",
+      reason: "The sentence does not match the owner register.",
+      revision_instruction: "Restore the owner register."
+    }]
   })
 });
 assert.equal(inconsistentReviewer.decision, "REVISE", "Any reviewer field marked REVISE must block PASS.");
 
+const gold = jsonl("data/writing/owner-approved-examples.jsonl");
+const negatives = jsonl("data/writing/negative-regression-fixtures.jsonl");
+const verticalSlice = evaluateLilithVerticalSlice({ gold, negatives });
+assert.equal(gold.length, 12);
+assert.equal(negatives.length, 8);
+assert.equal(verticalSlice.passed, true);
+assert.equal(verticalSlice.goldPassed, 12);
+assert.equal(verticalSlice.negativePassed, 8);
+assert.equal(verticalSlice.falsePositives, 0);
+assert.equal(verticalSlice.falseNegatives, 0);
+
+const externalFacts = extractNeutralExternalMeaning({
+  sourceId: "external-reference",
+  provenance: "A named external reference.",
+  facts: ["Jupiter spends roughly one year in each sign."]
+});
+assert.deepEqual(externalFacts.neutralFacts, ["Jupiter spends roughly one year in each sign."]);
+assert.equal(externalFacts.draftingText, null);
+assert.throws(() => extractNeutralExternalMeaning({
+  sourceId: "external-reference",
+  provenance: "A named external reference.",
+  facts: ["Jupiter spends roughly one year in each sign."],
+  externalProse: "Use this publication's phrasing as a model."
+}), /Derivative-laundering guard/iu);
+
+assert.equal(CURRENT_PRODUCTION_WRITER, null, "No writer is promoted without owner authorization.");
+assert.equal(CANDIDATE_WRITER.promoted, false);
+const promotionReport = {
+  goldPassed: 12,
+  negativePassed: 8,
+  falsePositives: 0,
+  falseNegatives: 0,
+  blockingRegressions: 0
+};
+assert.equal(validateWriterPromotion(promotionReport).passed, true);
+assert.throws(() => promoteCandidateWriter(promotionReport), /owner authorization/iu);
+
+for (const field of MEANING_PLAN_SCHEMA.required) assert.ok(Object.hasOwn(plan, field), `Meaning plan must contain ${field}.`);
+
 const directCallFiles = [
+  "scripts/run-astro-writing-harness.mjs",
   "api/_lib/content-generation.ts",
   "packages/astro-knowledge/scripts/generate-sky-aspect-cards.js",
   "packages/astro-knowledge/scripts/judge-daily-glance.js",
@@ -213,10 +287,28 @@ const directCallFiles = [
 ];
 for (const file of directCallFiles) {
   const source = read(file);
-  assert.ok(source.includes("api.openai.com/v1/responses"));
-  assert.ok(source.includes("instructions:"), `${file} must load canonical instructions on every Responses API request.`);
-  assert.ok(source.includes("canonicalAstrology"), `${file} must use the canonical shared instruction module.`);
+  assert.ok(source.includes("callOpenAIResponses"), `${file} must use the canonical Responses wrapper.`);
+  assert.ok(!source.includes("api.openai.com/v1/responses"), `${file} may not bypass the canonical Responses wrapper.`);
 }
+const { callOpenAIResponses, instructionsForRole } = await import("../../src/astro-writing/openAIResponses.cjs").then((module) => module.default);
+assert.equal(instructionsForRole("WRITER"), canonicalAstrologyWritingInstructions);
+assert.equal(instructionsForRole("REVIEWER"), canonicalAstrologyReviewInstructions);
+let capturedWrapperBody = null;
+await callOpenAIResponses({
+  apiKey: "test-key",
+  role: "REVIEWER",
+  request: { model: "test-model", input: "Review this." },
+  fetchImpl: async (_url, init) => {
+    capturedWrapperBody = JSON.parse(init.body);
+    return { json: async () => ({ id: "test-response" }), ok: true, status: 200 };
+  }
+});
+assert.equal(capturedWrapperBody.instructions, canonicalAstrologyReviewInstructions);
+await assert.rejects(() => callOpenAIResponses({
+  apiKey: "test-key",
+  role: "WRITER",
+  request: { model: "test-model", input: "Write this.", previous_response_id: "forbidden" }
+}), /previous-response instruction persistence/iu);
 const apiGeneration = read("api/_lib/content-generation.ts");
 assert.ok(apiGeneration.includes("reviewGeneratedContentWithOpenAI"), "Application generation must run a separate review pass.");
 assert.ok(apiGeneration.includes("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"), "Application generation must retrieve from canonical owner-approved evidence.");

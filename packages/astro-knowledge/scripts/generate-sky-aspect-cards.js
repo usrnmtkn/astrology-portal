@@ -22,6 +22,7 @@ const {
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions
 } = require("../../../src/astro-writing/canonicalInstructions.cjs");
+const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
 const {
   annotateCandidateWithWarmth,
   buildAspectWarmthHarvest,
@@ -987,23 +988,16 @@ async function generateWithConfig(prompt, config, { temperature } = {}) {
     return text;
   }
 
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${config.apiKey}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
+  const { response, payload } = await callOpenAIResponses({
+    apiKey: config.apiKey,
+    role: config.role === "judge" ? "REVIEWER" : "WRITER",
+    request: {
       model: config.model,
-      instructions: config.role === "judge"
-        ? canonicalAstrologyReviewInstructions
-        : canonicalAstrologyWritingInstructions,
       input: prompt,
       ...openAiRequestSettings(config, { temperature: temp }),
       max_output_tokens: 1500
-    })
+    }
   });
-  const payload = await response.json();
 
   if (!response.ok) {
     throw new Error(payload.error?.message || `OpenAI request failed with ${response.status}.`);
