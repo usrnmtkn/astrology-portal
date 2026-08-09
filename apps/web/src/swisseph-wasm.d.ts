@@ -13,7 +13,21 @@ declare module "swisseph-wasm" {
     readonly SE_MEAN_NODE: number;
     readonly SE_TRUE_NODE: number;
     readonly SEFLG_SWIEPH: number;
+    readonly SEFLG_MOSEPH: number;
     readonly SEFLG_SPEED: number;
+
+    readonly SweModule: {
+      _malloc(size: number): number;
+      _free(pointer: number): void;
+      ccall(
+        name: string,
+        returnType: string,
+        argumentTypes: string[],
+        arguments_: number[]
+      ): number;
+      UTF8ToString(pointer: number): string;
+      HEAPF64: Float64Array;
+    };
 
     initSwissEph(): Promise<void>;
     julday(year: number, month: number, day: number, hour: number): number;
