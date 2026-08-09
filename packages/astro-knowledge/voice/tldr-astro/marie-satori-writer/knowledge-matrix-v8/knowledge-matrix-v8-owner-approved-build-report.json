@@ -1,0 +1,34 @@
+{
+  "version": "v8-owner-approved-locked",
+  "source_workbook": "tldr-astro-cc-knowledge-matrix-voiced-v8-owner-approved-locked.xlsx",
+  "validation": {
+    "em_dash_count": 0,
+    "whether_count": 0,
+    "banned_vocabulary": {
+      "profound": 0,
+      "medicine": 0,
+      "inner weather": 0,
+      "landscape": 0,
+      "tapestry": 0
+    }
+  },
+  "status_counts": {
+    "transit_locked_rows": 300,
+    "house_locked_rows": 341,
+    "cc_transit_baseline_rows": 510,
+    "cc_house_baseline_rows": 1944
+  },
+  "runtime_index": {
+    "transit_primary_keys": 318,
+    "house_primary_keys": 936,
+    "house_event_entries": 993,
+    "excluded_house_rows_without_reusable_key": 15,
+    "precedence": [
+      "owner-approved-v8-locked",
+      "rewritten-owner-voice-audited-v5"
+    ]
+  },
+  "warnings": [],
+  "warning_count": 0,
+  "build_passed": true
+}

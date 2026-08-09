@@ -1,0 +1,66 @@
+{
+  "schema": "tldrastro.knowledge-matrix-import.v8",
+  "version": "v8-owner-approved-locked",
+  "source_of_truth": "tldr-astro-cc-knowledge-matrix-voiced-v8-owner-approved-locked.xlsx",
+  "source_policy": {
+    "rewrite_or_clean_copy": false,
+    "preserve_workbook_copy_exactly": true,
+    "locked_status": "owner-approved-v8-locked",
+    "legacy_approved_status": "rewritten-owner-voice-audited-v5"
+  },
+  "transit_meanings": {
+    "sheet": "TransitMeanings",
+    "runtime_key": [
+      "Planet",
+      "Sign",
+      "Event"
+    ],
+    "copy_column": "Copy (Marie voice)",
+    "judge_column": "Judge",
+    "precedence": [
+      "owner-approved-v8-locked",
+      "rewritten-owner-voice-audited-v5"
+    ]
+  },
+  "house_activations": {
+    "sheet": "HouseActivations",
+    "primary_runtime_key": [
+      "Rising sign",
+      "Planet",
+      "Transit sign",
+      "House"
+    ],
+    "secondary_key": "Event",
+    "copy_column": "Experience (Marie voice)",
+    "judge_column": "Judge",
+    "exclusion_rules": [
+      "Exclude rows whose copy begins with '[EXCLUDE FROM FALLBACK]'.",
+      "Exclude rows missing a reusable Planet + Transit sign + House combination.",
+      "Do not flatten different Event values into one house entry; keep Event nested or add Event to the runtime key."
+    ],
+    "precedence": [
+      "owner-approved-v8-locked",
+      "rewritten-owner-voice-audited-v5"
+    ]
+  },
+  "validation": {
+    "required_zero_occurrences": {
+      "em_dash": "—",
+      "whether": "whether",
+      "banned_vocabulary": [
+        "profound",
+        "medicine",
+        "inner weather",
+        "landscape",
+        "tapestry"
+      ]
+    },
+    "expected_build_warnings": 0
+  },
+  "verified_build": {
+    "transit_primary_keys": 318,
+    "house_primary_keys": 936,
+    "house_event_entries": 993,
+    "build_warnings": 0
+  }
+}

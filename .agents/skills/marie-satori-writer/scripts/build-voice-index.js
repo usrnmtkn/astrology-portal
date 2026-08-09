@@ -442,12 +442,81 @@ function thirdPartyEntries() {
   }));
 }
 
+function knowledgeMatrixV8Entries() {
+  // Owner-approved, locked knowledge matrix (v8, 2026-08-09). The owner
+  // authorized this copy as judge and writer evidence for sky placements and
+  // horoscopes. Copy is preserved exactly per the import manifest
+  // (rewrite_or_clean_copy: false); runtime serving remains a separately
+  // governed path and is not granted merely by inclusion in this index.
+  const matrixRoot = path.join(writerRoot, "knowledge-matrix-v8");
+  if (!fs.existsSync(matrixRoot)) return [];
+  const normalizePlanet = (value) => {
+    const slug = tokens([String(value || "")].join(" ")).join("-");
+    if (slug === "black-moon-lilith") return "lilith";
+    return slug;
+  };
+  const normalizeSign = (value) => {
+    const slug = tokens([String(value || "")].join(" ")).join("-");
+    return slug === "any" ? "" : slug;
+  };
+  const policy = {
+    author: "Owner-approved exact wording",
+    origin: "owner-approved-knowledge-matrix-v8",
+    authorityClass: "exact_owner_approved",
+    ownerApproved: true,
+    reviewStatus: "approved",
+    editorialStatus: "owner-approved-v8-locked",
+    canonical: false,
+    useAsPositiveVoiceEvidence: true,
+    useAsContextualEvidence: true,
+    provenance: "Owner-approved v8 locked knowledge matrix (2026-08-09). Judge and writer evidence for sky placements and horoscopes. Copy preserved exactly; production serving promotion remains a separate governed step."
+  };
+  const entries = [];
+  const transitFile = path.join(matrixRoot, "transit-meanings-v8-owner-approved-locked.json");
+  const transitRows = readJson(transitFile).entries || {};
+  for (const [key, row] of Object.entries(transitRows)) {
+    if (!row?.copy || row.copy.startsWith("[EXCLUDE FROM FALLBACK]")) continue;
+    entries.push(baseEntry({
+      sourceId: `kmv8-transit:${tokens(key).join("-")}`,
+      text: row.copy,
+      sourcePath: relative(transitFile),
+      surface: "sky-placement",
+      planet: normalizePlanet(row.planet),
+      sign: normalizeSign(row.transit_sign),
+      articleBeat: "knowledge-matrix-transit",
+      structuralFunction: `knowledge matrix transit meaning (${row.event_type || "ingress"})`,
+      ...policy
+    }));
+  }
+  const houseFile = path.join(matrixRoot, "house-activations-v8-owner-approved-locked.json");
+  const houseRows = readJson(houseFile).entries || {};
+  for (const [key, row] of Object.entries(houseRows)) {
+    for (const [eventType, event] of Object.entries(row?.events || {})) {
+      if (!event?.copy || event.copy.startsWith("[EXCLUDE FROM FALLBACK]")) continue;
+      entries.push(baseEntry({
+        sourceId: `kmv8-house:${tokens(key).join("-")}:${tokens(eventType).join("-")}`,
+        text: event.copy,
+        sourcePath: relative(houseFile),
+        surface: "sky-placement",
+        planet: normalizePlanet(row.transit_planet),
+        sign: normalizeSign(row.transit_sign),
+        house: row.house ? String(row.house) : "",
+        articleBeat: "knowledge-matrix-house",
+        structuralFunction: `knowledge matrix house activation (${row.rising_sign || "unknown"} rising, ${eventType})`,
+        ...policy
+      }));
+    }
+  }
+  return entries;
+}
+
 function buildIndex() {
   const entries = [
     ...activeOwnerEntries(),
     ...ownerCorpusEntries(),
     ...reviewCandidateEntries(),
     ...approvedFormatExemplarEntries(),
+    ...knowledgeMatrixV8Entries(),
     ...historicalEntries(),
     ...contrastiveEntries(),
     ...negativeEntries(),

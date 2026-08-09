@@ -30,6 +30,60 @@ function main() {
   ));
   assert(index.entries.filter((entry) => entry.authorityClass === "ai_candidate_unreviewed").every((entry) => !entry.useAsPositiveVoiceEvidence));
   assert(index.entries.filter((entry) => entry.authorityClass === "third_party_source").every((entry) => !entry.useAsPositiveVoiceEvidence));
+  const knowledgeMatrixTransit = require(path.join(
+    packageRoot,
+    "voice",
+    "tldr-astro",
+    "marie-satori-writer",
+    "knowledge-matrix-v8",
+    "transit-meanings-v8-owner-approved-locked.json"
+  ));
+  const knowledgeMatrixHouses = require(path.join(
+    packageRoot,
+    "voice",
+    "tldr-astro",
+    "marie-satori-writer",
+    "knowledge-matrix-v8",
+    "house-activations-v8-owner-approved-locked.json"
+  ));
+  const knowledgeMatrixEntries = index.entries.filter((entry) => (
+    entry.origin === "owner-approved-knowledge-matrix-v8"
+  ));
+  const knowledgeMatrixSourceCopy = [
+    ...Object.values(knowledgeMatrixTransit.entries).map((entry) => entry.copy),
+    ...Object.values(knowledgeMatrixHouses.entries).flatMap((entry) => (
+      Object.values(entry.events).map((event) => event.copy)
+    ))
+  ].sort();
+  assert.strictEqual(knowledgeMatrixEntries.length, 1311);
+  assert.strictEqual(
+    knowledgeMatrixEntries.filter((entry) => entry.articleBeat === "knowledge-matrix-transit").length,
+    318
+  );
+  assert.strictEqual(
+    knowledgeMatrixEntries.filter((entry) => entry.articleBeat === "knowledge-matrix-house").length,
+    993
+  );
+  assert.deepStrictEqual(knowledgeMatrixEntries.map((entry) => entry.text).sort(), knowledgeMatrixSourceCopy);
+  assert(knowledgeMatrixEntries.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.ownerApproved === true
+    && entry.reviewStatus === "approved"
+    && entry.editorialStatus === "owner-approved-v8-locked"
+    && entry.useAsPositiveVoiceEvidence === true
+    && entry.useAsContextualEvidence === true
+    && entry.surface === "sky-placement"
+  )));
+  assert(knowledgeMatrixEntries
+    .filter((entry) => entry.sourceId.includes("black-moon-lilith"))
+    .every((entry) => entry.planet === "lilith"));
+  assert.strictEqual(
+    knowledgeMatrixEntries.find((entry) => entry.sourceId === "kmv8-transit:black-moon-lilith-any-station")?.sign,
+    ""
+  );
+  assert.strictEqual(index.entries.length, 5220);
+  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 4735);
+  assert.strictEqual(index.summary.bySurface["sky-placement"], 1642);
   const calibrationV3 = index.entries.filter((entry) => entry.sourceId.startsWith("sky-placement-uranus-cancer-collective-owner-approval-candidate-v3:"));
   assert(calibrationV3.length >= 5);
   assert(calibrationV3.every((entry) => entry.authorityClass === "exact_owner_approved" && entry.ownerApproved && !entry.useAsPositiveVoiceEvidence));
@@ -579,7 +633,7 @@ function main() {
   assert.strictEqual(readiness.totals.continuousRowsReady, 1);
   assert.strictEqual(readiness.totals.standaloneHookRowsReady, 36);
   assert.strictEqual(readiness.totals.retiredPairCoreAvailable, 168);
-  assert.strictEqual(readiness.totals.retiredPairFullFiveAvailable, 168);
+  assert.strictEqual(readiness.totals.retiredPairFullFiveAvailable, 0);
   assert.deepStrictEqual(readiness.runtime.quarantinedRows, []);
 
   const continuousCandidate = {
@@ -796,7 +850,7 @@ function main() {
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
-  assert.strictEqual(fixtureAudit.sourceRecordCount, 31);
+  assert.strictEqual(fixtureAudit.sourceRecordCount, 33);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
   console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);
