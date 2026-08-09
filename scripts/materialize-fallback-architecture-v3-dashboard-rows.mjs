@@ -81,7 +81,8 @@ function isContinuousSkyPlacementRecord(record, contentKey) {
 }
 
 function isSkyPlacementPartitionKey(contentKey) {
-  return contentKey.startsWith("fallback-hook/sky-sign-copy/")
+  return contentKey.startsWith("house-horoscope-core/")
+    || contentKey.startsWith("fallback-hook/sky-sign-copy/")
     || (
       contentKey.startsWith("fallback-hook/sky-placement-")
       && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
@@ -195,7 +196,10 @@ function statusForReview(role, reviewStatus, contentKey) {
     return { status: "DRAFT", lane: "reference", reviewState: "needs-review" };
   }
 
-  if (role === "full_copy" && ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)) {
+  if (
+    ["full_copy", "house_horoscope_core"].includes(role)
+    && ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
+  ) {
     return { status: "LIVE", lane: "serving", reviewState: null };
   }
 
@@ -269,7 +273,11 @@ function requiresPlacementPositiveTest(record, contentKey, reviewStatus) {
 
 function blockTypeForPackageRecord(contentRole, contentKey) {
   if (contentRole === "template") return "fallback_template";
-  if (contentRole === "fallback_hook" || contentKey.startsWith("fallback-hook/")) return "fallback_hook";
+  if (
+    contentRole === "fallback_hook"
+    || contentRole === "house_horoscope_core"
+    || contentKey.startsWith("fallback-hook/")
+  ) return "fallback_hook";
   return null;
 }
 
@@ -470,6 +478,7 @@ function readPackageSources() {
   const skyAspectPhrasebook = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skyPlacementOwnerApprovedFallbacks = readJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+  const sunLeoHouseCores = readJson("source-rows/sun-leo-house-cores-v1.json");
   const skyPlacementOwnerApprovedReaderFallbacks = readJson("bundled-sky-placement-owner-approved-reader-v1.json");
   const skyPlanetFrames = readJson("source-rows/sky-planet-frames-v1.json");
   const skySignCopySources = readSkySignCopySources();
@@ -500,6 +509,7 @@ function readPackageSources() {
     skyAspectPhrasebook,
     skyPlacementVoicePass,
     skyPlacementOwnerApprovedFallbacks,
+    sunLeoHouseCores,
     skyPlacementOwnerApprovedReaderFallbacks,
     skyPlanetFrames,
     skySignCopy,
@@ -564,7 +574,13 @@ function readerPackageBundle(sources) {
         ...sources.skyPlanetFrames.rows,
         ...sources.skyPlacementVoicePass.rows,
         ...sources.skySignCopy.rows,
-        ...sources.skyPlacementOwnerApprovedReaderFallbacks.rows
+        ...sources.skyPlacementOwnerApprovedReaderFallbacks.rows,
+        ...sources.sunLeoHouseCores.rows.map(({
+          notes: _notes,
+          source_keys: _sourceKeys,
+          approved_via: _approvedVia,
+          ...row
+        }) => row)
       ]),
       vocabularyRows: packageRowsWithLatestEligibleOverride([
         ...sources.sourceRows.vocabularyRows,
@@ -600,6 +616,7 @@ function materializeRows(sources) {
     ...(sources.skySignCopy.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skySignCopy.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementOwnerApprovedFallbacks.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.sunLeoHouseCores.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),

@@ -34,6 +34,13 @@ const skyArticleRows = readPackageJson("source-rows/sky-article-v1.json");
 const skyAspectPhrasebook = readPackageJson("source-rows/sky-aspect-phrasebook-v1.json");
 const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlacementOwnerApprovedFallbacks = readPackageJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+const sunLeoHouseCores = readPackageJson("source-rows/sun-leo-house-cores-v1.json");
+const sunLeoHouseCoreReaderRows = sunLeoHouseCores.rows.map(({
+  notes: _notes,
+  source_keys: _sourceKeys,
+  approved_via: _approvedVia,
+  ...row
+}) => row);
 const skyPlacementOwnerApprovedReaderFallbacks = readPackageJson("bundled-sky-placement-owner-approved-reader-v1.json");
 const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFileSync(
   path.join(repoRoot, `packages/astro-knowledge/review/sky-placement-writer-batch-${batch}-owner-edited-approved-v1.json`),
@@ -159,7 +166,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-08g");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08h");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -924,6 +931,7 @@ try {
         ...skyAspectPhrasebook.hookRows,
         ...skyPlanetFrames.rows,
         ...skySignCopySun.rows,
+        ...sunLeoHouseCoreReaderRows,
         ...pairDailyFrames.rows,
         ...pairDailyClauses.rows,
         ...skyPlacementOwnerApprovedReaderFallbacks.rows
@@ -1005,6 +1013,13 @@ try {
     assert.equal(materializedRow.body, row.body_you);
     assert.equal(materializedRow.source_snapshot.review_status, "approved");
     assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+  }
+
+  for (const row of sunLeoHouseCores.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    assert.equal(materializedRow.body, row.body_you);
+    assert.equal(materializedRow.source_snapshot.review_status, "approved");
   }
 
   for (const row of skySignCopySun.superseded_rows) {

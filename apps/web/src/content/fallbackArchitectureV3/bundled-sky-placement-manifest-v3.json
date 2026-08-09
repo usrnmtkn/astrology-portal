@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-08g",
-  "contentHash": "a786754d8e9a22c14f46a3c72a0dc77d",
-  "keyManifestHash": "68da2bbd1a24bff146a9a9d30582ea4d",
-  "keyCount": 917,
+  "packageVersion": "v3-2026-08-08h",
+  "contentHash": "6cd260e879c4d454644065eacd941098",
+  "keyManifestHash": "80a70c082dc46da457d575ee64127018",
+  "keyCount": 929,
   "keys": [
     "hook:fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
     "hook:fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
@@ -920,6 +920,18 @@
     "hook:fallback-hook/sky-sign-copy/venus/sagittarius",
     "hook:fallback-hook/sky-sign-copy/venus/scorpio",
     "hook:fallback-hook/sky-sign-copy/venus/taurus",
-    "hook:fallback-hook/sky-sign-copy/venus/virgo"
+    "hook:fallback-hook/sky-sign-copy/venus/virgo",
+    "hook:house-horoscope-core/sun/leo/house-1",
+    "hook:house-horoscope-core/sun/leo/house-10",
+    "hook:house-horoscope-core/sun/leo/house-11",
+    "hook:house-horoscope-core/sun/leo/house-12",
+    "hook:house-horoscope-core/sun/leo/house-2",
+    "hook:house-horoscope-core/sun/leo/house-3",
+    "hook:house-horoscope-core/sun/leo/house-4",
+    "hook:house-horoscope-core/sun/leo/house-5",
+    "hook:house-horoscope-core/sun/leo/house-6",
+    "hook:house-horoscope-core/sun/leo/house-7",
+    "hook:house-horoscope-core/sun/leo/house-8",
+    "hook:house-horoscope-core/sun/leo/house-9"
   ]
 }

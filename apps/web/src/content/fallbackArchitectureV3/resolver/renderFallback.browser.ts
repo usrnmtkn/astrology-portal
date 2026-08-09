@@ -36,6 +36,7 @@ export interface ApprovalReference {
 export interface HookRow {
   contentKey: string;
   content_role: string;
+  grammar_frame?: string;
   body_you: string;
   body_they: string;
   review_status: string;

@@ -17,6 +17,7 @@ const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../sou
 const pairDailyFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/pair-daily-frames-v1.json"), "utf8"));
 const pairDailyClausesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/pair-daily-clauses-v1.json"), "utf8"));
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
+const sunLeoHouseCoresV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sun-leo-house-cores-v1.json"), "utf8"));
 const skyPlacementOwnerApprovedReaderV1 = JSON.parse(fs.readFileSync(path.join(here, "../bundled-sky-placement-owner-approved-reader-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
@@ -29,6 +30,7 @@ rowsFile.hookRows.push(...skyAspectPhrasebookV1.hookRows);
 rowsFile.hookRows.push(...pairDailyFramesV1.rows);
 rowsFile.hookRows.push(...pairDailyClausesV1.rows);
 rowsFile.hookRows.push(...skySignCopySunV1.rows);
+rowsFile.hookRows.push(...sunLeoHouseCoresV1.rows);
 rowsFile.hookRows.push(...skyPlacementOwnerApprovedReaderV1.rows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
 rowsFile.vocabularyRows.push(...skyArticleV1.vocabularyRows);
@@ -107,6 +109,35 @@ const title = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).jo
 const NEEDS_ARTICLE = new Set(["sun", "moon", "north-node", "south-node"]);
 // mid-sentence reference: "the Sun", optionally with its current sign: "the Sun in Leo"
 const transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title(planet)}${sign ? ` in ${title(sign)}` : ""}`;
+
+export function renderSkyPlacementHouseCore({ planet, sign, house }) {
+  const normalizedPlanet = String(planet ?? "").trim().toLowerCase();
+  const normalizedSign = String(sign ?? "").trim().toLowerCase();
+  const normalizedHouse = Number(house);
+  const key = `house-horoscope-core/${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`;
+  const row = hooks.get(key);
+
+  if (
+    normalizedPlanet !== "sun"
+    || normalizedSign !== "leo"
+    || !Number.isInteger(normalizedHouse)
+    || normalizedHouse < 1
+    || normalizedHouse > 12
+    || !row
+    || row.content_role !== "house_horoscope_core"
+    || row.grammar_frame !== "second_person_block"
+    || !row.body_you
+  ) {
+    throw new SourceGapError(`SOURCE_GAP: house horoscope core ${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`);
+  }
+
+  return {
+    body: row.body_you,
+    contentKey: row.contentKey,
+    house: normalizedHouse,
+    templateKey: "house-horoscope-core/sun-leo-v1"
+  };
+}
 
 
 // sentence-start window phrase -> mid-sentence ("Until Nov 13" -> "through Nov 13")
