@@ -1780,8 +1780,14 @@ export function createTransitSynastryRenderer(
     }
 
     if (pairHook && pairLived && pairTurn) {
-      const parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas]
+      let parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas]
         .filter((part): part is string => Boolean(part));
+      if (planet === "lilith" && sign === "sagittarius") {
+        parts = parts.map((part) => fillKeep(part, { exitDate }));
+        if (parts.some((part) => /\{\{/u.test(part))) {
+          throw new SourceGapError("SOURCE_GAP: sky placement pair slots lilith/sagittarius");
+        }
+      }
       return {
         headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
         tagline,
