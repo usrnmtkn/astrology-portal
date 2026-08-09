@@ -8,6 +8,12 @@ import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { REPORT_JUDGE_PROMPT_PATH, REPORT_CRITIQUE_PROMPT_PATH } from "../api/_lib/report-prompt-versions.ts";
 import { scopeReportPayloadToUnit } from "../api/_lib/report-unit-scope.ts";
 import { enforceReportRevisionStopRule, ReportStopRuleError } from "../api/_lib/report-writer-chain.ts";
+import {
+  assertFixtureFactCompleteness,
+  completeUnitFacts,
+  numberedCompleteUnit,
+  paragraphLocationToken,
+} from "./report-judge-v3-fixture-packets.mjs";
 
 if (process.argv.includes("--live")) throw new Error("Use calibrate-report-judge-v3.mjs for the separately authorized live run.");
 
@@ -18,6 +24,10 @@ const critiqueV3 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-C
 const livedProseStandard = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md", "utf8");
 const activeJudgeV2 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
 const activeCritiqueV2 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
+const approvedV3Hashes = {
+  judge: "a6c06cb37d648b7bd803be449be98703e9aa1d647304b9382d16dcc7a1f3966a",
+  critique: "1cc473aa5473f796f22cdd37cad1d476b45eaf56aa74c62133e81c824019e19c",
+};
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -111,6 +121,11 @@ assert.deepEqual(new Set(manifest.functionVocabulary), functionVocabulary);
 assert.equal(manifest.observedLifeContracts.length, 4);
 assert.equal(manifest.pairs.length, 4);
 assert.equal(manifest.findingLevelFixtures.length, 1);
+assert.deepEqual(manifest.completeUnitParagraphIndexing, {
+  convention: "zero_based_supplied_indices",
+  marker: "[PARAGRAPH_INDEX={index}]",
+  instruction: "Locations must copy the supplied PARAGRAPH_INDEX value. The model never counts paragraphs.",
+});
 assert.deepEqual(manifest.proposedCalibrationCallBudget, {
   total: 9,
   judgeCalls: 8,
@@ -134,6 +149,7 @@ for (const [name, document] of [["judge", judgeV3], ["critique", critiqueV3]]) {
   assert.match(document, /OWNER_COMPARISON_SET/u);
   assert.match(document, /candidate unit itself is forbidden from its own comparison set/iu);
   assert.match(document, /`opening`, `development`, `complication`, `turn`, or `close`/u);
+  assert.equal(sha256(document), approvedV3Hashes[name], `${name} v3 changed after owner approval.`);
 }
 const amendedQuestion9 = "Could the interpretive passage move unchanged into a generic wellness, HR, or horoscope article because it lacks the unit-specific circumstance, cause, or consequence? If so, identify what is missing. This diagnostic alone cannot establish a defect.";
 assert.ok(judgeV3.includes(amendedQuestion9));
@@ -149,6 +165,27 @@ assert.match(critiqueV3, /scope_end/u);
 assert.match(judgeV3, /scores\.interpretive_movement` to `null`/u);
 assert.match(judgeV3, /runtime, not the model, recomputes applicability, overall score, hard gates, and verdict/iu);
 
+assert.equal(manifest.ownerFinalityRuling.date, "2026-08-09");
+assert.equal(manifest.ownerFinalityRuling.verbatim, [
+  "WORK & MONEY: final / owner-authored-final reference",
+  "LOVE & CONNECTION: final / owner-authored-final reference",
+  "PERSONAL & HEALTH: final / owner-authored-final reference",
+].join("\n"));
+for (const [domain, reference] of Object.entries(manifest.ownerFinalityRuling.references)) {
+  assert.equal(reference.sourceType, "owner_authored_final");
+  assert.equal(sha256(fs.readFileSync(reference.sourcePath)), reference.sha256, `${domain} final owner reference drifted.`);
+}
+for (const [domain, prefix] of [["work_money", "work_"], ["love_connection", "love_"], ["personal_health", "personal_"]]) {
+  const finalReference = manifest.ownerFinalityRuling.references[domain].sourcePath;
+  for (const source of [
+    ...[...manifest.pairs, ...manifest.findingLevelFixtures].filter((fixture) => fixture.reportDomain === domain),
+    ...manifest.ownerPassages.filter((passage) => passage.id.startsWith(prefix)),
+  ]) {
+    assert.equal(source.sourcePath, finalReference, `${source.id} must use the ruled final ${domain} reference.`);
+    assert.equal(source.sourceType, "owner_authored_final");
+  }
+}
+
 const scopedDraft = { headline: "FIXTURE_ONLY.", body: "ONE.\n\nTWO.\n\nTHREE.\n\nFOUR.", sections: [] };
 const scopedRevision = { ...scopedDraft, body: "ONE.\n\nTWO_CHANGED.\n\nTHREE_CHANGED.\n\nFOUR." };
 assert.equal(enforceReportRevisionStopRule(scopedDraft, scopedRevision, [{
@@ -161,6 +198,7 @@ assert.throws(() => enforceReportRevisionStopRule(scopedDraft, scopedRevision, [
 }]), ReportStopRuleError);
 
 const rows = [];
+const factRows = [];
 for (const fixture of [...manifest.pairs, ...manifest.findingLevelFixtures]) {
   assertFixtureGovernance(fixture);
   const positive = extractUnit(fixture);
@@ -179,12 +217,16 @@ for (const fixture of [...manifest.pairs, ...manifest.findingLevelFixtures]) {
     frozenFacts: facts
   }));
   assert.equal(payload.livedProseStandard.sourcePath, "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md");
-  const unitFacts = {
-    ...payload.frozenFacts,
-    unitContext: { unitId: fixture.unitId, startsOn: fixture.unitWindow.startsOn, endsOn: fixture.unitWindow.endsOn }
-  };
+  const unitFacts = completeUnitFacts({ manifest, fixture, scopedFacts: payload.frozenFacts, fullFacts: facts });
+  factRows.push(...assertFixtureFactCompleteness({ manifest, fixture, unit: positive, unitFacts }));
   assert.deepEqual(verifyReportFactLock({ body: positive, sections: [] }, unitFacts).issues, [], `${fixture.id} positive must match scoped facts.`);
   assert.deepEqual(verifyReportFactLock({ body: negative, sections: [] }, unitFacts).issues, [], `${fixture.id} negative must preserve scoped facts.`);
+  const numberedPositive = numberedCompleteUnit(manifest, positive);
+  const numberedNegative = numberedCompleteUnit(manifest, negative);
+  paragraphs(positive).forEach((_, index) => {
+    assert.ok(numberedPositive.includes(paragraphLocationToken(manifest, index)), `${fixture.id} positive packet is missing supplied paragraph index ${index}.`);
+    assert.ok(numberedNegative.includes(paragraphLocationToken(manifest, index)), `${fixture.id} negative packet is missing supplied paragraph index ${index}.`);
+  });
   rows.push({
     fixture: fixture.id,
     kind: fixture.kind ?? "score_pair",
@@ -202,7 +244,12 @@ const findingFixture = manifest.findingLevelFixtures[0];
 assert.equal(findingFixture.expected.requiredFindingCategory, "owner_voice_drift");
 assert.equal(findingFixture.expected.wholeUnitScoreRequirement, null);
 assert.equal(findingFixture.degradation.replacements.length, 1);
+assert.equal(findingFixture.degradation.replacements[0].paragraphIndex, findingFixture.expected.requiredParagraphIndex);
+assert.ok(numberedCompleteUnit(manifest, materializeNegative(findingFixture, extractUnit(findingFixture))).includes(
+  `${paragraphLocationToken(manifest, findingFixture.expected.requiredParagraphIndex)}\n${findingFixture.degradation.replacements[0].replacement}`
+));
 assert.ok(manifest.pairs.find((pair) => pair.reportDomain === "work_money").degradation.replacements.length >= 3);
 
 console.table(rows);
-console.log("Report judge v3 draft fixtures passed: four controlled score pairs, one bounded finding fixture, function-tagged non-self comparisons, scoped facts, stop-rule ranges, and no live calls.");
+console.table(factRows);
+console.log("Report judge v3 draft fixtures passed: four controlled score pairs, complete audited UNIT_FACTS, supplied paragraph indices, owner-final references, byte-locked approved documents, stop-rule ranges, and no live calls.");

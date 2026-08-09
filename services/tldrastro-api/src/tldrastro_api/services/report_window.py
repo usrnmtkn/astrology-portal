@@ -27,6 +27,7 @@ from tldrastro_api.services.chart import (
     angular_separation,
     aspect_delta,
     configured_flags,
+    house_for_longitude,
     julian_day_for,
     make_position,
     normalize_degrees,
@@ -421,12 +422,44 @@ def _natal_contacts(
                 contacts.append(
                     ReportNatalContact(
                         natalPoint=natal_point.point,
+                        natalHouse=natal_point.house,
                         aspect=aspect_name,
                         orb=round(orb, 4),
                     )
                 )
                 break
     return contacts
+
+
+def _eclipse_subtype(kind: str, root: float) -> Optional[str]:
+    if kind == "solar_eclipse":
+        eclipse_flags, times = swe.sol_eclipse_when_glob(
+            root - 2.0,
+            swe.FLG_SWIEPH,
+            0,
+            False,
+        )
+    elif kind == "lunar_eclipse":
+        eclipse_flags, times = swe.lun_eclipse_when(
+            root - 2.0,
+            swe.FLG_SWIEPH,
+            0,
+            False,
+        )
+    else:
+        return None
+    if abs(times[0] - root) > 2.0:
+        return None
+    for flag, subtype in (
+        (swe.ECL_ANNULAR_TOTAL, "hybrid"),
+        (swe.ECL_TOTAL, "total"),
+        (swe.ECL_ANNULAR, "annular"),
+        (swe.ECL_PARTIAL, "partial"),
+        (swe.ECL_PENUMBRAL, "penumbral"),
+    ):
+        if eclipse_flags & flag:
+            return subtype
+    return None
 
 
 def _lunation_roots(start_jd: float, end_jd: float, angle: float, settings) -> List[float]:
@@ -469,9 +502,11 @@ def _lunar_events(natal, start_jd: float, end_jd: float, settings) -> List[Repor
                 ReportLunarEvent(
                     id=f"{kind}-{_iso(root)[:10]}",
                     kind=kind,
+                    subtype=_eclipse_subtype(kind, root),
                     occursAt=_iso(root),
                     longitude=round(moon_longitude, 6),
                     sign=sign,
+                    natalHouse=house_for_longitude(moon_longitude, natal.houseCusps),
                     natalContacts=_natal_contacts(
                         moon_longitude,
                         natal_points,

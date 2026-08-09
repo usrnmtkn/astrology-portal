@@ -423,6 +423,7 @@ class ReportKeyDate(BaseModel):
 
 class ReportNatalContact(BaseModel):
     natalPoint: str
+    natalHouse: Optional[int] = None
     aspect: str
     orb: float
 
@@ -430,9 +431,11 @@ class ReportNatalContact(BaseModel):
 class ReportLunarEvent(BaseModel):
     id: str
     kind: Literal["new_moon", "full_moon", "solar_eclipse", "lunar_eclipse"]
+    subtype: Optional[Literal["total", "annular", "partial", "penumbral", "hybrid"]] = None
     occursAt: str
     longitude: float
     sign: str
+    natalHouse: Optional[int] = None
     natalContacts: List[ReportNatalContact] = Field(default_factory=list)
 
 
