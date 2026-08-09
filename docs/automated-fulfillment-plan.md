@@ -1,8 +1,9 @@
 # Automated Report Fulfillment Plan
 
-**Status:** Draft for owner approval
+**Status:** Owner approved (`owner-approved-v1`)
 **Last updated:** 2026-08-09
 **Owner direction (2026-08-09):** purchased personalized reports must fulfill without per-report human review; the system must handle hundreds of orders.
+**Owner approval (2026-08-09):** “I approve.” The approved ruling is recorded verbatim in `tldr-astro-phrasebank/TLDR-REPORT-AUTOMATED-FULFILLMENT-RULING-OWNER.md`.
 
 ## 1. The governance change, stated precisely
 
@@ -16,7 +17,7 @@ For **purchased personalized reports**, control moves from approving outputs to 
 4. **Automated judge** — a scoring pass against a rubric distilled from the owner's v1→FINAL review cycles (the named defect categories: astrology/chronology, factual traceability, vagueness, unnatural phrasing, repeated generated syntax, emotional temperature beyond what the astrology supports). Below-threshold units regenerate. The judge is calibration-evidence-driven: it is tuned on the owner's recorded accept/reject decisions, and never edits prose itself.
 5. **Sampled audit** — the owner reviews a fixed sample (e.g. 5% weekly, plus the first N reports of any new domain, horizon, or prompt version). Audit findings become validator rules or prompt amendments, not one-off edits. This is how the system keeps learning her standard without her standing in the delivery path.
 
-**Draft ruling for owner approval (verbatim, to be recorded in the phrasebank on approval):**
+**Approved ruling (verbatim; version `owner-approved-v1`):**
 
 > Purchased personalized reports are fulfilled automatically. I approve the generation system — the version-pinned canonical prompts, validators, fact-lock, judge rubric, and audit protocol — rather than each output. A report that passes all gates is delivered without my review. My exact-wording approval regime continues to govern all shared app content, the calibration corpus, and every change to the prompts, validators, rubric, and audit protocol themselves.
 
