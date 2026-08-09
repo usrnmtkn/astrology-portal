@@ -5,6 +5,7 @@ const path = require("path");
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
 const { loadLocalEnv } = require("./daily-glance-writer-runtime.js");
+const { canonicalAstrologyReviewInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
 
 const JUDGE_MODEL = "gpt-4.1-mini";
 const RUBRIC_VERSION = "daily-glance-voice-v2:boundary-discipline+median3";
@@ -61,7 +62,13 @@ async function callJudge(prompt) {
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: { authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({ model: JUDGE_MODEL, input: prompt, temperature: 0.2, max_output_tokens: 700 })
+    body: JSON.stringify({
+      model: JUDGE_MODEL,
+      instructions: canonicalAstrologyReviewInstructions,
+      input: prompt,
+      temperature: 0.2,
+      max_output_tokens: 700
+    })
   });
   const payload = await response.json();
   if (!response.ok) throw new Error(`judge http ${response.status}: ${JSON.stringify(payload).slice(0, 300)}`);
