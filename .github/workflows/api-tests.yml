@@ -25,7 +25,6 @@ jobs:
         working-directory: services/tldrastro-api
     env:
       SWISS_EPHEMERIS_COMMIT: cae9ecd4b201544d85e411aced17660932514d43
-      TLDR_ASTRO_EPHEMERIS_PATH: ${{ runner.temp }}/swisseph
       TLDR_ASTRO_TEST_EPHEMERIS_ENGINES: swiss
     steps:
       - uses: actions/checkout@v4
@@ -40,15 +39,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$TLDR_ASTRO_EPHEMERIS_PATH"
+          ephemeris_path="$RUNNER_TEMP/swisseph"
+          echo "TLDR_ASTRO_EPHEMERIS_PATH=$ephemeris_path" >> "$GITHUB_ENV"
+          mkdir -p "$ephemeris_path"
           base_url="https://raw.githubusercontent.com/aloistr/swisseph/$SWISS_EPHEMERIS_COMMIT/ephe"
-          curl -fsSL "$base_url/sepl_18.se1" -o "$TLDR_ASTRO_EPHEMERIS_PATH/sepl_18.se1"
-          curl -fsSL "$base_url/semo_18.se1" -o "$TLDR_ASTRO_EPHEMERIS_PATH/semo_18.se1"
-          curl -fsSL "$base_url/seas_18.se1" -o "$TLDR_ASTRO_EPHEMERIS_PATH/seas_18.se1"
+          curl -fsSL "$base_url/sepl_18.se1" -o "$ephemeris_path/sepl_18.se1"
+          curl -fsSL "$base_url/semo_18.se1" -o "$ephemeris_path/semo_18.se1"
+          curl -fsSL "$base_url/seas_18.se1" -o "$ephemeris_path/seas_18.se1"
           printf '%s  %s\n' \
-            'ca1393ceab3a44fbc895887cf789c68819ae6a1cbc9b22225872dbe4ccd99a66' "$TLDR_ASTRO_EPHEMERIS_PATH/sepl_18.se1" \
-            '1ca07bd67c24374d77226180c20a4f9996cba013697894810518e7eb582ca4f7' "$TLDR_ASTRO_EPHEMERIS_PATH/semo_18.se1" \
-            'a2cd8fc33807c78ca9a700c91c2e042258b12fc4796519e00781440b5ad8b2e2' "$TLDR_ASTRO_EPHEMERIS_PATH/seas_18.se1" \
+            'ca1393ceab3a44fbc895887cf789c68819ae6a1cbc9b22225872dbe4ccd99a66' "$ephemeris_path/sepl_18.se1" \
+            '1ca07bd67c24374d77226180c20a4f9996cba013697894810518e7eb582ca4f7' "$ephemeris_path/semo_18.se1" \
+            'a2cd8fc33807c78ca9a700c91c2e042258b12fc4796519e00781440b5ad8b2e2' "$ephemeris_path/seas_18.se1" \
             | sha256sum --check --strict
       - name: Run API suite
         run: python -m pytest
