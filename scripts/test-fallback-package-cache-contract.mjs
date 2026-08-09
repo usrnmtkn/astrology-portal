@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-08g");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08h");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -102,6 +102,13 @@ const skyArticleRows = readJson(`${packageDir}/source-rows/sky-article-v1.json`)
 const skyAspectPhrasebook = readJson(`${packageDir}/source-rows/sky-aspect-phrasebook-v1.json`);
 const skyPlacementVoicePass = readJson(`${packageDir}/source-rows/sky-placement-inventories-voice-pass-v1.json`);
 const skyPlacementOwnerApprovedFallbacks = readJson(`${packageDir}/bundled-sky-placement-owner-approved-reader-v1.json`);
+const sunLeoHouseCores = readJson(`${packageDir}/source-rows/sun-leo-house-cores-v1.json`);
+const sunLeoHouseCoreReaderRows = sunLeoHouseCores.rows.map(({
+  notes: _notes,
+  source_keys: _sourceKeys,
+  approved_via: _approvedVia,
+  ...row
+}) => row);
 const skyPlanetFrames = readJson(`${packageDir}/source-rows/sky-planet-frames-v1.json`);
 const servingManifest = readJson(`${packageDir}/authored-inputs/sky-placement-serving-manifest-v1.json`);
 const servingReleaseByKey = new Map(servingManifest.releases.flatMap((release) => (
@@ -158,7 +165,8 @@ const expectedManifest = createPackageManifest({
       ...skyPlanetFrames.rows,
       ...skyPlacementVoicePass.rows,
       ...skySignCopyRows,
-      ...skyPlacementOwnerApprovedFallbacks.rows
+      ...skyPlacementOwnerApprovedFallbacks.rows,
+      ...sunLeoHouseCoreReaderRows
     ]),
     vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,
@@ -173,7 +181,8 @@ const expectedManifest = createPackageManifest({
 const bundledManifest = readJson(`${packageDir}/bundled-manifest-v3.json`);
 const bundledManifestSummary = readJson(`${packageDir}/bundled-manifest-summary-v3.json`);
 const isSkyPlacementPartitionRow = (row) => (
-  String(row.contentKey ?? "").startsWith("fallback-hook/sky-sign-copy/")
+  String(row.contentKey ?? "").startsWith("house-horoscope-core/")
+  || String(row.contentKey ?? "").startsWith("fallback-hook/sky-sign-copy/")
   || (
     String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-")
     && !String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-sign/")
@@ -184,7 +193,8 @@ const skyPlacementRows = latestEligible([
   ...skyPlanetFrames.rows,
   ...skyPlacementVoicePass.rows,
   ...skySignCopyRows,
-  ...skyPlacementOwnerApprovedFallbacks.rows
+  ...skyPlacementOwnerApprovedFallbacks.rows,
+  ...sunLeoHouseCoreReaderRows
 ]);
 const skyPlacementKeys = new Set(skyPlacementRows.map((row) => row.contentKey));
 const expectedCoreManifest = createPackageManifest({
@@ -210,7 +220,8 @@ const expectedCoreManifest = createPackageManifest({
       ...skyAspectPhrasebook.hookRows,
       ...skyPlanetFrames.rows,
       ...skyPlacementVoicePass.rows,
-      ...skySignCopyRows
+      ...skySignCopyRows,
+      ...sunLeoHouseCoreReaderRows
     ]).filter((row) => !skyPlacementKeys.has(row.contentKey)),
     vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,

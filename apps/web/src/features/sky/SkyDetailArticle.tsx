@@ -57,6 +57,13 @@ export type SkyHistoricalLookback = {
   paragraphs: string[];
 };
 
+export type SkyPersonalizedPlacement = {
+  body: string;
+  contentKey: string;
+  heading: "Where it lands for you";
+  natalAspectLines: string[];
+};
+
 export type SkyDetail = {
   routePath?: string;
   glyph: string;
@@ -84,6 +91,7 @@ export type SkyDetail = {
     heading: string;
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
+  personalizedPlacement?: SkyPersonalizedPlacement | null;
   historicalLookback?: SkyHistoricalLookback | null;
   astrologyDrilldown?: GeneratedContentDrilldown | null;
   seriesLine?: string | null;
@@ -634,6 +642,12 @@ export function SkyDetailArticle({
           ) : null}
         </div>
 
+        {hasAspectCard ? (
+          <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">
+            Aspects to the planet
+          </span>
+        ) : null}
+
         {hasAspectCard ? aspectGroups.map((group) => (
           <Fragment key={group.id}>
             <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">{group.label}</span>
@@ -680,6 +694,34 @@ export function SkyDetailArticle({
             </section>
           </Fragment>
         )) : null}
+
+        {detail.personalizedPlacement ? (
+          <>
+            <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">
+              {detail.personalizedPlacement.heading}
+            </span>
+            <section
+              className="article-card sky-detail-personalized-placement"
+              aria-label={detail.personalizedPlacement.heading}
+            >
+              <div className="article-body-card sky-detail-body">
+                <div className="article-body-inner">
+                  <section className="article-section sky-detail-section">
+                    <p>{detail.personalizedPlacement.body}</p>
+                    {detail.personalizedPlacement.natalAspectLines.length > 0 ? (
+                      <>
+                        <h3>Aspects to the natal chart</h3>
+                        {detail.personalizedPlacement.natalAspectLines.map((line, index) => (
+                          <p key={`${detail.personalizedPlacement?.contentKey}-natal-${index}`}>{line}</p>
+                        ))}
+                      </>
+                    ) : null}
+                  </section>
+                </div>
+              </div>
+            </section>
+          </>
+        ) : null}
       </article>
     </section>
   );

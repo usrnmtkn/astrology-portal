@@ -5209,6 +5209,64 @@ function skyDetailFromRoutePath(
   return null;
 }
 
+function personalizedSkyPlacementDetail(
+  detail: SkyDetail | null,
+  risingSign: string | null | undefined,
+  transits: TransitItem[],
+  generatedAt: string
+): SkyDetail | null {
+  if (!detail) {
+    return null;
+  }
+
+  if (!risingSign || !detail.routePath?.startsWith("sky/placement/")) {
+    return { ...detail, personalizedPlacement: null };
+  }
+
+  const [, , routePlanet = "", routeSign = ""] = decodeSkyRouteParts(detail.routePath);
+  const planet = normalizeContentIdPart(routePlanet);
+  const sign = normalizeContentIdPart(routeSign);
+  const house = wholeSignHouseForSign(sign, risingSign);
+
+  if (!house) {
+    console.warn(`SOURCE_GAP: house horoscope core ${planet}/${sign}/house-pending`);
+    return { ...detail, personalizedPlacement: null };
+  }
+
+  try {
+    const rendered = transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
+      planet,
+      sign,
+      house
+    });
+    const natalAspectLines = transits
+      .filter((transit) => (
+        normalizeContentIdPart(transit.transitPlanet) === planet
+        && normalizeContentIdPart(transit.transitSign ?? "") === sign
+      ))
+      .map((transit) => personalTransitPackageSection(transit, generatedAt))
+      .filter((section): section is NormalizedPersonalTransitSection => Boolean(section))
+      .map((section) => section.body);
+
+    return {
+      ...detail,
+      personalizedPlacement: {
+        body: rendered.body,
+        contentKey: rendered.contentKey,
+        heading: "Where it lands for you",
+        natalAspectLines
+      }
+    };
+  } catch (error) {
+    if (!(error instanceof FallbackV3SourceGapError)) {
+      throw error;
+    }
+
+    console.warn(error instanceof Error ? error.message : String(error));
+    return { ...detail, personalizedPlacement: null };
+  }
+}
+
 function relatedAspectRowsForPlacement({
   aspects,
   generatedAt,
@@ -10458,7 +10516,12 @@ export function App() {
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
-    setSelectedSkyDetail(detail);
+    setSelectedSkyDetail(personalizedSkyPlacementDetail(
+      detail,
+      profileNatalSky?.ascendant ?? userProfile?.rising,
+      profileTransits,
+      sky?.generatedAt ?? new Date().toISOString()
+    ));
 
     if (detail.routePath) {
       setSkyDetailRoutePath(detail.routePath);
@@ -10793,7 +10856,11 @@ export function App() {
       return;
     }
 
-    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}`;
+    const personalizationKey = [
+      profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
+      profileTransits.map((transit) => transit.id).join(",")
+    ].join(":");
+    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${personalizationKey}`;
 
     if (
       selectedSkyDetail?.routePath === skyDetailRoutePath
@@ -10814,8 +10881,13 @@ export function App() {
 
     selectedSkyDetailRefreshKeyRef.current = refreshKey;
     selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-    setSelectedSkyDetail(detail);
-  }, [fallbackArchitectureV3Version, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent]);
+    setSelectedSkyDetail(personalizedSkyPlacementDetail(
+      detail,
+      profileNatalSky?.ascendant ?? userProfile?.rising,
+      profileTransits,
+      sky.generatedAt
+    ));
+  }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, profileTransits, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, userProfile?.rising]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
