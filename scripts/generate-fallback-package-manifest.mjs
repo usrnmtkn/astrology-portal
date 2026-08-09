@@ -175,6 +175,8 @@ function fullReaderBundle() {
   const skyPlacementRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skySignRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
   const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
+  const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
+    .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templates = readJson("templates/fallback-templates-v3.json");
@@ -201,7 +203,8 @@ function fullReaderBundle() {
         ...skyPlanetRows.rows,
         ...skyPlacementRows.rows,
         ...skySignRows,
-        ...skyPlacementOwnerApprovedRows.rows
+        ...skyPlacementOwnerApprovedRows.rows,
+        ...sunLeoHouseCoreRows
       ]),
       vocabularyRows: latestReaderEligible([
         ...sourceRows.vocabularyRows,
@@ -226,6 +229,8 @@ const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
 const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
 const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
+const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
+  .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
 const skySignCopyRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
 const skyCoreRows = {
   hookRows: sourceRows.hookRows.filter((row) => isSkyCoreHook(row) && !isSkyPlacementDeferredHook(row)),
@@ -251,7 +256,8 @@ const skyPlacementRows = {
     ...(skyPlanetFrameRows.rows ?? []),
     ...(skyPlacementVoicePassRows.rows ?? []),
     ...skySignCopyRows,
-    ...skyPlacementOwnerApprovedRows.rows
+    ...skyPlacementOwnerApprovedRows.rows,
+    ...sunLeoHouseCoreRows
   ]),
   vocabularyRows: []
 };
