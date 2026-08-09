@@ -23,6 +23,9 @@ const browserRenderer = createTransitSynastryRenderer(transitRows, templates, {
   ...sourceRows,
   hookRows: [...sourceRows.hookRows, ...phrasebook.hookRows]
 });
+const ownerApprovedSecondPersonKeys = new Set([
+  "fallback-hook/sky-aspect-sign/lilith/sagittarius/sextile/north-node/aquarius"
+]);
 
 assert.equal(phrasebook.hookRows.length, 148);
 assert.ok(phrasebook.hookRows.every((row) => row.review_status === "reviewed"));
@@ -104,7 +107,15 @@ for (const { facts, contentKey } of cases) {
   assert.equal(nodeResult.contentKey, contentKey);
   assert.equal(browserResult.contentKey, contentKey);
   assert.equal(browserResult.body, nodeResult.body);
-  assert.ok(!/\b(?:you|your)\b/iu.test(nodeResult.body), `${contentKey} leaked second-person copy`);
+  if (ownerApprovedSecondPersonKeys.has(contentKey)) {
+    const approvedRow = phrasebook.hookRows.find((row) => row.contentKey === contentKey);
+    assert.ok(approvedRow?.source_keys?.includes(
+      "packages/astro-knowledge/review/lilith-sagittarius-owner-rewrite-v1/lilith-sagittarius-owner-package.md"
+    ));
+    assert.equal(approvedRow?.approved_via, "owner-authored replacement and rulings, 2026-08-09");
+  } else {
+    assert.ok(!/\b(?:you|your)\b/iu.test(nodeResult.body), `${contentKey} leaked second-person copy`);
+  }
   assert.ok(!/—/u.test(nodeResult.body), `${contentKey} leaked an em dash`);
 }
 
