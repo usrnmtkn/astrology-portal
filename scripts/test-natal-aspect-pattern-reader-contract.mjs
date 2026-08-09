@@ -10,6 +10,8 @@ function read(relativePath) {
 }
 
 const app = read("apps/web/src/App.tsx");
+const manualChartsPanel = read("apps/web/src/features/friends/ManualChartsPanel.tsx");
+const readerSurfaces = `${app}\n${manualChartsPanel}`;
 const page = read("apps/web/src/features/you/YouPage.tsx");
 const component = read("apps/web/src/features/you/NatalAspectPatternsSection.tsx");
 const labels = read("apps/web/src/features/you/natalAspectPatternLabels.ts");
@@ -41,17 +43,17 @@ assert.match(
 assert.match(app, /skyWithNatalAspectPatternCopy\(natalSky, aspectPatterns\)/, "Aspect patterns must be attached by copying the sky snapshot.");
 assert.match(app, /showNatalAspectPatterns\s*\?\s*natalAspectPatternReaderItems\(natalSky\)/, "Reader items must be derived only when enabled.");
 assert.match(app, /natalAspectPatternStatus={natalAspectPatternStatus}/, "YouPage must receive an explicit reader status.");
-assert.match(app, /showFriendNatalAspectPatterns\s*=\s*natalAspectPatternReaderEnabled\(\)/, "Friends natal charts must use the same guarded reader flag.");
-assert.match(app, /natalAspectPatternReaderItemsForOwner\(\s*selectedChart\.natalChart \?\? null,\s*selectedChart\.displayName,\s*selectedChartIsEvent \? "chart" : "person",\s*selectedChart\.pronouns\s*\)/s, "Friends natal charts must derive reader items with the selected chart name and saved pronouns.");
-assert.doesNotMatch(app, /natalAspectPatternReaderItems\([^)]*,\s*"they"\)/, "Friends natal charts must not rely on the retired ignored voice argument.");
-assert.match(app, /copy:\s*natalAspectPatternCopyForOwner\(item\.copy,\s*ownerName,\s*ownerKind,\s*ownerPronouns\)/s, "Friend pattern preview and detail copy must share the owner-aware transformation.");
-assert.match(app, /activationCopy:\s*item\.activationCopy\s*\?\s*natalAspectPatternActivationCopyForOwner\(item\.activationCopy,\s*ownerName,\s*ownerKind,\s*ownerPronouns\)/s, "Friend pattern activation copy must use the same owner-aware transformation.");
-assert.match(app, /createNatalGeneratedCopyForOwnerConverter\(ownerName,\s*ownerKind,\s*ownerPronouns,\s*false\)/, "Pattern copy must retain the first generated owner-name mention instead of collapsing it back to a pronoun.");
-assert.match(app, /\|leave\|leaves\|left\) you/, "Pattern object clauses such as “leave [name] out” must use object grammar.");
-assert.match(app, /patternTitle=\{`Patterns in \$\{possessiveLabel\(selectedChart\.displayName\)\} chart`\}/, "Friends natal patterns must derive the section label from the chart owner's name.");
+assert.match(readerSurfaces, /showFriendNatalAspectPatterns\s*=\s*natalAspectPatternReaderEnabled\(\)/, "Friends natal charts must use the same guarded reader flag.");
+assert.match(readerSurfaces, /natalAspectPatternReaderItemsForOwner\(\s*selectedChart\.natalChart \?\? null,\s*selectedChart\.displayName,\s*selectedChartIsEvent \? "chart" : "person",\s*selectedChart\.pronouns\s*\)/s, "Friends natal charts must derive reader items with the selected chart name and saved pronouns.");
+assert.doesNotMatch(readerSurfaces, /natalAspectPatternReaderItems\([^)]*,\s*"they"\)/, "Friends natal charts must not rely on the retired ignored voice argument.");
+assert.match(readerSurfaces, /copy:\s*natalAspectPatternCopyForOwner\(item\.copy,\s*ownerName,\s*ownerKind,\s*ownerPronouns\)/s, "Friend pattern preview and detail copy must share the owner-aware transformation.");
+assert.match(readerSurfaces, /activationCopy:\s*item\.activationCopy\s*\?\s*natalAspectPatternActivationCopyForOwner\(item\.activationCopy,\s*ownerName,\s*ownerKind,\s*ownerPronouns\)/s, "Friend pattern activation copy must use the same owner-aware transformation.");
+assert.match(readerSurfaces, /createNatalGeneratedCopyForOwnerConverter\(ownerName,\s*ownerKind,\s*ownerPronouns,\s*false\)/, "Pattern copy must retain the first generated owner-name mention instead of collapsing it back to a pronoun.");
+assert.match(readerSurfaces, /\|leave\|leaves\|left\) you/, "Pattern object clauses such as “leave [name] out” must use object grammar.");
+assert.match(readerSurfaces, /patternTitle=\{`Patterns in \$\{possessiveLabel\(selectedChart\.displayName\)\} chart`\}/, "Friends natal patterns must derive the section label from the chart owner's name.");
 assert.match(friendNatalTab, /<NatalAspectPatternsSection[\s\S]*title=\{patternTitle\}/, "The deferred Friends natal tab must forward its owner-aware section title.");
-assert.match(app, /selectedFriendNatalAspectPatternStatus/, "Friends natal charts must compute an explicit reader status.");
-assert.match(app, /<FriendNatalTab[\s\S]*onOpenPattern=\{openFriendNatalAspectPatternDetail\}[\s\S]*patternItems=\{selectedFriendNatalAspectPatternItems\}[\s\S]*patternStatus=\{selectedFriendNatalAspectPatternStatus\}/, "App must pass owner-aware pattern data and actions into the deferred Friends natal tab.");
+assert.match(manualChartsPanel, /selectedFriendNatalAspectPatternStatus/, "Friends natal charts must compute an explicit reader status.");
+assert.match(manualChartsPanel, /<FriendNatalTab[\s\S]*onOpenPattern=\{openFriendNatalAspectPatternDetail\}[\s\S]*patternItems=\{selectedFriendNatalAspectPatternItems\}[\s\S]*patternStatus=\{selectedFriendNatalAspectPatternStatus\}/, "App must pass owner-aware pattern data and actions into the deferred Friends natal tab.");
 assert.match(friendNatalTab, /<NatalAspectPatternsSection\s+items=\{patternItems\}\s+onOpenDetail=\{onOpenPattern\}\s+status=\{patternStatus\}\s+title=\{patternTitle\}/s, "The deferred Friends natal tab must render the shared pattern preview with a detail action.");
 assert.match(service, /natalAspectPatternPillSummary/, "Friends lists must derive compact pattern summaries from stored snapshots.");
 assert.match(service, /confidence === "exact" \|\| pattern\.geometry\.confidence === "strong"/, "Pattern pills must remain limited to exact and strong detections.");
