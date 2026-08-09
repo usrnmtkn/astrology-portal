@@ -1,0 +1,559 @@
+{
+  "id": "year-ahead-manifestation-sets-v1",
+  "kind": "manifestation-set-collection",
+  "version": 1,
+  "coverageDomains": [
+    "career/work",
+    "money",
+    "health/capacity",
+    "home",
+    "moving/property",
+    "family",
+    "caregiving",
+    "love/dating",
+    "sex",
+    "relationships",
+    "friendships",
+    "creativity",
+    "children when earned",
+    "travel",
+    "education",
+    "communication",
+    "spirituality/faith",
+    "privacy/withdrawal",
+    "grief/closure",
+    "public recognition"
+  ],
+  "records": {
+    "profection-year-house-12": {
+      "factorType": "profection-year",
+      "match": { "house": 12 },
+      "domain": [
+        "private work",
+        "closure",
+        "unfinished obligations",
+        "rest",
+        "reduced availability",
+        "behind-the-scenes preparation",
+        "endings before a new cycle"
+      ],
+      "possibleLivedManifestations": [
+        "another draft before publication",
+        "finishing a private project",
+        "reducing a recurring commitment",
+        "ending an old role",
+        "preparing an application or launch before announcement",
+        "closing paperwork",
+        "needing more uninterrupted time"
+      ],
+      "doNotAssume": [
+        "job loss",
+        "isolation",
+        "illness",
+        "secret relationship",
+        "failure",
+        "withdrawal from public life"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "sr-overlay-venus-house-10": {
+      "factorType": "sr-overlay",
+      "match": { "house": 10, "overlayPoint": "Venus" },
+      "domain": [
+        "creative work",
+        "pleasure",
+        "dating",
+        "projects of genuine interest",
+        "career",
+        "recognition",
+        "professional identity",
+        "public-facing output"
+      ],
+      "possibleLivedManifestations": [
+        "hobby becoming more serious",
+        "private project gaining a client or audience",
+        "creative work attached to the user's name",
+        "dating or pleasure receiving more time",
+        "invitation or collaboration",
+        "work becoming more public after private development"
+      ],
+      "doNotAssume": [
+        "fame",
+        "promotion",
+        "monetization",
+        "romantic relationship",
+        "creative success",
+        "public acclaim"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "sr-overlay-ascendant-house-5": {
+      "factorType": "sr-overlay",
+      "match": { "house": 5, "overlayPoint": "Ascendant" },
+      "domain": [
+        "creative work",
+        "pleasure",
+        "dating",
+        "projects of genuine interest",
+        "career",
+        "recognition",
+        "professional identity",
+        "public-facing output"
+      ],
+      "possibleLivedManifestations": [
+        "hobby becoming more serious",
+        "private project gaining a client or audience",
+        "creative work attached to the user's name",
+        "dating or pleasure receiving more time",
+        "invitation or collaboration",
+        "work becoming more public after private development"
+      ],
+      "doNotAssume": [
+        "fame",
+        "promotion",
+        "monetization",
+        "romantic relationship",
+        "creative success",
+        "public acclaim"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-to-jupiter-house-3": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "house": 3, "natalPoint": "Jupiter" },
+      "domain": [
+        "writing",
+        "speech",
+        "learning",
+        "applications",
+        "proposals",
+        "teaching",
+        "planning",
+        "communication systems"
+      ],
+      "possibleLivedManifestations": [
+        "proposal outline",
+        "manuscript structure",
+        "course schedule",
+        "application plan",
+        "newsletter or publishing plan",
+        "calendar and budget around an idea",
+        "learning commitment"
+      ],
+      "doNotAssume": [
+        "publication",
+        "acceptance",
+        "enrollment",
+        "business launch",
+        "audience growth"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "eclipse-on-saturn-house-4": {
+      "factorType": "eclipse-on-natal-point",
+      "match": { "house": 4, "natalPoint": "Saturn" },
+      "domain": [
+        "home",
+        "family",
+        "property",
+        "parents",
+        "private responsibilities",
+        "long-standing duty"
+      ],
+      "possibleLivedManifestations": [
+        "move or living-arrangement decision",
+        "repair / maintenance",
+        "family caregiving change",
+        "division of household responsibility",
+        "ending a domestic obligation",
+        "property paperwork",
+        "storage / maintenance decision",
+        "boundary with parent or family member"
+      ],
+      "doNotAssume": ["a move", "death", "illness", "family conflict", "property sale"],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-to-sun": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "natalPoint": "Sun" },
+      "domain": [
+        "role",
+        "self-description",
+        "public identity",
+        "expectations",
+        "independence",
+        "plans others assume are settled"
+      ],
+      "possibleLivedManifestations": [
+        "change in title or bio",
+        "rejecting an old label",
+        "different answer to a recurring request",
+        "changing a schedule",
+        "leaving an opportunity that requires too much conformity",
+        "revising a plan others assumed was settled"
+      ],
+      "doNotAssume": [
+        "quitting a job",
+        "relationship breakup",
+        "sudden relocation",
+        "public conflict"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-work-access": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "natalPoint": "Pluto" },
+      "domain": [
+        "work",
+        "access",
+        "credit",
+        "terms",
+        "tools",
+        "workflow",
+        "opportunity",
+        "repeatable limits"
+      ],
+      "possibleLivedManifestations": [
+        "job application",
+        "client request",
+        "collaboration",
+        "contract",
+        "grant",
+        "project terms",
+        "new software or method",
+        "responsibility negotiation",
+        "weekly schedule change"
+      ],
+      "doNotAssume": [
+        "currently employed",
+        "promotion",
+        "exploitation",
+        "contract signing",
+        "financial success"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "return-jupiter-house-3": {
+      "factorType": "return",
+      "match": { "house": 3, "natalPoint": "Jupiter", "transitPlanet": "Jupiter" },
+      "domain": [
+        "writing",
+        "speech",
+        "learning",
+        "publishing",
+        "applications",
+        "announcements",
+        "teaching",
+        "public messaging"
+      ],
+      "possibleLivedManifestations": [
+        "send application",
+        "pitch or proposal",
+        "publish a piece",
+        "begin newsletter",
+        "start class or course",
+        "public speaking",
+        "manuscript development",
+        "announcement",
+        "revise private writing for wider audience"
+      ],
+      "doNotAssume": [
+        "publication",
+        "acceptance",
+        "virality",
+        "career success",
+        "becoming a teacher"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "eclipse-on-mercury-house-10": {
+      "factorType": "eclipse-on-natal-point",
+      "match": { "house": 10, "natalPoint": "Mercury" },
+      "domain": [
+        "writing",
+        "speech",
+        "learning",
+        "publishing",
+        "applications",
+        "announcements",
+        "teaching",
+        "public messaging"
+      ],
+      "possibleLivedManifestations": [
+        "send application",
+        "pitch or proposal",
+        "publish a piece",
+        "begin newsletter",
+        "start class or course",
+        "public speaking",
+        "manuscript development",
+        "announcement",
+        "revise private writing for wider audience"
+      ],
+      "doNotAssume": [
+        "publication",
+        "acceptance",
+        "virality",
+        "career success",
+        "becoming a teacher"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-to-moon-house-6": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "house": 6, "natalPoint": "Moon" },
+      "domain": [
+        "workload",
+        "routine",
+        "sleep",
+        "meals",
+        "appointments",
+        "caregiving",
+        "emotional capacity",
+        "daily maintenance"
+      ],
+      "possibleLivedManifestations": [
+        "less sleep",
+        "meals pushed around",
+        "appointment postponed",
+        "schedule overflow",
+        "extra favor or work request",
+        "caregiving load",
+        "routine stops working",
+        "resentment about time being overcommitted"
+      ],
+      "doNotAssume": [
+        "illness",
+        "diagnosis",
+        "medical crisis",
+        "burnout",
+        "eating disorder"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-to-uranus-house-6": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "house": 6, "natalPoint": "Uranus" },
+      "domain": [
+        "workflow",
+        "schedule",
+        "budget",
+        "process",
+        "tools",
+        "repeatability",
+        "ordinary weekly capacity"
+      ],
+      "possibleLivedManifestations": [
+        "deadline",
+        "calendar",
+        "budget",
+        "draft process",
+        "client workflow",
+        "automation or software test",
+        "schedule review",
+        "changing a routine",
+        "reverting from a failed tool"
+      ],
+      "doNotAssume": [
+        "launch",
+        "business growth",
+        "productivity increase",
+        "technological success"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-to-neptune": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "natalPoint": "Neptune" },
+      "domain": [
+        "workflow",
+        "schedule",
+        "budget",
+        "process",
+        "tools",
+        "repeatability",
+        "ordinary weekly capacity"
+      ],
+      "possibleLivedManifestations": [
+        "deadline",
+        "calendar",
+        "budget",
+        "draft process",
+        "client workflow",
+        "automation or software test",
+        "schedule review",
+        "changing a routine",
+        "reverting from a failed tool"
+      ],
+      "doNotAssume": [
+        "launch",
+        "business growth",
+        "productivity increase",
+        "technological success"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "eclipse-on-uranus-house-6": {
+      "factorType": "eclipse-on-natal-point",
+      "match": { "house": 6, "natalPoint": "Uranus" },
+      "domain": [
+        "writing",
+        "speech",
+        "learning",
+        "publishing",
+        "applications",
+        "announcements",
+        "teaching",
+        "public messaging"
+      ],
+      "possibleLivedManifestations": [
+        "send application",
+        "pitch or proposal",
+        "publish a piece",
+        "begin newsletter",
+        "start class or course",
+        "public speaking",
+        "manuscript development",
+        "announcement",
+        "revise private writing for wider audience"
+      ],
+      "doNotAssume": [
+        "publication",
+        "acceptance",
+        "virality",
+        "career success",
+        "becoming a teacher"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "eclipse-on-midheaven-house-10": {
+      "factorType": "eclipse-on-natal-point",
+      "match": { "house": 10, "natalPoint": "Midheaven" },
+      "domain": [
+        "career",
+        "public role",
+        "title",
+        "professional direction",
+        "recognition",
+        "access"
+      ],
+      "possibleLivedManifestations": [
+        "job application",
+        "interview",
+        "offer / rejection",
+        "promotion",
+        "title change",
+        "client opportunity",
+        "launch",
+        "publication",
+        "credit dispute",
+        "leaving a role",
+        "career pivot",
+        "professional introduction",
+        "project carrying the user's name"
+      ],
+      "doNotAssume": [
+        "currently employed",
+        "promotion",
+        "fame",
+        "success",
+        "job loss"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-to-ascendant": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "natalPoint": "Ascendant" },
+      "domain": [
+        "work",
+        "access",
+        "credit",
+        "terms",
+        "tools",
+        "workflow",
+        "opportunity",
+        "repeatable limits"
+      ],
+      "possibleLivedManifestations": [
+        "job application",
+        "client request",
+        "collaboration",
+        "contract",
+        "grant",
+        "project terms",
+        "new software or method",
+        "responsibility negotiation",
+        "weekly schedule change"
+      ],
+      "doNotAssume": [
+        "currently employed",
+        "promotion",
+        "exploitation",
+        "contract signing",
+        "financial success"
+      ],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    },
+    "slow-transit-to-mars": {
+      "factorType": "slow-transit-to-natal",
+      "match": { "natalPoint": "Mars" },
+      "domain": [
+        "dating",
+        "attraction",
+        "sex",
+        "pleasure",
+        "time together",
+        "availability",
+        "money",
+        "travel",
+        "caregiving",
+        "changed health/capacity",
+        "different expectations",
+        "who adjusts",
+        "who organizes",
+        "who gets priority"
+      ],
+      "possibleLivedManifestations": [
+        "different expectations",
+        "who adjusts",
+        "who organizes",
+        "who gets priority"
+      ],
+      "doNotAssume": ["partnership", "breakup", "commitment", "marriage"],
+      "copyClaim": { "text": null, "review_status": "needs_review" },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "review_status": "needs_review"
+    }
+  },
+  "review_status": "needs_review"
+}
