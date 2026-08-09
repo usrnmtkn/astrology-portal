@@ -8,6 +8,12 @@ import {
   type StoredGeneratedContent
 } from "./_lib/content-generation.js";
 import { contentGenerationProvider } from "./_lib/provider-config.js";
+import { fetchSupabaseReportEnvelopeById } from "./_lib/report-envelope.js";
+import {
+  assembleReportGenerationPayload,
+  type ReportGenerationPayload,
+  type ReportHorizon
+} from "./_lib/report-generation.js";
 
 type UserContentSubjectType =
   // Keep identical to UserGeneratedSubjectType in apps/web/src/services/userGeneratedContent.ts.
@@ -31,12 +37,17 @@ type UserContentSubjectType =
   | "year_ahead_saturn_return_callout"
   | "relationship_report_section"
   | "saturn_return"
-  | "saturn_return_section";
+  | "saturn_return_section"
+  | "report_unit";
 
 type UserContentRequest = GenerateContentInput & {
   subjectType: UserContentSubjectType;
   subjectId: string;
   status?: "DRAFT" | "LIVE";
+  reportId?: string;
+  reportHorizon?: ReportHorizon;
+  unitId?: string;
+  dryRun?: boolean;
 };
 
 type SupabaseUserPayload = {
@@ -211,7 +222,9 @@ async function saveUserGeneratedInterpretation(
       facts: input.facts,
       knowledge_ids: input.knowledgeIds ?? [],
       source_snapshot: input.sourceSnapshot ?? {},
-      prompt_version: "tldr-astro-v4",
+      prompt_version: input.subjectType === "report_unit"
+        ? "report-generation-owner-2026-08-09"
+        : "tldr-astro-v4",
       provider: contentProvider(input.subjectType),
       model: generated.model,
       headline: generated.headline,
@@ -230,7 +243,10 @@ async function saveUserGeneratedInterpretation(
   return payload;
 }
 
-function generationInput(input: UserContentRequest): GenerateContentInput {
+function generationInput(
+  input: UserContentRequest,
+  reportPayload?: ReportGenerationPayload
+): GenerateContentInput {
   return {
     contentKey: input.contentKey,
     surface: input.surface,
@@ -243,8 +259,54 @@ function generationInput(input: UserContentRequest): GenerateContentInput {
     knowledgeIds: input.knowledgeIds,
     sourceSnapshot: input.sourceSnapshot,
     voiceNotes: input.voiceNotes,
-    allowQualityFallback: input.allowQualityFallback
+    allowQualityFallback: input.allowQualityFallback,
+    reportPayload
   };
+}
+
+const reportTypesByHorizon: Record<ReportHorizon, string> = {
+  "1_month": "report_1_month",
+  "4_months": "report_4_months",
+  "6_months": "report_6_months",
+  "12_months": "report_12_months"
+};
+
+async function reportPayloadForRequest(userId: string, input: UserContentRequest) {
+  if (!input.reportId || !input.reportHorizon || !input.unitId) {
+    throw new Error("report_unit requires reportId, reportHorizon, and unitId.");
+  }
+  const report = await fetchSupabaseReportEnvelopeById({
+    supabaseUrl: supabaseUrl(),
+    serviceRoleKey: serviceRoleKey(),
+    userId,
+    reportId: input.reportId
+  });
+  if (!report) {
+    throw new Error("Report envelope was not found for this user.");
+  }
+  if (report.report_type !== reportTypesByHorizon[input.reportHorizon]) {
+    throw new Error("Report horizon does not match the frozen report envelope.");
+  }
+  const contentKey = `report:${report.id}:${input.unitId}`;
+  input.contentKey = contentKey;
+  input.subjectId = report.id;
+  input.surface = "year_ahead";
+  input.mode = "report";
+  input.eventType = "report_unit";
+  input.targetDate = report.period_start;
+  input.facts = report.facts;
+  input.sourceSnapshot = {
+    reportId: report.id,
+    factsEngine: report.facts_engine,
+    periodStart: report.period_start,
+    periodEnd: report.period_end
+  };
+  return assembleReportGenerationPayload({
+    reportId: report.id,
+    reportHorizon: input.reportHorizon,
+    unitId: input.unitId,
+    frozenFacts: report.facts
+  });
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -256,7 +318,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const userId = await requireAuthenticatedUser(req);
     const input = await readJsonBody(req);
-    const requestedStatus = input.status === "LIVE" && isAdminRequest(req) ? "LIVE" : "DRAFT";
+    const reportPayload = input.subjectType === "report_unit"
+      ? await reportPayloadForRequest(userId, input)
+      : undefined;
+    if (input.subjectType === "report_unit" && input.dryRun) {
+      sendJson(res, 200, {
+        ok: true,
+        dryRun: true,
+        contentKey: input.contentKey,
+        payload: reportPayload
+      });
+      return;
+    }
+    const requestedStatus = input.subjectType === "report_unit"
+      ? "DRAFT"
+      : input.status === "LIVE" && isAdminRequest(req) ? "LIVE" : "DRAFT";
     const existing = await existingUserGeneratedInterpretation(userId, input);
 
     if (requestedStatus === "DRAFT" && existing && (existing.status === "REVIEWED" || existing.status === "LIVE")) {
@@ -270,7 +346,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return;
     }
 
-    const generated = await generateContent(generationInput(input));
+    const generated = await generateContent(generationInput(input, reportPayload));
     const saved = await saveUserGeneratedInterpretation(userId, input, generated, requestedStatus);
 
     sendJson(res, 200, {
