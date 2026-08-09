@@ -159,7 +159,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-08f");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08g");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");

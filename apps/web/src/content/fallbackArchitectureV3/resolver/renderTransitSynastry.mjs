@@ -1707,15 +1707,11 @@ export function renderSkyPlacement({
     const planetFrame = isRetrograde || isShadowPhase
       ? retrogradePlanetFrame ?? directPlanetFrame
       : directPlanetFrame;
-    const personal = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-    const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
     const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
     const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
     if (
       windowFrame
       && planetFrame
-      && personal
-      && practice
       && signStyle
       && planetFunction
       && entryDate
@@ -1727,9 +1723,7 @@ export function renderSkyPlacement({
         windowFrame,
         planetFrame,
         ...signParts,
-        ...aspectParas,
-        personal,
-        practice
+        ...aspectParas
       ].map((part) => fillKeep(part, ctx));
       if (parts.some((part) => /\{\{/u.test(part))) {
         throw new SourceGapError(`SOURCE_GAP: sky placement V3 frame ${planet}/${sign}`);
@@ -1758,54 +1752,7 @@ export function renderSkyPlacement({
       contentKey: pairKey
     };
   }
-  const template = tpl("fallback-template/sky.placement-article");
-  if (!template) throw new SourceGapError("SOURCE_GAP: missing template fallback-template/sky.placement-article");
-  const fallbackHook = hooks.get(`fallback-hook/sky-placement-you/${planet}`)?.body_you;
-  const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
-  const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
-  const frame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
-  if (!fallbackHook || !frame || !signStyle || !planetFunction) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
-  const ctx = {
-    signTitle: title(sign),
-    signStyle,
-    signDoes: vocab.get(`fallback-vocab/sign-does/${sign}`)?.body,
-    planetFunction,
-    entryDate,
-    exitDate
-  };
-  const placementRef = capitalizeSentence(transitRef(planet));
-  const hook = hooks.get(`fallback-hook/sky-placement-hook/${planet}/${sign}`)?.body_you
-    ?? fill(fallbackHook, ctx);
-  const lived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you
-    ?? fill(frame, ctx);
-  const authoredTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
-  const trap = hooks.get(`fallback-hook/sky-sign-trap/${sign}`)?.body_you;
-  const practice = hooks.get(`fallback-hook/sky-placement-practice/${planet}`)?.body_you;
-  const fallbackTurn = trap ? `The catch is ${trap}${practice ? ` ${practice}` : ""}` : practice;
-  const templateCtx = {
-    planetTitle: placementRef,
-    signTitle: title(sign),
-    hook,
-    lived,
-    turn: authoredTurn ?? fallbackTurn
-  };
-  for (const slot of template.requiredSlots ?? []) {
-    if (!templateCtx[slot]) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing ${slot}`);
-  }
-  const baseBody = fillKeep(template.body, templateCtx);
-  if (/\{\{/.test(baseBody)) throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign} missing slot`);
-  const baseParts = baseBody.split(/\n{2,}/u).filter(Boolean);
-  const parts = retrogradeGuidance
-    ? [...baseParts.slice(0, -1), retrogradeGuidance, ...baseParts.slice(-1), ...aspectParas]
-    : [...baseParts, ...aspectParas];
-  return {
-    headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
-    body: parts.join("\n\n"),
-    parts,
-    templateKey: template.contentKey,
-    tagline,
-    moves
-  };
+  throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
 }
 
 // ---- Calendar page (CALENDAR-CONTENT-SPEC.md): lunar phases, void of course, season
