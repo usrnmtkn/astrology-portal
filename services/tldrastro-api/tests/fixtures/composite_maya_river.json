@@ -49,15 +49,15 @@
   },
   "expected": {
     "positionCount": 12,
-    "aspectCount": 20,
+    "aspectCount": 22,
     "positions": {
-      "Sun": { "longitude": 301.82793, "sign": "Aquarius", "house": 9 },
-      "Moon": { "longitude": 116.376003, "sign": "Cancer", "house": 2 },
-      "Venus": { "longitude": 108.984985, "sign": "Cancer", "house": 2 },
-      "Mars": { "longitude": 290.423595, "sign": "Capricorn", "house": 8 }
+      "Sun": { "longitude": 301.827936, "sign": "Aquarius", "house": 9 },
+      "Moon": { "longitude": 116.376028, "sign": "Cancer", "house": 2 },
+      "Venus": { "longitude": 108.984983, "sign": "Cancer", "house": 2 },
+      "Mars": { "longitude": 290.4236, "sign": "Capricorn", "house": 8 }
     },
     "topAspects": [
-      { "from": "Venus", "type": "opposition", "to": "Neptune", "orb": 0.1312, "strength": 98 },
+      { "from": "Venus", "type": "opposition", "to": "Neptune", "orb": 0.1313, "strength": 98 },
       { "from": "Uranus", "type": "conjunction", "to": "Neptune", "orb": 0.3974, "strength": 95 },
       { "from": "Sun", "type": "conjunction", "to": "Mercury", "orb": 0.414, "strength": 95 }
     ],

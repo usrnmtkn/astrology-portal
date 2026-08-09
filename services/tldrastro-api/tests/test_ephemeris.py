@@ -16,6 +16,7 @@ class FakeSwiss:
     FLG_SPEED = 256
     SUN = 0
     MOON = 1
+    OSCU_APOG = 13
     __version__ = "test-version"
 
     def __init__(self, returned_engine):
@@ -67,6 +68,25 @@ def test_status_accepts_swiss_when_the_configured_path_is_used(monkeypatch, tmp_
     assert status["actualEngine"] == "swiss"
     assert status["fallback"] is False
     assert fake.path == str(tmp_path)
+
+
+def test_status_probes_true_lilith_before_reporting_swiss_ready(monkeypatch, tmp_path):
+    class MissingTrueLilithSwiss(FakeSwiss):
+        def calc_ut(self, _julian_day, body_id, _flags):
+            engine = self.FLG_MOSEPH if body_id == self.OSCU_APOG else self.FLG_SWIEPH
+            result = (100.0 + body_id, 0.0, 1.0, 0.5, 0.0, 0.0)
+            return result, engine | self.FLG_SPEED
+
+    fake = MissingTrueLilithSwiss(FakeSwiss.FLG_SWIEPH)
+    monkeypatch.setitem(sys.modules, "swisseph", fake)
+
+    status = ephemeris_status(str(tmp_path))
+
+    assert status["ready"] is False
+    assert status["actualEngine"] == "mixed"
+    assert status["actualEngines"] == ["moshier", "swiss"]
+    assert status["checks"][2]["body"] == "True Black Moon Lilith"
+    assert status["checks"][2]["engine"] == "moshier"
 
 
 def test_calculation_trace_records_the_engine_returned_by_calc_ut():
