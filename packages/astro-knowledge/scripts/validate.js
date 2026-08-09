@@ -473,6 +473,60 @@ function validateSource(filePath, source, errors) {
   }
 }
 
+function validateManifestationSetFile(filePath, errors) {
+  assertSchemaFile("manifestation-set.schema.json", errors);
+  const collection = readJson(filePath);
+  const allowedFactorTypes = new Set([
+    "eclipse-on-natal-point",
+    "slow-transit-to-natal",
+    "return",
+    "profection-year",
+    "sr-overlay"
+  ]);
+
+  if (collection.kind !== "manifestation-set-collection") {
+    errors.push(`${rel(filePath)}: kind must be manifestation-set-collection`);
+  }
+  if (collection.review_status !== "needs_review") {
+    errors.push(`${rel(filePath)}: collection review_status must be needs_review`);
+  }
+  if (!Array.isArray(collection.coverageDomains) || collection.coverageDomains.length === 0) {
+    errors.push(`${rel(filePath)}: coverageDomains must be a non-empty array`);
+  }
+  if (!collection.records || typeof collection.records !== "object" || Array.isArray(collection.records)) {
+    errors.push(`${rel(filePath)}: records must be an object keyed by record id`);
+    return;
+  }
+
+  for (const [id, record] of Object.entries(collection.records)) {
+    const prefix = `${rel(filePath)}: records.${id}`;
+    if (!allowedFactorTypes.has(record.factorType)) {
+      errors.push(`${prefix}.factorType is not supported`);
+    }
+    if (!record.match || typeof record.match !== "object" || Array.isArray(record.match)) {
+      errors.push(`${prefix}.match must be an object`);
+    }
+    for (const field of ["domain", "possibleLivedManifestations", "doNotAssume"]) {
+      if (!Array.isArray(record[field]) || !record[field].every((item) => typeof item === "string") || record[field].length === 0) {
+        errors.push(`${prefix}.${field} must be a non-empty array:string`);
+      }
+    }
+    if (record.review_status !== "needs_review") {
+      errors.push(`${prefix}.review_status must be needs_review`);
+    }
+    if (
+      !record.copyClaim
+      || record.copyClaim.text !== null
+      || record.copyClaim.review_status !== "needs_review"
+    ) {
+      errors.push(`${prefix}.copyClaim must remain null and needs_review`);
+    }
+    if (typeof record.provenance !== "string") {
+      errors.push(`${prefix}.provenance must be string`);
+    }
+  }
+}
+
 function listDirectJsonFiles(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir, { withFileTypes: true })
@@ -496,6 +550,10 @@ function isNonServingSourceLedger(value) {
     && value.sourceRecords.length > 0
     && value.sourceRecords.every((record) => record && record.serving === false)
   );
+}
+
+function isNonServingManifestationSet(value) {
+  return Boolean(value && value.kind === "manifestation-set-collection");
 }
 
 function escapeRegExp(value) {
@@ -538,7 +596,7 @@ function validateVoicePolicy(errors) {
     const json = readJson(filePath);
     // Evidence ledgers are search inputs, not reader-facing copy. Their selected
     // output is still required to pass the ban list in the packet builder.
-    if (isNonServingSourceLedger(json)) continue;
+    if (isNonServingSourceLedger(json) || isNonServingManifestationSet(json)) continue;
     const text = flattenText(json);
     for (const check of checks) {
       if (check.pattern.test(text)) {
@@ -618,6 +676,9 @@ function validateAll() {
   }
   for (const filePath of listJsonFiles(path.join(dataRoot, "insights"))) {
     validateEntryFile(filePath, "insightCard", errors);
+  }
+  for (const filePath of listJsonFiles(path.join(dataRoot, "manifestation-sets"))) {
+    validateManifestationSetFile(filePath, errors);
   }
   validateVoicePolicy(errors);
 
