@@ -31,6 +31,10 @@ export type PlanetPosition = {
   priorTransitEnd?: string | null;
   previousSignResidencyStart?: string | null;
   previousSignResidencyEnd?: string | null;
+  residencyPasses?: Array<{
+    entryDate: string;
+    exitDate: string;
+  }> | null;
   retrogradeStart?: string | null;
   retrogradeEnd?: string | null;
   retrogradeWindowSource?: "station" | "sign-transit" | null;
@@ -54,7 +58,7 @@ export type SkySnapshot = {
   generatedAt: string;
   cacheState?: {
     source: "last-known-verified";
-    schema: "tldrastro-verified-sky-v1";
+    schema: "tldrastro-verified-sky-v2";
     verifiedAt: string;
     ageMs: number;
   };
@@ -68,6 +72,7 @@ export type SkySnapshot = {
     houseSystem: "whole_sign";
     planetHouseSystem: "whole_sign";
     nodeType: "mean" | "true";
+    lilithType: "mean" | "true";
     calculationVersion: string;
   };
   ascendant: string;

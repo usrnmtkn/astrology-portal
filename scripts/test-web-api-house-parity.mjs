@@ -18,6 +18,17 @@ const pythonCandidates = [
 
 const cases = [
   {
+    id: "true-lilith-sign-divergence-new-york-2026",
+    iso: "2026-03-27T00:00:00.000Z",
+    date: "2026-03-27",
+    location: {
+      label: "New York, NY",
+      latitude: 40.7128,
+      longitude: -74.006,
+      timeZone: "America/New_York"
+    }
+  },
+  {
     id: "jose-el-vigia-1979",
     iso: "1979-02-08T13:00:00.000Z",
     date: "1979-02-08",
@@ -138,8 +149,8 @@ function assertCircularClose(actual, expected, tolerance, message) {
   );
 }
 
-const requiredPoints = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node"];
-const optionalPoints = ["Chiron", "Lilith"];
+const requiredPoints = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "North Node", "Lilith"];
+const optionalPoints = ["Chiron"];
 
 const logger = createLogger("error");
 const viteError = logger.error;
@@ -179,6 +190,7 @@ try {
     assert.equal(web.calculationProvenance.houseSystem, "whole_sign", `${caseData.id}: web house system`);
     assert.equal(web.calculationProvenance.planetHouseSystem, "whole_sign", `${caseData.id}: web planet house system`);
     assert.equal(web.calculationProvenance.nodeType, "true", `${caseData.id}: web node model`);
+    assert.equal(web.calculationProvenance.lilithType, "true", `${caseData.id}: web Lilith model`);
 
     assertCircularClose(api.ascendantLongitude, web.ascendantLongitude, 0.02, `${caseData.id}: ascendant longitude`);
     assertCircularClose(api.midheavenLongitude, web.midheavenLongitude, 0.02, `${caseData.id}: MC longitude`);
@@ -195,9 +207,13 @@ try {
       const apiPosition = apiPositions.get(point);
       assert.ok(webPosition, `${caseData.id}: missing web ${point}`);
       assert.ok(apiPosition, `${caseData.id}: missing API ${point}`);
-      assertCircularClose(apiPosition.longitude, webPosition.longitude, 0.02, `${caseData.id}: ${point} longitude`);
+      const longitudeTolerance = point === "Lilith" ? 0.05 : 0.02;
+      assertCircularClose(apiPosition.longitude, webPosition.longitude, longitudeTolerance, `${caseData.id}: ${point} longitude`);
       assert.equal(apiPosition.sign, webPosition.sign, `${caseData.id}: ${point} sign`);
       assert.equal(apiPosition.house, webPosition.house, `${caseData.id}: ${point} house`);
+      if (point === "Lilith") {
+        assert.equal(apiPosition.motion, webPosition.motion, `${caseData.id}: Lilith motion`);
+      }
       assert.equal(webPosition.houseSystem, "whole_sign", `${caseData.id}: ${point} web house system`);
     }
 

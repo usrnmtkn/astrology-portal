@@ -45,7 +45,9 @@ BODIES: List[Tuple[str, str, str, int]] = [
     ("Pluto", "♇", "depth", swe.PLUTO),
     ("North Node", "☊", "direction", swe.TRUE_NODE),
     ("Chiron", "⚷", "integration", swe.CHIRON),
-    ("Lilith", "⚸", "shadow", swe.MEAN_APOG),
+    # Owner ruling 2026-08-09: every surface uses true/osculating Black Moon
+    # Lilith. Mean apogee must not remain reachable through the Python API.
+    ("Lilith", "⚸", "shadow", swe.OSCU_APOG),
 ]
 
 BODY_IDS: Dict[str, int] = {point: body_id for point, _, _, body_id in BODIES}

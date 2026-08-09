@@ -74,7 +74,7 @@ const bodies = [
   ["Neptune", swe.SE_NEPTUNE],
   ["Pluto", swe.SE_PLUTO],
   ["Chiron", 15],
-  ["Lilith", 12],
+  ["Lilith", 13],
   ["North Node", swe.SE_TRUE_NODE]
 ];
 

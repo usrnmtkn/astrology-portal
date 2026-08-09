@@ -36,7 +36,7 @@ Source registry: `scripts/fixtures/ephemeris-source-registry.json`
 - Frame: geocentric. No topocentric flag is currently used.
 - Planet flags: `SEFLG_SWIEPH | SEFLG_SPEED`.
 - Node: True Node via `SE_TRUE_NODE`; the South Node is derived as its exact opposition.
-- Lilith: mean Black Moon Lilith constant `12`.
+- Lilith: true/osculating Black Moon Lilith (`SE_OSCU_APOG`, constant `13`) on every surface. Its monthly direction changes and sign re-entry passes are modeled; mean apogee is excluded by the v3 calculation contract.
 - Chiron: constant `15`.
 - Houses/angles: `swe.houses(..., "W")` for Ascendant and Midheaven angle data, with Whole Sign house cusps derived from 0 degrees of the rising sign.
 - Displayed planet house assignment: whole-sign house from Ascendant sign. This is explicit in fact provenance as `planetHouseSystem: "whole_sign"` and `houseSystem: "whole_sign"`.
