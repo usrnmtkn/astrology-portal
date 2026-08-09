@@ -5,7 +5,7 @@ import type { ReportFulfillmentStore, FulfillmentJobRow, FulfillmentReportRow } 
 import { verifyReportFactLock } from "./report-fact-lock.ts";
 import { judgeReportUnit, type ReportJudgeResult } from "./report-judge.ts";
 import { createReportMailProvider, type ReportMailProvider } from "./report-mail.ts";
-import { assembleReportGenerationPayload, validateReportDraft, type ReportDraft } from "./report-generation.ts";
+import { assertReportDomainFulfillmentReady, assembleReportGenerationPayload, validateReportDraft, type ReportDraft } from "./report-generation.ts";
 import { reportSystemPromptVersions } from "./report-prompt-versions.ts";
 import type { ReportModelCall } from "./report-model-client.ts";
 import { runReportWriterChain } from "./report-writer-chain.ts";
@@ -80,6 +80,7 @@ export async function processReportFulfillmentJob(input: {
     await input.store.updateJob(input.job.id, { state: "cancelled", last_error: `Entitlement is ${entitlement.status}.` });
     return { status: "cancelled" };
   }
+  assertReportDomainFulfillmentReady(report.report_domain);
   let factsBundle = await input.store.reusableFacts(report);
   if (!factsBundle) {
     const claimed = await input.store.claimFacts(report, input.job.id);
@@ -220,7 +221,7 @@ export async function runReportFulfillmentBatch(input: {
     } catch (error) {
       const report = await input.store.report(job.report_id);
       const message = error instanceof Error ? error.message : "Unknown fulfillment failure.";
-      const terminal = /SOURCE_GAP|attempt cap exhausted|token budget exceeded|birth data is unavailable|lost its report or entitlement|facts bundle/iu.test(message);
+      const terminal = /REPORT_DOMAIN_PROMPT_PENDING|SOURCE_GAP|attempt cap exhausted|token budget exceeded|birth data is unavailable|lost its report or entitlement|facts bundle/iu.test(message);
       const retryable = message.startsWith("FACTS_PENDING:") || (!terminal && job.attempt < config.jobAttemptCap);
       if (report) {
         await input.store.updateReport(report.id, {
