@@ -9,7 +9,7 @@ import { REPORT_JUDGE_PROMPT_PATH, REPORT_CRITIQUE_PROMPT_PATH } from "../api/_l
 import { scopeReportPayloadToUnit } from "../api/_lib/report-unit-scope.ts";
 import { enforceReportRevisionStopRule, ReportStopRuleError } from "../api/_lib/report-writer-chain.ts";
 
-if (process.argv.includes("--live")) throw new Error("Report judge v3 is a needs_review draft. Live calls require fresh owner approval and separate run authorization.");
+if (process.argv.includes("--live")) throw new Error("Use calibrate-report-judge-v3.mjs for the separately authorized live run.");
 
 const manifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-judge-complete-unit-regressions-v3.json", import.meta.url), "utf8"));
 const facts = JSON.parse(fs.readFileSync(manifest.factsSourcePath, "utf8"));
@@ -125,9 +125,9 @@ assert.match(activeJudgeV2, /^\*\*Status:\*\* `owner_approved`$/mu);
 assert.match(activeCritiqueV2, /^\*\*Status:\*\* `owner_approved`$/mu);
 
 for (const [name, document] of [["judge", judgeV3], ["critique", critiqueV3]]) {
-  assert.match(document, /^\*\*Status:\*\* `needs_review`$/mu, `${name} v3 must remain needs_review.`);
+  assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} v3 approval must be recorded.`);
   assert.match(document, /^\*\*Active in production:\*\* `false`$/mu, `${name} v3 must remain inactive.`);
-  assert.match(document, /^\*\*Owner approved:\*\* `false`$/mu, `${name} v3 must remain unapproved.`);
+  assert.match(document, /^\*\*Owner approved:\*\* `true`$/mu, `${name} v3 must record owner approval.`);
   assert.match(document, /^\*\*Promotion authorized:\*\* `false`$/mu, `${name} v3 must remain unauthorized.`);
   assert.match(document, /COMPLETE_UNIT/u);
   assert.match(document, /UNIT_FACTS/u);
