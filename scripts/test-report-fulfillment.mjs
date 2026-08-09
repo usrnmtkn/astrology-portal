@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportFulfillmentConfig } from "../api/_lib/report-fulfillment-config.ts";
 import { processReportFulfillmentJob, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { REPORT_JUDGE_CATEGORIES, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
 import { revokeEntitlement } from "../api/_lib/report-entitlements.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
@@ -33,11 +34,11 @@ delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
 const draft = { headline: "FIXTURE_ONLY.", body: "FIRST_SENTENCE. SECOND_SENTENCE.", sections: [] };
 const namedRevision = { ...draft, body: "FIRST_SENTENCE. REVISED_SECOND_SENTENCE." };
 assert.equal(enforceReportRevisionStopRule(draft, namedRevision, [{
-  id: "d1", category: "vagueness", location: "body", sentence_index: 1,
+  id: "d1", category: "unlived_abstraction", location: "body", sentence_index: 1,
   quote: "SECOND_SENTENCE.", evidence: "FIXTURE_ONLY", instruction: "FIXTURE_ONLY"
 }]).body, namedRevision.body);
 assert.throws(() => enforceReportRevisionStopRule(draft, { ...draft, body: "REVISED_FIRST_SENTENCE. SECOND_SENTENCE." }, [{
-  id: "d1", category: "vagueness", location: "body", sentence_index: 1,
+  id: "d1", category: "unlived_abstraction", location: "body", sentence_index: 1,
   quote: "SECOND_SENTENCE.", evidence: "FIXTURE_ONLY", instruction: "FIXTURE_ONLY"
 }]), ReportStopRuleError);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
@@ -99,6 +100,12 @@ function createMemoryStore() {
 }
 
 const modelDraft = { headline: "FIXTURE_ONLY_HEADLINE.", tldr: "FIXTURE_ONLY_TLDR.", summary: "FIXTURE_ONLY_SUMMARY.", body: "FIXTURE_ONLY_BODY.", action: "FIXTURE_ONLY_ACTION.", timing: "FIXTURE_ONLY_TIMING.", sections: [] };
+const passingJudgeScores = Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, 4]));
+assert.equal(reportJudgeVerdict(passingJudgeScores, 1, 0.9), "pass");
+for (const category of ["astrology_chronology", "factual_traceability", "lived_experience", "interpretive_movement", "owner_voice"]) {
+  assert.equal(reportJudgeVerdict({ ...passingJudgeScores, [category]: 2 }, 1, 0.9), "below_threshold", `${category} must be a hard gate.`);
+}
+assert.equal(reportJudgeVerdict({ ...passingJudgeScores, natural_language: 2 }, 1, 0.9), "pass", "Non-gated categories remain governed by the configured overall threshold.");
 function modelCallWithCrash(crashAt = Infinity) {
   let calls = 0;
   const call = async (input) => {
@@ -114,7 +121,7 @@ function modelCallWithCrash(crashAt = Infinity) {
   return call;
 }
 const judgeCall = async () => ({
-  result: { scores: { astrology_chronology: 4, factual_traceability: 4, specificity: 4, natural_language: 4, syntax_variety: 4, emotional_temperature: 4, density: 4 }, overall: 1, verdict: "pass", findings: [] },
+  result: { scores: passingJudgeScores, overall: 1, verdict: "pass", findings: [] },
   usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, model: "FIXTURE_ONLY_JUDGE", promptVersion: "FIXTURE_ONLY_JUDGE_V1"
 });
 
