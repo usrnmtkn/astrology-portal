@@ -11,6 +11,20 @@
   },
   "purpose": "Calibration-only complete-unit pairs for proposed report judge v3. Positive units are extracted verbatim from owner-authored reference reports. Negative units are unapproved mechanical degradations and must never become positive voice evidence or reader-facing copy.",
   "factsSourcePath": "scripts/fixtures/marie-report-frozen-facts.json",
+  "completeUnitParagraphIndexing": {
+    "convention": "zero_based_supplied_indices",
+    "marker": "[PARAGRAPH_INDEX={index}]",
+    "instruction": "Locations must copy the supplied PARAGRAPH_INDEX value. The model never counts paragraphs."
+  },
+  "ownerFinalityRuling": {
+    "date": "2026-08-09",
+    "verbatim": "WORK & MONEY: final / owner-authored-final reference\nLOVE & CONNECTION: final / owner-authored-final reference\nPERSONAL & HEALTH: final / owner-authored-final reference",
+    "references": {
+      "work_money": { "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "d436634a25a122dc765a5e4167cdf2b99b6e0d4480e1000ba839be91ced24896" },
+      "love_connection": { "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "fd376233984157814190985b7dbe449e014ac8a47e6a140fe11ce169e3e8b534" },
+      "personal_health": { "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "e59f752512bd8f1ca01e8786e26d687344319b4eaac4edd5d479262e85bfa745" }
+    }
+  },
   "functionVocabulary": [
     "opening",
     "development",
@@ -141,6 +155,20 @@
         "startsOn": "2026-03-20",
         "endsOn": "2026-06-21"
       },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "uranus-square-sun", "transitPlanet": "Uranus", "natalPoint": "Sun", "natalHouse": 9, "aspect": "square", "passCount": 1, "passDates": ["2026-04-14"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "jupiter-square-pluto", "transitPlanet": "Jupiter", "natalPoint": "Pluto", "natalHouse": 5, "aspect": "square", "passCount": 1, "passDates": ["2026-05-01"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "jupiter-trine-uranus", "transitPlanet": "Jupiter", "natalPoint": "Uranus", "natalHouse": 6, "aspect": "trine", "passCount": 1, "passDates": ["2026-05-14"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "saturn-sextile-ascendant", "transitPlanet": "Saturn", "natalPoint": "Ascendant", "natalHouse": 1, "aspect": "sextile", "passCount": 3, "passDates": ["2026-05-19", "2026-10-06", "2027-02-10"], "motions": ["direct", "retrograde", "direct"] }
+        ],
+        "claimSupport": [
+          { "claim": "Uranus squares the natal Sun on Apr 14 in a single exact pass.", "supportingFactIds": ["uranus-square-sun"] },
+          { "claim": "Jupiter squares natal Pluto on May 1.", "supportingFactIds": ["jupiter-square-pluto"] },
+          { "claim": "Jupiter trines natal Uranus on May 14.", "supportingFactIds": ["jupiter-trine-uranus"] },
+          { "claim": "May 19 is Saturn's first of three sextiles to the natal Ascendant; the later October review is pass 2 on Oct 6 while Saturn is retrograde.", "supportingFactIds": ["saturn-sextile-ascendant"] }
+        ]
+      },
       "attributionParagraphIndex": 14,
       "keyDatesParagraphIndex": 16,
       "movementApplicable": true,
@@ -215,22 +243,38 @@
       ]
     },
     {
-      "id": "work_money_winter_material_voice_drift",
+      "id": "work_money_summer_material_voice_drift",
       "dimension": "owner_voice",
       "reportDomain": "work_money",
       "reportHorizon": "12_months",
-      "unitId": "winter-current",
+      "unitId": "summer",
       "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
       "sourceType": "owner_authored_final",
-      "startMarker": "## WINTER 2026",
-      "endMarker": "## SPRING 2026:",
-      "sourceSha256": "fcfba4d014442fd843751898ee2507c976f5a8f4c1e486138862a6abedda38e6",
+      "startMarker": "## SUMMER 2026:",
+      "endMarker": "## AUTUMN 2026:",
+      "sourceSha256": "3d9dbccb9bc4f6b5792da6e0f01393be1abfde15e18c0bcf3073d0f983246f5e",
       "unitWindow": {
-        "startsOn": "2026-02-18",
-        "endsOn": "2026-03-20"
+        "startsOn": "2026-06-21",
+        "endsOn": "2026-09-22"
       },
-      "attributionParagraphIndex": 8,
-      "keyDatesParagraphIndex": 10,
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "jupiter-conjunction-jupiter", "transitPlanet": "Jupiter", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "conjunction", "passCount": 1, "passDates": ["2026-07-04"], "motions": ["direct"], "isReturn": true },
+          { "factType": "lunar_event", "factId": "solar-eclipse-2026-08-12", "kind": "solar_eclipse", "subtype": "total", "occursOn": "2026-08-12", "natalHouse": 3, "contact": { "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square" } },
+          { "factType": "transit_arc", "factId": "jupiter-square-moon", "transitPlanet": "Jupiter", "natalPoint": "Moon", "natalHouse": 6, "aspect": "square", "passCount": 1, "passDates": ["2026-08-27"], "motions": ["direct"] },
+          { "factType": "lunar_event", "factId": "lunar-eclipse-2026-08-28", "kind": "lunar_eclipse", "subtype": "partial", "occursOn": "2026-08-28", "natalHouse": 10, "contact": { "natalPoint": "Mercury", "natalHouse": 10, "aspect": "conjunction" } },
+          { "factType": "transit_arc", "factId": "jupiter-opposition-midheaven", "transitPlanet": "Jupiter", "natalPoint": "Midheaven", "natalHouse": 9, "aspect": "opposition", "passCount": 1, "passDates": ["2026-09-15"], "motions": ["direct"] }
+        ],
+        "claimSupport": [
+          { "claim": "Jupiter returns to natal Jupiter in the natal 3rd house on Jul 4.", "supportingFactIds": ["jupiter-conjunction-jupiter", "natal-position-jupiter"] },
+          { "claim": "The Aug 12 total solar eclipse falls in the natal 3rd house.", "supportingFactIds": ["solar-eclipse-2026-08-12"] },
+          { "claim": "Jupiter squares the natal 6th-house Moon on Aug 27.", "supportingFactIds": ["jupiter-square-moon", "natal-position-moon"] },
+          { "claim": "The Aug 28 partial lunar eclipse conjoins natal Mercury at the top of the chart.", "supportingFactIds": ["lunar-eclipse-2026-08-28", "natal-position-mercury"] },
+          { "claim": "Jupiter opposes the natal Midheaven on Sep 15.", "supportingFactIds": ["jupiter-opposition-midheaven", "natal-angle-midheaven"] }
+        ]
+      },
+      "attributionParagraphIndex": 10,
+      "keyDatesParagraphIndex": 12,
       "movementApplicable": true,
       "expected": {
         "positiveMinimum": {
@@ -247,22 +291,27 @@
         "review_status": "needs_review",
         "ownerApproved": false,
         "promotionAuthorized": false,
-        "method": "Replace the unit's practical closing movement across three named paragraphs with generic coaching, abstraction, and an aphoristic closer. Leave heading, dates, attribution, structure, scoped facts, and every unnamed paragraph byte-identical.",
+        "method": "Replace only four named complication and closing paragraphs with generic coaching and capacity abstractions. Leave heading, dates, attribution, structure, calculated facts, and every unnamed paragraph byte-identical.",
         "replacements": [
           {
-            "paragraphIndex": 4,
-            "sourceSha256": "6219ee2e81c832af181acf5a9a212bf5b1babbcc5f403439408a780ea63ef64a",
-            "replacement": "This is a strong period for bringing inspiration into alignment with sustainable action. Give the proposal or project supportive structure, honor your capacity, and trust the process of turning a meaningful idea into an achievable plan. The goal is to create a professional path that can grow without asking you to abandon your balance."
-          },
-          {
             "paragraphIndex": 6,
-            "sourceSha256": "57824703947b63d4779aac29438e4de744dd956624ff0e792d98888345703342",
-            "replacement": "A move, commute, family responsibility, health need, repair, expense, or living arrangement may affect your professional capacity. These practical conditions can clarify what feels sustainable, what requires more support, and which opportunities remain aligned with your changing needs."
+            "sourceSha256": "2354d99335dcde8758c8add2c823c1d4bd31362078922580e809ee67863f06e5",
+            "replacement": "The complication arrives between those eclipses. Jupiter squares your Moon on August 27, and expanding opportunities may ask you to honor your capacity. Messages, plans, and responsibilities can accumulate quickly, making balance and sustainable pacing more important."
           },
           {
             "paragraphIndex": 7,
-            "sourceSha256": "1fabcbeb556b505954c058d14703f7427fb0de8472590378734c0323213583f8",
-            "replacement": "You need a professional life that leaves enough room for the person who has to live it."
+            "sourceSha256": "62057f66898d62118915145cbd10f68eb4412408002f78de5975e187aecd01da",
+            "replacement": "Because your Moon sits in the sixth house of work, health, and daily routines, the increased activity may affect your overall well-being and the balance of the week. You may need more support, more intentional routines, or a more sustainable relationship with productivity as professional demands grow."
+          },
+          {
+            "paragraphIndex": 8,
+            "sourceSha256": "c6da70afce6381792df51f6f3e121676ddf1ca5bb6a0278dfe40a97e7e1a4a57",
+            "replacement": "This is where professional enthusiasm can benefit from greater awareness and discernment. A new project or useful meeting may still require meaningful time and energy. Let your opportunities grow in alignment with your capacity."
+          },
+          {
+            "paragraphIndex": 9,
+            "sourceSha256": "676f53e0b364c546a55c5269df5b5120b18b03f409896bf346fb569fc70daa33",
+            "replacement": "If professional growth repeatedly asks you to compromise your energy or well-being, the career plan may need more balance, support, and sustainable structure."
           }
         ]
       },
@@ -283,7 +332,9 @@
         4,
         5,
         6,
-        7
+        7,
+        8,
+        9
       ]
     },
     {
@@ -300,6 +351,16 @@
       "unitWindow": {
         "startsOn": "2026-09-22",
         "endsOn": "2026-12-21"
+      },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "saturn-sextile-ascendant", "transitPlanet": "Saturn", "natalPoint": "Ascendant", "natalHouse": 1, "aspect": "sextile", "passCount": 3, "passDates": ["2026-05-19", "2026-10-06", "2027-02-10"], "motions": ["direct", "retrograde", "direct"] },
+          { "factType": "transit_arc", "factId": "jupiter-opposition-mars", "transitPlanet": "Jupiter", "natalPoint": "Mars", "natalHouse": 9, "aspect": "opposition", "passCount": 2, "passDates": ["2026-10-20", "2027-02-05"], "motions": ["direct", "retrograde"] }
+        ],
+        "claimSupport": [
+          { "claim": "Oct 6 is Saturn's retrograde second sextile to the natal Ascendant, returning to the May first pass and followed by the Feb 10 final pass.", "supportingFactIds": ["saturn-sextile-ascendant"] },
+          { "claim": "Oct 20 is Jupiter's first of two oppositions to natal Mars; the second pass returns Feb 5 while Jupiter is retrograde.", "supportingFactIds": ["jupiter-opposition-mars"] }
+        ]
       },
       "attributionParagraphIndex": 10,
       "keyDatesParagraphIndex": 12,
@@ -404,6 +465,20 @@
         "startsOn": "2026-06-21",
         "endsOn": "2026-09-22"
       },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "jupiter-conjunction-jupiter", "transitPlanet": "Jupiter", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "conjunction", "passCount": 1, "passDates": ["2026-07-04"], "motions": ["direct"], "isReturn": true },
+          { "factType": "lunar_event", "factId": "solar-eclipse-2026-08-12", "kind": "solar_eclipse", "subtype": "total", "occursOn": "2026-08-12", "natalHouse": 3, "contact": { "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square" } },
+          { "factType": "transit_arc", "factId": "jupiter-square-moon", "transitPlanet": "Jupiter", "natalPoint": "Moon", "natalHouse": 6, "aspect": "square", "passCount": 1, "passDates": ["2026-08-27"], "motions": ["direct"] },
+          { "factType": "lunar_event", "factId": "lunar-eclipse-2026-08-28", "kind": "lunar_eclipse", "subtype": "partial", "occursOn": "2026-08-28", "natalHouse": 10, "contact": { "natalPoint": "Mercury", "natalHouse": 10, "aspect": "conjunction" } }
+        ],
+        "claimSupport": [
+          { "claim": "Jupiter returns to natal Jupiter in the natal 3rd house on Jul 4.", "supportingFactIds": ["jupiter-conjunction-jupiter", "natal-position-jupiter"] },
+          { "claim": "The Aug 12 total solar eclipse falls in the natal 3rd house.", "supportingFactIds": ["solar-eclipse-2026-08-12"] },
+          { "claim": "Jupiter squares the natal 6th-house Moon on Aug 27.", "supportingFactIds": ["jupiter-square-moon", "natal-position-moon"] },
+          { "claim": "The Aug 28 partial lunar eclipse conjoins natal Mercury.", "supportingFactIds": ["lunar-eclipse-2026-08-28", "natal-position-mercury"] }
+        ]
+      },
       "attributionParagraphIndex": 8,
       "keyDatesParagraphIndex": 8,
       "attributionMode": "key_date_inline",
@@ -474,6 +549,17 @@
       "unitWindow": {
         "startsOn": "2026-02-18",
         "endsOn": "2026-03-20"
+      },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "saturn-trine-jupiter", "transitPlanet": "Saturn", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "trine", "passCount": 1, "passDates": ["2026-02-22"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "neptune-trine-jupiter", "transitPlanet": "Neptune", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "trine", "passCount": 1, "passDates": ["2026-02-26"], "motions": ["direct"] },
+          { "factType": "lunar_event", "factId": "lunar-eclipse-2026-03-03", "kind": "lunar_eclipse", "subtype": "total", "occursOn": "2026-03-03", "natalHouse": 4, "contact": { "natalPoint": "Saturn", "natalHouse": 4, "aspect": "conjunction" } }
+        ],
+        "claimSupport": [
+          { "claim": "Saturn trines natal Jupiter on Feb 22 and Neptune trines natal Jupiter on Feb 26, four days later.", "supportingFactIds": ["saturn-trine-jupiter", "neptune-trine-jupiter"] },
+          { "claim": "The Mar 3 eclipse is a total lunar eclipse conjunct natal Saturn in the natal 4th house.", "supportingFactIds": ["lunar-eclipse-2026-03-03", "natal-position-saturn"] }
+        ]
       },
       "attributionParagraphIndex": 8,
       "keyDatesParagraphIndex": 10,
