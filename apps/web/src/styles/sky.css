@@ -181,7 +181,7 @@
   font-size: clamp(1.35rem, 2.5vw, 1.8rem);
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-tight);
-  line-height: 1.2;
+  line-height: var(--leading-sky-quote);
   text-wrap: balance;
 }
 

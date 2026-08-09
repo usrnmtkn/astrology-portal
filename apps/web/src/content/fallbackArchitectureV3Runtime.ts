@@ -421,10 +421,12 @@ export function loadFallbackArchitectureV3BundledSkyPlacementManifest() {
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
 let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
+let relationshipFallbackBundlePromise: Promise<boolean> | null = null;
 let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
@@ -474,7 +476,8 @@ function mergeReaderBundles(
 
 function recomposeReaderBundle() {
   const localCoreWithDeferred = mergeReaderBundles(initialReaderBundle, localDeferredReaderBundle);
-  const core = dashboardCoreReaderBundle ?? localCoreWithDeferred;
+  const localCoreWithRelationships = mergeReaderBundles(localCoreWithDeferred, localRelationshipReaderBundle);
+  const core = dashboardCoreReaderBundle ?? localCoreWithRelationships;
   const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
   activateReaderBundle(mergeReaderBundles(core, placement));
 }
@@ -677,6 +680,33 @@ export async function loadDeferredFallbackArchitectureV3Bundle() {
     });
 
   return deferredFallbackBundlePromise;
+}
+
+export function isRelationshipFallbackArchitectureV3BundleLoaded() {
+  return Boolean(localRelationshipReaderBundle || dashboardCoreReaderBundle);
+}
+
+export async function loadRelationshipFallbackArchitectureV3Bundle() {
+  if (localRelationshipReaderBundle || dashboardCoreReaderBundle) {
+    return false;
+  }
+
+  relationshipFallbackBundlePromise ??= import("./fallbackArchitectureV3RelationshipBundle")
+    .then(({ relationshipFallbackArchitectureV3Bundle }) => {
+      if (localRelationshipReaderBundle || dashboardCoreReaderBundle) {
+        return false;
+      }
+
+      localRelationshipReaderBundle = readerEligibleBundle(relationshipFallbackArchitectureV3Bundle);
+      recomposeReaderBundle();
+      return true;
+    })
+    .catch((error) => {
+      relationshipFallbackBundlePromise = null;
+      throw error;
+    });
+
+  return relationshipFallbackBundlePromise;
 }
 
 export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {

@@ -669,19 +669,27 @@ export function ManualChartsPanel({
   ): CompatibilityPlanetCard[] {
     const friendSky = chart.natalChart;
 
-    if (!profileNatalSky || !friendSky) {
+    if ((!profileNatalSky && !comparisonIsSelf) || !friendSky) {
       return [];
     }
 
     return compatibilityPlanets.flatMap((planet) => {
-      const yourPosition = profileNatalSky.positions.find((position) => position.planet === planet);
+      const yourPosition = profileNatalSky?.positions.find((position) => position.planet === planet);
       const friendPosition = friendSky.positions.find((position) => position.planet === planet);
+      const cachedProfileSign = comparisonIsSelf
+        ? planet === "Sun"
+          ? profile.sun
+          : planet === "Moon"
+            ? profile.moon
+            : null
+        : null;
+      const yourSign = yourPosition?.sign || cachedProfileSign;
 
-      if (!yourPosition || !friendPosition) {
+      if (!yourSign || !friendPosition) {
         return [];
       }
 
-      const exactAspect = samePlanetExactAspect(yourPosition, friendPosition);
+      const exactAspect = yourPosition ? samePlanetExactAspect(yourPosition, friendPosition) : null;
       const hasExactAspect = Boolean(exactAspect);
       const comparisonLabel = comparisonIsSelf ? "You" : comparisonName;
       const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
@@ -690,7 +698,7 @@ export function ManualChartsPanel({
       try {
         rendered = transitSynastryFallbackRendererV3.renderCompat({
           planet: normalizeContentIdPart(planet),
-          signA: normalizeContentIdPart(yourPosition.sign),
+          signA: normalizeContentIdPart(yourSign),
           signB: normalizeContentIdPart(friendPosition.sign),
           otherName: chart.displayName
         });
@@ -708,22 +716,22 @@ export function ManualChartsPanel({
         return [];
       }
 
-      const sameSign = yourPosition.sign === friendPosition.sign;
+      const sameSign = yourSign === friendPosition.sign;
       const relationship = sameSign ? "same-sign" : "sign-pair";
-      const match = rendered.tag?.trim() || (sameSign ? "Same sign" : `${yourPosition.sign} + ${friendPosition.sign}`);
+      const match = rendered.tag?.trim() || (sameSign ? "Same sign" : `${yourSign} + ${friendPosition.sign}`);
       const sourceKey = rendered.contentKey ?? rendered.templateKey;
-      const contentTrace = `source=${sourceKey};template=${rendered.templateKey};route=friends.compatibility;planet=${normalizeContentIdPart(planet)};signA=${normalizeContentIdPart(yourPosition.sign)};signB=${normalizeContentIdPart(friendPosition.sign)};context=${normalizeRelationshipContextKey(relationshipType)}`;
+      const contentTrace = `source=${sourceKey};template=${rendered.templateKey};route=friends.compatibility;planet=${normalizeContentIdPart(planet)};signA=${normalizeContentIdPart(yourSign)};signB=${normalizeContentIdPart(friendPosition.sign)};context=${normalizeRelationshipContextKey(relationshipType)}`;
 
       return [{
         id: `compatibility-${normalizeContentIdPart(planet)}`,
-        glyph: yourPosition.glyph || pointGlyph(planet),
+        glyph: yourPosition?.glyph || pointGlyph(planet),
         planet,
         comparisonLabel,
-        youSign: yourPosition.sign,
+        youSign: yourSign,
         friendName: chart.displayName,
         friendSign: friendPosition.sign,
         goDeeper: {
-          glyph: yourPosition.glyph || pointGlyph(planet),
+          glyph: yourPosition?.glyph || pointGlyph(planet),
           match,
           body,
           function: "",
@@ -1057,7 +1065,10 @@ export function ManualChartsPanel({
         relationshipComparisonIsSelf
       );
   }, [
+    fallbackArchitectureV3Version,
     friendProfileWork.compatibility,
+    profile.moon,
+    profile.sun,
     relationshipComparisonIsSelf,
     relationshipComparisonName,
     relationshipComparisonSky,
@@ -1981,21 +1992,6 @@ export function ManualChartsPanel({
   }, [friendProfileTab, onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id]);
 
   useEffect(() => {
-    if (resolvedFriendsMainView !== "profile" || !selectedChart) {
-      return;
-    }
-
-    const prefetchAfterPaint = window.requestAnimationFrame(() => {
-      onFriendProfileContentRequest("natal");
-      if (!selectedChartIsEvent) {
-        onFriendProfileContentRequest("synastry");
-      }
-    });
-
-    return () => window.cancelAnimationFrame(prefetchAfterPaint);
-  }, [onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id, selectedChartIsEvent]);
-
-  useEffect(() => {
     function handlePopState() {
       if (!applyFriendsRouteStateFromUrl()) {
         const nextTab = initialFriendsTab();
@@ -2148,6 +2144,7 @@ export function ManualChartsPanel({
   }
 
   function changeFriendProfileTab(tab: FriendProfileTab) {
+    onFriendProfileContentRequest(tab);
     setFriendProfileTab(tab);
     if (selectedChart) {
       updateFriendProfileUrl(selectedChart.id, tab);
@@ -2362,6 +2359,7 @@ export function ManualChartsPanel({
           name={selectedChart.displayName}
           onEdit={isSocialFriendChart(selectedChart) ? undefined : () => editChart(selectedChart)}
           onTabChange={changeFriendProfileTab}
+          onTabIntent={onFriendProfileContentRequest}
           rising={selectedFriendBigThree?.rising ?? "Rising pending"}
           subtitle={selectedSocialFriend ? `@${selectedSocialFriend.handle}` : undefined}
           sun={selectedFriendBigThree?.sun ?? "Pending"}

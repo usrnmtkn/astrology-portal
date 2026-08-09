@@ -10,6 +10,7 @@ const fixtures = JSON.parse(await readFile(
 ));
 const workflow = await readFile(path.join(root, ".github/workflows/ephemeris-integrity.yml"), "utf8");
 const releaseGate = await readFile(path.join(root, ".github/workflows/ephemeris-release-gate.yml"), "utf8");
+const horizonsProvider = await readFile(path.join(root, "scripts/providers/nasa-horizons-provider.mjs"), "utf8");
 
 const before = fixtures.fixtures.find((fixture) => fixture.id === "sky-mercury-before-direct-station-2026-07-23");
 const after = fixtures.fixtures.find((fixture) => fixture.id === "sky-mercury-after-direct-station-2026-07-24");
@@ -31,5 +32,8 @@ assert.match(workflow, /github\.repository_owner/);
 assert.match(workflow, /Action required:/);
 assert.match(workflow, /update\.assignees = alertLogins/);
 assert.match(releaseGate, /node scripts\/test-ephemeris-monitoring-contract\.mjs/);
+for (const aspect of ["conjunction", "sextile", "square", "trine", "quincunx", "opposition"]) {
+  assert.match(horizonsProvider, new RegExp(`\\["${aspect}",\\s*\\d+\\]`), `Horizons provider must verify ${aspect} aspects.`);
+}
 
 console.log("Ephemeris station and notification monitoring contract passed.");

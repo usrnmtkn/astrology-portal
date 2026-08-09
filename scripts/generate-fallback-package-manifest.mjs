@@ -15,6 +15,8 @@ const outputPath = path.join(packageRoot, "bundled-manifest-v3.json");
 const summaryOutputPath = path.join(packageRoot, "bundled-manifest-summary-v3.json");
 const skyCoreOutputPath = path.join(packageRoot, "bundled-sky-core-rows-v3.json");
 const deferredCoreOutputPath = path.join(packageRoot, "bundled-deferred-core-rows-v3.json");
+const transitCoreAuthoredOutputPath = path.join(packageRoot, "bundled-transit-core-authored-cards-v3.json");
+const relationshipAuthoredOutputPath = path.join(packageRoot, "bundled-relationship-authored-cards-v3.json");
 const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards-v3.json");
 const skyPlacementOutputPath = path.join(packageRoot, "bundled-sky-placement-rows-v3.json");
 const coreManifestOutputPath = path.join(packageRoot, "bundled-core-manifest-v3.json");
@@ -161,6 +163,15 @@ function isSkyCoreHook(row) {
   ].some((prefix) => row.contentKey.startsWith(prefix));
 }
 
+function isRelationshipAuthoredCard(row) {
+  const contentKey = String(row?.contentKey ?? "");
+  return [
+    "authored/compat-",
+    "authored/relationship-",
+    "authored/synastry-"
+  ].some((prefix) => contentKey.startsWith(prefix));
+}
+
 function fullReaderBundle() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
   const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
@@ -252,6 +263,15 @@ const deferredCoreRows = {
   ],
   vocabularyRows: []
 };
+const transitCoreAuthoredCards = {
+  // Keep the source order and historical candidates intact. The runtime's
+  // readerEligibleBundle applies the same latest-eligible precedence after
+  // all partitions are recomposed.
+  authoredCards: transitRows.authoredCards.filter((row) => !isRelationshipAuthoredCard(row))
+};
+const relationshipAuthoredCards = {
+  authoredCards: transitRows.authoredCards.filter(isRelationshipAuthoredCard)
+};
 const skyAuthoredCards = {
   authoredCards: transitRows.authoredCards.filter((row) => row.contentKey.startsWith("authored/sky-"))
 };
@@ -307,6 +327,8 @@ const summary = {
 const serializedSummary = `${JSON.stringify(summary, null, 2)}\n`;
 const serializedSkyCore = `${JSON.stringify(skyCoreRows, null, 2)}\n`;
 const serializedDeferredCore = `${JSON.stringify(deferredCoreRows, null, 2)}\n`;
+const serializedTransitCoreAuthored = `${JSON.stringify(transitCoreAuthoredCards, null, 2)}\n`;
+const serializedRelationshipAuthored = `${JSON.stringify(relationshipAuthoredCards, null, 2)}\n`;
 const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
 const serializedSkyPlacement = `${JSON.stringify(skyPlacementRows, null, 2)}\n`;
 const serializedCoreManifest = `${JSON.stringify(coreManifest, null, 2)}\n`;
@@ -319,6 +341,8 @@ if (checkOnly) {
   const existingSummary = fs.existsSync(summaryOutputPath) ? fs.readFileSync(summaryOutputPath, "utf8") : "";
   const existingSkyCore = fs.existsSync(skyCoreOutputPath) ? fs.readFileSync(skyCoreOutputPath, "utf8") : "";
   const existingDeferredCore = fs.existsSync(deferredCoreOutputPath) ? fs.readFileSync(deferredCoreOutputPath, "utf8") : "";
+  const existingTransitCoreAuthored = fs.existsSync(transitCoreAuthoredOutputPath) ? fs.readFileSync(transitCoreAuthoredOutputPath, "utf8") : "";
+  const existingRelationshipAuthored = fs.existsSync(relationshipAuthoredOutputPath) ? fs.readFileSync(relationshipAuthoredOutputPath, "utf8") : "";
   const existingSkyAuthored = fs.existsSync(skyAuthoredOutputPath) ? fs.readFileSync(skyAuthoredOutputPath, "utf8") : "";
   const existingSkyPlacement = fs.existsSync(skyPlacementOutputPath) ? fs.readFileSync(skyPlacementOutputPath, "utf8") : "";
   const existingCoreManifest = fs.existsSync(coreManifestOutputPath) ? fs.readFileSync(coreManifestOutputPath, "utf8") : "";
@@ -332,6 +356,8 @@ if (checkOnly) {
     || existingSummary !== serializedSummary
     || existingSkyCore !== serializedSkyCore
     || existingDeferredCore !== serializedDeferredCore
+    || existingTransitCoreAuthored !== serializedTransitCoreAuthored
+    || existingRelationshipAuthored !== serializedRelationshipAuthored
     || existingSkyAuthored !== serializedSkyAuthored
     || existingSkyPlacement !== serializedSkyPlacement
     || existingCoreManifest !== serializedCoreManifest
@@ -348,6 +374,8 @@ if (checkOnly) {
   fs.writeFileSync(summaryOutputPath, serializedSummary);
   fs.writeFileSync(skyCoreOutputPath, serializedSkyCore);
   fs.writeFileSync(deferredCoreOutputPath, serializedDeferredCore);
+  fs.writeFileSync(transitCoreAuthoredOutputPath, serializedTransitCoreAuthored);
+  fs.writeFileSync(relationshipAuthoredOutputPath, serializedRelationshipAuthored);
   fs.writeFileSync(skyAuthoredOutputPath, serializedSkyAuthored);
   fs.writeFileSync(skyPlacementOutputPath, serializedSkyPlacement);
   fs.writeFileSync(coreManifestOutputPath, serializedCoreManifest);
@@ -357,6 +385,8 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
   console.log(`Wrote ${path.relative(repoRoot, deferredCoreOutputPath)} (${deferredCoreRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, transitCoreAuthoredOutputPath)} (${transitCoreAuthoredCards.authoredCards.length} authored cards).`);
+  console.log(`Wrote ${path.relative(repoRoot, relationshipAuthoredOutputPath)} (${relationshipAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, skyAuthoredOutputPath)} (${skyAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementOutputPath)} (${skyPlacementRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, coreManifestOutputPath)} (${coreManifest.keyCount} keys).`);
