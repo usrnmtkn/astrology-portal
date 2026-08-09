@@ -1,8 +1,8 @@
 import type { LocationInput, SkySnapshot } from "../types";
-import { validateAstrologyFacts } from "./astrologyFacts";
+import { ASTROLOGY_CALCULATION_PROVENANCE, validateAstrologyFacts } from "./astrologyFacts";
 
-export const VERIFIED_SKY_CACHE_SCHEMA = "tldrastro-verified-sky-v1";
-export const VERIFIED_SKY_CACHE_PREFIX = "tldrastro:verifiedSky:v1";
+export const VERIFIED_SKY_CACHE_SCHEMA = "tldrastro-verified-sky-v2";
+export const VERIFIED_SKY_CACHE_PREFIX = "tldrastro:verifiedSky:v2";
 export const VERIFIED_SKY_CACHE_MAX_AGE_MS = 30 * 60 * 1000;
 export const VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 export const VERIFIED_SKY_CACHE_MAX_ENTRIES = 24;
@@ -54,7 +54,10 @@ function isVerifiedSkySnapshot(value: unknown): value is SkySnapshot {
     && Boolean(snapshot.location)
     && finiteCoordinate(snapshot.location?.latitude)
     && finiteCoordinate(snapshot.location?.longitude)
-    && Boolean(snapshot.calculationProvenance?.calculationVersion)
+    && snapshot.calculationProvenance?.calculationVersion
+      === ASTROLOGY_CALCULATION_PROVENANCE.calculationVersion
+    && snapshot.calculationProvenance?.lilithType
+      === ASTROLOGY_CALCULATION_PROVENANCE.lilithType
     && facts.length > 0
     && facts.every((fact) => (
       (

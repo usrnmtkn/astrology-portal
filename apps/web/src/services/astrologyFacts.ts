@@ -16,6 +16,7 @@ export type AstrologyCalculationProvenance = {
   houseSystem: "whole_sign";
   planetHouseSystem: "whole_sign";
   nodeType: "mean" | "true";
+  lilithType: "mean" | "true";
   calculationVersion: string;
 };
 
@@ -73,7 +74,11 @@ export const ASTROLOGY_CALCULATION_PROVENANCE: AstrologyCalculationProvenance = 
   houseSystem: "whole_sign",
   planetHouseSystem: "whole_sign",
   nodeType: "true",
-  calculationVersion: "tldrastro-calculation-v2"
+  // v3: Black Moon Lilith switched from mean apogee (SE 12) to true/osculating
+  // apogee (SE 13) per owner decision 2026-08-09. Cached v2 placements must not
+  // be reused for Lilith-bearing facts.
+  lilithType: "true",
+  calculationVersion: "tldrastro-calculation-v3"
 };
 
 export function slugFactPart(value: string | number | null | undefined) {
