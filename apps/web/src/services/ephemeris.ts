@@ -5,7 +5,11 @@ import {
   SKY_ASPECT_DEFINITIONS,
   SKY_ASPECT_POINT_ORDER
 } from "@tldr/astro-knowledge/sky-aspect-engine";
-import { ASTROLOGY_CALCULATION_PROVENANCE, factsFromSkySnapshot } from "./astrologyFacts.js";
+import {
+  ASTROLOGY_CALCULATION_CONTRACT,
+  astrologyCalculationProvenance,
+  factsFromSkySnapshot
+} from "./astrologyFacts.js";
 import { debugInfoForZonedDateTime } from "./timezones.js";
 import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
 
@@ -52,6 +56,11 @@ const SE_TRUE_BLACK_MOON_LILITH = 13;
 
 type SwissEphConstructor = typeof import("swisseph-wasm").default;
 type SwissEphInstance = InstanceType<SwissEphConstructor>;
+
+type SwissCalculation = {
+  values: Float64Array;
+  returnedFlags: number;
+};
 
 type CalculatedPlanet = PlanetPosition & {
   longitude: number;
@@ -256,6 +265,62 @@ function utcHour(date: Date) {
   return date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
 }
 
+export function validateSwissEphemerisReturnFlag(
+  returnedFlags: number,
+  swissFlag: number,
+  moshierFlag: number,
+  errorMessage = ""
+) {
+  if (returnedFlags < 0) {
+    throw new Error(`Swiss Ephemeris calculation failed${errorMessage ? `: ${errorMessage}` : "."}`);
+  }
+
+  const usedSwissEphemeris = (returnedFlags & swissFlag) === swissFlag;
+  const usedMoshierEphemeris = (returnedFlags & moshierFlag) === moshierFlag;
+
+  if (!usedSwissEphemeris || usedMoshierEphemeris) {
+    const detail = errorMessage ? ` ${errorMessage}` : "";
+    throw new Error(
+      `Swiss Ephemeris provenance mismatch: expected Swiss flags, received ${returnedFlags}.${detail}`
+    );
+  }
+}
+
+function calculateSwissUt(
+  swe: SwissEphInstance,
+  julianDay: number,
+  body: number,
+  flags: number
+): SwissCalculation {
+  const resultPointer = swe.SweModule._malloc(6 * Float64Array.BYTES_PER_ELEMENT);
+  const errorPointer = swe.SweModule._malloc(256);
+
+  try {
+    const returnedFlags = swe.SweModule.ccall(
+      "swe_calc_ut",
+      "number",
+      ["number", "number", "number", "pointer", "pointer"],
+      [julianDay, body, flags, resultPointer, errorPointer]
+    );
+    const errorMessage = swe.SweModule.UTF8ToString(errorPointer).trim();
+    validateSwissEphemerisReturnFlag(
+      returnedFlags,
+      swe.SEFLG_SWIEPH,
+      swe.SEFLG_MOSEPH,
+      errorMessage
+    );
+
+    const resultStart = resultPointer / Float64Array.BYTES_PER_ELEMENT;
+    return {
+      values: swe.SweModule.HEAPF64.slice(resultStart, resultStart + 6),
+      returnedFlags
+    };
+  } finally {
+    swe.SweModule._free(resultPointer);
+    swe.SweModule._free(errorPointer);
+  }
+}
+
 function moonPhaseName(sunLongitude: number, moonLongitude: number) {
   const phase = normalizeDegrees(moonLongitude - sunLongitude);
 
@@ -279,7 +344,7 @@ function exactPlanetLongitude(swe: SwissEphInstance, planetId: number, date: Dat
   );
   const flags = swe.SEFLG_SWIEPH;
 
-  return normalizeDegrees(swe.calc_ut(jd, planetId, flags)[0]);
+  return normalizeDegrees(calculateSwissUt(swe, jd, planetId, flags).values[0]);
 }
 
 function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
@@ -291,7 +356,7 @@ function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
   );
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
 
-  return swe.calc_ut(jd, planetId, flags)[3];
+  return calculateSwissUt(swe, jd, planetId, flags).values[3];
 }
 
 function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date, longitudeOffset = 0) {
@@ -666,7 +731,7 @@ function greenwichMeanSiderealTimeDegrees(julianDay: number) {
 function sunAltitudeDegrees(swe: SwissEphInstance, location: LocationInput, date: Date) {
   const jd = julianDayForDate(swe, date);
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
-  const [longitude, latitude] = swe.calc_ut(jd, swe.SE_SUN, flags);
+  const [longitude, latitude] = calculateSwissUt(swe, jd, swe.SE_SUN, flags).values;
   const eclipticLongitude = degreesToRadians(normalizeDegrees(longitude));
   const eclipticLatitude = degreesToRadians(latitude);
   const meanObliquity = degreesToRadians(23.439291111);
@@ -2992,9 +3057,9 @@ export async function getSkyPlacementTransitFacts({
       ? { sign, entryDate: previous.transitStart, exitDate: previous.transitEnd }
       : null,
     rankedEventsDuringTransit,
-    calculationSource: ASTROLOGY_CALCULATION_PROVENANCE.source,
-    zodiac: ASTROLOGY_CALCULATION_PROVENANCE.zodiac,
-    lilithType: ASTROLOGY_CALCULATION_PROVENANCE.lilithType
+    calculationSource: ASTROLOGY_CALCULATION_CONTRACT.source,
+    zodiac: ASTROLOGY_CALCULATION_CONTRACT.zodiac,
+    lilithType: ASTROLOGY_CALCULATION_CONTRACT.lilithType
   };
 }
 
@@ -3046,8 +3111,11 @@ export async function getAstrodienstSky(
     SE_TRUE_BLACK_MOON_LILITH,
     swe.SE_TRUE_NODE
   ];
+  const returnedEphemerisFlags = new Set<number>();
   const positions: CalculatedPlanet[] = planets.map(([planet, glyph], index) => {
-    const result = swe.calc_ut(jd, planetIds[index], flags);
+    const calculation = calculateSwissUt(swe, jd, planetIds[index], flags);
+    returnedEphemerisFlags.add(calculation.returnedFlags);
+    const result = calculation.values;
     const longitude = normalizeDegrees(result[0]);
     const latitude = Number(result[1].toFixed(4));
     const { sign, signGlyph, degree } = signForLongitude(longitude);
@@ -3093,7 +3161,7 @@ export async function getAstrodienstSky(
   const snapshot: SkySnapshot = {
     location,
     generatedAt: date.toISOString(),
-    calculationProvenance: ASTROLOGY_CALCULATION_PROVENANCE,
+    calculationProvenance: astrologyCalculationProvenance(returnedEphemerisFlags),
     ascendant,
     ascendantLongitude,
     midheaven,
