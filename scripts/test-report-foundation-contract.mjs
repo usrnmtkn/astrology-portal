@@ -50,7 +50,8 @@ const reportSubjectTypes = [
   "year_ahead_saturn_return_callout",
   "relationship_report_section",
   "saturn_return",
-  "saturn_return_section"
+  "saturn_return_section",
+  "report_unit"
 ];
 for (const subjectType of reportSubjectTypes) {
   assert.match(apiSubjectTypes, new RegExp(`\\| "${subjectType}"`, "u"));

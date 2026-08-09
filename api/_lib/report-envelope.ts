@@ -1,4 +1,11 @@
-export type ReportType = "year_ahead" | "relationship" | "saturn_return";
+export type ReportType =
+  | "year_ahead"
+  | "relationship"
+  | "saturn_return"
+  | "report_1_month"
+  | "report_4_months"
+  | "report_6_months"
+  | "report_12_months";
 export type ReportStatus = "draft" | "needs_review" | "approved" | "live";
 export type ReportFacts = Record<string, unknown>;
 
@@ -256,4 +263,33 @@ export function createSupabaseReportEnvelopeStore({
       return payload ?? [];
     }
   };
+}
+
+export async function fetchSupabaseReportEnvelopeById({
+  supabaseUrl,
+  serviceRoleKey,
+  userId,
+  reportId,
+  fetchImpl = fetch
+}: SupabaseRestStoreOptions & { userId: string; reportId: string }) {
+  const params = new URLSearchParams({
+    id: `eq.${reportId}`,
+    user_id: `eq.${userId}`,
+    select: "*",
+    limit: "1"
+  });
+  const response = await fetchImpl(
+    `${supabaseUrl.replace(/\/$/u, "")}/rest/v1/user_reports?${params.toString()}`,
+    {
+      headers: {
+        apikey: serviceRoleKey,
+        authorization: `Bearer ${serviceRoleKey}`
+      }
+    }
+  );
+  const payload = await responsePayload(response) as UserReportRow[] | null;
+  if (!response.ok) {
+    throw supabaseFailure("report id lookup", response, payload);
+  }
+  return payload?.[0] ?? null;
 }
