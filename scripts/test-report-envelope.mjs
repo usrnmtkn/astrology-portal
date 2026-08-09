@@ -17,9 +17,15 @@ class MemoryReportEnvelopeStore {
     return this.reports.find((report) => (
       report.user_id === identity.userId
       && report.report_type === identity.reportType
+      && report.report_domain === (identity.reportDomain ?? null)
+      && report.report_horizon === (identity.reportHorizon ?? null)
       && report.subject_id === identity.subjectId
       && report.period_start === identity.periodStart
     )) ?? null;
+  }
+
+  async findReusableFacts() {
+    return null;
   }
 
   async insertReport(input) {
@@ -28,6 +34,8 @@ class MemoryReportEnvelopeStore {
       id: `report-${this.reports.length + 1}`,
       user_id: input.userId,
       report_type: input.reportType,
+      report_domain: input.reportDomain ?? null,
+      report_horizon: input.reportHorizon ?? null,
       subject_id: input.subjectId,
       period_start: input.periodStart,
       period_end: input.periodEnd,

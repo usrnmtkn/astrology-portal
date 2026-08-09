@@ -2,10 +2,14 @@ import {
   createReportEnvelope,
   fetchReportEnvelope,
   type ReportEnvelopeStore,
-  type ReportType,
   type UserReportRow
 } from "./report-envelope.ts";
-import type { ReportHorizon } from "./report-generation.ts";
+import {
+  REPORT_DOMAINS,
+  REPORT_HORIZONS,
+  type ReportDomain,
+  type ReportHorizon
+} from "./report-types.ts";
 
 const DEFAULT_TLDRASTRO_API_URL = "https://tldrastro-api-27165565299.us-central1.run.app";
 
@@ -38,6 +42,7 @@ export type ComposeReportFactsInput = {
   subjectId?: string | null;
   natalSubject: ReportChartSubject;
   location: ReportChartSubject["location"];
+  reportDomain: ReportDomain;
   reportHorizon: ReportHorizon;
   start: string;
   end: string;
@@ -46,7 +51,7 @@ export type ComposeReportFactsInput = {
 
 type ReportFactsIdentityInput = Pick<
   ComposeReportFactsInput,
-  "userId" | "subjectId" | "reportHorizon" | "start"
+  "userId" | "subjectId" | "reportDomain" | "reportHorizon" | "start"
 >;
 
 export type ReportFactsAstroClient = {
@@ -69,13 +74,6 @@ export class ReportFactsInputError extends Error {
   }
 }
 
-const reportTypesByHorizon: Record<ReportHorizon, ReportType> = {
-  "1_month": "report_1_month",
-  "4_months": "report_4_months",
-  "6_months": "report_6_months",
-  "12_months": "report_12_months"
-};
-
 function periodDate(value: string) {
   const timestamp = Date.parse(value);
   if (!Number.isFinite(timestamp)) {
@@ -87,15 +85,23 @@ function periodDate(value: string) {
 function identity(input: ReportFactsIdentityInput) {
   return {
     userId: input.userId,
-    reportType: reportTypesByHorizon[input.reportHorizon],
+    reportType: "report" as const,
+    reportDomain: input.reportDomain,
+    reportHorizon: input.reportHorizon,
     subjectId: input.subjectId || null,
     periodStart: periodDate(input.start)
   };
 }
 
 function validateInput(input: ComposeReportFactsInput) {
-  if (!input.userId || !input.natalSubject || !input.location || !input.reportHorizon) {
-    throw new ReportFactsInputError("natalSubject, location, reportHorizon, start, and end are required.");
+  if (!input.userId || !input.natalSubject || !input.location || !input.reportDomain || !input.reportHorizon) {
+    throw new ReportFactsInputError("natalSubject, location, reportDomain, reportHorizon, start, and end are required.");
+  }
+  if (!REPORT_DOMAINS.includes(input.reportDomain)) {
+    throw new ReportFactsInputError("reportDomain must be general or work_money.");
+  }
+  if (!REPORT_HORIZONS.includes(input.reportHorizon)) {
+    throw new ReportFactsInputError("reportHorizon is not supported.");
   }
   if (Date.parse(input.end) <= Date.parse(input.start)) {
     throw new ReportFactsInputError("Report end must be after report start.");
@@ -110,6 +116,26 @@ export async function composeReportFacts(
   const reportIdentity = identity(input);
   const existing = await fetchReportEnvelope(dependencies.envelopeStore, reportIdentity);
   if (existing && !input.regenerate) return existing;
+
+  const periodEnd = periodDate(input.end);
+  if (!input.regenerate) {
+    const reusable = await dependencies.envelopeStore.findReusableFacts({
+      userId: input.userId,
+      subjectId: input.subjectId || null,
+      reportHorizon: input.reportHorizon,
+      periodStart: reportIdentity.periodStart,
+      periodEnd
+    });
+    if (reusable) {
+      return createReportEnvelope(dependencies.envelopeStore, {
+        ...reportIdentity,
+        periodEnd,
+        facts: reusable.facts,
+        factsEngine: reusable.facts_engine,
+        status: "draft"
+      });
+    }
+  }
 
   const [version, facts] = await Promise.all([
     dependencies.astroClient.serviceVersion(),
@@ -127,7 +153,7 @@ export async function composeReportFacts(
   const factsEngine = `tldrastro-api@${version}`;
   return createReportEnvelope(dependencies.envelopeStore, {
     ...reportIdentity,
-    periodEnd: periodDate(input.end),
+    periodEnd,
     facts,
     factsEngine,
     status: "draft"
