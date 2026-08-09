@@ -367,8 +367,10 @@ export function createTransitSynastryRenderer(
     const row = hooks.get(key);
 
     if (
-      normalizedPlanet !== "sun"
-      || normalizedSign !== "leo"
+      !(
+        (normalizedPlanet === "sun" && normalizedSign === "leo")
+        || (normalizedPlanet === "venus" && normalizedSign === "libra")
+      )
       || !Number.isInteger(normalizedHouse)
       || normalizedHouse < 1
       || normalizedHouse > 12
@@ -384,7 +386,7 @@ export function createTransitSynastryRenderer(
       body: row.body_you,
       contentKey: row.contentKey,
       house: normalizedHouse,
-      templateKey: "house-horoscope-core/sun-leo-v1"
+      templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`
     };
   }
 
