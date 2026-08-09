@@ -1782,10 +1782,10 @@ export function createTransitSynastryRenderer(
     if (pairHook && pairLived && pairTurn) {
       let parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas]
         .filter((part): part is string => Boolean(part));
-      if (planet === "lilith" && sign === "sagittarius") {
+      if (planet === "lilith") {
         parts = parts.map((part) => fillKeep(part, { exitDate }));
         if (parts.some((part) => /\{\{/u.test(part))) {
-          throw new SourceGapError("SOURCE_GAP: sky placement pair slots lilith/sagittarius");
+          throw new SourceGapError(`SOURCE_GAP: sky placement pair slots lilith/${sign}`);
         }
       }
       return {
