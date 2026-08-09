@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import { pathToFileURL } from "node:url";
+
+const modulePath = process.env.REPORT_PGLITE_MODULE;
+if (!modulePath) throw new Error("REPORT_PGLITE_MODULE must point to @electric-sql/pglite/dist/index.js.");
+const { PGlite } = await import(pathToFileURL(modulePath).href);
+const db = new PGlite();
+await db.exec(`
+  create schema auth;
+  create table auth.users (id uuid primary key);
+  create function auth.uid() returns uuid language sql stable as 'select null::uuid';
+  create table public.user_reports (
+    id uuid primary key default gen_random_uuid(), user_id uuid not null, report_type text not null,
+    report_domain text, report_horizon text, subject_id uuid, period_start date not null, period_end date not null,
+    facts jsonb not null default '{}'::jsonb, facts_engine text not null, status text not null default 'draft',
+    created_at timestamptz not null default now(), updated_at timestamptz not null default now()
+  );
+  create unique index user_reports_unique_period_idx on public.user_reports
+    (user_id, report_type, report_domain, report_horizon, subject_id, period_start) nulls not distinct;
+`);
+const migration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809150000_report_fulfillment.sql", import.meta.url), "utf8");
+await db.exec("begin");
+try {
+  await db.exec(migration);
+  const userId = "00000000-0000-0000-0000-000000000001";
+  await db.query("insert into auth.users (id) values ($1)", [userId]);
+  await db.query(`insert into public.report_entitlements
+    (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
+    values ($1, 'general_1_month', 'general', '1_month', 'purchase', '2026-08-09', '2026-09-08', 'active', 'evt_1', 'cs_1', now())`, [userId]);
+  await db.exec("savepoint duplicate_event");
+  await assert.rejects(db.query(`insert into public.report_entitlements
+    (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
+    values ($1, 'general_1_month', 'general', '1_month', 'purchase', '2026-08-09', '2026-09-08', 'active', 'evt_1', 'cs_2', now())`, [userId]));
+  await db.exec("rollback to savepoint duplicate_event");
+  await db.exec("release savepoint duplicate_event");
+  assert.equal(Number((await db.query("select count(*)::int count from public.user_reports")).rows[0].count), 1);
+  assert.equal(Number((await db.query("select count(*)::int count from public.report_fulfillment_jobs")).rows[0].count), 1);
+  assert.ok((await db.query("select fulfillment_timestamps ? 'queued' as recorded from public.user_reports limit 1")).rows[0].recorded);
+  assert.equal((await db.query("select public.claim_report_facts_window('fixture-window', $1, 'worker-1') as claimed", [userId])).rows[0].claimed, true);
+  assert.equal((await db.query("select public.claim_report_facts_window('fixture-window', $1, 'worker-2') as claimed", [userId])).rows[0].claimed, false);
+  const awaitingId = "00000000-0000-0000-0000-000000000002";
+  await db.query(`insert into public.report_entitlements
+    (id, user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, requires_birth_time, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
+    values ($1, $2, 'love_connection_12_months', 'love_connection', '12_months', 'solar_return_display', '2026-02-18', '2027-02-17', true, 'awaiting_birth_data', 'evt_2', 'cs_3', now())`, [awaitingId, userId]);
+  assert.equal(Number((await db.query("select count(*)::int count from public.report_fulfillment_jobs")).rows[0].count), 1, "Awaiting birth data must not enqueue.");
+  assert.equal((await db.query("select fulfillment_status from public.user_reports where entitlement_id = $1", [awaitingId])).rows[0].fulfillment_status, "awaiting_birth_data");
+  assert.ok((await db.query("select fulfillment_timestamps ? 'awaiting_birth_data' as recorded from public.user_reports where entitlement_id = $1", [awaitingId])).rows[0].recorded);
+  await db.exec("rollback");
+} catch (error) {
+  await db.exec("rollback");
+  throw error;
+}
+console.log("Report fulfillment migration passed: entitlement idempotency, envelope/queue triggers, birth-data parking, exclusive facts claim, timestamps, and rollback.");

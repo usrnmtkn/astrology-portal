@@ -10043,6 +10043,10 @@ function isAdminContentPath() {
   );
 }
 
+function isReportPath() {
+  return typeof window !== "undefined" && window.location.pathname.startsWith("/reports/");
+}
+
 const GeneratedContentAdminDashboard = lazy(() =>
   import("../../admin/src/GeneratedContentAdminDashboard").then((module) => ({
     default: module.GeneratedContentAdminDashboard
@@ -10054,6 +10058,10 @@ const loadYouRoute = () => import("./routes/YouRoute");
 const preloadYouExperience = () => {
   void Promise.all([loadYouPage(), loadYouRoute()]);
 };
+
+const ReportRoute = lazy(() =>
+  import("./routes/ReportRoute").then((module) => ({ default: module.ReportRoute }))
+);
 
 const YouPage = lazy(() =>
   loadYouPage().then((module) => ({
@@ -10269,6 +10277,10 @@ export function App() {
         <GeneratedContentAdminDashboard />
       </Suspense>
     );
+  }
+
+  if (isReportPath()) {
+    return <Suspense fallback={<main className="report-delivery-state" />}><ReportRoute /></Suspense>;
   }
 
   const initialLocationState = useMemo(getInitialLocation, []);
