@@ -49,11 +49,60 @@
     "sourceGapCount": 0,
     "bridgeSelection": {
       "factorId": "lunar-eclipse-2026-03-03-saturn",
-      "score": 35,
-      "matchedTerms": ["caregiving"],
+      "score": 30,
+      "tierId": "condition_changers",
+      "matchedRuleIds": ["home_commute_caregiving"],
+      "matchedTerms": ["home", "family", "caregiving", "property", "move"],
+      "inspectionNotes": ["commute", "hours", "expenses", "availability", "which jobs remain practical"],
+      "doNotAssume": ["a move", "illness", "family conflict", "the professional goal changed"],
       "bridgeConsequences": ["commute", "hours", "expenses", "availability", "which jobs remain practical"]
     },
     "venusProjectedDomains": ["creative work", "career", "recognition", "professional identity"],
     "voiceEvidenceSource": "artifacts/marie-satori-work-money-2026-owner-v1.md"
+  },
+  "love_connection_12_months": {
+    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "professional-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"] },
+    "factorIds": [
+      "profection-year-house-12",
+      "sr-overlay-venus-house-10",
+      "sr-overlay-ascendant-house-5",
+      "saturn-trine-jupiter",
+      "neptune-trine-jupiter",
+      "uranus-square-sun",
+      "jupiter-square-pluto",
+      "jupiter-trine-uranus",
+      "saturn-sextile-ascendant",
+      "jupiter-conjunction-jupiter",
+      "jupiter-square-moon",
+      "jupiter-trine-neptune",
+      "jupiter-square-uranus",
+      "jupiter-opposition-mars",
+      "lunar-eclipse-2026-03-03-saturn",
+      "solar-eclipse-2026-08-12-uranus",
+      "lunar-eclipse-2026-08-28-mercury",
+      "solar-eclipse-2027-02-06-midheaven"
+    ],
+    "tierIds": ["direct_love_connection", "condition_changers"],
+    "ascendantInspection": {
+      "factorId": "sr-overlay-ascendant-house-5",
+      "score": 47,
+      "tierId": "direct_love_connection",
+      "matchedRuleIds": ["ascendant_descendant_axis", "relationship_houses_and_eclipses", "solar_return_relationship_house_signatures"],
+      "matchedTerms": ["dating", "pleasure"],
+      "inspectionNotes": ["one-to-one relationships", "relationship roles", "availability", "what kind of arrangement fits", "dating", "romance", "pleasure", "sex", "partnership terms", "intimacy", "shared resources", "repeated Solar Return relationship signatures", "SR Ascendant overlays", "SR Venus", "SR Mars", "SR Moon"],
+      "doNotAssume": ["Descendant activation guarantees partnership", "partnership", "commitment", "marriage", "the 8th house is only sex", "one weak Solar Return signature makes relationships the year theme"],
+      "bridgeConsequences": []
+    },
+    "homeInspection": {
+      "factorId": "lunar-eclipse-2026-03-03-saturn",
+      "score": 31,
+      "tierId": "condition_changers",
+      "matchedRuleIds": ["home_and_family"],
+      "matchedTerms": ["home", "family", "property", "caregiving", "living", "move"],
+      "inspectionNotes": ["moving", "cohabitation", "living apart", "privacy", "caregiving", "household labor", "relationship logistics"],
+      "doNotAssume": ["a move", "cohabitation", "separation", "family conflict"],
+      "bridgeConsequences": ["privacy", "caregiving", "household labor", "who lives where", "relationship logistics"]
+    },
+    "voiceEvidenceSource": "artifacts/marie-satori-love-connection-2026-owner-v1.md"
   }
 }

@@ -23,10 +23,23 @@ const workMoneyReference = fs.readFileSync(
   new URL("../artifacts/marie-satori-work-money-2026-owner-v1.md", import.meta.url),
   "utf8"
 );
+const loveConnectionPrompt = fs.readFileSync(
+  new URL("../tldr-astro-phrasebank/TLDR-LOVE-CONNECTION-DEEPDIVE-GENERATION-PROMPT-OWNER.md", import.meta.url),
+  "utf8"
+);
+const loveConnectionReference = fs.readFileSync(
+  new URL("../artifacts/marie-satori-love-connection-2026-owner-v1.md", import.meta.url),
+  "utf8"
+);
+const generatorSource = fs.readFileSync(new URL("../api/_lib/report-generation.ts", import.meta.url), "utf8");
 const endpointSource = fs.readFileSync(new URL("../api/generate-user-content.ts", import.meta.url), "utf8");
 const webServiceSource = fs.readFileSync(new URL("../apps/web/src/services/userGeneratedContent.ts", import.meta.url), "utf8");
 const migrationSource = fs.readFileSync(
   new URL("../apps/web/supabase/migrations/20260809130000_report_domains.sql", import.meta.url),
+  "utf8"
+);
+const loveDomainMigrationSource = fs.readFileSync(
+  new URL("../apps/web/supabase/migrations/20260809140000_love_connection_report_domain.sql", import.meta.url),
   "utf8"
 );
 const cases = [
@@ -97,6 +110,7 @@ assert.ok(endpointSource.indexOf("input.dryRun") < endpointSource.indexOf("gener
 assert.match(endpointSource, /`report:\$\{report\.id\}:\$\{input\.unitId\}`/u);
 assert.match(migrationSource, /report_domain in \('general', 'work_money'\)/u);
 assert.match(migrationSource, /report_horizon in \('1_month', '4_months', '6_months', '12_months'\)/u);
+assert.match(loveDomainMigrationSource, /report_domain in \('general', 'work_money', 'love_connection'\)/u);
 
 const workMoneyPayload = assembleReportGenerationPayload({
   reportId: "00000000-0000-0000-0000-000000000118",
@@ -118,6 +132,11 @@ const workMoneySelectedContext = JSON.stringify({
 }).toLowerCase();
 assert.doesNotMatch(workMoneySelectedContext, /\b(?:dating|spirituality)\b/u);
 assert.match(payloads.get("12_months").voiceEvidence[0].text, /\bdating\b/iu);
+assert.equal(workMoneyPayload.domainRelevanceModel.length, 3);
+assert.ok(workMoneyPayload.domainRelevanceModel.every((tier) => (
+  tier.rules.length && tier.rules.every((rule) => rule.inspectionNotes.length && rule.doNotAssume.length)
+)));
+assert.ok(workMoneyPayload.factorSelection.every((item) => item.inspectionNotes.length && item.doNotAssume.length));
 assert.deepEqual({
   unit: workMoneyPayload.unit,
   factorIds: workMoneyPayload.factors.map((factor) => factor.id),
@@ -131,6 +150,57 @@ assert.deepEqual({
   ))?.record.domain,
   voiceEvidenceSource: workMoneyPayload.voiceEvidence[0].sourcePath
 }, snapshots.work_money_12_months);
+
+const loveConnectionPayload = assembleReportGenerationPayload({
+  reportId: "00000000-0000-0000-0000-000000000119",
+  reportDomain: "love_connection",
+  reportHorizon: "12_months",
+  unitId: "summer",
+  frozenFacts: facts
+});
+assert.equal(loveConnectionPayload.canonicalOwnerPrompt.text, loveConnectionPrompt);
+assert.equal(loveConnectionPayload.voiceEvidence[0].text, loveConnectionReference);
+assert.equal(loveConnectionPayload.generationStandard, null);
+assert.deepEqual(loveConnectionPayload.domainRelevanceModel.map((tier) => tier.id), [
+  "direct_love_connection",
+  "condition_changers",
+  "slow_planet_relationship_conditions"
+]);
+assert.ok(loveConnectionPayload.domainRelevanceModel.every((tier) => (
+  tier.rules.length && tier.rules.every((rule) => rule.inspectionNotes.length && rule.doNotAssume.length)
+)));
+for (const factorId of [
+  "sr-overlay-ascendant-house-5",
+  "lunar-eclipse-2026-03-03-saturn",
+  "uranus-square-sun",
+  "jupiter-square-moon",
+  "jupiter-opposition-mars",
+  "lunar-eclipse-2026-08-28-mercury",
+  "solar-eclipse-2027-02-06-midheaven"
+]) {
+  assert.ok(loveConnectionPayload.factors.some((factor) => factor.id === factorId), `${factorId} must pass Love & Connection inspection.`);
+}
+assert.ok(loveConnectionPayload.factorSelection.every((item) => (
+  item.tierId && item.matchedRuleIds.length && item.inspectionNotes.length && item.doNotAssume.length
+)));
+const uranusInspection = loveConnectionPayload.factorSelection.find((item) => item.factorId === "uranus-square-sun");
+assert.ok(uranusInspection?.matchedRuleIds.includes("uranus_conditions"));
+assert.ok(uranusInspection?.doNotAssume.includes("breakup"));
+assert.doesNotMatch(loveConnectionPayload.voiceEvidence[0].text, /\b(?:soulmate|twin flame|divine union|your person)\b/iu);
+assert.doesNotMatch(loveConnectionPayload.voiceEvidence[0].text, /—|\bwhether\b/iu);
+assert.doesNotMatch(generatorSource, /reportDomain === "love_connection"/u);
+assert.deepEqual({
+  unit: loveConnectionPayload.unit,
+  factorIds: loveConnectionPayload.factors.map((factor) => factor.id),
+  tierIds: [...new Set(loveConnectionPayload.factorSelection.map((item) => item.tierId))],
+  ascendantInspection: loveConnectionPayload.factorSelection.find((item) => (
+    item.factorId === "sr-overlay-ascendant-house-5"
+  )),
+  homeInspection: loveConnectionPayload.factorSelection.find((item) => (
+    item.factorId === "lunar-eclipse-2026-03-03-saturn"
+  )),
+  voiceEvidenceSource: loveConnectionPayload.voiceEvidence[0].sourcePath
+}, snapshots.love_connection_12_months);
 
 const factors = reportFactors(facts);
 assert.deepEqual(reportFactors({ reportWindow: facts }), factors);
@@ -224,18 +294,56 @@ assert.ok(!validateReportDraft({
     heading: "KEY DATES",
     body: "FIXTURE_ONLY_DATE · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SENTENCE. · FIXTURE_ONLY_ATTRIBUTION"
   }]
-}, workMoneyPayload).some((issue) => issue.code === "work_money_key_date_format"));
+}, workMoneyPayload).some((issue) => issue.code === "deep_dive_key_date_format"));
 assert.ok(validateReportDraft({
   sections: [{
     heading: "KEY DATES",
     body: "FIXTURE_ONLY_DATE · WORK · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SENTENCE. · FIXTURE_ONLY_ATTRIBUTION"
   }]
-}, workMoneyPayload).some((issue) => issue.code === "work_money_key_date_format"));
+}, workMoneyPayload).some((issue) => issue.code === "deep_dive_key_date_format"));
 assert.ok(!validateReportDraft({
   sections: [{
     heading: "KEY DATES",
     body: "FIXTURE_ONLY_DATE · WORK · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SENTENCE. · FIXTURE_ONLY_ATTRIBUTION"
   }]
-}, payload).some((issue) => issue.code === "work_money_key_date_format"));
+}, payload).some((issue) => issue.code === "deep_dive_key_date_format"));
 
-console.log("Report generation passed: General + Work & Money snapshots, independent selection, return dedupe, and validators.");
+for (const phrase of ["soulmate", "twin flame", "divine union", "your person"]) {
+  assert.ok(validateReportDraft(
+    { body: `FIXTURE_ONLY ${phrase}.` },
+    loveConnectionPayload
+  ).some((issue) => issue.code === "love_banned_vocabulary" && issue.severity === "error"));
+}
+assert.ok(!validateReportDraft(
+  { body: "FIXTURE_ONLY soulmate." },
+  workMoneyPayload
+).some((issue) => issue.code === "love_banned_vocabulary"));
+
+const statusBranches = {
+  body: "If you are single, FIXTURE_ONLY. If you are partnered, FIXTURE_ONLY. If you are dating, FIXTURE_ONLY."
+};
+assert.ok(validateReportDraft(statusBranches, loveConnectionPayload)
+  .some((issue) => issue.code === "status_branching" && issue.severity === "warning"));
+assert.ok(!validateReportDraft(statusBranches, workMoneyPayload)
+  .some((issue) => issue.code === "status_branching"));
+
+for (const term of ["dysfunction", "infidelity", "pregnancy", "fertility"]) {
+  assert.ok(validateReportDraft(
+    { body: `FIXTURE_ONLY ${term}.` },
+    loveConnectionPayload
+  ).some((issue) => issue.code === "sex_invention" && issue.severity === "error"));
+}
+assert.ok(!validateReportDraft(
+  { body: "Do not assume fertility." },
+  loveConnectionPayload
+).some((issue) => issue.code === "sex_invention"));
+assert.ok(validateReportDraft(isolatedDraft, loveConnectionPayload)
+  .some((issue) => issue.code === "isolated_one_liners" && issue.severity === "warning"));
+assert.ok(validateReportDraft({
+  sections: [{
+    heading: "KEY DATES",
+    body: "FIXTURE_ONLY_DATE · LOVE · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SENTENCE. · FIXTURE_ONLY_ATTRIBUTION"
+  }]
+}, loveConnectionPayload).some((issue) => issue.code === "deep_dive_key_date_format"));
+
+console.log("Report generation passed: three domains, tiered selection, return dedupe, and domain validators.");

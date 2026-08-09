@@ -27,7 +27,7 @@ export type UserGeneratedSubjectType =
   | "report_unit";
 
 export type ReportHorizon = "1_month" | "4_months" | "6_months" | "12_months";
-export type ReportDomain = "general" | "work_money";
+export type ReportDomain = "general" | "work_money" | "love_connection";
 
 type UserGeneratedContentRow = {
   id: string;
