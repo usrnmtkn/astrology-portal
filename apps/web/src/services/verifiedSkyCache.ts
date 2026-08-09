@@ -1,5 +1,10 @@
 import type { LocationInput, SkySnapshot } from "../types";
-import { ASTROLOGY_CALCULATION_PROVENANCE, validateAstrologyFacts } from "./astrologyFacts";
+import {
+  ASTROLOGY_CALCULATION_CONTRACT,
+  MOSHIER_EPHEMERIS_FLAG,
+  SWISS_EPHEMERIS_FLAG,
+  validateAstrologyFacts
+} from "./astrologyFacts";
 
 export const VERIFIED_SKY_CACHE_SCHEMA = "tldrastro-verified-sky-v2";
 export const VERIFIED_SKY_CACHE_PREFIX = "tldrastro:verifiedSky:v2";
@@ -43,6 +48,7 @@ function isVerifiedSkySnapshot(value: unknown): value is SkySnapshot {
   const snapshot = value as Partial<SkySnapshot>;
   const facts = snapshot.facts ?? [];
   const validation = validateAstrologyFacts(facts);
+  const returnedEphemerisFlags = snapshot.calculationProvenance?.returnedEphemerisFlags;
 
   return typeof snapshot.generatedAt === "string"
     && Number.isFinite(Date.parse(snapshot.generatedAt))
@@ -55,9 +61,17 @@ function isVerifiedSkySnapshot(value: unknown): value is SkySnapshot {
     && finiteCoordinate(snapshot.location?.latitude)
     && finiteCoordinate(snapshot.location?.longitude)
     && snapshot.calculationProvenance?.calculationVersion
-      === ASTROLOGY_CALCULATION_PROVENANCE.calculationVersion
+      === ASTROLOGY_CALCULATION_CONTRACT.calculationVersion
     && snapshot.calculationProvenance?.lilithType
-      === ASTROLOGY_CALCULATION_PROVENANCE.lilithType
+      === ASTROLOGY_CALCULATION_CONTRACT.lilithType
+    && snapshot.calculationProvenance?.actualEphemeris === "swiss"
+    && Array.isArray(returnedEphemerisFlags)
+    && returnedEphemerisFlags.length > 0
+    && returnedEphemerisFlags.every((flag) => (
+      Number.isInteger(flag)
+      && (flag & SWISS_EPHEMERIS_FLAG) === SWISS_EPHEMERIS_FLAG
+      && (flag & MOSHIER_EPHEMERIS_FLAG) === 0
+    ))
     && facts.length > 0
     && facts.every((fact) => (
       (

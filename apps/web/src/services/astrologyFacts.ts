@@ -18,6 +18,8 @@ export type AstrologyCalculationProvenance = {
   nodeType: "mean" | "true";
   lilithType: "mean" | "true";
   calculationVersion: string;
+  actualEphemeris?: "swiss";
+  returnedEphemerisFlags?: number[];
 };
 
 export type AstrologyFact = {
@@ -64,11 +66,14 @@ export type AstrologyFact = {
   diagnostics?: string[];
 };
 
-export const ASTROLOGY_CALCULATION_PROVENANCE: AstrologyCalculationProvenance = {
+export const SWISS_EPHEMERIS_FLAG = 2;
+export const MOSHIER_EPHEMERIS_FLAG = 4;
+
+export const ASTROLOGY_CALCULATION_CONTRACT: AstrologyCalculationProvenance = {
   source: "local-swisseph-wasm",
   library: "swisseph-wasm",
   libraryVersion: "0.0.5",
-  ephemerisFiles: ["swisseph.wasm"],
+  ephemerisFiles: ["swisseph.wasm", "swisseph.data", "semo_18.se1"],
   zodiac: "tropical",
   frame: "geocentric",
   houseSystem: "whole_sign",
@@ -80,6 +85,20 @@ export const ASTROLOGY_CALCULATION_PROVENANCE: AstrologyCalculationProvenance = 
   lilithType: "true",
   calculationVersion: "tldrastro-calculation-v3"
 };
+
+export function astrologyCalculationProvenance(returnedEphemerisFlags: Iterable<number>): AstrologyCalculationProvenance {
+  const actualFlags = [...new Set(returnedEphemerisFlags)].sort((first, second) => first - second);
+
+  if (actualFlags.length === 0) {
+    throw new Error("Swiss Ephemeris provenance requires at least one validated return flag.");
+  }
+
+  return {
+    ...ASTROLOGY_CALCULATION_CONTRACT,
+    actualEphemeris: "swiss",
+    returnedEphemerisFlags: actualFlags
+  };
+}
 
 export function slugFactPart(value: string | number | null | undefined) {
   return String(value ?? "")
@@ -123,7 +142,7 @@ function baseFact(snapshot: SkySnapshot, kind: AstrologyFactKind): Pick<Astrolog
     calculatedAt: snapshot.generatedAt,
     timeZone: snapshot.location.timeZone ?? "UTC",
     location: snapshot.location,
-    provenance: snapshot.calculationProvenance ?? ASTROLOGY_CALCULATION_PROVENANCE,
+    provenance: snapshot.calculationProvenance ?? ASTROLOGY_CALCULATION_CONTRACT,
     validationStatus: "verified-primary"
   };
 }
@@ -151,7 +170,7 @@ export function factsFromSkySnapshot(snapshot: SkySnapshot): AstrologyFact[] {
       shadowEnd: position.retrogradeShadowEnd ?? null,
       role: "current-sky",
       house: position.house,
-      houseSystem: position.houseSystem ?? snapshot.calculationProvenance?.planetHouseSystem ?? ASTROLOGY_CALCULATION_PROVENANCE.planetHouseSystem,
+      houseSystem: position.houseSystem ?? snapshot.calculationProvenance?.planetHouseSystem ?? ASTROLOGY_CALCULATION_CONTRACT.planetHouseSystem,
       activeWindow: {
         startsAt: position.transitStart ?? null,
         endsAt: position.transitEnd ?? null
@@ -183,7 +202,7 @@ export function factsFromSkySnapshot(snapshot: SkySnapshot): AstrologyFact[] {
       normalizedSign: sign,
       role: "current-sky",
       canonicalAxisId: axisIdForPoint(angle) ?? undefined,
-      houseSystem: snapshot.calculationProvenance?.houseSystem ?? ASTROLOGY_CALCULATION_PROVENANCE.houseSystem,
+      houseSystem: snapshot.calculationProvenance?.houseSystem ?? ASTROLOGY_CALCULATION_CONTRACT.houseSystem,
       snapshotSource: "api",
       hydrationState: "not-applicable",
       cacheAgeMs: null
