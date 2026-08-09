@@ -23,6 +23,10 @@ const loveConnectionMigration = fs.readFileSync(
   new URL("../apps/web/supabase/migrations/20260809140000_love_connection_report_domain.sql", import.meta.url),
   "utf8"
 );
+const personalHealthMigration = fs.readFileSync(
+  new URL("../apps/web/supabase/migrations/20260809160000_personal_health_report_domain.sql", import.meta.url),
+  "utf8"
+);
 const legacyTypes = ["report_1_month", "report_4_months", "report_6_months", "report_12_months"];
 
 await db.exec(`
@@ -55,6 +59,7 @@ try {
 
   await db.exec(domainMigration);
   await db.exec(loveConnectionMigration);
+  await db.exec(personalHealthMigration);
   const backfilled = await db.query(`
     select report_type, report_domain, report_horizon
     from public.user_reports
@@ -67,7 +72,7 @@ try {
     ["1_month", "4_months", "6_months", "12_months"].sort()
   );
 
-  for (const [index, domain] of ["general", "work_money", "love_connection"].entries()) {
+  for (const [index, domain] of ["general", "work_money", "love_connection", "personal_health"].entries()) {
     await db.query(
       `insert into public.user_reports
         (id, user_id, report_type, report_domain, report_horizon, subject_id, period_start, period_end)
@@ -77,8 +82,8 @@ try {
   }
   assert.equal(
     Number((await db.query("select count(*)::int as count from public.user_reports where user_id = 'dual-user'")).rows[0].count),
-    3,
-    "All three report domains must coexist as separate envelopes for one user/window."
+    4,
+    "All four report domains must coexist as separate envelopes for one user/window."
   );
 
   for (const statement of [
@@ -116,4 +121,4 @@ await assert.rejects(() => db.exec(`
 `));
 await db.close();
 
-console.log("report domain migration backfill, three-envelope identity, constraints, and rollback passed");
+console.log("report domain migration backfill, four-envelope identity, constraints, and rollback passed");

@@ -75,6 +75,10 @@ export type ReportGenerationPayload = {
     sourcePath: string;
     text: string;
   } | null;
+  livedProseStandard: {
+    sourcePath: string;
+    text: string;
+  };
   sharedInvariants: string[];
   domainRelevanceModel: DomainRelevanceTier[];
   frozenFacts: Record<string, unknown>;
@@ -93,6 +97,8 @@ export type ReportGenerationPayload = {
   outputGovernance: {
     status: "DRAFT";
     review_status: "needs_review";
+    ownerApproved: false;
+    promotionAuthorized: false;
     promotionAllowed: false;
   };
 };
@@ -127,6 +133,8 @@ export type ReportValidatorOptions = {
 };
 
 const GENERATION_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md";
+const LIVED_PROSE_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md";
+export const PERSONAL_HEALTH_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md";
 const MANIFESTATION_SETS_PATH = "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json";
 
 type FactorRuleMatch = {
@@ -164,16 +172,19 @@ type DomainValidator =
 
 type ReportDomainConfiguration = {
   canonicalPromptPath: string;
+  canonicalPromptOwnerApproved: boolean;
   voiceEvidencePath: string;
   generationStandardPath: string | null;
   tiers: DomainRelevanceTier[];
   excludedProjectionTerms: string[];
+  strictBridgeProjection?: boolean;
   validators: DomainValidator[];
 };
 
 const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   general: {
     canonicalPromptPath: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md",
+    canonicalPromptOwnerApproved: true,
     voiceEvidencePath: "artifacts/marie-satori-year-ahead-2026-FINAL.md",
     generationStandardPath: GENERATION_STANDARD_PATH,
     tiers: [],
@@ -182,6 +193,7 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   },
   work_money: {
     canonicalPromptPath: "tldr-astro-phrasebank/TLDR-WORK-MONEY-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
+    canonicalPromptOwnerApproved: true,
     voiceEvidencePath: "artifacts/marie-satori-work-money-2026-owner-v1.md",
     generationStandardPath: null,
     tiers: [
@@ -266,6 +278,7 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   },
   love_connection: {
     canonicalPromptPath: "tldr-astro-phrasebank/TLDR-LOVE-CONNECTION-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
+    canonicalPromptOwnerApproved: true,
     voiceEvidencePath: "artifacts/marie-satori-love-connection-2026-owner-v1.md",
     generationStandardPath: null,
     tiers: [
@@ -447,6 +460,102 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
       "newsletter"
     ],
     validators: ["natural_paragraphs", "key_date_format", "love_banned_vocabulary", "status_branching", "sex_invention"]
+  },
+  personal_health: {
+    canonicalPromptPath: PERSONAL_HEALTH_PROMPT_PATH,
+    canonicalPromptOwnerApproved: false,
+    voiceEvidencePath: "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+    generationStandardPath: null,
+    tiers: [
+      {
+        id: "direct_personal_health",
+        weight: 30,
+        rules: [
+          {
+            id: "major_sun_moon_ascendant_transits",
+            match: { factorTypes: ["slow-transit-to-natal", "return"], natalPoints: ["Sun", "Moon", "Ascendant"], mode: "all" },
+            inspectionNotes: ["major contacts to the Sun, Moon, or Ascendant", "daily rhythm", "care", "work", "health", "body", "privacy", "appointments", "sleep", "recovery"],
+            relevanceTerms: ["body", "health", "routine", "appointment", "sleep", "recovery", "capacity", "privacy", "rest", "schedule", "care", "daily"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+          },
+          {
+            id: "personal_health_house_activations",
+            match: { houses: [1, 6, 12] },
+            inspectionNotes: ["1st-, 6th-, and 12th-house activation and ruler relevance"],
+            relevanceTerms: ["identity", "private", "privacy", "daily", "health", "body", "routine", "appointment", "sleep", "recovery", "care", "schedule"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+          },
+          {
+            id: "annual_profection_personal_health",
+            match: { factorTypes: ["profection-year"], houses: [1, 6, 12], mode: "all" },
+            inspectionNotes: ["annual profection and Lord of the Year when relevant to identity, privacy, daily life, or health"],
+            relevanceTerms: ["identity", "private", "privacy", "daily", "health", "body", "routine", "appointment", "sleep", "recovery", "care", "schedule"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+          },
+          {
+            id: "solar_return_personal_health_houses",
+            match: { factorTypes: ["sr-overlay"], houses: [1, 6, 12], mode: "all" },
+            inspectionNotes: ["Solar Return overlay materially touching the 1st, 6th, or 12th house or ruler"],
+            relevanceTerms: ["identity", "private", "privacy", "daily", "health", "body", "routine", "appointment", "sleep", "recovery", "care", "schedule"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+          },
+          {
+            id: "solar_return_personal_health_points",
+            match: { factorTypes: ["sr-overlay"], overlayPoints: ["Sun", "Moon", "Ascendant"], mode: "all" },
+            inspectionNotes: ["Solar Return overlay materially touching the Sun, Moon, or Ascendant"],
+            relevanceTerms: ["identity", "private", "privacy", "daily", "health", "body", "routine", "appointment", "sleep", "recovery", "care", "schedule"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+          },
+          {
+            id: "eclipse_personal_health_points",
+            match: { factorTypes: ["eclipse-on-natal-point"], natalPoints: ["Sun", "Moon", "Ascendant"], mode: "all" },
+            inspectionNotes: ["eclipse materially contacting the Sun, Moon, or Ascendant"],
+            relevanceTerms: ["identity", "private", "privacy", "daily", "health", "body", "routine", "appointment", "sleep", "recovery", "care", "schedule"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+          }
+        ]
+      },
+      {
+        id: "condition_changers",
+        weight: 20,
+        rules: [
+          {
+            id: "home_family_caregiving",
+            match: { houses: [4] },
+            inspectionNotes: ["driving", "cleaning", "maintenance", "stairs", "caregiving", "hours returned to the week"],
+            relevanceTerms: ["driving", "cleaning", "maintenance", "stairs", "caregiving", "weekly time", "privacy", "accessibility", "commute"],
+            bridgeConsequences: ["driving", "cleaning", "maintenance", "stairs", "caregiving", "weekly time"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms", "a move", "family conflict", "caregiving is the reader's responsibility"]
+          },
+          {
+            id: "communication_schedule_and_errands",
+            match: { houses: [3], natalPoints: ["Mercury", "Jupiter"] },
+            inspectionNotes: ["appointments", "errands", "paperwork", "messages", "classes", "short trips", "calendar load"],
+            relevanceTerms: ["appointment", "errand", "paperwork", "message", "short trip", "local travel", "schedule", "routine", "calendar"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms", "every communication factor creates overload", "the reader must decline the opportunity"]
+          },
+          {
+            id: "public_work_conditions",
+            match: { houses: [10], natalPoints: ["Midheaven"] },
+            inspectionNotes: ["hours", "commute", "travel", "physical demands", "appointments displaced by work"],
+            relevanceTerms: ["hours", "commute", "travel", "physical demands", "schedule", "appointment", "recovery"],
+            bridgeConsequences: ["hours", "commute", "travel", "physical demands", "appointment schedule"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms", "the reader has a conventional job", "a professional change is voluntary", "the opportunity is worth its cost"]
+          },
+          {
+            id: "work_travel_money_logistics",
+            match: { sourceTerms: ["hours", "daily demands", "travel", "commute", "transportation", "housing", "treatment", "help", "access", "schedule", "recovery"] },
+            inspectionNotes: ["work enters only through hours or daily demands", "travel enters only through timing or recovery", "money enters only through access to help, transportation, housing, treatment or routine logistics, or the daily schedule"],
+            relevanceTerms: ["hours", "daily", "travel", "commute", "transportation", "housing", "treatment", "routine", "help", "access", "schedule", "recovery"],
+            bridgeConsequences: ["hours", "daily demands", "travel timing", "recovery", "transportation", "housing", "treatment logistics", "routine logistics", "access to help", "daily schedule"],
+            doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms", "the reader is employed", "income changes", "travel is optional"]
+          }
+        ]
+      }
+    ],
+    excludedProjectionTerms: ["dating", "romance", "attraction", "sex", "application", "proposal", "income", "salary", "pay", "pricing", "revenue", "profit"],
+    strictBridgeProjection: true,
+    validators: ["natural_paragraphs", "key_date_format"]
   }
 };
 
@@ -747,18 +856,53 @@ function projectedRecord(
   const projectionTerms = domainRules(configuration)
     .filter(({ rule }) => selectedRules.has(rule.id))
     .flatMap(({ rule }) => rule.relevanceTerms);
-  const relevant = (value: string) => relevantTerms(value, projectionTerms).length > 0;
+  const bridgeTerms = selection?.bridgeConsequences ?? [];
+  const relevant = (value: string) => relevantTerms(value, [...projectionTerms, ...bridgeTerms]).length > 0;
   const bridge = (selection?.bridgeConsequences.length ?? 0) > 0;
+  const included = (value: string) => !excluded(value)
+    && (configuration.strictBridgeProjection ? relevant(value) : bridge || relevant(value));
   return {
     ...record,
-    domain: record.domain.filter((value) => !excluded(value) && (bridge || relevant(value))),
+    domain: record.domain.filter(included),
     possibleLivedManifestations: record.possibleLivedManifestations
-      .filter((value) => !excluded(value) && (bridge || relevant(value))),
+      .filter(included),
     doNotAssume: [...new Set([
       ...record.doNotAssume.filter((value) => !excluded(value)),
       ...(selection?.doNotAssume ?? [])
     ])]
   };
+}
+
+export type ReportDomainPromptReadiness = {
+  reportDomain: ReportDomain;
+  sourcePath: string;
+  exists: boolean;
+  ownerApproved: boolean;
+  ready: boolean;
+};
+
+export function reportDomainPromptReadiness(reportDomain: ReportDomain): ReportDomainPromptReadiness {
+  const configuration = REPORT_DOMAIN_CONFIG[reportDomain];
+  const exists = fs.existsSync(path.join(process.cwd(), configuration.canonicalPromptPath));
+  return {
+    reportDomain,
+    sourcePath: configuration.canonicalPromptPath,
+    exists,
+    ownerApproved: configuration.canonicalPromptOwnerApproved,
+    ready: exists && configuration.canonicalPromptOwnerApproved
+  };
+}
+
+export function reportDomainRelevanceModel(reportDomain: ReportDomain): DomainRelevanceTier[] {
+  return JSON.parse(JSON.stringify(REPORT_DOMAIN_CONFIG[reportDomain].tiers)) as DomainRelevanceTier[];
+}
+
+export function assertReportDomainFulfillmentReady(reportDomain: ReportDomain) {
+  const readiness = reportDomainPromptReadiness(reportDomain);
+  if (!readiness.ready) {
+    throw new Error(`REPORT_DOMAIN_PROMPT_PENDING: ${reportDomain} requires owner-approved canonical prompt ${readiness.sourcePath}.`);
+  }
+  return readiness;
 }
 
 export function selectReportFactors(
@@ -845,6 +989,7 @@ export function assembleReportGenerationPayload(
   input: AssembleReportPayloadInput
 ): ReportGenerationPayload {
   validateFrozenWindow(input.reportHorizon, input.frozenFacts);
+  assertReportDomainFulfillmentReady(input.reportDomain);
   const configuration = REPORT_DOMAIN_CONFIG[input.reportDomain];
   const completeFactors = reportFactors(input.frozenFacts);
   const { factors, selection } = selectReportFactors(completeFactors, input.reportDomain);
@@ -863,8 +1008,12 @@ export function assembleReportGenerationPayload(
       sourcePath: configuration.generationStandardPath,
       text: readRepoText(configuration.generationStandardPath)
     } : null,
+    livedProseStandard: {
+      sourcePath: LIVED_PROSE_STANDARD_PATH,
+      text: readRepoText(LIVED_PROSE_STANDARD_PATH)
+    },
     sharedInvariants: [...SHARED_INVARIANTS],
-    domainRelevanceModel: JSON.parse(JSON.stringify(configuration.tiers)) as DomainRelevanceTier[],
+    domainRelevanceModel: reportDomainRelevanceModel(input.reportDomain),
     frozenFacts: JSON.parse(JSON.stringify(input.frozenFacts)) as Record<string, unknown>,
     factors,
     factorSelection: selection,
@@ -881,14 +1030,34 @@ export function assembleReportGenerationPayload(
     outputGovernance: {
       status: "DRAFT",
       review_status: "needs_review",
+      ownerApproved: false,
+      promotionAuthorized: false,
       promotionAllowed: false
     }
   };
 }
 
+const INTERNAL_LIVED_PROSE_SCAFFOLD = `INTERNAL PRE-DRAFT EXTRACTION (REQUIRED)
+Complete this reasoning internally before drafting:
+ASTROLOGY
+LIVED FACT
+CAUSE
+CONSEQUENCE
+CONTRADICTION
+DO NOT ASSUME
+
+The ASTROLOGY / LIVED FACT / CAUSE / CONSEQUENCE / CONTRADICTION / DO NOT ASSUME extraction is an internal generation scaffold only.
+It must never appear in reader-facing report output, headings, metadata, attribution, or key dates.
+Its purpose is to force reasoning before prose, not to create visible report structure.`;
+
 export function reportPromptFromPayload(payload: ReportGenerationPayload) {
-  const { canonicalOwnerPrompt, ...taskPayload } = payload;
-  return `${canonicalOwnerPrompt.text}\n\nREPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`;
+  const { canonicalOwnerPrompt, livedProseStandard, ...taskPayload } = payload;
+  return [
+    canonicalOwnerPrompt.text,
+    `LIVED_PROSE_STANDARD\n${livedProseStandard.text}`,
+    INTERNAL_LIVED_PROSE_SCAFFOLD,
+    `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
+  ].join("\n\n");
 }
 
 function draftText(draft: ReportDraft) {
@@ -901,6 +1070,25 @@ function draftText(draft: ReportDraft) {
     draft.timing,
     ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])
   ].filter(Boolean).join("\n");
+}
+
+function withoutTechnicalAttribution(value: string) {
+  return value.split("\n")
+    .filter((line) => !/^\s*(?:\*[^*]+\*|\*\*(?:provenance|governance):\*\*|(?:provenance|governance):)/iu.test(line))
+    .map((line) => line.replace(/\s+·\s+\*[^*]+\*\s*$/u, ""))
+    .join("\n");
+}
+
+function readerFacingText(draft: ReportDraft) {
+  return [
+    draft.headline,
+    draft.tldr,
+    draft.summary,
+    draft.body,
+    draft.action,
+    draft.timing,
+    ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])
+  ].filter(Boolean).map((value) => withoutTechnicalAttribution(value as string)).join("\n");
 }
 
 function blocks(draft: ReportDraft) {
@@ -966,7 +1154,7 @@ function validateMoneyAbstractions(draft: ReportDraft, issues: ReportValidationI
 
 function validateNaturalParagraphs(draft: ReportDraft, issues: ReportValidationIssue[]) {
   let run = 0;
-  for (const paragraph of paragraphs(draft)) {
+  for (const paragraph of paragraphs(draft).map(withoutTechnicalAttribution).filter(Boolean)) {
     const paragraphSentences = sentences(paragraph);
     const onlySentence = paragraphSentences[0] ?? "";
     const shortDeclarative = !onlySentence.endsWith("?") && onlySentence.split(/\s+/u).length <= 12;
@@ -979,6 +1167,47 @@ function validateNaturalParagraphs(draft: ReportDraft, issues: ReportValidationI
       });
       return;
     }
+  }
+}
+
+function validateLivedProseMechanics(draft: ReportDraft, issues: ReportValidationIssue[]) {
+  const text = readerFacingText(draft);
+  const writerNotes = [
+    "this report",
+    "this section is about",
+    "the question becomes",
+    "the point is",
+    "what matters here is",
+    "this distinction matters",
+    "enters this report"
+  ];
+  const genericAdvice = [
+    "listen to your body",
+    "protect your energy",
+    "honor your needs",
+    "prioritize self-care",
+    "trust the evidence"
+  ];
+  for (const phrase of writerNotes.filter((candidate) => phrasePresent(text, candidate))) {
+    issues.push({
+      code: "writer_note_leakage",
+      message: `Reader-facing output contains writer-facing report language: ${phrase}.`,
+      severity: "error"
+    });
+  }
+  for (const phrase of genericAdvice.filter((candidate) => phrasePresent(text, candidate))) {
+    issues.push({
+      code: "generic_advice",
+      message: `Reader-facing output contains generic advice instead of a situated practical change: ${phrase}.`,
+      severity: "error"
+    });
+  }
+  if (/^\s*(?:#{1,6}\s*)?(?:ASTROLOGY|LIVED FACT|CAUSE|CONSEQUENCE|CONTRADICTION|DO NOT ASSUME)\s*(?::|$)/mu.test(text)) {
+    issues.push({
+      code: "internal_scaffold_leakage",
+      message: "Reader-facing output exposes the internal lived-prose extraction scaffold.",
+      severity: "error"
+    });
   }
 }
 
@@ -1120,9 +1349,10 @@ export function validateReportDraft(
     }
   }
 
+  validateLivedProseMechanics(draft, issues);
+  validateNaturalParagraphs(draft, issues);
   const domainValidators = REPORT_DOMAIN_CONFIG[payload.reportDomain].validators;
   if (domainValidators.includes("money_abstraction")) validateMoneyAbstractions(draft, issues);
-  if (domainValidators.includes("natural_paragraphs")) validateNaturalParagraphs(draft, issues);
   if (domainValidators.includes("key_date_format")) validateDeepDiveKeyDates(draft, issues);
   if (domainValidators.includes("love_banned_vocabulary")) validateLoveBannedVocabulary(draft, issues);
   if (domainValidators.includes("status_branching")) validateStatusBranching(draft, issues);

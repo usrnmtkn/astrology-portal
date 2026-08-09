@@ -1,0 +1,518 @@
+{
+  "version": "report-judge-complete-unit-regressions-v3-draft",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "proposedCalibrationCallBudget": {
+    "total": 9,
+    "judgeCalls": 8,
+    "critiqueCalls": 1,
+    "description": "One judge call for each positive and negative in four score-level pairs, plus one critique call for the single-sentence finding-level fixture. No retries without new authorization."
+  },
+  "purpose": "Calibration-only complete-unit pairs for proposed report judge v3. Positive units are extracted verbatim from owner-authored reference reports. Negative units are unapproved mechanical degradations and must never become positive voice evidence or reader-facing copy.",
+  "factsSourcePath": "scripts/fixtures/marie-report-frozen-facts.json",
+  "functionVocabulary": [
+    "opening",
+    "development",
+    "complication",
+    "turn",
+    "close"
+  ],
+  "observedLifeContracts": [
+    "Concrete nouns do not establish lived experience unless the reader can see what changed because of what.",
+    "Abstract consequence language does not replace an observable displacement, delay, addition, cancellation, division, rescheduling, or difficulty.",
+    "Writer-facing explanation and manufactured aphoristic closers are voice drift when owner evidence lands inside the reader's life.",
+    "Multi-pass and multi-paragraph movement must advance the interpretation rather than reset to transit keywords and generic advice."
+  ],
+  "ownerPassages": [
+    {
+      "id": "general_autumn_opening",
+      "sourceUnitKey": "general_autumn",
+      "sourcePath": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+      "startMarker": "## AUTUMN 2026:",
+      "endMarker": "## 2026 IN REVIEW",
+      "paragraphIndex": 1,
+      "function": "opening",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "7154a4a247c0dc865d7f3b157b24528c13143b57f6b7828c722360f127c8a704"
+    },
+    {
+      "id": "general_summer_complication",
+      "sourceUnitKey": "general_summer",
+      "sourcePath": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+      "startMarker": "## SUMMER 2026:",
+      "endMarker": "## AUTUMN 2026:",
+      "paragraphIndex": 7,
+      "function": "complication",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "037b808515afb66795dd2de5b4a4e2fc4a65d61a7e7fdc969b598dd4a68eca15"
+    },
+    {
+      "id": "work_spring_development",
+      "sourceUnitKey": "work_spring",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 3,
+      "function": "development",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "ae43f4caf3bd1b815499a66a492db4302b9ad6d40fc2ebe152f4c63d952921f1"
+    },
+    {
+      "id": "work_summer_complication",
+      "sourceUnitKey": "work_summer",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "startMarker": "## SUMMER 2026:",
+      "endMarker": "## AUTUMN 2026:",
+      "paragraphIndex": 6,
+      "function": "complication",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "2354d99335dcde8758c8add2c823c1d4bd31362078922580e809ee67863f06e5"
+    },
+    {
+      "id": "love_spring_turn",
+      "sourceUnitKey": "love_spring",
+      "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 5,
+      "function": "turn",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "e8565333002340cfd4b87d4c19bccfad2a2a88a5eb7cf24021d753987cf17587"
+    },
+    {
+      "id": "love_winter_close",
+      "sourceUnitKey": "love_winter",
+      "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md",
+      "startMarker": "## WINTER 2026",
+      "endMarker": "## SPRING 2026:",
+      "paragraphIndex": 7,
+      "function": "close",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "103cb298557d43de07064c72bad9a5d14452276e3b32960b5249ce8175a0829b"
+    },
+    {
+      "id": "personal_spring_development",
+      "sourceUnitKey": "personal_spring",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 4,
+      "function": "development",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "b7cbbdab47d934d9f74b455c2fcee8939bf2049f9bd4844a6c4b21c95b7d1269"
+    },
+    {
+      "id": "personal_spring_close",
+      "sourceUnitKey": "personal_spring",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 9,
+      "function": "close",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "3d3f7cf3b008002db202d7c331a73deec726d14a984b70cce888d0c477d35bf3"
+    },
+    {
+      "id": "personal_autumn_complication",
+      "sourceUnitKey": "personal_autumn",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "startMarker": "## AUTUMN 2026:",
+      "endMarker": "## Health and capacity",
+      "paragraphIndex": 3,
+      "function": "complication",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "f74754b2f3430bca3e34f68356741266766c9c2441bc4130353ec7b54d29e976"
+    }
+  ],
+  "pairs": [
+    {
+      "id": "general_spring_lived_abstraction",
+      "dimension": "lived_experience",
+      "reportDomain": "general",
+      "reportHorizon": "12_months",
+      "unitId": "spring",
+      "sourcePath": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## SPRING 2026: The old role may stop fitting",
+      "endMarker": "## SUMMER 2026:",
+      "sourceSha256": "315f26db25172c2f4d044d705ec884c6b062613b8c45e7faf3c6c74a37e2d7db",
+      "unitWindow": {
+        "startsOn": "2026-03-20",
+        "endsOn": "2026-06-21"
+      },
+      "attributionParagraphIndex": 14,
+      "keyDatesParagraphIndex": 16,
+      "movementApplicable": true,
+      "expected": {
+        "positiveMinimum": {
+          "lived_experience": 3,
+          "owner_voice": 3
+        },
+        "negativeMaximum": {
+          "lived_experience": 2
+        },
+        "minimumPairDelta": {
+          "lived_experience": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace concrete obligations, decisions, and consequences with wellness and capacity abstractions. Leave heading, date range, astrology, attribution, key dates, paragraph count, and all other prose byte-identical.",
+        "replacements": [
+          {
+            "paragraphIndex": 2,
+            "sourceSha256": "fab2f81e66891cef0b5fe316a37bf9513157952cd315e721be315b7742b211f7",
+            "replacement": "The change may be something you choose, or the old setup may simply stop being workable. Your capacity, alignment, needs, and evolving priorities may ask you to honor what fits now instead of what fit before."
+          },
+          {
+            "paragraphIndex": 3,
+            "sourceSha256": "0f1973f9e6a13ca08090ed04065ba8a3a82274d656863ec770f898068c2fc152",
+            "replacement": "You may need to honor your capacity, protect your energy, create more space, or choose terms that support your well-being. You may step back from what no longer feels sustainable. You may change how you relate to the opportunity or release what requires you to remain unchanged."
+          },
+          {
+            "paragraphIndex": 6,
+            "sourceSha256": "5976ed2dbbee04f214512fcb2e031dabd45e4beb0cb3e53ae2d5e30cd6b76346",
+            "replacement": "This can show up in relationships too. A connection may need to reflect your current capacity and the person you are becoming. The relationship may ask for more alignment, more spaciousness, or a healthier balance between your needs and the needs of others. Different terms may help everyone honor the changes already taking place."
+          },
+          {
+            "paragraphIndex": 10,
+            "sourceSha256": "dc2305f8b66712de4041ac5347bb415b9a49d5fb7835788f45fc38988354eb3d",
+            "replacement": "This matters if you are looking for work too. An opportunity may appear aligned while the conditions around it ask you to compromise your capacity or well-being. The process can clarify what supports your growth and what you are no longer available to carry."
+          },
+          {
+            "paragraphIndex": 11,
+            "sourceSha256": "f4a3babbf6e15b7445f5c10f7688c195bc45a65698c1084512835b670ca39662",
+            "replacement": "The same logic applies outside work. A connection or collaboration may look supportive until the energetic exchange reveals that the balance is no longer sustainable."
+          }
+        ]
+      },
+      "ownerComparisonSet": [
+        "work_spring_development",
+        "love_spring_turn",
+        "personal_spring_development"
+      ],
+      "targetFunctions": [
+        "development",
+        "turn"
+      ],
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "id": "work_money_winter_material_voice_drift",
+      "dimension": "owner_voice",
+      "reportDomain": "work_money",
+      "reportHorizon": "12_months",
+      "unitId": "winter-current",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## WINTER 2026",
+      "endMarker": "## SPRING 2026:",
+      "sourceSha256": "fcfba4d014442fd843751898ee2507c976f5a8f4c1e486138862a6abedda38e6",
+      "unitWindow": {
+        "startsOn": "2026-02-18",
+        "endsOn": "2026-03-20"
+      },
+      "attributionParagraphIndex": 8,
+      "keyDatesParagraphIndex": 10,
+      "movementApplicable": true,
+      "expected": {
+        "positiveMinimum": {
+          "owner_voice": 3
+        },
+        "negativeMaximum": {
+          "owner_voice": 2
+        },
+        "minimumPairDelta": {
+          "owner_voice": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace the unit's practical closing movement across three named paragraphs with generic coaching, abstraction, and an aphoristic closer. Leave heading, dates, attribution, structure, scoped facts, and every unnamed paragraph byte-identical.",
+        "replacements": [
+          {
+            "paragraphIndex": 4,
+            "sourceSha256": "6219ee2e81c832af181acf5a9a212bf5b1babbcc5f403439408a780ea63ef64a",
+            "replacement": "This is a strong period for bringing inspiration into alignment with sustainable action. Give the proposal or project supportive structure, honor your capacity, and trust the process of turning a meaningful idea into an achievable plan. The goal is to create a professional path that can grow without asking you to abandon your balance."
+          },
+          {
+            "paragraphIndex": 6,
+            "sourceSha256": "57824703947b63d4779aac29438e4de744dd956624ff0e792d98888345703342",
+            "replacement": "A move, commute, family responsibility, health need, repair, expense, or living arrangement may affect your professional capacity. These practical conditions can clarify what feels sustainable, what requires more support, and which opportunities remain aligned with your changing needs."
+          },
+          {
+            "paragraphIndex": 7,
+            "sourceSha256": "1fabcbeb556b505954c058d14703f7427fb0de8472590378734c0323213583f8",
+            "replacement": "You need a professional life that leaves enough room for the person who has to live it."
+          }
+        ]
+      },
+      "ownerComparisonSet": [
+        "personal_spring_development",
+        "love_winter_close",
+        "personal_autumn_complication"
+      ],
+      "targetFunctions": [
+        "development",
+        "complication",
+        "close"
+      ],
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "love_connection_autumn_flattened_movement",
+      "dimension": "interpretive_movement",
+      "reportDomain": "love_connection",
+      "reportHorizon": "12_months",
+      "unitId": "autumn",
+      "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## AUTUMN 2026: Desire and logistics meet each other",
+      "endMarker": "## Sex and intimacy",
+      "sourceSha256": "971dfcbd9ac80513dd7a6c2be44f6a5763e13660354c39df78560a27d4270024",
+      "unitWindow": {
+        "startsOn": "2026-09-22",
+        "endsOn": "2026-12-21"
+      },
+      "attributionParagraphIndex": 10,
+      "keyDatesParagraphIndex": 12,
+      "movementApplicable": true,
+      "expected": {
+        "positiveMinimum": {
+          "interpretive_movement": 3
+        },
+        "negativeMaximum": {
+          "interpretive_movement": 2
+        },
+        "minimumPairDelta": {
+          "interpretive_movement": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace the development paragraphs with transit-to-keyword-to-advice summaries while preserving the same paragraph count, chronology, named facts, attribution, key dates, and approximate unit length.",
+        "replacements": [
+          {
+            "paragraphIndex": 1,
+            "sourceSha256": "0c5d9cb12e7021146534f107c81de43b77d29ace7071cdb12ec96768dc24e165",
+            "replacement": "Saturn makes its second sextile to your Ascendant on October 6. This transit brings structure, maturity, boundaries, and responsibility to relationships and daily arrangements. It asks you to build a more sustainable foundation."
+          },
+          {
+            "paragraphIndex": 2,
+            "sourceSha256": "7192ce5b72f779ccce36f67304b434be2f1a23977a68ece1c3c591addebd5f80",
+            "replacement": "This is a time to review your boundaries and create a healthier relationship rhythm. Make sure the schedule supports every area of life. Communicate clearly, divide responsibilities fairly, and remain committed to balance when circumstances become demanding or another person has different expectations."
+          },
+          {
+            "paragraphIndex": 3,
+            "sourceSha256": "a7239eeaac0388ff59cfa78b86c843da82986749045b1fc3349231c976f0d0d8",
+            "replacement": "You may need to balance connection with sleep, work, recovery, travel, and other responsibilities. Honor each person's capacity, plan ahead, and stay flexible. Relationships become more sustainable when both people respect their needs, communicate their limits, and make practical adjustments that support mutual well-being."
+          },
+          {
+            "paragraphIndex": 4,
+            "sourceSha256": "6bbc61e74299d2e1eb38fe7bb466edcdf697e40c90a1c535aad08f386691b29a",
+            "replacement": "Use the second pass to integrate the lessons, honor the process, and strengthen the new pattern."
+          },
+          {
+            "paragraphIndex": 5,
+            "sourceSha256": "1a0b5e9286e6f57a3ce56560553021f68d7ede7e0090f9dc1e9ff6d543a9193e",
+            "replacement": "Jupiter opposes your natal Mars on October 20. This transit expands desire, action, conflict, and the need for greater honesty about what you want."
+          },
+          {
+            "paragraphIndex": 6,
+            "sourceSha256": "1512ae53d2901be1619aa2aaf75a9d4603b105e0e735192d00366867bd4f5a3a",
+            "replacement": "You may experience differences involving sex, timing, money, travel, work, holidays, initiation, payment, or compromise. Practice direct communication, make space for both perspectives, and avoid letting conflict become larger than the issue itself."
+          },
+          {
+            "paragraphIndex": 7,
+            "sourceSha256": "8112cccac52e2c48a8ee8e63efc16e04290bc38393eebb72c8f3e5b59a5db83c",
+            "replacement": "Stay grounded and communicate with intention. Do not assume one disagreement defines the entire relationship. Approach differences with patience, honesty, compassion, and mutual respect so the connection can grow through a clearer understanding of each person's needs and values."
+          },
+          {
+            "paragraphIndex": 8,
+            "sourceSha256": "4bb101c7e98fc8adf6db9de265b226cad3780192bdbde66fedda22b4305d02df",
+            "replacement": "Every conflict can become an opportunity for growth and deeper alignment."
+          },
+          {
+            "paragraphIndex": 9,
+            "sourceSha256": "4165605ae0a1a8e5e1627273195ecdb8602cc1cb6f0983a8682210fbf44e68f7",
+            "replacement": "Jupiter opposes Mars again in February. Use October to identify the issue, learn from the disagreement, and prepare for the next stage with greater clarity, confidence, and awareness."
+          }
+        ]
+      },
+      "ownerComparisonSet": [
+        "general_summer_complication",
+        "work_summer_complication",
+        "personal_autumn_complication"
+      ],
+      "targetFunctions": [
+        "development",
+        "complication",
+        "turn"
+      ],
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "personal_health_summer_observed_life",
+      "dimension": "lived_experience",
+      "reportDomain": "personal_health",
+      "reportHorizon": "12_months",
+      "unitId": "summer",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## SUMMER 2026: The week fills faster than you expect",
+      "endMarker": "## AUTUMN 2026:",
+      "unitWindow": {
+        "startsOn": "2026-06-21",
+        "endsOn": "2026-09-22"
+      },
+      "attributionParagraphIndex": 8,
+      "keyDatesParagraphIndex": 8,
+      "attributionMode": "key_date_inline",
+      "movementApplicable": true,
+      "substantiveParagraphIndices": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "ownerComparisonSet": [
+        "general_summer_complication",
+        "work_summer_complication",
+        "love_spring_turn"
+      ],
+      "targetFunctions": [
+        "development",
+        "complication",
+        "turn"
+      ],
+      "expected": {
+        "positiveMinimum": {
+          "lived_experience": 3,
+          "owner_voice": 3
+        },
+        "negativeMaximum": {
+          "lived_experience": 2
+        },
+        "minimumPairDelta": {
+          "lived_experience": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace two lived cause-and-consequence paragraphs with category lists and wellness abstractions while preserving the unit's chronology, named facts, heading, date range, attribution-bearing key dates, structure, and every unnamed paragraph byte-identical.",
+        "replacements": [
+          {
+            "paragraphIndex": 4,
+            "sourceSha256": "a8bc9b74500fa177bc1f87c046e62d72f6de40e8db60b26a608274ffdec9698c",
+            "replacement": "Sleep, lunch, appointments, movement, medication, work, and evening tasks may all affect your capacity during this period. These daily-life categories can require more planning, balance, support, and sustainable attention as the calendar becomes fuller."
+          },
+          {
+            "paragraphIndex": 5,
+            "sourceSha256": "d5200fac387271714c5f9684a52a7981c4ddfdba1154e06edba30699049c23d3",
+            "replacement": "You may genuinely want the class, trip, project, invitation, and other opportunities that appear. Jupiter can expand possibility and enthusiasm, while the amount of activity may ask you to honor your limits, protect your energy, and create more room for well-being."
+          }
+        ]
+      },
+      "sourceSha256": "6702ec6f2191e5654462c3833a5fd23e33bfdf24c03bd4e299530cfc8064fcbc"
+    }
+  ],
+  "findingLevelFixtures": [
+    {
+      "id": "work_money_winter_single_aphorism_finding",
+      "kind": "finding_level",
+      "dimension": "owner_voice",
+      "reportDomain": "work_money",
+      "reportHorizon": "12_months",
+      "unitId": "winter-current",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## WINTER 2026",
+      "endMarker": "## SPRING 2026:",
+      "sourceSha256": "fcfba4d014442fd843751898ee2507c976f5a8f4c1e486138862a6abedda38e6",
+      "unitWindow": {
+        "startsOn": "2026-02-18",
+        "endsOn": "2026-03-20"
+      },
+      "attributionParagraphIndex": 8,
+      "keyDatesParagraphIndex": 10,
+      "attributionMode": "standalone",
+      "movementApplicable": true,
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "ownerComparisonSet": [
+        "love_winter_close",
+        "personal_spring_close"
+      ],
+      "targetFunctions": [
+        "close"
+      ],
+      "expected": {
+        "requiredFindingCategory": "owner_voice_drift",
+        "requiredParagraphIndex": 7,
+        "wholeUnitScoreRequirement": null
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace only the final interpretive sentence before attribution with a polished wellness aphorism of comparable length. This fixture tests bounded finding sensitivity and imposes no whole-unit score requirement.",
+        "replacements": [
+          {
+            "paragraphIndex": 7,
+            "sourceSha256": "1fabcbeb556b505954c058d14703f7427fb0de8472590378734c0323213583f8",
+            "replacement": "You need a professional life that leaves enough room for the person who has to live it."
+          }
+        ]
+      }
+    }
+  ]
+}
