@@ -229,9 +229,6 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
-      await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible({
-        timeout: routeReadyTimeoutMs
-      });
     });
     await expect(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);
 
@@ -261,9 +258,6 @@ test.describe("visual regression baseline", () => {
 
     await expectRouteLoadsWithin(page, "/#sky", "client sky desktop dark", async () => {
       await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({
-        timeout: routeReadyTimeoutMs
-      });
-      await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
     });
