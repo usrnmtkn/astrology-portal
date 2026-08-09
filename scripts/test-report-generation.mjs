@@ -186,9 +186,33 @@ assert.ok(loveConnectionPayload.factorSelection.every((item) => (
 const uranusInspection = loveConnectionPayload.factorSelection.find((item) => item.factorId === "uranus-square-sun");
 assert.ok(uranusInspection?.matchedRuleIds.includes("uranus_conditions"));
 assert.ok(uranusInspection?.doNotAssume.includes("breakup"));
+const loveManifestationContext = JSON.stringify(loveConnectionPayload.manifestationSets).toLowerCase();
+assert.doesNotMatch(loveManifestationContext, /\b(?:application|proposal|publishing|newsletter)\b/u);
 assert.doesNotMatch(loveConnectionPayload.voiceEvidence[0].text, /\b(?:soulmate|twin flame|divine union|your person)\b/iu);
 assert.doesNotMatch(loveConnectionPayload.voiceEvidence[0].text, /—|\bwhether\b/iu);
 assert.doesNotMatch(generatorSource, /reportDomain === "love_connection"/u);
+const marsFactor = loveConnectionPayload.factors.find((factor) => factor.id === "jupiter-opposition-mars");
+const midheavenInspection = loveConnectionPayload.factorSelection.find((item) => (
+  item.factorId === "solar-eclipse-2027-02-06-midheaven"
+));
+const domainDisagreement = {
+  mar3RelationshipConsequences: loveConnectionPayload.factorSelection.find((item) => (
+    item.factorId === "lunar-eclipse-2026-03-03-saturn"
+  ))?.bridgeConsequences,
+  marsSpineExactDates: marsFactor?.source.passes.map((pass) => pass.exactAt.slice(0, 10)),
+  marsSpinePresentInLoveReference: [
+    /October 20, and what you want may conflict/u.test(loveConnectionReference),
+    /On February 5, Jupiter retrograde opposes your natal Mars/u.test(loveConnectionReference)
+  ],
+  workReferenceHasApplicationMaterial: /\bapplication\b/iu.test(workMoneyReference),
+  loveReferenceHasApplicationMaterial: /\bapplication\b/iu.test(loveConnectionReference),
+  workReferenceHasMoneySection: /^## Money$/mu.test(workMoneyReference),
+  loveReferenceHasMoneySection: /^## Money$/mu.test(loveConnectionReference),
+  feb6RelationshipContext: midheavenInspection?.inspectionNotes.filter((note) => (
+    ["availability", "travel", "location", "money", "schedule"].includes(note)
+  )),
+  feb6ContextPresentInLoveReference: /FEB 6 · Work changes the relationship context/u.test(loveConnectionReference)
+};
 assert.deepEqual({
   unit: loveConnectionPayload.unit,
   factorIds: loveConnectionPayload.factors.map((factor) => factor.id),
@@ -199,6 +223,7 @@ assert.deepEqual({
   homeInspection: loveConnectionPayload.factorSelection.find((item) => (
     item.factorId === "lunar-eclipse-2026-03-03-saturn"
   )),
+  domainDisagreement,
   voiceEvidenceSource: loveConnectionPayload.voiceEvidence[0].sourcePath
 }, snapshots.love_connection_12_months);
 
