@@ -103,6 +103,17 @@
       "doNotAssume": ["a move", "cohabitation", "separation", "family conflict"],
       "bridgeConsequences": ["privacy", "caregiving", "household labor", "who lives where", "relationship logistics"]
     },
+    "domainDisagreement": {
+      "mar3RelationshipConsequences": ["privacy", "caregiving", "household labor", "who lives where", "relationship logistics"],
+      "marsSpineExactDates": ["2026-10-20", "2027-02-05"],
+      "marsSpinePresentInLoveReference": [true, true],
+      "workReferenceHasApplicationMaterial": true,
+      "loveReferenceHasApplicationMaterial": false,
+      "workReferenceHasMoneySection": true,
+      "loveReferenceHasMoneySection": false,
+      "feb6RelationshipContext": ["availability", "travel", "location", "money", "schedule"],
+      "feb6ContextPresentInLoveReference": true
+    },
     "voiceEvidenceSource": "artifacts/marie-satori-love-connection-2026-owner-v1.md"
   }
 }

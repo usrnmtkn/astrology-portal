@@ -436,7 +436,16 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
         ]
       }
     ],
-    excludedProjectionTerms: ["soulmate", "twin flame", "divine union", "your person"],
+    excludedProjectionTerms: [
+      "soulmate",
+      "twin flame",
+      "divine union",
+      "your person",
+      "application",
+      "proposal",
+      "publishing",
+      "newsletter"
+    ],
     validators: ["natural_paragraphs", "key_date_format", "love_banned_vocabulary", "status_branching", "sex_invention"]
   }
 };
