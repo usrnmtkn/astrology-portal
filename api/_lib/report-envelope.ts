@@ -1,17 +1,18 @@
+import type { ReportDomain, ReportHorizon } from "./report-types.ts";
+
 export type ReportType =
   | "year_ahead"
   | "relationship"
   | "saturn_return"
-  | "report_1_month"
-  | "report_4_months"
-  | "report_6_months"
-  | "report_12_months";
+  | "report";
 export type ReportStatus = "draft" | "needs_review" | "approved" | "live";
 export type ReportFacts = Record<string, unknown>;
 
 export type ReportIdentity = {
   userId: string;
   reportType: ReportType;
+  reportDomain?: ReportDomain | null;
+  reportHorizon?: ReportHorizon | null;
   subjectId: string | null;
   periodStart: string;
 };
@@ -20,6 +21,8 @@ export type UserReportRow = {
   id: string;
   user_id: string;
   report_type: ReportType;
+  report_domain: ReportDomain | null;
+  report_horizon: ReportHorizon | null;
   subject_id: string | null;
   period_start: string;
   period_end: string;
@@ -53,6 +56,13 @@ export type CreateReportEnvelopeInput = ReportIdentity & {
 
 export type ReportEnvelopeStore = {
   findReport(identity: ReportIdentity): Promise<UserReportRow | null>;
+  findReusableFacts(input: {
+    userId: string;
+    subjectId: string | null;
+    reportHorizon: ReportHorizon;
+    periodStart: string;
+    periodEnd: string;
+  }): Promise<UserReportRow | null>;
   insertReport(input: CreateReportEnvelopeInput): Promise<UserReportRow>;
   regenerateReport(id: string, input: CreateReportEnvelopeInput): Promise<UserReportRow>;
   listUnits(userId: string, contentKeyPrefix: string): Promise<ReportUnitRow[]>;
@@ -90,6 +100,8 @@ function cloneFacts(facts: ReportFacts): ReportFacts {
 function normalizedInput(input: CreateReportEnvelopeInput): CreateReportEnvelopeInput {
   return {
     ...input,
+    reportDomain: input.reportDomain ?? null,
+    reportHorizon: input.reportHorizon ?? null,
     subjectId: input.subjectId || null,
     facts: cloneFacts(input.facts),
     status: input.status ?? "draft"
@@ -162,6 +174,8 @@ function reportQuery(identity: ReportIdentity) {
     select: "*",
     limit: "1"
   });
+  params.set("report_domain", identity.reportDomain ? `eq.${identity.reportDomain}` : "is.null");
+  params.set("report_horizon", identity.reportHorizon ? `eq.${identity.reportHorizon}` : "is.null");
   params.set("subject_id", identity.subjectId ? `eq.${identity.subjectId}` : "is.null");
   return params;
 }
@@ -170,6 +184,8 @@ function reportPayload(input: CreateReportEnvelopeInput) {
   return {
     user_id: input.userId,
     report_type: input.reportType,
+    report_domain: input.reportDomain ?? null,
+    report_horizon: input.reportHorizon ?? null,
     subject_id: input.subjectId,
     period_start: input.periodStart,
     period_end: input.periodEnd,
@@ -206,6 +222,28 @@ export function createSupabaseReportEnvelopeStore({
 
       if (!response.ok) {
         throw supabaseFailure("report lookup", response, payload);
+      }
+
+      return payload?.[0] ?? null;
+    },
+
+    async findReusableFacts(input) {
+      const params = new URLSearchParams({
+        user_id: `eq.${input.userId}`,
+        report_type: "eq.report",
+        report_horizon: `eq.${input.reportHorizon}`,
+        period_start: `eq.${input.periodStart}`,
+        period_end: `eq.${input.periodEnd}`,
+        select: "*",
+        order: "created_at.asc",
+        limit: "1"
+      });
+      params.set("subject_id", input.subjectId ? `eq.${input.subjectId}` : "is.null");
+      const response = await fetchImpl(`${baseUrl}/rest/v1/user_reports?${params.toString()}`, { headers });
+      const payload = await responsePayload(response) as UserReportRow[] | null;
+
+      if (!response.ok) {
+        throw supabaseFailure("shared report facts lookup", response, payload);
       }
 
       return payload?.[0] ?? null;

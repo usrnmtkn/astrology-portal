@@ -18,9 +18,42 @@
     "sourceGapCount": 0
   },
   "12_months": {
-    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "review-current-year", "winter-next"] },
+    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "professional-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"] },
     "factorCount": 18,
     "resolvedCount": 18,
     "sourceGapCount": 0
+  },
+  "work_money_12_months": {
+    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "professional-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"] },
+    "factorIds": [
+      "profection-year-house-12",
+      "sr-overlay-venus-house-10",
+      "sr-overlay-ascendant-house-5",
+      "saturn-trine-jupiter",
+      "neptune-trine-jupiter",
+      "uranus-square-sun",
+      "jupiter-square-pluto",
+      "jupiter-trine-uranus",
+      "saturn-sextile-ascendant",
+      "jupiter-conjunction-jupiter",
+      "jupiter-square-moon",
+      "jupiter-trine-neptune",
+      "jupiter-square-uranus",
+      "jupiter-opposition-mars",
+      "lunar-eclipse-2026-03-03-saturn",
+      "solar-eclipse-2026-08-12-uranus",
+      "lunar-eclipse-2026-08-28-mercury",
+      "solar-eclipse-2027-02-06-midheaven"
+    ],
+    "resolvedCount": 18,
+    "sourceGapCount": 0,
+    "bridgeSelection": {
+      "factorId": "lunar-eclipse-2026-03-03-saturn",
+      "score": 35,
+      "matchedTerms": ["caregiving"],
+      "bridgeConsequences": ["commute", "hours", "expenses", "availability", "which jobs remain practical"]
+    },
+    "venusProjectedDomains": ["creative work", "career", "recognition", "professional identity"],
+    "voiceEvidenceSource": "artifacts/marie-satori-work-money-2026-owner-v1.md"
   }
 }

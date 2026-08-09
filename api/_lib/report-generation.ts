@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
-export type ReportHorizon = "1_month" | "4_months" | "6_months" | "12_months";
+export type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type ReportUnitContract = {
   horizon: ReportHorizon;
@@ -43,6 +44,13 @@ export type ResolvedManifestationSet = {
   record: ManifestationSetRecord;
 };
 
+export type ReportFactorSelection = {
+  factorId: string;
+  score: number;
+  matchedTerms: string[];
+  bridgeConsequences: string[];
+};
+
 export type ReportSourceGap = {
   factorId: string;
   requestedKey: string;
@@ -50,8 +58,9 @@ export type ReportSourceGap = {
 };
 
 export type ReportGenerationPayload = {
-  schemaVersion: "report-generation-v1";
+  schemaVersion: "report-generation-v2";
   reportId: string;
+  reportDomain: ReportDomain;
   reportHorizon: ReportHorizon;
   unit: ReportUnitContract;
   canonicalOwnerPrompt: {
@@ -61,9 +70,11 @@ export type ReportGenerationPayload = {
   generationStandard: {
     sourcePath: string;
     text: string;
-  };
+  } | null;
+  sharedInvariants: string[];
   frozenFacts: Record<string, unknown>;
   factors: ReportFactor[];
+  factorSelection: ReportFactorSelection[];
   manifestationSets: ResolvedManifestationSet[];
   sourceGaps: ReportSourceGap[];
   writingQueue: ReportSourceGap[];
@@ -83,6 +94,7 @@ export type ReportGenerationPayload = {
 
 export type AssembleReportPayloadInput = {
   reportId: string;
+  reportDomain: ReportDomain;
   reportHorizon: ReportHorizon;
   unitId: string;
   frozenFacts: Record<string, unknown>;
@@ -101,6 +113,7 @@ export type ReportDraft = {
 export type ReportValidationIssue = {
   code: string;
   message: string;
+  severity?: "error" | "warning";
 };
 
 export type ReportValidatorOptions = {
@@ -108,10 +121,66 @@ export type ReportValidatorOptions = {
   signatureNounCap?: number;
 };
 
-const CANONICAL_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md";
 const GENERATION_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md";
-const VOICE_EVIDENCE_PATH = "artifacts/marie-satori-year-ahead-2026-FINAL.md";
 const MANIFESTATION_SETS_PATH = "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json";
+
+type ReportDomainConfiguration = {
+  canonicalPromptPath: string;
+  voiceEvidencePath: string;
+  generationStandardPath: string | null;
+  relevanceTerms: string[];
+  bridgeHouses: Record<number, string[]>;
+  excludedProjectionTerms: string[];
+  validators: Array<"money_abstraction" | "natural_paragraphs" | "key_date_format">;
+};
+
+const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
+  general: {
+    canonicalPromptPath: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md",
+    voiceEvidencePath: "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+    generationStandardPath: GENERATION_STANDARD_PATH,
+    relevanceTerms: [],
+    bridgeHouses: {},
+    excludedProjectionTerms: [],
+    validators: []
+  },
+  work_money: {
+    canonicalPromptPath: "tldr-astro-phrasebank/TLDR-WORK-MONEY-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
+    voiceEvidencePath: "artifacts/marie-satori-work-money-2026-owner-v1.md",
+    generationStandardPath: null,
+    relevanceTerms: [
+      "work", "job", "career", "professional", "title", "recognition", "public role",
+      "client", "contract", "collaboration", "credit", "access", "workload", "schedule",
+      "education", "writing", "publishing", "application", "proposal", "teaching",
+      "income", "rate", "pay", "expense", "business cost", "payment", "financial",
+      "pricing", "revenue", "cash flow", "cash-flow", "unpaid", "scope", "money",
+      "customer", "ownership", "vendor", "staff", "delegation", "system", "platform",
+      "audience", "launch", "marketing", "intellectual property", "capacity", "business model",
+      "leverage", "commute", "hours", "availability", "caregiving", "travel", "tool", "workflow"
+    ],
+    bridgeHouses: {
+      4: ["commute", "hours", "expenses", "availability", "which jobs remain practical"]
+    },
+    excludedProjectionTerms: ["dating", "attraction", "sex", "pleasure", "romantic", "spirituality"],
+    validators: ["money_abstraction", "natural_paragraphs", "key_date_format"]
+  }
+};
+
+const SHARED_INVARIANTS = [
+  "coverage_gate",
+  "specificity_ceiling",
+  "life_status_neutrality",
+  "involuntary_change",
+  "chart_earned_topics",
+  "planet_logic",
+  "no_persona",
+  "no_em_dash",
+  "no_whether",
+  "multi_pass_handling",
+  "density_caps",
+  "governance",
+  "stop_rule"
+];
 
 const UNIT_IDS: Record<ReportHorizon, string[]> = {
   "1_month": ["overview", "what-matters-most", "domain:*", "key-dates"],
@@ -120,11 +189,14 @@ const UNIT_IDS: Record<ReportHorizon, string[]> = {
   "12_months": [
     "overview",
     "year-theme",
+    "professional-theme",
     "domain:*",
     "winter-current",
     "spring",
     "summer",
     "autumn",
+    "money",
+    "key-dates",
     "review-current-year",
     "winter-next"
   ]
@@ -352,19 +424,88 @@ function recordMatchScore(record: ManifestationSetRecord, factor: ReportFactor) 
   return score;
 }
 
-export function resolveManifestationSets(factors: ReportFactor[]) {
+function bestManifestationRecord(records: ManifestationSetRecord[], factor: ReportFactor) {
+  return records
+    .map((record) => ({ record, score: recordMatchScore(record, factor) }))
+    .filter((candidate) => candidate.score >= 0)
+    .sort((left, right) => right.score - left.score || left.record.id.localeCompare(right.record.id))[0]?.record;
+}
+
+function relevantTerms(text: string, terms: string[]) {
+  return terms.filter((term) => phrasePresent(text, term));
+}
+
+function projectedRecord(
+  record: ManifestationSetRecord,
+  configuration: ReportDomainConfiguration,
+  bridgeConsequences: string[]
+): ManifestationSetRecord {
+  if (configuration === REPORT_DOMAIN_CONFIG.general) return record;
+  const excluded = (value: string) => configuration.excludedProjectionTerms.some((term) => phrasePresent(value, term));
+  const relevant = (value: string) => relevantTerms(value, configuration.relevanceTerms).length > 0;
+  const bridge = bridgeConsequences.length > 0;
+  return {
+    ...record,
+    domain: record.domain.filter((value) => !excluded(value) && (bridge || relevant(value))),
+    possibleLivedManifestations: record.possibleLivedManifestations
+      .filter((value) => !excluded(value) && (bridge || relevant(value))),
+    doNotAssume: record.doNotAssume.filter((value) => !excluded(value))
+  };
+}
+
+export function selectReportFactors(
+  factors: ReportFactor[],
+  reportDomain: ReportDomain
+): { factors: ReportFactor[]; selection: ReportFactorSelection[] } {
+  const configuration = REPORT_DOMAIN_CONFIG[reportDomain];
   const records = loadManifestationRecords();
+  const selection = factors.flatMap((factor) => {
+    if (reportDomain === "general") {
+      return [{ factorId: factor.id, score: 1, matchedTerms: [], bridgeConsequences: [] }];
+    }
+    const record = bestManifestationRecord(records, factor);
+    const searchable = [
+      ...(record?.domain ?? []),
+      ...(record?.possibleLivedManifestations ?? []),
+      JSON.stringify(factor.source)
+    ].join(" ");
+    const matchedTerms = [...new Set(relevantTerms(searchable, configuration.relevanceTerms))];
+    const bridgeConsequences = factor.house === undefined
+      ? []
+      : configuration.bridgeHouses[factor.house] ?? [];
+    const directHouseScore = factor.house !== undefined && [2, 6, 10].includes(factor.house) ? 2 : 0;
+    const score = matchedTerms.length * 10 + bridgeConsequences.length * 5 + directHouseScore;
+    return score > 0 ? [{ factorId: factor.id, score, matchedTerms, bridgeConsequences }] : [];
+  });
+  const selectedIds = new Set(selection.map((item) => item.factorId));
+  return {
+    factors: factors.filter((factor) => selectedIds.has(factor.id)),
+    selection
+  };
+}
+
+export function resolveManifestationSets(
+  factors: ReportFactor[],
+  reportDomain: ReportDomain = "general",
+  selection: ReportFactorSelection[] = []
+) {
+  const records = loadManifestationRecords();
+  const configuration = REPORT_DOMAIN_CONFIG[reportDomain];
+  const selectionByFactor = new Map(selection.map((item) => [item.factorId, item]));
   const resolved: ResolvedManifestationSet[] = [];
   const gaps: ReportSourceGap[] = [];
 
   for (const factor of factors) {
-    const candidates = records
-      .map((record) => ({ record, score: recordMatchScore(record, factor) }))
-      .filter((candidate) => candidate.score >= 0)
-      .sort((left, right) => right.score - left.score || left.record.id.localeCompare(right.record.id));
-    const record = candidates[0]?.record;
+    const record = bestManifestationRecord(records, factor);
     if (record) {
-      resolved.push({ factor, record });
+      resolved.push({
+        factor,
+        record: projectedRecord(
+          record,
+          configuration,
+          selectionByFactor.get(factor.id)?.bridgeConsequences ?? []
+        )
+      });
     } else {
       gaps.push({ factorId: factor.id, requestedKey: factorKey(factor), reason: "SOURCE_GAP" });
     }
@@ -377,32 +518,37 @@ export function assembleReportGenerationPayload(
   input: AssembleReportPayloadInput
 ): ReportGenerationPayload {
   validateFrozenWindow(input.reportHorizon, input.frozenFacts);
-  const factors = reportFactors(input.frozenFacts);
-  const { resolved, gaps } = resolveManifestationSets(factors);
+  const configuration = REPORT_DOMAIN_CONFIG[input.reportDomain];
+  const completeFactors = reportFactors(input.frozenFacts);
+  const { factors, selection } = selectReportFactors(completeFactors, input.reportDomain);
+  const { resolved, gaps } = resolveManifestationSets(factors, input.reportDomain, selection);
   return {
-    schemaVersion: "report-generation-v1",
+    schemaVersion: "report-generation-v2",
     reportId: input.reportId,
+    reportDomain: input.reportDomain,
     reportHorizon: input.reportHorizon,
     unit: reportUnitContract(input.reportHorizon, input.unitId),
     canonicalOwnerPrompt: {
-      sourcePath: CANONICAL_PROMPT_PATH,
-      text: readRepoText(CANONICAL_PROMPT_PATH)
+      sourcePath: configuration.canonicalPromptPath,
+      text: readRepoText(configuration.canonicalPromptPath)
     },
-    generationStandard: {
-      sourcePath: GENERATION_STANDARD_PATH,
-      text: readRepoText(GENERATION_STANDARD_PATH)
-    },
+    generationStandard: configuration.generationStandardPath ? {
+      sourcePath: configuration.generationStandardPath,
+      text: readRepoText(configuration.generationStandardPath)
+    } : null,
+    sharedInvariants: [...SHARED_INVARIANTS],
     frozenFacts: JSON.parse(JSON.stringify(input.frozenFacts)) as Record<string, unknown>,
     factors,
+    factorSelection: selection,
     manifestationSets: resolved,
     sourceGaps: gaps,
     writingQueue: [...gaps],
     voiceEvidence: [{
-      sourcePath: VOICE_EVIDENCE_PATH,
+      sourcePath: configuration.voiceEvidencePath,
       sourceType: "owner_authored_final",
       surface: "report",
       eligible: true,
-      text: readRepoText(VOICE_EVIDENCE_PATH)
+      text: readRepoText(configuration.voiceEvidencePath)
     }],
     outputGovernance: {
       status: "DRAFT",
@@ -436,6 +582,13 @@ function blocks(draft: ReportDraft) {
     .filter(Boolean);
 }
 
+function paragraphs(draft: ReportDraft) {
+  return [draft.body ?? "", ...(draft.sections ?? []).map((section) => section.body ?? "")]
+    .flatMap((value) => value.split(/\n\s*\n/u))
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
 function sentences(block: string) {
   return block.match(/[^.!?]+[.!?]?/gu)?.map((sentence) => sentence.trim()).filter(Boolean) ?? [];
 }
@@ -458,6 +611,68 @@ function hasActualSaturnReturn(facts: Record<string, unknown>) {
     return arc?.transitPlanet === "Saturn" && arc?.natalPoint === "Saturn"
       && arc?.aspect === "conjunction" && arc?.isReturn === true;
   });
+}
+
+function validateMoneyAbstractions(draft: ReportDraft, issues: ReportValidationIssue[]) {
+  const abstractTerms = ["abundance", "scarcity", "value", "worth"];
+  const concreteTerms = [
+    "rate", "pay", "hours", "expense", "commute", "travel", "software", "staff", "help",
+    "tax", "payment timing", "unpaid", "revision", "scope", "client concentration", "revenue",
+    "cash flow", "lost time", "opportunity cost"
+  ];
+  for (const block of blocks(draft)) {
+    const blockSentences = sentences(block);
+    for (const [index, sentence] of blockSentences.entries()) {
+      if (!abstractTerms.some((term) => phrasePresent(sentence, term))) continue;
+      const immediateContext = `${sentence} ${blockSentences[index + 1] ?? ""}`;
+      if (!concreteTerms.some((term) => phrasePresent(immediateContext, term))) {
+        issues.push({
+          code: "money_abstraction",
+          message: `Money abstraction is not immediately translated to concrete financial terms: ${sentence}`,
+          severity: "error"
+        });
+      }
+    }
+  }
+}
+
+function validateNaturalParagraphs(draft: ReportDraft, issues: ReportValidationIssue[]) {
+  let run = 0;
+  for (const paragraph of paragraphs(draft)) {
+    const paragraphSentences = sentences(paragraph);
+    const onlySentence = paragraphSentences[0] ?? "";
+    const shortDeclarative = !onlySentence.endsWith("?") && onlySentence.split(/\s+/u).length <= 12;
+    run = paragraphSentences.length === 1 && (onlySentence.endsWith("?") || shortDeclarative) ? run + 1 : 0;
+    if (run >= 3) {
+      issues.push({
+        code: "isolated_one_liners",
+        message: "Three or more consecutive questions or short declaratives are isolated as one-line paragraphs.",
+        severity: "warning"
+      });
+      return;
+    }
+  }
+}
+
+function validateWorkMoneyKeyDates(draft: ReportDraft, issues: ReportValidationIssue[]) {
+  const categoryTag = /\b(?:WORK|SELF|LOVE|SEX|FRIENDS|FAMILY|HOME|HEALTH|MONEY)\b/iu;
+  for (const section of draft.sections ?? []) {
+    if (!/^key dates$/iu.test(section.heading?.trim() ?? "")) continue;
+    const lines = (section.body ?? "").split("\n")
+      .map((line) => line.trim().replace(/^[-*]\s+/u, "").replaceAll("**", ""))
+      .filter(Boolean);
+    for (const line of lines) {
+      const fields = line.split("·").map((field) => field.trim());
+      const validSentence = fields.length === 4 && sentences(fields[2] ?? "").length === 1;
+      if (fields.length !== 4 || !fields.every(Boolean) || !validSentence || categoryTag.test(fields[1] ?? "")) {
+        issues.push({
+          code: "work_money_key_date_format",
+          message: "Work & Money key dates require DATE · TITLE · one sentence · attribution with no category tag.",
+          severity: "error"
+        });
+      }
+    }
+  }
 }
 
 export function validateReportDraft(
@@ -535,6 +750,11 @@ export function validateReportDraft(
       }
     }
   }
+
+  const domainValidators = REPORT_DOMAIN_CONFIG[payload.reportDomain].validators;
+  if (domainValidators.includes("money_abstraction")) validateMoneyAbstractions(draft, issues);
+  if (domainValidators.includes("natural_paragraphs")) validateNaturalParagraphs(draft, issues);
+  if (domainValidators.includes("key_date_format")) validateWorkMoneyKeyDates(draft, issues);
 
   return issues;
 }
