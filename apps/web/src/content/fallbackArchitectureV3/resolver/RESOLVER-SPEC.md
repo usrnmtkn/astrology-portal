@@ -29,8 +29,9 @@ after it loads and passes package-manifest validation.
 
 Owner ruling 2026-08-09: Sky Placement articles do not render a `Try this`
 section. No placement resolver may read `try_this` arrays or
-`fallback-hook/sky-placement-moves/*` rows. Historical action rows remain stored
-as editorial provenance only and no placement render path may read them.
+`fallback-hook/sky-placement-moves/*` rows. The retired action rows are absent
+from approved source, and no placement render path may read, substitute, or
+display them.
 
 ## Hard runtime rules
 
