@@ -68,6 +68,41 @@ declare module "@tldr/astro-knowledge/relationships-web" {
   export default knowledge;
 }
 
+declare module "@tldr/astro-knowledge/shared-web" {
+  const knowledge: Record<string, unknown>;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/sky-runtime-web" {
+  const knowledge: Record<string, unknown>;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/natal-insights-web" {
+  const knowledge: Record<string, unknown>;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/natal-transits-web" {
+  const knowledge: Record<string, unknown>;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/natal-placements-web" {
+  const knowledge: Record<string, unknown>;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/relationships-synastry-web" {
+  const knowledge: Record<string, unknown>;
+  export default knowledge;
+}
+
+declare module "@tldr/astro-knowledge/relationships-composite-web" {
+  const knowledge: Record<string, unknown>;
+  export default knowledge;
+}
+
 declare module "@tldr/astro-knowledge/synastry" {
   const knowledge: unknown;
   export default knowledge;

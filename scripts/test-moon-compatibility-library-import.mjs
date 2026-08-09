@@ -66,13 +66,17 @@ assert.equal(
 const generatedRows = JSON.parse(fs.readFileSync(generatedFixturePath, "utf8"));
 const fallbackV3Rows = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const manualChartsPanelSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/ManualChartsPanel.tsx"),
+  "utf8"
+);
 
 assert.equal(Array.isArray(library), true, "Moon compatibility library must be an array.");
 assert.equal(library.length, 144, "Moon compatibility library must include all 144 directional pairs.");
 assert.equal(generatedRows.planet, "moon", "Generated compatibility dashboard rows must currently materialize Moon.");
 assert.equal(generatedRows.rows.length, 144, "Generated compatibility dashboard rows must include all 144 Moon pairs.");
-assert.match(appSource, /transitSynastryFallbackRendererV3\.renderCompat\(\{/, "The app must resolve compatibility copy through the V3 renderer.");
-assert.doesNotMatch(appSource, /moonCompatibilityLibrary|compatibilityRenderedLibraryManifest|renderedCompatibilityLibraryEntry/, "The app must not use the retired direct compatibility-library path.");
+assert.match(manualChartsPanelSource, /transitSynastryFallbackRendererV3\.renderCompat\(\{/, "The app must resolve compatibility copy through the V3 renderer.");
+assert.doesNotMatch(`${appSource}\n${manualChartsPanelSource}`, /moonCompatibilityLibrary|compatibilityRenderedLibraryManifest|renderedCompatibilityLibraryEntry/, "The app must not use the retired direct compatibility-library path.");
 
 const sourceByKey = new Map();
 const rowByKey = new Map(generatedRows.rows.map((row) => [row.content_key, row]));

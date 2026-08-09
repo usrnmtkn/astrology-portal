@@ -11,10 +11,15 @@ import {
   loadSharedGeneratedContent,
   sharedGeneratedContentCacheKey
 } from "../apps/web/src/services/sharedGeneratedContentCache.ts";
+import { activeFriendProfileContentRequest } from "../apps/web/src/features/friends/friendCalculationReadiness.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
 const appSource = fs.readFileSync(appSourcePath, "utf8");
+const manualChartsPanelSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/ManualChartsPanel.tsx"),
+  "utf8"
+);
 const manualChartsControllerPath = path.join(
   repoRoot,
   "apps/web/src/features/friends/useManualChartsController.ts"
@@ -169,10 +174,21 @@ assert.doesNotMatch(
   /const shouldLoadRelationships = mode === "friends";$/m,
   "Opening the Friends Circle or Charts landing view must not fetch all relationship content."
 );
-assert.match(
-  appSource,
-  /if \(resolvedFriendsMainView === "profile" && selectedChart\) \{\s*onFriendProfileContentRequest\(friendProfileTab\);/,
-  "A Friends chart profile must request only the active tab's deferred content after the landing view is usable."
+assert.equal(
+  activeFriendProfileContentRequest({
+    activeTab: "compatibility",
+    profileActive: false
+  }),
+  null,
+  "The Friends landing view must not request deferred profile content."
+);
+assert.equal(
+  activeFriendProfileContentRequest({
+    activeTab: "synastry",
+    profileActive: true
+  }),
+  "synastry",
+  "An active Friends chart profile must request only its active tab's deferred content."
 );
 assert.match(
   appSource,
@@ -185,12 +201,12 @@ assert.match(
   "Friends must request natal and relationship interpretation payloads independently by active profile tab."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /currentSky: SkySnapshot \| null;[\s\S]*friendProfileWork\.transits && currentSky && selectedChart/,
   "Friends transit calculations must tolerate a chart list that renders before current-sky data is ready."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /\(friendProfileWork\.compatibility \|\| friendProfileWork\.synastry\) && selectedChart && !selectedChartIsEvent/,
   "Compatibility and Synastry wheels must both receive their inspector aspect lines when active."
 );
@@ -306,12 +322,12 @@ assert.doesNotMatch(
   "ManualChartsPanel must not re-embed relationship request state or cancellation."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /function openFriendProfile\(chart: ManualChart\) \{[\s\S]*onFriendProfileContentRequest\(chart\.chartType === "event" \? "natal" : "compatibility"\);[\s\S]*setSelectedChartId\(chart\.id\);/,
   "Selecting a chart must start its Compatibility content prefetch before publishing the selection."
 );
 assert.match(
-  appSource,
+  manualChartsPanelSource,
   /const prefetchAfterPaint = window\.requestAnimationFrame\(\(\) => \{\s*onFriendProfileContentRequest\("natal"\);\s*if \(!selectedChartIsEvent\) \{\s*onFriendProfileContentRequest\("synastry"\);/,
   "Natal and Synastry content must prefetch only after the selected profile has painted."
 );
