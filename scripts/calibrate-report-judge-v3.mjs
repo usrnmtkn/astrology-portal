@@ -8,6 +8,11 @@ import { assembleReportGenerationPayload } from "../api/_lib/report-generation.t
 import { callReportModel, judgeModelTarget } from "../api/_lib/report-model-client.ts";
 import { scopeReportPayloadToUnit } from "../api/_lib/report-unit-scope.ts";
 import { REPORT_DEFECT_CATEGORIES } from "../api/_lib/report-writer-chain.ts";
+import {
+  completeUnitFacts,
+  numberedCompleteUnit,
+  paragraphLocationToken,
+} from "./report-judge-v3-fixture-packets.mjs";
 
 const manifestPath = "scripts/fixtures/report-judge-complete-unit-regressions-v3.json";
 const judgePath = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-DRAFT.md";
@@ -105,20 +110,12 @@ function comparisonSet(fixture) {
 function scopedFacts(fixture) {
   const payload = scopeReportPayloadToUnit(assembleReportGenerationPayload({
     reportId: "00000000-0000-0000-0000-000000000003",
-    reportDomain: "general",
+    reportDomain: fixture.reportDomain === "personal_health" ? "general" : fixture.reportDomain,
     reportHorizon: fixture.reportHorizon,
     unitId: fixture.unitId,
     frozenFacts: facts
   }));
-  return {
-    ...payload.frozenFacts,
-    unitContext: {
-      reportDomain: fixture.reportDomain,
-      unitId: fixture.unitId,
-      startsOn: fixture.unitWindow.startsOn,
-      endsOn: fixture.unitWindow.endsOn
-    }
-  };
+  return completeUnitFacts({ manifest, fixture, scopedFacts: payload.frozenFacts, fullFacts: facts });
 }
 
 function canonicalPrompt(fixture) {
@@ -241,11 +238,13 @@ function recomputeJudge(value, fixture, threshold) {
 }
 
 function judgePrompt(fixture, unit) {
+  const indexedUnit = numberedCompleteUnit(manifest, unit);
   return [
     judgeText,
     `DOMAIN_CANONICAL_PROMPT\n${JSON.stringify(canonicalPrompt(fixture))}`,
     `LIVED_PROSE_STANDARD\n${livedProseText}`,
-    `COMPLETE_UNIT\n${unit}`,
+    `COMPLETE_UNIT_PARAGRAPH_INDEX_CONVENTION\n${manifest.completeUnitParagraphIndexing.instruction}\nEvery finding location must include the exact supplied token ${manifest.completeUnitParagraphIndexing.marker}.`,
+    `COMPLETE_UNIT\n${indexedUnit}`,
     `UNIT_FACTS\n${JSON.stringify(scopedFacts(fixture))}`,
     `OWNER_COMPARISON_SET\n${JSON.stringify(comparisonSet(fixture))}`,
     `TARGET_FUNCTIONS\n${JSON.stringify(fixture.targetFunctions)}`,
@@ -256,11 +255,13 @@ function judgePrompt(fixture, unit) {
 }
 
 function critiquePrompt(fixture, unit) {
+  const indexedUnit = numberedCompleteUnit(manifest, unit);
   return [
     critiqueText,
     `DOMAIN_CANONICAL_PROMPT\n${JSON.stringify(canonicalPrompt(fixture))}`,
     `LIVED_PROSE_STANDARD\n${livedProseText}`,
-    `COMPLETE_UNIT\n${unit}`,
+    `COMPLETE_UNIT_PARAGRAPH_INDEX_CONVENTION\n${manifest.completeUnitParagraphIndexing.instruction}\nEvery defect location must include the exact supplied token ${manifest.completeUnitParagraphIndexing.marker}.`,
+    `COMPLETE_UNIT\n${indexedUnit}`,
     `UNIT_FACTS\n${JSON.stringify(scopedFacts(fixture))}`,
     `OWNER_COMPARISON_SET\n${JSON.stringify(comparisonSet(fixture))}`,
     `TARGET_FUNCTIONS\n${JSON.stringify(fixture.targetFunctions)}`,
@@ -272,6 +273,9 @@ function critiquePrompt(fixture, unit) {
 
 delete process.env.REPORT_FALLBACK_PROVIDER;
 delete process.env.REPORT_FALLBACK_MODEL;
+if (process.env.REPORT_JUDGE_V3_RUN_AUTHORIZATION !== "owner-authorized-run-2") {
+  throw new Error("Calibration run two is not authorized. Record separate owner authorization before setting REPORT_JUDGE_V3_RUN_AUTHORIZATION=owner-authorized-run-2.");
+}
 const target = judgeModelTarget();
 if (target.provider !== "openai") throw new Error(`The authorized run is for OpenAI, but REPORT_JUDGE_PROVIDER resolved to ${target.provider}.`);
 if (!/^sk-/u.test(process.env.OPENAI_API_KEY ?? "")) throw new Error("The production OpenAI credential is not locally available.");
@@ -284,7 +288,7 @@ const outputPath = process.env.REPORT_JUDGE_V3_OUTPUT
 const rows = [];
 const failures = [];
 const artifactBase = {
-  version: "report-judge-v3-calibration-v1",
+  version: "report-judge-v3-calibration-v2",
   runAt,
   authorization: {
     approvedDocuments: ["report-judge-rubric-v3", "report-critique-checklist-v3"],
@@ -381,8 +385,9 @@ try {
   const required = manifest.findingLevelFixtures[0].expected;
   const requiredDefect = critiqueRow.result.defects.find((defect) => defect.category === required.requiredFindingCategory);
   if (!requiredDefect) failures.push(`${critiqueRow.fixtureId} missing ${required.requiredFindingCategory}`);
-  if (requiredDefect && !new RegExp(`paragraph\\s+${required.requiredParagraphIndex}\\b`, "iu").test(requiredDefect.location)) {
-    failures.push(`${critiqueRow.fixtureId} finding location '${requiredDefect.location}' does not name paragraph ${required.requiredParagraphIndex}`);
+  const requiredLocationToken = paragraphLocationToken(manifest, required.requiredParagraphIndex);
+  if (requiredDefect && !requiredDefect.location.includes(requiredLocationToken)) {
+    failures.push(`${critiqueRow.fixtureId} finding location '${requiredDefect.location}' does not copy supplied token ${requiredLocationToken}`);
   }
   writeArtifact(failures.length ? "category_failure" : "passed");
 } catch (error) {
