@@ -105,6 +105,7 @@ const deferredPhoneAuthItem = javaScriptFiles.find((item) => item.file.includes(
 const deferredSignupItem = javaScriptFiles.find((item) => item.file.includes("SignupView-"));
 const deferredFriendsWorkspaceItem = javaScriptFiles.find((item) => item.file.includes("FriendsWorkspaceShell-"));
 const deferredSkyDetailItem = javaScriptFiles.find((item) => item.file.includes("SkyDetailArticle-"));
+const deferredReportRouteItem = javaScriptFiles.find((item) => item.file.includes("ReportRoute-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const measurements = {
   appBootGzipBytes: sum(bootItems, "gzipBytes"),
@@ -114,6 +115,7 @@ const measurements = {
   largestJavaScriptGzipBytes: largestJavaScript?.gzipBytes ?? 0,
   friendsWorkspaceChunkGzipBytes: deferredFriendsWorkspaceItem?.gzipBytes ?? 0,
   skyDetailChunkGzipBytes: deferredSkyDetailItem?.gzipBytes ?? 0,
+  reportRouteChunkGzipBytes: deferredReportRouteItem?.gzipBytes ?? 0,
   skyPlacementFallbackChunkGzipBytes: deferredSkyPlacementItem?.gzipBytes ?? 0,
   signupChunkGzipBytes: deferredSignupItem?.gzipBytes ?? 0,
   totalCssGzipBytes: sum(cssFiles, "gzipBytes"),
@@ -153,6 +155,11 @@ if (deferredFriendsWorkspaceItem && bootFiles.has(deferredFriendsWorkspaceItem.f
 if (deferredSkyDetailItem && bootFiles.has(deferredSkyDetailItem.file)) {
   failures.push("The Sky detail article re-entered the static App boot graph.");
 }
+if (!deferredReportRouteItem) {
+  failures.push("The purchased-report delivery route chunk is missing.");
+} else if (bootFiles.has(deferredReportRouteItem.file)) {
+  failures.push("The purchased-report delivery route re-entered the static App boot graph.");
+}
 
 console.log("# Web bundle budget");
 console.log(`App JavaScript boot graph: ${formatBytes(measurements.appBootGzipBytes)} gzip across ${bootItems.length} files`);
@@ -161,6 +168,7 @@ console.log(`Reader startup CSS: ${formatBytes(measurements.readerInitialCssGzip
 console.log(`App code chunk: ${formatBytes(measurements.appChunkGzipBytes)} gzip`);
 console.log(`Deferred Friends workspace: ${formatBytes(measurements.friendsWorkspaceChunkGzipBytes)} gzip`);
 console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailChunkGzipBytes)} gzip`);
+console.log(`Deferred purchased-report route: ${formatBytes(measurements.reportRouteChunkGzipBytes)} gzip`);
 console.log(`On-demand Sky Placement fallback: ${formatBytes(measurements.skyPlacementFallbackChunkGzipBytes)} gzip`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
