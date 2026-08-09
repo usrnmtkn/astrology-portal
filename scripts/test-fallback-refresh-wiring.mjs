@@ -41,6 +41,13 @@ const sunLeoHouseCoreReaderRows = sunLeoHouseCores.rows.map(({
   approved_via: _approvedVia,
   ...row
 }) => row);
+const venusLibraHouseCores = readPackageJson("source-rows/venus-libra-house-cores-v1.json");
+const venusLibraHouseCoreReaderRows = venusLibraHouseCores.rows.map(({
+  notes: _notes,
+  source_keys: _sourceKeys,
+  approved_via: _approvedVia,
+  ...row
+}) => row);
 const skyPlacementOwnerApprovedReaderFallbacks = readPackageJson("bundled-sky-placement-owner-approved-reader-v1.json");
 const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFileSync(
   path.join(repoRoot, `packages/astro-knowledge/review/sky-placement-writer-batch-${batch}-owner-edited-approved-v1.json`),
@@ -166,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-09a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-09b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -932,6 +939,7 @@ try {
         ...skyPlanetFrames.rows,
         ...skySignCopySun.rows,
         ...sunLeoHouseCoreReaderRows,
+        ...venusLibraHouseCoreReaderRows,
         ...pairDailyFrames.rows,
         ...pairDailyClauses.rows,
         ...skyPlacementOwnerApprovedReaderFallbacks.rows
@@ -1016,6 +1024,13 @@ try {
   }
 
   for (const row of sunLeoHouseCores.rows) {
+    const materializedRow = materializedByKey.get(row.contentKey);
+    assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    assert.equal(materializedRow.body, row.body_you);
+    assert.equal(materializedRow.source_snapshot.review_status, "approved");
+  }
+
+  for (const row of venusLibraHouseCores.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
     assert.equal(materializedRow.body, row.body_you);
