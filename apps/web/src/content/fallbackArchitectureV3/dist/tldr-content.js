@@ -1617,10 +1617,10 @@ ${passHook}`;
     }
     if (pairHook && pairLived && pairTurn) {
       let parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter((part) => Boolean(part));
-      if (planet === "lilith" && sign === "sagittarius") {
+      if (planet === "lilith") {
         parts = parts.map((part) => fillKeep(part, { exitDate }));
         if (parts.some((part) => /\{\{/u.test(part))) {
-          throw new SourceGapError("SOURCE_GAP: sky placement pair slots lilith/sagittarius");
+          throw new SourceGapError(`SOURCE_GAP: sky placement pair slots lilith/${sign}`);
         }
       }
       return {
@@ -2219,7 +2219,7 @@ function createKnowledgeMatrixV8Resolver(manifest, transitFile, houseFile, build
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-09d";
+var PACKAGE_VERSION = "v3-2026-08-09e";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
