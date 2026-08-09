@@ -204,7 +204,9 @@ const moonSignEntries = [
 }));
 const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
-  sign: "aries"
+  sign: "aries",
+  entryDate: "August 25, 2026",
+  exitDate: "May 21, 2027"
 });
 const saturnPiscesDirect = renderer.renderSkyPlacement({
   planet: "saturn",
@@ -560,10 +562,10 @@ assert.equal(sunAries.contentKey, "fallback-hook/sky-sign-copy/sun/aries");
 assert.match(sunAries.body, /The Sun in Aries makes a clean decision feel like a return to life\./u);
 assert.equal(sunLeo.tagline, null, "The continuous unit must not append the retired quote-style tagline.");
 assert.equal(Object.hasOwn(sunLeo, "moves"), false, "Sun-in-Leo must not expose the retired Try this section.");
-assert.equal(lilithAries.tagline, "Don’t let disrespect slide", "Owner-approved Lilith placement taglines must be reader-eligible.");
+assert.equal(lilithAries.tagline, "Anger stops going somewhere else", "Owner-approved Lilith placement taglines must be reader-eligible.");
 assert.match(
   lilithAries.body,
-  /^Someone cuts in line or talks over you and suddenly you’re all fire and no filter\./u,
+  /^Someone finally says no to the demand they have agreed to a hundred times before/u,
   "Owner-approved Lilith placement copy must render from the promoted pair rows."
 );
 assert.equal(Object.hasOwn(lilithAries, "moves"), false, "Lilith placement articles must not expose a Try this section.");
