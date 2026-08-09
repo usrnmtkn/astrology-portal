@@ -78,6 +78,10 @@ const phoneAuthServicePath = path.join(repoRoot, "apps/web/src/services/phoneAut
 const phoneAuthValidationServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuthValidation.ts");
 const accountApiPath = path.join(repoRoot, "api/account.ts");
 const appPath = path.join(repoRoot, "apps/web/src/App.tsx");
+const manualChartsPanelPath = path.join(
+  repoRoot,
+  "apps/web/src/features/friends/ManualChartsPanel.tsx"
+);
 const accountViewPath = path.join(repoRoot, "apps/web/src/features/account/AccountView.tsx");
 const signupViewPath = path.join(repoRoot, "apps/web/src/features/auth/SignupView.tsx");
 const memberSettingsViewPath = path.join(
@@ -124,6 +128,7 @@ const phoneAuthService = fs.readFileSync(phoneAuthServicePath, "utf8");
 const phoneAuthValidationService = fs.readFileSync(phoneAuthValidationServicePath, "utf8");
 const accountApi = fs.readFileSync(accountApiPath, "utf8");
 const app = fs.readFileSync(appPath, "utf8");
+const manualChartsPanel = fs.readFileSync(manualChartsPanelPath, "utf8");
 const accountView = fs.readFileSync(accountViewPath, "utf8");
 const signupView = fs.readFileSync(signupViewPath, "utf8");
 const memberSettingsView = fs.readFileSync(memberSettingsViewPath, "utf8");
@@ -297,7 +302,7 @@ assert.match(
   "Connected account charts must not fabricate or expose raw birth inputs."
 );
 assert.match(
-  app,
+  manualChartsPanel,
   /onEdit=\{isSocialFriendChart\(selectedChart\) \? undefined/,
   "Accepted account charts must remain read-only in the manual chart editor."
 );
@@ -582,12 +587,12 @@ assert.match(
   "The unified Friends panel must render directly under the page title."
 );
 assert.match(
-  `${friendsWorkspaceShell}\n${app}`,
+  `${friendsWorkspaceShell}\n${manualChartsPanel}`,
   /<SocialFriendsPanel[\s\S]*chartContent=\{<FriendChartsList[\s\S]*embedded[\s\S]*socialPanelProps=\{\{[\s\S]*onSelectView:/,
   "Circle, Charts, and Requests must be wired through one unified Friends panel."
 );
 assert.match(
-  app,
+  manualChartsPanel,
   /<FriendDetail[\s\S]*avatarUrl=\{selectedSocialFriend\?\.avatarUrl\}/,
   "Accepted social profiles must pass their shared photo into the friend detail header."
 );

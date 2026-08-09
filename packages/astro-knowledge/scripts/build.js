@@ -512,6 +512,35 @@ function build() {
   const skyWebKnowledge = webSkyKnowledge(packageJson, generatedAt, webRuntimeCollections);
   const natalWebKnowledge = webNatalKnowledge(packageJson, generatedAt, webRuntimeCollections);
   const relationshipWebKnowledge = webRelationshipKnowledge(packageJson, generatedAt, webRuntimeCollections);
+  const sharedWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    primitives: webRuntimeCollections.primitives,
+    voiceContent: webRuntimeCollections.voiceContent
+  });
+  const skyRuntimeWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    transits: skyWebKnowledge.transits,
+    placements: skyWebKnowledge.placements,
+    pointPlacements: skyWebKnowledge.pointPlacements,
+    modifiers: skyWebKnowledge.modifiers
+  });
+  const natalInsightsWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    insightCards: natalWebKnowledge.insightCards
+  });
+  const natalTransitsWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    transitNatal: natalWebKnowledge.transitNatal
+  });
+  const natalPlacementsWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    placements: natalWebKnowledge.placements,
+    pointPlacements: natalWebKnowledge.pointPlacements,
+    angles: natalWebKnowledge.angles,
+    modifiers: natalWebKnowledge.modifiers
+  });
+  const relationshipsSynastryWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    synastryAspects: relationshipWebKnowledge.synastryAspects,
+    synastryHouseOverlays: relationshipWebKnowledge.synastryHouseOverlays
+  });
+  const relationshipsCompositeWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
+    composite: relationshipWebKnowledge.composite
+  });
 
   const index = {
     version: packageJson.version,
@@ -557,6 +586,13 @@ function build() {
   writeJson(path.join(distRoot, "sky-web.json"), skyWebKnowledge);
   writeJson(path.join(distRoot, "natal-web.json"), natalWebKnowledge);
   writeJson(path.join(distRoot, "relationships-web.json"), relationshipWebKnowledge);
+  writeJson(path.join(distRoot, "shared-web.json"), sharedWebKnowledge);
+  writeJson(path.join(distRoot, "sky-runtime-web.json"), skyRuntimeWebKnowledge);
+  writeJson(path.join(distRoot, "natal-insights-web.json"), natalInsightsWebKnowledge);
+  writeJson(path.join(distRoot, "natal-transits-web.json"), natalTransitsWebKnowledge);
+  writeJson(path.join(distRoot, "natal-placements-web.json"), natalPlacementsWebKnowledge);
+  writeJson(path.join(distRoot, "relationships-synastry-web.json"), relationshipsSynastryWebKnowledge);
+  writeJson(path.join(distRoot, "relationships-composite-web.json"), relationshipsCompositeWebKnowledge);
   writeJson(path.join(distRoot, "synastry.json"), synastryKnowledge);
   writeJson(path.join(distRoot, "composite.json"), compositeKnowledge);
   writeJson(path.join(distRoot, "web.json"), webKnowledge);
