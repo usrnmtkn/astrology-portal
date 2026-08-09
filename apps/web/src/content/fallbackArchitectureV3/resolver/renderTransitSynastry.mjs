@@ -18,6 +18,7 @@ const pairDailyFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-
 const pairDailyClausesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/pair-daily-clauses-v1.json"), "utf8"));
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const sunLeoHouseCoresV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sun-leo-house-cores-v1.json"), "utf8"));
+const venusLibraHouseCoresV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/venus-libra-house-cores-v1.json"), "utf8"));
 const skyPlacementOwnerApprovedReaderV1 = JSON.parse(fs.readFileSync(path.join(here, "../bundled-sky-placement-owner-approved-reader-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
@@ -31,6 +32,7 @@ rowsFile.hookRows.push(...pairDailyFramesV1.rows);
 rowsFile.hookRows.push(...pairDailyClausesV1.rows);
 rowsFile.hookRows.push(...skySignCopySunV1.rows);
 rowsFile.hookRows.push(...sunLeoHouseCoresV1.rows);
+rowsFile.hookRows.push(...venusLibraHouseCoresV1.rows);
 rowsFile.hookRows.push(...skyPlacementOwnerApprovedReaderV1.rows);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
 rowsFile.vocabularyRows.push(...skyArticleV1.vocabularyRows);
@@ -118,8 +120,10 @@ export function renderSkyPlacementHouseCore({ planet, sign, house }) {
   const row = hooks.get(key);
 
   if (
-    normalizedPlanet !== "sun"
-    || normalizedSign !== "leo"
+    !(
+      (normalizedPlanet === "sun" && normalizedSign === "leo")
+      || (normalizedPlanet === "venus" && normalizedSign === "libra")
+    )
     || !Number.isInteger(normalizedHouse)
     || normalizedHouse < 1
     || normalizedHouse > 12
@@ -135,7 +139,7 @@ export function renderSkyPlacementHouseCore({ planet, sign, house }) {
     body: row.body_you,
     contentKey: row.contentKey,
     house: normalizedHouse,
-    templateKey: "house-horoscope-core/sun-leo-v1"
+    templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`
   };
 }
 

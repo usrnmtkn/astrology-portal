@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-09a",
-  "contentHash": "e0f216c57b5f22f92197f0eb2dd6df15",
-  "keyManifestHash": "f38ed1f892dd103cf446bce6688d9ac8",
-  "keyCount": 773,
+  "packageVersion": "v3-2026-08-09b",
+  "contentHash": "7ce60d3e86697ffa6c7a1a5c04098f0e",
+  "keyManifestHash": "bb320f7d9c3632f9d438983b767e8bcd",
+  "keyCount": 785,
   "keys": [
     "hook:fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
     "hook:fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
@@ -776,6 +776,18 @@
     "hook:house-horoscope-core/sun/leo/house-6",
     "hook:house-horoscope-core/sun/leo/house-7",
     "hook:house-horoscope-core/sun/leo/house-8",
-    "hook:house-horoscope-core/sun/leo/house-9"
+    "hook:house-horoscope-core/sun/leo/house-9",
+    "hook:house-horoscope-core/venus/libra/house-1",
+    "hook:house-horoscope-core/venus/libra/house-10",
+    "hook:house-horoscope-core/venus/libra/house-11",
+    "hook:house-horoscope-core/venus/libra/house-12",
+    "hook:house-horoscope-core/venus/libra/house-2",
+    "hook:house-horoscope-core/venus/libra/house-3",
+    "hook:house-horoscope-core/venus/libra/house-4",
+    "hook:house-horoscope-core/venus/libra/house-5",
+    "hook:house-horoscope-core/venus/libra/house-6",
+    "hook:house-horoscope-core/venus/libra/house-7",
+    "hook:house-horoscope-core/venus/libra/house-8",
+    "hook:house-horoscope-core/venus/libra/house-9"
   ]
 }

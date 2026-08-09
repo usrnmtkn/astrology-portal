@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-09a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-09b");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -109,6 +109,13 @@ const sunLeoHouseCoreReaderRows = sunLeoHouseCores.rows.map(({
   approved_via: _approvedVia,
   ...row
 }) => row);
+const venusLibraHouseCores = readJson(`${packageDir}/source-rows/venus-libra-house-cores-v1.json`);
+const venusLibraHouseCoreReaderRows = venusLibraHouseCores.rows.map(({
+  notes: _notes,
+  source_keys: _sourceKeys,
+  approved_via: _approvedVia,
+  ...row
+}) => row);
 const skyPlanetFrames = readJson(`${packageDir}/source-rows/sky-planet-frames-v1.json`);
 const servingManifest = readJson(`${packageDir}/authored-inputs/sky-placement-serving-manifest-v1.json`);
 const servingReleaseByKey = new Map(servingManifest.releases.flatMap((release) => (
@@ -166,7 +173,8 @@ const expectedManifest = createPackageManifest({
       ...skyPlacementVoicePass.rows,
       ...skySignCopyRows,
       ...skyPlacementOwnerApprovedFallbacks.rows,
-      ...sunLeoHouseCoreReaderRows
+      ...sunLeoHouseCoreReaderRows,
+      ...venusLibraHouseCoreReaderRows
     ]),
     vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,
@@ -194,7 +202,8 @@ const skyPlacementRows = latestEligible([
   ...skyPlacementVoicePass.rows,
   ...skySignCopyRows,
   ...skyPlacementOwnerApprovedFallbacks.rows,
-  ...sunLeoHouseCoreReaderRows
+  ...sunLeoHouseCoreReaderRows,
+  ...venusLibraHouseCoreReaderRows
 ]);
 const skyPlacementKeys = new Set(skyPlacementRows.map((row) => row.contentKey));
 const expectedCoreManifest = createPackageManifest({
@@ -221,7 +230,8 @@ const expectedCoreManifest = createPackageManifest({
       ...skyPlanetFrames.rows,
       ...skyPlacementVoicePass.rows,
       ...skySignCopyRows,
-      ...sunLeoHouseCoreReaderRows
+      ...sunLeoHouseCoreReaderRows,
+      ...venusLibraHouseCoreReaderRows
     ]).filter((row) => !skyPlacementKeys.has(row.contentKey)),
     vocabularyRows: latestEligible([
       ...sourceRows.vocabularyRows,
