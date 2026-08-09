@@ -68,6 +68,18 @@ Before returning `no_defects`, answer these against the complete unit and its ow
 9. Could the interpretive passage move unchanged into a generic wellness, HR, or horoscope article because it lacks the unit-specific circumstance, cause, or consequence? If so, identify what is missing. This diagnostic alone cannot establish a defect.
 10. Would removing the final sentence make the unit stronger because it only restates the lesson? If so, name the bounded density defect.
 
+These questions do NOT create a new defect category. Do not return `flatness`
+or `lived_prose` as a category. Their findings route into the existing defect
+categories:
+
+questions 1–3  -> unlived_abstraction
+questions 4–5  -> interpretive_gap and/or owner_voice_drift as supported
+question 6     -> owner_voice_drift
+question 7     -> density_violation
+question 8     -> owner_voice_drift and/or density_violation
+question 9     -> unlived_abstraction or owner_voice_drift, with comparison evidence
+question 10    -> density_violation
+
 These are diagnostic questions, not instructions to invent manifestations. Findings must remain inside `UNIT_FACTS`, governed interpretation, and the supplied comparison evidence.
 
 ## Comparison discipline
@@ -112,7 +124,7 @@ or:
     {
       "id": "defect-1",
       "category": "owner_voice_drift",
-      "location": "body paragraph 3",
+      "location": "body paragraph 1",
       "sentence_index": 1,
       "scope_start": 1,
       "scope_end": 1,
