@@ -297,6 +297,7 @@ test.describe("Friends loading performance matrix", () => {
       samples.push(await withContext(browser, { viewport: { width: 390, height: 844 } }, async (_context, page) => {
         await preparePage(page);
         await page.goto(url("/#sky"));
+        await expect(page.getByRole("button", { name: "Open full current sky chart" })).toBeVisible();
         await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
         await page.getByRole("button", { name: "Open menu" }).click();
         const friendsMenuItem = page.getByRole("menuitem", { name: "Friends" });
