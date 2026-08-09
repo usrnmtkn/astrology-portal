@@ -1433,7 +1433,7 @@ function renderMoonSignEntry(entryRow, { planet, sign, events, entryDate, exitDa
   const livedRow = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`);
   const closeRow = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`);
   const movesRow = hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`);
-  if (!entryRow.body_you || !livedRow?.body_you || !closeRow?.body_you || !movesRow?.body_you) {
+  if (!entryRow.body_you || !livedRow?.body_you || !closeRow?.body_you) {
     throw new SourceGapError(`SOURCE_GAP: Moon sign-entry structure ${planet}/${sign}`);
   }
 
@@ -1465,7 +1465,7 @@ function renderMoonSignEntry(entryRow, { planet, sign, events, entryDate, exitDa
       aspectDate: continuousSkyPlacementDate(aspectMatch.event.exactDate, "Moon aspect").body
     })
     : null;
-  const moves = movesRow.body_you
+  const moves = (movesRow?.body_you ?? "")
     .split(/\r?\n/u)
     .map((move) => move.trim())
     .filter(Boolean);
