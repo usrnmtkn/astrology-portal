@@ -1,11 +1,14 @@
 # Report critique checklist v3
 
-**Status:** `needs_review`
-**Version:** `report-critique-checklist-v3-draft`
+**Status:** `owner_approved`
+**Version:** `report-critique-checklist-v3`
+**Approved:** 2026-08-09
 **Active in production:** `false`
-**Owner approved:** `false`
+**Owner approved:** `true`
 **Promotion authorized:** `false`
-**Governance:** Owner-editable system prompt. Not reader-facing copy. Approved v2 remains active. This v3 draft requires explicit owner approval before activation, and any later revision requires a new version and fresh approval.
+**Governance:** Owner-editable system prompt. Not reader-facing copy. Approved v2 remains active in production. V3 is approved for calibration but is not activated or promotion-authorized. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Report fulfillment judge rubric v3, the Report critique checklist v3, and the proposed v3 threshold of 0.9.
 
 The critique call reviews one complete report unit. A complete unit includes its heading, date range when applicable, every prose paragraph, attribution line, and key-date block. The critic must use the unit-scoped facts bundle and two or three side-by-side owner-authored comparison passages supplied with the request.
 
@@ -147,9 +150,9 @@ The single-sentence Work & Money closer mutation tests detection sensitivity wit
 
 ## Activation gate
 
-This v3 draft cannot replace v2 until:
+This approved v3 checklist cannot replace v2 until:
 
-1. the owner explicitly approves the exact v3 documents;
+1. the recorded v3 approval remains unchanged;
 2. runtime schemas support applicability and comparison evidence;
 3. complete-unit paired fixtures pass deterministic fact and structure checks; and
 4. the owner separately authorizes the next billed calibration run.

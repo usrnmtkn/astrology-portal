@@ -1,12 +1,15 @@
 # Report fulfillment judge rubric v3
 
-**Status:** `needs_review`
-**Version:** `report-judge-rubric-v3-draft`
+**Status:** `owner_approved`
+**Version:** `report-judge-rubric-v3`
+**Approved:** 2026-08-09
 **Active in production:** `false`
-**Owner approved:** `false`
+**Owner approved:** `true`
 **Promotion authorized:** `false`
-**Proposed threshold:** `0.9` (not approved for v3)
-**Governance:** Owner-editable judge prompt. The judge scores and identifies defects; it never writes or edits prose. Approved v2 remains active. This v3 draft and its threshold require explicit owner approval before activation, and any later revision requires a new version and fresh approval.
+**Approved threshold:** `0.9`
+**Governance:** Owner-editable judge prompt. The judge scores and identifies defects; it never writes or edits prose. Approved v2 remains active in production. V3 and threshold 0.9 are approved for calibration but are not activated or promotion-authorized. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Report fulfillment judge rubric v3, the Report critique checklist v3, and the proposed v3 threshold of 0.9.
 
 Score one complete report unit from 0 to 4 in every applicable category. A complete unit includes its heading, date range when applicable, every prose paragraph, attribution line, and key-date block. Use only the canonical prompt, `UNIT_FACTS`, deterministic validator results, and the supplied side-by-side owner comparison set.
 
@@ -221,9 +224,9 @@ Do not tune the proposed threshold until every pair separates on its intended ca
 
 ## Activation gate
 
-This v3 draft cannot replace v2 until:
+This approved v3 rubric cannot replace v2 until:
 
-1. the owner explicitly approves the exact v3 documents and threshold;
+1. the recorded v3 approval and threshold remain unchanged;
 2. runtime schemas support movement applicability, comparison evidence, and runtime-recomputed overall scores;
 3. complete-unit paired fixtures pass deterministic structure and facts checks; and
 4. the owner separately authorizes the next billed calibration run.
