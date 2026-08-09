@@ -11,7 +11,7 @@
       "notes": [
         "Credential-free NASA/JPL Horizons API using DE441 apparent geocentric observer ecliptic-of-date longitudes.",
         "Used by scripts/providers/nasa-horizons-provider.mjs through TLDR_ASTRO_VERIFY_PROVIDER_COMMAND.",
-        "Verifies Sun through Pluto, Moon, Chiron, direct/retrograde by finite difference, and aspects among supported bodies.",
+        "Verifies Sun through Pluto, Moon, Chiron, direct/retrograde by finite difference, and conjunction, sextile, square, trine, quincunx, and opposition aspects among supported bodies.",
         "Does not verify lunar nodes, Lilith, Asc/Desc/MC/IC, house cusps, retrograde stations, shadow boundaries, or transit exact-hit bisection in the current adapter."
       ]
     },

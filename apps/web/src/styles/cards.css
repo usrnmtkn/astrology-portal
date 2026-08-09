@@ -648,7 +648,7 @@ button.daily-forecast-label::after {
   font-size: var(--text-button-size);
   grid-column: 2;
   grid-row: 1 / span 2;
-  line-height: 1;
+  line-height: var(--leading-label);
 }
 
 button.daily-forecast-label:hover {

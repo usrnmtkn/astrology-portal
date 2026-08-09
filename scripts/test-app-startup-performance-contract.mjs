@@ -22,6 +22,8 @@ const natalSkyEffectSource = appSource.slice(natalSkyEffectStart, natalSkyEffect
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
 const indexSource = fs.readFileSync(path.join(repoRoot, "apps/web/index.html"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
+const ephemerisSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/ephemeris.ts"), "utf8");
+const webSwissEphemerisData = fs.readFileSync(path.join(repoRoot, "apps/web/public/wasm/swisseph.data"));
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
 const friendDetailStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-detail.css"), "utf8");
@@ -131,6 +133,10 @@ const deferredFallbackSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3DeferredBundle.ts"),
   "utf8"
 );
+const relationshipFallbackSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3RelationshipBundle.ts"),
+  "utf8"
+);
 const deferredSkyPlacementSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts"),
   "utf8"
@@ -165,10 +171,31 @@ assert.doesNotMatch(mainSource, /setInterval\s*\(/u, "Blank-restore recovery mus
 assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Startup must keep bounded blank-mount checks.");
 assert.match(viteSource, /fallback-content-core/u, "Core fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-relationships/u, "Relationship fallback content must have a stable cache chunk.");
+assert.match(viteSource, /fallback-content-transit/u, "Transit fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-sky/u, "Sky fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-sky-core/u, "The eager Sky source partition must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-deferred-core/u, "The deferred natal and relationship source partition must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-sky-placement/u, "The on-demand Sky Placement source partition must have a stable cache chunk.");
+assert.match(
+  viteSource,
+  /tldr-trim-swiss-ephemeris-web-data/u,
+  "The browser build must trim unused Swiss Ephemeris catalogs from its on-demand data package."
+);
+assert.match(
+  viteSource,
+  /remote_package_size:2017967/u,
+  "The browser Swiss Ephemeris loader must pin the generated data-package size."
+);
+assert.equal(
+  webSwissEphemerisData.byteLength,
+  2_017_967,
+  "The browser Swiss Ephemeris data package must retain only the calculation files used by the app."
+);
+assert.doesNotMatch(
+  ephemerisSource,
+  /\.fixstar(?:2)?(?:_ut|_mag)?\s*\(/u,
+  "The trimmed browser data package is invalid if the app begins calling Swiss fixed-star catalogs."
+);
 assert.match(viteSource, /phone-auth/u, "Phone metadata must have a stable deferred cache chunk.");
 assert.doesNotMatch(phoneAuthSource, /libphonenumber-js/u, "Reader boot phone helpers must not import global phone metadata.");
 assert.match(
@@ -179,7 +206,12 @@ assert.match(
 assert.match(
   fallbackRuntimeSource,
   /import\("\.\/fallbackArchitectureV3DeferredBundle"\)/u,
-  "Transit and relationship content must remain behind a dynamic runtime boundary."
+  "Transit content must remain behind a dynamic runtime boundary."
+);
+assert.match(
+  fallbackRuntimeSource,
+  /import\("\.\/fallbackArchitectureV3RelationshipBundle"\)/u,
+  "Relationship content must remain behind its own dynamic runtime boundary."
 );
 assert.match(
   fallbackRuntimeSource,
@@ -205,6 +237,16 @@ assert.doesNotMatch(
   deferredFallbackSource,
   /source-rows\/fallback-source-rows-v3\.json/u,
   "The deferred runtime must use the generated complementary partition instead of duplicating the canonical snapshot."
+);
+assert.doesNotMatch(
+  deferredFallbackSource,
+  /transit-synastry-rows-v1\.json/u,
+  "The transit runtime must use its generated authored-card partition instead of importing the complete relationship source."
+);
+assert.match(
+  relationshipFallbackSource,
+  /bundled-relationship-authored-cards-v3\.json/u,
+  "The relationship runtime must use the generated compatibility partition."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,
