@@ -1,0 +1,26 @@
+{
+  "1_month": {
+    "unit": { "horizon": "1_month", "unitId": "overview", "allowedUnitIds": ["overview", "what-matters-most", "domain:*", "key-dates"] },
+    "factorCount": 4,
+    "resolvedCount": 4,
+    "sourceGapCount": 0
+  },
+  "4_months": {
+    "unit": { "horizon": "4_months", "unitId": "development:1", "allowedUnitIds": ["overview", "period-theme", "development:*", "key-dates", "closing-synthesis"] },
+    "factorCount": 8,
+    "resolvedCount": 8,
+    "sourceGapCount": 0
+  },
+  "6_months": {
+    "unit": { "horizon": "6_months", "unitId": "phase-1", "allowedUnitIds": ["overview", "period-theme", "phase-1", "phase-2", "key-dates", "review"] },
+    "factorCount": 10,
+    "resolvedCount": 10,
+    "sourceGapCount": 0
+  },
+  "12_months": {
+    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "review-current-year", "winter-next"] },
+    "factorCount": 18,
+    "resolvedCount": 18,
+    "sourceGapCount": 0
+  }
+}

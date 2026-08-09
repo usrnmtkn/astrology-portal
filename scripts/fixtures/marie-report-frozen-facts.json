@@ -1,0 +1,54 @@
+{
+  "reportHorizon": "12_months",
+  "startsAt": "2026-02-18T01:59:11Z",
+  "endsAt": "2027-02-18T07:40:22Z",
+  "natal": {
+    "positions": [
+      { "point": "Sun", "house": 9 },
+      { "point": "Moon", "house": 6 },
+      { "point": "Mercury", "house": 10 },
+      { "point": "Mars", "house": 9 },
+      { "point": "Jupiter", "house": 3 },
+      { "point": "Saturn", "house": 4 },
+      { "point": "Uranus", "house": 6 },
+      { "point": "Neptune", "house": 7 },
+      { "point": "Pluto", "house": 5 }
+    ],
+    "angles": {
+      "Ascendant": { "point": "Ascendant", "house": 1 },
+      "Midheaven": { "point": "Midheaven", "house": 10 }
+    }
+  },
+  "profections": {
+    "annual": { "house": 12, "sign": "Taurus", "ruler": "Venus" }
+  },
+  "solarReturn": {
+    "returnMoment": "2026-02-18T01:59:11Z",
+    "analysis": {
+      "solarReturnToNatalOverlays": [
+        { "point": "Venus", "house": 10 },
+        { "point": "Ascendant", "house": 5 }
+      ]
+    }
+  },
+  "slowTransitArcs": [
+    { "id": "saturn-trine-jupiter", "transitPlanet": "Saturn", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "trine", "isReturn": false, "passes": [{ "exactAt": "2026-02-22T00:00:00Z" }] },
+    { "id": "neptune-trine-jupiter", "transitPlanet": "Neptune", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "trine", "isReturn": false, "passes": [{ "exactAt": "2026-02-26T00:00:00Z" }] },
+    { "id": "uranus-square-sun", "transitPlanet": "Uranus", "natalPoint": "Sun", "natalHouse": 9, "aspect": "square", "isReturn": false, "passes": [{ "exactAt": "2026-04-14T00:00:00Z" }] },
+    { "id": "jupiter-square-pluto", "transitPlanet": "Jupiter", "natalPoint": "Pluto", "natalHouse": 5, "aspect": "square", "isReturn": false, "passes": [{ "exactAt": "2026-05-01T00:00:00Z" }] },
+    { "id": "jupiter-trine-uranus", "transitPlanet": "Jupiter", "natalPoint": "Uranus", "natalHouse": 6, "aspect": "trine", "isReturn": false, "passes": [{ "exactAt": "2026-05-14T00:00:00Z" }] },
+    { "id": "saturn-sextile-ascendant", "transitPlanet": "Saturn", "natalPoint": "Ascendant", "natalHouse": 1, "aspect": "sextile", "isReturn": false, "passes": [{ "exactAt": "2026-05-19T00:00:00Z" }, { "exactAt": "2026-10-06T00:00:00Z" }, { "exactAt": "2027-02-10T00:00:00Z" }] },
+    { "id": "jupiter-conjunction-jupiter", "transitPlanet": "Jupiter", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "conjunction", "isReturn": true, "passes": [{ "exactAt": "2026-07-04T00:00:00Z" }] },
+    { "id": "jupiter-square-moon", "transitPlanet": "Jupiter", "natalPoint": "Moon", "natalHouse": 6, "aspect": "square", "isReturn": false, "passes": [{ "exactAt": "2026-08-27T00:00:00Z" }] },
+    { "id": "jupiter-trine-neptune", "transitPlanet": "Jupiter", "natalPoint": "Neptune", "natalHouse": 7, "aspect": "trine", "isReturn": false, "passes": [{ "exactAt": "2026-10-04T00:00:00Z" }] },
+    { "id": "jupiter-square-uranus", "transitPlanet": "Jupiter", "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square", "isReturn": false, "passes": [{ "exactAt": "2026-10-09T00:00:00Z" }] },
+    { "id": "jupiter-opposition-mars", "transitPlanet": "Jupiter", "natalPoint": "Mars", "natalHouse": 9, "aspect": "opposition", "isReturn": false, "passes": [{ "exactAt": "2026-10-20T00:00:00Z" }, { "exactAt": "2027-02-05T00:00:00Z" }] },
+    { "id": "neptune-conjunction-neptune", "transitPlanet": "Neptune", "natalPoint": "Neptune", "natalHouse": 7, "aspect": "conjunction", "isReturn": false, "passes": [{ "exactAt": "2026-11-01T00:00:00Z" }] }
+  ],
+  "lunarEvents": [
+    { "id": "lunar-eclipse-2026-03-03", "kind": "lunar_eclipse", "occursAt": "2026-03-03T11:38:00Z", "natalContacts": [{ "natalPoint": "Saturn", "aspect": "conjunction" }] },
+    { "id": "solar-eclipse-2026-08-12", "kind": "solar_eclipse", "occursAt": "2026-08-12T17:37:00Z", "natalContacts": [{ "natalPoint": "Uranus", "aspect": "square" }] },
+    { "id": "lunar-eclipse-2026-08-28", "kind": "lunar_eclipse", "occursAt": "2026-08-28T04:19:00Z", "natalContacts": [{ "natalPoint": "Mercury", "aspect": "conjunction" }] },
+    { "id": "solar-eclipse-2027-02-06", "kind": "solar_eclipse", "occursAt": "2027-02-06T15:56:00Z", "natalContacts": [{ "natalPoint": "Midheaven", "aspect": "conjunction" }] }
+  ]
+}

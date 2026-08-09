@@ -23,7 +23,10 @@ export type UserGeneratedSubjectType =
   | "year_ahead_saturn_return_callout"
   | "relationship_report_section"
   | "saturn_return"
-  | "saturn_return_section";
+  | "saturn_return_section"
+  | "report_unit";
+
+export type ReportHorizon = "1_month" | "4_months" | "6_months" | "12_months";
 
 type UserGeneratedContentRow = {
   id: string;
@@ -57,6 +60,10 @@ export type GenerateUserContentRequest = {
   sourceSnapshot?: Record<string, unknown>;
   voiceNotes?: string;
   allowQualityFallback?: boolean;
+  reportId?: string;
+  reportHorizon?: ReportHorizon;
+  unitId?: string;
+  dryRun?: boolean;
 };
 
 export type GenerateUserContentErrorPayload = {
