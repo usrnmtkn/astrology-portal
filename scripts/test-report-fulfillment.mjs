@@ -20,7 +20,7 @@ const timestamp = 1_786_247_200;
 const signature = crypto.createHmac("sha256", "whsec_fixture").update(`${timestamp}.${signaturePayload}`).digest("hex");
 assert.equal(verifyStripeWebhookSignature({ payload: signaturePayload, signatureHeader: `t=${timestamp},v1=${signature}`, secret: "whsec_fixture", nowSeconds: timestamp }), true);
 assert.equal(verifyStripeWebhookSignature({ payload: `${signaturePayload}x`, signatureHeader: `t=${timestamp},v1=${signature}`, secret: "whsec_fixture", nowSeconds: timestamp }), false);
-assert.equal(new Set(REPORT_SKUS.map((sku) => sku.key)).size, 12);
+assert.equal(new Set(REPORT_SKUS.map((sku) => sku.key)).size, 16);
 assert.ok(REPORT_SKUS.every((sku) => sku.priceEnv.startsWith("STRIPE_REPORT_PRICE_") && sku.amountEnv.startsWith("STRIPE_REPORT_AMOUNT_") && sku.nameEnv.startsWith("STRIPE_REPORT_NAME_")));
 
 process.env.REPORT_AUTO_PUBLISH = "true";
@@ -41,6 +41,16 @@ assert.throws(() => enforceReportRevisionStopRule(draft, { ...draft, body: "REVI
   id: "d1", category: "unlived_abstraction", location: "body", sentence_index: 1,
   quote: "SECOND_SENTENCE.", evidence: "FIXTURE_ONLY", instruction: "FIXTURE_ONLY"
 }]), ReportStopRuleError);
+const scopedDraft = { ...draft, body: "FIRST_SENTENCE.\n\nSECOND_SENTENCE.\n\nTHIRD_SENTENCE.\n\nFOURTH_SENTENCE." };
+const scopedRevision = { ...scopedDraft, body: "FIRST_SENTENCE.\n\nREVISED_SECOND_SENTENCE.\n\nREVISED_THIRD_SENTENCE.\n\nFOURTH_SENTENCE." };
+assert.equal(enforceReportRevisionStopRule(scopedDraft, scopedRevision, [{
+  id: "multi-1", category: "interpretive_gap", location: "body", sentence_index: 1, scope_start: 1, scope_end: 2,
+  quote: "SECOND_SENTENCE. THIRD_SENTENCE.", evidence: "FIXTURE_ONLY", instruction: "FIXTURE_ONLY"
+}]).body, scopedRevision.body, "A multi-paragraph edit inside a declared defect scope must pass.");
+assert.throws(() => enforceReportRevisionStopRule(scopedDraft, scopedRevision, [{
+  id: "multi-1", category: "interpretive_gap", location: "body", sentence_index: 1,
+  quote: "SECOND_SENTENCE.", evidence: "FIXTURE_ONLY", instruction: "FIXTURE_ONLY"
+}]), ReportStopRuleError, "The same multi-paragraph edit without a scope declaration must fail.");
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
@@ -111,6 +121,13 @@ function modelCallWithCrash(crashAt = Infinity) {
   const call = async (input) => {
     calls += 1;
     if (calls === crashAt) throw new Error("FIXTURE_ONLY_CRASH");
+    if (input.schemaName === "report_unit_draft") {
+      assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*INTERNAL PRE-DRAFT EXTRACTION \(REQUIRED\)[\s\S]*REPORT_GENERATION_PAYLOAD/u);
+    }
+    if (input.schemaName === "report_unit_critique") {
+      assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE/u);
+      assert.match(input.prompt, /Never return flatness or lived_prose as a defect category\./u);
+    }
     return {
       value: input.schemaName === "report_unit_critique" ? { result: "no_defects", defects: [] } : structuredClone(modelDraft),
       model: "FIXTURE_ONLY_MODEL", provider: "FIXTURE_ONLY_PROVIDER",
@@ -131,7 +148,8 @@ const calculateFacts = async (report) => {
   calculationCalls += 1;
   return { facts: factsForHorizon(report.report_horizon), facts_engine: "FIXTURE_ONLY_ENGINE" };
 };
-for (const [index, sku] of REPORT_SKUS.entries()) {
+const activeSkus = REPORT_SKUS.filter((sku) => sku.reportDomain !== "personal_health");
+for (const [index, sku] of activeSkus.entries()) {
   const reportId = `report-${index}`;
   const entitlementId = `entitlement-${index}`;
   store.reports.set(reportId, {
@@ -148,8 +166,26 @@ for (const [index, sku] of REPORT_SKUS.entries()) {
   assert.equal(result.status, "needs_review");
   assert.equal(store.reports.get(reportId).status, "needs_review");
 }
-assert.equal(REPORT_SKUS.length, 12);
-assert.equal(calculationCalls, 4, "One facts calculation per user/window must serve all three domains.");
+assert.equal(REPORT_SKUS.length, 16);
+assert.equal(activeSkus.length, 12);
+assert.equal(calculationCalls, 4, "One facts calculation per user/window must serve all three active domains.");
+
+const personalGateStore = createMemoryStore();
+personalGateStore.reports.set("personal-gated", {
+  id: "personal-gated", user_id: "user-personal", subject_id: null, report_domain: "personal_health", report_horizon: "12_months",
+  period_start: frozen.startsAt.slice(0, 10), period_end: frozen.endsAt.slice(0, 10), facts: {}, facts_engine: "pending", facts_hash: null,
+  fulfillment_status: "queued", prompt_versions: {}, token_count: 0, attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
+});
+personalGateStore.entitlements.set("personal-gated-ent", { id: "personal-gated-ent", user_id: "user-personal", status: "active", product_key: "personal_health_12_months" });
+let gatedCalculationCalls = 0;
+await assert.rejects(processReportFulfillmentJob({
+  job: { id: "personal-gated-job", report_id: "personal-gated", entitlement_id: "personal-gated-ent", state: "running", step: "calculating", attempt: 1 },
+  store: personalGateStore,
+  calculateFacts: async () => { gatedCalculationCalls += 1; return { facts: frozen, facts_engine: "MUST_NOT_RUN" }; },
+  callModel: modelCallWithCrash(),
+  judgeCall
+}), /REPORT_DOMAIN_PROMPT_PENDING.*TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER\.md/u);
+assert.equal(gatedCalculationCalls, 0, "Personal & Health must fail closed before facts or model work while its canonical prompt is pending.");
 
 const concurrentStore = createMemoryStore();
 const concurrentBase = {
@@ -209,4 +245,4 @@ assert.equal(retryPatch.state, "retry", "Transient model failures remain resumab
 const adminSource = fs.readFileSync(new URL("../api/admin/report-fulfillment.ts", import.meta.url), "utf8");
 assert.ok(!/edit(?:_|\s|-)?prose|update(?:_|\s|-)?body/iu.test(adminSource), "The exception dashboard must not add a prose-editing path.");
 
-console.log("Report fulfillment passed: SKUs, owner gate, signatures, refunds, fact lock, stop rule, shared and concurrently claimed facts, 12 mocked products, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: 16 SKUs, Personal & Health prompt gate, owner gate, signatures, refunds, fact lock, scoped stop rule, shared facts across 12 active products, crash resume, retry queue, and no-edit admin contract.");

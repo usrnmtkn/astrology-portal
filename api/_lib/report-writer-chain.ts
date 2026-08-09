@@ -23,6 +23,8 @@ export type ReportDefect = {
   category: ReportDefectCategory;
   location: string;
   sentence_index: number;
+  scope_start?: number;
+  scope_end?: number;
   quote: string;
   evidence: string;
   instruction: string;
@@ -56,11 +58,24 @@ const critiqueSchema = {
       required: ["id", "category", "location", "sentence_index", "quote", "evidence", "instruction"],
       properties: {
         id: { type: "string" }, category: { type: "string", enum: [...REPORT_DEFECT_CATEGORIES] },
-        location: { type: "string" }, sentence_index: { type: "integer", minimum: 0 }, quote: { type: "string" }, evidence: { type: "string" }, instruction: { type: "string" }
+        location: { type: "string" }, sentence_index: { type: "integer", minimum: 0 },
+        scope_start: { type: "integer", minimum: 0 }, scope_end: { type: "integer", minimum: 0 },
+        quote: { type: "string" }, evidence: { type: "string" }, instruction: { type: "string" }
       }
     } }
   }
 };
+
+const FLATNESS_DIAGNOSTIC_ROUTING = `FLATNESS / LIVED PROSE
+Apply the lived-prose standard's ten-question final flatness check as a diagnostic group. It does not create a new defect enum.
+Questions 1-3 route to unlived_abstraction.
+Questions 4-5 route to interpretive_gap and/or owner_voice_drift when supported.
+Question 6 routes to owner_voice_drift.
+Question 7 routes to density_violation.
+Question 8 routes to owner_voice_drift and/or density_violation.
+Question 9 routes to unlived_abstraction or owner_voice_drift only with comparison evidence. It is corroborative only and can never be the sole basis for a defect.
+Question 10 routes to density_violation.
+Never return flatness or lived_prose as a defect category.`;
 
 function sentences(value: string) {
   return value.match(/[^.!?]+[.!?]+|[^.!?]+$/gu)?.map((sentence) => sentence.trim()).filter(Boolean) ?? [];
@@ -88,7 +103,15 @@ export class ReportStopRuleError extends Error {
 }
 
 export function enforceReportRevisionStopRule(draft: ReportDraft, revised: ReportDraft, defects: ReportDefect[]) {
-  const named = new Set(defects.map((defect) => `${defect.location}:${defect.sentence_index}`));
+  const named = new Set<string>();
+  for (const defect of defects) {
+    const start = defect.scope_start ?? defect.sentence_index;
+    const end = defect.scope_end ?? defect.sentence_index;
+    if (end < start || defect.sentence_index < start || defect.sentence_index > end) {
+      throw new Error(`Invalid report defect scope for ${defect.id}: ${start}-${end} (representative ${defect.sentence_index}).`);
+    }
+    for (let index = start; index <= end; index += 1) named.add(`${defect.location}:${index}`);
+  }
   const before = textFields(draft);
   const after = textFields(revised);
   const changed: string[] = [];
@@ -126,7 +149,7 @@ export async function runReportWriterChain(input: {
   calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
   const critiqueResult = await callModel<ReportCritique>({
     ...target,
-    prompt: `${critiquePrompt.text}\n\nCANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}\n\nSCOPED_FACTS\n${JSON.stringify(payload.frozenFacts)}\n\nOWNER_REFERENCE_EVIDENCE\n${JSON.stringify(payload.voiceEvidence)}\n\nDRAFT\n${JSON.stringify(draftResult.value)}`,
+    prompt: `${critiquePrompt.text}\n\nCANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}\n\nLIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}\n\n${FLATNESS_DIAGNOSTIC_ROUTING}\n\nSCOPED_FACTS\n${JSON.stringify(payload.frozenFacts)}\n\nOWNER_REFERENCE_EVIDENCE\n${JSON.stringify(payload.voiceEvidence)}\n\nDRAFT\n${JSON.stringify(draftResult.value)}`,
     schemaName: "report_unit_critique",
     schema: critiqueSchema
   });
@@ -137,7 +160,7 @@ export async function runReportWriterChain(input: {
   const reviseResult = await callModel<ReportDraft>({
     ...target,
     prompt: [
-      "Revise only the named sentences. Every unnamed sentence must remain byte-identical.",
+      "Revise only the explicitly named sentence or scope range. Everything outside every named scope must remain byte-identical.",
       `DRAFT\n${JSON.stringify(draftResult.value)}`,
       `NAMED_DEFECTS\n${JSON.stringify(critiqueResult.value.defects)}`
     ].join("\n\n"),
