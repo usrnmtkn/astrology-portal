@@ -19,6 +19,7 @@ const {
   sha256
 } = require("./daily-glance-writer-runtime.js");
 const { canonicalAstrologyWritingInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
+const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
 
 const packageRoot = path.resolve(__dirname, "..");
 const defaultOutDir = path.join(packageRoot, "review", "daily-glance-pilots-v1");
@@ -90,12 +91,11 @@ function existingLiveArtifacts(base) {
 
 async function requestOnce({ config, modelInput, maxOutputTokens = 16000 }) {
   const startedAt = Date.now();
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: { authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({
+  const { response, payload } = await callOpenAIResponses({
+    apiKey: process.env.OPENAI_API_KEY,
+    role: "WRITER",
+    request: {
       model: config.routing.model,
-      instructions: canonicalAstrologyWritingInstructions,
       input: modelInput,
       reasoning: { effort: config.routing.reasoningEffort },
       max_output_tokens: maxOutputTokens,
@@ -115,9 +115,8 @@ async function requestOnce({ config, modelInput, maxOutputTokens = 16000 }) {
           }
         }
       }
-    })
+    }
   });
-  const payload = await response.json();
   return { response, payload, latencyMs: Date.now() - startedAt };
 }
 

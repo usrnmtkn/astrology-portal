@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   CANONICAL_WRITING_INSTRUCTIONS_VERSION,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
@@ -13,6 +14,7 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const payload = {
+  CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   CANONICAL_WRITING_INSTRUCTIONS_VERSION,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
