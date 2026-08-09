@@ -76,7 +76,7 @@ The final gate checks em dashes, forbidden `whether`, governed banned words and 
 
 ## 10. Gold per-fixture results
 
-Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, and Pisces all returned expected `PASS`: 12/12.
+The deterministic baseline returned expected `PASS` for all 12. The required live semantic pass did not agree. GPT-5.6 Terra-low passed Cancer, Libra, Scorpio, Sagittarius, and Pisces: 5/12. It marked Aries, Taurus, Gemini, Leo, Virgo, Capricorn, and Aquarius `REVISE`: 7 live-model false positives. The combined pipeline passed only 4/12 because the deterministic banned-language gate rejected Pisces after the model passed it.
 
 ## 11. Negative per-fixture results
 
@@ -89,9 +89,11 @@ Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricor
 - `neg-gemini-advocacy`: `REVISE`; `advocacy_register_drift`, `observable_behavior`
 - `neg-virgo-clinical`: `REVISE`; `clinical_shorthand`, `observable_behavior`
 
+Those lines describe the deterministic baseline. In the live semantic pass, exact agreement required the model to return `REVISE` and include every expected blocking category. Aries, Pisces, Aquarius, and Gemini met that standard: 4/8. Capricorn, Sagittarius, and Virgo found the expected categories but returned `FAIL` instead of `REVISE`. Taurus returned `REVISE` but omitted `tagline_stands_alone`. The combined deterministic-plus-model pipeline returned `REVISE` with every expected category for all 8/8.
+
 ## 12. False positives and false negatives
 
-False positives: 0. False negatives: 0. Blocking regressions: 0.
+Deterministic baseline: 0 false positives, 0 false negatives. Live semantic model, under the exact expected-verdict rule: 7 false positives and 4 false negatives/mismatches. Combined pipeline: 8 false positives and 0 false negatives. The live result is a failed promotion evaluation and is preserved without fixture or prompt tuning.
 
 ## 13. Approval ladder
 
@@ -103,12 +105,12 @@ Every generated output carries component versions for the astrology contract, wr
 
 ## 15. Writer promotion gate
 
-`CURRENT_PRODUCTION_WRITER` remains unset. `CANDIDATE_WRITER` is the unpromoted Sol-xhigh Sky Placement lane. Promotion requires 12/12 gold, 8/8 negatives, zero false positives, zero false negatives, zero blocking regressions, and a separate explicit owner authorization.
+`CURRENT_PRODUCTION_WRITER` remains unset. `CANDIDATE_WRITER` is the unpromoted Sol-xhigh Sky Placement lane. Promotion requires 12/12 gold, 8/8 negatives, zero false positives, zero false negatives, zero blocking regressions, and a separate explicit owner authorization. The live semantic result fails that gate, so promotion remains impossible.
 
 ## 16. Source governance and billed call count
 
-The authority order is exact owner approval, owner corrections, owner corpus, locked matrix, voice bank, governed neutral astrology, then external neutral facts. External prose is rejected by the anti-laundering guard; only structured neutral facts and provenance can enter. This upgrade used **0 billed model calls**. Its executable vertical slice is deterministic and contract-based.
+The authority order is exact owner approval, owner corrections, owner corpus, locked matrix, voice bank, governed neutral astrology, then external neutral facts. External prose is rejected by the anti-laundering guard; only structured neutral facts and provenance can enter. The first executable vertical slice used **0 billed model calls** and was deterministic/pattern-based. After owner authorization, one real semantic pass used exactly **20 billed calls**, one per fixture, with `gpt-5.6-terra` at low reasoning. No generation or revision calls were made.
 
 ## 17. Remaining known gaps and next family
 
-The candidate writer has not been promoted, no generated copy was approved, and the deterministic vertical slice does not claim that a live model is editorially equivalent to the owner. A future billed candidate evaluation requires separate owner authorization. The next generalization target is the remaining Sky Placement families beyond the locked Lilith slice, followed by house-horoscope cores. Main integration also depends on the separately opened bridge PR #136; this branch must rebase onto current `main` before its own PR is opened.
+The candidate writer has not been promoted, no generated copy was approved, and the live reviewer is not yet calibrated to the owner-locked gold set. The main known defect is over-rejection of owner-approved language; the model also missed the Taurus tagline category. No fixture or prompt was changed in response to this run. Any further billed calibration requires separate owner authorization. After the reviewer is corrected and independently re-evaluated, the next generalization target is the remaining Sky Placement families beyond the locked Lilith slice, followed by house-horoscope cores.
