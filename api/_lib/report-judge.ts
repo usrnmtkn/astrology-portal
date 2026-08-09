@@ -3,7 +3,24 @@ import type { ReportDraft, ReportGenerationPayload } from "./report-generation.t
 import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.ts";
 import { loadVersionedReportPrompt, REPORT_JUDGE_PROMPT_PATH } from "./report-prompt-versions.ts";
 
-export const REPORT_JUDGE_CATEGORIES = ["astrology_chronology", "factual_traceability", "specificity", "natural_language", "syntax_variety", "emotional_temperature", "density"] as const;
+export const REPORT_JUDGE_CATEGORIES = [
+  "astrology_chronology",
+  "factual_traceability",
+  "lived_experience",
+  "interpretive_movement",
+  "owner_voice",
+  "natural_language",
+  "syntax_variety",
+  "emotional_temperature",
+  "density"
+] as const;
+export const REPORT_JUDGE_HARD_GATE_CATEGORIES = [
+  "astrology_chronology",
+  "factual_traceability",
+  "lived_experience",
+  "interpretive_movement",
+  "owner_voice"
+] as const satisfies readonly ReportJudgeCategory[];
 export type ReportJudgeCategory = typeof REPORT_JUDGE_CATEGORIES[number];
 export type ReportJudgeResult = {
   scores: Record<ReportJudgeCategory, number>;
@@ -33,12 +50,20 @@ export async function judgeReportUnit(input: {
   const target = judgeModelTarget();
   const response = await (input.callModel ?? callReportModel)<ReportJudgeResult>({
     ...target,
-    prompt: `${prompt.text}\n\nCANONICAL_PROMPT\n${input.payload.canonicalOwnerPrompt.text}\n\nFACTS\n${JSON.stringify(input.payload.frozenFacts)}\n\nVALIDATORS\n${JSON.stringify(input.validatorResults)}\n\nDRAFT\n${JSON.stringify(input.draft)}\n\nConfigured threshold: ${input.threshold}.`,
+    prompt: `${prompt.text}\n\nCANONICAL_PROMPT\n${input.payload.canonicalOwnerPrompt.text}\n\nFACTS\n${JSON.stringify(input.payload.frozenFacts)}\n\nOWNER_REFERENCE_EVIDENCE\n${JSON.stringify(input.payload.voiceEvidence)}\n\nVALIDATORS\n${JSON.stringify(input.validatorResults)}\n\nDRAFT\n${JSON.stringify(input.draft)}\n\nConfigured threshold: ${input.threshold}.`,
     schemaName: "report_fulfillment_judge",
     schema: judgeSchema
   });
-  const result = { ...response.value, verdict: response.value.overall >= input.threshold ? "pass" as const : "below_threshold" as const };
+  const result = {
+    ...response.value,
+    verdict: reportJudgeVerdict(response.value.scores, response.value.overall, input.threshold)
+  };
   return { result, usage: response.usage, model: response.model, promptVersion: prompt.version };
+}
+
+export function reportJudgeVerdict(scores: Record<ReportJudgeCategory, number>, overall: number, threshold: number) {
+  const hardGatePassed = REPORT_JUDGE_HARD_GATE_CATEGORIES.every((category) => scores[category] >= 3);
+  return overall >= threshold && hardGatePassed ? "pass" as const : "below_threshold" as const;
 }
 
 export function deterministicCalibrationScore(text: string) {
