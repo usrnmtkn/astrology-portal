@@ -1311,7 +1311,6 @@ ${passHook}`;
         body: aspectParts.join("\n\n")
       };
     }
-    const moves = Array.isArray(signCopy.try_this) ? signCopy.try_this.map((move) => fillKeep(move, ctx)).slice(0, 3) : [];
     const parts = [factLine, ...collective, ...aspectParts, close];
     const articleSections = [
       { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
@@ -1321,7 +1320,6 @@ ${passHook}`;
     const renderedText = [
       `${title2(planet)} in ${title2(sign)}`,
       ...parts,
-      ...moves,
       ...articleSections.map((section) => section.heading)
     ].join("\n");
     if (/\{\{/u.test(renderedText)) {
@@ -1344,8 +1342,6 @@ ${passHook}`;
     return {
       headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
       tagline: null,
-      moves,
-      movesPresentation: "plain",
       closingCharge: null,
       keyDates: [],
       body: parts.join("\n\n"),
@@ -1366,7 +1362,6 @@ ${passHook}`;
     }
     const livedRow = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`);
     const closeRow = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`);
-    const movesRow = hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`);
     if (!entryRow.body_you || !livedRow?.body_you || !closeRow?.body_you) {
       throw new SourceGapError(`SOURCE_GAP: Moon sign-entry structure ${planet}/${sign}`);
     }
@@ -1387,22 +1382,19 @@ ${passHook}`;
         break;
       }
     }
-    const moves = (movesRow?.body_you ?? "").split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
     const parts = [opening, ...livedParts, aspectBody, close].filter((part) => Boolean(part));
     const articleSections = [
       { kind: "collective-read", heading: "", body: [opening, ...livedParts].join("\n\n") },
       ...aspectBody ? [{ kind: "dated-aspect", heading: "", body: aspectBody }] : [],
       { kind: "exit-tone-shift", heading: "", body: close }
     ];
-    const renderedText = [...parts, ...moves].join("\n");
+    const renderedText = parts.join("\n");
     if (/\{\{/u.test(renderedText)) {
       throw new SourceGapError(`SOURCE_GAP: Moon sign-entry slots ${planet}/${sign}`);
     }
     return {
       headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
       tagline: null,
-      moves,
-      movesPresentation: "plain",
       closingCharge: null,
       keyDates: [],
       body: parts.join("\n\n"),
@@ -1476,7 +1468,6 @@ ${passHook}`;
         return {
           headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
           tagline: null,
-          moves: [],
           closingCharge: null,
           keyDates: [],
           articleWindow: articleWindow(authoredArticle),
@@ -1505,7 +1496,6 @@ ${passHook}`;
         return {
           headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
           tagline: null,
-          moves: [],
           closingCharge,
           keyDates: [],
           articleWindow: articleWindow(authoredArticle),
@@ -1524,7 +1514,6 @@ ${passHook}`;
       return {
         headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
         tagline: null,
-        moves: [],
         keyDates: [],
         articleWindow: articleWindow(authoredArticle),
         articleMode,
@@ -1575,7 +1564,6 @@ ${passHook}`;
         return {
           headline: `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
           tagline: null,
-          moves: [],
           keyDates: [],
           body,
           parts: [body],
@@ -1593,7 +1581,6 @@ ${passHook}`;
     const signCopy = continuousSignCopy?.body_you;
     const signParts = signCopy ? [signCopy] : pairHook && pairLived && pairTurn ? [pairHook, pairLived, pairTurn] : [];
     const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
-    const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "").split(/\r?\n/u).map((move) => move.trim()).filter(Boolean);
     {
       const windowFrame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
       const directPlanetFrame = hooks.get(`fallback-hook/sky-placement-frame/${planet}`)?.body_you;
@@ -1621,7 +1608,6 @@ ${passHook}`;
         return {
           headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
           tagline,
-          moves: signCopy ? [] : moves,
           body: parts.join("\n\n"),
           parts,
           templateKey: signCopy ? "sky-placement-article-v2" : "sky-placement-frame-v3",
@@ -1634,7 +1620,6 @@ ${passHook}`;
       return {
         headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
         tagline,
-        moves,
         body: parts.join("\n\n"),
         parts,
         templateKey: "fallback-template/sky.placement-article",
@@ -2086,7 +2071,7 @@ ${passHook}`;
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-08h";
+var PACKAGE_VERSION = "v3-2026-08-09a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
