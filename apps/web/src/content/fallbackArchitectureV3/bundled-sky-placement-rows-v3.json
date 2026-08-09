@@ -44,41 +44,42 @@
       "contentKey": "fallback-hook/sky-placement-hook/moon/capricorn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Pressure rises and we tighten up. For about two and a half days, everything gets weighed against the plan. The Moon gets serious here, and so do we.",
-      "body_they": "Pressure rises and we tighten up. For about two and a half days, everything gets weighed against the plan. The Moon gets serious here, and so do we.",
+      "body_you": "The Moon moves into Capricorn on {{entryDate}}. Moon in Capricorn is focused on what must be done. Composure holds. Needing something starts to feel like an admission.",
+      "body_they": "The Moon moves into Capricorn on {{entryDate}}. Moon in Capricorn is focused on what must be done. Composure holds. Needing something starts to feel like an admission.",
       "review_status": "approved",
       "source_keys": [
-        "owner screenshot 2026-07-27"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Voice-first placement hook, restored from the stronger prior card.",
-      "approved_via": "owner feedback, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/capricorn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem. Competence feels comforting, but it can also become armor. We stay busy enough to avoid admitting that something hurts.",
-      "body_they": "Feelings get translated into tasks: make the list, keep the promise, handle the thing before it becomes a problem. Competence feels comforting, but it can also become armor. We stay busy enough to avoid admitting that something hurts.",
+      "body_you": "The Capricorn Moon keeps the day standing; finishing things is how it feels safe. For two and a half days, that is the gift. The hard thing gets handled. Care shows up as reliability; the promise kept, the practical problem quietly solved.\n\nThe trouble starts in Capricorn's shadow: fear running the show in a suit. Composure becomes suppression. The mountain gets climbed without anyone asking whose it is, and the standard being met belongs to someone else entirely. The one who handles everything never gets asked how they are, partly because they never answer. Rest does not have to be earned through exhaustion. Capricorn doesn't need more proof. It needs the feeling to count as part of the day.",
+      "body_they": "The Capricorn Moon keeps the day standing; finishing things is how it feels safe. For two and a half days, that is the gift. The hard thing gets handled. Care shows up as reliability; the promise kept, the practical problem quietly solved.\n\nThe trouble starts in Capricorn's shadow: fear running the show in a suit. Composure becomes suppression. The mountain gets climbed without anyone asking whose it is, and the standard being met belongs to someone else entirely. The one who handles everything never gets asked how they are, partly because they never answer. Rest does not have to be earned through exhaustion. Capricorn doesn't need more proof. It needs the feeling to count as part of the day.",
       "review_status": "approved",
       "source_keys": [
-        "owner screenshot 2026-07-27",
-        "packages/astro-knowledge/data/placements/sign/moon-capricorn.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Voice-first lived-expression slot.",
-      "approved_via": "owner feedback, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/capricorn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The catch is treating every feeling like a problem to solve. Not everything difficult is a failure, and not everything tender needs a plan. Do what is yours to do, then let yourself be human off the clock.",
-      "body_they": "The catch is treating every feeling like a problem to solve. Not everything difficult is a failure, and not everything tender needs a plan. Do what is yours to do, then let yourself be human off the clock.",
+      "body_you": "A heavy, composed day is not proof that everything depends on us.",
+      "body_they": "A heavy, composed day is not proof that everything depends on us.",
       "review_status": "approved",
       "source_keys": [
-        "owner screenshot 2026-07-27"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Voice-first shadow-and-turn slot.",
-      "approved_via": "owner feedback, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/mercury/cancer",
@@ -163,40 +164,42 @@
       "contentKey": "fallback-hook/sky-placement-hook/moon/scorpio",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The collective mood drops below the surface. Small things land harder, silence gets louder, and we start reading for what people are not saying.",
-      "body_they": "The collective mood drops below the surface. Small things land harder, silence gets louder, and we start reading for what people are not saying.",
+      "body_you": "The Moon moves into Scorpio on {{entryDate}}. Small talk loses its charm. Undercurrents become easier to read than words. The Scorpio Moon doesn't sugarcoat the truth, it calls us to plunge straight into it.",
+      "body_they": "The Moon moves into Scorpio on {{entryDate}}. Small talk loses its charm. Undercurrents become easier to read than words. The Scorpio Moon doesn't sugarcoat the truth, it calls us to plunge straight into it.",
       "review_status": "approved",
       "source_keys": [
-        "outputs/sky-placement-golds-moon-chiron.md"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Voice-first placement hook.",
-      "approved_via": "owner feedback, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/scorpio",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For about two and a half days, feelings get heavier and more private: less said out loud, more felt in the gut. This is the fastest hand on the clock, a passing tone rather than a chapter. It is sharp while it lasts and mostly gone in a few days.",
-      "body_they": "For about two and a half days, feelings get heavier and more private: less said out loud, more felt in the gut. This is the fastest hand on the clock, a passing tone rather than a chapter. It is sharp while it lasts and mostly gone in a few days.",
+      "body_you": "The Scorpio Moon names what has been circling unsaid. For two and a half days, that is the gift. The door closes and the difficult conversation finally finishes. The question avoided all month gets asked. Admitting how hard something has been stops feeling like weakness.\n\nThe trouble starts in Scorpio's shadow: the fear of being left with nothing. Every silence gets filled with the worst explanation. A short reply gets reread for what it hid. Jealousy dresses up as insight, and a private feeling gets guarded like evidence. Scorpio doesn't need the whole truth excavated at once. It needs one honest sentence said out loud, and most of it comes down to trust.",
+      "body_they": "The Scorpio Moon names what has been circling unsaid. For two and a half days, that is the gift. The door closes and the difficult conversation finally finishes. The question avoided all month gets asked. Admitting how hard something has been stops feeling like weakness.\n\nThe trouble starts in Scorpio's shadow: the fear of being left with nothing. Every silence gets filled with the worst explanation. A short reply gets reread for what it hid. Jealousy dresses up as insight, and a private feeling gets guarded like evidence. Scorpio doesn't need the whole truth excavated at once. It needs one honest sentence said out loud, and most of it comes down to trust.",
       "review_status": "approved",
       "source_keys": [
-        "outputs/sky-placement-golds-moon-chiron.md"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Voice-first lived-expression slot.",
-      "approved_via": "owner feedback, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/scorpio",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The pull is to test the people we love, to poke at a bond to see if it holds, or to go quiet and make them guess. Scorpio feelings want the truth, but they will settle for control when the truth feels too exposed. Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest.",
-      "body_they": "The pull is to test the people we love, to poke at a bond to see if it holds, or to go quiet and make them guess. Scorpio feelings want the truth, but they will settle for control when the truth feels too exposed. Say the raw thing and it clears. Hold it in and it leaks out sideways, aimed at whoever is closest.",
+      "body_you": "An intense day is not proof that something is being hidden.",
+      "body_they": "An intense day is not proof that something is being hidden.",
       "review_status": "approved",
       "source_keys": [
-        "outputs/sky-placement-golds-moon-chiron.md"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Voice-first shadow-and-turn slot.",
-      "approved_via": "owner feedback, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/chiron/aries",
@@ -3395,522 +3398,434 @@
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/aquarius",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Keep feelings off the shelf",
-      "body_they": "Keep feelings off the shelf",
+      "grammar_frame": "complete_sentence",
+      "body_you": "See the pattern, keep the warmth",
+      "body_they": "See the pattern, keep the warmth",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aquarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/aquarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone just said, “I’m fine,” but their eyes are scanning the room. The Moon moves through Aquarius, making us check emotions from a distance and measure belonging by how much space we get to be ourselves.",
-      "body_they": "Someone just said, “I’m fine,” but their eyes are scanning the room. The Moon moves through Aquarius, making us check emotions from a distance and measure belonging by how much space we get to be ourselves.",
+      "body_you": "The Moon moves into Aquarius on {{entryDate}}. Feelings move to arm's length. Space feels necessary. The recurring argument shows its shape.",
+      "body_they": "The Moon moves into Aquarius on {{entryDate}}. Feelings move to arm's length. Space feels necessary. The recurring argument shows its shape.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aquarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/aquarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For about two and a half days, we hold our feelings like a puzzle piece we’re figuring out from across the table, not glued to the moment. You notice people pause before answering, as if running their reactions through a mental filter, or sharing an idea about the group instead of raw personal need. The quiet buzz of connection hums beneath a surface of calm, like a conversation happening in code.",
-      "body_they": "For about two and a half days, we hold our feelings like a puzzle piece we’re figuring out from across the table, not glued to the moment. You notice people pause before answering, as if running their reactions through a mental filter, or sharing an idea about the group instead of raw personal need. The quiet buzz of connection hums beneath a surface of calm, like a conversation happening in code.",
+      "body_you": "The Aquarius Moon zooms out; distance is how it sorts a feeling. For two and a half days, that is the gift. The week reads as a pattern instead of a storm. A feeling becomes information. The loop a relationship keeps running finally has a name.\n\nThe trouble starts in Aquarius' shadow: the view from the fringe. Distance turns into absence. A feeling gets analyzed instead of answered, and the observation about the pattern arrives where the warmth was needed. Being the one who sees it all starts feeling like a reason to stay outside it all. Detachment isn't enlightenment when it's really just dissociation. Aquarius doesn't need us above the room. It needs the clear view brought back down into it.",
+      "body_they": "The Aquarius Moon zooms out; distance is how it sorts a feeling. For two and a half days, that is the gift. The week reads as a pattern instead of a storm. A feeling becomes information. The loop a relationship keeps running finally has a name.\n\nThe trouble starts in Aquarius' shadow: the view from the fringe. Distance turns into absence. A feeling gets analyzed instead of answered, and the observation about the pattern arrives where the warmth was needed. Being the one who sees it all starts feeling like a reason to stay outside it all. Detachment isn't enlightenment when it's really just dissociation. Aquarius doesn't need us above the room. It needs the clear view brought back down into it.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aquarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/aquarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The gift is the space to be different without threat, but that space can freeze into a glass wall. When distance becomes default, we stop asking for warmth and settle for cool logic instead. People drift apart while pretending it’s all about principles, not the silence growing between them.",
-      "body_they": "The gift is the space to be different without threat, but that space can freeze into a glass wall. When distance becomes default, we stop asking for warmth and settle for cool logic instead. People drift apart while pretending it’s all about principles, not the silence growing between them.",
+      "body_you": "Feeling a step apart for a few days is not proof of not belonging.",
+      "body_they": "Feeling a step apart for a few days is not proof of not belonging.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aquarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/aquarius",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Ask one person what they really think without prepping your reply.\nSend a message that simply states your need, no explanation attached.\nSpend an hour observing a crowd without joining the buzz, then note what stands out.",
-      "body_they": "Ask one person what they really think without prepping your reply.\nSend a message that simply states your need, no explanation attached.\nSpend an hour observing a crowd without joining the buzz, then note what stands out.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-aquarius.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/aries",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Act on how it feels",
-      "body_they": "Act on how it feels",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Feel it before sending it",
+      "body_they": "Feel it before sending it",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aries.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/aries",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You want to say it before you think it through. The Moon in Aries turns feelings into sparks that demand a fast match. It only lingers for a couple of days - enough to feel the heat, not long enough to cool it down.",
-      "body_they": "You want to say it before you think it through. The Moon in Aries turns feelings into sparks that demand a fast match. It only lingers for a couple of days - enough to feel the heat, not long enough to cool it down.",
+      "body_you": "The Moon moves into Aries on {{entryDate}}. Aries doesn't wait for permission. Irritation shows up before its reason does. The reply goes out while the feeling is still hot.",
+      "body_they": "The Moon moves into Aries on {{entryDate}}. Aries doesn't wait for permission. Irritation shows up before its reason does. The reply goes out while the feeling is still hot.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aries.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/aries",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For around two and a half days, moods hit like a sudden rush: a burst of courage to start a conversation, a swipe to fix what’s wrong, or a snap decision to change course. The usual pause for second-guessing disappears. You notice the quick steps toward what feels urgent, like standing up first in a meeting or cutting off a complaint with action rather than words.",
-      "body_they": "For around two and a half days, moods hit like a sudden rush: a burst of courage to start a conversation, a swipe to fix what’s wrong, or a snap decision to change course. The usual pause for second-guessing disappears. You notice the quick steps toward what feels urgent, like standing up first in a meeting or cutting off a complaint with action rather than words.",
+      "body_you": "The Aries Moon strips the delay between feeling and action. For two and a half days, that is the gift; we know how we feel immediately and can say it without a week of rehearsal. Courage comes cheaper. The thing that needed saying gets said today.\n\nThe trouble starts in Aries' shadow: it wants what it wants immediately. The first flash gets the final word. A sharp reply starts a fight the feeling did not need, and seeing it from the other side becomes impossible for exactly as long as it matters. Under the impatience there is usually something unacknowledged, and it comes out as anger. Aries doesn't need us to act instantly. It needs us to act honestly.",
+      "body_they": "The Aries Moon strips the delay between feeling and action. For two and a half days, that is the gift; we know how we feel immediately and can say it without a week of rehearsal. Courage comes cheaper. The thing that needed saying gets said today.\n\nThe trouble starts in Aries' shadow: it wants what it wants immediately. The first flash gets the final word. A sharp reply starts a fight the feeling did not need, and seeing it from the other side becomes impossible for exactly as long as it matters. Under the impatience there is usually something unacknowledged, and it comes out as anger. Aries doesn't need us to act instantly. It needs us to act honestly.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aries.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/aries",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "That rush flips when everything becomes urgent, and you push before you’re ready. Impatience makes you interrupt or jump to conclusions, treating every feeling like a fire to put out. The fastest move isn’t always the right one - slow down or you’ll burn out your own signal.",
-      "body_they": "That rush flips when everything becomes urgent, and you push before you’re ready. Impatience makes you interrupt or jump to conclusions, treating every feeling like a fire to put out. The fastest move isn’t always the right one - slow down or you’ll burn out your own signal.",
+      "body_you": "A flash of anger or urgency is not proof that something is wrong with the plan or the person. Aries is quick to move on.",
+      "body_they": "A flash of anger or urgency is not proof that something is wrong with the plan or the person. Aries is quick to move on.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-aries.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/aries",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Call out one thing you want to start before the day ends.\nChoose one reaction to a feeling and pause for five breaths before acting.\nChallenge a quick no by asking yourself what you want instead.",
-      "body_they": "Call out one thing you want to start before the day ends.\nChoose one reaction to a feeling and pause for five breaths before acting.\nChallenge a quick no by asking yourself what you want instead.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-aries.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/cancer",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Protect what feels real",
-      "body_they": "Protect what feels real",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Tend what feels like home",
+      "body_they": "Tend what feels like home",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-cancer.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/cancer",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone suddenly wants to know where you’re from, or what you’re really made of. The Moon in Cancer pulls the past close and asks for a quiet place to land. It’s about the weight in a look, not the words behind it.",
-      "body_they": "Someone suddenly wants to know where you’re from, or what you’re really made of. The Moon in Cancer pulls the past close and asks for a quiet place to land. It’s about the weight in a look, not the words behind it.",
+      "body_you": "The Moon moves into Cancer on {{entryDate}}. Cancer pulls everything home. Feelings come in waves, and the waves set the schedule. Who checked in and who did not starts to register.",
+      "body_they": "The Moon moves into Cancer on {{entryDate}}. Cancer pulls everything home. Feelings come in waves, and the waves set the schedule. Who checked in and who did not starts to register.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-cancer.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/cancer",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For about two and a half days, the world moves slower around home and heart. You notice how the same chair holds a thousand memories, or how a single photo triggers a rush of care you didn’t expect. We spend more time checking the emotional locks on what matters, like rereading a letter aloud or making space for someone who doesn’t say much but needs to be near you.",
-      "body_they": "For about two and a half days, the world moves slower around home and heart. You notice how the same chair holds a thousand memories, or how a single photo triggers a rush of care you didn’t expect. We spend more time checking the emotional locks on what matters, like rereading a letter aloud or making space for someone who doesn’t say much but needs to be near you.",
+      "body_you": "The Cancer Moon turns the care up, and time with the ones who count as family does more than any plan. For two and a half days, that is the gift. The meal gets cooked instead of ordered. The person whose silence has been noticed gets the call. The shell is there for anyone who needs an evening inside it.\n\nThe trouble starts in Cancer's shadow: care with strings attached. Everyone else's comfort gets managed while our own request goes unsaid, and the unsaid part turns passive aggressive. Helping becomes a way of keeping someone needing us. A change of tone gets taken personally before anyone asks what happened. Cancer doesn't need us to mother everyone. It needs the care to point inward too, boundaries included.",
+      "body_they": "The Cancer Moon turns the care up, and time with the ones who count as family does more than any plan. For two and a half days, that is the gift. The meal gets cooked instead of ordered. The person whose silence has been noticed gets the call. The shell is there for anyone who needs an evening inside it.\n\nThe trouble starts in Cancer's shadow: care with strings attached. Everyone else's comfort gets managed while our own request goes unsaid, and the unsaid part turns passive aggressive. Helping becomes a way of keeping someone needing us. A change of tone gets taken personally before anyone asks what happened. Cancer doesn't need us to mother everyone. It needs the care to point inward too, boundaries included.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-cancer.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/cancer",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "When guarding feelings becomes a fortress, the walls start to echo with silence. We hide behind caretaking, avoiding the ask for help, or shrink away from the risk of showing our raw edges. If tenderness is your shield, you’ll miss the chance to be held back.",
-      "body_they": "When guarding feelings becomes a fortress, the walls start to echo with silence. We hide behind caretaking, avoiding the ask for help, or shrink away from the risk of showing our raw edges. If tenderness is your shield, you’ll miss the chance to be held back.",
+      "body_you": "A tender, thin-skinned day is not proof that a relationship is in trouble.",
+      "body_they": "A tender, thin-skinned day is not proof that a relationship is in trouble.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-cancer.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/cancer",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Cook one meal meant to be eaten slowly, without distraction.\nCall or visit someone who carries your earliest memories.\nWrite down one thing you want to protect, then say it out loud once.",
-      "body_they": "Cook one meal meant to be eaten slowly, without distraction.\nCall or visit someone who carries your earliest memories.\nWrite down one thing you want to protect, then say it out loud once.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-cancer.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/gemini",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Name what moves you",
-      "body_they": "Name what moves you",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Name the feeling once",
+      "body_they": "Name the feeling once",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-gemini.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/gemini",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone talks fast, pauses, then rewinds. Their feelings aren’t quiet - they’re a conversation in motion. That’s the Moon passing through Gemini.",
-      "body_they": "Someone talks fast, pauses, then rewinds. Their feelings aren’t quiet - they’re a conversation in motion. That’s the Moon passing through Gemini.",
+      "body_you": "The Moon moves into Gemini on {{entryDate}}. Gemini wants it talked about. Every feeling becomes a conversation, questions get three follow-ups, and silence starts to feel like something going wrong.",
+      "body_they": "The Moon moves into Gemini on {{entryDate}}. Gemini wants it talked about. Every feeling becomes a conversation, questions get three follow-ups, and silence starts to feel like something going wrong.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-gemini.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/gemini",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Over about two and a half days, emotions don’t sit still. They jump from one idea to the next, needing voice and labels before they land. You might catch yourself explaining what you feel, not just feeling it - like running your hand over a sculpture to understand its shape. The mood moves in sentences, questions, and quick shifts in thought.",
-      "body_they": "Over about two and a half days, emotions don’t sit still. They jump from one idea to the next, needing voice and labels before they land. You might catch yourself explaining what you feel, not just feeling it - like running your hand over a sculpture to understand its shape. The mood moves in sentences, questions, and quick shifts in thought.",
+      "body_you": "The Gemini Moon opens doors, and asking the questions is how it takes care of itself. It is a time to approach life with playfulness, curiosity, and childlike wonder. For two and a half days, that is the gift. The stuck conversation finds its opening. The right message arrives for the person who needed it. The thing that felt unsayable turns out to take one sentence.\n\nThe trouble starts in Gemini's shadow: all talk, no commitment. Plans get made warmly and dropped quietly. The story about someone gets told to everyone but them. Talking about the decision replaces making it. Without grounding, curiosity becomes avoidance. Words become noise. Gemini doesn't need us to say everything. It needs us to say the one thing that has been waiting, to the person it belongs to; and sometimes that person is us.",
+      "body_they": "The Gemini Moon opens doors, and asking the questions is how it takes care of itself. It is a time to approach life with playfulness, curiosity, and childlike wonder. For two and a half days, that is the gift. The stuck conversation finds its opening. The right message arrives for the person who needed it. The thing that felt unsayable turns out to take one sentence.\n\nThe trouble starts in Gemini's shadow: all talk, no commitment. Plans get made warmly and dropped quietly. The story about someone gets told to everyone but them. Talking about the decision replaces making it. Without grounding, curiosity becomes avoidance. Words become noise. Gemini doesn't need us to say everything. It needs us to say the one thing that has been waiting, to the person it belongs to; and sometimes that person is us.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-gemini.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/gemini",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "When feelings only live in words, the body feels left out. The mind’s chatter can turn restless, spinning in circles without grounding the heart. Trying to pin down emotions by talking them out can leave you more tangled, not clearer. Say what happened, say what you need, or the noise just grows louder.",
-      "body_they": "When feelings only live in words, the body feels left out. The mind’s chatter can turn restless, spinning in circles without grounding the heart. Trying to pin down emotions by talking them out can leave you more tangled, not clearer. Say what happened, say what you need, or the noise just grows louder.",
+      "body_you": "A scattered day of half-finished conversations is not proof that anything is wrong.",
+      "body_they": "A scattered day of half-finished conversations is not proof that anything is wrong.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-gemini.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/gemini",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Ask a question you don’t know the answer to and follow where it goes.\nRead a poem out loud and notice what you feel as you say it.\nExplain an emotion to a friend in three different ways before moving on.",
-      "body_they": "Ask a question you don’t know the answer to and follow where it goes.\nRead a poem out loud and notice what you feel as you say it.\nExplain an emotion to a friend in three different ways before moving on.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-gemini.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/leo",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Demand your moment",
-      "body_they": "Demand your moment",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Let the feeling be seen",
+      "body_they": "Let the feeling be seen",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-leo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/leo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Someone wants applause for just showing up. The Moon in Leo doesn’t just ask for warmth - it expects the spotlight to catch fire. You’ll know it by the way simple interactions beg for theater, not just comfort.",
-      "body_they": "Someone wants applause for just showing up. The Moon in Leo doesn’t just ask for warmth - it expects the spotlight to catch fire. You’ll know it by the way simple interactions beg for theater, not just comfort.",
+      "body_you": "The Moon moves into Leo on {{entryDate}}. Leo wants the feeling seen. The good story gets told twice. Appreciation lands deeper than usual, and so does being overlooked.",
+      "body_they": "The Moon moves into Leo on {{entryDate}}. Leo wants the feeling seen. The good story gets told twice. Appreciation lands deeper than usual, and so does being overlooked.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-leo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/leo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For about two and a half days, feelings shape-shift into declarations. A glance lingers longer, a laugh sounds louder, and kindness comes with a flair that fills the room. We find ourselves saying more than usual - not to fill silence, but to fill the space with something undeniably alive. Small moments become stages where affection wants to be seen, not just felt.",
-      "body_they": "For about two and a half days, feelings shape-shift into declarations. A glance lingers longer, a laugh sounds louder, and kindness comes with a flair that fills the room. We find ourselves saying more than usual - not to fill silence, but to fill the space with something undeniably alive. Small moments become stages where affection wants to be seen, not just felt.",
+      "body_you": "The Leo Moon puts the heart on stage. For two and a half days, that is the gift. Warmth gets expressed instead of implied. The small win gets its celebration. Praise comes easier, given and received, and confidence stops needing a reason.\n\nThe trouble starts in Leo's shadow: the ego takes the heart's seat. The story gets retold for a better response. The mood turns dramatic to hold the room. Going unnoticed starts to feel like being unloved, and standing outside our own perspective becomes the one thing we cannot do. Creative expression does not require applause to exist. Leo doesn't need us to perform the feeling. It needs us to mean it in front of someone.",
+      "body_they": "The Leo Moon puts the heart on stage. For two and a half days, that is the gift. Warmth gets expressed instead of implied. The small win gets its celebration. Praise comes easier, given and received, and confidence stops needing a reason.\n\nThe trouble starts in Leo's shadow: the ego takes the heart's seat. The story gets retold for a better response. The mood turns dramatic to hold the room. Going unnoticed starts to feel like being unloved, and standing outside our own perspective becomes the one thing we cannot do. Creative expression does not require applause to exist. Leo doesn't need us to perform the feeling. It needs us to mean it in front of someone.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-leo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/leo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "When the stage demands a standing ovation for every sigh, sincerity gets lost in the act. The need to be noticed turns vulnerability into performance, and generosity becomes a showpiece traded for applause. Don’t mistake attention for care - the real warmth doesn’t need an audience.",
-      "body_they": "When the stage demands a standing ovation for every sigh, sincerity gets lost in the act. The need to be noticed turns vulnerability into performance, and generosity becomes a showpiece traded for applause. Don’t mistake attention for care - the real warmth doesn’t need an audience.",
+      "body_you": "A few days of wanting to be seen more is not proof that something is wrong.",
+      "body_they": "A few days of wanting to be seen more is not proof that something is wrong.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-leo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/leo",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Wear something that feels like a celebration, not a uniform.\nCall out one person’s effort by name today, loudly enough they can hear it.\nMake a small gesture of affection that can’t be ignored.",
-      "body_they": "Wear something that feels like a celebration, not a uniform.\nCall out one person’s effort by name today, loudly enough they can hear it.\nMake a small gesture of affection that can’t be ignored.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-leo.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/libra",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Balance feels like work",
-      "body_they": "Balance feels like work",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Weigh the unspoken too",
+      "body_they": "Weigh the unspoken too",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-libra.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/libra",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "That moment when smoothing things over takes more effort than just saying what you want. The Moon moves into Libra, and everyone’s trying to keep the peace - even if it costs them. Watch how much you bend before you break your own rhythm.",
-      "body_they": "That moment when smoothing things over takes more effort than just saying what you want. The Moon moves into Libra, and everyone’s trying to keep the peace - even if it costs them. Watch how much you bend before you break your own rhythm.",
+      "body_you": "The Moon moves into Libra on {{entryDate}}, and everyone's playing nice. Smiles, small talk, surface-level calm. But just because it looks balanced doesn't mean it is. There's an urge to smooth things over, to make it all look okay, even if it's not.",
+      "body_they": "The Moon moves into Libra on {{entryDate}}, and everyone's playing nice. Smiles, small talk, surface-level calm. But just because it looks balanced doesn't mean it is. There's an urge to smooth things over, to make it all look okay, even if it's not.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-libra.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/libra",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For about two and a half days, feelings tune into the give-and-take of connection. We notice when conversations need a softer touch, and we pause to weigh responses before speaking. You might catch yourself rearranging plans or rephrasing requests to keep things even, as if harmony requires constant negotiation. The mood leans toward careful listening, but the work behind it is felt beneath the surface.",
-      "body_they": "For about two and a half days, feelings tune into the give-and-take of connection. We notice when conversations need a softer touch, and we pause to weigh responses before speaking. You might catch yourself rearranging plans or rephrasing requests to keep things even, as if harmony requires constant negotiation. The mood leans toward careful listening, but the work behind it is felt beneath the surface.",
+      "body_you": "The Libra Moon reads the balance sheet, and evening things out is how it self-soothes. For two and a half days, that is the gift. The favor that was never returned gets remembered. The one doing all the scheduling, the reminding, and the smoothing over finally gets counted.\n\nThe trouble starts in Libra's shadow: pleasing everyone to keep the peace. \"It's fine\" gets said, and noticed as untrue. A decision waits because either choice might disappoint someone. Losing ourselves in the relationship starts to look like devotion. Creating boundaries is a compassionate act for both parties. Libra doesn't need everyone comfortable. It needs the arrangement made fair, our own needs included.",
+      "body_they": "The Libra Moon reads the balance sheet, and evening things out is how it self-soothes. For two and a half days, that is the gift. The favor that was never returned gets remembered. The one doing all the scheduling, the reminding, and the smoothing over finally gets counted.\n\nThe trouble starts in Libra's shadow: pleasing everyone to keep the peace. \"It's fine\" gets said, and noticed as untrue. A decision waits because either choice might disappoint someone. Losing ourselves in the relationship starts to look like devotion. Creating boundaries is a compassionate act for both parties. Libra doesn't need everyone comfortable. It needs the arrangement made fair, our own needs included.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-libra.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/libra",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Here’s the catch: when keeping balance becomes a performance, you lose sight of your own edges. People-pleasing slips in as swallowing your needs to avoid ripples, and what started as diplomacy turns into erasure. Saying nothing to preserve peace just builds a quiet pile of resentment and exhaustion.",
-      "body_they": "Here’s the catch: when keeping balance becomes a performance, you lose sight of your own edges. People-pleasing slips in as swallowing your needs to avoid ripples, and what started as diplomacy turns into erasure. Saying nothing to preserve peace just builds a quiet pile of resentment and exhaustion.",
+      "body_you": "An awkward conversation about fairness is not proof that the relationship is failing.",
+      "body_they": "An awkward conversation about fairness is not proof that the relationship is failing.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-libra.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/libra",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Ask for one thing exactly as you want it, without softening or explaining.\nName one boundary out loud, even if it feels awkward.\nOffer a sincere no to one request that doesn’t feel equal.",
-      "body_they": "Ask for one thing exactly as you want it, without softening or explaining.\nName one boundary out loud, even if it feels awkward.\nOffer a sincere no to one request that doesn’t feel equal.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-libra.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/pisces",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Feel beyond the edges",
-      "body_they": "Feel beyond the edges",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Let the day drift on purpose",
+      "body_they": "Let the day drift on purpose",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-pisces.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/pisces",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "A song makes the room swell, and suddenly you aren’t just hearing it - you’re living it. For about two and a half days, the Moon in Pisces blurs the line between feeling and imagining, pulling emotions through the cracks and into a shared, unseen current.",
-      "body_they": "A song makes the room swell, and suddenly you aren’t just hearing it - you’re living it. For about two and a half days, the Moon in Pisces blurs the line between feeling and imagining, pulling emotions through the cracks and into a shared, unseen current.",
+      "body_you": "The Moon moves into Pisces on {{entryDate}}, soft, strange, and a little untethered. Two currents run at once, one lifting, one pulling under. Focus softens. The nap wins.",
+      "body_they": "The Moon moves into Pisces on {{entryDate}}, soft, strange, and a little untethered. Two currents run at once, one lifting, one pulling under. Focus softens. The nap wins.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-pisces.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/pisces",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "We slide into moments where sadness or joy surface without clear cause, like waves folding into one another. Conversations drift toward what’s hinted at, not said, and you notice the quiet gestures - an unspoken apology, a glance that carries weight. The world feels softer and more fluid, as if empathy leaks through the walls around us, mingling past and present in a slow, immersive pulse.",
-      "body_they": "We slide into moments where sadness or joy surface without clear cause, like waves folding into one another. Conversations drift toward what’s hinted at, not said, and you notice the quiet gestures - an unspoken apology, a glance that carries weight. The world feels softer and more fluid, as if empathy leaks through the walls around us, mingling past and present in a slow, immersive pulse.",
+      "body_you": "The Pisces Moon loosens the grip. For two and a half days, that is the gift. Rest stops needing a reason. The imagination keeps going after the plan runs out. The quieter read on a situation, the one logic kept overruling, finally gets heard.\n\nThe trouble starts in Pisces' shadow: boundaries thin to nothing. Every mood in the building comes home with us. The bill, the reply, and the decision all slide into next week, and the slide starts feeling like something happening to us rather than something we are choosing. Pisces doesn't need the list finished. It needs the drift chosen instead of suffered.",
+      "body_they": "The Pisces Moon loosens the grip. For two and a half days, that is the gift. Rest stops needing a reason. The imagination keeps going after the plan runs out. The quieter read on a situation, the one logic kept overruling, finally gets heard.\n\nThe trouble starts in Pisces' shadow: boundaries thin to nothing. Every mood in the building comes home with us. The bill, the reply, and the decision all slide into next week, and the slide starts feeling like something happening to us rather than something we are choosing. Pisces doesn't need the list finished. It needs the drift chosen instead of suffered.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-pisces.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/pisces",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The same porous heart that opens doors lets in what was never meant to be carried. Boundaries slip, and we collect feelings that aren’t ours - confusion, exhaustion, guilt - until we can’t tell what belongs inside and what should be shut out. When you carry everything, you carry nothing clearly.",
-      "body_they": "The same porous heart that opens doors lets in what was never meant to be carried. Boundaries slip, and we collect feelings that aren’t ours - confusion, exhaustion, guilt - until we can’t tell what belongs inside and what should be shut out. When you carry everything, you carry nothing clearly.",
+      "body_you": "A foggy, low-output day is not proof of lost direction.",
+      "body_they": "A foggy, low-output day is not proof of lost direction.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-pisces.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/pisces",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Listen to one song without doing anything else until you know every note by heart.\nSay no to one request that isn’t yours to hold.\nDraw or write a feeling you can’t put into words and leave it unfinished.",
-      "body_they": "Listen to one song without doing anything else until you know every note by heart.\nSay no to one request that isn’t yours to hold.\nDraw or write a feeling you can’t put into words and leave it unfinished.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-pisces.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/sagittarius",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Chase the why",
-      "body_they": "Chase the why",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Give the feeling air",
+      "body_they": "Give the feeling air",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-sagittarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/sagittarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "You want to know what matters, not just how it feels. The Moon in Sagittarius pulls feelings out of hiding and into the light of purpose and punchline.",
-      "body_they": "You want to know what matters, not just how it feels. The Moon in Sagittarius pulls feelings out of hiding and into the light of purpose and punchline.",
+      "body_you": "The Moon moves into Sagittarius on {{entryDate}}. The small room gets smaller. Honesty comes easier and blunter. A mood lifts the moment there is somewhere to go.",
+      "body_they": "The Moon moves into Sagittarius on {{entryDate}}. The small room gets smaller. Honesty comes easier and blunter. A mood lifts the moment there is somewhere to go.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-sagittarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/sagittarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For about two and a half days, emotions push toward stories with open roads and honest laughs. You might find yourself correcting a half-truth with a joke or switching the usual topic because it feels too small to hold your attention. The urge to get outside, ask bigger questions, or share what you really think colors everyday moments with a restless brightness.",
-      "body_they": "For about two and a half days, emotions push toward stories with open roads and honest laughs. You might find yourself correcting a half-truth with a joke or switching the usual topic because it feels too small to hold your attention. The urge to get outside, ask bigger questions, or share what you really think colors everyday moments with a restless brightness.",
+      "body_you": "The Sagittarius Moon opens a window; comfort hides in the unfamiliar today. The Sagittarius Moon fuels big-picture thinking, but don't get lost in vision. For two and a half days, the gift is air; the walk instead of the couch, the honest version instead of the polite one, the evening that was not planned three weeks ago.\n\nThe trouble starts in Sagittarius' shadow: restlessness posing as wisdom. The whole story gets redrafted because one chapter felt small. Advice gets given that nobody asked for, in words chosen for truth rather than landing. Boredom starts making the commitments look optional. Sagittarius doesn't need a new life by Friday. It needs air.",
+      "body_they": "The Sagittarius Moon opens a window; comfort hides in the unfamiliar today. The Sagittarius Moon fuels big-picture thinking, but don't get lost in vision. For two and a half days, the gift is air; the walk instead of the couch, the honest version instead of the polite one, the evening that was not planned three weeks ago.\n\nThe trouble starts in Sagittarius' shadow: restlessness posing as wisdom. The whole story gets redrafted because one chapter felt small. Advice gets given that nobody asked for, in words chosen for truth rather than landing. Boredom starts making the commitments look optional. Sagittarius doesn't need a new life by Friday. It needs air.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-sagittarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/sagittarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "When meaning becomes a deadline, feelings get rushed like a lesson to be learned before they've fully landed. That quick leap from pain to punchline can leave you skimming over what’s real and raw. You don’t owe every hurt a tidy ending - some need sitting with before the story can shift.",
-      "body_they": "When meaning becomes a deadline, feelings get rushed like a lesson to be learned before they've fully landed. That quick leap from pain to punchline can leave you skimming over what’s real and raw. You don’t owe every hurt a tidy ending - some need sitting with before the story can shift.",
+      "body_you": "A restless stretch is not proof that the whole life needs replacing.",
+      "body_they": "A restless stretch is not proof that the whole life needs replacing.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-sagittarius.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/sagittarius",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Tell one story today that starts with a question, not a conclusion.\nSay what you’re curious about instead of what you think you should feel.\nSwap one complaint for a wild guess about what might come next.",
-      "body_they": "Tell one story today that starts with a question, not a conclusion.\nSay what you’re curious about instead of what you think you should feel.\nSwap one complaint for a wild guess about what might come next.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-sagittarius.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/taurus",
@@ -3970,92 +3885,68 @@
       "contentKey": "fallback-hook/sky-placement-turn/moon/taurus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong. By {{exitDate}}, the mood has moved on.",
-      "body_they": "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong. By {{exitDate}}, the mood has moved on.",
+      "body_you": "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong.",
+      "body_they": "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong.",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/moon-template-package-2026-08-05.md"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Exact owner Moon-entry temporary-mood reminder and engine-owned exit-date slot.",
-      "approved_via": "packages/astro-knowledge/review/moon-template-package-2026-08-05.md#6-approval-scope"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/taurus",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Eat one meal without working or scrolling.\nFinish one task before opening another.\nFix one small source of discomfort in the room you use most.",
-      "body_they": "Eat one meal without working or scrolling.\nFinish one task before opening another.\nFix one small source of discomfort in the room you use most.",
-      "review_status": "approved",
-      "source_keys": [
-        "packages/astro-knowledge/review/moon-template-package-2026-08-05.md"
-      ],
-      "notes": "Exact owner Moon-entry actions. The final line is preserved verbatim under the package's exact-text approval scope.",
-      "approved_via": "packages/astro-knowledge/review/moon-template-package-2026-08-05.md#6-approval-scope"
+      "notes": "Owner Taurus close aligned to no-exit-date pattern per owner approval 2026-08-07; wording otherwise untouched.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/moon/virgo",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "body_you": "Sort feelings by function",
-      "body_they": "Sort feelings by function",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Fix one thing, feel the rest",
+      "body_they": "Fix one thing, feel the rest",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-virgo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-hook/moon/virgo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Some emotions won’t stop buzzing until you sort them out like a filing cabinet. The Moon in Virgo pushes us to tidy up the chaos inside, but it names the mess by what can be fixed, not what just feels real.",
-      "body_they": "Some emotions won’t stop buzzing until you sort them out like a filing cabinet. The Moon in Virgo pushes us to tidy up the chaos inside, but it names the mess by what can be fixed, not what just feels real.",
+      "body_you": "The Moon moves into Virgo on {{entryDate}}. Virgo notices what is off, in the room and underneath it. The worry gets specific. Care starts arriving as corrections.",
+      "body_they": "The Moon moves into Virgo on {{entryDate}}. Virgo notices what is off, in the room and underneath it. The worry gets specific. Care starts arriving as corrections.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-virgo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07.",
+      "render_policy": "sky-placement-moon-entry-v1",
+      "moon_entry_aspect_units": []
     },
     {
       "contentKey": "fallback-hook/sky-placement-lived/moon/virgo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "For about two and a half days, moods move through checklists and small adjustments. You might catch yourself breaking down a worry into steps, or noticing the rhythm of your breath as a tool to calm nerves. We triple-check plans and find relief in making one thing better - repairing a frayed habit, cleaning a cluttered space, or answering a message with fresh attention.",
-      "body_they": "For about two and a half days, moods move through checklists and small adjustments. You might catch yourself breaking down a worry into steps, or noticing the rhythm of your breath as a tool to calm nerves. We triple-check plans and find relief in making one thing better - repairing a frayed habit, cleaning a cluttered space, or answering a message with fresh attention.",
+      "body_you": "The Virgo Moon turns unease into a list; clearing the desk settles the nerves more than talking about them. Virgo moon is good for organizing. For two and a half days, that is the gift; the vague bad feeling becomes one solvable step, the small discomfort ignored for weeks finally gets fixed, and love gets shown by quietly handling something practical.\n\nThe trouble starts in Virgo's shadow: critical of everything, ourselves first. The flaw gets all the attention so the feeling never gets its turn. Help arrives as criticism with good intentions. Service becomes self-sacrifice, and doing everything for everyone eventually shows the real problem: none of the care is aimed at ourselves. Virgo doesn't need everything perfect. It needs one real thing handled, and the rest left alone.",
+      "body_they": "The Virgo Moon turns unease into a list; clearing the desk settles the nerves more than talking about them. Virgo moon is good for organizing. For two and a half days, that is the gift; the vague bad feeling becomes one solvable step, the small discomfort ignored for weeks finally gets fixed, and love gets shown by quietly handling something practical.\n\nThe trouble starts in Virgo's shadow: critical of everything, ourselves first. The flaw gets all the attention so the feeling never gets its turn. Help arrives as criticism with good intentions. Service becomes self-sacrifice, and doing everything for everyone eventually shows the real problem: none of the care is aimed at ourselves. Virgo doesn't need everything perfect. It needs one real thing handled, and the rest left alone.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-virgo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-turn/moon/virgo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The problem starts when trying to fix feelings replaces feeling them. We get stuck critiquing discomfort instead of sitting with it, turning care into a critique session. The pulse of life isn’t a problem to solve, and not every rough edge deserves smoothing down.",
-      "body_they": "The problem starts when trying to fix feelings replaces feeling them. We get stuck critiquing discomfort instead of sitting with it, turning care into a critique session. The pulse of life isn’t a problem to solve, and not every rough edge deserves smoothing down.",
+      "body_you": "A day of noticing every flaw is not proof that anything, or anyone, is failing.",
+      "body_they": "A day of noticing every flaw is not proof that anything, or anyone, is failing.",
       "review_status": "approved",
       "source_keys": [
-        "data/placements/sign/moon-virgo.json"
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
       ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
-    },
-    {
-      "contentKey": "fallback-hook/sky-placement-moves/moon/virgo",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "body_you": "Write down one feeling without a solution attached.\nSpend ten minutes arranging something tactile - a drawer, a desk, a digital folder.\nAsk for one specific way you can help someone near you instead of guessing.",
-      "body_they": "Write down one feeling without a solution attached.\nSpend ten minutes arranging something tactile - a drawer, a desk, a digital folder.\nAsk for one specific way you can help someone near you instead of guessing.",
-      "review_status": "approved",
-      "source_keys": [
-        "data/placements/sign/moon-virgo.json"
-      ],
-      "notes": "Generated by scripts/generate-sky-placement-articles.js; judge gate: auto-publish. Pair-authored copy overrides the generic planet fallback after owner approval.",
-      "approved_via": "owner approval in Codex, 2026-07-27"
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "contentKey": "fallback-hook/sky-placement-tagline/neptune/aquarius",
@@ -11096,36 +10987,6 @@
     },
     {
       "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
-      "body_you": "Name the feeling before turning it into another task.\nLeave one nonessential item unfinished and ask what the pressure was protecting.\nAsk for help with one responsibility you keep treating as proof of competence.",
-      "body_they": "Name the feeling before turning it into another task.\nLeave one nonessential item unfinished and ask what the pressure was protecting.\nAsk for help with one responsibility you keep treating as proof of competence.",
-      "contentKey": "fallback-hook/sky-placement-moves/moon/capricorn",
-      "source_keys": [
-        "fallback-hook/sky-placement-hook/moon/capricorn",
-        "fallback-hook/sky-placement-lived/moon/capricorn",
-        "fallback-hook/sky-placement-turn/moon/capricorn"
-      ],
-      "approved_via": "owner directive, 2026-07-29",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "approved"
-    },
-    {
-      "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
-      "body_you": "Ask the direct question instead of testing whether someone notices your silence.\nWrite down the fact, the fear, and the story you built between them.\nGive the feeling one honest sentence before it turns into suspicion.",
-      "body_they": "Ask the direct question instead of testing whether someone notices your silence.\nWrite down the fact, the fear, and the story you built between them.\nGive the feeling one honest sentence before it turns into suspicion.",
-      "contentKey": "fallback-hook/sky-placement-moves/moon/scorpio",
-      "source_keys": [
-        "fallback-hook/sky-placement-hook/moon/scorpio",
-        "fallback-hook/sky-placement-lived/moon/scorpio",
-        "fallback-hook/sky-placement-turn/moon/scorpio"
-      ],
-      "approved_via": "owner directive, 2026-07-29",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "approved"
-    },
-    {
-      "notes": "Three placement-specific optional moves completing the owner-approved calibration article.",
       "body_you": "Trace one shared rule back to the person or institution that benefits from it.\nProtect the dissenting voice before the group decides it speaks for everyone.\nPut your time behind one collective project whose power is actually shared.",
       "body_they": "Trace one shared rule back to the person or institution that benefits from it.\nProtect the dissenting voice before the group decides it speaks for everyone.\nPut your time behind one collective project whose power is actually shared.",
       "contentKey": "fallback-hook/sky-placement-moves/pluto/aquarius",
@@ -11308,34 +11169,30 @@
       "review_status": "approved"
     },
     {
-      "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
-      "body_you": "Feel it off the clock",
-      "body_they": "Feel it off the clock",
       "contentKey": "fallback-hook/sky-placement-tagline/moon/capricorn",
-      "source_keys": [
-        "fallback-hook/sky-placement-hook/moon/capricorn",
-        "fallback-hook/sky-placement-lived/moon/capricorn",
-        "fallback-hook/sky-placement-turn/moon/capricorn"
-      ],
-      "approved_via": "owner directive, 2026-07-29",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "review_status": "approved"
+      "grammar_frame": "complete_sentence",
+      "body_you": "One honest sentence counts",
+      "body_they": "One honest sentence counts",
+      "review_status": "approved",
+      "source_keys": [
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
+      ],
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
-      "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
-      "body_you": "Say the raw thing",
-      "body_they": "Say the raw thing",
       "contentKey": "fallback-hook/sky-placement-tagline/moon/scorpio",
-      "source_keys": [
-        "fallback-hook/sky-placement-hook/moon/scorpio",
-        "fallback-hook/sky-placement-lived/moon/scorpio",
-        "fallback-hook/sky-placement-turn/moon/scorpio"
-      ],
-      "approved_via": "owner directive, 2026-07-29",
       "content_role": "fallback_hook",
-      "grammar_frame": "fragment",
-      "review_status": "approved"
+      "grammar_frame": "complete_sentence",
+      "body_you": "Say the true thing",
+      "body_they": "Say the true thing",
+      "review_status": "approved",
+      "source_keys": [
+        "packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md"
+      ],
+      "notes": "Owner Moon-sign entry (owner register; RatM light-and-shadow; CHANI meaning reference); replaces pre-template copy. No moves slot by owner ruling 2026-08-07.",
+      "approved_via": "Owner approval recorded 2026-08-07 in packages/astro-knowledge/review/moon-sign-entries-v1/moon-sign-entries-owner-package.md#approval; Try This removal approved by owner ruling 2026-08-07."
     },
     {
       "notes": "Placement-specific optional tagline completing the owner-approved calibration article.",
