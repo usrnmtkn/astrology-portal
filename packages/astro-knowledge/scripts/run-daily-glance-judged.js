@@ -5,6 +5,7 @@ const path = require("path");
 const packageRoot = path.resolve(__dirname, "..");
 const { readJson, buildPacket, renderModelInput, packetLint, lintOutput, loadLocalEnv, normalizeUsage, outputText } = require("./daily-glance-writer-runtime.js");
 const { judgeCandidate } = require("./judge-daily-glance.js");
+const { canonicalAstrologyWritingInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
 
 function parseCandidate(raw) {
   const m = String(raw).match(/\{[\s\S]*\}/);
@@ -17,7 +18,9 @@ async function writerCall(config, modelInput) {
     method: "POST",
     headers: { authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify({
-      model: config.routing.model, input: modelInput,
+      model: config.routing.model,
+      instructions: canonicalAstrologyWritingInstructions,
+      input: modelInput,
       reasoning: { effort: config.routing.reasoningEffort },
       max_output_tokens: config.routing.maxOutputTokens ?? 24000
     })

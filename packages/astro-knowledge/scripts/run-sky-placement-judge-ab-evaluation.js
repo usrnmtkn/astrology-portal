@@ -9,6 +9,7 @@ const { knownWeak } = require("./test-placement-judge-calibration.js");
 const historicalV1 = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
 const { assertLiveJudgeAuthorized, sha256 } = require("./editorial-judge-runtime.js");
 const { judgeConfig } = require("./generate-sky-aspect-cards.js");
+const { canonicalAstrologyReviewInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
 
 const root = path.join(__dirname, "..");
 const manifestPath = path.join(root, "config", "sky-placement-judge-ab-evaluation-v1.json");
@@ -115,6 +116,7 @@ async function defaultRequest({ treatment, prompt, apiKey }) {
     },
     body: JSON.stringify({
       model: treatment.model,
+      instructions: canonicalAstrologyReviewInstructions,
       input: prompt,
       reasoning: { effort: treatment.reasoningEffort },
       max_output_tokens: 1500

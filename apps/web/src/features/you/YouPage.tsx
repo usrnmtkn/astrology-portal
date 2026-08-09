@@ -100,7 +100,8 @@ export type YouPageProps = {
   hasSavedBirthDetails: boolean;
   hasSavedCurrentCity: boolean;
   natalSky: SkySnapshot | null;
-  natalChartPending: boolean;
+  natalChartStatus: "idle" | "loading" | "ready" | "error";
+  natalChartError: string;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternTimingOverrides?: Record<string, NatalAspectPatternActivationTimingWindow>;
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
@@ -326,14 +327,16 @@ function YouProfileSummary({
 function YouNatalChartPanel({
   ariaLabel = "Natal chart",
   natalChart,
-  natalChartPending,
+  natalChartStatus,
+  natalChartError,
   onViewModeChange,
   tableContent,
   viewMode
 }: {
   ariaLabel?: string;
   natalChart: ReactNode;
-  natalChartPending: boolean;
+  natalChartStatus: "idle" | "loading" | "ready" | "error";
+  natalChartError: string;
   onViewModeChange?: (value: NatalChartViewMode) => void;
   tableContent?: ReactNode;
   viewMode?: NatalChartViewMode;
@@ -341,7 +344,11 @@ function YouNatalChartPanel({
   const showViewToggle = Boolean(onViewModeChange && tableContent);
 
   return (
-    <aside className="chart-layout__visual" aria-label={ariaLabel}>
+    <aside
+      className="chart-layout__visual"
+      aria-label={ariaLabel}
+      data-chart-calculation-status={natalChartStatus}
+    >
       {showViewToggle && viewMode ? (
         <SegmentedControl
           value={viewMode}
@@ -356,11 +363,22 @@ function YouNatalChartPanel({
         />
       ) : null}
       {viewMode === "table" && tableContent ? tableContent : natalChart}
-      {natalChartPending && (
+      {(natalChartStatus === "idle" || natalChartStatus === "loading") && (
         <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
           <span>Chart</span>
           <h3>Reading your chart.</h3>
           <p>The chart wheel and core signatures will appear as soon as the calculation finishes.</p>
+        </section>
+      )}
+      {natalChartStatus === "error" && (
+        <section
+          className="you-empty-card you-calculating-card you-calculation-error-card"
+          aria-label="Chart calculation error"
+          role="alert"
+        >
+          <span>Chart</span>
+          <h3>We could not calculate this chart.</h3>
+          <p>{natalChartError || "The chart calculation failed without an error message."}</p>
         </section>
       )}
     </aside>
@@ -1043,7 +1061,8 @@ export function YouPage({
   natalAspectPatternStatus,
   natalTableRows,
   natalSky,
-  natalChartPending,
+  natalChartStatus,
+  natalChartError,
   currentSky,
   houseSignLabelStyle,
   updateTransitAspectLines,
@@ -1132,7 +1151,8 @@ export function YouPage({
         <YouNatalChartPanel
           ariaLabel={activeChartLabel}
           natalChart={activeChart}
-          natalChartPending={natalChartPending}
+          natalChartStatus={natalChartStatus}
+          natalChartError={natalChartError}
           onViewModeChange={profileTab === "chart" ? setNatalChartViewMode : undefined}
           tableContent={profileTab === "chart" ? natalTableContent : undefined}
           viewMode={profileTab === "chart" ? natalChartViewMode : "circle"}
