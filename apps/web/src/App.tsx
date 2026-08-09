@@ -10289,6 +10289,22 @@ export function App() {
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
   const remoteProfileReadyRef = useRef(false);
+
+  useEffect(() => {
+    if (!userProfile) return;
+
+    const preload = () => preloadFriendsExperience();
+    const scheduleIdle = window.requestIdleCallback?.bind(window);
+    const cancelIdle = window.cancelIdleCallback?.bind(window);
+    if (scheduleIdle) {
+      const idleCallbackId = scheduleIdle(preload, { timeout: 1_000 });
+      return () => cancelIdle?.(idleCallbackId);
+    }
+
+    const timeoutId = globalThis.setTimeout(preload, 0);
+    return () => globalThis.clearTimeout(timeoutId);
+  }, [userProfile?.id]);
+
   const [accountIntent, setAccountIntentState] = useState<AuthMode>(getInitialAccountIntent);
   const setAccountIntent = useCallback((intent: AuthMode) => {
     storeAccountIntent(intent);
