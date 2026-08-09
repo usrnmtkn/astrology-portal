@@ -6,6 +6,7 @@
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 5000,
+  "reportRouteChunkGzipBytes": 4500,
   "skyPlacementFallbackChunkGzipBytes": 150000,
   "transitFallbackChunkGzipBytes": 330000,
   "relationshipFallbackChunkGzipBytes": 230000,
