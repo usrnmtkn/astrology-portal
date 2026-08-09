@@ -3014,7 +3014,7 @@ a.tx-card.has-article:hover .tx-more {
   right: var(--lunar-space-6);
   width: 5px;
   height: 5px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--muted);
   content: "";
 }
@@ -3113,6 +3113,6 @@ a.tx-card.has-article:hover .tx-more {
 
   .lunar-calendar-body.is-month .lunar-calendar-event-more {
     color: var(--muted);
-    line-height: 10px;
+    line-height: var(--lunar-event-more-leading);
   }
 }

@@ -20,6 +20,10 @@ const manualChartsPanelSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/ManualChartsPanel.tsx"),
   "utf8"
 );
+const friendDetailSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendDetail.tsx"),
+  "utf8"
+);
 const manualChartsControllerPath = path.join(
   repoRoot,
   "apps/web/src/features/friends/useManualChartsController.ts"
@@ -161,7 +165,7 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequested;/,
+  /const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequests\.size > 0;/,
   "Friends relationship and composite content must wait until a relationship-oriented profile tab requests it."
 );
 assert.match(
@@ -192,12 +196,17 @@ assert.equal(
 );
 assert.match(
   appSource,
-  /\|\| \(mode === "friends" && !friendRelationshipContentRequested\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
-  "Bare Friends and Natal-only views must not download the deferred transit and relationship fallback bundle."
+  /friendDeferredFallbackRequested = friendRelationshipContentRequests\.has\("transits"\)[\s\S]*friendRelationshipContentRequests\.has\("synastry"\)[\s\S]*friendRelationshipContentRequests\.has\("composite"\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
+  "Compatibility, bare Friends, and Natal-only views must not download the deferred transit fallback bundle."
 );
 assert.match(
   appSource,
-  /const requestFriendProfileContent = useCallback\(\(tab: FriendProfileTab\) => \{\s*if \(tab === "natal"\) \{\s*setFriendNatalContentRequested\(true\);\s*return;\s*\}\s*setFriendRelationshipContentRequested\(true\);/,
+  /friendCompatibilityFallbackRequested = friendRelationshipContentRequests\.has\("compatibility"\)[\s\S]*friendRelationshipContentRequests\.has\("transits"\)[\s\S]*loadRelationshipFallbackArchitectureV3Bundle\(\)/,
+  "Bare Friends and Natal-only views must not download the compatibility fallback bundle."
+);
+assert.match(
+  appSource,
+  /const requestFriendProfileContent = useCallback\(\(tab: FriendProfileTab\) => \{\s*if \(tab === "natal"\) \{\s*setFriendNatalContentRequested\(true\);\s*return;\s*\}\s*setFriendRelationshipContentRequests/,
   "Friends must request natal and relationship interpretation payloads independently by active profile tab."
 );
 assert.match(
@@ -326,10 +335,25 @@ assert.match(
   /function openFriendProfile\(chart: ManualChart\) \{[\s\S]*onFriendProfileContentRequest\(chart\.chartType === "event" \? "natal" : "compatibility"\);[\s\S]*setSelectedChartId\(chart\.id\);/,
   "Selecting a chart must start its Compatibility content prefetch before publishing the selection."
 );
+assert.doesNotMatch(
+  manualChartsPanelSource,
+  /onFriendProfileContentRequest\("synastry"\)/,
+  "Compatibility must not automatically prefetch the unrelated Synastry payload after paint."
+);
 assert.match(
   manualChartsPanelSource,
-  /const prefetchAfterPaint = window\.requestAnimationFrame\(\(\) => \{\s*onFriendProfileContentRequest\("natal"\);\s*if \(!selectedChartIsEvent\) \{\s*onFriendProfileContentRequest\("synastry"\);/,
-  "Natal and Synastry content must prefetch only after the selected profile has painted."
+  /onTabIntent=\{onFriendProfileContentRequest\}/,
+  "Friends tabs must forward deliberate hover and focus intent to the content loader."
+);
+assert.match(
+  manualChartsPanelSource,
+  /const selectedCompatibilityCards = useMemo\([\s\S]*\}, \[\s*fallbackArchitectureV3Version,/,
+  "Compatibility cards must recompute as soon as their deferred fallback bundle installs."
+);
+assert.match(
+  friendDetailSource,
+  /onPointerEnter=\{\(\) => onTabIntent\?\.\(tab\.value\)\}[\s\S]*onFocus=\{\(\) => onTabIntent\?\.\(tab\.value\)\}|onFocus=\{\(\) => onTabIntent\?\.\(tab\.value\)\}[\s\S]*onPointerEnter=\{\(\) => onTabIntent\?\.\(tab\.value\)\}/,
+  "Friends tab intent must start on pointer hover or keyboard focus without selecting the tab."
 );
 assert.equal(
   appSource.match(/loadSharedGeneratedContent\(/g)?.length,

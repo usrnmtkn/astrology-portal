@@ -302,7 +302,8 @@ assert.match(adminDashboard, /filteredCompatibilityRows/, "Compatibility admin t
 assert.match(adminDashboard, /handleCompatibilityCreateAction/, "Compatibility admin must open connected compatibility-specific drafts.");
 assert.ok(fallbackHookKeys.has("fallback-hook/compat-domain/moon"), "Friends compatibility fallback hooks must be discoverable in the V3 package catalog.");
 assert.match(manualChartsPanel, /transitSynastryFallbackRendererV3\.renderCompat\(\{/, "Compatibility cards must render through the V3 package.");
-assert.match(manualChartsPanel, /signA:\s*normalizeContentIdPart\(yourPosition\.sign\)/, "Compatibility direction must keep the reader's sign in signA.");
+assert.match(manualChartsPanel, /const yourSign = yourPosition\?\.sign \|\| cachedProfileSign;/, "Compatibility may use the reader's persisted Sun or Moon sign while their full natal chart loads.");
+assert.match(manualChartsPanel, /signA:\s*normalizeContentIdPart\(yourSign\)/, "Compatibility direction must keep the reader's sign in signA.");
 assert.match(manualChartsPanel, /signB:\s*normalizeContentIdPart\(friendPosition\.sign\)/, "Compatibility direction must keep the friend's sign in signB.");
 assert.match(materializeCompatibilityRows, /contentSystem:\s*"authored"/, "Compatibility materialized rows must use the authored content system.");
 assert.match(materializeCompatibilityRows, /contentLevel:\s*"source-grounded"/, "Compatibility materialized rows must keep source-grounded as the trust level.");
