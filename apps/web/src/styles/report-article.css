@@ -281,3 +281,10 @@
     padding-top: var(--space-9);
   }
 }
+.report-delivery-state {
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  padding: var(--space-8, 2rem);
+  text-align: center;
+}
