@@ -12964,6 +12964,7 @@ export function App() {
               setMenuOpen((isOpen) => {
                 if (!isOpen && userProfile) {
                   preloadYouExperience();
+                  preloadFriendsExperience();
                 }
                 return !isOpen;
               });
