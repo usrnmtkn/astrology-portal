@@ -13,7 +13,8 @@ def test_health():
     assert body["ok"] is True
     assert body["ephemeris"]["requestedEngine"] == "swiss"
     assert body["ephemeris"]["actualEngine"] in {"swiss", "jpl", "moshier"}
-    assert len(body["ephemeris"]["checks"]) == 2
+    assert len(body["ephemeris"]["checks"]) == 3
+    assert body["ephemeris"]["checks"][2]["body"] == "True Black Moon Lilith"
 
 
 def test_ready():
