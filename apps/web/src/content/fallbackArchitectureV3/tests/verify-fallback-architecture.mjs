@@ -38,11 +38,9 @@ const BASELINE_APPROVED_WEIRD_HOOKS = new Set([
   "fallback-hook/sky-placement-turn/mars/taurus",
   "fallback-hook/sky-placement-turn/neptune/taurus",
   "fallback-hook/sky-placement-turn/north-node/libra",
-  "fallback-hook/sky-placement-moves/north-node/pisces",
   "fallback-hook/sky-placement-turn/pluto/gemini",
   "fallback-hook/sky-placement-lived/pluto/taurus",
   "fallback-hook/sky-placement-turn/pluto/taurus",
-  "fallback-hook/sky-placement-moves/saturn/pisces",
   "fallback-hook/sky-placement-lived/south-node/gemini",
   "fallback-hook/sky-placement-turn/south-node/gemini",
   "fallback-hook/sky-placement-lived/uranus/cancer",
@@ -52,6 +50,13 @@ const BASELINE_APPROVED_WEIRD_HOOKS = new Set([
 ]);
 let failures = 0;
 const fail = (msg) => { failures++; console.error("FAIL:", msg); };
+
+const retiredSkyPlacementMoves = (rowsFile.hookRows ?? []).filter((row) =>
+  row.contentKey.startsWith("fallback-hook/sky-placement-moves/")
+);
+if (retiredSkyPlacementMoves.length !== 0) {
+  fail(`retired sky-placement-moves rows remain in approved source: ${retiredSkyPlacementMoves.length}`);
+}
 
 // 1 + 2: row hygiene
 for (const r of rowsFile.vocabularyRows) {

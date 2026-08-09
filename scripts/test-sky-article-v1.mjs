@@ -201,8 +201,8 @@ assert.equal(sunLeo.articleSections.length, 3);
 assert.equal(sunLeo.articleSections.filter((section) => section.kind === "dated-aspect").length, 1);
 assert.equal(sunLeo.articleSections[1].heading, "Sun conjunct Jupiter in Leo");
 assert.equal(sunLeo.articleSections[1].body.split(/\n{2,}/u).length, 2);
-assert.equal(sunLeo.moves.length, 3);
-assert.equal(sunLeo.movesPresentation, "plain");
+assert.equal(Object.hasOwn(sunLeo, "moves"), false, "Sky Placement renders must not expose a Try this section.");
+assert.equal(Object.hasOwn(sunLeo, "movesPresentation"), false);
 assert.doesNotMatch(sunLeo.body, /[\u2013\u2014]/u);
 assert.doesNotMatch(sunLeo.body, /Somewhere along the way|rescheduling a decision|version of yourself|The useful version|The distortion/iu);
 assert.equal(sunLeo.body.split("July 22").length - 1, 2);
@@ -226,11 +226,11 @@ assert.ok(sunLeoSignCopy);
 assert.equal(previewSunLeo.templateKey, "sky-placement-continuous-v2");
 assert.equal(previewSunLeo.contentKey, sunLeoSignCopy.contentKey);
 assert.equal(previewSunLeo.parts.length, 5);
-assert.deepEqual(previewSunLeo.moves, sunLeoSignCopy.try_this);
-const noAspectWordCount = [...previewSunLeo.parts, ...previewSunLeo.moves]
+assert.equal(Object.hasOwn(previewSunLeo, "moves"), false);
+const noAspectWordCount = previewSunLeo.parts
   .join(" ")
   .match(/[A-Za-z0-9’']+/gu)?.length ?? 0;
-assert.ok(noAspectWordCount >= 220 && noAspectWordCount <= 350);
+assert.ok(noAspectWordCount >= 190 && noAspectWordCount <= 350);
 for (const unapprovedSign of ["aries", "taurus", "gemini", "cancer", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
   assert.throws(
     () => previewRenderer.renderSkyPlacement({
@@ -412,7 +412,7 @@ const finalArticleFacts = {
 const finalArticleDirect = finalArticleRenderer.renderSkyPlacement(finalArticleFacts);
 assert.equal(finalArticleDirect.templateKey, "sky-article-final-v1");
 assert.equal(finalArticleDirect.tagline, null);
-assert.deepEqual(finalArticleDirect.moves, []);
+assert.equal(Object.hasOwn(finalArticleDirect, "moves"), false);
 assert.deepEqual(finalArticleDirect.keyDates, []);
 assert.deepEqual(
   finalArticleDirect.articleSections.map((section) => section.kind),
