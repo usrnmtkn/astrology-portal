@@ -5,6 +5,7 @@ import {
   reportFactors,
   reportPromptFromPayload,
   resolveManifestationSets,
+  selectReportFactors,
   validateReportDraft
 } from "../api/_lib/report-generation.ts";
 
@@ -14,10 +15,18 @@ const canonicalPrompt = fs.readFileSync(
   new URL("../tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md", import.meta.url),
   "utf8"
 );
+const workMoneyPrompt = fs.readFileSync(
+  new URL("../tldr-astro-phrasebank/TLDR-WORK-MONEY-DEEPDIVE-GENERATION-PROMPT-OWNER.md", import.meta.url),
+  "utf8"
+);
+const workMoneyReference = fs.readFileSync(
+  new URL("../artifacts/marie-satori-work-money-2026-owner-v1.md", import.meta.url),
+  "utf8"
+);
 const endpointSource = fs.readFileSync(new URL("../api/generate-user-content.ts", import.meta.url), "utf8");
 const webServiceSource = fs.readFileSync(new URL("../apps/web/src/services/userGeneratedContent.ts", import.meta.url), "utf8");
 const migrationSource = fs.readFileSync(
-  new URL("../apps/web/supabase/migrations/20260809120000_report_horizon_types.sql", import.meta.url),
+  new URL("../apps/web/supabase/migrations/20260809130000_report_domains.sql", import.meta.url),
   "utf8"
 );
 const cases = [
@@ -51,12 +60,14 @@ for (const [reportHorizon, unitId] of cases) {
   const horizonFacts = factsForHorizon(reportHorizon);
   const payload = assembleReportGenerationPayload({
     reportId: "00000000-0000-0000-0000-000000000117",
+    reportDomain: "general",
     reportHorizon,
     unitId,
     frozenFacts: horizonFacts
   });
   payloads.set(reportHorizon, payload);
   assert.equal(payload.canonicalOwnerPrompt.text, canonicalPrompt);
+  assert.equal(payload.reportDomain, "general");
   assert.deepEqual(payload.frozenFacts, horizonFacts);
   assert.deepEqual({
     unit: payload.unit,
@@ -75,6 +86,7 @@ assert.ok(!payloads.get("1_month").unit.allowedUnitIds.some((id) => id.includes(
 assert.ok(payloads.get("12_months").unit.allowedUnitIds.includes("summer"));
 assert.throws(() => assembleReportGenerationPayload({
   reportId: "fixture-mismatch",
+  reportDomain: "general",
   reportHorizon: "1_month",
   unitId: "overview",
   frozenFacts: facts
@@ -83,9 +95,42 @@ assert.match(endpointSource, /\| "report_unit"/u);
 assert.match(webServiceSource, /\| "report_unit"/u);
 assert.ok(endpointSource.indexOf("input.dryRun") < endpointSource.indexOf("generateContent(generationInput"));
 assert.match(endpointSource, /`report:\$\{report\.id\}:\$\{input\.unitId\}`/u);
-for (const reportType of ["report_1_month", "report_4_months", "report_6_months", "report_12_months"]) {
-  assert.match(migrationSource, new RegExp(`'${reportType}'`, "u"));
-}
+assert.match(migrationSource, /report_domain in \('general', 'work_money'\)/u);
+assert.match(migrationSource, /report_horizon in \('1_month', '4_months', '6_months', '12_months'\)/u);
+
+const workMoneyPayload = assembleReportGenerationPayload({
+  reportId: "00000000-0000-0000-0000-000000000118",
+  reportDomain: "work_money",
+  reportHorizon: "12_months",
+  unitId: "summer",
+  frozenFacts: facts
+});
+assert.equal(workMoneyPayload.canonicalOwnerPrompt.text, workMoneyPrompt);
+assert.equal(workMoneyPayload.voiceEvidence[0].text, workMoneyReference);
+assert.equal(workMoneyPayload.generationStandard, null);
+assert.ok(workMoneyPayload.factors.some((factor) => factor.id === "lunar-eclipse-2026-03-03-saturn"));
+assert.ok(workMoneyPayload.factorSelection.find((item) => (
+  item.factorId === "lunar-eclipse-2026-03-03-saturn"
+))?.bridgeConsequences.includes("commute"));
+const workMoneySelectedContext = JSON.stringify({
+  manifestationSets: workMoneyPayload.manifestationSets,
+  voiceEvidence: workMoneyPayload.voiceEvidence
+}).toLowerCase();
+assert.doesNotMatch(workMoneySelectedContext, /\b(?:dating|spirituality)\b/u);
+assert.match(payloads.get("12_months").voiceEvidence[0].text, /\bdating\b/iu);
+assert.deepEqual({
+  unit: workMoneyPayload.unit,
+  factorIds: workMoneyPayload.factors.map((factor) => factor.id),
+  resolvedCount: workMoneyPayload.manifestationSets.length,
+  sourceGapCount: workMoneyPayload.sourceGaps.length,
+  bridgeSelection: workMoneyPayload.factorSelection.find((item) => (
+    item.factorId === "lunar-eclipse-2026-03-03-saturn"
+  )),
+  venusProjectedDomains: workMoneyPayload.manifestationSets.find((item) => (
+    item.factor.id === "sr-overlay-venus-house-10"
+  ))?.record.domain,
+  voiceEvidenceSource: workMoneyPayload.voiceEvidence[0].sourcePath
+}, snapshots.work_money_12_months);
 
 const factors = reportFactors(facts);
 assert.deepEqual(reportFactors({ reportWindow: facts }), factors);
@@ -112,6 +157,32 @@ assert.deepEqual(unsupported.gaps, [{
   reason: "SOURCE_GAP"
 }]);
 
+const independentlySelected = selectReportFactors([
+  {
+    id: "fixture-only-dating-factor",
+    factorType: "slow-transit-to-natal",
+    transitPlanet: "Saturn",
+    natalPoint: "FIXTURE_ONLY_POINT",
+    aspect: "square",
+    source: { domain: "dating" }
+  },
+  {
+    id: "fixture-only-work-factor",
+    factorType: "slow-transit-to-natal",
+    transitPlanet: "Saturn",
+    natalPoint: "FIXTURE_ONLY_POINT",
+    aspect: "trine",
+    source: { domain: "client contract scope" }
+  }
+], "work_money");
+assert.deepEqual(independentlySelected.factors.map((factor) => factor.id), ["fixture-only-work-factor"]);
+const independentlyResolved = resolveManifestationSets(
+  independentlySelected.factors,
+  "work_money",
+  independentlySelected.selection
+);
+assert.deepEqual(independentlyResolved.gaps.map((gap) => gap.factorId), ["fixture-only-work-factor"]);
+
 const payload = payloads.get("12_months");
 const codes = (draft, options) => validateReportDraft(draft, payload, options).map((issue) => issue.code);
 assert.ok(codes({ body: "FIXTURE_ONLY_A — FIXTURE_ONLY_B." }).includes("em_dash"));
@@ -133,4 +204,38 @@ assert.ok(validateReportDraft(
   payload
 ).some((issue) => issue.code === "next_year_in_current_review"));
 
-console.log("Report generation passed: four dry-run snapshots, return dedupe, and all mechanical validators.");
+assert.ok(validateReportDraft(
+  { body: "FIXTURE_ONLY abundance." },
+  workMoneyPayload
+).some((issue) => issue.code === "money_abstraction" && issue.severity === "error"));
+assert.ok(!validateReportDraft(
+  { body: "FIXTURE_ONLY abundance means FIXTURE_ONLY rate and hours." },
+  workMoneyPayload
+).some((issue) => issue.code === "money_abstraction"));
+
+const isolatedDraft = { body: "FIXTURE_ONLY_ONE.\n\nFIXTURE_ONLY_TWO?\n\nFIXTURE_ONLY_THREE." };
+assert.ok(validateReportDraft(isolatedDraft, workMoneyPayload)
+  .some((issue) => issue.code === "isolated_one_liners" && issue.severity === "warning"));
+assert.ok(!validateReportDraft(isolatedDraft, payload)
+  .some((issue) => issue.code === "isolated_one_liners"));
+
+assert.ok(!validateReportDraft({
+  sections: [{
+    heading: "KEY DATES",
+    body: "FIXTURE_ONLY_DATE · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SENTENCE. · FIXTURE_ONLY_ATTRIBUTION"
+  }]
+}, workMoneyPayload).some((issue) => issue.code === "work_money_key_date_format"));
+assert.ok(validateReportDraft({
+  sections: [{
+    heading: "KEY DATES",
+    body: "FIXTURE_ONLY_DATE · WORK · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SENTENCE. · FIXTURE_ONLY_ATTRIBUTION"
+  }]
+}, workMoneyPayload).some((issue) => issue.code === "work_money_key_date_format"));
+assert.ok(!validateReportDraft({
+  sections: [{
+    heading: "KEY DATES",
+    body: "FIXTURE_ONLY_DATE · WORK · FIXTURE_ONLY_TITLE · FIXTURE_ONLY_SENTENCE. · FIXTURE_ONLY_ATTRIBUTION"
+  }]
+}, payload).some((issue) => issue.code === "work_money_key_date_format"));
+
+console.log("Report generation passed: General + Work & Money snapshots, independent selection, return dedupe, and validators.");
