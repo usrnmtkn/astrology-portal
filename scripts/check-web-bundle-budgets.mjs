@@ -97,7 +97,8 @@ const readerBootItems = [...new Set([...bootFiles, ...readerStyleFiles])]
   .map((file) => filesByName.get(file))
   .filter(Boolean);
 const appItem = filesByName.get(manifest[appKey].file);
-const deferredFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-relationships-"));
+const deferredTransitFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-transit-"));
+const deferredRelationshipFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-relationships-"));
 const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-manifest-"));
 const deferredCoreItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-deferred-core-"));
 const deferredSkyPlacementItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-sky-placement-"));
@@ -115,6 +116,8 @@ const measurements = {
   friendsWorkspaceChunkGzipBytes: deferredFriendsWorkspaceItem?.gzipBytes ?? 0,
   skyDetailChunkGzipBytes: deferredSkyDetailItem?.gzipBytes ?? 0,
   skyPlacementFallbackChunkGzipBytes: deferredSkyPlacementItem?.gzipBytes ?? 0,
+  transitFallbackChunkGzipBytes: deferredTransitFallbackItem?.gzipBytes ?? 0,
+  relationshipFallbackChunkGzipBytes: deferredRelationshipFallbackItem?.gzipBytes ?? 0,
   signupChunkGzipBytes: deferredSignupItem?.gzipBytes ?? 0,
   totalCssGzipBytes: sum(cssFiles, "gzipBytes"),
   totalJavaScriptGzipBytes: sum(javaScriptFiles, "gzipBytes")
@@ -127,8 +130,15 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
     : [];
 });
 
-if (deferredFallbackItem && bootFiles.has(deferredFallbackItem.file)) {
-  failures.push("The transit/relationship fallback chunk re-entered the static App boot graph.");
+if (!deferredTransitFallbackItem) {
+  failures.push("The on-demand transit fallback chunk is missing.");
+} else if (bootFiles.has(deferredTransitFallbackItem.file)) {
+  failures.push("The transit fallback chunk re-entered the static App boot graph.");
+}
+if (!deferredRelationshipFallbackItem) {
+  failures.push("The on-demand relationship fallback chunk is missing.");
+} else if (bootFiles.has(deferredRelationshipFallbackItem.file)) {
+  failures.push("The relationship fallback chunk re-entered the static App boot graph.");
 }
 if (deferredManifestItem && bootFiles.has(deferredManifestItem.file)) {
   failures.push("The full fallback key manifest re-entered the static App boot graph.");
@@ -162,6 +172,8 @@ console.log(`App code chunk: ${formatBytes(measurements.appChunkGzipBytes)} gzip
 console.log(`Deferred Friends workspace: ${formatBytes(measurements.friendsWorkspaceChunkGzipBytes)} gzip`);
 console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailChunkGzipBytes)} gzip`);
 console.log(`On-demand Sky Placement fallback: ${formatBytes(measurements.skyPlacementFallbackChunkGzipBytes)} gzip`);
+console.log(`On-demand transit fallback: ${formatBytes(measurements.transitFallbackChunkGzipBytes)} gzip`);
+console.log(`On-demand relationship fallback: ${formatBytes(measurements.relationshipFallbackChunkGzipBytes)} gzip`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
 console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);

@@ -19,6 +19,7 @@ type FixtureOptions = {
 
 type PreparedPage = {
   delayedCalculationRequests: () => number;
+  delayedDeferredFallbackRequests: () => number;
   delayedRelationshipRequests: () => number;
 };
 
@@ -37,6 +38,7 @@ function delay(ms: number) {
 
 async function preparePage(page: Page, options: FixtureOptions = {}): Promise<PreparedPage> {
   let delayedCalculationRequests = 0;
+  let delayedDeferredFallbackRequests = 0;
   let delayedRelationshipRequests = 0;
 
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
@@ -58,6 +60,9 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     page.on("request", (request) => {
       if (/\/assets\/(?:fallback-content-relationships|astro-knowledge-relationships)[^/]*\.js$/.test(request.url())) {
         delayedRelationshipRequests += 1;
+      }
+      if (/\/assets\/(?:fallback-content-transit|fallback-content-deferred-core)[^/]*\.js$/.test(request.url())) {
+        delayedDeferredFallbackRequests += 1;
       }
     });
   }
@@ -183,6 +188,7 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
 
   return {
     delayedCalculationRequests: () => delayedCalculationRequests,
+    delayedDeferredFallbackRequests: () => delayedDeferredFallbackRequests,
     delayedRelationshipRequests: () => delayedRelationshipRequests
   };
 }
@@ -342,6 +348,7 @@ test.describe("Friends loading performance matrix", () => {
     const listSamples: TimedSample[] = [];
     const shellSamples: TimedSample[] = [];
     const relationshipSamples: TimedSample[] = [];
+    const relationshipEnhancedSamples: TimedSample[] = [];
 
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       await withContext(browser, {}, async (context, page) => {
@@ -379,11 +386,23 @@ test.describe("Friends loading performance matrix", () => {
           elapsedMs: Math.round(performance.now() - detailStartedAt)
         });
         expect(prepared.delayedRelationshipRequests()).toBeGreaterThan(0);
+        expect(
+          prepared.delayedDeferredFallbackRequests(),
+          "Compatibility must not compete with deferred transit or cross-tab fallback chunks."
+        ).toBe(0);
+        await expect(page.locator(".compatibility-card")).toHaveCount(7, {
+          timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs + 5_000
+        });
+        relationshipEnhancedSamples.push({
+          label: "slow-network full relationship enhancement",
+          elapsedMs: Math.round(performance.now() - detailStartedAt)
+        });
       });
     }
 
     assertSamples(listSamples, friendsLoadingPerformanceBudgets.slowNetworkListReadyMs);
     assertSamples(shellSamples, friendsLoadingPerformanceBudgets.slowNetworkDetailShellReadyMs);
     assertSamples(relationshipSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs);
+    assertSamples(relationshipEnhancedSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs);
   });
 });
