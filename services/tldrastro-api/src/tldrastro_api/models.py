@@ -308,6 +308,176 @@ class PersonalTimingResponse(BaseModel):
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
 
 
+ReportHorizon = Literal["1_month", "4_months", "6_months", "12_months"]
+
+
+class SolarReturnRequest(BaseModel):
+    natalSubject: ChartSubject
+    targetDate: str = Field(..., examples=["2026-02-18"])
+    returnLocation: Optional[LocationInput] = None
+    useBirthplace: bool = False
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeContentFacts: bool = False
+
+
+class SolarReturnOverlay(BaseModel):
+    point: str
+    sourceChart: Literal["solar_return", "natal"]
+    targetChart: Literal["solar_return", "natal"]
+    house: int
+
+
+class SolarReturnAngleContact(BaseModel):
+    point: str
+    angle: str
+    angleChart: Literal["solar_return", "natal"]
+    orb: float
+
+
+class SolarReturnAspect(BaseModel):
+    solarReturnPoint: str
+    natalPoint: str
+    aspect: str
+    orb: float
+
+
+class SolarReturnLordCondition(BaseModel):
+    ruler: str
+    sign: str
+    house: Optional[int] = None
+    retrograde: bool = False
+    essentialCondition: Literal["domicile", "exaltation", "detriment", "fall", "peregrine"]
+    angular: bool = False
+
+
+class SolarReturnAnalysis(BaseModel):
+    solarReturnToNatalOverlays: List[SolarReturnOverlay] = Field(default_factory=list)
+    natalToSolarReturnOverlays: List[SolarReturnOverlay] = Field(default_factory=list)
+    angleContacts: List[SolarReturnAngleContact] = Field(default_factory=list)
+    aspects: List[SolarReturnAspect] = Field(default_factory=list)
+    lordOfYear: SolarReturnLordCondition
+    coincidenceChecks: Dict[str, bool] = Field(default_factory=dict)
+    bigYearScore: int = Field(..., ge=0)
+    bigYearDrivers: List[str] = Field(default_factory=list)
+
+
+class SolarReturnResponse(BaseModel):
+    metadata: ChartMetadata
+    returnMoment: str
+    location: LocationInput
+    natal: NatalChartResponse
+    chart: NatalChartResponse
+    quadrantHouseSystem: str
+    quadrantHouseCusps: List[float] = Field(default_factory=list)
+    quadrantHouses: Dict[str, int] = Field(default_factory=dict)
+    analysis: SolarReturnAnalysis
+
+
+class ReportWindowRequest(BaseModel):
+    natalSubject: ChartSubject
+    start: str = Field(..., examples=["2026-02-18T01:59:00Z"])
+    end: str = Field(..., examples=["2027-02-18T07:40:00Z"])
+    location: LocationInput
+    reportHorizon: ReportHorizon
+    settings: ChartSettings = Field(default_factory=ChartSettings)
+    includeSolarReturn: bool = True
+    includeContentFacts: bool = False
+
+
+class ReportTransitPass(BaseModel):
+    exactAt: str
+    motion: Literal["direct", "retrograde"]
+    transitLongitude: float
+    orbWindowStart: Optional[str] = None
+    orbWindowEnd: Optional[str] = None
+    stationProximityDegrees: Optional[float] = None
+    stationAt: Optional[str] = None
+
+
+class ReportTransitArc(BaseModel):
+    id: str
+    transitPlanet: str
+    natalPoint: str
+    natalSign: str
+    natalHouse: Optional[int] = None
+    aspect: str
+    category: Literal["WORK", "SELF", "SEX & LOVE", "FRIENDS & FAMILY"]
+    score: int = Field(..., ge=0)
+    passCount: int = Field(..., ge=1)
+    passes: List[ReportTransitPass] = Field(default_factory=list)
+    isReturn: bool = False
+    knowledgeIds: List[str] = Field(default_factory=list)
+
+
+class ReportKeyDate(BaseModel):
+    id: str
+    occursAt: str
+    eventType: str
+    transitPlanet: Optional[str] = None
+    natalPoint: Optional[str] = None
+    aspect: Optional[str] = None
+    category: Literal["WORK", "SELF", "SEX & LOVE", "FRIENDS & FAMILY"]
+    score: int = Field(..., ge=0)
+    exactAt: str
+
+
+class ReportNatalContact(BaseModel):
+    natalPoint: str
+    aspect: str
+    orb: float
+
+
+class ReportLunarEvent(BaseModel):
+    id: str
+    kind: Literal["new_moon", "full_moon", "solar_eclipse", "lunar_eclipse"]
+    occursAt: str
+    longitude: float
+    sign: str
+    natalContacts: List[ReportNatalContact] = Field(default_factory=list)
+
+
+class ReportStation(BaseModel):
+    planet: str
+    occursAt: str
+    longitude: float
+    motionAfter: Literal["direct", "retrograde"]
+    natalContacts: List[ReportNatalContact] = Field(default_factory=list)
+
+
+class ReportIngress(BaseModel):
+    planet: str
+    occursAt: str
+    sign: str
+    longitude: float
+    relevance: List[str] = Field(default_factory=list)
+
+
+class ReportPeriodSegment(BaseModel):
+    id: str
+    startsAt: str
+    endsAt: str
+    label: str
+    calendarYear: int
+
+
+class ReportWindowResponse(BaseModel):
+    metadata: ChartMetadata
+    reportHorizon: ReportHorizon
+    startsAt: str
+    endsAt: str
+    natal: NatalChartResponse
+    profections: ProfectionsResponse
+    solarReturn: Optional[SolarReturnResponse] = None
+    slowTransitArcs: List[ReportTransitArc] = Field(default_factory=list)
+    fastTransitKeyDates: List[ReportKeyDate] = Field(default_factory=list)
+    lunarEvents: List[ReportLunarEvent] = Field(default_factory=list)
+    stations: List[ReportStation] = Field(default_factory=list)
+    ingresses: List[ReportIngress] = Field(default_factory=list)
+    periods: List[ReportPeriodSegment] = Field(default_factory=list)
+    calendarYearBoundaries: List[str] = Field(default_factory=list)
+    contentFacts: List[ContentFactPacket] = Field(default_factory=list)
+
+
 class SynastryRequest(BaseModel):
     personA: ChartSubject
     personB: ChartSubject
