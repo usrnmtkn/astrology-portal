@@ -113,7 +113,7 @@
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
-  line-height: 1;
+  line-height: var(--leading-label);
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -563,7 +563,7 @@
 }
 
 .compatibility-dynamic-row__quality {
-  margin-top: 2px;
+  margin-top: calc(var(--space-1) / 2);
 }
 
 .compatibility-dynamic-row h4 {
@@ -772,7 +772,7 @@
   order: 1;
   overflow: visible;
   border: 1px solid var(--card-border);
-  border-radius: 20px;
+  border-radius: var(--friend-directory-panel-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
 }
@@ -788,7 +788,7 @@
 }
 
 .friends-unified-panel > .friends-unified-search-row:first-child {
-  border-radius: 20px 20px 0 0;
+  border-radius: var(--friend-directory-panel-radius) var(--friend-directory-panel-radius) 0 0;
 }
 
 .friends-unified-search-row input {
@@ -812,7 +812,7 @@
 .friends-searching-label {
   flex: 0 0 auto;
   color: var(--friend-directory-subtle-text);
-  font-size: 0.78rem;
+  font-size: var(--friend-directory-status-size);
   white-space: nowrap;
 }
 
@@ -825,7 +825,7 @@
   height: 34px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--friend-directory-secondary-text);
 }
@@ -862,13 +862,13 @@
   justify-content: center;
   gap: 7px;
   min-height: 34px;
-  padding: 0 13px;
+  padding: 0 calc(var(--space-3) + var(--space-1) / 4);
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--friend-directory-control-size);
   font-weight: var(--weight-medium);
   white-space: nowrap;
 }
@@ -892,21 +892,21 @@
 }
 
 .friends-unified-tabs > button.friends-requests-tab {
-  border-color: color-mix(in srgb, #77a67f 34%, var(--card-border));
-  background: #edf7ee;
-  color: #264d31;
+  border-color: var(--friend-request-border);
+  background: var(--friend-request-bg);
+  color: var(--friend-request-fg);
 }
 
 .friends-unified-tabs > button.friends-requests-tab.active {
-  border-color: #8ab793;
-  background: #dcefe0;
-  color: #173c22;
+  border-color: var(--friend-request-active-border);
+  background: var(--friend-request-active-bg);
+  color: var(--friend-request-active-fg);
 }
 
 .theme-dark .friends-unified-tabs > button.friends-requests-tab {
-  border-color: #466b50;
-  background: #24392a;
-  color: #d8f0dc;
+  border-color: var(--friend-request-border);
+  background: var(--friend-request-bg);
+  color: var(--friend-request-fg);
 }
 
 .friends-tab-count {
@@ -914,22 +914,22 @@
   min-width: 20px;
   height: 20px;
   place-items: center;
-  padding: 0 6px;
-  border-radius: 999px;
+  padding: 0 calc(var(--space-1) + var(--space-1) / 2);
+  border-radius: var(--radius-pill);
   background: var(--ink);
   color: var(--surface);
-  font-size: 0.68rem;
+  font-size: var(--friend-directory-count-size);
   font-variant-numeric: tabular-nums;
 }
 
 .friends-requests-tab .friends-tab-count {
-  background: #285c38;
-  color: #fff;
+  background: var(--friend-request-count-bg);
+  color: var(--friend-request-count-fg);
 }
 
 .theme-dark .friends-requests-tab .friends-tab-count {
-  background: #7fb98b;
-  color: #102818;
+  background: var(--friend-request-count-bg);
+  color: var(--friend-request-count-fg);
 }
 
 .friends-add-chart-action {
@@ -948,14 +948,14 @@
 .friends-person-list {
   display: grid;
   gap: 6px;
-  padding: 10px;
+  padding: calc(var(--space-2) + var(--space-1) / 2);
   overflow: visible;
 }
 
 .friends-request-groups {
   display: grid;
   gap: 18px;
-  padding: 16px 0;
+  padding: var(--space-4) 0;
 }
 
 .friends-request-group {
@@ -965,19 +965,19 @@
 
 .friends-request-group > h2 {
   margin: 0;
-  padding: 0 20px;
+  padding: 0 var(--space-5);
   color: var(--friend-directory-subtle-text);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--friend-directory-group-label-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-compact-label);
   text-transform: uppercase;
 }
 
 .friends-request-error {
-  margin: 0 20px;
-  color: #a32727;
-  font-size: 0.85rem;
+  margin: 0 var(--space-5);
+  color: var(--friend-danger-bg);
+  font-size: var(--friend-directory-message-size);
 }
 
 .friends-person-row {
@@ -987,10 +987,10 @@
   align-items: center;
   gap: 13px;
   min-height: 68px;
-  padding: 9px 10px 9px 12px;
+  padding: calc(var(--space-2) + var(--space-1) / 4) calc(var(--space-2) + var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 4) var(--space-3);
   overflow: visible;
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: var(--friend-directory-row-radius);
   background: var(--card-bg);
 }
 
@@ -1020,7 +1020,7 @@
 .friends-person-row > .profile-avatar {
   width: 44px;
   height: 44px;
-  font-size: 0.74rem;
+  font-size: var(--friend-directory-avatar-size);
 }
 
 .friends-invite-contact-avatar {
@@ -1029,11 +1029,11 @@
   height: 44px;
   place-items: center;
   border: 1px solid var(--control-border);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--surface-2);
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: var(--friend-directory-input-size);
   font-weight: var(--weight-semibold);
 }
 
@@ -1057,9 +1057,9 @@
   overflow: hidden;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: var(--friend-directory-row-title-size);
   font-weight: var(--weight-semibold);
-  line-height: 1.15;
+  line-height: var(--friend-directory-row-title-leading);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1069,13 +1069,13 @@
   overflow: hidden;
   color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--friend-directory-group-label-size);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .friends-person-identity mark {
-  border-radius: 3px;
+  border-radius: var(--friend-directory-mark-radius);
   background: color-mix(in srgb, var(--surface-2) 58%, #f1d58a 42%);
   color: inherit;
 }
@@ -1087,8 +1087,8 @@
   overflow: hidden;
   color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  line-height: 1.35;
+  font-size: var(--friend-directory-tertiary-size);
+  line-height: var(--leading-meta);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1105,16 +1105,16 @@
   display: inline-flex;
   flex: 0 0 auto;
   min-height: 20px;
-  padding: 1px 7px;
+  padding: calc(var(--space-1) / 4) calc(var(--space-2) - var(--space-1) / 4);
   border: 1px solid color-mix(in srgb, var(--card-border) 76%, var(--card-title-color) 24%);
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--surface-2) 82%, var(--card-bg) 18%);
   color: var(--card-title-color);
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: var(--friend-directory-pattern-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-compact-pill);
-  line-height: 1;
+  line-height: var(--leading-pill);
   white-space: nowrap;
 }
 
@@ -1130,8 +1130,8 @@
 .friends-unified-panel .social-secondary-button,
 .friends-danger-button {
   min-height: 34px;
-  padding: 0 14px;
-  font-size: 0.75rem;
+  padding: 0 calc(var(--space-3) + var(--space-1) / 2);
+  font-size: var(--friend-directory-control-size);
 }
 
 .friends-unified-panel button:disabled {
@@ -1140,8 +1140,8 @@
 }
 
 .friends-unified-panel .social-primary-button:disabled {
-  background: #454b55;
-  color: #fff;
+  background: var(--friend-disabled-control-bg);
+  color: var(--friend-danger-fg);
 }
 
 .friends-unified-panel .social-secondary-button:disabled {
@@ -1150,12 +1150,12 @@
 }
 
 .friends-row-text-action {
-  padding: 5px 3px;
+  padding: calc(var(--space-1) + var(--space-1) / 4) calc(var(--space-1) * 0.75);
   border: 0;
   background: transparent;
   color: #5448be;
   font: inherit;
-  font-size: 0.76rem;
+  font-size: var(--friend-directory-action-size);
   font-weight: var(--weight-semibold);
 }
 
@@ -1170,11 +1170,11 @@
   display: inline-flex;
   align-items: center;
   min-height: 32px;
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--friend-directory-subtle-text);
-  font-size: 0.75rem;
+  font-size: var(--friend-directory-control-size);
 }
 
 .friends-row-menu-wrap {
@@ -1189,22 +1189,22 @@
   right: 0;
   display: grid;
   width: 168px;
-  padding: 6px;
+  padding: calc(var(--space-1) + var(--space-1) / 2);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: var(--friend-directory-row-radius);
   background: var(--card-bg);
   box-shadow: var(--shadow-popover);
 }
 
 .friends-person-menu button {
   min-height: 36px;
-  padding: 0 10px;
+  padding: 0 calc(var(--space-2) + var(--space-1) / 2);
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--friend-directory-menu-radius);
   background: transparent;
   color: var(--ink);
   font: inherit;
-  font-size: 0.8rem;
+  font-size: var(--friend-directory-menu-size);
   text-align: left;
 }
 
@@ -1214,17 +1214,17 @@
 }
 
 .friends-person-menu .friends-danger-action {
-  color: #a32727;
+  color: var(--friend-danger-bg);
 }
 
 .friends-person-menu .friends-last-resort-action {
-  margin-top: 4px;
+  margin-top: var(--space-1);
   border-top: 1px solid var(--card-border);
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--friend-directory-menu-radius) var(--friend-directory-menu-radius);
 }
 
 .friends-row-text-action.friends-danger-action {
-  color: #a32727;
+  color: var(--friend-danger-bg);
 }
 
 .friends-unified-empty {
@@ -1233,7 +1233,7 @@
   justify-items: center;
   gap: 7px;
   min-height: 176px;
-  padding: 28px 20px;
+  padding: calc(var(--space-7) - var(--space-1)) var(--space-5);
   text-align: center;
 }
 
@@ -1246,25 +1246,25 @@
 .friends-unified-empty h2,
 .friends-unified-empty h3 {
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: var(--friend-directory-empty-title-size);
   font-weight: var(--weight-medium);
 }
 
 .friends-unified-empty p {
   max-width: 540px;
   color: var(--friend-directory-subtle-text);
-  font-size: 0.85rem;
-  line-height: 1.5;
+  font-size: var(--friend-directory-message-size);
+  line-height: var(--leading-description);
 }
 
 .friends-unified-empty .social-primary-button {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 
 .friends-search-skeleton {
   display: grid;
   gap: 6px;
-  padding: 10px;
+  padding: calc(var(--space-2) + var(--space-1) / 2);
 }
 
 .friends-search-skeleton-row {
@@ -1273,15 +1273,15 @@
   align-items: center;
   gap: 13px;
   min-height: 68px;
-  padding: 9px 12px;
+  padding: calc(var(--space-2) + var(--space-1) / 4) var(--space-3);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: var(--friend-directory-row-radius);
 }
 
 .friends-search-skeleton-row > i,
 .friends-search-skeleton-row > span i {
   display: block;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   animation: social-search-pulse 1.25s ease-in-out infinite alternate;
 }
@@ -1313,12 +1313,12 @@
 }
 
 .friends-unified-panel .friends-unified-chart-list > .manual-chart-message {
-  margin: 10px 16px 0;
+  margin: calc(var(--space-2) + var(--space-1) / 2) var(--space-4) 0;
 }
 
 .friends-unified-panel .manual-chart-cards {
   gap: 6px;
-  padding: 10px;
+  padding: calc(var(--space-2) + var(--space-1) / 2);
   box-shadow: none;
 }
 
@@ -1328,7 +1328,7 @@
     "select actions"
     "cta cta";
   min-height: 68px;
-  border-radius: 12px;
+  border-radius: var(--friend-directory-row-radius);
   box-shadow: none;
 }
 
@@ -1337,13 +1337,13 @@
   align-items: center;
   gap: 13px;
   min-height: 66px;
-  padding: 9px 12px;
+  padding: calc(var(--space-2) + var(--space-1) / 4) var(--space-3);
 }
 
 .friends-unified-panel .manual-chart-avatar {
   width: 44px;
   height: 44px;
-  font-size: 0.72rem;
+  font-size: var(--friend-directory-group-label-size);
 }
 
 .friends-unified-panel .crb {
@@ -1352,32 +1352,32 @@
 
 .friends-unified-panel .crt {
   font-family: var(--font-display);
-  font-size: 1.05rem;
-  line-height: 1.15;
+  font-size: var(--friend-directory-row-title-size);
+  line-height: var(--friend-directory-row-title-leading);
 }
 
 .friends-unified-panel .manual-chart-signatures {
   gap: 5px 10px;
   color: var(--friend-directory-secondary-text);
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: var(--friend-directory-count-size);
 }
 
 .friends-unified-panel .manual-chart-row-cta {
-  padding: 0 12px 9px 69px;
+  padding: 0 var(--space-3) calc(var(--space-2) + var(--space-1) / 4) var(--friend-directory-chart-cta-inset);
 }
 
 .friends-unified-panel .manual-chart-birth-time-button {
   min-height: 32px;
-  padding: 0 12px;
-  font-size: 0.72rem;
+  padding: 0 var(--space-3);
+  font-size: var(--friend-directory-group-label-size);
 }
 
 .friends-remove-dialog {
   display: grid;
   gap: 20px;
-  padding: 26px;
-  border-radius: 18px;
+  padding: calc(var(--space-7) - var(--space-1) - var(--space-1) / 2);
+  border-radius: var(--friend-directory-dialog-radius);
 }
 
 .friends-remove-identity {
@@ -1393,16 +1393,16 @@
 }
 
 .friends-remove-identity h2 {
-  margin: 0 0 2px;
+  margin: 0 0 calc(var(--space-1) / 2);
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: var(--friend-directory-dialog-title-size);
   font-weight: var(--weight-medium);
 }
 
 .friends-remove-dialog > p {
   margin: 0;
   color: #5f6670;
-  line-height: 1.55;
+  line-height: var(--friend-directory-dialog-copy-leading);
 }
 
 .friends-remove-actions {
@@ -1412,10 +1412,10 @@
 }
 
 .friends-danger-button {
-  border: 1px solid #a32727;
-  border-radius: 999px;
-  background: #a32727;
-  color: #fff;
+  border: 1px solid var(--friend-danger-bg);
+  border-radius: var(--radius-pill);
+  background: var(--friend-danger-bg);
+  color: var(--friend-danger-fg);
   font: inherit;
   font-weight: var(--weight-semibold);
 }
@@ -1430,19 +1430,19 @@
   gap: 16px;
   max-width: calc(100vw - 36px);
   min-height: 46px;
-  padding: 0 16px;
-  border-radius: 10px;
-  background: #151821;
+  padding: 0 var(--space-4);
+  border-radius: var(--friend-directory-toast-radius);
+  background: var(--friend-toast-bg);
   box-shadow: var(--shadow-popover);
-  color: #fff;
-  font-size: 0.78rem;
+  color: var(--friend-toast-fg);
+  font-size: var(--friend-directory-status-size);
 }
 
 .friends-toast button {
-  padding: 4px 0;
+  padding: var(--space-1) 0;
   border: 0;
   background: transparent;
-  color: #fff;
+  color: var(--friend-toast-fg);
   font: inherit;
   font-weight: var(--weight-semibold);
   text-decoration: underline;
@@ -1453,11 +1453,11 @@
   width: 30px;
   height: 30px;
   flex: 0 0 auto;
-  font-size: 0.6rem;
+  font-size: var(--friend-directory-toast-avatar-size);
 }
 
 .friends-acceptance-toast > span {
-  line-height: 1.35;
+  line-height: var(--leading-meta);
 }
 
 .friends-invite-dialog {
@@ -1465,15 +1465,15 @@
   display: grid;
   gap: 22px;
   max-height: min(760px, calc(100vh - 32px));
-  padding: 28px;
+  padding: calc(var(--space-7) - var(--space-1));
   overflow: auto;
-  border-radius: 18px;
+  border-radius: var(--friend-directory-dialog-radius);
 }
 
 .friends-invite-heading {
   display: grid;
   gap: 7px;
-  padding-right: 48px;
+  padding-right: var(--space-9);
 }
 
 .friends-invite-heading h2,
@@ -1489,13 +1489,13 @@
   font-family: var(--font-display);
   font-size: clamp(1.65rem, 5vw, 2.15rem);
   font-weight: var(--weight-regular);
-  line-height: 1.1;
+  line-height: var(--friend-directory-heading-leading);
 }
 
 .friends-invite-heading p,
 .friends-invite-ready p {
   color: #5f6670;
-  line-height: 1.5;
+  line-height: var(--leading-description);
 }
 
 .friends-invite-form,
@@ -1517,7 +1517,7 @@
   max-width: 46ch;
   margin: 0;
   color: #5f6670;
-  line-height: 1.5;
+  line-height: var(--leading-description);
 }
 
 .friends-invite-manage-row {
@@ -1525,8 +1525,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  margin-top: 4px;
-  padding-top: 16px;
+  margin-top: var(--space-1);
+  padding-top: var(--space-4);
   border-top: 1px solid var(--card-border);
   color: var(--muted);
   font-size: var(--text-meta-size);
@@ -1535,9 +1535,9 @@
 .friends-invite-link-card {
   display: grid;
   gap: 7px;
-  padding: 16px;
+  padding: var(--space-4);
   border: 1px solid var(--card-border);
-  border-radius: 14px;
+  border-radius: var(--friend-directory-invite-card-radius);
   background: var(--surface-2);
 }
 
@@ -1552,9 +1552,9 @@
   overflow-wrap: anywhere;
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: var(--friend-directory-input-size);
   font-weight: var(--weight-semibold);
-  line-height: 1.45;
+  line-height: var(--friend-directory-link-leading);
   user-select: all;
 }
 
@@ -1572,7 +1572,7 @@
   height: 38px;
   padding: 0;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--card-bg);
   color: var(--ink);
   cursor: pointer;
@@ -1606,34 +1606,34 @@
   justify-content: center;
   width: 100%;
   min-height: 48px;
-  padding: 0 14px;
-  border-radius: 999px;
+  padding: 0 calc(var(--space-3) + var(--space-1) / 2);
+  border-radius: var(--radius-pill);
   text-decoration: none;
 }
 
 .friends-invite-error {
   margin: 0;
-  color: #a32727;
-  font-size: 0.85rem;
+  color: var(--friend-danger-bg);
+  font-size: var(--friend-directory-message-size);
 }
 
 .friends-invite-history {
   display: grid;
   gap: 10px;
-  padding-top: 18px;
+  padding-top: calc(var(--space-4) + var(--space-1) / 2);
   border-top: 1px solid var(--card-border);
 }
 
 .friends-invite-history h3 {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: var(--friend-directory-section-title-size);
 }
 
 .friends-invite-history > div {
   display: grid;
   overflow: hidden;
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: var(--friend-directory-row-radius);
 }
 
 .friends-invite-history-row {
@@ -1642,7 +1642,7 @@
   align-items: center;
   gap: 14px;
   min-height: 74px;
-  padding: 12px 14px;
+  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
 }
 
 .friends-invite-history-row + .friends-invite-history-row {
@@ -1657,7 +1657,7 @@
 
 .friends-invite-history-row strong {
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: var(--friend-directory-input-size);
   letter-spacing: var(--tracking-pill);
 }
 
@@ -1665,7 +1665,7 @@
   overflow: hidden;
   color: var(--muted);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--friend-directory-tertiary-size);
   text-overflow: ellipsis;
   user-select: all;
   white-space: nowrap;
@@ -1674,7 +1674,7 @@
 .friends-invite-history-row small {
   color: #656c76;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--friend-directory-tertiary-size);
 }
 
 .friends-invite-history-actions {
@@ -1685,11 +1685,11 @@
   display: inline-flex;
   align-items: center;
   min-height: 26px;
-  padding: 0 9px;
+  padding: 0 calc(var(--space-2) + var(--space-1) / 4);
   border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: var(--friend-directory-tertiary-size);
   font-weight: var(--weight-semibold);
 }
 
@@ -1707,7 +1707,7 @@
 @media (max-width: 560px) {
   .friends-invite-dialog {
     gap: 18px;
-    padding: 24px 20px;
+    padding: var(--space-6) var(--space-5);
   }
 
   .friends-invite-send-actions {
@@ -1728,8 +1728,8 @@
 .social-invitation-accept-modal {
   display: grid;
   gap: 20px;
-  padding: 28px;
-  border-radius: 18px;
+  padding: calc(var(--space-7) - var(--space-1));
+  border-radius: var(--friend-directory-dialog-radius);
 }
 
 .social-invitation-accept-identity {
@@ -1756,8 +1756,8 @@
 
 .social-invitation-accept-identity h2 {
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  line-height: 1.15;
+  font-size: var(--friend-directory-accept-title-size);
+  line-height: var(--friend-directory-row-title-leading);
 }
 
 .social-invitation-accept-identity small {
@@ -1767,7 +1767,7 @@
 
 .social-invitation-accept-modal > p {
   color: #5f6670;
-  line-height: 1.55;
+  line-height: var(--friend-directory-dialog-copy-leading);
 }
 
 @media (max-width: 700px) {
@@ -1784,7 +1784,7 @@
 
   .friends-unified-tabs > button,
   .friends-add-chart-action {
-    padding-inline: 10px;
+    padding-inline: calc(var(--space-2) + var(--space-1) / 2);
   }
 
   .friends-add-chart-action {

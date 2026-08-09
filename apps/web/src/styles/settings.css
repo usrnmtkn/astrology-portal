@@ -433,8 +433,8 @@ button.settings-signout-row {
   border-radius: 0 var(--input-radius) var(--input-radius) 0;
 }
 
-.account-phone-message {
-  color: var(--ink) !important;
+.account-phone-modal .account-phone-message {
+  color: var(--ink);
   font-size: var(--text-meta-size);
 }
 

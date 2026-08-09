@@ -1,8 +1,7 @@
 import bundledDeferredCoreRowsV3 from "./fallbackArchitectureV3/bundled-deferred-core-rows-v3.json";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
-import bondLanguagePass2 from "./fallbackArchitectureV3/source-rows/bond-language-pass-2.json";
+import bundledTransitCoreAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json";
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
-import transitSynastryRowsV1 from "./fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle,
@@ -20,7 +19,7 @@ const fallbackSourceRowsV3 = {
 };
 
 function assertLunationBlendImport() {
-  const allAuthoredCards = [...transitSynastryRowsV1.authoredCards, ...lunationBlendUnitsV1.authoredCards];
+  const allAuthoredCards = [...bundledTransitCoreAuthoredCardsV3.authoredCards, ...lunationBlendUnitsV1.authoredCards];
   const allHookRows = [...fallbackSourceRowsV3.hookRows, ...lunationBlendUnitsV1.hookRows];
   const allRows = [...allAuthoredCards, ...allHookRows];
   const fallbackSetSource = "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores";
@@ -103,63 +102,18 @@ function assertLunationBlendImport() {
   }
 }
 
-function assertBondLanguagePass2Import() {
-  const rows = bondLanguagePass2.rows;
-  const keys = new Set(rows.map((row) => row.contentKey));
-  const baseByKey = new Map(fallbackSourceRowsV3.hookRows.map((row) => [row.contentKey, row]));
-  const readerEligible = new Set(["approved", "approved_reuse", "reviewed"]);
-
-  if (rows.length !== 139 || keys.size !== 139) {
-    throw new Error(`Bond language pass 2 must contain 139 unique rows; found ${rows.length}/${keys.size}.`);
-  }
-
-  for (const row of rows) {
-    const servingTwin = baseByKey.get(row.contentKey);
-
-    if (
-      row.review_status !== "reviewed"
-      || row.content_role !== "fallback_hook"
-      || row.grammar_frame !== "complete_sentence"
-      || row.body_you !== row.body_they
-      || !row.source_keys?.includes("owner/bond-language-pass-2")
-    ) {
-      throw new Error(`Invalid bond language pass 2 row: ${row.contentKey}`);
-    }
-
-    if (!servingTwin || !readerEligible.has(String(servingTwin.review_status))) {
-      throw new Error(`Bond language pass 2 is missing an approved serving twin: ${row.contentKey}`);
-    }
-  }
-
-  const byKey = new Map(rows.map((row) => [row.contentKey, row]));
-  const lintSwaps = [
-    ["fallback-hook/bond-effect-conjunction/uranus", "Let the change finish speaking before you decide it is a problem."],
-    ["fallback-hook/bond-effect-trine/pluto", "uses the truth as a weapon"],
-    ["fallback-hook/bond-effect-soft/pluto/variant-3", "without holding it over them later"],
-    ["fallback-hook/bond-effect-hard/pluto/variant-2", "Name the actual power imbalance"]
-  ] as const;
-
-  for (const [contentKey, expected] of lintSwaps) {
-    if (!byKey.get(contentKey)?.body_you.includes(expected)) {
-      throw new Error(`Bond language pass 2 lint swap mismatch: ${contentKey}`);
-    }
-  }
-}
-
 assertLunationBlendImport();
-assertBondLanguagePass2Import();
 
 export const deferredFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
   transitLib: {
-    authoredCards: transitSynastryRowsV1.authoredCards as AuthoredCard[]
+    authoredCards: bundledTransitCoreAuthoredCardsV3.authoredCards as AuthoredCard[]
   },
   templatesFile: {
     templates: []
   },
   rowsFile: {
     hookRows: [
-      ...(bundledDeferredCoreRowsV3.hookRows as HookRow[]),
-      ...(bondLanguagePass2.rows as HookRow[])
+      ...(bundledDeferredCoreRowsV3.hookRows as HookRow[])
     ],
     vocabularyRows: bundledDeferredCoreRowsV3.vocabularyRows
   }
