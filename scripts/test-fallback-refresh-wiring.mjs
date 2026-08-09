@@ -145,12 +145,9 @@ assert.equal(
 );
 assert.equal(
   moonTaurusClose?.body_you,
-  "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong. By {{exitDate}}, the mood has moved on."
+  "A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong."
 );
-assert.equal(
-  moonTaurusMoves?.body_you,
-  "Eat one meal without working or scrolling.\nFinish one task before opening another.\nFix one small source of discomfort in the room you use most."
-);
+assert.equal(moonTaurusMoves, undefined, "Moon moves rows are retired by owner ruling 2026-08-07.");
 
 const natalRenderer = createFallbackRenderer(templates, sourceRows);
 const transitRenderer = createTransitSynastryRenderer(transitRows, templates, sourceRows);
@@ -162,7 +159,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-08e");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-08f");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");

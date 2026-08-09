@@ -162,6 +162,16 @@ const moonTaurusReference = renderSkyPlacementReference({
     exactDate: "August 6, 2026"
   }]
 });
+const moonSignEntries = [
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+].map((sign) => renderer.renderSkyPlacement({
+  planet: "moon",
+  sign,
+  entryDate: "August 4, 2026",
+  exitDate: "August 7, 2026",
+  events: []
+}));
 const lilithAries = renderer.renderSkyPlacement({
   planet: "lilith",
   sign: "aries"
@@ -307,10 +317,10 @@ assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generi
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
-assert.equal(approvedSkyPlacementRows.length, 840, "The package must include five approved article slots for all 168 sky placements.");
+assert.equal(approvedSkyPlacementRows.length, 828, "The package must include five approved article slots except for the 12 Moon moves rows retired by owner ruling.");
 assert.equal(approvedSkyPlacementCoreRows.length, 504, "Every placement pair must have approved hook, lived, and turn rows.");
 for (const [family, rows] of Object.entries(approvedSkyPlacementRowsByFamily)) {
-  assert.equal(rows.length, 168, `Every sky placement must have an approved ${family} row.`);
+  assert.equal(rows.length, family === "moves" ? 156 : 168, `Sky placements must have the governed ${family} row count.`);
 }
 for (const planet of retrogradePlacementPlanets) {
   for (const sign of zodiacSigns) {
@@ -461,7 +471,11 @@ assert.match(
   /^The Moon moves into Taurus on August 4, and the collective pace slows\./u,
   "Moon in Taurus must fill its entry date from the engine-owned slot."
 );
-assert.match(moonTaurus.body, /By August 7, the mood has moved on\.$/u);
+assert.match(
+  moonTaurus.body,
+  /A delayed answer, slower day, or stronger need for comfort is not proof that the entire plan is wrong\.$/u
+);
+assert.doesNotMatch(moonTaurus.body, /mood has moved on/u);
 assert.doesNotMatch(
   moonTaurus.body,
   /squares Jupiter|August 6/u,
@@ -479,11 +493,12 @@ assert.ok(
 );
 assert.doesNotMatch(moonTaurusUndatedSquare.body, /squares Jupiter|This week/u);
 assert.doesNotMatch(moonTaurusWrongSignSquare.body, /squares Jupiter|August 6/u);
-assert.deepEqual(moonTaurus.moves, [
-  "Eat one meal without working or scrolling.",
-  "Finish one task before opening another.",
-  "Fix one small source of discomfort in the room you use most."
-]);
+assert.deepEqual(moonTaurus.moves, []);
+assert.equal(moonSignEntries.length, 12);
+moonSignEntries.forEach((entry) => {
+  assert.equal(entry.templateKey, "sky-placement-moon-entry-v1");
+  assert.deepEqual(entry.moves, [], "Moon sign entries must render without a moves row.");
+});
 assert.deepEqual(
   {
     articleSections: moonTaurusSquareJupiter.articleSections,
