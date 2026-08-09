@@ -1,0 +1,73 @@
+{
+  "version": "report-judge-personal-health-v1",
+  "status": "needs_review",
+  "purpose": "Calibration-only owner-directed examples. These fixtures do not promote any passage into the owner-authored voice corpus or reader-facing content.",
+  "minimumSuccessfulSeparation": 1,
+  "cases": [
+    {
+      "id": "flat_recovery_abstraction",
+      "text": "A long day may still be completely possible and need more recovery afterward.",
+      "critiqueExpected": ["unlived_abstraction", "owner_voice_drift"],
+      "judgeExpected": {
+        "maximum": { "lived_experience": 2, "owner_voice": 2 }
+      },
+      "comparisonGroup": "flat"
+    },
+    {
+      "id": "wellness_aphorism",
+      "text": "You need a life that leaves enough room for the person who has to live it.",
+      "critiqueExpected": ["owner_voice_drift"],
+      "judgeExpected": {
+        "maximum": { "owner_voice": 2 }
+      },
+      "comparisonGroup": "flat"
+    },
+    {
+      "id": "spatial_next_day_abstraction",
+      "text": "The next day may have less room than expected.",
+      "critiqueExpected": ["unlived_abstraction"],
+      "judgeExpected": {
+        "maximum": { "lived_experience": 2 }
+      },
+      "comparisonGroup": "flat"
+    },
+    {
+      "id": "lived_recovery_consequence",
+      "text": "A long day may still be manageable. The problem can be what is waiting for you afterward. The errands still need to get done. The appointment is still at ten. Work still starts in the morning.",
+      "critiqueExpected": [],
+      "judgeExpected": {
+        "minimum": { "lived_experience": 3, "owner_voice": 3 }
+      },
+      "comparisonGroup": "successful"
+    },
+    {
+      "id": "lived_interruption_consequence",
+      "text": "A text arrives and your afternoon is gone. Someone asks for a small favor, and the evening you kept clear for yourself disappears before you even realize you said yes.",
+      "critiqueExpected": [],
+      "judgeExpected": {
+        "minimum": { "lived_experience": 3, "owner_voice": 3 }
+      },
+      "comparisonGroup": "successful"
+    },
+    {
+      "id": "concrete_noun_manifestation_list",
+      "text": "Work, appointments, travel, caregiving, and recovery may all affect your capacity this month.",
+      "critiqueExpected": ["unlived_abstraction"],
+      "judgeExpected": {
+        "maximum": { "lived_experience": 2 }
+      },
+      "comparisonGroup": "flat",
+      "adversarialProperty": "Concrete nouns in a category list do not establish lived cause and consequence."
+    },
+    {
+      "id": "transit_keyword_interpretive_gap",
+      "text": "Uranus squares your Sun, bringing changes around identity and independence.",
+      "critiqueExpected": ["interpretive_gap"],
+      "judgeExpected": {
+        "maximum": { "interpretive_movement": 2 }
+      },
+      "comparisonGroup": "flat",
+      "adversarialProperty": "A technically attributable transit plus keywords does not establish causal interpretation."
+    }
+  ]
+}

@@ -1,0 +1,357 @@
+{
+  "version": "report-judge-personal-health-v1",
+  "fixtureStatus": "needs_review",
+  "runAt": "2026-08-09T16:57:36.982Z",
+  "status": "category_failure",
+  "requestedCallCount": 7,
+  "completedCallCount": 7,
+  "threshold": 0.9,
+  "governanceDocuments": [
+    "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-OWNER.md",
+    "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-OWNER.md"
+  ],
+  "rows": [
+    {
+      "id": "flat_recovery_abstraction",
+      "scores": {
+        "astrology_chronology": 4,
+        "factual_traceability": 3,
+        "lived_experience": 3,
+        "interpretive_movement": 1,
+        "owner_voice": 3,
+        "natural_language": 4,
+        "syntax_variety": 3,
+        "emotional_temperature": 4,
+        "density": 4
+      },
+      "verdict": "below_threshold",
+      "findings": [
+        {
+          "category": "interpretive_movement",
+          "location": "body",
+          "finding": "The sentence states a possible capacity consequence but provides no astrological factor, causal reasoning, complication, or report-period context to explain why this condition is relevant."
+        },
+        {
+          "category": "lived_experience",
+          "location": "body",
+          "finding": "The reference to a long day and recovery is recognizable, but it remains isolated from an obligation, schedule pattern, decision, or practical consequence."
+        },
+        {
+          "category": "factual_traceability",
+          "location": "body",
+          "finding": "Capacity and recovery are broadly compatible with the supplied sixth-house material, but the unit does not connect them to a scoped factor or timing anchor."
+        }
+      ],
+      "model": "gpt-5.6-terra",
+      "promptVersion": "TLDR-REPORT-JUDGE-RUBRIC-OWNER.md:5667e765e5d33db8",
+      "usage": {
+        "inputTokens": 12608,
+        "outputTokens": 313,
+        "totalTokens": 12921
+      }
+    },
+    {
+      "id": "wellness_aphorism",
+      "scores": {
+        "astrology_chronology": 2,
+        "factual_traceability": 2,
+        "lived_experience": 1,
+        "interpretive_movement": 0,
+        "owner_voice": 1,
+        "natural_language": 4,
+        "syntax_variety": 3,
+        "emotional_temperature": 4,
+        "density": 3
+      },
+      "verdict": "below_threshold",
+      "findings": [
+        {
+          "category": "astrology_chronology",
+          "location": "body",
+          "finding": "The unit contains no astrological factor, annual context, timing, or chronology, so it cannot function as a traceable 12-month report interpretation."
+        },
+        {
+          "category": "factual_traceability",
+          "location": "body",
+          "finding": "The assertion that the reader needs more room in their life is not tied to any supplied chart factor, governed interpretation, or supported manifestation."
+        },
+        {
+          "category": "lived_experience",
+          "location": "body",
+          "finding": "The sentence names no recognizable circumstance, obligation, choice, or consequence that would show what needing more room looks like in ordinary life."
+        },
+        {
+          "category": "interpretive_movement",
+          "location": "body",
+          "finding": "There is no movement from a lived situation through astrology and causal reasoning into a complication or consequence; this is an unsupported conclusion."
+        },
+        {
+          "category": "owner_voice",
+          "location": "body",
+          "finding": "The line has a broad reflective quality but lacks the owner reference's concrete stakes, astrological reasoning, and sharp observational specificity."
+        },
+        {
+          "category": "syntax_variety",
+          "location": "body",
+          "finding": "A single sentence cannot demonstrate controlled syntax variety across a report unit."
+        },
+        {
+          "category": "density",
+          "location": "body",
+          "finding": "The sentence is concise, but it does not advance report-specific interpretation, chronology, manifestation, or consequence."
+        }
+      ],
+      "model": "gpt-5.6-terra",
+      "promptVersion": "TLDR-REPORT-JUDGE-RUBRIC-OWNER.md:5667e765e5d33db8",
+      "usage": {
+        "inputTokens": 12611,
+        "outputTokens": 537,
+        "totalTokens": 13148
+      }
+    },
+    {
+      "id": "spatial_next_day_abstraction",
+      "scores": {
+        "astrology_chronology": 4,
+        "factual_traceability": 3,
+        "lived_experience": 1,
+        "interpretive_movement": 0,
+        "owner_voice": 1,
+        "natural_language": 4,
+        "syntax_variety": 4,
+        "emotional_temperature": 4,
+        "density": 2
+      },
+      "verdict": "below_threshold",
+      "findings": [
+        {
+          "category": "lived_experience",
+          "location": "body",
+          "finding": "The sentence names no lived situation, domain, obligation, choice, or consequence. “Less room” is too abstract for the reader to recognize what may be constrained."
+        },
+        {
+          "category": "interpretive_movement",
+          "location": "body",
+          "finding": "The forecast supplies no astrological factor, causal reasoning, complication, or consequence. It moves only from a vague future claim to an unspecified condition."
+        },
+        {
+          "category": "owner_voice",
+          "location": "body",
+          "finding": "The phrasing is generic and impersonal rather than grounded in the reference voice’s concrete stakes, observed circumstance, and precise consequence."
+        },
+        {
+          "category": "density",
+          "location": "body",
+          "finding": "Although concise, the sentence does not establish a meaningful report point because it lacks the circumstance needed to make its forecast useful."
+        }
+      ],
+      "model": "gpt-5.6-terra",
+      "promptVersion": "TLDR-REPORT-JUDGE-RUBRIC-OWNER.md:5667e765e5d33db8",
+      "usage": {
+        "inputTokens": 12604,
+        "outputTokens": 368,
+        "totalTokens": 12972
+      }
+    },
+    {
+      "id": "lived_recovery_consequence",
+      "scores": {
+        "astrology_chronology": 1,
+        "factual_traceability": 2,
+        "lived_experience": 2,
+        "interpretive_movement": 0,
+        "owner_voice": 2,
+        "natural_language": 4,
+        "syntax_variety": 2,
+        "emotional_temperature": 4,
+        "density": 3
+      },
+      "verdict": "below_threshold",
+      "findings": [
+        {
+          "category": "astrology_chronology",
+          "location": "Entire draft",
+          "finding": "The unit contains no chart factor, timing, annual context, or chronology, so it cannot function as an astrologically grounded report passage."
+        },
+        {
+          "category": "factual_traceability",
+          "location": "Entire draft",
+          "finding": "Work, errands, and an appointment are introduced without attribution to any supplied factor or governed manifestation set."
+        },
+        {
+          "category": "lived_experience",
+          "location": "Sentences 1-3",
+          "finding": "The concrete nouns describe a generic busy day but do not establish a chart-earned situation, decision, consequence, or change in the reader's ordinary life."
+        },
+        {
+          "category": "interpretive_movement",
+          "location": "Entire draft",
+          "finding": "There is no movement from lived situation through astrology and causal reasoning to complication or consequence; the passage is a standalone observation."
+        },
+        {
+          "category": "owner_voice",
+          "location": "Entire draft",
+          "finding": "The opening has some grounded concreteness, but it remains generic and lacks the owner-reference pattern of specific stakes, interpretive authority, and a consequential observation."
+        },
+        {
+          "category": "syntax_variety",
+          "location": "Sentences 1-3",
+          "finding": "Three short declarative sentences use a repetitive list-like architecture without developing the thought."
+        }
+      ],
+      "model": "gpt-5.6-terra",
+      "promptVersion": "TLDR-REPORT-JUDGE-RUBRIC-OWNER.md:5667e765e5d33db8",
+      "usage": {
+        "inputTokens": 12635,
+        "outputTokens": 601,
+        "totalTokens": 13236
+      }
+    },
+    {
+      "id": "lived_interruption_consequence",
+      "scores": {
+        "astrology_chronology": 1,
+        "factual_traceability": 1,
+        "lived_experience": 3,
+        "interpretive_movement": 0,
+        "owner_voice": 2,
+        "natural_language": 4,
+        "syntax_variety": 4,
+        "emotional_temperature": 4,
+        "density": 4
+      },
+      "verdict": "below_threshold",
+      "findings": [
+        {
+          "category": "astrology_chronology",
+          "location": "body",
+          "finding": "The unit contains no chart factor, date, annual context, or chronology, so it cannot function as a supported 12-month report interpretation."
+        },
+        {
+          "category": "factual_traceability",
+          "location": "body",
+          "finding": "The specific scenario of an incoming text or favor consuming protected time is not attributed to, or supported by, any supplied astrological factor."
+        },
+        {
+          "category": "interpretive_movement",
+          "location": "body",
+          "finding": "The unit offers a lived observation but does not reason from astrology through an activated domain to consequence or complication."
+        },
+        {
+          "category": "owner_voice",
+          "location": "body",
+          "finding": "The concrete rhythm is compatible with the reference, but the passage is too isolated and ungrounded in the report's interpretive movement to demonstrate owner-reference fidelity."
+        }
+      ],
+      "model": "gpt-5.6-terra",
+      "promptVersion": "TLDR-REPORT-JUDGE-RUBRIC-OWNER.md:5667e765e5d33db8",
+      "usage": {
+        "inputTokens": 12627,
+        "outputTokens": 486,
+        "totalTokens": 13113
+      }
+    },
+    {
+      "id": "concrete_noun_manifestation_list",
+      "scores": {
+        "astrology_chronology": 1,
+        "factual_traceability": 2,
+        "lived_experience": 2,
+        "interpretive_movement": 0,
+        "owner_voice": 1,
+        "natural_language": 4,
+        "syntax_variety": 3,
+        "emotional_temperature": 4,
+        "density": 3
+      },
+      "verdict": "below_threshold",
+      "findings": [
+        {
+          "category": "astrology_chronology",
+          "location": "body",
+          "finding": "The report horizon is 12 months, but the sentence frames its forecast as occurring \"this month\" without a supported monthly anchor, date, or transit chronology."
+        },
+        {
+          "category": "factual_traceability",
+          "location": "body",
+          "finding": "The sentence combines work, appointments, travel, caregiving, and recovery without attributing them to qualifying chart factors or establishing that all of these domains are active in the stated moment."
+        },
+        {
+          "category": "lived_experience",
+          "location": "body",
+          "finding": "Concrete nouns appear as an undifferentiated manifestation list. The sentence does not show what gets displaced, what decision follows, or how capacity changes ordinary life."
+        },
+        {
+          "category": "interpretive_movement",
+          "location": "body",
+          "finding": "No astrology, causal reasoning, complication, or consequence connects the forecast to the supplied facts."
+        },
+        {
+          "category": "owner_voice",
+          "location": "body",
+          "finding": "The wording is generic capacity language and lacks the reference report's grounded observation, concrete stakes, and sharp cause-and-consequence movement."
+        }
+      ],
+      "model": "gpt-5.6-terra",
+      "promptVersion": "TLDR-REPORT-JUDGE-RUBRIC-OWNER.md:5667e765e5d33db8",
+      "usage": {
+        "inputTokens": 12613,
+        "outputTokens": 449,
+        "totalTokens": 13062
+      }
+    },
+    {
+      "id": "transit_keyword_interpretive_gap",
+      "scores": {
+        "astrology_chronology": 4,
+        "factual_traceability": 3,
+        "lived_experience": 1,
+        "interpretive_movement": 1,
+        "owner_voice": 1,
+        "natural_language": 4,
+        "syntax_variety": 2,
+        "emotional_temperature": 4,
+        "density": 4
+      },
+      "verdict": "below_threshold",
+      "findings": [
+        {
+          "category": "lived_experience",
+          "location": "body",
+          "finding": "The sentence remains at abstract labels, “identity and independence,” without showing an ordinary-life situation, choice, changed condition, or consequence."
+        },
+        {
+          "category": "interpretive_movement",
+          "location": "body",
+          "finding": "This is a transit-to-keyword summary. It does not reason from the Uranus-Sun square through an activated lived domain, complication, or consequence."
+        },
+        {
+          "category": "owner_voice",
+          "location": "body",
+          "finding": "“Changes around identity and independence” is generic horoscope phrasing and does not match the reference voice’s concrete stakes, observation, and controlled specificity."
+        },
+        {
+          "category": "syntax_variety",
+          "location": "body",
+          "finding": "The single sentence uses a standard transit-plus-keyword construction; the bounded unit provides no interpretive variation."
+        }
+      ],
+      "model": "gpt-5.6-terra",
+      "promptVersion": "TLDR-REPORT-JUDGE-RUBRIC-OWNER.md:5667e765e5d33db8",
+      "usage": {
+        "inputTokens": 12608,
+        "outputTokens": 496,
+        "totalTokens": 13104
+      }
+    }
+  ],
+  "failures": [
+    "flat_recovery_abstraction.lived_experience=3 expected <= 2",
+    "flat_recovery_abstraction.owner_voice=3 expected <= 2",
+    "lived_recovery_consequence.lived_experience=2 expected >= 3",
+    "lived_recovery_consequence.owner_voice=2 expected >= 3",
+    "lived_interruption_consequence.owner_voice=2 expected >= 3",
+    "lived_experience separation=0.50 expected >= 1",
+    "owner_voice separation=0.00 expected >= 1"
+  ]
+}
