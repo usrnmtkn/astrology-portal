@@ -19,6 +19,10 @@ const path = require("path");
 const { lintCard } = require("./lint-sky-voice.js");
 const { buildOwnerVocabularyPrompt } = require("./owner-vocabulary-prompt.js");
 const {
+  canonicalAstrologyReviewInstructions,
+  canonicalAstrologyWritingInstructions
+} = require("../../../src/astro-writing/canonicalInstructions.cjs");
+const {
   annotateCandidateWithWarmth,
   buildAspectWarmthHarvest,
   foundationPromptBlock,
@@ -991,6 +995,9 @@ async function generateWithConfig(prompt, config, { temperature } = {}) {
     },
     body: JSON.stringify({
       model: config.model,
+      instructions: config.role === "judge"
+        ? canonicalAstrologyReviewInstructions
+        : canonicalAstrologyWritingInstructions,
       input: prompt,
       ...openAiRequestSettings(config, { temperature: temp }),
       max_output_tokens: 1500

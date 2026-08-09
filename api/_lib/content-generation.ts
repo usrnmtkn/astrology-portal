@@ -1,6 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
+import {
+  canonicalAstrologyReviewInstructions,
+  canonicalAstrologyWritingInstructions,
+  REVIEW_FIELDS
+} from "../../src/astro-writing/canonicalInstructions.mjs";
+import { REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 
 type ContentMode = "feed" | "in_depth" | "article";
 type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
@@ -118,19 +124,6 @@ export type AstrologyDrilldown = {
   factors: AstrologyFactorExplanation[];
   whyThisScene: string;
   timingNote?: string;
-};
-
-type ApprovedExampleRow = {
-  content_key?: string | null;
-  surface?: string | null;
-  mode?: string | null;
-  event_type?: string | null;
-  target_date?: string | null;
-  headline?: string | null;
-  summary?: string | null;
-  body?: string | null;
-  sections?: unknown;
-  status?: string | null;
 };
 
 type ApprovedExample = {
@@ -2759,27 +2752,6 @@ function natalPlacementFactInstruction(input: GenerateContentInput) {
   ].join("\n");
 }
 
-function exampleFromRow(row: ApprovedExampleRow): ApprovedExample | null {
-  const headline = stringValue(row.headline);
-  const summary = stringValue(row.summary);
-  const body = stringValue(row.body);
-
-  if (!headline || !body) {
-    return null;
-  }
-
-  return {
-    contentKey: stringValue(row.content_key),
-    surface: stringValue(row.surface),
-    mode: stringValue(row.mode),
-    eventType: stringValue(row.event_type),
-    targetDate: stringValue(row.target_date),
-    headline,
-    summary,
-    body: compactBody(body)
-  };
-}
-
 function factRecord(facts: Record<string, unknown>, key: string) {
   const value = facts[key];
   return isRecord(value) ? value : null;
@@ -4532,89 +4504,82 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
   ].join("\n");
 }
 
-function supabaseUrl() {
-  return process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "";
+type CanonicalOwnerExample = {
+  id: string;
+  contentKey: string;
+  family: string;
+  register: string;
+  text: string;
+  ownerApproved: boolean;
+  authority: string;
+};
+
+let canonicalOwnerExamplesCache: CanonicalOwnerExample[] | null = null;
+
+function canonicalExampleFamilies(input: GenerateContentInput) {
+  const context = `${input.surface} ${input.eventType} ${input.contentKey}`.toLowerCase();
+  if (context.includes("synastry") || context.includes("relationship")) return ["synastry"];
+  if (context.includes("daily")) return ["daily"];
+  if (context.includes("aspect") && input.surface === "sky") {
+    return ["sky-aspect", "knowledge-matrix-transit", "authored/transit-aspect", "fallback-hook/transit-aspect-type"];
+  }
+  if (context.includes("aspect")) return ["natal", "authored/transit-aspect"];
+  if (context.includes("placement") && input.surface === "sky") return ["sky-placement", "knowledge-matrix-transit"];
+  if (context.includes("house")) return ["house-core", "knowledge-matrix-house"];
+  return input.surface === "sky" ? ["sky-placement", "knowledge-matrix-transit"] : ["natal"];
 }
 
-function approvedExampleQueryUrl(input: GenerateContentInput, eventType?: string, limit = 3) {
-  const baseUrl = supabaseUrl();
+function canonicalExampleRegister(input: GenerateContentInput) {
+  return input.surface === "sky" ? "collective" : "second_person";
+}
 
-  if (!baseUrl) {
-    return "";
-  }
+function canonicalExampleWords(value: unknown) {
+  return new Set(JSON.stringify(value).toLowerCase().match(/[a-z][a-z'-]+/gu) ?? []);
+}
 
-  const params = new URLSearchParams({
-    select: "content_key,surface,mode,event_type,target_date,headline,summary,body,sections,status",
-    status: "in.(LIVE,REVIEWED)",
-    surface: `eq.${input.surface}`,
-    mode: `eq.${input.mode}`,
-    content_key: `neq.${input.contentKey}`,
-    order: "updated_at.desc",
-    limit: String(limit)
-  });
-
-  if (eventType) {
-    params.set("event_type", `eq.${eventType}`);
-  }
-
-  return `${baseUrl}/rest/v1/generated_interpretations?${params.toString()}`;
+function loadCanonicalOwnerExampleRows() {
+  if (canonicalOwnerExamplesCache) return canonicalOwnerExamplesCache;
+  const filePath = path.join(process.cwd(), "data/writing/OWNER_APPROVED_EXAMPLES.jsonl");
+  if (!fs.existsSync(filePath)) throw new Error(`Canonical owner examples are missing: ${filePath}`);
+  canonicalOwnerExamplesCache = fs.readFileSync(filePath, "utf8")
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => JSON.parse(line) as CanonicalOwnerExample)
+    .filter((entry) => entry.ownerApproved === true && entry.text && entry.contentKey);
+  return canonicalOwnerExamplesCache;
 }
 
 async function loadApprovedExamples(input: GenerateContentInput) {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!serviceRoleKey) {
-    return [];
-  }
-
-  const eventType = input.eventType.trim();
-  const queries = [
-    approvedExampleQueryUrl(input, eventType, 3),
-    approvedExampleQueryUrl(input, undefined, 3)
-  ].filter(Boolean);
-  const examples: ApprovedExample[] = [];
-  const seen = new Set<string>();
-
-  for (const query of queries) {
-    if (examples.length >= 3) {
-      break;
-    }
-
-    try {
-      const response = await fetch(query, {
-        headers: {
-          apikey: serviceRoleKey,
-          authorization: `Bearer ${serviceRoleKey}`
-        }
-      });
-
-      if (!response.ok) {
-        continue;
-      }
-
-      const rows = await response.json() as ApprovedExampleRow[];
-
-      for (const row of rows) {
-        const example = exampleFromRow(row);
-        const key = example?.contentKey;
-
-        if (!example || !key || seen.has(key)) {
-          continue;
-        }
-
-        seen.add(key);
-        examples.push(example);
-
-        if (examples.length >= 3) {
-          break;
-        }
-      }
-    } catch {
-      continue;
-    }
-  }
-
-  return examples;
+  const families = canonicalExampleFamilies(input);
+  const register = canonicalExampleRegister(input);
+  const needles = canonicalExampleWords({
+    contentKey: input.contentKey,
+    surface: input.surface,
+    eventType: input.eventType,
+    facts: input.facts
+  });
+  const scored = loadCanonicalOwnerExampleRows()
+    .filter((entry) => families.includes(entry.family) && entry.register === register)
+    .map((entry, index) => {
+      const words = canonicalExampleWords({ key: entry.contentKey, text: entry.text });
+      let score = 0;
+      for (const word of needles) if (words.has(word)) score += 1;
+      return { entry, index, score };
+    })
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .slice(0, 4);
+  if (!scored.length) throw new Error(`No canonical owner-approved ${families.join("|")}/${register} examples are available.`);
+  return scored.map(({ entry }) => ({
+    contentKey: entry.contentKey,
+    surface: input.surface,
+    mode: input.mode,
+    eventType: input.eventType,
+    targetDate: "",
+    headline: entry.contentKey,
+    summary: "",
+    body: compactBody(entry.text)
+  }));
 }
 
 function validateGeneratedContentQuality(content: GeneratedContent, input: GenerateContentInput) {
@@ -5134,6 +5099,67 @@ function responseOutputText(payload: {
     .trim();
 }
 
+type CanonicalReview = Record<string, "PASS" | "REVISE"> & {
+  decision: "PASS" | "REVISE";
+  violations: string[];
+  required_revisions: Array<{ field: string; instruction: string }>;
+};
+
+async function reviewGeneratedContentWithOpenAI({
+  apiKey,
+  draft,
+  input
+}: {
+  apiKey: string;
+  draft: GeneratedContent;
+  input: GenerateContentInput;
+}): Promise<CanonicalReview> {
+  const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
+  const response = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${apiKey}`,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      model,
+      instructions: canonicalAstrologyReviewInstructions,
+      input: JSON.stringify({
+        task: "Review this generated astrology passage. Preserve correct lines and identify only required surgical revisions.",
+        contentFamily: input.eventType,
+        surface: input.surface,
+        mode: input.mode,
+        governedFacts: input.facts,
+        draft
+      }),
+      reasoning: { effort: "low" },
+      max_output_tokens: 2500,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "tldr_astro_marie_review",
+          strict: true,
+          schema: REVIEW_SCHEMA
+        }
+      }
+    })
+  });
+  const payload = await response.json() as {
+    output_text?: string;
+    output?: Array<{ content?: Array<{ text?: string }> }>;
+    error?: { message?: string };
+  };
+  if (!response.ok) throw new Error(payload.error?.message ?? `OpenAI review failed with ${response.status}.`);
+  const output = responseOutputText(payload);
+  if (!output) throw new Error("OpenAI review did not include a verdict.");
+  const review = JSON.parse(output) as CanonicalReview;
+  if (!["PASS", "REVISE"].includes(review.decision)) throw new Error("OpenAI review returned an invalid decision.");
+  for (const field of REVIEW_FIELDS) {
+    if (!["PASS", "REVISE"].includes(review[field])) throw new Error(`OpenAI review omitted ${field}.`);
+  }
+  return review;
+}
+
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
   if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
     return deterministicNatalPlacementDraft(input);
@@ -5147,6 +5173,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   let qualityFeedback = "";
   let lastError: Error | null = null;
   let lastDraft: StoredGeneratedContent | null = null;
+  let lastReviewDecision: "PASS" | "REVISE" | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -5157,6 +5184,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       },
       body: JSON.stringify({
         model,
+        instructions: canonicalAstrologyWritingInstructions,
         ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
         input: buildPrompt(input, approvedExamples, qualityFeedback),
         text: {
@@ -5202,6 +5230,17 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       lastDraft = draft;
       validateGeneratedContentForInput(draft, input);
 
+      const review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input });
+      lastReviewDecision = review.decision;
+      if (review.decision !== "PASS") {
+        lastError = new Error(`Marie review required revision: ${review.violations.join("; ") || "unspecified violation"}`);
+        qualityFeedback = [
+          "Revise only the failed material below. Preserve every successful line exactly; do not rewrite for variety.",
+          ...review.required_revisions.map(({ field, instruction }) => `${field}: ${instruction}`)
+        ].join("\n");
+        continue;
+      }
+
       return withGenerationQualityDiagnostics(draft, input);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Generated content failed quality gates.");
@@ -5210,6 +5249,10 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
         retryInstructionForError(lastError, lastDraft, input)
       ].join("\n");
     }
+  }
+
+  if (lastReviewDecision === "REVISE") {
+    throw new ContentGenerationQualityError(lastError?.message ?? "Marie review required revision.");
   }
 
   if (input.allowQualityFallback && lastDraft) {

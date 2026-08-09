@@ -18,11 +18,13 @@ stale.
 ### Editorial writing and review
 
 For any request to write, rewrite, refine, compare, or approve TLDR Astro
-reader copy, invoke the repository skill at
-`.agents/skills/marie-satori-writer/SKILL.md` before drafting. Do not write from
-general repository context alone. The skill compiles a small governed evidence
-packet, separates owner-authored voice from unapproved candidates, runs the
-authorship gate before the Terra judge, and preserves approval provenance.
+reader copy, load the canonical repository skill at
+`skills/tldr-astro-writer/SKILL.md` before drafting. Do not write from general
+repository context alone. The skill routes every task through the versioned
+meaning-plan, owner-context, draft, separate-review, surgical-revision, and
+deterministic-validation pipeline. The existing Marie Satori evidence compiler
+at `.agents/skills/marie-satori-writer/SKILL.md` remains the governed retrieval
+implementation used by that pipeline.
 
 A writer result remains `needs_review` unless the owner explicitly approves
 the complete exact wording. A judge score, positive direction, or preferred

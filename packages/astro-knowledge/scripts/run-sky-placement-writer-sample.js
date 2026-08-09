@@ -8,6 +8,7 @@ const { assertRoutingMatch, resolveWriterCandidate } = require("./sky-placement-
 const { lintArticle } = require("./lint-placement-voice.js");
 const { judgeArticle } = require("./judge-placement-voice.js");
 const { judgeConfig } = require("./generate-sky-aspect-cards.js");
+const { canonicalAstrologyWritingInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
 
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
 let activeOutDir = null;
@@ -248,6 +249,7 @@ async function main() {
 
   const requestBody = {
     model: release.model,
+    instructions: canonicalAstrologyWritingInstructions,
     input: modelInput,
     reasoning: { effort: release.reasoningEffort },
     max_output_tokens: cli.maxOutputTokens,
