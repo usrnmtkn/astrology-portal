@@ -13,6 +13,13 @@ import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-car
 import { createFallbackRenderer, createPackageManifest, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
 
 export { normalizeAspect, SourceGapError };
+export {
+  KNOWLEDGE_MATRIX_V8_BASE_PATH,
+  KNOWLEDGE_MATRIX_V8_VERSION,
+  loadKnowledgeMatrixV8Runtime,
+  renderKnowledgeMatrixV8HouseActivation,
+  renderKnowledgeMatrixV8TransitMeaning
+} from "./knowledgeMatrixV8Runtime";
 export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
 
 export type ReviewStatus = "approved" | "approved_reuse" | "reviewed" | string;
