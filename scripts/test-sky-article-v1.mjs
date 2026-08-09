@@ -28,7 +28,10 @@ const skyPlacementResolver = browserResolver.slice(
 );
 
 assert.equal(skyArticleV1.authoredCards.length, 2);
-assert.equal(skyArticleV1.hookRows.length, 42);
+assert.equal(skyArticleV1.hookRows.length, 14);
+assert.ok(!skyArticleV1.hookRows.some((row) => (
+  /^fallback-hook\/sky-placement-(?:you|practice)\//u.test(row.contentKey)
+)));
 assert.equal(skyArticleV1.vocabularyRows.length, 25);
 assert.equal(skyPlanetFramesV1.rows.length, 23);
 assert.equal(
@@ -688,7 +691,7 @@ try {
 }
 
 console.log(
-  "Sky article v1 passed: 2 registry articles, 42 approved V3 slot rows, 23 approved three-beat frames, "
+  "Sky article v1 passed: 2 registry articles, 14 approved V3 slot rows, 23 approved three-beat frames, "
   + "42 review-gated voice-pass rows, 1 approved continuous Sun unit, 13 superseded Sun rows, 25 approved vocab rows, "
   + "9/9 archive ephemeris facts, wrong-station rejection, retrograde fallback, shared-bank hashes, "
   + "True Node sign-through, FINAL section order, article/slot exclusivity, twelve public rising blocks, "
