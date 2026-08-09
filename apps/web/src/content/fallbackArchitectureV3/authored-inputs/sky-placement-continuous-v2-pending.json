@@ -36,7 +36,6 @@
       "fallback-hook/sky-placement-lived/{planet}/{sign}",
       "fallback-hook/sky-placement-turn/{planet}/{sign}",
       "fallback-hook/sky-placement-tagline/{planet}/{sign}",
-      "fallback-hook/sky-placement-moves/{planet}/{sign}",
       "fallback-hook/sky-placement-opening/{planet}",
       "fallback-hook/sky-placement-meaning/{planet}",
       "fallback-hook/sky-placement-confrontation/{planet}",

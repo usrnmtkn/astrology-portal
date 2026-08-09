@@ -41,6 +41,7 @@ const pendingContinuousImports = JSON.parse(read(
   "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-continuous-v2-pending.json"
 ));
 const retiredPlacementFamily = /^fallback-hook\/sky-placement-(?:you|practice)\//u;
+const retiredPlacementMovesFamily = /^fallback-hook\/sky-placement-moves\//u;
 
 assert.equal(
   skyArticleV1.hookRows.filter((row) => retiredPlacementFamily.test(row.contentKey)).length,
@@ -51,6 +52,11 @@ assert.equal(
   skyPlacementOwnerApprovedFallbacksV1.rows.filter((row) => retiredPlacementFamily.test(row.contentKey)).length,
   0,
   "The retired emergency families must never enter the owner-approved placement reader bundle."
+);
+assert.equal(
+  fallbackSourceRows.hookRows.filter((row) => retiredPlacementMovesFamily.test(row.contentKey)).length,
+  0,
+  "No sky-placement-moves contentKey may remain in the approved fallback source."
 );
 for (const [label, source] of [
   ["Node", nodeTransitRenderer],
@@ -268,13 +274,13 @@ const authoredTransitAspectRows = transitSynastryRows.authoredCards.filter((row)
   row.contentKey.startsWith("authored/transit-aspect/")
 );
 const approvedSkyPlacementRows = fallbackSourceRows.hookRows.filter((row) =>
-  /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn|moves)\//u.test(row.contentKey)
+  /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn)\//u.test(row.contentKey)
 );
 const approvedSkyPlacementCoreRows = fallbackSourceRows.hookRows.filter((row) =>
   /^fallback-hook\/sky-placement-(?:hook|lived|turn)\//u.test(row.contentKey)
 );
 const approvedSkyPlacementRowsByFamily = Object.fromEntries(
-  ["tagline", "hook", "lived", "turn", "moves"].map((family) => [
+  ["tagline", "hook", "lived", "turn"].map((family) => [
     family,
     fallbackSourceRows.hookRows.filter((row) =>
       row.contentKey.startsWith(`fallback-hook/sky-placement-${family}/`)
@@ -339,10 +345,10 @@ assert.equal(dignityGlossaryRows.length, 4, "The package must provide one generi
 assert.ok(dignityLineRows.length > 0, "The imported package must retain its approved sparse dignity lines.");
 assert.equal(targetSpecificTransitEffectRows.length, 324, "The package must include the complete target-specific transit effect library.");
 assert.ok(authoredTransitAspectRows.length > 0, "The imported package must expose authored transit-aspect rows.");
-assert.equal(approvedSkyPlacementRows.length, 828, "The package must include five approved article slots except for the 12 Moon moves rows retired by owner ruling.");
+assert.equal(approvedSkyPlacementRows.length, 672, "The package must include four approved article slots for all 168 placement pairs.");
 assert.equal(approvedSkyPlacementCoreRows.length, 504, "Every placement pair must have approved hook, lived, and turn rows.");
 for (const [family, rows] of Object.entries(approvedSkyPlacementRowsByFamily)) {
-  assert.equal(rows.length, family === "moves" ? 156 : 168, `Sky placements must have the governed ${family} row count.`);
+  assert.equal(rows.length, 168, `Sky placements must have the governed ${family} row count.`);
 }
 for (const planet of retrogradePlacementPlanets) {
   for (const sign of zodiacSigns) {
@@ -693,6 +699,11 @@ for (const row of skyPlacementOwnerApprovedFallbacksV1.rows) {
   ]);
   assert.equal(rendered.parts.at(-1), fillOwnerFallback(row.close, facts));
   assert.equal(Object.hasOwn(rendered, "moves"), false, `${row.contentKey} must not expose a Try this section.`);
+  assert.doesNotMatch(
+    [rendered.headline, rendered.body, ...(rendered.parts ?? [])].join("\n"),
+    /Try this/iu,
+    `${row.contentKey} must not render a Try this section.`
+  );
   assert.doesNotMatch(rendered.body, /\{\{/u);
 }
 

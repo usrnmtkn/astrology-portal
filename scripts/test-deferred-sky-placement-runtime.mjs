@@ -69,7 +69,12 @@ const moonTaurusFacts = {
 };
 
 assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false);
-assert.ok(placementRows.hookRows.length > 800, "The long-form placement package must stay in its deferred partition.");
+assert.ok(placementRows.hookRows.length > 650, "The long-form placement package must stay in its deferred partition.");
+assert.equal(
+  placementRows.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-placement-moves/")).length,
+  0,
+  "The deferred placement partition must not revive retired Try this rows."
+);
 assert.equal(placementManifest.keyCount, placementRows.hookRows.length);
 
 const before = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
