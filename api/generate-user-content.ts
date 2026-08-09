@@ -11,9 +11,9 @@ import { contentGenerationProvider } from "./_lib/provider-config.js";
 import { fetchSupabaseReportEnvelopeById } from "./_lib/report-envelope.js";
 import {
   assembleReportGenerationPayload,
-  type ReportGenerationPayload,
-  type ReportHorizon
+  type ReportGenerationPayload
 } from "./_lib/report-generation.js";
+import type { ReportDomain, ReportHorizon } from "./_lib/report-types.js";
 
 type UserContentSubjectType =
   // Keep identical to UserGeneratedSubjectType in apps/web/src/services/userGeneratedContent.ts.
@@ -45,6 +45,7 @@ type UserContentRequest = GenerateContentInput & {
   subjectId: string;
   status?: "DRAFT" | "LIVE";
   reportId?: string;
+  reportDomain?: ReportDomain;
   reportHorizon?: ReportHorizon;
   unitId?: string;
   dryRun?: boolean;
@@ -264,16 +265,9 @@ function generationInput(
   };
 }
 
-const reportTypesByHorizon: Record<ReportHorizon, string> = {
-  "1_month": "report_1_month",
-  "4_months": "report_4_months",
-  "6_months": "report_6_months",
-  "12_months": "report_12_months"
-};
-
 async function reportPayloadForRequest(userId: string, input: UserContentRequest) {
-  if (!input.reportId || !input.reportHorizon || !input.unitId) {
-    throw new Error("report_unit requires reportId, reportHorizon, and unitId.");
+  if (!input.reportId || !input.reportDomain || !input.reportHorizon || !input.unitId) {
+    throw new Error("report_unit requires reportId, reportDomain, reportHorizon, and unitId.");
   }
   const report = await fetchSupabaseReportEnvelopeById({
     supabaseUrl: supabaseUrl(),
@@ -284,8 +278,10 @@ async function reportPayloadForRequest(userId: string, input: UserContentRequest
   if (!report) {
     throw new Error("Report envelope was not found for this user.");
   }
-  if (report.report_type !== reportTypesByHorizon[input.reportHorizon]) {
-    throw new Error("Report horizon does not match the frozen report envelope.");
+  if (report.report_type !== "report"
+    || report.report_domain !== input.reportDomain
+    || report.report_horizon !== input.reportHorizon) {
+    throw new Error("Report domain or horizon does not match the frozen report envelope.");
   }
   const contentKey = `report:${report.id}:${input.unitId}`;
   input.contentKey = contentKey;
@@ -297,12 +293,15 @@ async function reportPayloadForRequest(userId: string, input: UserContentRequest
   input.facts = report.facts;
   input.sourceSnapshot = {
     reportId: report.id,
+    reportDomain: report.report_domain,
+    reportHorizon: report.report_horizon,
     factsEngine: report.facts_engine,
     periodStart: report.period_start,
     periodEnd: report.period_end
   };
   return assembleReportGenerationPayload({
     reportId: report.id,
+    reportDomain: input.reportDomain,
     reportHorizon: input.reportHorizon,
     unitId: input.unitId,
     frozenFacts: report.facts

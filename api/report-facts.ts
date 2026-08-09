@@ -78,6 +78,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const existing = await readReportFacts({
       userId,
       subjectId: input.subjectId,
+      reportDomain: input.reportDomain,
       reportHorizon: input.reportHorizon,
       start: input.start
     }, envelopeStore);

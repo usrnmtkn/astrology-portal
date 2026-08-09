@@ -27,6 +27,7 @@ export type UserGeneratedSubjectType =
   | "report_unit";
 
 export type ReportHorizon = "1_month" | "4_months" | "6_months" | "12_months";
+export type ReportDomain = "general" | "work_money";
 
 type UserGeneratedContentRow = {
   id: string;
@@ -61,6 +62,7 @@ export type GenerateUserContentRequest = {
   voiceNotes?: string;
   allowQualityFallback?: boolean;
   reportId?: string;
+  reportDomain?: ReportDomain;
   reportHorizon?: ReportHorizon;
   unitId?: string;
   dryRun?: boolean;
