@@ -179,8 +179,6 @@ export interface TransitRenderResult {
   phaseSignSpecificity?: "exact-reviewed" | "sign-derived";
   window?: string | null;
   tagline?: string | null;
-  moves?: string[];
-  movesPresentation?: "list" | "plain";
   closingCharge?: string | null;
   keyDates?: SkyArticleKeyDate[];
   articleWindow?: string | null;
@@ -1409,9 +1407,6 @@ export function createTransitSynastryRenderer(
       };
     }
 
-    const moves = Array.isArray(signCopy.try_this)
-      ? signCopy.try_this.map((move) => fillKeep(move, ctx)).slice(0, 3)
-      : [];
     const parts = [factLine, ...collective, ...aspectParts, close];
     const articleSections: SkyArticleRenderedSection[] = [
       { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
@@ -1421,7 +1416,6 @@ export function createTransitSynastryRenderer(
     const renderedText = [
       `${title(planet)} in ${title(sign)}`,
       ...parts,
-      ...moves,
       ...articleSections.map((section) => section.heading)
     ].join("\n");
 
@@ -1452,8 +1446,6 @@ export function createTransitSynastryRenderer(
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       tagline: null,
-      moves,
-      movesPresentation: "plain",
       closingCharge: null,
       keyDates: [],
       body: parts.join("\n\n"),
@@ -1479,7 +1471,6 @@ export function createTransitSynastryRenderer(
     }
     const livedRow = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`);
     const closeRow = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`);
-    const movesRow = hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`);
     if (!entryRow.body_you || !livedRow?.body_you || !closeRow?.body_you) {
       throw new SourceGapError(`SOURCE_GAP: Moon sign-entry structure ${planet}/${sign}`);
     }
@@ -1517,10 +1508,6 @@ export function createTransitSynastryRenderer(
         break;
       }
     }
-    const moves = (movesRow?.body_you ?? "")
-      .split(/\r?\n/u)
-      .map((move) => move.trim())
-      .filter(Boolean);
     const parts = [opening, ...livedParts, aspectBody, close]
       .filter((part): part is string => Boolean(part));
     const articleSections = [
@@ -1528,7 +1515,7 @@ export function createTransitSynastryRenderer(
       ...(aspectBody ? [{ kind: "dated-aspect", heading: "", body: aspectBody }] : []),
       { kind: "exit-tone-shift", heading: "", body: close }
     ];
-    const renderedText = [...parts, ...moves].join("\n");
+    const renderedText = parts.join("\n");
     if (/\{\{/u.test(renderedText)) {
       throw new SourceGapError(`SOURCE_GAP: Moon sign-entry slots ${planet}/${sign}`);
     }
@@ -1536,8 +1523,6 @@ export function createTransitSynastryRenderer(
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
       tagline: null,
-      moves,
-      movesPresentation: "plain",
       closingCharge: null,
       keyDates: [],
       body: parts.join("\n\n"),
@@ -1549,7 +1534,7 @@ export function createTransitSynastryRenderer(
   }
 
   // ---- Sky page: FINAL articles render fixed authored sections and twelve public
-  // rising-sign blocks. They are exclusive of the slot-tier frame, tagline, moves,
+  // rising-sign blocks. They are exclusive of the slot-tier frame, tagline,
   // Key Dates list, and separately assembled aspect copy. When no article matches,
   // the approved slot tier remains the deterministic fallback. ----
   function renderSkyPlacement({
@@ -1618,7 +1603,6 @@ export function createTransitSynastryRenderer(
         return {
           headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
           tagline: null,
-          moves: [],
           closingCharge: null,
           keyDates: [],
           articleWindow: articleWindow(authoredArticle),
@@ -1653,7 +1637,6 @@ export function createTransitSynastryRenderer(
         return {
           headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
           tagline: null,
-          moves: [],
           closingCharge,
           keyDates: [],
           articleWindow: articleWindow(authoredArticle),
@@ -1674,7 +1657,6 @@ export function createTransitSynastryRenderer(
       return {
         headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
         tagline: null,
-        moves: [],
         keyDates: [],
         articleWindow: articleWindow(authoredArticle),
         articleMode,
@@ -1727,7 +1709,6 @@ export function createTransitSynastryRenderer(
         return {
           headline: `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
           tagline: null,
-          moves: [],
           keyDates: [],
           body,
           parts: [body],
@@ -1750,10 +1731,6 @@ export function createTransitSynastryRenderer(
         ? [pairHook, pairLived, pairTurn]
         : [];
     const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
-    const moves = (hooks.get(`fallback-hook/sky-placement-moves/${planet}/${sign}`)?.body_you ?? "")
-      .split(/\r?\n/u)
-      .map((move) => move.trim())
-      .filter(Boolean);
     {
       const windowFrame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
       const directPlanetFrame = hooks.get(`fallback-hook/sky-placement-frame/${planet}`)?.body_you;
@@ -1792,7 +1769,6 @@ export function createTransitSynastryRenderer(
         return {
           headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
           tagline,
-          moves: signCopy ? [] : moves,
           body: parts.join("\n\n"),
           parts,
           templateKey: signCopy ? "sky-placement-article-v2" : "sky-placement-frame-v3",
@@ -1807,7 +1783,6 @@ export function createTransitSynastryRenderer(
       return {
         headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
         tagline,
-        moves,
         body: parts.join("\n\n"),
         parts,
         templateKey: "fallback-template/sky.placement-article",

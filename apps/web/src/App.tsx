@@ -507,8 +507,6 @@ type SkyPlacementSlot = "meaning";
 type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> & {
   heading: string;
   tagline?: string | null;
-  moves?: string[];
-  movesPresentation?: "list" | "plain";
   closingCharge?: string | null;
   keyDates?: SkyDetailKeyDate[];
   articleWindow?: string | null;
@@ -4948,8 +4946,6 @@ function skyPlacementWritingSection(
     ].filter(Boolean),
     heading: rendered.headline || skyPlacementDisplayTitle(position),
     tagline: rendered.tagline,
-    moves: rendered.moves,
-    movesPresentation: rendered.movesPresentation,
     closingCharge: rendered.closingCharge,
     keyDates,
     articleWindow: rendered.articleWindow,
@@ -5101,8 +5097,6 @@ function currentSkyPlacementDetailArticle({
     ].filter(Boolean).join(" · "),
     duration: isRegistryArticle || isContinuousFallback ? undefined : effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
-    moves: placementSection?.moves,
-    movesPresentation: placementSection?.movesPresentation,
     keyDates: [],
     closingCharge: placementSection?.closingCharge,
     risingHoroscopes: placementSection?.risingHoroscopes,

@@ -253,22 +253,6 @@
   margin-top: var(--sp-2);
 }
 
-.sky-placement-moves ul {
-  display: grid;
-  gap: var(--sp-2);
-  margin: 0;
-  padding-left: 1.25rem;
-  color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--type-body-size);
-  line-height: var(--leading-body);
-}
-
-.sky-placement-moves-lines {
-  display: grid;
-  gap: var(--sp-2);
-}
-
 .sky-placement-key-dates dl {
   display: grid;
   gap: var(--space-3);
