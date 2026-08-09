@@ -246,6 +246,15 @@ assert.equal(verticalSlice.goldPassed, 12);
 assert.equal(verticalSlice.negativePassed, 8);
 assert.equal(verticalSlice.falsePositives, 0);
 assert.equal(verticalSlice.falseNegatives, 0);
+const liveSemanticReport = JSON.parse(read("packages/astro-knowledge/review/writing-harness-v2/lilith-live-semantic-review-eval.json"));
+assert.equal(liveSemanticReport.callCount, 20);
+assert.equal(liveSemanticReport.model, "gpt-5.6-terra");
+assert.equal(liveSemanticReport.reasoningEffort, "low");
+assert.equal(liveSemanticReport.status, "FAIL", "The first live semantic result must remain an honest failed baseline.");
+assert.equal(liveSemanticReport.modelGoldPassed, 5);
+assert.equal(liveSemanticReport.modelNegativePassed, 4);
+assert.equal(liveSemanticReport.modelFalsePositives, 7);
+assert.equal(liveSemanticReport.modelFalseNegatives, 4);
 
 const externalFacts = extractNeutralExternalMeaning({
   sourceId: "external-reference",
