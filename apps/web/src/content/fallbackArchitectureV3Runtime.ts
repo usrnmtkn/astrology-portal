@@ -187,7 +187,7 @@ function assertSkyArticleV1Import(
     throw new Error("Sky article registry must contain exactly 25 surface-scoped vocabulary rows.");
   }
   if (
-    hookRows.length !== 42
+    hookRows.length !== 14
     || hookRows.some((row) => row.review_status !== "approved")
     || vocabularyRows.some((row) => row.review_status !== "approved")
   ) {
