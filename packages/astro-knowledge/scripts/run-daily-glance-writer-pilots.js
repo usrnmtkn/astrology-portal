@@ -18,6 +18,7 @@ const {
   renderModelInput,
   sha256
 } = require("./daily-glance-writer-runtime.js");
+const { canonicalAstrologyWritingInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
 
 const packageRoot = path.resolve(__dirname, "..");
 const defaultOutDir = path.join(packageRoot, "review", "daily-glance-pilots-v1");
@@ -94,6 +95,7 @@ async function requestOnce({ config, modelInput, maxOutputTokens = 16000 }) {
     headers: { authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify({
       model: config.routing.model,
+      instructions: canonicalAstrologyWritingInstructions,
       input: modelInput,
       reasoning: { effort: config.routing.reasoningEffort },
       max_output_tokens: maxOutputTokens,

@@ -161,10 +161,33 @@ try {
 
   const provenance = signBoundarySky.calculationProvenance;
   assert.equal(provenance?.lilithType, "true", "Provenance must disclose true Black Moon Lilith.");
+  assert.equal(provenance?.actualEphemeris, "swiss", "Runtime provenance must record the ephemeris actually returned.");
+  assert.deepEqual(
+    provenance?.returnedEphemerisFlags,
+    [swe.SEFLG_SWIEPH | swe.SEFLG_SPEED],
+    "Runtime provenance must record the validated Swiss return flags."
+  );
+  assert.ok(provenance?.ephemerisFiles.includes("swisseph.data"), "Provenance must name the loaded Swiss data pack.");
+  assert.ok(provenance?.ephemerisFiles.includes("semo_18.se1"), "Provenance must name the lunar ephemeris inside the data pack.");
   assert.equal(
     provenance?.calculationVersion,
     "tldrastro-calculation-v3",
     "Calculation contract must be v3 so cached mean-Lilith (v2) placements are never reused."
+  );
+  assert.doesNotThrow(() => ephemeris.validateSwissEphemerisReturnFlag(
+    swe.SEFLG_SWIEPH | swe.SEFLG_SPEED,
+    swe.SEFLG_SWIEPH,
+    swe.SEFLG_MOSEPH
+  ));
+  assert.throws(
+    () => ephemeris.validateSwissEphemerisReturnFlag(
+      swe.SEFLG_MOSEPH | swe.SEFLG_SPEED,
+      swe.SEFLG_SWIEPH,
+      swe.SEFLG_MOSEPH,
+      "Swiss file unavailable; Moshier fallback selected."
+    ),
+    /Swiss Ephemeris provenance mismatch.*Moshier fallback selected/u,
+    "A Moshier return flag must fail closed instead of being labeled Swiss."
   );
 
   // 3. Calendar contract: true Lilith's monthly change of direction is a

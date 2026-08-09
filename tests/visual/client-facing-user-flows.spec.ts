@@ -965,6 +965,17 @@ test.describe("client-facing user flow case studies", () => {
     if (await updatesTab.isVisible()) {
       await updatesTab.click();
       await expect(updatesTab).toHaveAttribute("aria-selected", "true");
+      const chartCalculation = page.locator(".chart-layout__visual");
+      await expect(chartCalculation).toHaveAttribute(
+        "data-chart-calculation-status",
+        /^(?:ready|error)$/,
+        { timeout: 30_000 }
+      );
+      const chartCalculationStatus = await chartCalculation.getAttribute("data-chart-calculation-status");
+      if (chartCalculationStatus === "error") {
+        const errorMessage = (await page.getByRole("alert", { name: "Chart calculation error" }).innerText()).trim();
+        throw new Error(`Chart calculation entered its visible error state: ${errorMessage}`);
+      }
       const transitWheel = page.getByLabel("Transit chart wheel");
       await expect(transitWheel).toBeVisible();
       await expect(
@@ -1026,6 +1037,21 @@ test.describe("client-facing user flow case studies", () => {
     }
 
     await assertNoClientErrors();
+  });
+
+  test("chart calculation failure terminates in a visible error state", async ({ page }) => {
+    await page.route("**/wasm/swisseph.data", async (route) => {
+      await route.fulfill({ status: 503, body: "Ephemeris unavailable for visual-smoke coverage." });
+    });
+    await seedClientState(page, { profile: true });
+    await expectClientRouteLoads(page, "/#you");
+
+    const chartCalculation = page.locator(".chart-layout__visual");
+    await expect(chartCalculation).toHaveAttribute("data-chart-calculation-status", "error", { timeout: 30_000 });
+    const errorState = page.getByRole("alert", { name: "Chart calculation error" });
+    await expect(errorState).toBeVisible();
+    await expect(errorState).toContainText(/Swiss|Ephemeris|503|failed/i);
+    await expect(page.getByRole("heading", { name: "Reading your chart." })).toHaveCount(0);
   });
 
   test("aspect inspector works across eligible saved-chart wheels and stays off transit wheels", async ({ page }) => {
