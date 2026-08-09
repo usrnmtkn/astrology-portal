@@ -1,0 +1,33 @@
+{
+  "natalSubject": {
+    "name": "Marie Satori",
+    "datetime": {
+      "date": "1979-02-18",
+      "time": "11:20",
+      "timeKnown": true,
+      "timeZone": "America/New_York"
+    },
+    "location": {
+      "label": "Manhattan, New York, NY, USA",
+      "latitude": 40.7128,
+      "longitude": -74.006,
+      "timeZone": "America/New_York"
+    },
+    "settings": {
+      "houseSystem": "whole_sign",
+      "zodiac": "tropical",
+      "aspectProfile": "standard"
+    }
+  },
+  "returnLocation": {
+    "label": "Manhattan, New York, NY, USA",
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "timeZone": "America/New_York"
+  },
+  "window": {
+    "start": "2026-02-18T01:59:11Z",
+    "end": "2027-02-18T07:40:22Z",
+    "reportHorizon": "12_months"
+  }
+}
