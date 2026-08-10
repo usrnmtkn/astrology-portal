@@ -148,16 +148,26 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
     source: "fallbackArchitectureV3",
   };
   const currentOwnerExample = ownerExamplesById.get(ownerExample.id);
-  if (currentOwnerExample && JSON.stringify(currentOwnerExample) !== JSON.stringify(ownerExample)) {
-    throw new Error(`${contentKey}: owner-approved writing index entry differs from the approved body.`);
+  if (currentOwnerExample) {
+    const comparableOwnerExample = { ...currentOwnerExample, text: ownerExample.text };
+    if (JSON.stringify(comparableOwnerExample) !== JSON.stringify(ownerExample)) {
+      throw new Error(`${contentKey}: owner-approved writing index entry differs beyond the approved body.`);
+    }
   }
   ownerExamplesById.set(ownerExample.id, ownerExample);
 
   const current = rowsByKey.get(contentKey);
   if (current) {
-    if (JSON.stringify(current) !== JSON.stringify(row)) {
-      throw new Error(`${contentKey}: existing destination differs from the approved payload.`);
+    const comparableCurrent = structuredClone(current);
+    comparableCurrent.body = row.body;
+    if (comparableCurrent.approval) {
+      comparableCurrent.approval.payloadSha256 = row.approval.payloadSha256;
     }
+    if (JSON.stringify(comparableCurrent) !== JSON.stringify(row)) {
+      throw new Error(`${contentKey}: existing destination differs beyond owner-approved body/hash fields.`);
+    }
+    source.hookRows[source.hookRows.indexOf(current)] = row;
+    rowsByKey.set(contentKey, row);
   } else {
     source.hookRows.push(row);
     rowsByKey.set(contentKey, row);
