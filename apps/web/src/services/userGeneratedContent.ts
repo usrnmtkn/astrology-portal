@@ -2,6 +2,7 @@ import { getSupabaseClient } from "./auth";
 import type { GeneratedContentMode, LiveGeneratedContent } from "./generatedContent";
 
 export type UserGeneratedSubjectType =
+  // Keep identical to UserContentSubjectType in api/generate-user-content.ts.
   | "you_update"
   | "you_transit"
   | "natal_summary"
@@ -11,7 +12,22 @@ export type UserGeneratedSubjectType =
   | "synastry_aspect"
   | "composite_summary"
   | "composite_placement"
-  | "composite_aspect";
+  | "composite_aspect"
+  | "year_ahead"
+  | "year_ahead_season"
+  | "year_ahead_key_date"
+  | "year_ahead_sr_moment"
+  | "year_ahead_sr_stance"
+  | "year_ahead_sr_sun"
+  | "year_ahead_headline"
+  | "year_ahead_saturn_return_callout"
+  | "relationship_report_section"
+  | "saturn_return"
+  | "saturn_return_section"
+  | "report_unit";
+
+export type ReportHorizon = "1_month" | "4_months" | "6_months" | "12_months";
+export type ReportDomain = "general" | "work_money" | "love_connection";
 
 type UserGeneratedContentRow = {
   id: string;
@@ -34,7 +50,7 @@ export type GenerateUserContentRequest = {
   subjectType: UserGeneratedSubjectType;
   subjectId: string;
   contentKey: string;
-  surface: "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+  surface: "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "year_ahead";
   mode: GeneratedContentMode;
   eventType: string;
   status?: "DRAFT" | "LIVE";
@@ -45,6 +61,11 @@ export type GenerateUserContentRequest = {
   sourceSnapshot?: Record<string, unknown>;
   voiceNotes?: string;
   allowQualityFallback?: boolean;
+  reportId?: string;
+  reportDomain?: ReportDomain;
+  reportHorizon?: ReportHorizon;
+  unitId?: string;
+  dryRun?: boolean;
 };
 
 export type GenerateUserContentErrorPayload = {

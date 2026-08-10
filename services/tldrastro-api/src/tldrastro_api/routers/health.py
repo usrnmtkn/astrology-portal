@@ -14,6 +14,8 @@ FEATURES = [
     {"id": "sky.current", "path": "/sky/current", "method": "POST"},
     {"id": "timing.profections", "path": "/timing/profections", "method": "POST"},
     {"id": "timing.personal", "path": "/timing/personal", "method": "POST"},
+    {"id": "timing.solar_return", "path": "/timing/solar-return", "method": "POST"},
+    {"id": "timing.report_window", "path": "/timing/report-window", "method": "POST"},
     {"id": "relationship.synastry", "path": "/relationship/synastry", "method": "POST"},
     {"id": "relationship.composite", "path": "/relationship/composite", "method": "POST"},
     {"id": "relationship.compare", "path": "/relationship/compare", "method": "POST"},

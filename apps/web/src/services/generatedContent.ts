@@ -30,7 +30,7 @@ import {
   type AuthoredCard
 } from "../content/fallbackArchitectureV3Runtime";
 
-export type GeneratedContentMode = "feed" | "in_depth" | "article";
+export type GeneratedContentMode = "feed" | "in_depth" | "article" | "report";
 export type GeneratedContentBlockType =
   | "fallback_template"
   | "sign"

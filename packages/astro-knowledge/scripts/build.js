@@ -335,6 +335,7 @@ function build() {
   const synastryPointContacts = loadEntries(path.join("synastry", "point-contacts"));
   const synastryHouseOverlays = loadEntries(path.join("synastry", "house-overlays"));
   const insightCards = loadEntries("insights");
+  const manifestationSetCollections = loadEntries("manifestation-sets");
   const voiceProfiles = loadVoiceProfiles();
   const generatedContent = loadJsonTree("generated");
   const rewriteCorpora = generatedContent.filter(isRewriteCorpusEntry);
@@ -367,6 +368,7 @@ function build() {
     synastryPointContacts,
     synastryHouseOverlays,
     insightCards,
+    manifestationSetCollections,
     voiceProfiles,
     voiceContent
   });
@@ -409,6 +411,7 @@ function build() {
     modifiers,
     chartRulers,
     insightCards,
+    manifestationSetCollections,
     frameworks: frameworks.filter((entry) => [
       "natal-synthesis-framework",
       "body-astrology-framework",
@@ -577,6 +580,11 @@ function build() {
   for (const entry of synastryPointContacts) addEntry(index, entry, "synastry/point-contact");
   for (const entry of synastryHouseOverlays) addEntry(index, entry, "synastry/house-overlay");
   for (const entry of insightCards) addEntry(index, entry, `insight/${entry.kind}`);
+  for (const collection of manifestationSetCollections) {
+    for (const [id, entry] of Object.entries(collection.records)) {
+      addEntry(index, { id, ...entry }, `manifestation-set/${entry.factorType}`);
+    }
+  }
   for (const entry of voiceContent) addEntry(index, entry, `voice-content/${entry.voiceId ?? "unknown"}`);
 
   writeJson(path.join(distRoot, "knowledge.json"), knowledge);
@@ -601,6 +609,10 @@ function build() {
     voiceProfiles,
     rewriteCorpora
   }));
+  writeJson(
+    path.join(distRoot, "manifestation-sets.json"),
+    withBundleMetadata(packageJson, generatedAt, { collections: manifestationSetCollections })
+  );
 
   const counts = {
     primitives: Object.values(primitives).reduce((total, entries) => total + entries.length, 0),
@@ -628,6 +640,10 @@ function build() {
     synastryPointContacts: synastryPointContacts.length,
     synastryHouseOverlays: synastryHouseOverlays.length,
     insightCards: insightCards.length,
+    manifestationSets: manifestationSetCollections.reduce(
+      (total, collection) => total + Object.keys(collection.records).length,
+      0
+    ),
     voiceProfiles: Object.keys(voiceProfiles).length,
     voiceContent: voiceContent.length,
     rewriteCorpora: rewriteCorpora.length,
@@ -636,7 +652,7 @@ function build() {
 
   console.log("Validation passed: all data files match their schemas.");
   console.log(`Built dist/knowledge.json version ${packageJson.version}.`);
-  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, voiceProfiles=${counts.voiceProfiles}, voiceContent=${counts.voiceContent}, rewriteCorpora=${counts.rewriteCorpora}, indexedEntries=${counts.indexedEntries}`);
+  console.log(`Entry counts: primitives=${counts.primitives}, pairs=${counts.pairs}, transits=${counts.transits}, transitNatal=${counts.transitNatal}, transitHouses=${counts.transitHouses}, planetary=${counts.planetary}, points=${counts.points}, pointPlacements=${counts.pointPlacements}, pointAspects=${counts.pointAspects}, pointTransitHouses=${counts.pointTransitHouses}, placements=${counts.placements}, angles=${counts.angles}, modifiers=${counts.modifiers}, chartRulers=${counts.chartRulers}, composite=${counts.composite}, lunations=${counts.lunations}, guides=${counts.guides}, frameworks=${counts.frameworks}, templates=${counts.templates}, correspondences=${counts.correspondences}, synastry=${counts.synastry}, synastryAspects=${counts.synastryAspects}, synastryPointContacts=${counts.synastryPointContacts}, synastryHouseOverlays=${counts.synastryHouseOverlays}, insightCards=${counts.insightCards}, manifestationSets=${counts.manifestationSets}, voiceProfiles=${counts.voiceProfiles}, voiceContent=${counts.voiceContent}, rewriteCorpora=${counts.rewriteCorpora}, indexedEntries=${counts.indexedEntries}`);
 }
 
 build();
