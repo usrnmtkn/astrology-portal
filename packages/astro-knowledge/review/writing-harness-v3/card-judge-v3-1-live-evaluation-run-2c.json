@@ -1,0 +1,78 @@
+{
+  "version": "card-judge-v3.1-live-evaluation-run-2c",
+  "status": "passed",
+  "startedAt": "2026-08-10T03:18:53.604Z",
+  "completedAt": "2026-08-10T03:19:01.684Z",
+  "completedCalls": 1,
+  "authorization": {
+    "authorizedCalls": 1,
+    "retriesAuthorized": 0,
+    "run": "2c"
+  },
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "high",
+  "retries": 0,
+  "preserves": [
+    "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json",
+    "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json",
+    "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2b.json"
+  ],
+  "writerPromotionAuthorized": false,
+  "error": null,
+  "rows": [
+    {
+      "call": 1,
+      "fixtureId": "neg-gemini-advocacy",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "owner_voice_drift"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "owner_voice_drift",
+        "acceptedPrimary": [
+          "example_proves_astrology",
+          "stock_trope",
+          "owner_voice_drift"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "owner_voice_drift",
+          "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+          "finding": "The lived field collapses the placement into generalized advocacy-language abstraction rather than developing the words-and-information mechanism through an observable behavior or consequence. Unlike the comparison cards' lived fields, it supplies no particular speech act, correction, withholding pattern, or resulting tension.",
+          "evidence_ids": [
+            "gold-lilith-leo-v5",
+            "gold-lilith-libra-v5",
+            "gold-lilith-scorpio-v5"
+          ],
+          "mechanism_citations": [
+            "manifestation_space.body",
+            "interiority"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_03287268838f8fbc006a79431e5d6c81a0a36aaad6b848b214",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 6986,
+          "input_tokens_details": {
+            "cache_write_tokens": 6983,
+            "cached_tokens": 0
+          },
+          "output_tokens": 592,
+          "output_tokens_details": {
+            "reasoning_tokens": 443
+          },
+          "total_tokens": 7578
+        }
+      }
+    }
+  ]
+}

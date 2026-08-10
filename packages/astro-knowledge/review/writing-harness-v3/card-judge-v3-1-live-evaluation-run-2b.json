@@ -1,0 +1,859 @@
+{
+  "version": "card-judge-v3.1-live-evaluation-run-2b",
+  "status": "failed",
+  "startedAt": "2026-08-10T03:06:53.818Z",
+  "completedAt": "2026-08-10T03:07:53.323Z",
+  "completedCalls": 20,
+  "authorization": {
+    "authorizedCalls": 20,
+    "retriesAuthorized": 0,
+    "run": "2b"
+  },
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "high",
+  "retries": 0,
+  "approvedSources": {
+    "rubric": {
+      "path": "tldr-astro-phrasebank/TLDR-CARD-JUDGE-RUBRIC-V3-1-DRAFT.md",
+      "sha256": "13efcb054da3187238d1f58c177c2f11071b58c27f65c5fe4337b2e9966b70ca"
+    },
+    "critique": {
+      "path": "tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-1-DRAFT.md",
+      "sha256": "ce9c9556e8325fd16d417baf5277e12c05064f89e61fb9cec6f3ffc4dabedf35"
+    },
+    "mechanisms": {
+      "path": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-mechanism-records.json",
+      "sha256": "23a1bf1d97daeb66f741b8967d64b702e90518d2ce3dd95f4ee3e297526a68e3"
+    }
+  },
+  "candidateWriterActive": false,
+  "writerPromotionAuthorized": false,
+  "error": null,
+  "rows": [
+    {
+      "call": 1,
+      "fixtureId": "gold-lilith-aries-v5",
+      "kind": "gold",
+      "pairId": "aries-generic-prop",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0e524a72a8d221a0006a79404eb5e08192895418608131b889",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7085,
+          "input_tokens_details": {
+            "cache_write_tokens": 7082,
+            "cached_tokens": 0
+          },
+          "output_tokens": 60,
+          "output_tokens_details": {
+            "reasoning_tokens": 38
+          },
+          "total_tokens": 7145
+        }
+      }
+    },
+    {
+      "call": 2,
+      "fixtureId": "gold-lilith-taurus-v5",
+      "kind": "gold",
+      "pairId": "taurus-undeveloped-hook",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_07b4e40a8e5f4f61006a7940504fcc8191b4a7f5f08ab3b9a8",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7103,
+          "input_tokens_details": {
+            "cache_write_tokens": 7100,
+            "cached_tokens": 0
+          },
+          "output_tokens": 72,
+          "output_tokens_details": {
+            "reasoning_tokens": 50
+          },
+          "total_tokens": 7175
+        }
+      }
+    },
+    {
+      "call": 3,
+      "fixtureId": "gold-lilith-gemini-v5",
+      "kind": "gold",
+      "pairId": "gemini-advocacy-abstraction",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0e3444ef686909c2006a7940520b0081919c7a51f7890a1e83",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7052,
+          "input_tokens_details": {
+            "cache_write_tokens": 7049,
+            "cached_tokens": 0
+          },
+          "output_tokens": 104,
+          "output_tokens_details": {
+            "reasoning_tokens": 82
+          },
+          "total_tokens": 7156
+        }
+      }
+    },
+    {
+      "call": 4,
+      "fixtureId": "gold-lilith-cancer-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_00159ef2fc65fb2f006a794054493881a395918c1f08309c6f",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7093,
+          "input_tokens_details": {
+            "cache_write_tokens": 7090,
+            "cached_tokens": 0
+          },
+          "output_tokens": 204,
+          "output_tokens_details": {
+            "reasoning_tokens": 182
+          },
+          "total_tokens": 7297
+        }
+      }
+    },
+    {
+      "call": 5,
+      "fixtureId": "gold-lilith-leo-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0070d4c394e81798006a794057e438819db01f7744d29051be",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7020,
+          "input_tokens_details": {
+            "cache_write_tokens": 7017,
+            "cached_tokens": 0
+          },
+          "output_tokens": 150,
+          "output_tokens_details": {
+            "reasoning_tokens": 128
+          },
+          "total_tokens": 7170
+        }
+      }
+    },
+    {
+      "call": 6,
+      "fixtureId": "gold-lilith-virgo-v5",
+      "kind": "gold",
+      "pairId": "virgo-clinical-shorthand",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_057719cccaefd207006a79405a814881a1b2c0792b02cc2b85",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7153,
+          "input_tokens_details": {
+            "cache_write_tokens": 7150,
+            "cached_tokens": 0
+          },
+          "output_tokens": 58,
+          "output_tokens_details": {
+            "reasoning_tokens": 36
+          },
+          "total_tokens": 7211
+        }
+      }
+    },
+    {
+      "call": 7,
+      "fixtureId": "gold-lilith-libra-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0c02ad3f5cb7f00b006a79405beb9c819d9e3e4e8774bd74f5",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7076,
+          "input_tokens_details": {
+            "cache_write_tokens": 7073,
+            "cached_tokens": 0
+          },
+          "output_tokens": 63,
+          "output_tokens_details": {
+            "reasoning_tokens": 41
+          },
+          "total_tokens": 7139
+        }
+      }
+    },
+    {
+      "call": 8,
+      "fixtureId": "gold-lilith-scorpio-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0b7871d482a0a083006a79405d7a14819db3058ad35904b756",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7040,
+          "input_tokens_details": {
+            "cache_write_tokens": 7037,
+            "cached_tokens": 0
+          },
+          "output_tokens": 89,
+          "output_tokens_details": {
+            "reasoning_tokens": 67
+          },
+          "total_tokens": 7129
+        }
+      }
+    },
+    {
+      "call": 9,
+      "fixtureId": "gold-lilith-sagittarius-v5",
+      "kind": "gold",
+      "pairId": "sagittarius-house-bleed",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": "owner_voice_drift"
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0eae74a60a14d61f006a79405f05d481a2be8ee7d4ad3f776b",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7243,
+          "input_tokens_details": {
+            "cache_write_tokens": 7240,
+            "cached_tokens": 0
+          },
+          "output_tokens": 65,
+          "output_tokens_details": {
+            "reasoning_tokens": 43
+          },
+          "total_tokens": 7308
+        }
+      }
+    },
+    {
+      "call": 10,
+      "fixtureId": "gold-lilith-capricorn-v5",
+      "kind": "gold",
+      "pairId": "capricorn-house-bleed",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0e632785e829a302006a79406079a481a193f24261f882235a",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7125,
+          "input_tokens_details": {
+            "cache_write_tokens": 7122,
+            "cached_tokens": 0
+          },
+          "output_tokens": 203,
+          "output_tokens_details": {
+            "reasoning_tokens": 181
+          },
+          "total_tokens": 7328
+        }
+      }
+    },
+    {
+      "call": 11,
+      "fixtureId": "gold-lilith-aquarius-v5",
+      "kind": "gold",
+      "pairId": "aquarius-stock-self-help",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": null
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0e3e11216782d61f006a79406417c081a39af78ebd910a71f1",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7111,
+          "input_tokens_details": {
+            "cache_write_tokens": 7108,
+            "cached_tokens": 0
+          },
+          "output_tokens": 88,
+          "output_tokens_details": {
+            "reasoning_tokens": 66
+          },
+          "total_tokens": 7199
+        }
+      }
+    },
+    {
+      "call": 12,
+      "fixtureId": "gold-lilith-pisces-v5",
+      "kind": "gold",
+      "pairId": "pisces-untranslated-metaphor",
+      "expectedVerdict": "PASS",
+      "verdict": "PASS",
+      "categories": [],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "PASS",
+        "prohibitedRecurrence": "owner_voice_drift"
+      },
+      "citationCompliance": true,
+      "findings": [],
+      "provider": {
+        "responseId": "resp_0bb92ddf5e298230006a794065942481a0b9b63db7ea4f9412",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7176,
+          "input_tokens_details": {
+            "cache_write_tokens": 7173,
+            "cached_tokens": 0
+          },
+          "output_tokens": 100,
+          "output_tokens_details": {
+            "reasoning_tokens": 78
+          },
+          "total_tokens": 7276
+        }
+      }
+    },
+    {
+      "call": 13,
+      "fixtureId": "neg-aries-dishes",
+      "kind": "negative",
+      "pairId": "aries-generic-prop",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "example_proves_astrology"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "example_proves_astrology",
+        "acceptedPrimary": [
+          "example_proves_astrology",
+          "stock_trope"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "example_proves_astrology",
+          "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+          "finding": "The dishes example is a generic domestic prop that could illustrate almost any source of irritation and does not demonstrate the supplied Aries mechanism of anger triggered by disrespect, control, or threatened independence.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "manifestation_space.body"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0e0ed4721020a3fa006a7940672518819eaecac940ba9f3a0a",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7018,
+          "input_tokens_details": {
+            "cache_write_tokens": 7015,
+            "cached_tokens": 0
+          },
+          "output_tokens": 343,
+          "output_tokens_details": {
+            "reasoning_tokens": 243
+          },
+          "total_tokens": 7361
+        }
+      }
+    },
+    {
+      "call": 14,
+      "fixtureId": "neg-capricorn-career",
+      "kind": "negative",
+      "pairId": "capricorn-house-bleed",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "house_bleed"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "house_bleed",
+        "acceptedPrimary": [
+          "house_bleed"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "house_bleed",
+          "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+          "finding": "Deterministic noun-level house-bleed evidence: career, boss, promotion, professional hierarchy.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "house_bleed_noun_blacklist.career",
+            "house_bleed_noun_blacklist.boss",
+            "house_bleed_noun_blacklist.promotion",
+            "house_bleed_noun_blacklist.professional hierarchy"
+          ]
+        },
+        {
+          "category": "house_bleed",
+          "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+          "finding": "Career-domain nouns and scenarios—boss, promotion, title, career status, and professional hierarchy—replace the supplied Capricorn mechanism with a traditionally associated house domain. The field contains no mechanism anchor.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "do_not_assume.0",
+            "house_bleed_noun_blacklist.career",
+            "house_bleed_noun_blacklist.boss",
+            "house_bleed_noun_blacklist.promotion",
+            "house_bleed_noun_blacklist.job title",
+            "house_bleed_noun_blacklist.professional hierarchy"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0fcd9a3ff93cb056006a79406b1be881a0bc61bdba01115cc8",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7153,
+          "input_tokens_details": {
+            "cache_write_tokens": 7150,
+            "cached_tokens": 0
+          },
+          "output_tokens": 179,
+          "output_tokens_details": {
+            "reasoning_tokens": 26
+          },
+          "total_tokens": 7332
+        }
+      }
+    },
+    {
+      "call": 15,
+      "fixtureId": "neg-sagittarius-9th",
+      "kind": "negative",
+      "pairId": "sagittarius-house-bleed",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "house_bleed"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "house_bleed",
+        "acceptedPrimary": [
+          "house_bleed"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "house_bleed",
+          "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+          "finding": "Deterministic noun-level house-bleed evidence: teacher, university, institution, publication, travel, legal matter.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "house_bleed_noun_blacklist.teacher",
+            "house_bleed_noun_blacklist.university",
+            "house_bleed_noun_blacklist.institution",
+            "house_bleed_noun_blacklist.publication",
+            "house_bleed_noun_blacklist.travel",
+            "house_bleed_noun_blacklist.legal matter"
+          ]
+        },
+        {
+          "category": "house_bleed",
+          "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+          "finding": "The lived field substitutes education, publication, travel, and legal-institution domains for the supplied belief-and-conviction mechanism; the field contains multiple configured house-domain nouns without a mechanism anchor.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "do_not_assume.0",
+            "house_bleed_noun_blacklist.teacher",
+            "house_bleed_noun_blacklist.university",
+            "house_bleed_noun_blacklist.institution",
+            "house_bleed_noun_blacklist.publication",
+            "house_bleed_noun_blacklist.travel",
+            "house_bleed_noun_blacklist.legal matter"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_03b0dd0892318f04006a79406d719481a0b76010db017e946c",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7297,
+          "input_tokens_details": {
+            "cache_write_tokens": 7294,
+            "cached_tokens": 0
+          },
+          "output_tokens": 217,
+          "output_tokens_details": {
+            "reasoning_tokens": 56
+          },
+          "total_tokens": 7514
+        }
+      }
+    },
+    {
+      "call": 16,
+      "fixtureId": "neg-pisces-well",
+      "kind": "negative",
+      "pairId": "pisces-untranslated-metaphor",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "metaphor_requires_translation"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "metaphor_requires_translation",
+        "acceptedPrimary": [
+          "metaphor_requires_translation"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "metaphor_requires_translation",
+          "location": "[LOCATION=turn; PARAGRAPH_INDEX=3]",
+          "finding": "The well imagery leaves the reader to translate the situation into an ordinary behavior or consequence; this turn does not state what is happening plainly beneath the metaphor.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "manifestation_space.body"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_057a28e1e0c6fa24006a7940706f9481a1b4cb9e84804ac5fb",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7100,
+          "input_tokens_details": {
+            "cache_write_tokens": 7097,
+            "cached_tokens": 0
+          },
+          "output_tokens": 236,
+          "output_tokens_details": {
+            "reasoning_tokens": 142
+          },
+          "total_tokens": 7336
+        }
+      }
+    },
+    {
+      "call": 17,
+      "fixtureId": "neg-taurus-tagline",
+      "kind": "negative",
+      "pairId": "taurus-undeveloped-hook",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "tagline_stands_alone"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "tagline_stands_alone",
+        "acceptedPrimary": [
+          "tagline_stands_alone"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "tagline_stands_alone",
+          "location": "[LOCATION=tagline; PARAGRAPH_INDEX=0]",
+          "finding": "The opening tagline names a bargain ending, but the complete card develops scarcity, worth, comfort, and being undervalued without establishing the bargain itself as the cause, behavior, or consequence beneath the hook.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "core_theme_wound",
+            "manifestation_space.body"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_02561663d3f208eb006a7940740ad081928ed4810656e62d21",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7099,
+          "input_tokens_details": {
+            "cache_write_tokens": 7096,
+            "cached_tokens": 0
+          },
+          "output_tokens": 290,
+          "output_tokens_details": {
+            "reasoning_tokens": 178
+          },
+          "total_tokens": 7389
+        }
+      }
+    },
+    {
+      "call": 18,
+      "fixtureId": "neg-aquarius-selfhelp",
+      "kind": "negative",
+      "pairId": "aquarius-stock-self-help",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "stock_trope"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "stock_trope",
+        "acceptedPrimary": [
+          "stock_trope",
+          "owner_voice_drift"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "stock_trope",
+          "location": "[LOCATION=turn; PARAGRAPH_INDEX=3]",
+          "finding": "Generic empowerment language about uniqueness and authenticity replaces the placement’s belonging, exclusion, and defensive-distance mechanism with a familiar self-help shortcut.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "core_theme_wound",
+            "manifestation_space.body"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_03c6b23581ac402a006a794077daf081a0927571096fbf0427",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7049,
+          "input_tokens_details": {
+            "cache_write_tokens": 7046,
+            "cached_tokens": 0
+          },
+          "output_tokens": 244,
+          "output_tokens_details": {
+            "reasoning_tokens": 151
+          },
+          "total_tokens": 7293
+        }
+      }
+    },
+    {
+      "call": 19,
+      "fixtureId": "neg-gemini-advocacy",
+      "kind": "negative",
+      "pairId": "gemini-advocacy-abstraction",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "owner_voice_drift"
+      ],
+      "contract": {
+        "passed": false,
+        "expectedVerdict": "REVISE",
+        "primary": "owner_voice_drift",
+        "acceptedPrimary": [
+          "example_proves_astrology",
+          "stock_trope"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "owner_voice_drift",
+          "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+          "finding": "The development reduces the words-and-story mechanism to generic collective-empowerment abstraction (“reclaim their truth,” “speak their power”) rather than showing an observable correction, withheld information, or consequence. The comparison cards develop their mechanisms through specific interpersonal behavior and stakes.",
+          "evidence_ids": [
+            "gold-lilith-leo-v5",
+            "gold-lilith-libra-v5",
+            "gold-lilith-scorpio-v5"
+          ],
+          "mechanism_citations": [
+            "core_theme_wound",
+            "manifestation_space.body",
+            "interiority"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_083cfe6bcfcbbbff006a79407b67e081a1ba3f04432ab3e55a",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 6982,
+          "input_tokens_details": {
+            "cache_write_tokens": 6979,
+            "cached_tokens": 0
+          },
+          "output_tokens": 669,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 7651
+        }
+      }
+    },
+    {
+      "call": 20,
+      "fixtureId": "neg-virgo-clinical",
+      "kind": "negative",
+      "pairId": "virgo-clinical-shorthand",
+      "expectedVerdict": "REVISE",
+      "verdict": "REVISE",
+      "categories": [
+        "stock_trope"
+      ],
+      "contract": {
+        "passed": true,
+        "expectedVerdict": "REVISE",
+        "primary": "stock_trope",
+        "acceptedPrimary": [
+          "stock_trope"
+        ],
+        "forbiddenPresent": [],
+        "collisionFree": true
+      },
+      "citationCompliance": true,
+      "findings": [
+        {
+          "category": "stock_trope",
+          "location": "[LOCATION=turn; PARAGRAPH_INDEX=3]",
+          "finding": "The turn relies on therapy-shorthand about healing and reparenting rather than developing the supplied Virgo mechanism through its observable pattern of work, service, precision, and worth.",
+          "evidence_ids": [],
+          "mechanism_citations": [
+            "core_theme_wound",
+            "manifestation_space.body"
+          ]
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0ac252f5e0d9a284006a7940839a2481a182d3ff62f8ec2cd3",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 7080,
+          "input_tokens_details": {
+            "cache_write_tokens": 7077,
+            "cached_tokens": 0
+          },
+          "output_tokens": 237,
+          "output_tokens_details": {
+            "reasoning_tokens": 136
+          },
+          "total_tokens": 7317
+        }
+      }
+    }
+  ]
+}
