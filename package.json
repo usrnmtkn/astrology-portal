@@ -130,5 +130,8 @@
     "@playwright/test": "^1.61.0",
     "@types/node": "^25.9.1",
     "tsx": "^4.23.12"
+  },
+  "dependencies": {
+    "@vercel/functions": "^3.9.2"
   }
 }

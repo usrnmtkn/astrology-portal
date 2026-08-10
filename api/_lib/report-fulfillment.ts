@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { createTldrAstroReportFactsClient, type ReportChartSubject } from "./report-facts.js";
+import { createTldrAstroReportFactsClient, ReportCalculationApiClientError, type ReportChartSubject } from "./report-facts.js";
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import type { ReportFulfillmentStore, FulfillmentJobRow, FulfillmentReportRow } from "./report-fulfillment-store.ts";
 import { verifyReportFactLock } from "./report-fact-lock.js";
@@ -18,7 +18,7 @@ import { callReportModel, type ReportModelCall } from "./report-model-client.js"
 import { estimateReportModelCost } from "./report-model-pricing.js";
 import { runReportWriterChain } from "./report-writer-chain.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
-import { birthProfileFromPersistedData } from "./report-billing-window.js";
+import { ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
 import { reportUrl } from "./report-http.js";
 
 const unitsByHorizon = {
@@ -40,7 +40,7 @@ function fulfillmentUnitIds(reportDomain: ReportDomain, reportHorizon: ReportHor
 }
 
 export type ReportFactsCalculator = ((report: FulfillmentReportRow) => Promise<{ facts: Record<string, unknown>; facts_engine: string }>) & {
-  preflight?: () => Promise<void>;
+  preflight?: (report: FulfillmentReportRow, requiresBirthTime: boolean) => Promise<void>;
 };
 export type ReportJudgeCall = typeof judgeReportUnit;
 
@@ -68,10 +68,17 @@ function failures(existing: unknown[], stage: string, values: unknown) {
 
 export function createReportFactsCalculator(admin: SupabaseReportAdmin = createSupabaseReportAdmin()): ReportFactsCalculator {
   const client = createTldrAstroReportFactsClient();
-  const calculate: ReportFactsCalculator = async (report) => {
+  const preparedBirthProfiles = new Map<string, BirthProfile>();
+  const prepareBirthProfile = async (report: FulfillmentReportRow, requiresBirthTime: boolean) => {
     const profileRow = await admin.selectOne<{ data: unknown }>("user_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "data" }));
-    const birth = birthProfileFromPersistedData(profileRow?.data);
-    if (!birth?.birthDate || !birth.birthLocation) throw new Error("Report birth data is unavailable.");
+    const birth = requireReportBirthProfile(profileRow?.data, requiresBirthTime);
+    preparedBirthProfiles.set(report.id, birth);
+    return birth;
+  };
+  const calculate: ReportFactsCalculator = async (report) => {
+    const birth = preparedBirthProfiles.get(report.id) ?? await prepareBirthProfile(report, true);
+    preparedBirthProfiles.delete(report.id);
+    if (!birth.birthLocation) throw new ReportBirthDataError("BIRTH_DATA_MISSING", "Add a valid birth place before generating this report.");
     const natalSubject: ReportChartSubject = {
       datetime: { date: birth.birthDate, time: birth.birthTime, timeKnown: !birth.birthTimeUnknown && Boolean(birth.birthTime), timeZone: birth.birthLocation.timeZone },
       location: birth.birthLocation,
@@ -83,7 +90,10 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
     ]);
     return { facts, facts_engine: `tldrastro-api@${version}` };
   };
-  calculate.preflight = () => client.preflight();
+  calculate.preflight = async (report, requiresBirthTime) => {
+    await prepareBirthProfile(report, requiresBirthTime);
+    await client.preflight();
+  };
   return calculate;
 }
 
@@ -151,13 +161,22 @@ export async function processReportFulfillmentJob(input: {
   assertReportDomainFulfillmentReady(report.report_domain);
   let factsBundle = await input.store.reusableFacts(report);
   if (!factsBundle) {
-    await input.calculateFacts.preflight?.();
+    await input.calculateFacts.preflight?.(report, Boolean(entitlement.requires_birth_time));
     const claimed = await input.store.claimFacts(report, input.job.id);
     if (!claimed) throw new Error("FACTS_PENDING: another fulfillment worker owns this user-window calculation.");
     await input.store.updateReport(report.id, nowPatch("calculating"));
-    const calculated = await input.calculateFacts(report);
-    factsBundle = { ...calculated, facts_hash: reportFactsHash(calculated.facts) };
-    await input.store.saveFacts(report, factsBundle);
+    try {
+      const calculated = await input.calculateFacts(report);
+      factsBundle = { ...calculated, facts_hash: reportFactsHash(calculated.facts) };
+      await input.store.saveFacts(report, factsBundle);
+    } catch (error) {
+      try {
+        await input.store.releaseFactsClaim(report);
+      } catch (releaseError) {
+        console.error("Report facts claim release failed after calculation error.", releaseError);
+      }
+      throw error;
+    }
   }
   report.facts = factsBundle.facts;
   report.facts_engine = factsBundle.facts_engine;
@@ -287,10 +306,13 @@ export async function runReportFulfillmentBatch(input: {
   callModel?: ReportModelCall;
   judgeCall?: ReportJudgeCall;
   mail?: ReportMailProvider;
+  jobId?: string;
 }) {
   const config = reportFulfillmentConfig();
   if (config.workerPaused || await input.store.workerPaused()) return { paused: true, processed: [] };
-  const jobs = await input.store.claimJobs(input.workerId, config.workerBatchSize);
+  const jobs = input.jobId
+    ? await input.store.claimJob(input.workerId, input.jobId)
+    : await input.store.claimJobs(input.workerId, config.workerBatchSize);
   const processed = [];
   for (const job of jobs) {
     try {
@@ -298,15 +320,20 @@ export async function runReportFulfillmentBatch(input: {
     } catch (error) {
       const report = await input.store.report(job.report_id);
       const message = error instanceof Error ? error.message : "Unknown fulfillment failure.";
-      const terminal = /REPORT_CALL_AUTHORIZATION_REQUIRED|REPORT_DOMAIN_PROMPT_PENDING|CALCULATION_API_PREFLIGHT_FAILED|SOURCE_GAP|attempt cap exhausted|token budget exceeded|birth data is unavailable|lost its report or entitlement|facts bundle/iu.test(message);
+      const birthDataFailure = error instanceof ReportBirthDataError || /^BIRTH_DATA_(?:MISSING|INVALID):/u.test(message);
+      const clientFailure = error instanceof ReportCalculationApiClientError || /^CALCULATION_API_CLIENT_ERROR:/u.test(message);
+      const terminal = birthDataFailure || clientFailure || /REPORT_CALL_AUTHORIZATION_REQUIRED|REPORT_DOMAIN_PROMPT_PENDING|CALCULATION_API_PREFLIGHT_FAILED|SOURCE_GAP|attempt cap exhausted|token budget exceeded|birth data is unavailable|lost its report or entitlement|facts bundle/iu.test(message);
       const retryable = message.startsWith("FACTS_PENDING:") || (!terminal && job.attempt < config.jobAttemptCap);
       if (report) {
         await input.store.updateReport(report.id, {
-          ...nowPatch(retryable ? report.fulfillment_status : "exception"),
+          ...nowPatch(birthDataFailure ? "awaiting_birth_data" : retryable ? report.fulfillment_status : "exception"),
           failure_history: failures(report.failure_history ?? [], job.step, message)
         });
       }
-      await input.store.updateJob(job.id, retryable ? {
+      if (birthDataFailure) await input.store.updateEntitlement(job.entitlement_id, { status: "awaiting_birth_data" });
+      await input.store.updateJob(job.id, birthDataFailure ? {
+        state: "paused", last_error: message, locked_at: null, locked_by: null
+      } : retryable ? {
         state: "retry",
         run_after: new Date(Date.now() + Math.min(60_000, 2 ** job.attempt * 1_000)).toISOString(),
         last_error: message,

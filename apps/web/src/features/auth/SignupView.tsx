@@ -11,6 +11,7 @@ import {
   verifyPhoneSignInCode,
   type AuthAccount
 } from "../../services/auth";
+import { birthTimeInputMessage, normalizeBirthTime } from "../../services/chartTime";
 import {
   formatUsPhoneInput,
   isValidUsPhoneNumber,
@@ -129,6 +130,16 @@ export function SignupView({
     updateField("birthDate", formatSignupBirthDate(nextParts));
   }
 
+  function normalizedFormForAccountCreation() {
+    if (isLogin || form.unknownBirthTime) return form;
+    try {
+      return { ...form, birthTime: normalizeBirthTime(form.birthTime) };
+    } catch {
+      setAuthMessage(birthTimeInputMessage);
+      return null;
+    }
+  }
+
   async function submitSignup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -142,10 +153,13 @@ export function SignupView({
       return;
     }
 
+    const submittedForm = normalizedFormForAccountCreation();
+    if (!submittedForm) return;
+
     setAuthStatus("loading");
     setAuthMessage("");
     if (!isLogin) {
-      onSavePendingForm(form);
+      onSavePendingForm(submittedForm);
     }
 
     try {
@@ -163,7 +177,7 @@ export function SignupView({
       if (account) {
         onAuthenticated({
           account,
-          form,
+          form: submittedForm,
           isNewAccount: !isLogin,
           provider: "email"
         });
@@ -184,10 +198,12 @@ export function SignupView({
       return;
     }
 
+    const submittedForm = normalizedFormForAccountCreation();
+    if (!submittedForm) return;
     setAuthStatus("loading");
     setAuthMessage("");
     if (authMode === "create") {
-      onSavePendingForm(form);
+      onSavePendingForm(submittedForm);
     } else {
       onClearPendingForm();
     }
@@ -237,12 +253,15 @@ export function SignupView({
       return;
     }
 
+    const submittedForm = normalizedFormForAccountCreation();
+    if (!submittedForm) return;
+
     phoneVerificationCodeRef.current = verificationCode;
     setAuthStatus("loading");
     setAuthMessage("");
 
     if (!isLogin) {
-      onSavePendingForm(form);
+      onSavePendingForm(submittedForm);
     }
 
     try {
@@ -254,7 +273,7 @@ export function SignupView({
       if (account) {
         onAuthenticated({
           account,
-          form,
+          form: submittedForm,
           isNewAccount: !isLogin,
           provider: "phone"
         });

@@ -3,6 +3,8 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
 import { processReportFulfillmentJob, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
+import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
 import { REPORT_JUDGE_CATEGORIES, reportJudgeOverall, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
 import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../api/_lib/report-entitlements.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
@@ -37,6 +39,10 @@ assert.equal(skuCatalog.billing_mode, "free_test");
 assert.deepEqual(skuCatalog.skus.map((sku) => sku.sku).sort(), REPORT_SKUS.map((sku) => sku.key).sort());
 assert.ok(skuCatalog.skus.every((sku) => sku.price_cents === 0 && sku.stripe_product_id.startsWith("PLACEHOLDER_") && sku.stripe_price_id.startsWith("PLACEHOLDER_")));
 assert.equal(reportSku("general_1_month").key, "general_1m", "Legacy entitlement keys must resolve to the compact catalog key.");
+assert.equal(birthProfileFromPersistedData({ profile: { charts: [{
+  birthDate: "1979-02-18", birthTime: "11:20 aM",
+  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }
+}] } }).birthTime, "11:20", "Fulfillment must normalize legacy human birth times before any calculation payload.");
 delete process.env.REPORT_BILLING_MODE;
 assert.equal(reportBillingMode(), "free_test");
 process.env.REPORT_BILLING_MODE = "stripe";
@@ -194,7 +200,7 @@ const authorization = await authorizeReportGeneration({
     return table === "report_fulfillment_jobs" ? [{ id: "comp-job-1" }] : [{ id: "comp-report-1" }];
   }
 }, { reportId: "comp-report-1", callBudget: 44, now: "2026-08-10T12:01:00Z" });
-assert.deepEqual(authorization, { authorized: true, callBudget: 44 });
+assert.deepEqual(authorization, { authorized: true, callBudget: 44, jobId: "comp-job-1" });
 const jobAuthorization = authorizationUpdates.find((entry) => entry.table === "report_fulfillment_jobs").patch;
 assert.match(jobAuthorization.authorization_token, /^[0-9a-f-]{36}$/u);
 assert.equal(jobAuthorization.authorized_call_budget, 44);
@@ -246,10 +252,12 @@ function createMemoryStore() {
   return {
     reports, entitlements, units, facts,
     async claimJobs() { return []; },
+    async claimJob() { return []; },
     async workerPaused() { return false; },
     async report(id) { return reports.get(id) ?? null; },
     async entitlement(id) { return entitlements.get(id) ?? null; },
     async updateReport(id, patch) { Object.assign(reports.get(id), patch); },
+    async updateEntitlement(id, patch) { Object.assign(entitlements.get(id), patch); },
     async updateJob() {},
     async beginAuthorizedCall(jobId, token, attempt) {
       if (token !== "fixture-authorization") throw new Error("REPORT_CALL_AUTHORIZATION_REQUIRED");
@@ -429,6 +437,73 @@ assert.equal(preflightBatch.processed[0].retryable, false, "A missing calculatio
 assert.equal(preflightJobPatch.state, "exception");
 assert.match(preflightJobPatch.last_error, /CALCULATION_API_PREFLIGHT_FAILED/u);
 
+const malformedBirthStore = createMemoryStore();
+malformedBirthStore.reports.set("malformed-birth-report", {
+  ...structuredClone([...store.reports.values()][0]), id: "malformed-birth-report", user_id: "malformed-user",
+  fulfillment_status: "queued", facts: {}, facts_engine: "pending", facts_hash: null, failure_history: []
+});
+malformedBirthStore.entitlements.set("malformed-birth-ent", {
+  id: "malformed-birth-ent", user_id: "malformed-user", status: "active", product_key: "general_12m", requires_birth_time: true
+});
+let malformedClaimed = false;
+malformedBirthStore.claimFacts = async () => { malformedClaimed = true; return true; };
+let malformedJobPatch = null;
+malformedBirthStore.updateJob = async (_id, patch) => { malformedJobPatch = patch; };
+malformedBirthStore.claimJobs = async () => [authorizedJob({
+  id: "malformed-birth-job", report_id: "malformed-birth-report", entitlement_id: "malformed-birth-ent",
+  state: "running", step: "calculating", attempt: 1
+})];
+const malformedBirthCalculation = Object.assign(async () => { throw new Error("must not calculate"); }, {
+  async preflight() { throw new ReportBirthDataError("BIRTH_DATA_INVALID", "Enter a valid birth time, such as 11:20 AM or 23:20."); }
+});
+const malformedBirthBatch = await runReportFulfillmentBatch({
+  workerId: "malformed-birth-worker", store: malformedBirthStore, calculateFacts: malformedBirthCalculation,
+  callModel: modelCallWithCrash(), judgeCall
+});
+assert.equal(malformedClaimed, false, "Malformed birth data must stop before a facts-window claim.");
+assert.equal(malformedBirthBatch.processed[0].retryable, false);
+assert.equal(malformedBirthStore.reports.get("malformed-birth-report").fulfillment_status, "awaiting_birth_data");
+assert.equal(malformedBirthStore.entitlements.get("malformed-birth-ent").status, "awaiting_birth_data");
+assert.equal(malformedJobPatch.state, "paused");
+assert.match(malformedJobPatch.last_error, /^BIRTH_DATA_INVALID:/u);
+
+const clientErrorStore = createMemoryStore();
+clientErrorStore.reports.set("client-error-report", {
+  ...structuredClone([...store.reports.values()][0]), id: "client-error-report", user_id: "client-error-user",
+  fulfillment_status: "queued", facts: {}, facts_engine: "pending", facts_hash: null, failure_history: []
+});
+clientErrorStore.entitlements.set("client-error-ent", {
+  id: "client-error-ent", user_id: "client-error-user", status: "active", product_key: "general_12m", requires_birth_time: true
+});
+let clientErrorReleased = 0;
+clientErrorStore.releaseFactsClaim = async () => { clientErrorReleased += 1; };
+let clientErrorJobPatch = null;
+clientErrorStore.updateJob = async (_id, patch) => { clientErrorJobPatch = patch; };
+clientErrorStore.claimJobs = async () => [authorizedJob({
+  id: "client-error-job", report_id: "client-error-report", entitlement_id: "client-error-ent",
+  state: "running", step: "calculating", attempt: 1
+})];
+const deterministicClientFailure = Object.assign(async () => {
+  throw new ReportCalculationApiClientError(400, { code: "BAD_REQUEST", message: "FIXTURE_ONLY" });
+}, { async preflight() {} });
+const clientErrorBatch = await runReportFulfillmentBatch({
+  workerId: "client-error-worker", store: clientErrorStore, calculateFacts: deterministicClientFailure,
+  callModel: modelCallWithCrash(), judgeCall
+});
+assert.equal(clientErrorBatch.processed[0].retryable, false, "Deterministic 4xx calculation failures must never enter the retry loop.");
+assert.equal(clientErrorJobPatch.state, "exception");
+assert.match(clientErrorJobPatch.last_error, /^CALCULATION_API_CLIENT_ERROR:/u);
+assert.equal(clientErrorReleased, 1, "A failed calculation must release its facts-window claim immediately.");
+
+const immediateStore = createMemoryStore();
+let claimedImmediateJob = null;
+immediateStore.claimJob = async (workerId, jobId) => { claimedImmediateJob = { workerId, jobId }; return []; };
+await runReportFulfillmentBatch({
+  workerId: "authorize-doorbell", jobId: "authorized-job-id", store: immediateStore,
+  calculateFacts, callModel: modelCallWithCrash(), judgeCall
+});
+assert.deepEqual(claimedImmediateJob, { workerId: "authorize-doorbell", jobId: "authorized-job-id" }, "Authorize pickup must target the newly authorized job.");
+
 const concurrentStore = createMemoryStore();
 const concurrentBase = {
   user_id: "concurrent-user", subject_id: null, report_horizon: "1_month",
@@ -491,6 +566,8 @@ assert.ok(adminSource.includes('code: "ACTIVE_COMP_EXISTS"'), "Duplicate comp gr
 assert.ok(adminSource.includes("status: 409"), "Duplicate comp grants must return HTTP 409.");
 assert.ok(adminSource.includes("An active comp report already exists"), "Duplicate comp grants must explain that the existing queue row should be used.");
 assert.ok(adminSource.includes("reportId: report?.id ?? null"), "Successful comp grants must identify the generated report row for UI focus.");
+assert.ok(adminSource.includes("waitUntil(fetch(workerUrl"), "Authorize must ring an immediate worker cycle without removing the scheduled pickup.");
+assert.ok(adminSource.includes("jobId=${encodeURIComponent(authorized.jobId)}"), "The immediate worker trigger must target the authorized job.");
 const adminPanelSource = fs.readFileSync(new URL("../apps/admin/src/ReportFulfillmentAdminPanel.tsx", import.meta.url), "utf8");
 for (const label of ["Grant report", "Authorize ", "Revoke comp"]) assert.ok(adminPanelSource.includes(label));
 assert.ok(adminPanelSource.includes("Report granted. The fulfillment queue was refreshed"), "Successful comp grants need visible refresh confirmation.");

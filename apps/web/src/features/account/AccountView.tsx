@@ -11,6 +11,7 @@ import {
   verifyPhoneNumberChange,
   verifyPhoneSignInCode
 } from "../../services/auth";
+import { birthTimeInputMessage, normalizeBirthTime } from "../../services/chartTime";
 import {
   formatUsPhoneInput,
   isValidUsPhoneNumber,
@@ -67,6 +68,7 @@ export function AccountView({
   const [draftBirthDate, setDraftBirthDate] = useState(savedBirthDate);
   const [draftBirthTime, setDraftBirthTime] = useState(savedBirthTime);
   const [draftBirthCity, setDraftBirthCity] = useState(savedBirthCity);
+  const [birthDetailsMessage, setBirthDetailsMessage] = useState("");
   const [socialHandle, setSocialHandle] = useState<string | null>(null);
   const [handleDraft, setHandleDraft] = useState("");
   const [handleStatus, setHandleStatus] = useState<"loading" | "ready" | "saving" | "unavailable">("loading");
@@ -190,9 +192,20 @@ export function AccountView({
   };
 
   const saveBirthChartDetails = () => {
+    let birthTime = draftBirthTime.trim();
+    if (birthTime && birthTime !== "Time unknown") {
+      try {
+        birthTime = normalizeBirthTime(birthTime);
+      } catch {
+        setBirthDetailsMessage(birthTimeInputMessage);
+        return;
+      }
+    }
+    setDraftBirthTime(birthTime);
+    setBirthDetailsMessage("Birth details saved.");
     onBirthDetailsChange({
       birthDate: draftBirthDate.trim(),
-      birthTime: draftBirthTime.trim(),
+      birthTime,
       birthCity: draftBirthCity.trim()
     });
   };
@@ -527,7 +540,10 @@ export function AccountView({
                   type="text"
                   inputMode="text"
                   value={draftBirthTime}
-                  onChange={(event) => setDraftBirthTime(event.target.value)}
+                  onChange={(event) => {
+                    setDraftBirthTime(event.target.value);
+                    setBirthDetailsMessage("");
+                  }}
                   placeholder="Not set"
                   aria-label="Birth time"
                 />
@@ -560,6 +576,7 @@ export function AccountView({
                 </button>
               </div>
             )}
+            {birthDetailsMessage && <p className="account-action-message" role="status">{birthDetailsMessage}</p>}
           </div>
         </div>
       </section>
