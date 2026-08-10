@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
+import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.ts";
 import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.ts";
 import { loadVersionedReportPrompt, REPORT_JUDGE_PROMPT_PATH } from "./report-prompt-versions.ts";
 
@@ -22,20 +23,46 @@ export const REPORT_JUDGE_HARD_GATE_CATEGORIES = [
   "owner_voice"
 ] as const satisfies readonly ReportJudgeCategory[];
 export type ReportJudgeCategory = typeof REPORT_JUDGE_CATEGORIES[number];
+export type ReportJudgeScores = Record<ReportJudgeCategory, number | null>;
 export type ReportJudgeResult = {
-  scores: Record<ReportJudgeCategory, number>;
+  scores: ReportJudgeScores;
+  applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
   overall: number;
   verdict: "pass" | "below_threshold";
-  findings: Array<{ category: ReportJudgeCategory; location: string; finding: string }>;
+  findings: Array<{ category: ReportJudgeCategory; location: string; finding: string; evidence_ids: string[] }>;
 };
 
 const judgeSchema = {
-  type: "object", additionalProperties: false, required: ["scores", "overall", "verdict", "findings"],
+  type: "object", additionalProperties: false, required: ["scores", "applicability", "overall", "verdict", "findings"],
   properties: {
-    scores: { type: "object", additionalProperties: false, required: [...REPORT_JUDGE_CATEGORIES], properties: Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, { type: "number", minimum: 0, maximum: 4 }])) },
+    scores: {
+      type: "object", additionalProperties: false, required: [...REPORT_JUDGE_CATEGORIES],
+      properties: Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, category === "interpretive_movement"
+        ? { anyOf: [{ type: "number", minimum: 0, maximum: 4 }, { type: "null" }] }
+        : { type: "number", minimum: 0, maximum: 4 }]))
+    },
+    applicability: {
+      type: "object", additionalProperties: false,
+      required: ["interpretive_movement", "reason"],
+      properties: {
+        interpretive_movement: { type: "string", enum: ["applicable", "not_applicable"] },
+        reason: { type: "string" }
+      }
+    },
     overall: { type: "number", minimum: 0, maximum: 1 },
     verdict: { type: "string", enum: ["pass", "below_threshold"] },
-    findings: { type: "array", items: { type: "object", additionalProperties: false, required: ["category", "location", "finding"], properties: { category: { type: "string", enum: [...REPORT_JUDGE_CATEGORIES] }, location: { type: "string" }, finding: { type: "string" } } } }
+    findings: {
+      type: "array",
+      items: {
+        type: "object", additionalProperties: false,
+        required: ["category", "location", "finding", "evidence_ids"],
+        properties: {
+          category: { type: "string", enum: [...REPORT_JUDGE_CATEGORIES] },
+          location: { type: "string" }, finding: { type: "string" },
+          evidence_ids: { type: "array", items: { type: "string" } }
+        }
+      }
+    }
   }
 };
 
@@ -48,21 +75,67 @@ export async function judgeReportUnit(input: {
 }): Promise<{ result: ReportJudgeResult; usage: ReportModelUsage; model: string; promptVersion: string }> {
   const prompt = loadVersionedReportPrompt(REPORT_JUDGE_PROMPT_PATH);
   const target = judgeModelTarget();
+  const packet = reportEvaluationPacket(input.payload, input.draft);
   const response = await (input.callModel ?? callReportModel)<ReportJudgeResult>({
     ...target,
-    prompt: `${prompt.text}\n\nCANONICAL_PROMPT\n${input.payload.canonicalOwnerPrompt.text}\n\nFACTS\n${JSON.stringify(input.payload.frozenFacts)}\n\nOWNER_REFERENCE_EVIDENCE\n${JSON.stringify(input.payload.voiceEvidence)}\n\nVALIDATORS\n${JSON.stringify(input.validatorResults)}\n\nDRAFT\n${JSON.stringify(input.draft)}\n\nConfigured threshold: ${input.threshold}.`,
+    prompt: [
+      prompt.text,
+      `CANONICAL_PROMPT\n${input.payload.canonicalOwnerPrompt.text}`,
+      `LIVED_PROSE_STANDARD\n${input.payload.livedProseStandard.text}`,
+      `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
+      `COMPLETE_UNIT\n${packet.completeUnit}`,
+      `UNIT_FACTS\n${JSON.stringify(packet.unitFacts)}`,
+      `OWNER_COMPARISON_SET\n${JSON.stringify(packet.ownerComparisonSet)}`,
+      `TARGET_FUNCTIONS\n${JSON.stringify(packet.targetFunctions)}`,
+      `LABELED_NEGATIVE_EXAMPLES\n${JSON.stringify(packet.labeledNegativeExamples)}`,
+      `VALIDATOR_RESULTS\n${JSON.stringify(input.validatorResults)}`,
+      `CONFIGURED_THRESHOLD\n${input.threshold}`
+    ].join("\n\n"),
     schemaName: "report_fulfillment_judge",
     schema: judgeSchema
   });
+  const movementApplicable = reportDraftMovementApplicable(input.draft);
+  const scores: ReportJudgeScores = {
+    ...response.value.scores,
+    interpretive_movement: movementApplicable ? response.value.scores.interpretive_movement : null
+  };
+  if (movementApplicable && typeof scores.interpretive_movement !== "number") {
+    throw new Error("V3 judge omitted interpretive_movement for a multi-paragraph unit.");
+  }
+  const eligibleEvidence = new Set(packet.ownerComparisonSet.map((passage) => passage.evidenceId));
+  for (const finding of response.value.findings.filter((candidate) => candidate.category === "owner_voice")) {
+    if (!finding.evidence_ids.length || finding.evidence_ids.some((id) => !eligibleEvidence.has(id))) {
+      throw new Error("V3 owner_voice finding lacks eligible comparison evidence.");
+    }
+  }
+  const overall = reportJudgeOverall(scores, movementApplicable);
   const result = {
     ...response.value,
-    verdict: reportJudgeVerdict(response.value.scores, response.value.overall, input.threshold)
+    scores,
+    applicability: {
+      interpretive_movement: movementApplicable ? "applicable" as const : "not_applicable" as const,
+      reason: movementApplicable
+        ? "The complete unit contains at least two substantive prose paragraphs."
+        : "The complete unit contains fewer than two substantive prose paragraphs."
+    },
+    overall,
+    verdict: reportJudgeVerdict(scores, input.threshold, movementApplicable)
   };
   return { result, usage: response.usage, model: response.model, promptVersion: prompt.version };
 }
 
-export function reportJudgeVerdict(scores: Record<ReportJudgeCategory, number>, overall: number, threshold: number) {
-  const hardGatePassed = REPORT_JUDGE_HARD_GATE_CATEGORIES.every((category) => scores[category] >= 3);
+export function reportJudgeOverall(scores: ReportJudgeScores, movementApplicable = scores.interpretive_movement !== null) {
+  const applicable = REPORT_JUDGE_CATEGORIES.filter((category) => category !== "interpretive_movement" || movementApplicable);
+  const values = applicable.map((category) => scores[category]);
+  if (values.some((score) => typeof score !== "number")) throw new Error("V3 judge returned a null applicable score.");
+  return (values as number[]).reduce((sum, score) => sum + score, 0) / (4 * applicable.length);
+}
+
+export function reportJudgeVerdict(scores: ReportJudgeScores, threshold: number, movementApplicable = scores.interpretive_movement !== null) {
+  const overall = reportJudgeOverall(scores, movementApplicable);
+  const hardGatePassed = REPORT_JUDGE_HARD_GATE_CATEGORIES
+    .filter((category) => category !== "interpretive_movement" || movementApplicable)
+    .every((category) => typeof scores[category] === "number" && (scores[category] as number) >= 3);
   return overall >= threshold && hardGatePassed ? "pass" as const : "below_threshold" as const;
 }
 

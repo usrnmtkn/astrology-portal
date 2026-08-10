@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import {
   assembleReportGenerationPayload,
@@ -40,6 +41,10 @@ const livedProseStandard = fs.readFileSync(
 );
 const personalHealthReference = fs.readFileSync(
   new URL("../artifacts/marie-satori-personal-health-2026-owner-v1.md", import.meta.url),
+  "utf8"
+);
+const personalHealthPrompt = fs.readFileSync(
+  new URL("../tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md", import.meta.url),
   "utf8"
 );
 const generatorSource = fs.readFileSync(new URL("../api/_lib/report-generation.ts", import.meta.url), "utf8");
@@ -119,6 +124,10 @@ for (const [reportHorizon, unitId] of cases) {
 
 assert.ok(!payloads.get("1_month").unit.allowedUnitIds.some((id) => id.includes("winter") || id === "spring"));
 assert.ok(payloads.get("12_months").unit.allowedUnitIds.includes("summer"));
+assert.ok(payloads.get("12_months").sourceGaps.some((gap) => (
+  gap.factorId === "jupiter-opposition-midheaven"
+  && gap.requestedKey === "slow-transit-to-natal/jupiter/opposition/midheaven/9"
+)), "The calibration-only Jupiter-Midheaven fact must remain an explicit SOURCE_GAP until owner-reviewed manifestation content exists.");
 assert.throws(() => assembleReportGenerationPayload({
   reportId: "fixture-mismatch",
   reportDomain: "general",
@@ -251,20 +260,34 @@ assert.deepEqual({
 }, snapshots.love_connection_12_months);
 
 const personalHealthReadiness = reportDomainPromptReadiness("personal_health");
+assert.match(personalHealthPrompt, /`owner_approved`/u);
+assert.match(personalHealthPrompt, /Version `personal-health-deepdive-generation-prompt-v1`/u);
+assert.equal(
+  crypto.createHash("sha256").update(personalHealthPrompt).digest("hex"),
+  "c43cf5a05272af7355543a5ccbd7ed50a81e1ad3bf307eb64d2bcbf984c10bee"
+);
 assert.deepEqual(personalHealthReadiness, {
   reportDomain: "personal_health",
   sourcePath: PERSONAL_HEALTH_PROMPT_PATH,
-  exists: false,
-  ownerApproved: false,
-  ready: false
+  exists: true,
+  ownerApproved: true,
+  ready: true
 });
-assert.throws(() => assembleReportGenerationPayload({
+const personalHealthPayload = assembleReportGenerationPayload({
   reportId: "00000000-0000-0000-0000-000000000120",
   reportDomain: "personal_health",
   reportHorizon: "12_months",
   unitId: "summer",
   frozenFacts: facts
-}), /REPORT_DOMAIN_PROMPT_PENDING/u);
+});
+assert.equal(personalHealthPayload.canonicalOwnerPrompt.text, personalHealthPrompt);
+assert.equal(personalHealthPayload.voiceEvidence[0].text, personalHealthReference);
+assert.equal(personalHealthPayload.generationStandard?.text, fs.readFileSync(
+  new URL("../tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md", import.meta.url),
+  "utf8"
+));
+assert.ok(personalHealthPayload.unit.allowedUnitIds.includes("health-capacity"));
+assert.ok(!personalHealthPayload.unit.allowedUnitIds.includes("money"));
 const personalHealthModel = reportDomainRelevanceModel("personal_health");
 assert.deepEqual(personalHealthModel.map((tier) => tier.id), [
   "direct_personal_health",
@@ -291,6 +314,21 @@ assert.ok(personalHealthSelection.selection.find((item) => item.factorId === "lu
   ?.bridgeConsequences.includes("caregiving"));
 const midheavenHealthBridge = personalHealthSelection.selection.find((item) => item.factorId === "solar-eclipse-2027-02-06-midheaven");
 assert.ok(["hours", "commute", "recovery"].every((term) => midheavenHealthBridge?.bridgeConsequences.includes(term)));
+assert.ok(!personalHealthSelection.factors.some((item) => item.id === "jupiter-opposition-midheaven"),
+  "A generic Midheaven transit must not enter Personal & Health without a demonstrated schedule or capacity consequence.");
+for (const factorId of ["saturn-trine-jupiter", "neptune-trine-jupiter"]) {
+  const privatePracticeFactor = personalHealthSelection.selection.find((item) => item.factorId === factorId);
+  assert.equal(privatePracticeFactor?.tierId, "direct_personal_health", `${factorId} must be direct through private work and practice.`);
+  assert.ok(privatePracticeFactor?.matchedRuleIds.includes("private_practice_slow_planet_support"));
+  assert.ok(privatePracticeFactor?.doNotAssume.includes("awakening"));
+}
+for (const factorId of ["jupiter-conjunction-jupiter", "solar-eclipse-2026-08-12-uranus", "lunar-eclipse-2026-08-28-mercury"]) {
+  assert.equal(
+    personalHealthSelection.selection.find((item) => item.factorId === factorId)?.tierId,
+    "condition_changers",
+    `${factorId} must enter through schedule or communication consequences.`
+  );
+}
 const personalProjectedReaderMaterial = JSON.stringify(personalHealthResolved.resolved.map(({ record }) => ({
   domain: record.domain,
   possibleLivedManifestations: record.possibleLivedManifestations
@@ -298,6 +336,7 @@ const personalProjectedReaderMaterial = JSON.stringify(personalHealthResolved.re
 assert.doesNotMatch(personalProjectedReaderMaterial, /\b(?:dating|romance|attraction|sex|income|salary|pay|pricing|revenue|profit)\b/u);
 assert.deepEqual({
   promptReadiness: personalHealthReadiness,
+  unit: personalHealthPayload.unit,
   factorIds: personalHealthSelection.factors.map((factor) => factor.id),
   tierIds: [...new Set(personalHealthSelection.selection.map((item) => item.tierId))],
   homeInspection: {
@@ -318,8 +357,11 @@ assert.deepEqual({
     const record = personalHealthResolved.resolved.find((item) => item.factor.id === "solar-eclipse-2027-02-06-midheaven")?.record;
     return { domain: record?.domain, possibleLivedManifestations: record?.possibleLivedManifestations };
   })(),
-  voiceEvidenceSource: "artifacts/marie-satori-personal-health-2026-owner-v1.md",
-  livedProseStandardSource: "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md"
+  canonicalPromptSource: personalHealthPayload.canonicalOwnerPrompt.sourcePath,
+  generationStandardSource: personalHealthPayload.generationStandard?.sourcePath,
+  voiceEvidenceSource: personalHealthPayload.voiceEvidence[0].sourcePath,
+  ownerComparisonIds: personalHealthPayload.ownerComparisonSet.map((passage) => passage.evidenceId),
+  livedProseStandardSource: personalHealthPayload.livedProseStandard.sourcePath
 }, snapshots.personal_health_12_months);
 
 const factors = reportFactors(facts);
@@ -414,8 +456,26 @@ assert.ok(!validateReportDraft(
 const isolatedDraft = { body: "FIXTURE_ONLY_ONE.\n\nFIXTURE_ONLY_TWO?\n\nFIXTURE_ONLY_THREE." };
 assert.ok(validateReportDraft(isolatedDraft, workMoneyPayload)
   .some((issue) => issue.code === "isolated_one_liners" && issue.severity === "warning"));
-assert.ok(validateReportDraft(isolatedDraft, payload)
+assert.ok(!validateReportDraft(isolatedDraft, payload)
+  .some((issue) => issue.code === "isolated_one_liners"), "Natural-paragraph warnings are deep-dive-only.");
+assert.ok(validateReportDraft(isolatedDraft, personalHealthPayload)
   .some((issue) => issue.code === "isolated_one_liners" && issue.severity === "warning"));
+
+for (const phrase of [
+  "listen to your body", "protect your energy", "honor your needs", "prioritize self-care",
+  "self-care", "wellness journey", "healing journey", "holding space"
+]) {
+  assert.ok(validateReportDraft({ body: `FIXTURE_ONLY ${phrase}.` }, personalHealthPayload)
+    .some((issue) => issue.code === "personal_health_banned_advice"));
+}
+assert.ok(validateReportDraft({ body: "You may develop an illness." }, personalHealthPayload)
+  .some((issue) => issue.code === "personal_health_medical_invention"));
+assert.ok(validateReportDraft({ body: "You could experience a spiritual awakening." }, personalHealthPayload)
+  .some((issue) => issue.code === "personal_health_spirituality_invention"));
+assert.ok(validateReportDraft({ body: "You earned a rest." }, personalHealthPayload)
+  .some((issue) => issue.code === "personal_health_moralizing"));
+assert.ok(!validateReportDraft({ body: "You may go to the event and need somewhere to sit." }, personalHealthPayload)
+  .some((issue) => issue.code.startsWith("personal_health_")));
 
 assert.ok(!validateReportDraft({
   sections: [{

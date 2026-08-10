@@ -15,8 +15,8 @@ import {
 } from "./report-judge-v3-fixture-packets.mjs";
 
 const manifestPath = "scripts/fixtures/report-judge-complete-unit-regressions-v3.json";
-const judgePath = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-DRAFT.md";
-const critiquePath = "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-DRAFT.md";
+const judgePath = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md";
+const critiquePath = "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md";
 const livedProsePath = "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md";
 const promptPaths = {
   general: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md",
@@ -77,9 +77,9 @@ const facts = JSON.parse(read(manifest.factsSourcePath));
 
 for (const [name, document] of [["judge", judgeText], ["critique", critiqueText]]) {
   assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} v3 is not owner-approved.`);
-  assert.match(document, /^\*\*Active in production:\*\* `false`$/mu, `${name} v3 must remain inactive.`);
+  assert.match(document, /^\*\*Active in production:\*\* `true`$/mu, `${name} v3 must be active.`);
   assert.match(document, /^\*\*Owner approved:\*\* `true`$/mu);
-  assert.match(document, /^\*\*Promotion authorized:\*\* `false`$/mu);
+  assert.match(document, /^\*\*Promotion authorized:\*\* `true`$/mu);
 }
 assert.deepEqual(manifest.proposedCalibrationCallBudget, {
   total: 9,
@@ -275,6 +275,10 @@ delete process.env.REPORT_FALLBACK_PROVIDER;
 delete process.env.REPORT_FALLBACK_MODEL;
 if (process.env.REPORT_JUDGE_V3_RUN_AUTHORIZATION !== "owner-authorized-run-2") {
   throw new Error("Calibration run two is not authorized. Record separate owner authorization before setting REPORT_JUDGE_V3_RUN_AUTHORIZATION=owner-authorized-run-2.");
+}
+const completedRunTwoArtifact = "artifacts/report-judge-calibration/2026-08-09T22-43-04.385Z-report-judge-v3.json";
+if (fs.existsSync(completedRunTwoArtifact)) {
+  throw new Error("Calibration run two authorization has already been consumed. A future run requires a new version and fresh owner authorization.");
 }
 const target = judgeModelTarget();
 if (target.provider !== "openai") throw new Error(`The authorized run is for OpenAI, but REPORT_JUDGE_PROVIDER resolved to ${target.provider}.`);

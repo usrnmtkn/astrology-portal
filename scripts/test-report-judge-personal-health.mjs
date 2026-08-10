@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { REPORT_JUDGE_THRESHOLD } from "../api/_lib/report-fulfillment-config.ts";
 import { assembleReportGenerationPayload } from "../api/_lib/report-generation.ts";
 import { judgeModelTarget } from "../api/_lib/report-model-client.ts";
 import {
@@ -37,7 +38,7 @@ for (const item of fixture.cases) {
       assert.ok(Number.isInteger(score) && score >= 0 && score <= 4);
       if (bound === "maximum" && hardGateCategories.has(category) && score < 3) {
         const otherwisePassing = Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((name) => [name, 4]));
-        assert.equal(reportJudgeVerdict({ ...otherwisePassing, [category]: score }, 1, 0.9), "below_threshold");
+        assert.equal(reportJudgeVerdict({ ...otherwisePassing, [category]: score }, 0.85), "below_threshold");
       }
     }
   }
@@ -56,8 +57,8 @@ if (!live) {
 }
 
 const governanceDocuments = [
-  "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-OWNER.md",
-  "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-OWNER.md"
+  "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md",
+  "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md"
 ];
 for (const sourcePath of governanceDocuments) {
   const text = fs.readFileSync(sourcePath, "utf8");
@@ -76,7 +77,7 @@ if (["anthropic", "claude"].includes(productionTarget.provider) && !/^sk-ant-/u.
 
 console.log(`LIVE CALIBRATION: ${fixture.cases.length} billed judge calls will run.`);
 const runAt = new Date().toISOString();
-const threshold = Number(process.env.REPORT_JUDGE_THRESHOLD ?? 0.9);
+const threshold = REPORT_JUDGE_THRESHOLD;
 const datedName = `${runAt.replaceAll(":", "-").replace(/\.\d{3}Z$/u, "Z")}-${fixture.version}.json`;
 const outputPath = process.env.REPORT_JUDGE_PERSONAL_HEALTH_OUTPUT
   ? path.resolve(process.env.REPORT_JUDGE_PERSONAL_HEALTH_OUTPUT)

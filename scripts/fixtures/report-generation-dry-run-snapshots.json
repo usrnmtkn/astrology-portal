@@ -66,9 +66,9 @@
         "winter-next"
       ]
     },
-    "factorCount": 18,
+    "factorCount": 19,
     "resolvedCount": 18,
-    "sourceGapCount": 0
+    "sourceGapCount": 1
   },
   "work_money_12_months": {
     "unit": {
@@ -101,6 +101,7 @@
       "saturn-sextile-ascendant",
       "jupiter-conjunction-jupiter",
       "jupiter-square-moon",
+      "jupiter-opposition-midheaven",
       "jupiter-trine-neptune",
       "jupiter-square-uranus",
       "jupiter-opposition-mars",
@@ -110,7 +111,7 @@
       "solar-eclipse-2027-02-06-midheaven"
     ],
     "resolvedCount": 18,
-    "sourceGapCount": 0,
+    "sourceGapCount": 1,
     "bridgeSelection": {
       "factorId": "lunar-eclipse-2026-03-03-saturn",
       "score": 30,
@@ -185,6 +186,7 @@
       "saturn-sextile-ascendant",
       "jupiter-conjunction-jupiter",
       "jupiter-square-moon",
+      "jupiter-opposition-midheaven",
       "jupiter-trine-neptune",
       "jupiter-square-uranus",
       "jupiter-opposition-mars",
@@ -311,13 +313,29 @@
     "promptReadiness": {
       "reportDomain": "personal_health",
       "sourcePath": "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
-      "exists": false,
-      "ownerApproved": false,
-      "ready": false
+      "exists": true,
+      "ownerApproved": true,
+      "ready": true
+    },
+    "unit": {
+      "horizon": "12_months",
+      "unitId": "summer",
+      "allowedUnitIds": [
+        "overview",
+        "year-theme",
+        "domain:main",
+        "winter-current",
+        "spring",
+        "summer",
+        "autumn",
+        "health-capacity",
+        "key-dates",
+        "review-current-year",
+        "winter-next"
+      ]
     },
     "factorIds": [
       "profection-year-house-12",
-      "sr-overlay-venus-house-10",
       "sr-overlay-ascendant-house-5",
       "saturn-trine-jupiter",
       "neptune-trine-jupiter",
@@ -390,7 +408,14 @@
       ],
       "possibleLivedManifestations": []
     },
+    "canonicalPromptSource": "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
+    "generationStandardSource": "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md",
     "voiceEvidenceSource": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+    "ownerComparisonIds": [
+      "personal_spring_development",
+      "personal_spring_close",
+      "personal_autumn_complication"
+    ],
     "livedProseStandardSource": "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md"
   }
 }

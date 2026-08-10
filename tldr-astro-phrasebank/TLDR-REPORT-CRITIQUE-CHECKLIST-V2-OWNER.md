@@ -3,7 +3,9 @@
 **Status:** `owner_approved`
 **Version:** `report-critique-checklist-v2`
 **Approved:** 2026-08-09
-**Governance:** Owner-editable system prompt. Not reader-facing copy. Approval applies to v2 specifically; any future revision requires a new version and fresh owner approval.
+**Active in production:** `false`
+**Superseded by:** `report-critique-checklist-v3`
+**Governance:** Archived owner-approved system prompt. V2 remains historical calibration provenance; v3 is active in production.
 
 > I explicitly approve both v2 documents: the critique checklist and the judge rubric with its threshold.
 

@@ -1,5 +1,7 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.ts";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";
@@ -32,6 +34,7 @@ export type ReportFactor = {
   id: string;
   factorType: ManifestationSetRecord["factorType"];
   house?: number;
+  activationHouse?: number;
   natalPoint?: string;
   transitPlanet?: string;
   aspect?: string;
@@ -94,6 +97,7 @@ export type ReportGenerationPayload = {
     eligible: true;
     text: string;
   }>;
+  ownerComparisonSet: ReportOwnerComparisonPassage[];
   outputGovernance: {
     status: "DRAFT";
     review_status: "needs_review";
@@ -168,11 +172,14 @@ type DomainValidator =
   | "key_date_format"
   | "love_banned_vocabulary"
   | "status_branching"
-  | "sex_invention";
+  | "sex_invention"
+  | "personal_health_ceiling";
 
 type ReportDomainConfiguration = {
   canonicalPromptPath: string;
   canonicalPromptOwnerApproved: boolean;
+  canonicalPromptVersion?: string;
+  canonicalPromptSha256?: string;
   voiceEvidencePath: string;
   generationStandardPath: string | null;
   tiers: DomainRelevanceTier[];
@@ -463,9 +470,11 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   },
   personal_health: {
     canonicalPromptPath: PERSONAL_HEALTH_PROMPT_PATH,
-    canonicalPromptOwnerApproved: false,
+    canonicalPromptOwnerApproved: true,
+    canonicalPromptVersion: "personal-health-deepdive-generation-prompt-v1",
+    canonicalPromptSha256: "c43cf5a05272af7355543a5ccbd7ed50a81e1ad3bf307eb64d2bcbf984c10bee",
     voiceEvidencePath: "artifacts/marie-satori-personal-health-2026-owner-v1.md",
-    generationStandardPath: null,
+    generationStandardPath: GENERATION_STANDARD_PATH,
     tiers: [
       {
         id: "direct_personal_health",
@@ -512,6 +521,21 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
             inspectionNotes: ["eclipse materially contacting the Sun, Moon, or Ascendant"],
             relevanceTerms: ["identity", "private", "privacy", "daily", "health", "body", "routine", "appointment", "sleep", "recovery", "care", "schedule"],
             doNotAssume: ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"]
+          },
+          {
+            id: "private_practice_slow_planet_support",
+            match: {
+              factorTypes: ["slow-transit-to-natal"],
+              transitPlanets: ["Saturn", "Neptune"],
+              natalPoints: ["Jupiter"],
+              mode: "all"
+            },
+            inspectionNotes: ["private work", "spiritual practice", "study", "retreat", "meaning", "a role the reader is growing out of"],
+            relevanceTerms: ["private", "practice", "spiritual", "study", "retreat", "meaning", "belief", "role", "schedule", "calendar"],
+            doNotAssume: [
+              "symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms",
+              "awakening", "psychic ability", "a crisis of faith", "confusion", "addiction", "depression", "hardship", "illness"
+            ]
           }
         ]
       },
@@ -536,7 +560,7 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
           },
           {
             id: "public_work_conditions",
-            match: { houses: [10], natalPoints: ["Midheaven"] },
+            match: { factorTypes: ["eclipse-on-natal-point"], natalPoints: ["Midheaven"], mode: "all" },
             inspectionNotes: ["hours", "commute", "travel", "physical demands", "appointments displaced by work"],
             relevanceTerms: ["hours", "commute", "travel", "physical demands", "schedule", "appointment", "recovery"],
             bridgeConsequences: ["hours", "commute", "travel", "physical demands", "appointment schedule"],
@@ -555,7 +579,7 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
     ],
     excludedProjectionTerms: ["dating", "romance", "attraction", "sex", "application", "proposal", "income", "salary", "pay", "pricing", "revenue", "profit"],
     strictBridgeProjection: true,
-    validators: ["natural_paragraphs", "key_date_format"]
+    validators: ["natural_paragraphs", "key_date_format", "personal_health_ceiling"]
   }
 };
 
@@ -595,6 +619,20 @@ const UNIT_IDS: Record<ReportHorizon, string[]> = {
   ]
 };
 
+const PERSONAL_HEALTH_12_MONTH_UNIT_IDS = [
+  "overview",
+  "year-theme",
+  "domain:main",
+  "winter-current",
+  "spring",
+  "summer",
+  "autumn",
+  "health-capacity",
+  "key-dates",
+  "review-current-year",
+  "winter-next"
+];
+
 const RETURN_ELIGIBLE = new Set([
   "Sun",
   "Mercury",
@@ -633,8 +671,14 @@ function reportWindowFacts(facts: Record<string, unknown>) {
   return recordValue(facts.reportWindow) ?? facts;
 }
 
-function unitIdAllowed(horizon: ReportHorizon, unitId: string) {
-  return UNIT_IDS[horizon].some((allowed) => (
+function unitIdsFor(reportDomain: ReportDomain, horizon: ReportHorizon) {
+  return reportDomain === "personal_health" && horizon === "12_months"
+    ? PERSONAL_HEALTH_12_MONTH_UNIT_IDS
+    : UNIT_IDS[horizon];
+}
+
+function unitIdAllowed(reportDomain: ReportDomain, horizon: ReportHorizon, unitId: string) {
+  return unitIdsFor(reportDomain, horizon).some((allowed) => (
     allowed.endsWith(":*") ? unitId.startsWith(allowed.slice(0, -1)) : unitId === allowed
   ));
 }
@@ -674,11 +718,11 @@ function validateFrozenWindow(horizon: ReportHorizon, facts: Record<string, unkn
   }
 }
 
-export function reportUnitContract(horizon: ReportHorizon, unitId: string): ReportUnitContract {
-  if (!unitIdAllowed(horizon, unitId)) {
-    throw new Error(`Unit '${unitId}' is not part of the ${horizon} report contract.`);
+export function reportUnitContract(horizon: ReportHorizon, unitId: string, reportDomain: ReportDomain = "general"): ReportUnitContract {
+  if (!unitIdAllowed(reportDomain, horizon, unitId)) {
+    throw new Error(`Unit '${unitId}' is not part of the ${reportDomain} ${horizon} report contract.`);
   }
-  return { horizon, unitId, allowedUnitIds: [...UNIT_IDS[horizon]] };
+  return { horizon, unitId, allowedUnitIds: [...unitIdsFor(reportDomain, horizon)] };
 }
 
 function loadManifestationRecords() {
@@ -780,6 +824,7 @@ function eclipseFactors(facts: Record<string, unknown>): ReportFactor[] {
         id: `${stringValue(event.id)}-${natalPoint.toLowerCase().replaceAll(" ", "-")}`,
         factorType: "eclipse-on-natal-point" as const,
         house: natalHouses.get(natalPoint),
+        activationHouse: numberValue(event.natalHouse),
         natalPoint,
         aspect: stringValue(contact.aspect),
         source: { ...event, contact }
@@ -835,8 +880,11 @@ function domainRules(configuration: ReportDomainConfiguration) {
 function ruleMatches(rule: DomainRelevanceRule, factor: ReportFactor, searchable: string) {
   const checks: boolean[] = [];
   const match = rule.match;
+  const relevanceHouse = factor.factorType === "eclipse-on-natal-point"
+    ? factor.activationHouse ?? factor.house
+    : factor.house;
   if (match.factorTypes) checks.push(match.factorTypes.includes(factor.factorType));
-  if (match.houses) checks.push(factor.house !== undefined && match.houses.includes(factor.house));
+  if (match.houses) checks.push(relevanceHouse !== undefined && match.houses.includes(relevanceHouse));
   if (match.natalPoints) checks.push(Boolean(factor.natalPoint && match.natalPoints.includes(factor.natalPoint)));
   if (match.transitPlanets) checks.push(Boolean(factor.transitPlanet && match.transitPlanets.includes(factor.transitPlanet)));
   if (match.overlayPoints) checks.push(Boolean(factor.overlayPoint && match.overlayPoints.includes(factor.overlayPoint)));
@@ -884,12 +932,20 @@ export type ReportDomainPromptReadiness = {
 export function reportDomainPromptReadiness(reportDomain: ReportDomain): ReportDomainPromptReadiness {
   const configuration = REPORT_DOMAIN_CONFIG[reportDomain];
   const exists = fs.existsSync(path.join(process.cwd(), configuration.canonicalPromptPath));
+  const text = exists ? readRepoText(configuration.canonicalPromptPath) : "";
+  const versionMatches = !configuration.canonicalPromptVersion
+    || text.includes(`Version \`${configuration.canonicalPromptVersion}\``);
+  const shaMatches = !configuration.canonicalPromptSha256
+    || crypto.createHash("sha256").update(text).digest("hex") === configuration.canonicalPromptSha256;
+  const approvalRecorded = !configuration.canonicalPromptVersion
+    || /`owner_approved`/u.test(text);
+  const ownerApproved = configuration.canonicalPromptOwnerApproved && versionMatches && shaMatches && approvalRecorded;
   return {
     reportDomain,
     sourcePath: configuration.canonicalPromptPath,
     exists,
-    ownerApproved: configuration.canonicalPromptOwnerApproved,
-    ready: exists && configuration.canonicalPromptOwnerApproved
+    ownerApproved,
+    ready: exists && ownerApproved
   };
 }
 
@@ -999,7 +1055,7 @@ export function assembleReportGenerationPayload(
     reportId: input.reportId,
     reportDomain: input.reportDomain,
     reportHorizon: input.reportHorizon,
-    unit: reportUnitContract(input.reportHorizon, input.unitId),
+    unit: reportUnitContract(input.reportHorizon, input.unitId, input.reportDomain),
     canonicalOwnerPrompt: {
       sourcePath: configuration.canonicalPromptPath,
       text: readRepoText(configuration.canonicalPromptPath)
@@ -1027,6 +1083,7 @@ export function assembleReportGenerationPayload(
       eligible: true,
       text: readRepoText(configuration.voiceEvidencePath)
     }],
+    ownerComparisonSet: reportOwnerComparisonSet(input.reportDomain),
     outputGovernance: {
       status: "DRAFT",
       review_status: "needs_review",
@@ -1273,6 +1330,57 @@ function validateSexInvention(draft: ReportDraft, issues: ReportValidationIssue[
   }
 }
 
+function validatePersonalHealthCeiling(draft: ReportDraft, issues: ReportValidationIssue[]) {
+  const text = readerFacingText(draft);
+  const bannedAdvice = [
+    "listen to your body",
+    "protect your energy",
+    "honor your needs",
+    "prioritize self-care",
+    "self-care",
+    "wellness journey",
+    "healing journey",
+    "holding space"
+  ];
+  for (const phrase of bannedAdvice.filter((candidate) => phrasePresent(text, candidate))) {
+    issues.push({
+      code: "personal_health_banned_advice",
+      message: `Personal & Health output contains banned wellness language: ${phrase}.`,
+      severity: "error"
+    });
+  }
+
+  const unsupportedHealthPrediction = /\b(?:you|your body)\s+(?:will|may|might|could|can)\s+(?:develop|experience|suffer(?:\s+from)?|be diagnosed with|recover from|decline from)\s+(?:an?\s+)?(?:illness|disease|injury|diagnosis|symptoms?|medical (?:event|crisis)|health crisis)\b/giu;
+  for (const match of text.match(unsupportedHealthPrediction) ?? []) {
+    issues.push({
+      code: "personal_health_medical_invention",
+      message: `Personal & Health output predicts an unsupported medical state or outcome: ${match}.`,
+      severity: "error"
+    });
+  }
+
+  const unsupportedSpiritualClaims = ["spiritual awakening", "psychic ability", "crisis of faith"];
+  const disclaimer = /\b(?:not|never|cannot|can't|do not|does not|don't|without)\b/iu;
+  for (const sentence of blocks(draft).flatMap((block) => sentences(block))) {
+    for (const phrase of unsupportedSpiritualClaims) {
+      if (phrasePresent(sentence, phrase) && !disclaimer.test(sentence)) {
+        issues.push({
+          code: "personal_health_spirituality_invention",
+          message: `Personal & Health output predicts an unsupported spiritual condition: ${phrase}.`,
+          severity: "error"
+        });
+      }
+    }
+    if (/\b(?:earn|earned|deserve|deserved)\s+(?:a\s+)?rest\b/iu.test(sentence)) {
+      issues.push({
+        code: "personal_health_moralizing",
+        message: "Personal & Health output frames rest as a reward.",
+        severity: "error"
+      });
+    }
+  }
+}
+
 export function validateReportDraft(
   draft: ReportDraft,
   payload: ReportGenerationPayload,
@@ -1350,13 +1458,14 @@ export function validateReportDraft(
   }
 
   validateLivedProseMechanics(draft, issues);
-  validateNaturalParagraphs(draft, issues);
   const domainValidators = REPORT_DOMAIN_CONFIG[payload.reportDomain].validators;
+  if (domainValidators.includes("natural_paragraphs")) validateNaturalParagraphs(draft, issues);
   if (domainValidators.includes("money_abstraction")) validateMoneyAbstractions(draft, issues);
   if (domainValidators.includes("key_date_format")) validateDeepDiveKeyDates(draft, issues);
   if (domainValidators.includes("love_banned_vocabulary")) validateLoveBannedVocabulary(draft, issues);
   if (domainValidators.includes("status_branching")) validateStatusBranching(draft, issues);
   if (domainValidators.includes("sex_invention")) validateSexInvention(draft, issues);
+  if (domainValidators.includes("personal_health_ceiling")) validatePersonalHealthCeiling(draft, issues);
 
   return issues;
 }

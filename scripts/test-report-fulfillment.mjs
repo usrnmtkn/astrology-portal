@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportFulfillmentConfig } from "../api/_lib/report-fulfillment-config.ts";
 import { processReportFulfillmentJob, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
-import { REPORT_JUDGE_CATEGORIES, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
+import { REPORT_JUDGE_CATEGORIES, reportJudgeOverall, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
 import { revokeEntitlement } from "../api/_lib/report-entitlements.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
@@ -25,6 +25,8 @@ assert.ok(REPORT_SKUS.every((sku) => sku.priceEnv.startsWith("STRIPE_REPORT_PRIC
 
 process.env.REPORT_AUTO_PUBLISH = "true";
 delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
+delete process.env.REPORT_JUDGE_THRESHOLD;
+assert.equal(reportFulfillmentConfig().judgeThreshold, 0.85, "V3.1 must default to the owner-approved 0.85 threshold.");
 assert.equal(reportFulfillmentConfig().autoPublishEnabled, false, "Auto-publish requires the owner ruling version as well as its feature flag.");
 process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION = REPORT_AUTOMATION_RULING_VERSION;
 assert.equal(reportFulfillmentConfig().autoPublishEnabled, true);
@@ -72,6 +74,11 @@ function factsForHorizon(horizon) {
   result.reportHorizon = horizon;
   result.endsAt = ends[horizon];
   result.slowTransitArcs = result.slowTransitArcs.flatMap((arc) => {
+    // This fact exists to complete the governed Summer calibration packet. It
+    // intentionally remains a SOURCE_GAP until owner-reviewed manifestation
+    // content exists, so the orchestration fixture excludes it instead of
+    // weakening production's fail-closed content gate.
+    if (arc.id === "jupiter-opposition-midheaven") return [];
     const passes = arc.passes.filter((pass) => pass.exactAt <= result.endsAt);
     return passes.length ? [{ ...arc, passes }] : [];
   });
@@ -111,11 +118,15 @@ function createMemoryStore() {
 
 const modelDraft = { headline: "FIXTURE_ONLY_HEADLINE.", tldr: "FIXTURE_ONLY_TLDR.", summary: "FIXTURE_ONLY_SUMMARY.", body: "FIXTURE_ONLY_BODY.", action: "FIXTURE_ONLY_ACTION.", timing: "FIXTURE_ONLY_TIMING.", sections: [] };
 const passingJudgeScores = Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, 4]));
-assert.equal(reportJudgeVerdict(passingJudgeScores, 1, 0.9), "pass");
+assert.equal(reportJudgeOverall(passingJudgeScores), 1);
+assert.equal(reportJudgeVerdict(passingJudgeScores, 0.85), "pass");
 for (const category of ["astrology_chronology", "factual_traceability", "lived_experience", "interpretive_movement", "owner_voice"]) {
-  assert.equal(reportJudgeVerdict({ ...passingJudgeScores, [category]: 2 }, 1, 0.9), "below_threshold", `${category} must be a hard gate.`);
+  assert.equal(reportJudgeVerdict({ ...passingJudgeScores, [category]: 2 }, 0.85), "below_threshold", `${category} must be a hard gate.`);
 }
-assert.equal(reportJudgeVerdict({ ...passingJudgeScores, natural_language: 2 }, 1, 0.9), "pass", "Non-gated categories remain governed by the configured overall threshold.");
+assert.equal(reportJudgeVerdict({ ...passingJudgeScores, natural_language: 2 }, 0.85), "pass", "Non-gated categories remain governed by the configured overall threshold.");
+const shortUnitScores = { ...passingJudgeScores, interpretive_movement: null };
+assert.equal(reportJudgeOverall(shortUnitScores, false), 1);
+assert.equal(reportJudgeVerdict(shortUnitScores, 0.85, false), "pass", "Movement is excluded when a short unit marks it not applicable.");
 function modelCallWithCrash(crashAt = Infinity) {
   let calls = 0;
   const call = async (input) => {
@@ -125,11 +136,15 @@ function modelCallWithCrash(crashAt = Infinity) {
       assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*INTERNAL PRE-DRAFT EXTRACTION \(REQUIRED\)[\s\S]*REPORT_GENERATION_PAYLOAD/u);
     }
     if (input.schemaName === "report_unit_critique") {
-      assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE/u);
+      assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE[\s\S]*COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARISON_SET/u);
       assert.match(input.prompt, /Never return flatness or lived_prose as a defect category\./u);
     }
     return {
-      value: input.schemaName === "report_unit_critique" ? { result: "no_defects", defects: [] } : structuredClone(modelDraft),
+      value: input.schemaName === "report_unit_critique" ? {
+        result: "no_defects",
+        applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
+        defects: []
+      } : structuredClone(modelDraft),
       model: "FIXTURE_ONLY_MODEL", provider: "FIXTURE_ONLY_PROVIDER",
       usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
     };
@@ -138,7 +153,11 @@ function modelCallWithCrash(crashAt = Infinity) {
   return call;
 }
 const judgeCall = async () => ({
-  result: { scores: passingJudgeScores, overall: 1, verdict: "pass", findings: [] },
+  result: {
+    scores: passingJudgeScores,
+    applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
+    overall: 1, verdict: "pass", findings: []
+  },
   usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, model: "FIXTURE_ONLY_JUDGE", promptVersion: "FIXTURE_ONLY_JUDGE_V1"
 });
 
@@ -148,7 +167,7 @@ const calculateFacts = async (report) => {
   calculationCalls += 1;
   return { facts: factsForHorizon(report.report_horizon), facts_engine: "FIXTURE_ONLY_ENGINE" };
 };
-const activeSkus = REPORT_SKUS.filter((sku) => sku.reportDomain !== "personal_health");
+const activeSkus = REPORT_SKUS;
 for (const [index, sku] of activeSkus.entries()) {
   const reportId = `report-${index}`;
   const entitlementId = `entitlement-${index}`;
@@ -167,25 +186,10 @@ for (const [index, sku] of activeSkus.entries()) {
   assert.equal(store.reports.get(reportId).status, "needs_review");
 }
 assert.equal(REPORT_SKUS.length, 16);
-assert.equal(activeSkus.length, 12);
-assert.equal(calculationCalls, 4, "One facts calculation per user/window must serve all three active domains.");
-
-const personalGateStore = createMemoryStore();
-personalGateStore.reports.set("personal-gated", {
-  id: "personal-gated", user_id: "user-personal", subject_id: null, report_domain: "personal_health", report_horizon: "12_months",
-  period_start: frozen.startsAt.slice(0, 10), period_end: frozen.endsAt.slice(0, 10), facts: {}, facts_engine: "pending", facts_hash: null,
-  fulfillment_status: "queued", prompt_versions: {}, token_count: 0, attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
-});
-personalGateStore.entitlements.set("personal-gated-ent", { id: "personal-gated-ent", user_id: "user-personal", status: "active", product_key: "personal_health_12_months" });
-let gatedCalculationCalls = 0;
-await assert.rejects(processReportFulfillmentJob({
-  job: { id: "personal-gated-job", report_id: "personal-gated", entitlement_id: "personal-gated-ent", state: "running", step: "calculating", attempt: 1 },
-  store: personalGateStore,
-  calculateFacts: async () => { gatedCalculationCalls += 1; return { facts: frozen, facts_engine: "MUST_NOT_RUN" }; },
-  callModel: modelCallWithCrash(),
-  judgeCall
-}), /REPORT_DOMAIN_PROMPT_PENDING.*TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER\.md/u);
-assert.equal(gatedCalculationCalls, 0, "Personal & Health must fail closed before facts or model work while its canonical prompt is pending.");
+assert.equal(activeSkus.length, 16);
+assert.equal(calculationCalls, 4, "One facts calculation per user/window must serve all four active domains.");
+assert.ok([...store.reports.values()].filter((report) => report.report_domain === "personal_health")
+  .every((report) => report.status === "needs_review"), "Personal & Health fulfillment must be active and remain review-gated.");
 
 const concurrentStore = createMemoryStore();
 const concurrentBase = {
@@ -245,4 +249,4 @@ assert.equal(retryPatch.state, "retry", "Transient model failures remain resumab
 const adminSource = fs.readFileSync(new URL("../api/admin/report-fulfillment.ts", import.meta.url), "utf8");
 assert.ok(!/edit(?:_|\s|-)?prose|update(?:_|\s|-)?body/iu.test(adminSource), "The exception dashboard must not add a prose-editing path.");
 
-console.log("Report fulfillment passed: 16 SKUs, Personal & Health prompt gate, owner gate, signatures, refunds, fact lock, scoped stop rule, shared facts across 12 active products, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: 16 active SKUs including Personal & Health, owner gate, signatures, refunds, fact lock, scoped stop rule, shared facts across four domains, crash resume, retry queue, and no-edit admin contract.");

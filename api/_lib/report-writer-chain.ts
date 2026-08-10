@@ -1,5 +1,7 @@
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
-import { reportPromptFromPayload } from "./report-generation.ts";
+import { reportPromptFromPayload, validateReportDraft } from "./report-generation.ts";
+import { reportEvaluationPacket, reportDraftMovementApplicable } from "./report-evaluation-packet.ts";
+import { verifyReportFactLock } from "./report-fact-lock.ts";
 import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.ts";
 import { loadVersionedReportPrompt, REPORT_CRITIQUE_PROMPT_PATH } from "./report-prompt-versions.ts";
 import { scopeReportPayloadToUnit } from "./report-unit-scope.ts";
@@ -23,14 +25,19 @@ export type ReportDefect = {
   category: ReportDefectCategory;
   location: string;
   sentence_index: number;
-  scope_start?: number;
-  scope_end?: number;
+  scope_start: number;
+  scope_end: number;
   quote: string;
   evidence: string;
+  evidence_ids: string[];
   instruction: string;
 };
 
-export type ReportCritique = { result: "no_defects" | "defects"; defects: ReportDefect[] };
+export type ReportCritique = {
+  result: "no_defects" | "defects";
+  applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
+  defects: ReportDefect[];
+};
 export type ReportWriterChainResult = {
   draft: ReportDraft;
   critique: ReportCritique;
@@ -51,16 +58,25 @@ const draftSchema = {
 };
 
 const critiqueSchema = {
-  type: "object", additionalProperties: false, required: ["result", "defects"],
+  type: "object", additionalProperties: false, required: ["result", "applicability", "defects"],
   properties: {
     result: { type: "string", enum: ["no_defects", "defects"] },
+    applicability: {
+      type: "object", additionalProperties: false,
+      required: ["interpretive_movement", "reason"],
+      properties: {
+        interpretive_movement: { type: "string", enum: ["applicable", "not_applicable"] },
+        reason: { type: "string" }
+      }
+    },
     defects: { type: "array", items: { type: "object", additionalProperties: false,
-      required: ["id", "category", "location", "sentence_index", "quote", "evidence", "instruction"],
+      required: ["id", "category", "location", "sentence_index", "scope_start", "scope_end", "quote", "evidence", "evidence_ids", "instruction"],
       properties: {
         id: { type: "string" }, category: { type: "string", enum: [...REPORT_DEFECT_CATEGORIES] },
         location: { type: "string" }, sentence_index: { type: "integer", minimum: 0 },
         scope_start: { type: "integer", minimum: 0 }, scope_end: { type: "integer", minimum: 0 },
-        quote: { type: "string" }, evidence: { type: "string" }, instruction: { type: "string" }
+        quote: { type: "string" }, evidence: { type: "string" },
+        evidence_ids: { type: "array", items: { type: "string" } }, instruction: { type: "string" }
       }
     } }
   }
@@ -147,27 +163,63 @@ export async function runReportWriterChain(input: {
     schema: draftSchema
   });
   calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
+  const packet = reportEvaluationPacket(payload, draftResult.value);
+  const deterministicIssues = [
+    ...validateReportDraft(draftResult.value, payload),
+    ...verifyReportFactLock(draftResult.value, payload.frozenFacts).issues
+  ];
   const critiqueResult = await callModel<ReportCritique>({
     ...target,
-    prompt: `${critiquePrompt.text}\n\nCANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}\n\nLIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}\n\n${FLATNESS_DIAGNOSTIC_ROUTING}\n\nSCOPED_FACTS\n${JSON.stringify(payload.frozenFacts)}\n\nOWNER_REFERENCE_EVIDENCE\n${JSON.stringify(payload.voiceEvidence)}\n\nDRAFT\n${JSON.stringify(draftResult.value)}`,
+    prompt: [
+      critiquePrompt.text,
+      `CANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}`,
+      `LIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}`,
+      FLATNESS_DIAGNOSTIC_ROUTING,
+      `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
+      `COMPLETE_UNIT\n${packet.completeUnit}`,
+      `UNIT_FACTS\n${JSON.stringify(packet.unitFacts)}`,
+      `OWNER_COMPARISON_SET\n${JSON.stringify(packet.ownerComparisonSet)}`,
+      `TARGET_FUNCTIONS\n${JSON.stringify(packet.targetFunctions)}`,
+      `LABELED_NEGATIVE_EXAMPLES\n${JSON.stringify(packet.labeledNegativeExamples)}`,
+      `VALIDATOR_RESULTS\n${JSON.stringify(deterministicIssues)}`
+    ].join("\n\n"),
     schemaName: "report_unit_critique",
     schema: critiqueSchema
   });
   calls.push({ stage: "critique", model: critiqueResult.model, provider: critiqueResult.provider, usage: critiqueResult.usage });
-  if (critiqueResult.value.result === "no_defects" || critiqueResult.value.defects.length === 0) {
-    return { draft: draftResult.value, critique: { result: "no_defects", defects: [] }, revised: draftResult.value, calls, promptVersion: critiquePrompt.version };
+  const movementApplicable = reportDraftMovementApplicable(draftResult.value);
+  const critique: ReportCritique = {
+    ...critiqueResult.value,
+    applicability: {
+      interpretive_movement: movementApplicable ? "applicable" : "not_applicable",
+      reason: movementApplicable
+        ? "The complete unit contains at least two substantive prose paragraphs."
+        : "The complete unit contains fewer than two substantive prose paragraphs."
+    }
+  };
+  if (!movementApplicable && critique.defects.some((defect) => defect.category === "interpretive_gap")) {
+    throw new Error("V3 critique returned interpretive_gap for a unit where interpretive movement is not applicable.");
+  }
+  const eligibleEvidence = new Set(packet.ownerComparisonSet.map((passage) => passage.evidenceId));
+  for (const defect of critique.defects.filter((candidate) => candidate.category === "owner_voice_drift")) {
+    if (!defect.evidence_ids.length || defect.evidence_ids.some((id) => !eligibleEvidence.has(id))) {
+      throw new Error(`V3 owner_voice_drift defect ${defect.id} lacks eligible comparison evidence.`);
+    }
+  }
+  if (critique.result === "no_defects" || critique.defects.length === 0) {
+    return { draft: draftResult.value, critique: { ...critique, result: "no_defects", defects: [] }, revised: draftResult.value, calls, promptVersion: critiquePrompt.version };
   }
   const reviseResult = await callModel<ReportDraft>({
     ...target,
     prompt: [
       "Revise only the explicitly named sentence or scope range. Everything outside every named scope must remain byte-identical.",
       `DRAFT\n${JSON.stringify(draftResult.value)}`,
-      `NAMED_DEFECTS\n${JSON.stringify(critiqueResult.value.defects)}`
+      `NAMED_DEFECTS\n${JSON.stringify(critique.defects)}`
     ].join("\n\n"),
     schemaName: "report_unit_revision",
     schema: draftSchema
   });
   calls.push({ stage: "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage });
-  const revised = enforceReportRevisionStopRule(draftResult.value, reviseResult.value, critiqueResult.value.defects);
-  return { draft: draftResult.value, critique: critiqueResult.value, revised, calls, promptVersion: critiquePrompt.version };
+  const revised = enforceReportRevisionStopRule(draftResult.value, reviseResult.value, critique.defects);
+  return { draft: draftResult.value, critique, revised, calls, promptVersion: critiquePrompt.version };
 }
