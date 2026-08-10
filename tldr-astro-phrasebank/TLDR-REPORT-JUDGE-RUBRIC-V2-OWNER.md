@@ -3,8 +3,10 @@
 **Status:** `owner_approved`
 **Version:** `report-judge-rubric-v2`
 **Approved:** 2026-08-09
+**Active in production:** `false`
 **Approved threshold:** `0.9`
-**Governance:** Owner-editable judge prompt. The judge scores and identifies defects; it never writes or edits prose. Approval applies to v2 and threshold 0.9 specifically; any future revision requires a new version and fresh owner approval.
+**Superseded by:** `report-judge-rubric-v3.1`
+**Governance:** Archived owner-approved judge prompt. V2 and threshold 0.9 remain historical calibration provenance; v3.1 is active in production.
 
 > I explicitly approve both v2 documents: the critique checklist and the judge rubric with its threshold.
 

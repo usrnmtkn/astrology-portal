@@ -2,6 +2,7 @@ import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export const REPORT_AUTOMATION_RULING_VERSION = "owner-approved-v1";
 export const REPORT_AUTOMATION_RULING_PATH = "tldr-astro-phrasebank/TLDR-REPORT-AUTOMATED-FULFILLMENT-RULING-OWNER.md";
+export const REPORT_JUDGE_THRESHOLD = 0.85;
 
 export type ReportSku = {
   key: string;
@@ -54,7 +55,7 @@ export function reportFulfillmentConfig() {
     fallbackModel: process.env.REPORT_FALLBACK_MODEL ?? "",
     judgeProvider: process.env.REPORT_JUDGE_PROVIDER ?? "openai",
     judgeModel: process.env.REPORT_JUDGE_MODEL ?? "gpt-5.6-terra",
-    judgeThreshold: decimalEnv("REPORT_JUDGE_THRESHOLD", 0.9),
+    judgeThreshold: REPORT_JUDGE_THRESHOLD,
     validatorAttemptCap: integerEnv("REPORT_VALIDATOR_ATTEMPT_CAP", 3, 1),
     judgeAttemptCap: integerEnv("REPORT_JUDGE_ATTEMPT_CAP", 2, 1),
     auditSampleRate: decimalEnv("REPORT_AUDIT_SAMPLE_RATE", 0.05),

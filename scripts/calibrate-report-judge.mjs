@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
 import fs from "node:fs";
+import { REPORT_JUDGE_THRESHOLD } from "../api/_lib/report-fulfillment-config.ts";
 import { callReportModel } from "../api/_lib/report-model-client.ts";
 import { deterministicCalibrationScore, reportJudgeCalibrationFixtures } from "../api/_lib/report-judge.ts";
 import { judgeModelTarget } from "../api/_lib/report-model-client.ts";
 import { loadVersionedReportPrompt, REPORT_JUDGE_PROMPT_PATH } from "../api/_lib/report-prompt-versions.ts";
 
 const live = process.argv.includes("--live");
-const threshold = Number(process.env.REPORT_JUDGE_THRESHOLD ?? 0.9);
+const threshold = REPORT_JUDGE_THRESHOLD;
 const fixtures = reportJudgeCalibrationFixtures();
 const rows = [];
 

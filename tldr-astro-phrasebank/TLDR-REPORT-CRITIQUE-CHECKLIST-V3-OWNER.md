@@ -3,12 +3,15 @@
 **Status:** `owner_approved`
 **Version:** `report-critique-checklist-v3`
 **Approved:** 2026-08-09
-**Active in production:** `false`
+**Active in production:** `true`
 **Owner approved:** `true`
-**Promotion authorized:** `false`
-**Governance:** Owner-editable system prompt. Not reader-facing copy. Approved v2 remains active in production. V3 is approved for calibration but is not activated or promotion-authorized. Any later revision requires a new version and fresh owner approval.
+**Promotion authorized:** `true`
+**Supersedes:** `report-critique-checklist-v2`
+**Governance:** Owner-editable system prompt. Not reader-facing copy. V3 is active in production and replaces v2. Any later revision requires a new version and fresh owner approval.
 
 > I explicitly approve the Report fulfillment judge rubric v3, the Report critique checklist v3, and the proposed v3 threshold of 0.9.
+
+> I approve changing the v3 judge threshold from 0.9 to 0.85. Update the rubric threshold line and config as an owner-approved versioned change, then activate v3 in place of v2.
 
 The critique call reviews one complete report unit. A complete unit includes its heading, date range when applicable, every prose paragraph, attribution line, and key-date block. The critic must use the unit-scoped facts bundle and two or three side-by-side owner-authored comparison passages supplied with the request.
 
@@ -148,11 +151,12 @@ Do not name a defect without specific unit or comparison evidence. Do not sugges
 
 The single-sentence Work & Money closer mutation tests detection sensitivity without forcing an unjustified whole-unit score. The critic must return a bounded `owner_voice_drift` finding naming that sentence. This fixture has no whole-unit score contract and is not positive voice evidence.
 
-## Activation gate
+## Activation record
 
-This approved v3 checklist cannot replace v2 until:
+V3 replaces v2 in the production prompt selector. Activation is authorized because:
 
-1. the recorded v3 approval remains unchanged;
+1. the v3 rubric and critique checklist were owner-approved;
 2. runtime schemas support applicability and comparison evidence;
-3. complete-unit paired fixtures pass deterministic fact and structure checks; and
-4. the owner separately authorizes the next billed calibration run.
+3. complete-unit paired fixtures passed deterministic fact and structure checks;
+4. calibration run two completed exactly eight judge calls and one critique call with no retries, and every configured contract passed; and
+5. the owner approved threshold 0.85 and authorized v3 activation on 2026-08-09.

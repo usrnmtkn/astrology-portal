@@ -3,9 +3,17 @@
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
+import { REPORT_JUDGE_THRESHOLD, reportFulfillmentConfig } from "../api/_lib/report-fulfillment-config.ts";
 import { assembleReportGenerationPayload } from "../api/_lib/report-generation.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
-import { REPORT_JUDGE_PROMPT_PATH, REPORT_CRITIQUE_PROMPT_PATH } from "../api/_lib/report-prompt-versions.ts";
+import { REPORT_JUDGE_CATEGORIES, judgeReportUnit, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
+import { reportOwnerComparisonSet } from "../api/_lib/report-owner-comparison.ts";
+import {
+  REPORT_CRITIQUE_PROMPT_PATH,
+  REPORT_CRITIQUE_PROMPT_VERSION,
+  REPORT_JUDGE_PROMPT_PATH,
+  REPORT_JUDGE_PROMPT_VERSION
+} from "../api/_lib/report-prompt-versions.ts";
 import { scopeReportPayloadToUnit } from "../api/_lib/report-unit-scope.ts";
 import { enforceReportRevisionStopRule, ReportStopRuleError } from "../api/_lib/report-writer-chain.ts";
 import {
@@ -19,14 +27,15 @@ if (process.argv.includes("--live")) throw new Error("Use calibrate-report-judge
 
 const manifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-judge-complete-unit-regressions-v3.json", import.meta.url), "utf8"));
 const facts = JSON.parse(fs.readFileSync(manifest.factsSourcePath, "utf8"));
-const judgeV3 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-DRAFT.md", "utf8");
-const critiqueV3 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-DRAFT.md", "utf8");
+const judgeV3 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
+const critiqueV3 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
 const livedProseStandard = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md", "utf8");
-const activeJudgeV2 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
-const activeCritiqueV2 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
+const archivedJudgeV2 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V2-OWNER.md", "utf8");
+const archivedCritiqueV2 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V2-OWNER.md", "utf8");
+const calibrationRunTwo = JSON.parse(fs.readFileSync("artifacts/report-judge-calibration/2026-08-09T22-43-04.385Z-report-judge-v3.json", "utf8"));
 const approvedV3Hashes = {
-  judge: "a6c06cb37d648b7bd803be449be98703e9aa1d647304b9382d16dcc7a1f3966a",
-  critique: "1cc473aa5473f796f22cdd37cad1d476b45eaf56aa74c62133e81c824019e19c",
+  judge: "8578b86c8bce19b47eef2a668b60a97b91d5de5e91182594da331167e8cc688c",
+  critique: "815bc04db2890cb1797ff5ac1979dd1137953775629bf3e933db8f33029418b9",
 };
 
 function sha256(value) {
@@ -134,23 +143,108 @@ assert.deepEqual(manifest.proposedCalibrationCallBudget, {
 });
 assert.equal(new Set(manifest.pairs.map((pair) => pair.reportDomain)).size, 4);
 assert.ok(manifest.pairs.some((pair) => pair.reportDomain === "personal_health"));
-assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-OWNER.md");
-assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-OWNER.md");
-assert.match(activeJudgeV2, /^\*\*Status:\*\* `owner_approved`$/mu);
-assert.match(activeCritiqueV2, /^\*\*Status:\*\* `owner_approved`$/mu);
+assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md");
+assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md");
+assert.equal(REPORT_JUDGE_PROMPT_VERSION, "report-judge-rubric-v3.1");
+assert.equal(REPORT_CRITIQUE_PROMPT_VERSION, "report-critique-checklist-v3");
+assert.match(archivedJudgeV2, /^\*\*Active in production:\*\* `false`$/mu);
+assert.match(archivedCritiqueV2, /^\*\*Active in production:\*\* `false`$/mu);
+assert.equal(REPORT_JUDGE_THRESHOLD, 0.85);
+assert.equal(reportFulfillmentConfig().judgeThreshold, 0.85);
 
 for (const [name, document] of [["judge", judgeV3], ["critique", critiqueV3]]) {
   assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} v3 approval must be recorded.`);
-  assert.match(document, /^\*\*Active in production:\*\* `false`$/mu, `${name} v3 must remain inactive.`);
+  assert.match(document, /^\*\*Active in production:\*\* `true`$/mu, `${name} v3 must be active.`);
   assert.match(document, /^\*\*Owner approved:\*\* `true`$/mu, `${name} v3 must record owner approval.`);
-  assert.match(document, /^\*\*Promotion authorized:\*\* `false`$/mu, `${name} v3 must remain unauthorized.`);
+  assert.match(document, /^\*\*Promotion authorized:\*\* `true`$/mu, `${name} v3 must record promotion authorization.`);
   assert.match(document, /COMPLETE_UNIT/u);
   assert.match(document, /UNIT_FACTS/u);
   assert.match(document, /OWNER_COMPARISON_SET/u);
   assert.match(document, /candidate unit itself is forbidden from its own comparison set/iu);
   assert.match(document, /`opening`, `development`, `complication`, `turn`, or `close`/u);
-  assert.equal(sha256(document), approvedV3Hashes[name], `${name} v3 changed after owner approval.`);
+  assert.equal(sha256(document), approvedV3Hashes[name], `${name} active v3 changed after owner approval.`);
 }
+assert.match(judgeV3, /^\*\*Version:\*\* `report-judge-rubric-v3\.1`$/mu);
+assert.match(judgeV3, /^\*\*Approved threshold:\*\* `0\.85`$/mu);
+assert.match(critiqueV3, /^\*\*Version:\*\* `report-critique-checklist-v3`$/mu);
+assert.equal(calibrationRunTwo.status, "passed");
+assert.equal(calibrationRunTwo.completedCalls, 9);
+assert.deepEqual(calibrationRunTwo.failures, []);
+assert.equal(calibrationRunTwo.authorization.threshold, 0.9, "The completed calibration artifact remains immutable historical evidence.");
+for (const row of calibrationRunTwo.rows.filter((candidate) => candidate.type === "judge")) {
+  assert.equal(
+    reportJudgeVerdict(row.result.scores, 0.85, true),
+    row.variant === "positive" ? "pass" : "below_threshold",
+    `${row.fixtureId}.${row.variant} must classify correctly at the owner-approved 0.85 threshold.`
+  );
+}
+for (const [domain, prefix] of [["general", "general_"], ["work_money", "work_"], ["love_connection", "love_"], ["personal_health", "personal_"]]) {
+  const comparisonSet = reportOwnerComparisonSet(domain);
+  assert.ok(comparisonSet.length >= 2 && comparisonSet.length <= 3);
+  assert.equal(new Set(comparisonSet.map((passage) => passage.evidenceId)).size, comparisonSet.length);
+  assert.ok(comparisonSet.every((passage) => passage.provenance.sourceType === "owner_authored_final"));
+  assert.deepEqual(
+    comparisonSet.map((passage) => passage.evidenceId),
+    manifest.ownerPassages.filter((passage) => passage.id.startsWith(prefix)).map((passage) => passage.id),
+    `${domain} runtime comparison evidence must match the calibrated manifest.`
+  );
+}
+const runtimePayload = assembleReportGenerationPayload({
+  reportId: "00000000-0000-0000-0000-000000000085",
+  reportDomain: "general",
+  reportHorizon: "12_months",
+  unitId: "spring",
+  frozenFacts: facts
+});
+const runtimeScores = Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, category === "natural_language" ? 3 : 4]));
+let runtimePrompt = "";
+const runtimeJudge = await judgeReportUnit({
+  payload: runtimePayload,
+  draft: { headline: "FIXTURE_ONLY", body: "FIRST SUBSTANTIVE PARAGRAPH.\n\nSECOND SUBSTANTIVE PARAGRAPH.", sections: [] },
+  validatorResults: [],
+  threshold: 0.85,
+  callModel: async (input) => {
+    runtimePrompt = input.prompt;
+    return {
+      value: {
+        scores: runtimeScores,
+        applicability: { interpretive_movement: "not_applicable", reason: "MODEL_REPORTED_VALUE_IS_NOT_AUTHORITY" },
+        overall: 0,
+        verdict: "below_threshold",
+        findings: []
+      },
+      model: "FIXTURE_ONLY_MODEL",
+      provider: "FIXTURE_ONLY_PROVIDER",
+      usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+    };
+  }
+});
+assert.match(runtimePrompt, /COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARISON_SET[\s\S]*TARGET_FUNCTIONS[\s\S]*LABELED_NEGATIVE_EXAMPLES[\s\S]*VALIDATOR_RESULTS/u);
+assert.equal(runtimeJudge.result.applicability.interpretive_movement, "applicable");
+assert.equal(runtimeJudge.result.overall, 35 / 36);
+assert.equal(runtimeJudge.result.verdict, "pass", "Runtime recomputation must override model-reported overall and verdict.");
+const shortJudge = await judgeReportUnit({
+  payload: runtimePayload,
+  draft: { body: "ONE SUBSTANTIVE PARAGRAPH.", sections: [] },
+  validatorResults: [],
+  threshold: 0.85,
+  callModel: async () => ({
+    value: {
+      scores: { ...runtimeScores, natural_language: 4, interpretive_movement: 0 },
+      applicability: { interpretive_movement: "applicable", reason: "MODEL_REPORTED_VALUE_IS_NOT_AUTHORITY" },
+      overall: 0,
+      verdict: "below_threshold",
+      findings: []
+    },
+    model: "FIXTURE_ONLY_MODEL",
+    provider: "FIXTURE_ONLY_PROVIDER",
+    usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+  })
+});
+assert.equal(shortJudge.result.scores.interpretive_movement, null);
+assert.equal(shortJudge.result.applicability.interpretive_movement, "not_applicable");
+assert.equal(shortJudge.result.overall, 1);
+assert.equal(shortJudge.result.verdict, "pass");
 const amendedQuestion9 = "Could the interpretive passage move unchanged into a generic wellness, HR, or horoscope article because it lacks the unit-specific circumstance, cause, or consequence? If so, identify what is missing. This diagnostic alone cannot establish a defect.";
 assert.ok(judgeV3.includes(amendedQuestion9));
 assert.ok(critiqueV3.includes(amendedQuestion9));
@@ -252,4 +346,4 @@ assert.ok(manifest.pairs.find((pair) => pair.reportDomain === "work_money").degr
 
 console.table(rows);
 console.table(factRows);
-console.log("Report judge v3 draft fixtures passed: four controlled score pairs, complete audited UNIT_FACTS, supplied paragraph indices, owner-final references, byte-locked approved documents, stop-rule ranges, and no live calls.");
+console.log("Active report judge v3 contracts passed: threshold 0.85, four controlled score pairs, complete audited UNIT_FACTS, supplied paragraph indices, owner-final comparison evidence, byte-locked active documents, runtime recomputation, stop-rule ranges, and no live calls.");

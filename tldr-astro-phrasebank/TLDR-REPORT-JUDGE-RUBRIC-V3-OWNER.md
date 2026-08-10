@@ -1,15 +1,18 @@
 # Report fulfillment judge rubric v3
 
 **Status:** `owner_approved`
-**Version:** `report-judge-rubric-v3`
+**Version:** `report-judge-rubric-v3.1`
 **Approved:** 2026-08-09
-**Active in production:** `false`
+**Active in production:** `true`
 **Owner approved:** `true`
-**Promotion authorized:** `false`
-**Approved threshold:** `0.9`
-**Governance:** Owner-editable judge prompt. The judge scores and identifies defects; it never writes or edits prose. Approved v2 remains active in production. V3 and threshold 0.9 are approved for calibration but are not activated or promotion-authorized. Any later revision requires a new version and fresh owner approval.
+**Promotion authorized:** `true`
+**Approved threshold:** `0.85`
+**Supersedes:** `report-judge-rubric-v2`
+**Governance:** Owner-editable judge prompt. The judge scores and identifies defects; it never writes or edits prose. V3.1 and threshold 0.85 are active in production. The threshold amendment is owner-approved against the completed v3 calibration; any later revision requires a new version and fresh owner approval.
 
 > I explicitly approve the Report fulfillment judge rubric v3, the Report critique checklist v3, and the proposed v3 threshold of 0.9.
+
+> I approve changing the v3 judge threshold from 0.9 to 0.85. Update the rubric threshold line and config as an owner-approved versioned change, then activate v3 in place of v2.
 
 Score one complete report unit from 0 to 4 in every applicable category. A complete unit includes its heading, date range when applicable, every prose paragraph, attribution line, and key-date block. Use only the canonical prompt, `UNIT_FACTS`, deterministic validator results, and the supplied side-by-side owner comparison set.
 
@@ -220,13 +223,14 @@ For each pair:
 
 The Work & Money `owner_voice` score pair degrades enough of the unit's closing movement to make a whole-unit score of `2` semantically honest. A separate one-sentence closer mutation is finding-level only: it requires a bounded `owner_voice_drift` critique finding naming that sentence and imposes no whole-unit score requirement.
 
-Do not tune the proposed threshold until every pair separates on its intended category. A calibration failure requires changes to instructions, evidence, or fixture validity before any threshold discussion.
+Every pair separated on its intended category in calibration run two. The approved production threshold is 0.85. Any future threshold change is a new owner-approved versioned change.
 
-## Activation gate
+## Activation record
 
-This approved v3 rubric cannot replace v2 until:
+V3.1 replaces v2 in the production prompt selector. Activation is authorized because:
 
-1. the recorded v3 approval and threshold remain unchanged;
+1. the v3 rubric and critique checklist were owner-approved;
 2. runtime schemas support movement applicability, comparison evidence, and runtime-recomputed overall scores;
-3. complete-unit paired fixtures pass deterministic structure and facts checks; and
-4. the owner separately authorizes the next billed calibration run.
+3. complete-unit paired fixtures passed deterministic structure and facts checks;
+4. calibration run two completed exactly eight judge calls and one critique call with no retries, and every configured category contract passed; and
+5. the owner approved threshold 0.85 and authorized v3 activation on 2026-08-09.
