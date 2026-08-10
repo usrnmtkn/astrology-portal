@@ -42,7 +42,7 @@ export type ReportColophon = {
 
 export type ReportDocument = {
   id: string;
-  reportType: "year_ahead" | "relationship" | "saturn_return";
+  reportType: "year_ahead" | "relationship" | "saturn_return" | "report";
   cover: ReportCover;
   chapters: ReportChapter[];
   keyDates?: ReportKeyDate[];
