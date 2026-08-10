@@ -68,6 +68,11 @@ def test_report_window_reproduces_owner_transit_and_eclipse_contract():
         "retrograde",
         "direct",
     ]
+    jupiter_mars_passes = arcs[("Jupiter", "Mars", "opposition")]["passes"]
+    assert [report_pass["motion"] for report_pass in jupiter_mars_passes] == [
+        "direct",
+        "retrograde",
+    ]
 
     eclipses = {
         event["occursAt"][:10]: event for event in body["lunarEvents"] if "eclipse" in event["kind"]
@@ -86,6 +91,20 @@ def test_report_window_reproduces_owner_transit_and_eclipse_contract():
     assert any(
         contact["natalPoint"] == "Midheaven" for contact in eclipses["2027-02-06"]["natalContacts"]
     )
+    assert {
+        event_date: (event["subtype"], event["natalHouse"])
+        for event_date, event in eclipses.items()
+        if event_date in {"2026-03-03", "2026-08-12", "2026-08-28", "2027-02-06"}
+    } == {
+        "2026-03-03": ("total", 4),
+        "2026-08-12": ("total", 3),
+        "2026-08-28": ("partial", 10),
+        "2027-02-06": ("annular", 9),
+    }
+    assert next(
+        contact for contact in eclipses["2026-03-03"]["natalContacts"]
+        if contact["natalPoint"] == "Saturn"
+    )["natalHouse"] == 4
 
 
 def test_neptune_and_pluto_self_conjunctions_are_not_returns():

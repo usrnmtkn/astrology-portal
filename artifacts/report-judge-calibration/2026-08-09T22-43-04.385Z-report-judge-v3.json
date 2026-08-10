@@ -1,0 +1,706 @@
+{
+  "version": "report-judge-v3-calibration-v2",
+  "runAt": "2026-08-09T22:43:04.385Z",
+  "authorization": {
+    "approvedDocuments": [
+      "report-judge-rubric-v3",
+      "report-critique-checklist-v3"
+    ],
+    "threshold": 0.9,
+    "requestedCalls": 9,
+    "judgeCalls": 8,
+    "critiqueCalls": 1,
+    "retriesAuthorized": 0
+  },
+  "inputs": {
+    "manifest": {
+      "sourcePath": "scripts/fixtures/report-judge-complete-unit-regressions-v3.json",
+      "sha256": "3a5804ed7dddf4ff33f875c283def900d23829f0d7eff0fed8a96a9443004068"
+    },
+    "judge": {
+      "sourcePath": "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-DRAFT.md",
+      "sha256": "a6c06cb37d648b7bd803be449be98703e9aa1d647304b9382d16dcc7a1f3966a"
+    },
+    "critique": {
+      "sourcePath": "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-DRAFT.md",
+      "sha256": "1cc473aa5473f796f22cdd37cad1d476b45eaf56aa74c62133e81c824019e19c"
+    },
+    "livedProse": {
+      "sourcePath": "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md",
+      "sha256": "39d52560dd34ae95babbb81c769f502e6cf26e9961269ccf01dee4160a86245b"
+    }
+  },
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "status": "passed",
+  "completedCalls": 9,
+  "rows": [
+    {
+      "call": 1,
+      "type": "judge",
+      "fixtureId": "general_spring_lived_abstraction",
+      "variant": "positive",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 4,
+          "lived_experience": 3,
+          "interpretive_movement": 4,
+          "owner_voice": 3,
+          "natural_language": 4,
+          "syntax_variety": 3,
+          "emotional_temperature": 4,
+          "density": 3
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.8888888888888888,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=2]",
+            "finding": "The paragraph accurately preserves multiple possible changed conditions, but it remains largely a manifestation list. It does not yet show what one changed condition displaces, delays, or makes impossible; the more observed consequences arrive in later paragraphs.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=7]",
+            "finding": "The abstract staging sentence, “the issue becomes leverage,” observes the report's interpretive transition before showing the reader-facing circumstance. This is a minor drift from the concrete development movement in work_spring_development (development) and the compact lived contradiction in love_spring_turn (turn).",
+            "evidence_ids": [
+              "work_spring_development",
+              "love_spring_turn"
+            ]
+          },
+          {
+            "category": "syntax_variety",
+            "location": "[PARAGRAPH_INDEX=7]",
+            "finding": "The isolated transition sentence creates a section-like rhetorical beat rather than developing the lived situation within the paragraph flow.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=8]",
+            "finding": "The standalone questions set up the leverage theme, but they delay the concrete circumstance and consequence that the following paragraph supplies. The unit would be denser if this reasoning were carried directly by the lived terms of the opportunity.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.8888888889,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs and develops a connected seasonal arc."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_02a97daf8db77291006a790279231481a28ef92c35e54cf10f",
+      "usage": {
+        "inputTokens": 12433,
+        "outputTokens": 1945,
+        "totalTokens": 14378
+      }
+    },
+    {
+      "call": 2,
+      "type": "judge",
+      "fixtureId": "general_spring_lived_abstraction",
+      "variant": "negative",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 3,
+          "lived_experience": 2,
+          "interpretive_movement": 2,
+          "owner_voice": 2,
+          "natural_language": 4,
+          "syntax_variety": 3,
+          "emotional_temperature": 3,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.6944444444444444,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=2]",
+            "finding": "The paragraph substitutes abstractions such as “capacity,” “alignment,” “needs,” and “evolving priorities” for an observable circumstance, cause, and displaced consequence. It does not show what the old setup prevents, delays, changes, or makes harder.",
+            "evidence_ids": []
+          },
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=3]",
+            "finding": "This is a generic advice and wellness sequence rather than observed life. “Honor your capacity,” “protect your energy,” “create more space,” and “support your well-being” do not identify a practical situation or the consequence of changing terms.",
+            "evidence_ids": [
+              "labeled-negative-flat-recovery",
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "[PARAGRAPH_INDEX=2] [PARAGRAPH_INDEX=3] [PARAGRAPH_INDEX=6]",
+            "finding": "The Uranus development begins with a usable situation but repeatedly returns to generalized language about capacity, alignment, space, and sustainability instead of advancing through a concrete complication or consequence. The relationship paragraph opens a further manifestation domain without showing how the changed arrangement alters an ordinary interaction or obligation.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=2] [PARAGRAPH_INDEX=3] [PARAGRAPH_INDEX=6]",
+            "finding": "Compared with development evidence work_spring_development (function: development) and personal_spring_development (function: development), these paragraphs observe the reader from outside through wellness and coaching abstractions rather than naming an ordinary condition and what it changes. Compared with love_spring_turn (function: turn), the relationship turn is materially less direct: it explains “alignment,” “spaciousness,” and “balance” instead of stating the changed terms of the connection.",
+            "evidence_ids": [
+              "work_spring_development",
+              "personal_spring_development",
+              "love_spring_turn"
+            ]
+          },
+          {
+            "category": "emotional_temperature",
+            "location": "[PARAGRAPH_INDEX=3] [PARAGRAPH_INDEX=6]",
+            "finding": "The repeated therapeutic framing around honoring needs, well-being, alignment, and healthier balance softens the forecast into generalized self-care language rather than keeping the tone proportionate to a defined circumstance.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=2] [PARAGRAPH_INDEX=3]",
+            "finding": "The two paragraphs repeat the same broad point about no longer fitting the old arrangement without adding a concrete manifestation, causal development, or consequence.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=7] [PARAGRAPH_INDEX=8]",
+            "finding": "The isolated leverage setup announces the next interpretation in writer-facing rhetorical questions rather than advancing the reader-facing circumstance; the following paragraph supplies the usable explanation.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.6944444444,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0e48eee71017909d006a79028fa3c8819eaeda71421434b1b7",
+      "usage": {
+        "inputTokens": 12359,
+        "outputTokens": 1111,
+        "totalTokens": 13470
+      }
+    },
+    {
+      "call": 3,
+      "type": "judge",
+      "fixtureId": "work_money_summer_material_voice_drift",
+      "variant": "positive",
+      "targetDimension": "owner_voice",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 4,
+          "lived_experience": 3,
+          "interpretive_movement": 4,
+          "owner_voice": 3,
+          "natural_language": 4,
+          "syntax_variety": 4,
+          "emotional_temperature": 4,
+          "density": 3
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.9166666666666666,
+        "verdict": "pass",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=9]",
+            "finding": "The closing response returns to abstract language about a career plan needing “different math” instead of naming the next concrete change inside the established circumstance, such as which obligation, meeting, project scope, or appointment can no longer absorb the overload.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=9]",
+            "finding": "The closer drifts from the owner references' observed consequence into a generalized conclusion. In personal_spring_development (function: development), the practical pressure remains visible through errands, an appointment, and work the next morning; in personal_autumn_complication (function: complication), a change is tested through what it solves and what it makes harder. “The career plan needs different math” names the lesson without retaining the specific arrangement that must change.",
+            "evidence_ids": [
+              "personal_spring_development",
+              "personal_autumn_complication"
+            ]
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=9]",
+            "finding": "The sentence explains the overload already established in the preceding paragraphs rather than advancing it with a concrete consequence or practical development.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.9166666666666666,
+          "verdict": "pass",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs that develop the summer sequence."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_06585ac1b6f4cc42006a79029c0648819ca0bfaac64d26b004",
+      "usage": {
+        "inputTokens": 11425,
+        "outputTokens": 857,
+        "totalTokens": 12282
+      }
+    },
+    {
+      "call": 4,
+      "type": "judge",
+      "fixtureId": "work_money_summer_material_voice_drift",
+      "variant": "negative",
+      "targetDimension": "owner_voice",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 3,
+          "lived_experience": 2,
+          "interpretive_movement": 2,
+          "owner_voice": 2,
+          "natural_language": 3,
+          "syntax_variety": 2,
+          "emotional_temperature": 3,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.6388888888888888,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=6]",
+            "finding": "The paragraph names messages, plans, responsibilities, balance, and sustainable pacing, but does not show what the accumulation displaces, delays, or makes harder in the week. The capacity consequence remains abstract.",
+            "evidence_ids": [
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=7]",
+            "finding": "The work, health, routine, support, and productivity language remains a category-level explanation. It does not identify an ordinary circumstance in which increased activity changes a schedule, appointment, meal, commute, deadline, or other fixed obligation.",
+            "evidence_ids": [
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "[PARAGRAPH_INDEX=6] [PARAGRAPH_INDEX=7] [PARAGRAPH_INDEX=8] [PARAGRAPH_INDEX=9]",
+            "finding": "The Jupiter-Moon complication begins as a plausible interaction between expanding opportunity and sixth-house routines, but the subsequent paragraphs repeat generalized capacity, balance, support, and sustainability language rather than advancing into a concrete consequence or a changed version of the opportunity.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=6] [PARAGRAPH_INDEX=7] [PARAGRAPH_INDEX=8] [PARAGRAPH_INDEX=9]",
+            "finding": "The complication and closing movement drift into generic wellness and coaching language such as \"honor your capacity,\" \"greater awareness and discernment,\" and \"alignment with your capacity.\" Unlike the supplied complication reference, these paragraphs do not show a specific arrangement that initially works and then fails under ordinary pressure; unlike the supplied development reference, they do not name what remains waiting afterward.",
+            "evidence_ids": [
+              "personal_autumn_complication",
+              "personal_spring_development"
+            ]
+          },
+          {
+            "category": "syntax_variety",
+            "location": "[PARAGRAPH_INDEX=6] [PARAGRAPH_INDEX=7] [PARAGRAPH_INDEX=8] [PARAGRAPH_INDEX=9]",
+            "finding": "Four consecutive paragraphs use similar generalized conditional and advisory framing. The repeated abstract conclusion structure flattens the development instead of changing rhythm with a concrete situation and consequence.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=7] [PARAGRAPH_INDEX=8] [PARAGRAPH_INDEX=9]",
+            "finding": "These paragraphs substantially restate the same capacity-and-sustainability point after the Jupiter-Moon paragraph has introduced it. They add generalized advice rather than new manifestation, complication, or consequence.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.6388888889,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0b8b4df5b730cb7d006a7902a60f2481a1b36c1ba76eea1802",
+      "usage": {
+        "inputTokens": 11397,
+        "outputTokens": 921,
+        "totalTokens": 12318
+      }
+    },
+    {
+      "call": 5,
+      "type": "judge",
+      "fixtureId": "love_connection_autumn_flattened_movement",
+      "variant": "positive",
+      "targetDimension": "interpretive_movement",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 4,
+          "lived_experience": 3,
+          "interpretive_movement": 3,
+          "owner_voice": 3,
+          "natural_language": 4,
+          "syntax_variety": 3,
+          "emotional_temperature": 4,
+          "density": 3
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.8611111111111112,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=6]",
+            "finding": "The paragraph usefully keeps Jupiter-Mars disagreement open across several relationship subjects, but it is primarily a manifestation menu. It does not yet show how one of those subjects changes another person's time, plan, obligation, or access; the causal consequence arrives only in the following paragraph.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=3] [PARAGRAPH_INDEX=6]",
+            "finding": "The repeated \"Maybe\" alternatives and subject list are more generalized than the supplied owner complication passages, which move from a changed condition into a visible practical result. The candidate retains the owner's plainness and contradiction, but its complication movement is less concretely observed than the comparison evidence.",
+            "evidence_ids": [
+              "general_summer_complication",
+              "work_summer_complication",
+              "personal_autumn_complication"
+            ]
+          },
+          {
+            "category": "syntax_variety",
+            "location": "[PARAGRAPH_INDEX=3]",
+            "finding": "The repeated sentence-opening pattern creates a run of similarly framed alternatives. The repetition is readable, but it slightly flattens the paragraph's movement compared with the more varied causal sequencing elsewhere in the unit.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=6]",
+            "finding": "The broad list of possible disagreement subjects adds range but repeats material that the surrounding paragraphs already narrow into schedule, sex, care, and practical arrangements. More of the list could carry consequence rather than category coverage.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.8611111111,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains nine substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0289de50c64b117d006a7902b0a584819fb3717c72bb7ca6bd",
+      "usage": {
+        "inputTokens": 12416,
+        "outputTokens": 1344,
+        "totalTokens": 13760
+      }
+    },
+    {
+      "call": 6,
+      "type": "judge",
+      "fixtureId": "love_connection_autumn_flattened_movement",
+      "variant": "negative",
+      "targetDimension": "interpretive_movement",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 3,
+          "lived_experience": 1,
+          "interpretive_movement": 1,
+          "owner_voice": 1,
+          "natural_language": 3,
+          "syntax_variety": 1,
+          "emotional_temperature": 2,
+          "density": 1
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.4722222222222222,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=2]",
+            "finding": "The paragraph gives generalized relationship guidance rather than an observable circumstance. “Review your boundaries,” “communicate clearly,” and “remain committed to balance” do not show what changes in a schedule, agreement, or shared responsibility because of the transit.",
+            "evidence_ids": [
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=3]",
+            "finding": "Sleep, work, recovery, travel, and responsibilities are presented as a manifestation list. The prose does not establish which obligation displaces another, what gets delayed or cancelled, or what practical arrangement becomes harder.",
+            "evidence_ids": [
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "[PARAGRAPH_INDEX=1] [PARAGRAPH_INDEX=4]",
+            "finding": "The second Saturn pass is identified accurately, but it does not advance the May-to-October story through what survived, failed, or required revision. “Integrate the lessons” and “strengthen the new pattern” reset the passage into generic advice rather than testing a proved arrangement.",
+            "evidence_ids": []
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "[PARAGRAPH_INDEX=5] [PARAGRAPH_INDEX=9]",
+            "finding": "The Jupiter-Mars sequence names the February return but does not develop an October circumstance into a later test. “Identify the issue” and “prepare for the next stage” provide an abstract chronology rather than a specific disagreement, consequence, and returning condition.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=2] [PARAGRAPH_INDEX=3]",
+            "finding": "Compared with owner complication references general_summer_complication (function: complication), work_summer_complication (function: complication), and personal_autumn_complication (function: complication), this uses wellness and coaching language in place of observed consequence. The owner passages show opportunity or an arrangement producing a concrete problem; this unit says to create balance, honor capacity, and support mutual well-being without showing the arrangement that fails.",
+            "evidence_ids": [
+              "general_summer_complication",
+              "work_summer_complication",
+              "personal_autumn_complication",
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=4] [PARAGRAPH_INDEX=8] [PARAGRAPH_INDEX=9]",
+            "finding": "The closers drift into motivational and writer-facing summary language: “integrate the lessons,” “opportunity for growth and deeper alignment,” and “prepare for the next stage.” In contrast to personal_autumn_complication (function: complication), which stops on the concrete consequence of an arrangement, these lines state a lesson without an observed event that earns it.",
+            "evidence_ids": [
+              "personal_autumn_complication"
+            ]
+          },
+          {
+            "category": "syntax_variety",
+            "location": "[PARAGRAPH_INDEX=2] [PARAGRAPH_INDEX=3] [PARAGRAPH_INDEX=6] [PARAGRAPH_INDEX=7]",
+            "finding": "The unit repeatedly uses directive constructions and coordinated advice lists: “Make sure,” “Communicate,” “Honor,” “plan,” “stay,” “Practice,” and “Approach.” The repeated instructional architecture does not develop with the changing astrology.",
+            "evidence_ids": []
+          },
+          {
+            "category": "emotional_temperature",
+            "location": "[PARAGRAPH_INDEX=2] [PARAGRAPH_INDEX=3] [PARAGRAPH_INDEX=7] [PARAGRAPH_INDEX=8]",
+            "finding": "Therapeutic and reassuring framing, including “healthier relationship rhythm,” “mutual well-being,” “compassion,” and “growth and deeper alignment,” inflates generic advice beyond the limited concrete evidence in the unit.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=4] [PARAGRAPH_INDEX=8] [PARAGRAPH_INDEX=9]",
+            "finding": "These paragraphs repeat abstract lessons after the transit claims rather than adding manifestation, complication, or a practical consequence. The unit continues after its point is established without showing what specifically changes.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.4722222222,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0be918f83ce60732006a7902c2db5081a2ac84e76f36a2abae",
+      "usage": {
+        "inputTokens": 12390,
+        "outputTokens": 1479,
+        "totalTokens": 13869
+      }
+    },
+    {
+      "call": 7,
+      "type": "judge",
+      "fixtureId": "personal_health_summer_observed_life",
+      "variant": "positive",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 4,
+          "lived_experience": 4,
+          "interpretive_movement": 4,
+          "owner_voice": 4,
+          "natural_language": 4,
+          "syntax_variety": 4,
+          "emotional_temperature": 4,
+          "density": 4
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 1,
+        "verdict": "pass",
+        "findings": [],
+        "modelReported": {
+          "overall": 1,
+          "verdict": "pass",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs that develop the summer sequence."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_09edd2f85cdf1ef0006a7902d408f081a19df8a33479d858dc",
+      "usage": {
+        "inputTokens": 7955,
+        "outputTokens": 257,
+        "totalTokens": 8212
+      }
+    },
+    {
+      "call": 8,
+      "type": "judge",
+      "fixtureId": "personal_health_summer_observed_life",
+      "variant": "negative",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 3,
+          "lived_experience": 2,
+          "interpretive_movement": 2,
+          "owner_voice": 2,
+          "natural_language": 4,
+          "syntax_variety": 3,
+          "emotional_temperature": 4,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.7222222222222222,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=4]",
+            "finding": "This is a category list rather than an observed chain of events. Sleep, lunch, appointments, medication, work, and evening tasks are named, but the paragraph does not show what changes another obligation, what gets moved, or what becomes harder as a result.",
+            "evidence_ids": [
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "lived_experience",
+            "location": "[PARAGRAPH_INDEX=5]",
+            "finding": "The paragraph identifies a real contradiction—wanting the opportunities while the amount becomes too much—but resolves it with generic instructions to honor limits, protect energy, and create room rather than naming the practical consequence inside the situation.",
+            "evidence_ids": [
+              "labeled-negative-flat-recovery"
+            ]
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "[PARAGRAPH_INDEX=4]",
+            "finding": "The sequence establishes a specific August pressure and later reaches concrete schedule changes, but the middle development flattens into abstract categories and planning language. It does not carry the Jupiter-square-Moon complication through a cause-and-consequence chain before the eclipse-driven revision in the next paragraph.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=4]",
+            "finding": "The complication movement drifts from the supplied owner comparison passages. The owner complication references move quickly from pressure to a visible consequence—“more opportunity than room,” then multiplying messages, plans, and hours—in general_summer_complication (function: complication) and work_summer_complication (function: complication). This paragraph substitutes category accumulation and abstractions such as capacity, balance, support, and sustainable attention.",
+            "evidence_ids": [
+              "general_summer_complication",
+              "work_summer_complication",
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "owner_voice",
+            "location": "[PARAGRAPH_INDEX=5]",
+            "finding": "The paragraph begins with an owner-like contradiction about genuinely wanting what appears, but its closing shifts into generalized wellness guidance. That is materially less direct and observed than the supplied complication passages, especially work_summer_complication (function: complication), which names the practical cost of one easy yes.",
+            "evidence_ids": [
+              "work_summer_complication",
+              "labeled-negative-flat-recovery"
+            ]
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=4]",
+            "finding": "The second sentence restates that the calendar is fuller through abstract planning language without advancing the concrete circumstances or consequences established elsewhere in the unit.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "[PARAGRAPH_INDEX=5]",
+            "finding": "The final clause supplies generic advice after the paragraph has already established the relevant tension, rather than advancing into the specific schedule consequence delivered in the following paragraph.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.7222222222,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains five substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0336638eb87d9340006a7902d75e6481a3be1e3ed72cd1d0dc",
+      "usage": {
+        "inputTokens": 7911,
+        "outputTokens": 1097,
+        "totalTokens": 9008
+      }
+    },
+    {
+      "call": 9,
+      "type": "critique",
+      "fixtureId": "work_money_winter_single_aphorism_finding",
+      "variant": "single_aphorism_negative",
+      "result": {
+        "result": "defects",
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The unit contains seven substantive prose paragraphs, excluding the heading, date line, attribution, key-date label, and key-date bullets."
+        },
+        "defects": [
+          {
+            "id": "defect-1",
+            "category": "owner_voice_drift",
+            "location": "[PARAGRAPH_INDEX=7]",
+            "sentence_index": 1,
+            "scope_start": 1,
+            "scope_end": 1,
+            "quote": "You need a professional life that leaves enough room for the person who has to live it.",
+            "evidence": "This closing sentence shifts from the preceding observable consequences of a move, caregiving, home management, or repair expense changing hours, commute, or money into a generalized, aphoristic instruction carried by the abstraction \"room.\" The supplied close passages perform their conclusions through the conditions that constrain the reader: love_winter_close keeps connection tied to home, family, body, and responsibilities, while personal_spring_close tests an arrangement against work, family, travel, and ordinary interruptions. The candidate does not retain a comparable circumstance or consequence, so the difference is material rather than a preference for phrasing.",
+            "evidence_ids": [
+              "love_winter_close",
+              "personal_spring_close"
+            ],
+            "instruction": "Revise only this closing sentence so the close remains reader-facing and grounded in the specific work consequence established in the preceding paragraph; do not add a generalized lesson or abstract requirement."
+          }
+        ]
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0f1e906eb71a03cd006a7902e235708192ac52e1fa39812ac0",
+      "usage": {
+        "inputTokens": 10113,
+        "outputTokens": 1036,
+        "totalTokens": 11149
+      }
+    }
+  ],
+  "failures": []
+}
