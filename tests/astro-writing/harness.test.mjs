@@ -79,7 +79,12 @@ assert.equal(cardTransitWritingStandard, cardStandard);
 assert.equal(cardCritiqueChecklist, cardChecklist);
 assert.match(cardStandard, /Status: owner ruling, 2026-08-09[\s\S]*Generation rule, not reader-facing copy/u);
 assert.match(cardChecklist, /^\*\*Surface:\*\* `card`$/mu);
-assert.match(cardChecklist, /^\*\*Owner approved:\*\* `false`$/mu);
+assert.match(cardChecklist, /^\*\*Status:\*\* `owner_approved`$/mu);
+assert.match(cardChecklist, /^\*\*Approved source SHA-256:\*\* `3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043`$/mu);
+assert.match(cardChecklist, /^\*\*Owner approved:\*\* `true`$/mu);
+assert.match(cardChecklist, /^\*\*Active in harness:\*\* `true`$/mu);
+assert.match(cardChecklist, /^\*\*Active in production:\*\* `false`$/mu);
+assert.match(cardChecklist, /^\*\*Promotion authorized:\*\* `false`$/mu);
 assert.match(cardChecklist, /For every complete card, ask:[\s\S]*15\. Does the copy have enough personality/u);
 assert.match(cardChecklist, /The model returns findings only; runtime code computes PASS, REVISE, or FAIL\./u);
 assert.deepEqual(CARD_WRITER_SEVEN_PASS_LOOP.map((entry) => entry.id), [
