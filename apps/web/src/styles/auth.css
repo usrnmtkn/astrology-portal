@@ -108,8 +108,8 @@
   gap: 4px;
   width: fit-content;
   min-height: 32px;
-  margin: 0 auto -8px;
-  padding: 4px 6px;
+  margin: 0 auto calc(var(--space-2) * -1);
+  padding: var(--space-1) calc(var(--space-1) + var(--space-1) / 2);
   border: 0;
   background: transparent;
   color: var(--app-muted);
@@ -149,7 +149,7 @@
   font-size: clamp(2rem, 7vw, 2.65rem);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-display);
-  line-height: 1.02;
+  line-height: var(--leading-auth-title);
 }
 
 .phone-auth-heading > p,
@@ -181,7 +181,7 @@
   border-radius: var(--input-radius) 0 0 var(--input-radius);
   background: var(--input-bg);
   color: var(--app-text);
-  padding: 0 34px 0 14px;
+  padding: 0 calc(var(--space-7) + var(--space-1) / 2) 0 calc(var(--space-3) + var(--space-1) / 2);
   font-family: var(--font-ui);
   font-size: var(--text-body-sm);
   font-weight: var(--weight-regular);
@@ -210,7 +210,7 @@
 
 .phone-auth-help {
   display: block;
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 
 .phone-auth-destination-row {
@@ -277,7 +277,7 @@
   background: var(--input-bg);
   color: var(--app-text);
   font-family: var(--font-ui);
-  font-size: 1.35rem;
+  font-size: var(--text-auth-code-slot-size);
   font-variant-numeric: tabular-nums;
 }
 
@@ -314,7 +314,7 @@
 
 .phone-auth-text-button {
   min-height: 32px;
-  padding: 4px;
+  padding: var(--space-1);
   border: 0;
   background: transparent;
   color: var(--app-text);
@@ -328,7 +328,7 @@
 
 .phone-auth-resend-button {
   min-height: 32px;
-  padding: 4px;
+  padding: var(--space-1);
   border: 0;
   background: transparent;
   color: var(--app-muted);
@@ -347,7 +347,7 @@
 
 @media (max-width: 560px) {
   .auth-card--phone {
-    padding: 28px 22px;
+    padding: calc(var(--space-7) - var(--space-1)) calc(var(--space-5) + var(--space-1) / 2);
   }
 
   .phone-auth-fields {
@@ -356,7 +356,7 @@
 
   .phone-auth-country-select {
     width: 88px;
-    padding-left: 10px;
+    padding-left: calc(var(--space-2) + var(--space-1) / 2);
     font-size: var(--text-body-sm);
   }
 

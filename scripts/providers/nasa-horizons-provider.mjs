@@ -36,6 +36,7 @@ const ASPECTS = [
   ["sextile", 60],
   ["square", 90],
   ["trine", 120],
+  ["quincunx", 150],
   ["opposition", 180]
 ];
 

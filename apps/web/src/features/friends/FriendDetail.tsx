@@ -24,6 +24,7 @@ type FriendDetailProps = {
   name: string;
   onEdit?: () => void;
   onTabChange: (tab: FriendDetailTab) => void;
+  onTabIntent?: (tab: FriendDetailTab) => void;
   rising: string;
   subtitle?: string;
   sun: string;
@@ -51,6 +52,7 @@ export function FriendDetail({
   name,
   onEdit,
   onTabChange,
+  onTabIntent,
   rising,
   subtitle,
   sun,
@@ -146,7 +148,9 @@ export function FriendDetail({
                   aria-selected={isActive}
                   className={`friend-view-tab${isActive ? " friend-view-tab--active" : ""}`}
                   key={tab.value}
+                  onFocus={() => onTabIntent?.(tab.value)}
                   onClick={() => selectTab(tab.value)}
+                  onPointerEnter={() => onTabIntent?.(tab.value)}
                 >
                   {tab.label}
                 </button>
@@ -192,7 +196,9 @@ export function FriendDetail({
                           aria-checked={isActive}
                           className={isActive ? "friend-view-more-option friend-view-more-option--active" : "friend-view-more-option"}
                           key={tab.value}
+                          onFocus={() => onTabIntent?.(tab.value)}
                           onClick={() => selectTab(tab.value)}
+                          onPointerEnter={() => onTabIntent?.(tab.value)}
                         >
                           <span className="friend-view-more-option-copy">
                             <strong>{tab.label}</strong>
