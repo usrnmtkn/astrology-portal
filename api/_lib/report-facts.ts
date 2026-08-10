@@ -55,6 +55,7 @@ type ReportFactsIdentityInput = Pick<
 >;
 
 export type ReportFactsAstroClient = {
+  preflight(): Promise<void>;
   serviceVersion(): Promise<string>;
   reportWindow(input: Omit<ComposeReportFactsInput, "userId" | "subjectId" | "regenerate">): Promise<JsonObject>;
 };
@@ -169,14 +170,44 @@ export function readReportFacts(
 
 type FetchLike = typeof fetch;
 
+const REQUIRED_REPORT_CALCULATION_FEATURES = [
+  { id: "timing.report_window", path: "/timing/report-window", method: "POST" },
+  { id: "timing.solar_return", path: "/timing/solar-return", method: "POST" }
+] as const;
+
+export class ReportCalculationApiPreflightError extends Error {
+  readonly code = "CALCULATION_API_PREFLIGHT_FAILED";
+
+  constructor(message: string) {
+    super(`CALCULATION_API_PREFLIGHT_FAILED: ${message}`);
+    this.name = "ReportCalculationApiPreflightError";
+  }
+}
+
 export function createTldrAstroReportFactsClient({
   baseUrl = process.env.TLDRASTRO_API_URL || process.env.VITE_TLDRASTRO_API_URL || DEFAULT_TLDRASTRO_API_URL,
-  fetchImpl = fetch
+  fetchImpl = fetch,
+  preflightTimeoutMs = 5_000
 }: {
   baseUrl?: string;
   fetchImpl?: FetchLike;
+  preflightTimeoutMs?: number;
 } = {}): ReportFactsAstroClient {
   const normalizedBaseUrl = baseUrl.replace(/\/$/u, "");
+
+  async function preflightFetch(path: string, method: "GET" | "POST") {
+    try {
+      return await fetchImpl(`${normalizedBaseUrl}${path}`, {
+        method,
+        headers: method === "POST" ? { "content-type": "application/json" } : undefined,
+        body: method === "POST" ? "{}" : undefined,
+        signal: AbortSignal.timeout(preflightTimeoutMs)
+      });
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "unknown network error";
+      throw new ReportCalculationApiPreflightError(`${method} ${path} did not respond within ${preflightTimeoutMs}ms (${detail}).`);
+    }
+  }
 
   async function request<T>(path: string, body?: unknown): Promise<T> {
     const response = await fetchImpl(`${normalizedBaseUrl}${path}`, body === undefined ? undefined : {
@@ -192,6 +223,30 @@ export function createTldrAstroReportFactsClient({
   }
 
   return {
+    async preflight() {
+      const statusResponse = await preflightFetch("/meta/status", "GET");
+      if (!statusResponse.ok) {
+        throw new ReportCalculationApiPreflightError(`GET /meta/status returned ${statusResponse.status}.`);
+      }
+      const status = await statusResponse.json().catch(() => null) as { features?: unknown } | null;
+      const features = Array.isArray(status?.features) ? status.features : [];
+      for (const required of REQUIRED_REPORT_CALCULATION_FEATURES) {
+        const advertised = features.some((feature) => {
+          if (!feature || typeof feature !== "object") return false;
+          const entry = feature as Record<string, unknown>;
+          return entry.id === required.id && entry.path === required.path && entry.method === required.method;
+        });
+        if (!advertised) {
+          throw new ReportCalculationApiPreflightError(`GET /meta/status is missing ${required.method} ${required.path} (${required.id}).`);
+        }
+      }
+      await Promise.all(REQUIRED_REPORT_CALCULATION_FEATURES.map(async (required) => {
+        const response = await preflightFetch(required.path, required.method);
+        if (response.status !== 422) {
+          throw new ReportCalculationApiPreflightError(`${required.method} ${required.path} contract probe returned ${response.status}; expected 422 for an intentionally incomplete payload.`);
+        }
+      }));
+    },
     async serviceVersion() {
       const status = await request<{ version?: unknown }>("/meta/status");
       if (typeof status.version !== "string" || !status.version.trim()) {
