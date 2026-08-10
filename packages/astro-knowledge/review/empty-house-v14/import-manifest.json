@@ -17,6 +17,13 @@
     "archive": "AR",
     "future_wording_change_requires_owner_approval": true
   },
+  "superseded_draft_lineage": {
+    "status": "reference_only_not_served",
+    "package": "../empty-house-corpus-v1",
+    "validator": "../empty-house-corpus-v1/source/validate.py",
+    "judge_rubric": "../empty-house-corpus-v1/source/judge-rubric.json",
+    "writing_prompt": "../empty-house-corpus-v1/source/writing-engine-prompt.md"
+  },
   "ruler_policy": {
     "phase": "dual-system-modern-launch",
     "active_launch_system": "modern",
