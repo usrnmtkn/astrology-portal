@@ -66,18 +66,57 @@
     "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json",
     "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json"
   ],
-  "liveRunStatus": "run_2b_pending_explicit_authorization",
-  "completedCalls": 0,
+  "preservedEvaluationRuns": [
+    {
+      "run": "2b",
+      "path": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2b.json",
+      "sha256": "d3532fef2f78b4f6763a0d0cb70cc0fa8d28bdd6972a849cef71ed24c2a076ff",
+      "status": "failed",
+      "completedCalls": 20,
+      "contractsPassed": 19,
+      "contractsTotal": 20
+    },
+    {
+      "run": "2c",
+      "path": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2c.json",
+      "sha256": "c04c384486e577809e083e0a72af6ac9b0fedc8e40311b5acbf7ec5d722d6db3",
+      "status": "passed",
+      "completedCalls": 1,
+      "contractsPassed": 1,
+      "contractsTotal": 1
+    }
+  ],
+  "liveRunStatus": "calibration_complete",
+  "completedCalls": 21,
   "proposedLiveRun": {
-    "run": "2b",
-    "calls": 20,
+    "run": "2c",
+    "calls": 1,
     "model": "gpt-5.6-terra",
     "reasoningEffort": "high",
     "retries": 0,
-    "positives": 12,
-    "negatives": 8,
-    "authorizationStatus": "pending_explicit_owner_authorization"
+    "fixtureIds": ["neg-gemini-advocacy"],
+    "authorizationStatus": "consumed_by_run_2c_artifact"
   },
+  "calibration": {
+    "status": "complete",
+    "completedAt": "2026-08-10",
+    "runs": ["2b", "2c"],
+    "goldContractsPassed": 12,
+    "goldContractsTotal": 12,
+    "negativeContractsPassed": 8,
+    "negativeContractsTotal": 8,
+    "retries": 0
+  },
+  "contractAmendmentRulings": [
+    {
+      "date": "2026-08-10",
+      "fixtureId": "neg-gemini-advocacy",
+      "ruling": "judge_classification_defensible_contract_too_narrow",
+      "addedAcceptedPrimary": "owner_voice_drift",
+      "basis": "alternates_rule",
+      "preserveRunArtifact": "card-judge-v3-1-live-evaluation-run-2b.json"
+    }
+  ],
   "pairs": [
     {
       "id": "aries-generic-prop",
@@ -159,7 +198,7 @@
       "replacementField": "lived",
       "comparisonSet": ["gold-lilith-leo-v5", "gold-lilith-libra-v5", "gold-lilith-scorpio-v5"],
       "required_primary": "example_proves_astrology",
-      "allowed_primary_alternates": ["stock_trope"],
+      "allowed_primary_alternates": ["stock_trope", "owner_voice_drift"],
       "verdict": "REVISE",
       "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
     },

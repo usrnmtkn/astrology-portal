@@ -9,8 +9,13 @@ import {
   CARD_JUDGE_V3_1_AUTHORIZATION_ENV,
   CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN,
   CARD_JUDGE_V3_1_CALL_BUDGET,
+  CARD_JUDGE_V3_1_RUN_2C_ARTIFACT_PATH,
+  CARD_JUDGE_V3_1_RUN_2C_AUTHORIZATION_ENV,
+  CARD_JUDGE_V3_1_RUN_2C_AUTHORIZATION_TOKEN,
+  CARD_JUDGE_V3_1_RUN_2C_CALL_BUDGET,
   CARD_JUDGE_V3_1_SCHEMA,
   assertCardJudgeV31LiveAuthorization,
+  assertCardJudgeV31Run2cAuthorization,
   cardJudgeV31PacketPrompt,
   evaluateCardJudgeV31
 } from "../../src/astro-writing/cardJudgeV31.mjs";
@@ -21,15 +26,20 @@ const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex"
 const approvedChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md");
 const approvedRubric = read("tldr-astro-phrasebank/TLDR-CARD-JUDGE-RUBRIC-V3-DRAFT.md");
 const runOneArtifact = read("packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-live-evaluation-run-1.json");
+const runTwoBArtifact = read("packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2b.json");
+const runTwoCArtifact = read("packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2c.json");
 const ownerApprovedGold = read("data/writing/owner-approved-examples.jsonl");
 const draftChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-1-DRAFT.md");
 const draftRubric = read("tldr-astro-phrasebank/TLDR-CARD-JUDGE-RUBRIC-V3-1-DRAFT.md");
 const fixtureContracts = JSON.parse(read("packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-fixture-contracts.json"));
 const runtime = read("scripts/run-astro-writing-live-reviewer-eval-v3-1.mjs");
+const runTwoCRuntime = read("scripts/run-astro-writing-live-reviewer-eval-v3-1-run-2c.mjs");
 
 assert.equal(sha256(approvedChecklist), "d1e255a1cf151d2d7fbf705d5a9167da5a62ca3cbbbabf0957dd5f6e56f702f5", "Approved v3 checklist must remain byte-identical.");
 assert.equal(sha256(approvedRubric), "bb2584941678a20d13e99c6aef34d8394f986bcdc52871c8a321a73cc0223117", "Approved v3 rubric must remain byte-identical.");
 assert.equal(sha256(runOneArtifact), "5b50e50841938d95667ef6047132905f2ae52f5b60ee10bcbed3a736395f0e20", "Failed v3 run-one artifact must remain immutable.");
+assert.equal(sha256(runTwoBArtifact), "d3532fef2f78b4f6763a0d0cb70cc0fa8d28bdd6972a849cef71ed24c2a076ff", "Run 2b must remain byte-identical after the contract ruling.");
+assert.equal(sha256(runTwoCArtifact), "c04c384486e577809e083e0a72af6ac9b0fedc8e40311b5acbf7ec5d722d6db3", "Passing run 2c must remain byte-identical.");
 assert.equal(sha256(ownerApprovedGold), "7f43af675d3a3769377c409f864e9919ab3e1b6e0245daf408d52d0195d17002", "Owner-locked V5 gold cards must remain byte-identical.");
 
 for (const draft of [draftChecklist, draftRubric]) {
@@ -87,18 +97,36 @@ assert.equal(fixtureContracts.ownerApproved, true);
 assert.equal(fixtureContracts.activeInHarness, true);
 assert.equal(fixtureContracts.activeInProduction, false);
 assert.equal(fixtureContracts.liveRunAuthorized, false);
-assert.equal(fixtureContracts.liveRunStatus, "run_2b_pending_explicit_authorization");
-assert.equal(fixtureContracts.completedCalls, 0);
+assert.equal(fixtureContracts.liveRunStatus, "calibration_complete");
+assert.equal(fixtureContracts.completedCalls, 21);
 assert.equal(fixtureContracts.fixtureSetStatus, "owner_approved");
 assert.deepEqual(fixtureContracts.proposedLiveRun, {
-  run: "2b",
-  calls: 20,
+  run: "2c",
+  calls: 1,
   model: "gpt-5.6-terra",
   reasoningEffort: "high",
   retries: 0,
-  positives: 12,
-  negatives: 8,
-  authorizationStatus: "pending_explicit_owner_authorization"
+  fixtureIds: ["neg-gemini-advocacy"],
+  authorizationStatus: "consumed_by_run_2c_artifact"
+});
+assert.deepEqual(fixtureContracts.calibration, {
+  status: "complete",
+  completedAt: "2026-08-10",
+  runs: ["2b", "2c"],
+  goldContractsPassed: 12,
+  goldContractsTotal: 12,
+  negativeContractsPassed: 8,
+  negativeContractsTotal: 8,
+  retries: 0
+});
+assert.equal(fixtureContracts.contractAmendmentRulings.length, 1);
+assert.deepEqual(fixtureContracts.contractAmendmentRulings[0], {
+  date: "2026-08-10",
+  fixtureId: "neg-gemini-advocacy",
+  ruling: "judge_classification_defensible_contract_too_narrow",
+  addedAcceptedPrimary: "owner_voice_drift",
+  basis: "alternates_rule",
+  preserveRunArtifact: "card-judge-v3-1-live-evaluation-run-2b.json"
 });
 assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.decision), ["judge_error", "judge_error"]);
 assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.prohibitedRecurrence), ["owner_voice_drift", "owner_voice_drift"]);
@@ -186,6 +214,7 @@ for (const ruling of fixtureContracts.goldFindingRulings) {
 const geminiNegative = cases.find((fixture) => fixture.fixtureId === "neg-gemini-advocacy");
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "REVISE", categories: ["example_proves_astrology"] }).passed, true);
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "REVISE", categories: ["stock_trope"] }).passed, true);
+assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "REVISE", categories: ["owner_voice_drift"] }).passed, true);
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "REVISE", categories: ["example_proves_astrology", "stock_trope"] }).passed, false, "Allowed alternates are substitutions, not permission to stack findings.");
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "FAIL", categories: ["specificity_ceiling"] }).passed, false);
 
@@ -206,6 +235,18 @@ assert.match(runtime, /role: "CARD_REVIEWER_V3"/u);
 assert.ok(!runtime.includes("CARD_REVIEWER_V3_1"), "The shared OpenAI client accepts the governed card-reviewer role only.");
 assert.match(runtime, /ASTRO_WRITING_CALIBRATION_ENV_FILE/u);
 assert.match(runtime, /failed the local structural preflight/u);
+assert.equal(CARD_JUDGE_V3_1_RUN_2C_CALL_BUDGET, 1);
+assert.equal(CARD_JUDGE_V3_1_RUN_2C_ARTIFACT_PATH, "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2c.json");
+assert.deepEqual(assertCardJudgeV31Run2cAuthorization({
+  env: { [CARD_JUDGE_V3_1_RUN_2C_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_RUN_2C_AUTHORIZATION_TOKEN },
+  artifactExists: false
+}), { authorizedCalls: 1, retriesAuthorized: 0, run: "2c" });
+assert.throws(() => assertCardJudgeV31Run2cAuthorization({
+  env: { [CARD_JUDGE_V3_1_RUN_2C_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_RUN_2C_AUTHORIZATION_TOKEN },
+  artifactExists: true
+}), /already consumed/u);
+assert.match(runTwoCRuntime, /neg-gemini-advocacy/u);
+assert.match(runTwoCRuntime, /CARD_JUDGE_V3_1_RUN_2C_CALL_BUDGET !== 1/u);
 
 console.log(JSON.stringify({
   status: "PASS",

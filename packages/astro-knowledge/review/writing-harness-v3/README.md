@@ -12,6 +12,8 @@ Every billed run requires a separate, explicit owner authorization naming the ca
 
 The proposed next run is 20 calls, no retries, over the frozen 12 gold and 8 paired degradation variants. It uses `gpt-5.6-terra` with `high` reasoning. Low reasoning is the documented suspect in the v2 baseline's seven gold false positives and is forbidden for v3 semantic voice evaluation.
 
+Card judge v3.1 calibration completed on 2026-08-10 across preserved runs 2b and 2c: 12/12 owner-locked gold contracts and 8/8 paired negative contracts passed. Run 2c applied the owner-approved alternates ruling for `neg-gemini-advocacy`; run 2b remains byte-identical.
+
 ## Governance wall
 
 - The register-per-surface ruling is `owner_approved` and active in the harness only.
