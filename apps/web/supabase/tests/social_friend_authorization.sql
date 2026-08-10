@@ -97,6 +97,21 @@ begin
   set natal_chart = '{"authorization_test": true}'::jsonb
   where user_id = member_a;
 
+  perform public.ensure_own_social_profile(
+    (select profile.display_name from public.social_profiles profile where profile.user_id = member_a),
+    (select profile.avatar_url from public.social_profiles profile where profile.user_id = member_a),
+    null
+  );
+
+  if not exists (
+    select 1
+    from public.social_profiles profile
+    where profile.user_id = member_a
+      and profile.natal_chart = '{"authorization_test": true}'::jsonb
+  ) then
+    raise exception 'Null profile synchronization erased the cached natal chart.';
+  end if;
+
   perform public.set_social_friend_chart_sharing(friendship_id, false);
 
   if not exists (

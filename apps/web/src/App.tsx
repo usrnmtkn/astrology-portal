@@ -11780,7 +11780,7 @@ export function App() {
   ]);
 
   useEffect(() => {
-    if (!remoteAccountId || !remoteProfileReady || !userProfile) {
+    if (!remoteAccountId || !remoteProfileReady || !userProfile || !profileNatalSky) {
       return;
     }
 
@@ -11826,9 +11826,14 @@ export function App() {
   ]);
 
   useEffect(() => {
+    const socialNatalCacheMissing = ownSocialProfile?.hasNatalChart === false;
+
     if (
       !userProfile
-      || !shouldRunProfileNatalCalculation(mode, isProfileMode, friendCalculationNeeds)
+      || (
+        !socialNatalCacheMissing
+        && !shouldRunProfileNatalCalculation(mode, isProfileMode, friendCalculationNeeds)
+      )
     ) {
       return;
     }
@@ -11998,6 +12003,7 @@ export function App() {
     friendCalculationNeeds,
     isProfileMode,
     mode,
+    ownSocialProfile?.hasNatalChart,
     showNatalAspectPatterns,
     showNatalAspectPatternActivation
   ]);
