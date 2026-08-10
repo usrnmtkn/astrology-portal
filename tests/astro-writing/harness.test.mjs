@@ -1,11 +1,19 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildMeaningPlan,
+  buildCardWriterInstructions,
+  CARD_WRITER_SEVEN_PASS_LOOP,
+  CARD_WRITING_INSTRUCTIONS_VERSION,
+  cardCritiqueChecklist,
+  cardTransitTopLevelDirection,
+  cardTransitWritingStandard,
+  candidateCardAstrologyWritingInstructions,
   CANDIDATE_WRITER,
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   canonicalAstrologyReviewInstructions,
@@ -29,12 +37,15 @@ import {
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 const jsonl = (relativePath) => read(relativePath).trim().split("\n").filter(Boolean).map(JSON.parse);
+const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
 const astrologyContract = read("docs/writing/ASTROLOGY_CONTRACT.md");
 const voiceContract = read("docs/writing/VOICE_CONTRACT.md");
 const literalRules = read("docs/writing/LITERAL_LANGUAGE_RULES.md");
 const rubric = read("docs/writing/REVIEW_RUBRIC.md");
 const ownerDoctrine = read("packages/astro-knowledge/review/writing-harness-v1/TLDR-Owner-Writing-Doctrine.md");
+const cardStandard = read("tldr-astro-phrasebank/TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md");
+const cardChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md");
 const normalizedAstrologyContract = astrologyContract.replace(/\s+/gu, " ");
 const normalizedLiteralRules = literalRules.replace(/\s+/gu, " ");
 for (const required of [
@@ -63,9 +74,38 @@ assert.equal(read("docs/writing/BANNED_PATTERNS.md"), read("tldr-astro-phraseban
 assert.equal(read("data/writing/owner-corrections.jsonl"), read("packages/astro-knowledge/review/writing-harness-v2/owner-corrections.jsonl"));
 assert.ok(voiceContract.startsWith(ownerDoctrine));
 assert.ok(voiceContract.endsWith(read("tldr-astro-phrasebank/MARIE-VOICE-BANK.md")));
+assert.equal(sha256(cardStandard), "20ebf9edc5143c7f7dc04672bb1d107f7b480dcac61043db17b19432c6491175", "Card transit writing standard must remain byte-for-byte owner supplied.");
+assert.equal(cardTransitWritingStandard, cardStandard);
+assert.equal(cardCritiqueChecklist, cardChecklist);
+assert.match(cardStandard, /Status: owner ruling, 2026-08-09[\s\S]*Generation rule, not reader-facing copy/u);
+assert.match(cardChecklist, /^\*\*Surface:\*\* `card`$/mu);
+assert.match(cardChecklist, /^\*\*Status:\*\* `owner_approved`$/mu);
+assert.match(cardChecklist, /^\*\*Approved source SHA-256:\*\* `3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043`$/mu);
+assert.match(cardChecklist, /^\*\*Owner approved:\*\* `true`$/mu);
+assert.match(cardChecklist, /^\*\*Active in harness:\*\* `true`$/mu);
+assert.match(cardChecklist, /^\*\*Active in production:\*\* `false`$/mu);
+assert.match(cardChecklist, /^\*\*Promotion authorized:\*\* `false`$/mu);
+assert.match(cardChecklist, /For every complete card, ask:[\s\S]*15\. Does the copy have enough personality/u);
+assert.match(cardChecklist, /The model returns findings only; runtime code computes PASS, REVISE, or FAIL\./u);
+assert.deepEqual(CARD_WRITER_SEVEN_PASS_LOOP.map((entry) => entry.id), [
+  "astrology_integrity",
+  "remove_doctrine_prose",
+  "voice",
+  "lived_consequence",
+  "cut",
+  "full_family_comparison",
+  "full_file_consistency"
+]);
+assert.match(cardTransitTopLevelDirection, /^23\. Compact instruction to give Codex/u);
+const cardWriterInstructions = buildCardWriterInstructions(canonicalAstrologyWritingInstructions);
+assert.equal(cardWriterInstructions, candidateCardAstrologyWritingInstructions);
+assert.ok(cardWriterInstructions.includes(cardStandard), "Every card writer prompt must load the owner standard verbatim.");
+assert.ok(cardWriterInstructions.includes(read("tldr-astro-phrasebank/TLDR-REGISTER-PER-SURFACE-RULING-OWNER.md")), "Every candidate card writer prompt must be surface-scoped.");
+assert.ok(cardWriterInstructions.startsWith(cardTransitTopLevelDirection), "Section 23 must be the card writer's top-level direction.");
 
 const cjs = await import("../../src/astro-writing/canonicalInstructions.cjs");
 assert.equal(cjs.default.canonicalAstrologyWritingInstructions, canonicalAstrologyWritingInstructions);
+assert.equal(cjs.default.candidateCardAstrologyWritingInstructions, candidateCardAstrologyWritingInstructions);
 assert.equal(cjs.default.canonicalAstrologyReviewInstructions, canonicalAstrologyReviewInstructions);
 assert.equal(cjs.default.CANONICAL_REVIEWER_INSTRUCTIONS_VERSION, CANONICAL_REVIEWER_INSTRUCTIONS_VERSION);
 const ownerCodexInstruction = ownerDoctrine.slice(ownerDoctrine.indexOf("CODEX INSTRUCTION (owner-designated canonical form):")).trim();
@@ -75,7 +115,7 @@ assert.ok(
 );
 assert.ok(
   voiceContract.replace(/\s+/gu, " ").includes(canonicalAstrologyWritingInstructions.split("\n\n")[0].replace(/\s+/gu, " ")),
-  "Canonical API instructions must begin with the verbatim owner-designated doctrine."
+  "Canonical API instructions must retain the verbatim owner-designated doctrine."
 );
 assert.deepEqual(REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
 assert.ok(canonicalAstrologyReviewInstructions.includes("DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL."));
@@ -171,9 +211,31 @@ assert.equal(plan.house, null);
 assert.ok(plan.prohibitedDomainAssumptions.includes("travel/education/legal"));
 assert.ok(plan.DO_NOT_ASSUME.includes("a house or life domain that was not supplied"));
 
+assert.ok(validateCopy({ body: "Someone checks the source before repeating the claim.", DO_NOT_ASSUME: plan.DO_NOT_ASSUME }, {
+  plan,
+  requiredFields: ["body"]
+}).passed, "Internal guard fields must not be treated as reader copy.");
+for (const leaked of [
+  "DO NOT ASSUME a specific event.",
+  "This transit does not necessarily mean a specific event will happen.",
+  "A specific event, motive, relationship type, or biography not present in governed facts."
+]) {
+  const result = validateCopy(leaked, { plan });
+  assert.ok(result.violations.some((entry) => entry.category === "shared_ban"), `Reader-facing guard leakage must fail: ${leaked}`);
+}
+
 let reviewCount = 0;
-const writerClient = async ({ stage, instructions }) => {
-  assert.equal(instructions, canonicalAstrologyWritingInstructions);
+const writerClient = async ({ stage, instructions, input }) => {
+  assert.equal(instructions, cardWriterInstructions);
+  assert.ok(instructions.includes(cardStandard));
+  if (stage === "draft") {
+    assert.match(input, /CARD WRITER SEVEN-PASS CHAIN[\s\S]*full_file_consistency/u);
+    assert.match(input, /CARD CRITIQUE CHECKLIST[\s\S]*Fifteen-question editorial test/u);
+    assert.match(input, /DO_NOT_ASSUME and do_not_assume values are internal generation constraints/u);
+  } else {
+    assert.match(input, /"writerChain"[\s\S]*"full_file_consistency"/u);
+    assert.match(input, /"cardCritiqueChecklist"/u);
+  }
   if (stage === "revision") return { hook: "Someone checks the claim before repeating it." };
   return {
     tagline: "Certainty is not evidence",
@@ -221,6 +283,8 @@ assert.equal(pipeline.draft.lived, "A familiar answer keeps getting repeated aft
 assert.equal(pipeline.draft.ownerApproved, false, "Generated copy must never be labeled owner-approved.");
 assert.equal(pipeline.draft.reviewStatus, "needs_review");
 assert.equal(pipeline.draft.approvalStatus, "owner-review-pending");
+assert.equal(pipeline.draft.generation_metadata.role, "CARD_WRITER_V3");
+assert.equal(pipeline.draft.generation_metadata.components.writer_prompt, CARD_WRITING_INSTRUCTIONS_VERSION);
 assert.equal(pipeline.report.automaticallyRevised, 1);
 assert.equal(pipeline.report.finalLintStatus, "PASS");
 
@@ -335,6 +399,10 @@ for (const file of directCallFiles) {
 }
 const { callOpenAIResponses, instructionsForRole } = await import("../../src/astro-writing/openAIResponses.cjs").then((module) => module.default);
 assert.equal(instructionsForRole("WRITER"), canonicalAstrologyWritingInstructions);
+assert.equal(instructionsForRole("CARD_WRITER_V3"), candidateCardAstrologyWritingInstructions);
+assert.equal(instructionsForRole("CARD_REVISER_V3"), candidateCardAstrologyWritingInstructions);
+assert.ok(instructionsForRole("CARD_WRITER_V3").includes(cardStandard), "Every candidate CARD_WRITER_V3 call must load the card standard verbatim.");
+assert.ok(instructionsForRole("CARD_REVISER_V3").includes(cardStandard), "Every candidate CARD_REVISER_V3 call must load the card standard verbatim.");
 assert.equal(instructionsForRole("REVIEWER"), canonicalAstrologyReviewInstructions);
 let capturedWrapperBody = null;
 await callOpenAIResponses({
