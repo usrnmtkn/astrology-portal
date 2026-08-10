@@ -73,6 +73,7 @@ export type SkyDetail = {
   duration?: string;
   tagline?: string;
   keyDates?: SkyDetailKeyDate[];
+  keyDatesIntro?: string | null;
   closingCharge?: string | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
   subtitle?: string;
@@ -545,11 +546,12 @@ export function SkyDetailArticle({
               {detail.keyDates?.length ? (
                 <section className="article-section sky-detail-section sky-placement-key-dates" aria-label="Key dates">
                   <h3>Key dates</h3>
+                  {detail.keyDatesIntro ? <p>{detail.keyDatesIntro}</p> : null}
                   <dl>
                     {detail.keyDates.map((keyDate) => (
                       <div key={`${keyDate.date}-${keyDate.label}`}>
                         <dt>{keyDate.date}</dt>
-                        <dd>{keyDate.label}</dd>
+                        {keyDate.label ? <dd>{keyDate.label}</dd> : null}
                       </div>
                     ))}
                   </dl>

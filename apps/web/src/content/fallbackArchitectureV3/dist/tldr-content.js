@@ -304,6 +304,40 @@ function normalizeAspect(input) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
+function skyPlacementKeyDates({
+  planet,
+  residencyPasses,
+  residencyStations
+}) {
+  const passes = (residencyPasses ?? []).filter((pass) => {
+    const entry = new Date(pass.entryDate);
+    const exit = new Date(pass.exitDate);
+    return !Number.isNaN(entry.getTime()) && !Number.isNaN(exit.getTime()) && entry.getTime() <= exit.getTime();
+  }).sort((left, right) => left.entryDate.localeCompare(right.entryDate));
+  if (passes.length === 0) return [];
+  const keyDates = passes.map((pass, index) => ({
+    date: pass.entryDate,
+    endDate: pass.exitDate,
+    label: passes.length > 1 ? `Pass ${index + 1} of ${passes.length}` : "",
+    event: "residency-pass"
+  }));
+  for (const station of residencyStations ?? []) {
+    const occursAt = new Date(station.occursAt);
+    if (Number.isNaN(occursAt.getTime())) continue;
+    const isVerifiedInsidePass = passes.some((pass) => occursAt.getTime() >= new Date(pass.entryDate).getTime() && occursAt.getTime() <= new Date(pass.exitDate).getTime());
+    if (!isVerifiedInsidePass) continue;
+    keyDates.push({
+      date: station.occursAt,
+      label: `${title2(planet)} stations ${station.direction}`,
+      event: `station-${station.direction}`
+    });
+  }
+  return keyDates.sort((left, right) => left.date.localeCompare(right.date));
+}
+function skyPlacementKeyDatesIntro(facts) {
+  return String(facts.planet ?? "").trim().toLowerCase() === "lilith" && skyPlacementKeyDates(facts).length > 0 ? TRUE_LILITH_KEY_DATES_INTRO : null;
+}
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -1404,7 +1438,7 @@ ${passHook}`;
       contentKey: entryRow.contentKey
     };
   }
-  function renderSkyPlacement({
+  function renderSkyPlacementCopy({
     planet,
     sign,
     events = [],
@@ -1633,6 +1667,14 @@ ${passHook}`;
       };
     }
     throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+  }
+  function renderSkyPlacement(facts) {
+    const keyDates = skyPlacementKeyDates(facts);
+    return {
+      ...renderSkyPlacementCopy(facts),
+      keyDates,
+      keyDatesIntro: skyPlacementKeyDatesIntro(facts)
+    };
   }
   function formatCircleNames(names = [], includesReader = true) {
     const clean = names.map((n) => {
@@ -2219,7 +2261,7 @@ function createKnowledgeMatrixV8Resolver(manifest, transitFile, houseFile, build
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-09e";
+var PACKAGE_VERSION = "v3-2026-08-10a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -2274,11 +2316,14 @@ export {
   PACKAGE_VERSION,
   RoleViolationError,
   SourceGapError,
+  TRUE_LILITH_KEY_DATES_INTRO,
   chooseKnowledgeMatrixCandidate,
   createFallbackRenderer,
   createKnowledgeMatrixV8Resolver,
   createPackageManifest,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
-  normalizeAspect
+  normalizeAspect,
+  skyPlacementKeyDates,
+  skyPlacementKeyDatesIntro
 };
