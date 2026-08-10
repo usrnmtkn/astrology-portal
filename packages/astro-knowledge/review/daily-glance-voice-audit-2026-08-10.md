@@ -21,6 +21,10 @@ Judge: `gpt-5.6-terra`, reasoning `low`, rubric `daily-glance-voice-v2:boundary-
 - Estimated Step 4 judge cost: $0.230840
 - Estimated Step 4 total: $2.038025
 - Estimated all-call total: $4.106442
+- Owner-verdict ledger: 0 ruled, 66 pending
+- Judge agreement with ruled owner verdicts: not yet measurable
+- Agreement definition: owner-rewrote and took-candidate mean the flag was actionable; kept means the owner rejected the flag. Pending entries are excluded from the agreement denominator.
+- Ledger: `packages/astro-knowledge/review/daily-glance-judge-verdict-ledger.json`
 - Ordering: lowest triage score first, then most failed dimensions. In flag-only mode this is a reading queue, not a quality ranking.
 
 ## Ranked flags
