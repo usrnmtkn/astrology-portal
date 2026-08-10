@@ -53,8 +53,8 @@ const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFi
   path.join(repoRoot, `packages/astro-knowledge/review/sky-placement-writer-batch-${batch}-owner-edited-approved-v1.json`),
   "utf8"
 )));
-const skyPlacementTeachingLinesApproval = JSON.parse(fs.readFileSync(
-  path.join(repoRoot, "packages/astro-knowledge/review/sky-placement-teaching-lines-owner-approved-runtime-v2.json"),
+const skyPlacementCurrentApproval = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "packages/astro-knowledge/review/sun-leo-fallback-v3/approval-record.json"),
   "utf8"
 ));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
@@ -86,11 +86,11 @@ const servingArticleSnapshot = skyPlacementOwnerApprovedFallbacks.rows
     }
   }))
   .sort((first, second) => first.contentKey.localeCompare(second.contentKey));
-assert.equal(skyPlacementTeachingLinesApproval.articleCount, servingArticleSnapshot.length);
+assert.equal(skyPlacementCurrentApproval.articleCount, servingArticleSnapshot.length);
 assert.equal(
   createHash("sha256").update(JSON.stringify(servingArticleSnapshot)).digest("hex"),
-  skyPlacementTeachingLinesApproval.articlesSha256,
-  "The exact serving articles must match the approved Aug 5 teaching-line snapshot."
+  skyPlacementCurrentApproval.articlesSha256,
+  "The exact serving articles must match the owner-approved Sun-in-Leo V3 snapshot."
 );
 for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows) {
   assert.equal(
