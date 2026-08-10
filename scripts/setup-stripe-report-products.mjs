@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { REPORT_SKUS } from "../api/_lib/report-fulfillment-config.ts";
+import { REPORT_SKUS, reportBillingMode } from "../api/_lib/report-fulfillment-config.ts";
 import { stripePost } from "../api/_lib/stripe-report-billing.ts";
+
+if (reportBillingMode() !== "stripe") throw new Error("Stripe product setup is disabled unless REPORT_BILLING_MODE=stripe.");
 
 const dryRun = process.argv.includes("--dry-run");
 const currency = process.env.STRIPE_REPORT_CURRENCY ?? "usd";
