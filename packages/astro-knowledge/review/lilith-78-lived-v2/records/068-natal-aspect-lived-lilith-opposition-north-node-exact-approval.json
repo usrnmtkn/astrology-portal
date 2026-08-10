@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-068",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/north-node",
+  "workbookKey": "lilith|opposition|north-node",
+  "payloadSha256": "e7e6b667af1c0807b75b22ddb1cb2fe64c8c9551eece36612f33e95d17757907",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to pursue the sensible opportunity and then want to reject it before it changes how you live. Progress can feel managed by other people, while independence can leave an important skill or commitment undeveloped. This often comes from learning that advancement required compliance with someone else's definition of success. Keep the opportunity and renegotiate one expectation that makes it feel controlling.",
+    "astroHint": "Lilith opposite the North Node can make a developing direction feel at odds with your need for autonomy.",
+    "sourceMechanism": "LIMITED LEGACY SUPPORT: no fallback-hook/aspect-pair/lilith reader row exists for this counterpart. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. North Node primitive: Growth direction, unfamiliar medicine, the qualities and life field that ask for conscious development. Pair frame: Reclamation aimed at revenge serves the past; the respectable habit revealed as release-side material. Aspect operation: Opposition brings the two functions face-to-face through polarity, awareness, or confrontation. Traditional nature: malefic-leaning, oriented to awareness and relationship. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/points/north-node.json; packages/astro-knowledge/data/pairs/lilith-nodes.json; packages/astro-knowledge/data/primitives/aspects.json."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 69,
+    "approvedBodyCell": "E69",
+    "approvedAstroHintCell": "F69",
+    "ownerStatusCell": "H69"
+  },
+  "additionalBilledCalls": 0
+}

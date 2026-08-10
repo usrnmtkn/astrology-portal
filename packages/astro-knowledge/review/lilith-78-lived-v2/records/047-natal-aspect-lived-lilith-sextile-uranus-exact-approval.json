@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-047",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/uranus",
+  "workbookKey": "lilith|sextile|uranus",
+  "payloadSha256": "4f7dc268d6dd95a8d085063d036db58ea30f7ccef02a008e4fd2a028ed509d60",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to notice new tools, communities, jobs, and friendships that make a different way of living possible. The opportunity feels useful because it does not require destroying everything old before trying something new. You may hesitate when earlier groups treated difference as a problem to correct. Test the new approach in one part of life before deciding whether it belongs everywhere.",
+    "astroHint": "Lilith sextile Uranus can bring fresh settings where an edited part of you has more room.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Uranus primitive: Uranus describes awakening, disruption, freedom, invention, rupture, surprise, and the part of life that refuses to stay trapped inside a stale pattern. It shows where someone needs room to change and where the old structure may no longer fit. Pair frame: The unconventional choice lands and relieves everyone, including the doubters. Aspect operation: Sextile offers a supportive opening that still has to be used. Traditional nature: benefic-leaning, conditional. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/uranus.json; packages/astro-knowledge/data/pairs/uranus-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/uranus/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 48,
+    "approvedBodyCell": "E48",
+    "approvedAstroHintCell": "F48",
+    "ownerStatusCell": "H48"
+  },
+  "additionalBilledCalls": 0
+}
