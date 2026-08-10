@@ -30657,16 +30657,16 @@
    "body_you": "A small change gives you your day back.",
    "body_they": "A small change gives you your day back.",
    "review_status": "approved",
-   "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
+   "notes": "Owner v2 rewrite, exact approval 2026-08-05; supersedes batch-4 landing; 40-word floor owner-waived for this key."
   },
   {
    "contentKey": "fallback-hook/daily-body/soft/uranus",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "An unexpected gap opens in your afternoon, offering a quick chance to shift an errand or rearrange your tasks without causing any rupture. You might hesitate because sticking to the default path feels safer than taking an unplanned detour, but small, steady reps of flexibility go a long way. Take the opening anyway: rearranging a minor detail costs nothing to try and gives you an hour of your day back. You're allowed to define success on your own terms.",
-   "body_they": "An unexpected gap opens in your afternoon, offering a quick chance to shift an errand or rearrange your tasks without causing any rupture. You might hesitate because sticking to the default path feels safer than taking an unplanned detour, but small, steady reps of flexibility go a long way. Take the opening anyway: rearranging a minor detail costs nothing to try and gives you an hour of your day back. You're allowed to define success on your own terms.",
+   "body_you": "An unexpected gap opens in your afternoon, giving you a quick chance to clear an errand or shift your schedule. Use the window to handle something small now, and enjoy having an extra hour to yourself later.",
+   "body_they": "An unexpected gap opens in your afternoon, giving you a quick chance to clear an errand or shift your schedule. Use the window to handle something small now, and enjoy having an extra hour to yourself later.",
    "review_status": "approved",
-   "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
+   "notes": "Owner v2 rewrite, exact approval 2026-08-05; supersedes batch-4 landing; 40-word floor owner-waived for this key."
   },
   {
    "contentKey": "fallback-hook/daily-headline/soft/neptune",
