@@ -1,7 +1,10 @@
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.ts";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
-export type FulfillmentJobRow = { id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number };
+export type FulfillmentJobRow = {
+  id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number;
+  authorization_token: string | null; authorized_call_budget: number | null; model_call_count: number;
+};
 export type FulfillmentReportRow = {
   id: string; user_id: string; subject_id: string | null; report_domain: ReportDomain; report_horizon: ReportHorizon;
   period_start: string; period_end: string; facts: Record<string, unknown>; facts_engine: string; facts_hash: string | null;
@@ -17,6 +20,7 @@ export type ReportFulfillmentStore = {
   entitlement(id: string): Promise<FulfillmentEntitlementRow | null>;
   updateReport(id: string, patch: Record<string, unknown>): Promise<void>;
   updateJob(id: string, patch: Record<string, unknown>): Promise<void>;
+  consumeAuthorizedCall(jobId: string, authorizationToken: string): Promise<number>;
   reusableFacts(report: FulfillmentReportRow): Promise<{ facts: Record<string, unknown>; facts_hash: string; facts_engine: string } | null>;
   claimFacts(report: FulfillmentReportRow, workerId: string): Promise<boolean>;
   releaseFactsClaim(report: FulfillmentReportRow): Promise<void>;
@@ -48,6 +52,12 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
     entitlement: (id) => admin.selectOne("report_entitlements", new URLSearchParams({ id: `eq.${id}`, select: "*" })),
     async updateReport(id, patch) { await admin.update("user_reports", `id=eq.${id}`, patch); },
     async updateJob(id, patch) { await admin.update("report_fulfillment_jobs", `id=eq.${id}`, patch); },
+    async consumeAuthorizedCall(jobId, authorizationToken) {
+      return admin.request<number>("rpc/consume_report_fulfillment_call", {
+        method: "POST",
+        body: JSON.stringify({ job_id: jobId, call_authorization_token: authorizationToken })
+      });
+    },
     reusableFacts: (report) => admin.selectOne("report_facts_bundles", new URLSearchParams({
       user_id: `eq.${report.user_id}`, subject_id: report.subject_id ? `eq.${report.subject_id}` : "is.null",
       report_horizon: `eq.${report.report_horizon}`, period_start: `eq.${report.period_start}`, period_end: `eq.${report.period_end}`,

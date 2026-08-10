@@ -23,10 +23,12 @@ await db.exec(`
 `);
 const migration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809150000_report_fulfillment.sql", import.meta.url), "utf8");
 const personalHealthMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809160000_personal_health_report_domain.sql", import.meta.url), "utf8");
+const compMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810120000_comp_report_entitlements.sql", import.meta.url), "utf8");
 await db.exec("begin");
 try {
   await db.exec(migration);
   await db.exec(personalHealthMigration);
+  await db.exec(compMigration);
   const userId = "00000000-0000-0000-0000-000000000001";
   await db.query("insert into auth.users (id) values ($1)", [userId]);
   await db.query(`insert into public.report_entitlements
@@ -40,7 +42,9 @@ try {
   await db.exec("release savepoint duplicate_event");
   assert.equal(Number((await db.query("select count(*)::int count from public.user_reports")).rows[0].count), 1);
   assert.equal(Number((await db.query("select count(*)::int count from public.report_fulfillment_jobs")).rows[0].count), 1);
-  assert.ok((await db.query("select fulfillment_timestamps ? 'queued' as recorded from public.user_reports limit 1")).rows[0].recorded);
+  assert.equal((await db.query("select source from public.report_entitlements where stripe_event_id = 'evt_1'")).rows[0].source, "stripe");
+  assert.ok((await db.query("select fulfillment_timestamps ? 'awaiting_authorization' as recorded from public.user_reports limit 1")).rows[0].recorded);
+  assert.equal((await db.query("select state from public.report_fulfillment_jobs limit 1")).rows[0].state, "paused");
   assert.equal((await db.query("select public.claim_report_facts_window('fixture-window', $1, 'worker-1') as claimed", [userId])).rows[0].claimed, true);
   assert.equal((await db.query("select public.claim_report_facts_window('fixture-window', $1, 'worker-2') as claimed", [userId])).rows[0].claimed, false);
   const awaitingId = "00000000-0000-0000-0000-000000000002";
@@ -54,9 +58,38 @@ try {
     (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, requires_birth_time, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
     values ($1, 'personal_health_12_months', 'personal_health', '12_months', 'solar_return_display', '2026-02-18', '2027-02-17', true, 'active', 'evt_3', 'cs_4', now())`, [userId]);
   assert.equal(Number((await db.query("select count(*)::int count from public.user_reports where report_domain = 'personal_health'")).rows[0].count), 1);
+
+  const compId = "00000000-0000-0000-0000-000000000003";
+  await db.query(`insert into public.report_entitlements
+    (id, user_id, product_key, report_domain, report_horizon, window_anchor, selected_start, period_start, period_end, requires_birth_time, status, source, purchased_at)
+    values ($1, $2, 'work_money_4_months', 'work_money', '4_months', 'selected', '2027-01-01', '2027-01-01', '2027-04-30', true, 'active', 'comp', now())`, [compId, userId]);
+  const comp = (await db.query("select source, stripe_event_id, stripe_checkout_session_id from public.report_entitlements where id = $1", [compId])).rows[0];
+  assert.deepEqual(comp, { source: "comp", stripe_event_id: null, stripe_checkout_session_id: null });
+  const compReport = (await db.query("select id, fulfillment_status from public.user_reports where entitlement_id = $1", [compId])).rows[0];
+  assert.equal(compReport.fulfillment_status, "awaiting_authorization");
+  const compJob = (await db.query("select id, state from public.report_fulfillment_jobs where entitlement_id = $1", [compId])).rows[0];
+  assert.equal(compJob.state, "paused");
+  await db.exec("savepoint duplicate_comp");
+  await assert.rejects(db.query(`insert into public.report_entitlements
+    (user_id, product_key, report_domain, report_horizon, window_anchor, selected_start, period_start, period_end, requires_birth_time, status, source, purchased_at)
+    values ($1, 'work_money_4_months', 'work_money', '4_months', 'selected', '2027-01-01', '2027-01-01', '2027-04-30', true, 'active', 'comp', now())`, [userId]));
+  await db.exec("rollback to savepoint duplicate_comp");
+  await db.exec("release savepoint duplicate_comp");
+
+  const authorizationToken = "00000000-0000-0000-0000-000000000099";
+  await db.query("update public.report_fulfillment_jobs set state = 'queued', authorization_token = $1, authorized_call_budget = 2 where id = $2", [authorizationToken, compJob.id]);
+  await db.query("update public.user_reports set fulfillment_status = 'queued' where id = $1", [compReport.id]);
+  const claimed = (await db.query("select * from public.claim_report_fulfillment_jobs('fixture-worker', 10)")).rows.find((row) => row.id === compJob.id);
+  assert.ok(claimed, "An authorized queued comp report must be claimable.");
+  assert.equal((await db.query("select public.consume_report_fulfillment_call($1, $2) as count", [compJob.id, authorizationToken])).rows[0].count, 1);
+  assert.equal((await db.query("select public.consume_report_fulfillment_call($1, $2) as count", [compJob.id, authorizationToken])).rows[0].count, 2);
+  await db.exec("savepoint exhausted_budget");
+  await assert.rejects(db.query("select public.consume_report_fulfillment_call($1, $2)", [compJob.id, authorizationToken]), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
+  await db.exec("rollback to savepoint exhausted_budget");
+  await db.exec("release savepoint exhausted_budget");
   await db.exec("rollback");
 } catch (error) {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: entitlement idempotency, envelope/queue triggers, birth-data parking, exclusive facts claim, timestamps, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");

@@ -42,6 +42,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         period_end: stringValue(metadata.period_end),
         requires_birth_time: sku.requiresBirthTime,
         status: stringValue(metadata.birth_data_status) === "awaiting_birth_data" ? "awaiting_birth_data" : "active",
+        source: "stripe",
         stripe_event_id: event.id,
         stripe_checkout_session_id: stringValue(object.id),
         stripe_customer_id: stringValue(object.customer) || null,

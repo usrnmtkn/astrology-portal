@@ -74,3 +74,17 @@ export function reportFulfillmentConfig() {
 export function resolvedStripePriceId(sku: ReportSku) {
   return process.env[sku.priceEnv]?.trim() ?? "";
 }
+
+export function reportCallEstimate(horizon: ReportHorizon) {
+  const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 11;
+  const cleanPathCalls = unitCount * 3; // draft + critique + judge
+  const recommendedCallBudget = unitCount * 4; // allows one revise call per unit
+  const config = reportFulfillmentConfig();
+  return {
+    unitCount,
+    cleanPathCalls,
+    recommendedCallBudget,
+    tokenBudget: config.tokenBudget,
+    configuredMaxCostUsd: Number(((config.tokenBudget / 1_000_000) * config.tokenCostPerMillion).toFixed(4))
+  };
+}
