@@ -1,0 +1,237 @@
+{
+  "version": "card-judge-v3.1-lilith-mechanism-records-2026-08-09",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "activeInHarness": false,
+  "activeInProduction": false,
+  "surface": "card",
+  "object": "lilith",
+  "sourcePolicy": "Resolve owner-reviewed doctrine fields verbatim from the provenance-locked source row. The judge may not add astrology knowledge from training priors.",
+  "doNotAssumeProfiles": {
+    "lilith_sign_default_v1": {
+      "authority": "TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md sections 17-18",
+      "items": [
+        "Do not infer a traditionally associated house domain from the sign alone.",
+        "Do not assert a life status, motive, biography, diagnosis, crisis, or outcome not supplied by governed facts."
+      ]
+    }
+  },
+  "records": [
+    {
+      "fixtureId": "gold-lilith-aries-v5",
+      "placementId": "lilith-aries",
+      "sign": "aries",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-aries.json",
+      "sourceSha256": "716db22fe03254bf5d61cc7dbcbc30d9886414c428c66ac41cee7adea65847e2",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "internal",
+      "interiorityBasis": "anger and disrespect processed as an internal reaction before action",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["identity", "appearance", "first impression", "self-image", "physical body"],
+        "mechanismAnchors": ["anger", "fight", "control", "disrespect", "independence", "refusal"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-taurus-v5",
+      "placementId": "lilith-taurus",
+      "sign": "taurus",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-taurus.json",
+      "sourceSha256": "81d2bc3c5da64509efa285b39a4e8f3637fd797da61289f5b1f5eeb91c19953f",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "security and worth become observable through material terms and what is kept",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["paycheck", "bank account", "tax return", "asset portfolio", "net worth"],
+        "mechanismAnchors": ["scarcity", "worth", "security", "comfort", "undervalued", "enough"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-gemini-v5",
+      "placementId": "lilith-gemini",
+      "sign": "gemini",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-gemini.json",
+      "sourceSha256": "5220624b822bbf690dc8115e5e968091dc60dda9b7514daa4b19734ba13b206c",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "the mechanism becomes observable through words, stories, speech, and information",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["sibling", "neighborhood", "commute", "elementary school", "paperwork"],
+        "mechanismAnchors": ["word", "story", "speak", "voice", "information", "said"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-cancer-v5",
+      "placementId": "lilith-cancer",
+      "sign": "cancer",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-cancer.json",
+      "sourceSha256": "326737f37dd99594e503c3dcda3b1e8cc5d6e41588d64f633d061551492c619c",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "internal",
+      "interiorityBasis": "memory, unmet need, and old rejection steer mood and present choices internally",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["real estate", "property deed", "house move", "parental home", "domestic property"],
+        "mechanismAnchors": ["care", "need", "memory", "belonging", "unloved", "caretaking"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-leo-v5",
+      "placementId": "lilith-leo",
+      "sign": "leo",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-leo.json",
+      "sourceSha256": "e4383035445c740988034b866fe184ceec53bfa55cd3c2e05a629b863e8f4b58",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "the wound becomes observable through attention, credit, performance, and recognition",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["pregnancy", "child", "dating", "romance", "hobby"],
+        "mechanismAnchors": ["seen", "attention", "credit", "recognition", "pride", "overlooked"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-virgo-v5",
+      "placementId": "lilith-virgo",
+      "sign": "virgo",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-virgo.json",
+      "sourceSha256": "ca60d7963c477ec7a97869e9a4896544cbbb08dd3b45381340e73c6253b3646a",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "the mechanism becomes observable through work, service, correction, and usefulness",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["diagnosis", "doctor", "coworker", "work shift", "daily routine", "illness"],
+        "mechanismAnchors": ["useful", "standard", "mistake", "service", "precise", "not enough"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-libra-v5",
+      "placementId": "lilith-libra",
+      "sign": "libra",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-libra.json",
+      "sourceSha256": "119a58ff578f11b6cba034e307111fd083a34d14215fd65ef0b69790e190b4b0",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "the mechanism becomes observable through compromise, partnership, and negotiated arrangements",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["marriage", "spouse", "divorce", "lawsuit", "client contract"],
+        "mechanismAnchors": ["compromise", "fairness", "peace", "arrangement", "agreement", "chosen"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-scorpio-v5",
+      "placementId": "lilith-scorpio",
+      "sign": "scorpio",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-scorpio.json",
+      "sourceSha256": "05701164b7157cd5bba886651fe0977fa1b86746cfb6c23af26f891b576c30b4",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "the mechanism becomes observable through secrets, leverage, exposure, and private agreements",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["debt", "loan", "inheritance", "taxes", "shared finances", "sexual relationship"],
+        "mechanismAnchors": ["secret", "leverage", "private", "power", "exposure", "vulnerability"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-sagittarius-v5",
+      "placementId": "lilith-sagittarius",
+      "sign": "sagittarius",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-sagittarius.json",
+      "sourceSha256": "bb56c31f7b3ecdbd114ea4db0658f1701129152352921240177b7eca9a71da72",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "internal",
+      "interiorityBasis": "owner ruling 2026-08-09: belief and certainty are internal mechanisms whose observable naming satisfies concreteness",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["education", "teacher", "university", "institution", "publication", "travel", "legal matter", "law school"],
+        "mechanismAnchors": ["belief", "truth", "conviction", "evidence", "morality", "freedom", "certainty"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-capricorn-v5",
+      "placementId": "lilith-capricorn",
+      "sign": "capricorn",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-capricorn.json",
+      "sourceSha256": "29b94fe9c7597edd521468ac3c83bb5a89129c182ffe8115a7c247d87f55b8d7",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "the mechanism becomes observable through responsibility, authority, rules, and carried burdens",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["career", "boss", "promotion", "job title", "professional hierarchy", "public reputation"],
+        "mechanismAnchors": ["responsibility", "authority", "rule", "standard", "approval", "burden", "failure"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-aquarius-v5",
+      "placementId": "lilith-aquarius",
+      "sign": "aquarius",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-aquarius.json",
+      "sourceSha256": "74a6b6e99bbc5cfa0943b6e2252b1884c9d847865a8d9cd74e264230b29240ea",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "external",
+      "interiorityBasis": "the mechanism becomes observable through groups, exclusion, conditional belonging, and collective rules",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["fundraiser", "professional network", "membership committee", "trade association", "organization chart"],
+        "mechanismAnchors": ["belonging", "exclusion", "difference", "group", "invitation", "included"]
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-pisces-v5",
+      "placementId": "lilith-pisces",
+      "sign": "pisces",
+      "sourcePath": "packages/astro-knowledge/data/placements/sign/lilith-pisces.json",
+      "sourceSha256": "d3ddc870080f261f3de273b81e85d489b91cac321b13691bc6e491f0b43f7bf6",
+      "sourceFields": { "coreThemeWound": "tldr", "manifestationSpace": ["body", "gift", "challenge"] },
+      "interiority": "internal",
+      "interiorityBasis": "owner ruling 2026-08-09: escape and numbing are internal mechanisms whose observable naming satisfies concreteness",
+      "doNotAssumeProfile": "lilith_sign_default_v1",
+      "houseBleedNounBlacklist": {
+        "status": "needs_review",
+        "ownerApproved": false,
+        "triggerThreshold": 2,
+        "terms": ["hospital", "retreat", "prison", "secret enemy", "isolation ward", "institutional confinement"],
+        "mechanismAnchors": ["escape", "numb", "disappear", "absorb", "compassion", "forgive", "checking out"]
+      }
+    }
+  ]
+}

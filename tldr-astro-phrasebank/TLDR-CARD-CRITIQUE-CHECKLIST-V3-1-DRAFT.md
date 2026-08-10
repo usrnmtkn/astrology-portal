@@ -99,4 +99,4 @@ Use these examples as diagnostic controls, not as freestanding style adjectives.
 
 ## Output discipline
 
-Return only supported findings under the card judge schema. Cite eligible comparison evidence for `owner_voice_drift`. Apply the collision rule before returning the findings. Do not write replacement prose. Do not return a score, severity, or verdict.
+Return only supported findings under the card judge schema. Cite eligible comparison evidence for `owner_voice_drift`. Every theme, concreteness, house-bleed, specificity, or drift finding must cite at least one exact element ID from the supplied `MECHANISM_RECORD`; a finding without a valid mechanism citation is invalid. The judge is forbidden from using astrology knowledge outside the supplied facts and mechanism record. Apply the collision rule before returning the findings. Do not write replacement prose. Do not return a score, severity, or verdict.
