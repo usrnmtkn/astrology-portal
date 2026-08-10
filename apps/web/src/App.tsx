@@ -1909,8 +1909,8 @@ function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapsh
 
   try {
     const rendered = driver.kind === "aspect"
-      ? transitSynastryFallbackRendererV3.renderDailyGlance({ natal: driver.natal, aspect: driver.aspect })
-      : transitSynastryFallbackRendererV3.renderDailyGlance({ house: driver.house });
+      ? transitSynastryFallbackRendererV3.renderDailyGlance({ natal: driver.natal, aspect: driver.aspect, dateKey: targetDate, userId: profile.id })
+      : transitSynastryFallbackRendererV3.renderDailyGlance({ house: driver.house, dateKey: targetDate, userId: profile.id });
 
     return {
       id: personalDailyGeneratedContentKey(targetDate),
