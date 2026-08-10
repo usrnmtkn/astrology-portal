@@ -29,9 +29,10 @@
     "south-node": 6
   },
   "invariants": {
-    "existingApprovedRowsSha256": "3545dd7f0475a14ef0b381ed94d5ec0c47647ce28ea7eb6e34d33c46925f5cf7",
+    "existingApprovedRowsSha256": "64e5ce77cefdb4009c682796aacd56e5a1fd2977a98e582a78179552167a29bf",
     "existingApprovedRowsChanged": 0,
-    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))"
+    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+    "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows; all 78 governed family rows remain byte-identical to their row-level approval payloads and records."
   },
   "rows": [
     {

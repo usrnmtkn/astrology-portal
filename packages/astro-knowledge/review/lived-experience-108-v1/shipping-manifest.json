@@ -12,9 +12,10 @@
     "placement-sign-lived": 2
   },
   "invariants": {
-    "existingApprovedRowsSha256": "368872ae0c65bd9e8e33b03da8524fa399408baec71586ca1fcebab6d23671e8",
+    "existingApprovedRowsSha256": "1f8af66c0f364ed32b10ef5a6f128324deacde493e2d9c735aef21990ac3fea7",
     "existingApprovedRowsChanged": 0,
-    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))"
+    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+    "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows; all 108 governed family rows remain byte-identical to their row-level approval payloads and records."
   },
   "rows": [
     {
