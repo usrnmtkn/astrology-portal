@@ -155,6 +155,7 @@
     "write:daily-glance-writer-batch-3v2:live": "node scripts/run-daily-glance-writer-pilots.js --authorize-live --config config/daily-glance-writer-sol-xhigh-batch-3-v2.json --out review/daily-glance-batch-3-v2",
     "judge:daily-glance:calibrate": "node scripts/judge-daily-glance.js --calibrate",
     "audit:daily-glance-voice": "node scripts/audit-daily-glance-voice.js",
+    "audit:daily-glance-sol-pilot": "node scripts/run-daily-glance-self-audit-pilot.js",
     "audit:record-verdict": "node scripts/record-daily-glance-audit-verdict.js",
     "test:daily-glance-voice-audit": "node scripts/test-daily-glance-voice-audit.js",
     "test:daily-glance-verdict-ledger": "node scripts/test-daily-glance-verdict-ledger.js",
