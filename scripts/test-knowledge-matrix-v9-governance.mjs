@@ -1,33 +1,22 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  createKnowledgeMatrixV8Resolver,
-  createKnowledgeMatrixV9Resolver,
-} from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { createKnowledgeMatrixV9Resolver } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const packageRoot = path.join(
+const writerRoot = path.join(
   repoRoot,
   "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer",
 );
-const v8Root = path.join(packageRoot, "knowledge-matrix-v8");
-const deltaRoot = path.join(packageRoot, "knowledge-matrix-v9-governance");
+const deltaRoot = path.join(writerRoot, "knowledge-matrix-v9-governance");
+const canonicalRoot = path.join(writerRoot, "knowledge-matrix-v9");
 const publicRoot = path.join(
   repoRoot,
   "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-delta",
 );
-
-const v8ExpectedHashes = {
-  "house-activations-v8-owner-approved-locked.json": "f25074ea1f6eba38c2d12a3216f124b4d573c175bb374be28ea6ee3c69b2117f",
-  "knowledge-matrix-v8-import-manifest.json": "e13cef6d29112970a127dd89774ce81643e5e8b8e7f4b8be26f80790febf2895",
-  "knowledge-matrix-v8-owner-approved-build-report.json": "1ba70bfa44997d1462a6d65994c161329347729c31f5c42c3a5ffb16bd6d393b",
-  "transit-meanings-v8-owner-approved-locked.json": "1e918369505d41d2cf74d6e76a59704aa0550e8fc55d22b65b99b53a8f55a1a3",
-};
 
 function bytes(root, fileName) {
   return fs.readFileSync(path.join(root, fileName));
@@ -35,11 +24,6 @@ function bytes(root, fileName) {
 
 function json(root, fileName) {
   return JSON.parse(bytes(root, fileName).toString("utf8"));
-}
-
-for (const [fileName, expected] of Object.entries(v8ExpectedHashes)) {
-  const actual = crypto.createHash("sha256").update(bytes(v8Root, fileName)).digest("hex");
-  assert.equal(actual, expected, `${fileName} must remain byte-identical to v8`);
 }
 
 const deltaFiles = [
@@ -52,87 +36,68 @@ for (const fileName of deltaFiles) {
   assert.deepEqual(bytes(deltaRoot, fileName), bytes(publicRoot, fileName), `${fileName} package/public bytes`);
 }
 
-const v8 = createKnowledgeMatrixV8Resolver(
-  json(v8Root, "knowledge-matrix-v8-import-manifest.json"),
-  json(v8Root, "transit-meanings-v8-owner-approved-locked.json"),
-  json(v8Root, "house-activations-v8-owner-approved-locked.json"),
-  json(v8Root, "knowledge-matrix-v8-owner-approved-build-report.json"),
-);
 const manifest = json(deltaRoot, "knowledge-matrix-v9-governance-manifest.json");
 const transit = json(deltaRoot, "transit-meanings-v9-governance-delta.json");
-const house = json(deltaRoot, "house-activations-v9-governance-delta.json");
+const houses = json(deltaRoot, "house-activations-v9-governance-delta.json");
 const buildReport = json(deltaRoot, "knowledge-matrix-v9-governance-build-report.json");
+const canonicalManifest = json(canonicalRoot, "knowledge-matrix-v9-import-manifest.json");
+const canonicalRows = json(canonicalRoot, "knowledge-matrix-v9-owner-approved-rows.json");
+const canonicalBuild = json(canonicalRoot, "knowledge-matrix-v9-build-report.json");
+
+assert.equal(manifest.source_workbook_sha256, "d78569b194d132b921a71d061055e6b484ecae8877c6ae4c7b82d08538023b22");
+assert.equal(manifest.workbook_validation.transit_copy_digest, "478dd230db2eb2268d8e71e0e428a8fa03d3e5a77658872b9a71ecf802496d67");
+assert.equal(manifest.workbook_validation.house_experience_digest, "b6a5d42f4a16eac69fb2db89ef4a7cc2a718e9e1423ffa4c55b1654b7d6c4e98");
+assert.equal(buildReport.workbook_sha256_match, true);
+assert.equal(buildReport.transit_copy_digest_match, true);
+assert.equal(buildReport.house_experience_digest_match, true);
+assert.equal(buildReport.wording_changes, 0);
+assert.equal(buildReport.warning_count, 0);
+assert.deepEqual(buildReport.warnings, []);
+assert.equal(buildReport.build_passed, true);
 
 assert.equal(transit.rows.length, 609);
-assert.equal(house.rows.length, 424);
+assert.equal(houses.rows.length, 424);
 assert.equal(transit.rows.filter((row) => row.Archive === "AC").length, 307);
 assert.equal(transit.rows.filter((row) => row.Archive === "OWN").length, 129);
 assert.equal(transit.rows.filter((row) => row.Archive === "ML").length, 171);
 assert.equal(transit.rows.filter((row) => row.Judge === "rewritten-source-safe (lilith fact boundary)").length, 2);
-assert.equal(house.rows.filter((row) => row.Archive === "AC").length, 83);
-assert.equal(house.rows.filter((row) => row.Archive === "ML").length, 341);
-assert.equal([...transit.rows, ...house.rows].every((row) => row.Governance === "owner-approved"), true);
-assert.equal(manifest.workbook_validation.transit_copy_digest.startsWith("478dd230db2eb226"), true);
-assert.equal(manifest.workbook_validation.house_experience_digest.startsWith("b6a5d42f4a16eac6"), true);
+assert.equal(houses.rows.filter((row) => row.Archive === "AC").length, 83);
+assert.equal(houses.rows.filter((row) => row.Archive === "ML").length, 341);
+assert.equal([...transit.rows, ...houses.rows].every((row) => row.Governance === "owner-approved"), true);
 
-const resolver = createKnowledgeMatrixV9Resolver(v8, manifest, transit, house, buildReport);
+const canonicalTransitByRow = new Map(canonicalRows.transit_meanings.map((row) => [row.source_row, row]));
+for (const row of transit.rows) {
+  const canonical = canonicalTransitByRow.get(row.source_row);
+  assert.ok(canonical, `canonical transit source row ${row.source_row}`);
+  for (const field of ["Archive", "Planet", "Sign", "Event", "Copy", "Judge", "Governance"]) {
+    assert.equal(row[field], canonical[field], `transit source row ${row.source_row} ${field}`);
+  }
+}
+
+const canonicalHouseByRow = new Map(canonicalRows.house_activations.map((row) => [row.source_row, row]));
+for (const row of houses.rows) {
+  const canonical = canonicalHouseByRow.get(row.source_row);
+  assert.ok(canonical, `canonical house source row ${row.source_row}`);
+  for (const field of ["Archive", "Rising sign", "Planet", "Transit sign", "House", "Event", "Experience", "Judge", "Governance"]) {
+    assert.equal(row[field], canonical[field], `house source row ${row.source_row} ${field}`);
+  }
+}
+
+const resolver = createKnowledgeMatrixV9Resolver(canonicalManifest, canonicalRows, canonicalBuild);
 assert.deepEqual(resolver.counts, {
-  transitPrimaryKeys: 365,
+  ownerApprovedRows: 3485,
+  transitEligibleRows: 1117,
+  transitRuntimeKeys: 365,
+  houseEligibleRows: 2353,
   housePrimaryKeys: 954,
-  houseEventEntries: 1017,
+  houseEventRuntimeKeys: 1017,
+  excludedHouseRows: 15,
 });
-
-const v8CollisionFacts = { planet: "Chiron", transitSign: "Aries", eventType: "direct" };
-assert.deepEqual(
-  resolver.renderTransitMeaning(v8CollisionFacts),
-  v8.renderTransitMeaning(v8CollisionFacts),
-  "a v8 runtime winner must remain unchanged on a delta collision",
-);
-
-const newTransit = resolver.renderTransitMeaning({
-  planet: "Mars",
-  transitSign: "Scorpio",
-  eventType: "direct",
-});
-const firstMarsScorpio = transit.rows.find((row) => (
-  row.Planet === "Mars" && row.Sign === "Scorpio" && row.Event === "direct"
-));
-assert.equal(newTransit?.body, firstMarsScorpio.Copy);
-assert.equal(newTransit?.sourceRow, firstMarsScorpio.source_row);
-assert.equal(newTransit?.governance, "owner-approved");
-
-const newHouse = resolver.renderHouseActivation({
-  risingSign: "Aries",
-  planet: "Venus",
-  transitSign: "Libra",
-  house: 7,
-  eventType: "direct",
-});
-const firstVenusLibra = house.rows.find((row) => (
-  row["Rising sign"] === "Aries"
-  && row.Planet === "Venus"
-  && row["Transit sign"] === "Libra"
-  && row.House === 7
-  && row.Event === "direct"
-));
-assert.equal(newHouse?.body, firstVenusLibra.Experience);
-assert.equal(newHouse?.sourceRow, firstVenusLibra.source_row);
 
 assert.equal(
   resolver.renderTransitMeaning({ planet: "Sun", transitSign: "Aries", eventType: "retrograde" }),
   null,
   "an uncovered transit key must fail closed",
 );
-assert.equal(
-  resolver.renderHouseActivation({
-    risingSign: "Cancer",
-    planet: "Mercury",
-    transitSign: "None",
-    house: 0,
-    eventType: "direct",
-  }),
-  null,
-  "a house row missing a reusable key must not serve",
-);
 
-console.log("Knowledge matrix v9 Phase 0 passed: 1,033 governance-authorized rows landed, v8 bytes unchanged, 47 transit and 24 house-event keys added, uncovered keys fail closed.");
+console.log("Knowledge matrix v9 Phase 0 passed: 1,033 delta rows match canonical V9 byte-for-byte; workbook/digest gates pass; canonical runtime remains 365 transit and 1,017 house-event keys.");

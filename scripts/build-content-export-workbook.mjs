@@ -82,5 +82,34 @@ parity.getRange("B:B").format.columnWidth = 28;
 
 const output = await SpreadsheetFile.exportXlsx(workbook);
 await output.save(outputPath);
+const verificationDir = path.join("/private/tmp", "tldrastro-content-inventory-preview");
+await fs.mkdir(verificationDir, { recursive: true });
+for (const [sheetName, range, fileName] of [
+  ["Summary", "A1:H12", "summary.png"],
+  ["Content Inventory", "A1:O20", "content-inventory.png"],
+  ["Parity Report", "A1:D10", "parity-report.png"],
+]) {
+  const inspection = await workbook.inspect({
+    kind: "table",
+    sheetId: sheetName,
+    range,
+    include: "values,formulas",
+    tableMaxRows: 20,
+    tableMaxCols: 15,
+    maxChars: 8000,
+  });
+  if (!inspection.ndjson) throw new Error(`Workbook inspection failed for ${sheetName}.`);
+  const preview = await workbook.render({ sheetName, range, scale: 1, format: "png" });
+  await fs.writeFile(path.join(verificationDir, fileName), new Uint8Array(await preview.arrayBuffer()));
+}
+const formulaErrors = await workbook.inspect({
+  kind: "match",
+  searchTerm: "#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A",
+  options: { useRegex: true, maxResults: 300 },
+  summary: "final formula error scan",
+});
+if (/"matchCount":[1-9][0-9]*/u.test(formulaErrors.ndjson ?? "")) {
+  throw new Error("Generated content export contains spreadsheet formula errors.");
+}
 await fs.rm(`${outputPath}.inspect.ndjson`, { force: true });
 console.log(`Wrote ${path.relative(repoRoot, outputPath)} from canonical JSONL (${records.length} records).`);
