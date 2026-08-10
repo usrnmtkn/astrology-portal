@@ -1,10 +1,10 @@
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
-import { reportPromptFromPayload, validateReportDraft } from "./report-generation.ts";
-import { assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket, reportDraftMovementApplicable } from "./report-evaluation-packet.ts";
-import { verifyReportFactLock } from "./report-fact-lock.ts";
-import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.ts";
-import { loadVersionedReportPrompt, REPORT_CRITIQUE_PROMPT_PATH } from "./report-prompt-versions.ts";
-import { scopeReportPayloadToUnit } from "./report-unit-scope.ts";
+import { reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
+import { assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket, reportDraftMovementApplicable } from "./report-evaluation-packet.js";
+import { verifyReportFactLock } from "./report-fact-lock.js";
+import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
+import { loadVersionedReportPrompt, REPORT_CRITIQUE_PROMPT_PATH } from "./report-prompt-versions.js";
+import { scopeReportPayloadToUnit } from "./report-unit-scope.js";
 
 export const REPORT_DEFECT_CATEGORIES = [
   "astrology_chronology",

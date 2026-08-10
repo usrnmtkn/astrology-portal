@@ -1,5 +1,5 @@
-import { reportFulfillmentConfig } from "./report-fulfillment-config.ts";
-import { createReportMailProvider, type ReportMailProvider } from "./report-mail.ts";
+import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
+import { createReportMailProvider, type ReportMailProvider } from "./report-mail.js";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.ts";
 
 export type ReleasableReport = {

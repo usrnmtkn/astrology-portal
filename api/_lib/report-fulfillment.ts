@@ -1,10 +1,10 @@
 import crypto from "node:crypto";
-import { createTldrAstroReportFactsClient, type ReportChartSubject } from "./report-facts.ts";
-import { reportFulfillmentConfig } from "./report-fulfillment-config.ts";
+import { createTldrAstroReportFactsClient, type ReportChartSubject } from "./report-facts.js";
+import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import type { ReportFulfillmentStore, FulfillmentJobRow, FulfillmentReportRow } from "./report-fulfillment-store.ts";
-import { verifyReportFactLock } from "./report-fact-lock.ts";
-import { judgeReportUnit, type ReportJudgeResult } from "./report-judge.ts";
-import { createReportMailProvider, type ReportMailProvider } from "./report-mail.ts";
+import { verifyReportFactLock } from "./report-fact-lock.js";
+import { judgeReportUnit, type ReportJudgeResult } from "./report-judge.js";
+import { createReportMailProvider, type ReportMailProvider } from "./report-mail.js";
 import {
   assertReportDomainFulfillmentReady,
   assembleReportGenerationPayload,
@@ -12,14 +12,14 @@ import {
   type ReportDomain,
   type ReportDraft,
   type ReportHorizon
-} from "./report-generation.ts";
-import { reportSystemPromptVersions } from "./report-prompt-versions.ts";
-import { callReportModel, type ReportModelCall } from "./report-model-client.ts";
-import { estimateReportModelCost } from "./report-model-pricing.ts";
-import { runReportWriterChain } from "./report-writer-chain.ts";
-import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.ts";
-import { birthProfileFromPersistedData } from "./report-billing-window.ts";
-import { reportUrl } from "./report-http.ts";
+} from "./report-generation.js";
+import { reportSystemPromptVersions } from "./report-prompt-versions.js";
+import { callReportModel, type ReportModelCall } from "./report-model-client.js";
+import { estimateReportModelCost } from "./report-model-pricing.js";
+import { runReportWriterChain } from "./report-writer-chain.js";
+import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
+import { birthProfileFromPersistedData } from "./report-billing-window.js";
+import { reportUrl } from "./report-http.js";
 
 const unitsByHorizon = {
   "1_month": ["overview", "what-matters-most", "domain:main", "key-dates"],

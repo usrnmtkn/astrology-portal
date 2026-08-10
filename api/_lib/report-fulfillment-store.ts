@@ -1,4 +1,4 @@
-import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.ts";
+import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type FulfillmentJobRow = {
