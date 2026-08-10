@@ -34,9 +34,18 @@ if (process.argv.includes("--authorize-live")) {
 }
 
 loadLocalEnv();
+const calibrationEnvPath = process.env.ASTRO_WRITING_CALIBRATION_ENV_FILE;
+if (!process.env.OPENAI_API_KEY && calibrationEnvPath) {
+  const calibrationEnv = fs.readFileSync(path.resolve(calibrationEnvPath), "utf8");
+  const keyMatch = calibrationEnv.match(/^OPENAI_API_KEY=(.*)$/mu);
+  if (keyMatch) process.env.OPENAI_API_KEY = keyMatch[1].trim().replace(/^(["'])(.*)\1$/u, "$2");
+}
 const outputPath = path.resolve(process.env.ASTRO_WRITING_V3_1_OUTPUT ?? CARD_JUDGE_V3_1_ARTIFACT_PATH);
-const authorization = assertCardJudgeV31LiveAuthorization({ artifactExists: fs.existsSync(outputPath) });
 if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured.");
+if (!process.env.OPENAI_API_KEY.startsWith("sk-") || process.env.OPENAI_API_KEY.length < 40 || process.env.OPENAI_API_KEY === "[SENSITIVE]") {
+  throw new Error("OPENAI_API_KEY failed the local structural preflight. No artifact or billed call was created.");
+}
+const authorization = assertCardJudgeV31LiveAuthorization({ artifactExists: fs.existsSync(outputPath) });
 
 const { manifest, cases } = loadCardJudgeV31FixtureSet();
 if (cases.length !== CARD_JUDGE_V3_1_CALL_BUDGET || manifest.proposedLiveRun.calls !== CARD_JUDGE_V3_1_CALL_BUDGET) {
@@ -56,7 +65,7 @@ const startedAt = new Date().toISOString();
 function writeArtifact(status, error = null) {
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, `${JSON.stringify({
-    version: "card-judge-v3.1-live-evaluation-run-2a",
+    version: "card-judge-v3.1-live-evaluation-run-2b",
     status,
     startedAt,
     completedAt: status === "running" ? null : new Date().toISOString(),
