@@ -196,8 +196,8 @@ assert.equal(
 );
 assert.match(
   appSource,
-  /friendDeferredFallbackRequested = friendRelationshipContentRequests\.has\("transits"\)[\s\S]*friendRelationshipContentRequests\.has\("synastry"\)[\s\S]*friendRelationshipContentRequests\.has\("composite"\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
-  "Compatibility, bare Friends, and Natal-only views must not download the deferred transit fallback bundle."
+  /friendDeferredFallbackRequested = friendRelationshipContentRequests\.has\("compatibility"\)[\s\S]*friendRelationshipContentRequests\.has\("transits"\)[\s\S]*friendRelationshipContentRequests\.has\("synastry"\)[\s\S]*friendRelationshipContentRequests\.has\("composite"\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
+  "Compatibility must load its deferred synastry rows while bare Friends and Natal-only views stay on the eager core."
 );
 assert.match(
   appSource,
@@ -349,6 +349,27 @@ assert.match(
   manualChartsPanelSource,
   /const selectedCompatibilityCards = useMemo\([\s\S]*\}, \[\s*fallbackArchitectureV3Version,/,
   "Compatibility cards must recompute as soon as their deferred fallback bundle installs."
+);
+const selectedSynastryContactsStart = manualChartsPanelSource.indexOf(
+  "const selectedSynastryContacts = useMemo"
+);
+const selectedSynastryContactsEnd = manualChartsPanelSource.indexOf(
+  "const selectedSynastryAspectGroups = useMemo",
+  selectedSynastryContactsStart
+);
+const selectedSynastryContactsSource = manualChartsPanelSource.slice(
+  selectedSynastryContactsStart,
+  selectedSynastryContactsEnd
+);
+
+assert.ok(
+  selectedSynastryContactsStart >= 0 && selectedSynastryContactsEnd > selectedSynastryContactsStart,
+  "Friends performance QA must be able to inspect the selected synastry contacts memo."
+);
+assert.match(
+  selectedSynastryContactsSource,
+  /\}, \[\s*fallbackArchitectureV3Version,/,
+  "Synastry contacts must recompute as soon as their deferred relationship bundle installs."
 );
 assert.match(
   friendDetailSource,
