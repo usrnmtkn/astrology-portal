@@ -10836,7 +10836,8 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const friendDeferredFallbackRequested = friendRelationshipContentRequests.has("transits")
+    const friendDeferredFallbackRequested = friendRelationshipContentRequests.has("compatibility")
+      || friendRelationshipContentRequests.has("transits")
       || friendRelationshipContentRequests.has("synastry")
       || friendRelationshipContentRequests.has("composite");
 
