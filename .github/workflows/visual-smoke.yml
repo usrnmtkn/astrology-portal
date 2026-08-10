@@ -36,6 +36,9 @@ jobs:
           VITE_SUPABASE_URL: https://visual-smoke.supabase.test
           VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
 
+      - name: Verify production health endpoint imports
+        run: npm run test:production-health
+
       - name: Enforce web bundle budgets
         run: npm run qa:bundle
 
