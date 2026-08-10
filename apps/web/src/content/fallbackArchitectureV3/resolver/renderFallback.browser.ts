@@ -37,12 +37,15 @@ export interface HookRow {
   contentKey: string;
   content_role: string;
   grammar_frame?: string;
-  body_you: string;
-  body_they: string;
+  body?: string;
+  body_you?: string;
+  body_they?: string;
   review_status: string;
   approved_via?: string;
   approval?: ApprovalReference;
   render_policy?: string;
+  reader_only?: boolean;
+  sourceMechanism?: string;
   fact_line?: string;
   aspect_insert?: string;
   opening?: string;
@@ -88,7 +91,7 @@ export interface EmptyHouseFacts {
   modernRuler?: string;
   voice?: Voice;
 }
-export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition"; voice: Voice }
+export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx"; voice: Voice }
 export interface RenderResult { headline: string; parts: string[]; body: string; templateKey: string }
 export interface RenderOpts { allowUnreviewed?: boolean }
 
@@ -161,6 +164,17 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     if (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
     return (voice === "you" ? row.body_you : row.body_they) ?? null;
   };
+  const getReaderLivedRow = (key: string, voice: "you" | "they", opts: RenderOpts = {}): HookRow | null => {
+    if (voice !== "you") return null;
+    const row = hooks.get(key);
+    if (!row) return null;
+    if (row.content_role !== "fallback_hook") throw new RoleViolationError(`Row ${key} is not a fallback_hook.`);
+    if (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
+    if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
+      throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
+    }
+    return typeof row.body === "string" && row.body.trim() ? row : null;
+  };
   const findTemplate = (key: string, opts: RenderOpts = {}): TemplateRow | null => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
     if (!t) return null;
@@ -186,6 +200,18 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   function renderNatalPlacement(facts: PlacementFacts, opts: RenderOpts = {}): RenderResult {
     const { planet, sign, house } = facts;
     const voice: "you" | "they" = facts.voice === "you" ? "you" : "they";
+    const exactHouseLived = house
+      ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts)
+      : null;
+    if (exactHouseLived) {
+      return {
+        headline: `${title(planet)} in the ${ordinal(house)} house`,
+        parts: [exactHouseLived.body ?? ""],
+        body: exactHouseLived.body ?? "",
+        templateKey: exactHouseLived.contentKey,
+      };
+    }
+    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
     const ctx: Ctx = {
@@ -202,7 +228,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, opts),
       planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, opts),
       signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, opts),
-      planetIntro: getHook(`fallback-hook/planet-intro/${planet}`, voice, opts),
+      planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, opts)?.body
+        ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, opts),
       planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts),
       placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts),
       placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, opts).join(", or ") || null,
@@ -237,7 +264,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts)
       ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
-    parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+    parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
 
     let headlineTemplate = signTemplate;
     if (house) {
@@ -274,7 +301,20 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
 
   function renderNatalAspect(facts: AspectFacts, opts: RenderOpts = {}): RenderResult {
     const voice: "you" | "they" = facts.voice === "you" ? "you" : "they";
-    const group = ASPECT_GROUP[facts.aspect];
+    const aspect = facts.aspect;
+    const exactLived =
+      getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts)
+      ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts);
+    if (exactLived) {
+      return {
+        headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
+        parts: [exactLived.body ?? ""],
+        body: exactLived.body ?? "",
+        templateKey: exactLived.contentKey,
+      };
+    }
+    const group = ASPECT_GROUP[aspect];
+    if (!group) throw new SourceGapError(`SOURCE_GAP: natal aspect ${facts.planetA}-${aspect}-${facts.planetB}`);
     const pair =
       getHook(`fallback-hook/aspect-pair/${facts.planetA}/${facts.planetB}/${group}`, voice, opts) ??
       getHook(`fallback-hook/aspect-pair/${facts.planetB}/${facts.planetA}/${group}`, voice, opts);
@@ -282,12 +322,12 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       possessive: facts.voice === "you" ? "Your" : `${facts.voice}'s`,
       planetATitle: title(facts.planetA),
       planetBTitle: title(facts.planetB),
-      aspectName: facts.aspect,
-      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${facts.aspect}`, opts),
+      aspectName: aspect,
+      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, opts),
       planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, opts),
       planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, opts),
-      aspectTypeLine: getHook(`fallback-hook/aspect-type/${facts.aspect}`, voice, opts),
-      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${facts.aspect}`, opts),
+      aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, opts),
+      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, opts),
       possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
       pairSentences: pair,
     };
@@ -427,17 +467,17 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
 }
 
-/** Normalize app wording to the five canonical aspect ids ("conjunct" -> "conjunction", etc).
- *  Returns null for anything the package does not cover (minor aspects like quincunx),
- *  so callers can route those to SOURCE_GAP instead of rendering. */
-export function normalizeAspect(input: string): "conjunction" | "square" | "trine" | "sextile" | "opposition" | null {
+/** Normalize app wording to the six canonical aspect ids ("conjunct" -> "conjunction", etc).
+ *  Inconjunct normalizes to the engine's canonical quincunx id. */
+export function normalizeAspect(input: string): "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | null {
   const k = input.trim().toLowerCase();
-  const map: Record<string, "conjunction" | "square" | "trine" | "sextile" | "opposition"> = {
+  const map: Record<string, "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx"> = {
     conjunction: "conjunction", conjunct: "conjunction", conj: "conjunction",
     square: "square", sq: "square",
     trine: "trine",
     sextile: "sextile", sext: "sextile",
     opposition: "opposition", opposite: "opposition", opposed: "opposition", oppose: "opposition",
+    quincunx: "quincunx", inconjunct: "quincunx",
   };
   return map[k] ?? null;
 }

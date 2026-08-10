@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-075",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/north-node",
+  "workbookKey": "sun|inconjunct|north_node",
+  "payloadSha256": "0ca2e7d203c531ebd5ac414e44b735940048022a5df4bcbc5c74cea21c4bbc92",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun inconjunct the North Node can make one flaw in the messenger drown out the part worth hearing. You find out the teacher is inconsistent, hypocritical, or simply human and feel tempted to throw away the whole lesson. The contradiction can be real without making every useful sentence false.",
+    "sourceMechanism": "Sun inconjunct North Node can make a teacher's ordinary human flaws difficult to reconcile with the value of what they know. The person may dismiss useful guidance because the messenger is imperfect. A teacher can be imperfect and still say something worth hearing."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 76,
+    "approvedBodyCell": "E76",
+    "ownerStatusCell": "G76"
+  },
+  "additionalBilledCalls": 0
+}

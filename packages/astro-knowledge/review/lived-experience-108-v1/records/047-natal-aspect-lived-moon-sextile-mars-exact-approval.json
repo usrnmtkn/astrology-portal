@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-047",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/mars",
+  "workbookKey": "moon|sextile|mars",
+  "payloadSha256": "ccb36c53adae6324d1f7927d7eeeca6e49546c62f46c0754954a913a1dee503a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon sextile Mars can make a strong mood easier to move through by doing something with it. You clean the room, go for the run, cook dinner, make the call, or put the feeling into a project and notice that your body settles before your mind does. Emotion has somewhere to go besides another argument.",
+    "sourceMechanism": "Moon sextile Mars gives feeling enough energy to become action without automatically becoming conflict. Vitality and recuperative strength can be good, and emotion can be directed into creative or practical work. Desire becomes more useful once there is enough space to choose what to do with it."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 48,
+    "approvedBodyCell": "E48",
+    "ownerStatusCell": "G48"
+  },
+  "additionalBilledCalls": 0
+}

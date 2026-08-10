@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-038",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/north-node",
+  "workbookKey": "moon|inconjunct|north_node",
+  "payloadSha256": "5317940911563a1bb4a84c58c3b1e8b3089edd076135db2670698d4c39143551",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon inconjunct the North Node can make your own emotional mess feel like proof that you should not be helping anybody else. Then a friend calls in a panic and you know exactly what to say because you recognize the feeling immediately. Struggling with something yourself does not mean you understand nothing about how it works.",
+    "sourceMechanism": "Moon inconjunct North Node can make a teacher's emotional difficulties seem like proof that they have nothing useful to offer. Someone can struggle personally and still know how to help another person through similar turmoil."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 39,
+    "approvedBodyCell": "E39",
+    "ownerStatusCell": "G39"
+  },
+  "additionalBilledCalls": 0
+}

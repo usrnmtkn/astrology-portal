@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-090",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/jupiter",
+  "workbookKey": "venus|inconjunct|jupiter",
+  "payloadSha256": "5bc25c15789d003f541d80ef9bdc216fc83cd95240793d166b20865e136391ef",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus inconjunct Jupiter can make a generous night get expensive quickly. You choose the nicer restaurant, cover the extra round, buy the better seat, or say yes to one more plan because it feels good to be generous. Later you notice the account is lower than expected, or feel oddly disappointed that nobody matched the effort. Pleasure is easy to choose here. Limits are easier to notice afterward.",
+    "sourceMechanism": "Venus inconjunct Jupiter can make enjoyment easy and effort harder to sustain. Warmth is real, but affection may come with an expectation that it will be returned in the preferred form. Sometimes pleasure needs more willpower. Sometimes the body is simply tired. Confusing the two creates its own problem."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 91,
+    "approvedBodyCell": "E91",
+    "ownerStatusCell": "G91"
+  },
+  "additionalBilledCalls": 0
+}

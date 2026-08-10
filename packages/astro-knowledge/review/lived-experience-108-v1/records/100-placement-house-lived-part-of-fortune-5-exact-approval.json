@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-100",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/5",
+  "workbookKey": "part-of-fortune|5th house",
+  "payloadSha256": "440347a946cbcaac133f4e42350c05a2a2853f5489f1973e06e7e374c904fb79",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Part of Fortune in the 5th house can turn restlessness into an afternoon that disappears inside something you enjoy making. You pick up the camera, start the drawing, work on the song, play the game, or get absorbed in a personal interest and notice your mood change with it. The trouble starts when all the excitement has to come from romance, attention, or somebody else entertaining you.",
+    "sourceMechanism": "Part of Fortune in the 5th house gives restless feelings somewhere creative to go. Something gets made. A personal interest becomes absorbing enough to change the mood. The trouble starts when romance, children, or gambling are expected to supply all of the excitement the person is not creating for themselves."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 101,
+    "approvedBodyCell": "E101",
+    "ownerStatusCell": "G101"
+  },
+  "additionalBilledCalls": 0
+}

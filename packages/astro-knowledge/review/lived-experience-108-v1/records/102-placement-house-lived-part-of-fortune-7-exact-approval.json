@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-102",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/7",
+  "workbookKey": "part-of-fortune|7th house",
+  "payloadSha256": "82f467b2b55e69bc0617cacdf6d75a98289476718159ba2d2883e2b62828de1f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Part of Fortune in the 7th house can make relationship tension easier to handle once the actual agreement is clear. The argument stops circling, somebody names the boundary, and the two of you finally say what each person is willing to do. Repeating the same partnership pattern with different people does not create a different result.",
+    "sourceMechanism": "Part of Fortune in the 7th house gives relationship tension somewhere practical to go. A disagreement gets worked through. A boundary gets named. Two people figure out what they are actually agreeing to. Repeating the same partnership pattern with different people does not create a different result."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 103,
+    "approvedBodyCell": "E103",
+    "ownerStatusCell": "G103"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-012",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/midheaven",
+  "workbookKey": "mars|inconjunct|midheaven",
+  "payloadSha256": "b8f9f1478487a4aed7189eab69c9fdb2205940d67dd8fe808c1262ce6aac3cfd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars inconjunct the Midheaven can make the first slow stretch of a career feel like proof that nothing is happening. You want the promotion, the bigger role, or the visible result, and the middle steps feel painfully ordinary. That is often when quitting or looking elsewhere starts to sound better than staying long enough to build something.",
+    "sourceMechanism": "Mars inconjunct Midheaven can make the person want the top position before the long climb that produces it. If immediate advancement is not available, ambition may collapse into work that no longer matters. A career still has to survive the middle stages, not only the imagined moment at the top."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 13,
+    "approvedBodyCell": "E13",
+    "ownerStatusCell": "G13"
+  },
+  "additionalBilledCalls": 0
+}

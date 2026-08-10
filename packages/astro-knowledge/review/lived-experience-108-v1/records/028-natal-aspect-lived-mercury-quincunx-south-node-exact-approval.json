@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-028",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/south-node",
+  "workbookKey": "mercury|inconjunct|south_node",
+  "payloadSha256": "e7d83e7b3466bad94227ce5aeb5cf44b7616c5d01748f3c05e85037cb8df04ee",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct the South Node can give a recurring problem a brand-new explanation every time it comes back. This time it was the timing. Last time it was the other person. Before that, the circumstances were different. The reasons change while the same thought pattern keeps producing a familiar result.",
+    "sourceMechanism": "Mercury inconjunct South Node can make karmic necessity difficult to accept intellectually. The person may keep finding reasons the repeated situation should not apply to them. The recurrence keeps pointing toward the same mental habit because that habit has not changed yet."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 29,
+    "approvedBodyCell": "E29",
+    "ownerStatusCell": "G29"
+  },
+  "additionalBilledCalls": 0
+}

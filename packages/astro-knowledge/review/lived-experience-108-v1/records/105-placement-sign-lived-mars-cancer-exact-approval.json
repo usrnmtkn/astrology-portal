@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-105",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-sign-lived/mars/cancer",
+  "workbookKey": "mars|cancer",
+  "payloadSha256": "1279bd6cc5adeb44c82a3988975f92e67b4d933e53b482305a1b4708590a5fae",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars in Cancer can make a family problem stay with you long after the call ends. You are still irritated while making dinner, still replaying the criticism in bed, or eating too quickly because your body has not caught up with the fact that the argument is over. You can work incredibly hard for what feels personal. The anger gets heavier when it has nowhere direct to go.",
+    "sourceMechanism": "Mars in Cancer can work incredibly hard for what feels personal. Ambition and sensitivity live close together, so criticism, family pressure, or feeling unprotected can bring out defensiveness or moodiness fast. Emotions can also affect appetite and digestion, especially when someone eats while exhausted or upset. When the anger has nowhere direct to go, the body may end up carrying it."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 106,
+    "approvedBodyCell": "E106",
+    "ownerStatusCell": "G106"
+  },
+  "additionalBilledCalls": 0
+}

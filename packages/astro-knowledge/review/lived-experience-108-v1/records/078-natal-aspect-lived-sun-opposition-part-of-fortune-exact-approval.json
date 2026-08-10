@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-078",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/part-of-fortune",
+  "workbookKey": "sun|opposition|part_of_fortune",
+  "payloadSha256": "65eb3bfe343cf26d15aec649f61439bfb3ebe80c6621d3bd8533814e9d0f4bc5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun opposite the Part of Fortune can make wanting recognition feel less spiritual than it actually is. You downplay the promotion, hide the work, or feel guilty for wanting your name attached to something you built because ordinary ambition seems too small next to a larger purpose. A spiritual life gets distorted when becoming more fully yourself is treated like a distraction.",
+    "sourceMechanism": "Sun opposite Part of Fortune can make personal growth and soul growth look more contradictory than they really are. The person may feel pressured to choose between developing the self and following a larger spiritual direction. Personal development and soul growth can happen at the same time without either one canceling the other."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 79,
+    "approvedBodyCell": "E79",
+    "ownerStatusCell": "G79"
+  },
+  "additionalBilledCalls": 0
+}

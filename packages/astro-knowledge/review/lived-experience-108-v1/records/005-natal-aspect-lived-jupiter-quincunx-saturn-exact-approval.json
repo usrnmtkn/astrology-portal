@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-005",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/saturn",
+  "workbookKey": "jupiter|inconjunct|saturn",
+  "payloadSha256": "b7fcaea2529916369bf119297bd0c22387cbcbf57340d18c331b8cc538106d25",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter inconjunct Saturn can spend Monday booking the trip, pitching the bigger idea, or wanting more room, then spend Tuesday making a stricter budget or a tighter schedule. Too much structure feels suffocating. Too much freedom starts to feel irresponsible. Changing the calendar helps for a while, but both needs keep returning.",
+    "sourceMechanism": "Jupiter inconjunct Saturn can create restlessness that gets blamed on the people nearby. Part of the person wants expansion and another part wants order, so no arrangement feels comfortable for very long. The conflict is internal before it is logistical, which is why changing the schedule alone may not fix the restlessness."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 6,
+    "approvedBodyCell": "E6",
+    "ownerStatusCell": "G6"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,885 @@
+{
+  "schemaVersion": 1,
+  "release": "lived-experience-108-v1",
+  "approvedAt": "2026-08-10",
+  "sourceWorkbook": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+  "payloadsPath": "packages/astro-knowledge/review/lived-experience-108-v1/lived-experience-108-payloads.json",
+  "rowCount": 108,
+  "familyCounts": {
+    "natal-aspect-lived": 97,
+    "placement-house-lived": 8,
+    "planet-lived": 1,
+    "placement-sign-lived": 2
+  },
+  "invariants": {
+    "existingApprovedRowsSha256": "368872ae0c65bd9e8e33b03da8524fa399408baec71586ca1fcebab6d23671e8",
+    "existingApprovedRowsChanged": 0,
+    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))"
+  },
+  "rows": [
+    {
+      "workbookRow": 1,
+      "workbookKey": "jupiter|inconjunct|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/001-natal-aspect-lived-jupiter-quincunx-ascendant-exact-approval.json",
+      "payloadSha256": "7ff16fe5a6a468a397a72a2a34d102d5e8a67cdcc159cafdee4f9648ce601f9b"
+    },
+    {
+      "workbookRow": 2,
+      "workbookKey": "jupiter|inconjunct|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/midheaven",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/002-natal-aspect-lived-jupiter-quincunx-midheaven-exact-approval.json",
+      "payloadSha256": "044b94b2c145fbbe1307a94d5e15e8f88a9b5256fc31658a7d2a661f648f1c9c"
+    },
+    {
+      "workbookRow": 3,
+      "workbookKey": "jupiter|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/003-natal-aspect-lived-jupiter-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "70882554143f7f07c5a7f97111007a37a5dd19c0caa5b30420b3d251cd91af86"
+    },
+    {
+      "workbookRow": 4,
+      "workbookKey": "jupiter|inconjunct|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/004-natal-aspect-lived-jupiter-quincunx-pluto-exact-approval.json",
+      "payloadSha256": "0279524d7b0053d11fa99693fc83f4049393734b1a492166a1aa8aceb458170b"
+    },
+    {
+      "workbookRow": 5,
+      "workbookKey": "jupiter|inconjunct|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/saturn",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/005-natal-aspect-lived-jupiter-quincunx-saturn-exact-approval.json",
+      "payloadSha256": "b7fcaea2529916369bf119297bd0c22387cbcbf57340d18c331b8cc538106d25"
+    },
+    {
+      "workbookRow": 6,
+      "workbookKey": "jupiter|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/006-natal-aspect-lived-jupiter-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "586e236406b44d763e116c80a032d9bfda232650adbd37058ab8c6bf5f2d95a9"
+    },
+    {
+      "workbookRow": 7,
+      "workbookKey": "jupiter|inconjunct|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/uranus",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/007-natal-aspect-lived-jupiter-quincunx-uranus-exact-approval.json",
+      "payloadSha256": "0f41827de7bfa0602e4dec4daff18bf27518a69c9799e76fa547173695a20c4a"
+    },
+    {
+      "workbookRow": 8,
+      "workbookKey": "jupiter|sextile|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/008-natal-aspect-lived-jupiter-sextile-part-of-fortune-exact-approval.json",
+      "payloadSha256": "9efee7cf863cf2dd0f58161e7ee72d073bacee906d7c08f54e77de3cb36caace"
+    },
+    {
+      "workbookRow": 9,
+      "workbookKey": "jupiter|sextile|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/009-natal-aspect-lived-jupiter-sextile-south-node-exact-approval.json",
+      "payloadSha256": "02f6c0ac8f1769e0e999bcbddd91d13f0cd21fbf9219914c89e67707cc77d87d"
+    },
+    {
+      "workbookRow": 10,
+      "workbookKey": "mars|inconjunct|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/010-natal-aspect-lived-mars-quincunx-ascendant-exact-approval.json",
+      "payloadSha256": "219e937e4a532897196799f7a26a3f3015fd5b4d844385cb983695f21a25f4b0"
+    },
+    {
+      "workbookRow": 11,
+      "workbookKey": "mars|inconjunct|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/jupiter",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/011-natal-aspect-lived-mars-quincunx-jupiter-exact-approval.json",
+      "payloadSha256": "b65188507350239583639ce12b248d3e05a16a5bd121ab1b375e945adada4540"
+    },
+    {
+      "workbookRow": 12,
+      "workbookKey": "mars|inconjunct|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/midheaven",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/012-natal-aspect-lived-mars-quincunx-midheaven-exact-approval.json",
+      "payloadSha256": "b8f9f1478487a4aed7189eab69c9fdb2205940d67dd8fe808c1262ce6aac3cfd"
+    },
+    {
+      "workbookRow": 13,
+      "workbookKey": "mars|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/013-natal-aspect-lived-mars-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "d12c2f44f8047ed942fd3363c48f71e53451af6f77d4393306ba2f0eb5f76f3c"
+    },
+    {
+      "workbookRow": 14,
+      "workbookKey": "mars|inconjunct|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/014-natal-aspect-lived-mars-quincunx-pluto-exact-approval.json",
+      "payloadSha256": "b63e40bc94a8af00086379574ce97fab871c63bcaef2daa4c225fb8aa0dfbfbd"
+    },
+    {
+      "workbookRow": 15,
+      "workbookKey": "mars|inconjunct|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/saturn",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/015-natal-aspect-lived-mars-quincunx-saturn-exact-approval.json",
+      "payloadSha256": "c838758d8f1a0e73ce11108a19cfb75cfa034beb2f0a91c8046fcde87e2bd069"
+    },
+    {
+      "workbookRow": 16,
+      "workbookKey": "mars|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/016-natal-aspect-lived-mars-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "91088741523d9253b3fb0d8f27d131af0535d1fd8d483297d6dc18db880197cb"
+    },
+    {
+      "workbookRow": 17,
+      "workbookKey": "mars|inconjunct|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/uranus",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/017-natal-aspect-lived-mars-quincunx-uranus-exact-approval.json",
+      "payloadSha256": "cc8213cca088a10eb92a0c88c9496f5604c269265ecf76fb321b81b923edf729"
+    },
+    {
+      "workbookRow": 18,
+      "workbookKey": "mars|opposition|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/saturn",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/018-natal-aspect-lived-mars-opposition-saturn-exact-approval.json",
+      "payloadSha256": "6c981ccec0511d71fc3670768007b872691dbb4a35cbdec5f1256c0c9b4bc20a"
+    },
+    {
+      "workbookRow": 19,
+      "workbookKey": "mars|sextile|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/jupiter",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/019-natal-aspect-lived-mars-sextile-jupiter-exact-approval.json",
+      "payloadSha256": "60a9137bdc13d6d82885013c0bda9033ddf7051cd02417723d600652b8654d50"
+    },
+    {
+      "workbookRow": 20,
+      "workbookKey": "mars|sextile|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/020-natal-aspect-lived-mars-sextile-part-of-fortune-exact-approval.json",
+      "payloadSha256": "4dad888e87ac9fdd05897d815ffc9120110d9c841dd8abfe65a01a0b26ec6f87"
+    },
+    {
+      "workbookRow": 21,
+      "workbookKey": "mars|sextile|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/021-natal-aspect-lived-mars-sextile-south-node-exact-approval.json",
+      "payloadSha256": "dcb54ac89c63d7098c8ed9ef3baf2083079804fc3f3741b22d779595c2c6185f"
+    },
+    {
+      "workbookRow": 22,
+      "workbookKey": "mercury|inconjunct|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/022-natal-aspect-lived-mercury-quincunx-ascendant-exact-approval.json",
+      "payloadSha256": "14944ebc4070730b96f56cf1c82e70e415342268741fb27f54950ccd6be3fb2f"
+    },
+    {
+      "workbookRow": 23,
+      "workbookKey": "mercury|inconjunct|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/jupiter",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/023-natal-aspect-lived-mercury-quincunx-jupiter-exact-approval.json",
+      "payloadSha256": "152b2868d5d73dd8669df6a1cbeb00751fbac67ff85806ca4d360ba096cf6833"
+    },
+    {
+      "workbookRow": 24,
+      "workbookKey": "mercury|inconjunct|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/mars",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/024-natal-aspect-lived-mercury-quincunx-mars-exact-approval.json",
+      "payloadSha256": "6439e38726f25b22eb1a7d37b7ab3e1edbc91d1a6735006c5ea137d379ea0632"
+    },
+    {
+      "workbookRow": 25,
+      "workbookKey": "mercury|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/025-natal-aspect-lived-mercury-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "009d7bb269f7ab5b869b2383be9a1f7842bcb09750c016bf23c11c2bffdf6f9c"
+    },
+    {
+      "workbookRow": 26,
+      "workbookKey": "mercury|inconjunct|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/026-natal-aspect-lived-mercury-quincunx-pluto-exact-approval.json",
+      "payloadSha256": "b4121ece21158a7c6c169522a23fed768a044a0a1b867a3ae583c956ba6fc61d"
+    },
+    {
+      "workbookRow": 27,
+      "workbookKey": "mercury|inconjunct|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/saturn",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/027-natal-aspect-lived-mercury-quincunx-saturn-exact-approval.json",
+      "payloadSha256": "6293641c1479ecb7c2473ec821f5e636839e443104b0418736f7800c88f78d23"
+    },
+    {
+      "workbookRow": 28,
+      "workbookKey": "mercury|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/028-natal-aspect-lived-mercury-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "e7d83e7b3466bad94227ce5aeb5cf44b7616c5d01748f3c05e85037cb8df04ee"
+    },
+    {
+      "workbookRow": 29,
+      "workbookKey": "mercury|inconjunct|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/uranus",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/029-natal-aspect-lived-mercury-quincunx-uranus-exact-approval.json",
+      "payloadSha256": "b1d8d1acab281fcbfc560fdfa062c88273bb4fe257625f9c601ecc97ffb8611d"
+    },
+    {
+      "workbookRow": 30,
+      "workbookKey": "mercury|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/030-natal-aspect-lived-mercury-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "ae71b7fcbb210f98fda3a156b5b1b05fb0f228f2a897b601bb7af19bf9bedb35"
+    },
+    {
+      "workbookRow": 31,
+      "workbookKey": "mercury|sextile|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/mars",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/031-natal-aspect-lived-mercury-sextile-mars-exact-approval.json",
+      "payloadSha256": "9eced37b30c6d28c3e4c1cbced6a1a322f60c44c8637eb25d9bf2c5e2d95a32a"
+    },
+    {
+      "workbookRow": 32,
+      "workbookKey": "mercury|sextile|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/032-natal-aspect-lived-mercury-sextile-south-node-exact-approval.json",
+      "payloadSha256": "544709c424bfb9a26f332e3125230b47d6d12a60ef9e6993abf7e19fedbe30e9"
+    },
+    {
+      "workbookRow": 33,
+      "workbookKey": "mercury|square|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/033-natal-aspect-lived-mercury-square-pluto-exact-approval.json",
+      "payloadSha256": "ae0ed288ed8b662752e1b83b31f182ebd22118bb88230020f889b5fe32546d1c"
+    },
+    {
+      "workbookRow": 34,
+      "workbookKey": "moon|conjunction|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/mars",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/034-natal-aspect-lived-moon-conjunction-mars-exact-approval.json",
+      "payloadSha256": "20055f82ccde15d8b7068765729a717b2677437e345ddef081827009d296af5b"
+    },
+    {
+      "workbookRow": 35,
+      "workbookKey": "moon|conjunction|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/035-natal-aspect-lived-moon-conjunction-neptune-exact-approval.json",
+      "payloadSha256": "3085d9fdad694bc372e28cba6c3c561032a6c91cf87002bb9559473c14ba401e"
+    },
+    {
+      "workbookRow": 36,
+      "workbookKey": "moon|inconjunct|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/mars",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/036-natal-aspect-lived-moon-quincunx-mars-exact-approval.json",
+      "payloadSha256": "9b7ac4b605dfa8401fe2fb755e969b8bf008961baab310dd85e45b9485e50ff0"
+    },
+    {
+      "workbookRow": 37,
+      "workbookKey": "moon|inconjunct|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/037-natal-aspect-lived-moon-quincunx-neptune-exact-approval.json",
+      "payloadSha256": "e528a2bd3da8b41cdfb5951e25916fd3e00b94ce2567e65234b03fcea8413cc5"
+    },
+    {
+      "workbookRow": 38,
+      "workbookKey": "moon|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/038-natal-aspect-lived-moon-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "5317940911563a1bb4a84c58c3b1e8b3089edd076135db2670698d4c39143551"
+    },
+    {
+      "workbookRow": 39,
+      "workbookKey": "moon|inconjunct|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/saturn",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/039-natal-aspect-lived-moon-quincunx-saturn-exact-approval.json",
+      "payloadSha256": "f459f7319f80e92db49e2b9ad66312ec82d7710b125805a3e0616905a046233a"
+    },
+    {
+      "workbookRow": 40,
+      "workbookKey": "moon|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/040-natal-aspect-lived-moon-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "f1e48ecef7341fc98222749ab83ef2c6bda5f8e4769786af96fddf32e4754fb5"
+    },
+    {
+      "workbookRow": 41,
+      "workbookKey": "moon|inconjunct|venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/venus",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/041-natal-aspect-lived-moon-quincunx-venus-exact-approval.json",
+      "payloadSha256": "3bb085367c2b9955f5c6d05134573dc3f1986e3321dd13e7b79266817e6a268d"
+    },
+    {
+      "workbookRow": 42,
+      "workbookKey": "moon|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/042-natal-aspect-lived-moon-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "037121fac6ce7448bed7da5b66666b12f5bce557ab0d20fd211aec258e7b90cd"
+    },
+    {
+      "workbookRow": 43,
+      "workbookKey": "moon|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/043-natal-aspect-lived-moon-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "8be4a5ec60d8afc58d5abd439d2caee3c0b9262554c6bb539cf8823d70f15ea1"
+    },
+    {
+      "workbookRow": 44,
+      "workbookKey": "moon|opposition|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/044-natal-aspect-lived-moon-opposition-part-of-fortune-exact-approval.json",
+      "payloadSha256": "af88a46079188a783adfbbfdd07f61778ef9939bd5ba07bf50e8192041d4d5b1"
+    },
+    {
+      "workbookRow": 45,
+      "workbookKey": "moon|opposition|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/045-natal-aspect-lived-moon-opposition-pluto-exact-approval.json",
+      "payloadSha256": "b9bb68a9edb51df94ea835d08dcf45ef2aa5da22073d7345dd236345c9408387"
+    },
+    {
+      "workbookRow": 46,
+      "workbookKey": "moon|opposition|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/saturn",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/046-natal-aspect-lived-moon-opposition-saturn-exact-approval.json",
+      "payloadSha256": "57d759736181a24cfebf56e036b6c9471e0a0f6d0981c9bfe0f12142ab891cfd"
+    },
+    {
+      "workbookRow": 47,
+      "workbookKey": "moon|sextile|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/mars",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/047-natal-aspect-lived-moon-sextile-mars-exact-approval.json",
+      "payloadSha256": "ccb36c53adae6324d1f7927d7eeeca6e49546c62f46c0754954a913a1dee503a"
+    },
+    {
+      "workbookRow": 48,
+      "workbookKey": "moon|sextile|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/048-natal-aspect-lived-moon-sextile-neptune-exact-approval.json",
+      "payloadSha256": "a5d22bc5f2393d1da232ebe03639f0a0c398f4b3ad0f75a37f00193fb6d0fc34"
+    },
+    {
+      "workbookRow": 49,
+      "workbookKey": "neptune|inconjunct|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/049-natal-aspect-lived-neptune-quincunx-ascendant-exact-approval.json",
+      "payloadSha256": "148a5b5be3ece13617ae54b1a8ece98da725d59a12e455d89f6a658527b3acb9"
+    },
+    {
+      "workbookRow": 50,
+      "workbookKey": "neptune|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/050-natal-aspect-lived-neptune-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "da6829023c464a11af082f2175ea6380564183fc38a4b22a75b615871e525c67"
+    },
+    {
+      "workbookRow": 51,
+      "workbookKey": "neptune|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/051-natal-aspect-lived-neptune-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "fffc14bea1f14b57e40a446c39265b7ec2c51546dbfa574e6b5fe6e3ed8c243c"
+    },
+    {
+      "workbookRow": 52,
+      "workbookKey": "neptune|sextile|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/052-natal-aspect-lived-neptune-sextile-part-of-fortune-exact-approval.json",
+      "payloadSha256": "cd117e0cd9bb6ce265745115361f8b46a60d6e0c92e772da4b058b7c33b4df02"
+    },
+    {
+      "workbookRow": 53,
+      "workbookKey": "neptune|sextile|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/053-natal-aspect-lived-neptune-sextile-south-node-exact-approval.json",
+      "payloadSha256": "8db6efd2e158ecbb74a14e84b88c94bce53abfa699f24c7bf86827a0fd8d04ee"
+    },
+    {
+      "workbookRow": 54,
+      "workbookKey": "north_node|sextile|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/north-node/sextile/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/054-natal-aspect-lived-north-node-sextile-ascendant-exact-approval.json",
+      "payloadSha256": "5f1457b82dc7d9dae80b284e9bd165881b9068801798feaba44b864d84374423"
+    },
+    {
+      "workbookRow": 55,
+      "workbookKey": "pluto|inconjunct|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/055-natal-aspect-lived-pluto-quincunx-ascendant-exact-approval.json",
+      "payloadSha256": "f2ebe7d9204efb6992f7da684ce75bee41f160343c24d37923befee34b375b95"
+    },
+    {
+      "workbookRow": 56,
+      "workbookKey": "pluto|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/056-natal-aspect-lived-pluto-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "e12c3aee8b073983c3d9e78e3416262b59e35023a62fa6ff9676c7cb452184e0"
+    },
+    {
+      "workbookRow": 57,
+      "workbookKey": "pluto|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/057-natal-aspect-lived-pluto-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "4ce950a3ae486be3c77cf87609a384cd649b3dfd02ffe29f08bd42c47782b536"
+    },
+    {
+      "workbookRow": 58,
+      "workbookKey": "pluto|sextile|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/058-natal-aspect-lived-pluto-sextile-part-of-fortune-exact-approval.json",
+      "payloadSha256": "57bfc64676f2a5962f54a844ebda4971452c3dac56baf2abba49a6a547b32d7c"
+    },
+    {
+      "workbookRow": 59,
+      "workbookKey": "pluto|sextile|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/059-natal-aspect-lived-pluto-sextile-south-node-exact-approval.json",
+      "payloadSha256": "62fe2026171c8ee30f684ceca790bfc321c562d98ca8ce8de9059295bbaaec52"
+    },
+    {
+      "workbookRow": 60,
+      "workbookKey": "saturn|inconjunct|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/060-natal-aspect-lived-saturn-quincunx-ascendant-exact-approval.json",
+      "payloadSha256": "20bc4b7edf3c231630c56fc28ac50a95fbebd8068db61760391d897defd972ac"
+    },
+    {
+      "workbookRow": 61,
+      "workbookKey": "saturn|inconjunct|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/061-natal-aspect-lived-saturn-quincunx-neptune-exact-approval.json",
+      "payloadSha256": "91a5e11e6331c32328aa175ac0e2aaf5ed2024aaaf580ee757222560766f3a78"
+    },
+    {
+      "workbookRow": 62,
+      "workbookKey": "saturn|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/062-natal-aspect-lived-saturn-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "5d777d95815ea3363ab57babdafaf69aecaf8c1ab4f86af9810805e676d7de94"
+    },
+    {
+      "workbookRow": 63,
+      "workbookKey": "saturn|inconjunct|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/063-natal-aspect-lived-saturn-quincunx-pluto-exact-approval.json",
+      "payloadSha256": "a353ea4ebf75b7abd2f8fb94c1db8a3396c56ff96557db016cac5ac3ea564e10"
+    },
+    {
+      "workbookRow": 64,
+      "workbookKey": "saturn|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/064-natal-aspect-lived-saturn-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "e361ae07ed8e597b2896bc19f37b238e3dd0c2122cde6164f9e3ad7294f12329"
+    },
+    {
+      "workbookRow": 65,
+      "workbookKey": "saturn|inconjunct|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/uranus",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/065-natal-aspect-lived-saturn-quincunx-uranus-exact-approval.json",
+      "payloadSha256": "ea55b42033d7fface97e8ca55d03e094720bc2342d25f3224dc9bc780dfe684f"
+    },
+    {
+      "workbookRow": 66,
+      "workbookKey": "saturn|opposition|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/066-natal-aspect-lived-saturn-opposition-neptune-exact-approval.json",
+      "payloadSha256": "7b53ed3a4641aebf872576f9bfddd5b5cf7f1c2f89850c41d203f754977fb906"
+    },
+    {
+      "workbookRow": 67,
+      "workbookKey": "saturn|sextile|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/067-natal-aspect-lived-saturn-sextile-part-of-fortune-exact-approval.json",
+      "payloadSha256": "3f5ad61a2cb15ddc84211898f36ff9e3398132b2549d567c37784dd6a847fef7"
+    },
+    {
+      "workbookRow": 68,
+      "workbookKey": "saturn|sextile|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/068-natal-aspect-lived-saturn-sextile-south-node-exact-approval.json",
+      "payloadSha256": "bf30c37df6824de13d68c50eb4a681109c41f7b8d70e25393627ceeb38e62284"
+    },
+    {
+      "workbookRow": 69,
+      "workbookKey": "saturn|square|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/uranus",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/069-natal-aspect-lived-saturn-square-uranus-exact-approval.json",
+      "payloadSha256": "a0ac82f0c8c3ab95f4224ccc65352d66c10d144d8f5a9dd4c36a77408b6101df"
+    },
+    {
+      "workbookRow": 70,
+      "workbookKey": "south_node|inconjunct|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/quincunx/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/070-natal-aspect-lived-south-node-quincunx-ascendant-exact-approval.json",
+      "payloadSha256": "ccf15ead8e21db70a24b142618083b0e227458f4e5038a64d2279965fb4c5dc4"
+    },
+    {
+      "workbookRow": 71,
+      "workbookKey": "south_node|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/opposition/midheaven",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/071-natal-aspect-lived-south-node-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "66f194fa8e1c9b7bf890b4fb604dcf771f9056f5fdce80caef8bd0c4eca50331"
+    },
+    {
+      "workbookRow": 72,
+      "workbookKey": "south_node|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/square/ascendant",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/072-natal-aspect-lived-south-node-square-ascendant-exact-approval.json",
+      "payloadSha256": "d54edf7f0206a357892e7245b66dd35911f07ca549088610afdecc4318dbcb8e"
+    },
+    {
+      "workbookRow": 73,
+      "workbookKey": "sun|inconjunct|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/moon",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/073-natal-aspect-lived-sun-quincunx-moon-exact-approval.json",
+      "payloadSha256": "b66c0735f08cf643bd7567ad2e13650da50791b0f58caab39d3bd72782fa8cff"
+    },
+    {
+      "workbookRow": 74,
+      "workbookKey": "sun|inconjunct|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/074-natal-aspect-lived-sun-quincunx-neptune-exact-approval.json",
+      "payloadSha256": "87ee618f87dc5faac99f6e463c76c165fcef3bd3fda6517406679fb38e62aa8d"
+    },
+    {
+      "workbookRow": 75,
+      "workbookKey": "sun|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/075-natal-aspect-lived-sun-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "0ca2e7d203c531ebd5ac414e44b735940048022a5df4bcbc5c74cea21c4bbc92"
+    },
+    {
+      "workbookRow": 76,
+      "workbookKey": "sun|inconjunct|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/076-natal-aspect-lived-sun-quincunx-part-of-fortune-exact-approval.json",
+      "payloadSha256": "b58451adf7688f903eed7c049cb7837c5aaa123b3d50484d6b9f0b3c9d1f95b2"
+    },
+    {
+      "workbookRow": 77,
+      "workbookKey": "sun|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/077-natal-aspect-lived-sun-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "c609aff0c34b9561f46447eadbf176721ecc1ca24d7d081919301f0688fae86e"
+    },
+    {
+      "workbookRow": 78,
+      "workbookKey": "sun|opposition|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/078-natal-aspect-lived-sun-opposition-part-of-fortune-exact-approval.json",
+      "payloadSha256": "65eb3bfe343cf26d15aec649f61439bfb3ebe80c6621d3bd8533814e9d0f4bc5"
+    },
+    {
+      "workbookRow": 79,
+      "workbookKey": "sun|sextile|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/sextile/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/079-natal-aspect-lived-sun-sextile-neptune-exact-approval.json",
+      "payloadSha256": "5d1d0158f4ce449e2e90e678c1eac20e4d563cffa74b7d9168a261a0782b29cc"
+    },
+    {
+      "workbookRow": 80,
+      "workbookKey": "sun|square|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/square/moon",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/080-natal-aspect-lived-sun-square-moon-exact-approval.json",
+      "payloadSha256": "d3aad13231dba1c124972025ca864fe3c1dd6e19fb13497f8fd3a6929167dd8a"
+    },
+    {
+      "workbookRow": 81,
+      "workbookKey": "uranus|inconjunct|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/midheaven",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/081-natal-aspect-lived-uranus-quincunx-midheaven-exact-approval.json",
+      "payloadSha256": "145b012a5c71186f212f86a052c4df0cb309c6ff84042567bafda61b90285dea"
+    },
+    {
+      "workbookRow": 82,
+      "workbookKey": "uranus|inconjunct|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/082-natal-aspect-lived-uranus-quincunx-neptune-exact-approval.json",
+      "payloadSha256": "a3faee443026bfc50d023e7f34ebed5e2265d27ce2b80128206b53436f257000"
+    },
+    {
+      "workbookRow": 83,
+      "workbookKey": "uranus|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/083-natal-aspect-lived-uranus-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "c0e7540702f489390dc83e1c1c577c71a5d17e49e3a3742dbe456f9ebb2a3d92"
+    },
+    {
+      "workbookRow": 84,
+      "workbookKey": "uranus|inconjunct|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/084-natal-aspect-lived-uranus-quincunx-pluto-exact-approval.json",
+      "payloadSha256": "4e4cf6042ab026bfa3bc0412bb3b7120c6499e351921c773fd0e33b6a843f347"
+    },
+    {
+      "workbookRow": 85,
+      "workbookKey": "uranus|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/085-natal-aspect-lived-uranus-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "9386f8fcbd511ce31ebaf10a8da7cda6d4efab152d25d001964d214b753d8029"
+    },
+    {
+      "workbookRow": 86,
+      "workbookKey": "uranus|sextile|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/086-natal-aspect-lived-uranus-sextile-neptune-exact-approval.json",
+      "payloadSha256": "c09dc9d4960d07053ab71ba8d22746b8e6cff16293666b50a9114d4d8e96ef28"
+    },
+    {
+      "workbookRow": 87,
+      "workbookKey": "uranus|sextile|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/087-natal-aspect-lived-uranus-sextile-part-of-fortune-exact-approval.json",
+      "payloadSha256": "605397d64acee78918fcde29f03fc469152dee9ce9757f32a8d8d263a65bcfa0"
+    },
+    {
+      "workbookRow": 88,
+      "workbookKey": "uranus|sextile|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/088-natal-aspect-lived-uranus-sextile-south-node-exact-approval.json",
+      "payloadSha256": "8a912185d6a800a1a2632ddcbedefcb552be37ae3d2698632076e87103a47709"
+    },
+    {
+      "workbookRow": 89,
+      "workbookKey": "uranus|square|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/089-natal-aspect-lived-uranus-square-pluto-exact-approval.json",
+      "payloadSha256": "24de301981961df9e4d0530582f546e4cd15e0bb3685703ea424d247d0ba714d"
+    },
+    {
+      "workbookRow": 90,
+      "workbookKey": "venus|inconjunct|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/jupiter",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/090-natal-aspect-lived-venus-quincunx-jupiter-exact-approval.json",
+      "payloadSha256": "5bc25c15789d003f541d80ef9bdc216fc83cd95240793d166b20865e136391ef"
+    },
+    {
+      "workbookRow": 91,
+      "workbookKey": "venus|inconjunct|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/neptune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/091-natal-aspect-lived-venus-quincunx-neptune-exact-approval.json",
+      "payloadSha256": "8feba2f873cb52ea0ea13d1ef0aa4880b1184d4d28f0822344b528fdb1d1f683"
+    },
+    {
+      "workbookRow": 92,
+      "workbookKey": "venus|inconjunct|north_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/north-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/092-natal-aspect-lived-venus-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "eaceb46f5a5c6397d32e920e456f8bac7b0e5e6a9c72254122938f7018bc0dde"
+    },
+    {
+      "workbookRow": 93,
+      "workbookKey": "venus|inconjunct|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/saturn",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/093-natal-aspect-lived-venus-quincunx-saturn-exact-approval.json",
+      "payloadSha256": "0c7da57d4652691ca75c694d8cb1c4a7703a3dad14018c20ca15319c860f29ec"
+    },
+    {
+      "workbookRow": 94,
+      "workbookKey": "venus|inconjunct|south_node",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/south-node",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/094-natal-aspect-lived-venus-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "cc8166c74697d801254e354e77ce11525c752fb70ab310597fcc8e848a5f2297"
+    },
+    {
+      "workbookRow": 95,
+      "workbookKey": "venus|inconjunct|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/uranus",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/095-natal-aspect-lived-venus-quincunx-uranus-exact-approval.json",
+      "payloadSha256": "8e61f74fe409acb628be8ce8c2ea060eb1dfe233e4a3d1b4b8b616e9b34ec6c9"
+    },
+    {
+      "workbookRow": 96,
+      "workbookKey": "venus|sextile|part_of_fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/part-of-fortune",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/096-natal-aspect-lived-venus-sextile-part-of-fortune-exact-approval.json",
+      "payloadSha256": "cf0bb4f582e28e93053f058410358592e8fa93e4a2d6a21f3deb3ed81b30453c"
+    },
+    {
+      "workbookRow": 97,
+      "workbookKey": "venus|sextile|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/pluto",
+      "family": "natal-aspect-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/097-natal-aspect-lived-venus-sextile-pluto-exact-approval.json",
+      "payloadSha256": "eac1b20cb6a829fd9fb3e06b0daa85fd74ecbe429e878adba08b3c7ce1406d47"
+    },
+    {
+      "workbookRow": 98,
+      "workbookKey": "north-node|10th house",
+      "contentKey": "fallback-hook/placement-house-lived/north-node/10",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/098-placement-house-lived-north-node-10-exact-approval.json",
+      "payloadSha256": "c83fc42ea7f4b3a46b62e4a6764175439e957ccbb95550e19f0b12ffb59d1af8"
+    },
+    {
+      "workbookRow": 99,
+      "workbookKey": "part-of-fortune|10th house",
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/10",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/099-placement-house-lived-part-of-fortune-10-exact-approval.json",
+      "payloadSha256": "c4bfa750b1988fd70c790351ef3e5e8bdeff4d24a5f6d77fb0292111ed2c17d4"
+    },
+    {
+      "workbookRow": 100,
+      "workbookKey": "part-of-fortune|5th house",
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/5",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/100-placement-house-lived-part-of-fortune-5-exact-approval.json",
+      "payloadSha256": "440347a946cbcaac133f4e42350c05a2a2853f5489f1973e06e7e374c904fb79"
+    },
+    {
+      "workbookRow": 101,
+      "workbookKey": "part-of-fortune|6th house",
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/6",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/101-placement-house-lived-part-of-fortune-6-exact-approval.json",
+      "payloadSha256": "fdc57e510499e86abd71ba3230eee989f90737470e0f3a8a754a92e779640eff"
+    },
+    {
+      "workbookRow": 102,
+      "workbookKey": "part-of-fortune|7th house",
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/7",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/102-placement-house-lived-part-of-fortune-7-exact-approval.json",
+      "payloadSha256": "82f467b2b55e69bc0617cacdf6d75a98289476718159ba2d2883e2b62828de1f"
+    },
+    {
+      "workbookRow": 103,
+      "workbookKey": "part-of-fortune|8th house",
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/8",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/103-placement-house-lived-part-of-fortune-8-exact-approval.json",
+      "payloadSha256": "9aa9da9680e0a6cbbf3001cd0556805d47f058ead5e344b37ab456d9530702c3"
+    },
+    {
+      "workbookRow": 104,
+      "workbookKey": "jupiter",
+      "contentKey": "fallback-hook/planet-lived/jupiter",
+      "family": "planet-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/104-planet-lived-jupiter-exact-approval.json",
+      "payloadSha256": "b55591e6ca8955de1baf092f72de292462e776b7542f4b185c145646e76fb0b0"
+    },
+    {
+      "workbookRow": 105,
+      "workbookKey": "mars|cancer",
+      "contentKey": "fallback-hook/placement-sign-lived/mars/cancer",
+      "family": "placement-sign-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/105-placement-sign-lived-mars-cancer-exact-approval.json",
+      "payloadSha256": "1279bd6cc5adeb44c82a3988975f92e67b4d933e53b482305a1b4708590a5fae"
+    },
+    {
+      "workbookRow": 106,
+      "workbookKey": "mercury|aries",
+      "contentKey": "fallback-hook/placement-sign-lived/mercury/aries",
+      "family": "placement-sign-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/106-placement-sign-lived-mercury-aries-exact-approval.json",
+      "payloadSha256": "94759c8d8c8c2e3a40945ffb60d62b6420eb904053c9d8971d74df6c2d822ee9"
+    },
+    {
+      "workbookRow": 107,
+      "workbookKey": "moon|6th house",
+      "contentKey": "fallback-hook/placement-house-lived/moon/6",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/107-placement-house-lived-moon-6-exact-approval.json",
+      "payloadSha256": "f2a3ee040f45696e9ba6c0b73ca692b29efc25dca52d15074be5f38aa3de81a7"
+    },
+    {
+      "workbookRow": 108,
+      "workbookKey": "uranus|10th house",
+      "contentKey": "fallback-hook/placement-house-lived/uranus/10",
+      "family": "placement-house-lived",
+      "recordPath": "packages/astro-knowledge/review/lived-experience-108-v1/records/108-placement-house-lived-uranus-10-exact-approval.json",
+      "payloadSha256": "3f195dc1900795aa5c8b06078e6bba37e85f46ad973e7815e0068c41fa422dc0"
+    }
+  ]
+}

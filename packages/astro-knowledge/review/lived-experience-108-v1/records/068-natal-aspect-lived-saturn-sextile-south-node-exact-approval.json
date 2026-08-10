@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-068",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/south-node",
+  "workbookKey": "saturn|sextile|south_node",
+  "payloadSha256": "bf30c37df6824de13d68c50eb4a681109c41f7b8d70e25393627ceeb38e62284",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "The answer is no, the deadline cannot move, or the budget is smaller than you hoped. You are disappointed, but you do not spend the rest of the day treating the limit like proof that everything is going wrong. Saturn sextile the South Node can help you recognize the restriction faster and adjust what actually needs to change.",
+    "sourceMechanism": "Saturn sextile South Node can make karmic situations easier to use as lessons in humility. The correction is easier to recognize without every limit feeling like punishment."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 69,
+    "approvedBodyCell": "E69",
+    "ownerStatusCell": "G69"
+  },
+  "additionalBilledCalls": 0
+}

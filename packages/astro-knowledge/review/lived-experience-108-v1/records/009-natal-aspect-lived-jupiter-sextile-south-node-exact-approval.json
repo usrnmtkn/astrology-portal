@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-009",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/south-node",
+  "workbookKey": "jupiter|sextile|south_node",
+  "payloadSha256": "02f6c0ac8f1769e0e999bcbddd91d13f0cd21fbf9219914c89e67707cc77d87d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter sextile the South Node can make a familiar problem easier to recognize before frustration takes over. The same kind of situation comes back and you remember exactly how the last version went. That memory gives you a little more perspective this time, so the repeat does not have to feel like meaningless bad luck.",
+    "sourceMechanism": "Jupiter sextile South Node can make karmic situations easier to use as spiritual teaching. The larger meaning is easier to notice before frustration reduces the experience to bad luck."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 10,
+    "approvedBodyCell": "E10",
+    "ownerStatusCell": "G10"
+  },
+  "additionalBilledCalls": 0
+}

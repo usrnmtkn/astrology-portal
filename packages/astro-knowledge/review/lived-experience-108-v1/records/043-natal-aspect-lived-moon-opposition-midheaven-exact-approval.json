@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-043",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+  "workbookKey": "moon|opposition|midheaven",
+  "payloadSha256": "8be4a5ec60d8afc58d5abd439d2caee3c0b9262554c6bb539cf8823d70f15ea1",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon opposite the Midheaven can make one hard meeting change how you feel about your whole career by lunchtime. A boss criticizes the work, a public moment goes badly, or you feel embarrassed, and suddenly quitting sounds like the only reasonable response. The feeling deserves attention. It does not always deserve the final career decision.",
+    "sourceMechanism": "Moon opposite Midheaven can make public success especially difficult until objectivity is learned. Emotional reactions may repeatedly interfere with the role society expects the person to hold. Sensitivity is not the problem. Letting the first feeling run the professional decision is."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 44,
+    "approvedBodyCell": "E44",
+    "ownerStatusCell": "G44"
+  },
+  "additionalBilledCalls": 0
+}

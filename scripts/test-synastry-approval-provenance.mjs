@@ -17,6 +17,13 @@ const manifestPath = path.join(
 const synastryPrefix = "fallback-hook/synastry-pair/";
 const bondEffectPrefix = "fallback-hook/bond-effect-";
 const bondApprovalPrefix = "packages/astro-knowledge/review/bond-effect-directional-copy-v1/";
+const livedPrefixes = [
+  "fallback-hook/natal-aspect-lived/",
+  "fallback-hook/placement-house-lived/",
+  "fallback-hook/placement-sign-lived/",
+  "fallback-hook/planet-lived/",
+];
+const livedApprovalPrefix = "packages/astro-knowledge/review/lived-experience-108-v1/records/";
 const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
   "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
@@ -192,6 +199,48 @@ assert.throws(
   "Bond provenance gate must fail closed when an approved row is restated as reviewed.",
 );
 
+const livedRows = source.hookRows.filter((row) => (
+  livedPrefixes.some((prefix) => row.contentKey?.startsWith(prefix))
+));
+assert.equal(livedRows.length, 108, "Expected 108 lived-experience serving rows");
+
+function assertExactLivedApproval(row) {
+  assert.equal(row.review_status, "approved", `${row.contentKey}: lived-experience row must be approved`);
+  assert.equal(row.approval?.approvalLevel, "exact_owner_approved", `${row.contentKey}: lived approval level mismatch`);
+  assert.equal(row.approval?.approvedAt, "2026-08-10", `${row.contentKey}: lived approval date mismatch`);
+  assert.ok(
+    row.approval?.recordPath?.startsWith(livedApprovalPrefix),
+    `${row.contentKey}: lived approval record must use ${livedApprovalPrefix}`,
+  );
+  assert.match(row.approval?.payloadSha256 ?? "", shaPattern, `${row.contentKey}: lived payload hash missing`);
+  assert.equal(row.reader_only, true, `${row.contentKey}: lived row must be reader-only`);
+  assert.equal(row.render_policy, "reader-only-exact-lived-v1", `${row.contentKey}: lived render policy mismatch`);
+  assert.equal(Object.hasOwn(row, "body_you"), false, `${row.contentKey}: lived row must not synthesize body_you`);
+  assert.equal(Object.hasOwn(row, "body_they"), false, `${row.contentKey}: lived row must not synthesize body_they`);
+  const recordPath = path.join(repoRoot, row.approval.recordPath);
+  assert.ok(fs.existsSync(recordPath), `${row.contentKey}: lived approval record missing`);
+  const record = JSON.parse(fs.readFileSync(recordPath, "utf8"));
+  assert.equal(record.authorship, "owner_authored", `${row.contentKey}: lived authorship mismatch`);
+  assert.equal(record.contentKey, row.contentKey, `${row.contentKey}: lived record contentKey mismatch`);
+  assert.equal(record.approvalLevel, "exact_owner_approved", `${row.contentKey}: lived record approval level mismatch`);
+  assert.equal(record.payloadSha256, row.approval.payloadSha256, `${row.contentKey}: lived record hash mismatch`);
+  assert.equal(sha256(JSON.stringify(record.payload)), row.approval.payloadSha256, `${row.contentKey}: lived record payload hash mismatch`);
+  assert.equal(record.payload.body, row.body, `${row.contentKey}: lived body differs from exact record`);
+  assert.equal(record.payload.sourceMechanism, row.sourceMechanism, `${row.contentKey}: lived sourceMechanism differs from record`);
+  assert.equal(
+    record.sourceWorkbook.path,
+    "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    `${row.contentKey}: lived workbook provenance mismatch`,
+  );
+}
+
+for (const row of livedRows) assertExactLivedApproval(row);
+assert.throws(
+  () => assertExactLivedApproval({ ...livedRows[0], body: `${livedRows[0].body} changed` }),
+  /lived body differs from exact record/u,
+  "Lived provenance gate must fail closed when approved body text changes.",
+);
+
 console.log("Synastry approval provenance coverage:");
 console.log(`  rows: ${rows.length}`);
 console.log(`  approved: ${statusCounts.approved}`);
@@ -200,3 +249,4 @@ console.log(`  exact_owner_approved: ${levelCounts.exact_owner_approved}`);
 console.log(`  exact approval records resolved: ${exactApprovalRecordsResolved}`);
 console.log(`  owner_signoff_untraced: ${levelCounts.owner_signoff_untraced}`);
 console.log(`  bond-effect exact_owner_approved: ${bondRows.length}`);
+console.log(`  lived-experience exact_owner_approved: ${livedRows.length}`);

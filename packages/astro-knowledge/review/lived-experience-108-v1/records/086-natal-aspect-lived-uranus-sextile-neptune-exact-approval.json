@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-086",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/neptune",
+  "workbookKey": "uranus|sextile|neptune",
+  "payloadSha256": "c09dc9d4960d07053ab71ba8d22746b8e6cff16293666b50a9114d4d8e96ef28",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus sextile Neptune can make you curious about an idea you normally would have dismissed. You keep reading, try the practice, listen to the strange theory, or let somebody explain their belief without needing to agree by the end. Some questions get more interesting when you do not force an answer immediately.",
+    "sourceMechanism": "Uranus sextile Neptune can make spiritual and philosophical exploration feel exciting rather than threatening. Idealism, intuition, psychic sensitivity, and interest in different belief systems can all expand together. A larger spiritual view becomes possible without requiring one tradition to supply every answer."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 87,
+    "approvedBodyCell": "E87",
+    "ownerStatusCell": "G87"
+  },
+  "additionalBilledCalls": 0
+}
