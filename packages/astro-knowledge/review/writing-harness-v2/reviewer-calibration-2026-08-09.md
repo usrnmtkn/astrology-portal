@@ -75,9 +75,9 @@ Per-fixture results:
 
 The complete provider response IDs, decisions, categories, reasoning effort, and token usage are preserved in `lilith-live-semantic-review-calibration-round-1.json`.
 
-## Deterministic follow-up note
+## Deterministic follow-up
 
-The combined deterministic-plus-semantic pipeline reports 11/12 gold because the Capricorn card triggers the existing noun-level `sign_house_separation` detector. The live semantic reviewer correctly passes the exact owner-locked card. This did not affect the owner's live-model calibration bar and was not relaxed as part of this job.
+The owner subsequently aligned the noun-level detector with the canonical cluster rule: one life-domain example is legitimate; a cluster is the warning sign. The detector now requires four distinct governed domain nouns. The exact Capricorn gold card passes, the all-career Capricorn negative still fails, and every other gold and negative result remains unchanged.
 
 ## Governance result
 

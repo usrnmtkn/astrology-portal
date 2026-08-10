@@ -76,7 +76,7 @@ The final gate checks em dashes, forbidden `whether`, governed banned words and 
 
 ## 10. Gold per-fixture results
 
-The preserved Terra-low baseline passed 5/12 gold cards. After owner-authorized calibration, GPT-5.6 Terra-medium passed all 12/12 exact owner-locked cards in one 20-call round. The deterministic Pisces conflict was fixed by exempting exact protected owner lines from banned-vocabulary scanning while retaining the ban for unprotected copy. The combined pipeline is 11/12 because the existing noun-level house-bleed detector still flags the exact owner-locked Capricorn card; the semantic model passes it.
+The preserved Terra-low baseline passed 5/12 gold cards. After owner-authorized calibration, GPT-5.6 Terra-medium passed all 12/12 exact owner-locked cards in one 20-call round. The deterministic Pisces conflict was fixed by exempting exact protected owner lines from banned-vocabulary scanning while retaining the ban for unprotected copy. The noun-level house-bleed detector now follows the owner's cluster rule: one life-domain example is allowed, while a cluster of four distinct associated-house nouns blocks. All 12 gold cards pass the complete deterministic gate, and the all-career Capricorn negative still fails.
 
 ## 11. Negative per-fixture results
 
@@ -113,4 +113,4 @@ The authority order is exact owner approval, owner corrections, owner corpus, lo
 
 ## 17. Remaining known gaps and next family
 
-The candidate writer has not been promoted and no generated copy was approved. The live reviewer is calibrated on the Lilith vertical slice at 12/12 gold and 8/8 negatives. The remaining deterministic gap is the exact owner-locked Capricorn card triggering the noun-level house-bleed detector; it was not relaxed in this calibration. The next generalization target remains the other Sky Placement families, followed by house-horoscope cores.
+The candidate writer has not been promoted and no generated copy was approved. The live reviewer is calibrated on the Lilith vertical slice at 12/12 gold and 8/8 negatives, and the complete deterministic gate now passes all 12 gold cards while retaining every negative fixture's expected blocking category. The next generalization target remains the other Sky Placement families, followed by house-horoscope cores.
