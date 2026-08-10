@@ -1,6 +1,6 @@
--- Run against a seeded environment with at least two social profiles.
--- Every mutation is rolled back. A raised exception indicates an authorization
--- or revocation regression.
+-- Run against a migrated, disposable database. The test creates its own users
+-- and profiles, and every mutation is rolled back. A raised exception indicates
+-- an authorization or revocation regression.
 
 begin;
 
@@ -19,42 +19,31 @@ declare
   created_invitation_id uuid;
   invitation_token text;
 begin
-  select profile.user_id
-    into member_a
-  from public.social_profiles profile
-  order by profile.user_id
-  limit 1;
+  member_a := gen_random_uuid();
+  member_b := gen_random_uuid();
 
-  if member_a is null then
-    raise exception 'Authorization test requires at least one seeded social profile.';
-  end if;
+  insert into auth.users (id)
+  values (member_a), (member_b);
 
-  select profile.user_id
-    into member_b
-  from public.social_profiles profile
-  where profile.user_id <> member_a
-  order by profile.user_id
-  limit 1;
-
-  if member_b is null then
-    member_b := gen_random_uuid();
-
-    insert into auth.users (id)
-    values (member_b);
-
-    insert into public.social_profiles (
-      user_id,
-      handle,
-      display_name,
-      discoverable
-    )
-    values (
+  insert into public.social_profiles (
+    user_id,
+    handle,
+    display_name,
+    discoverable
+  )
+  values
+    (
+      member_a,
+      'auth_test_' || left(replace(member_a::text, '-', ''), 8),
+      'Authorization Test A',
+      true
+    ),
+    (
       member_b,
-      'codex_test_' || left(replace(member_b::text, '-', ''), 8),
-      'Codex Authorization Test',
+      'auth_test_' || left(replace(member_b::text, '-', ''), 8),
+      'Authorization Test B',
       true
     );
-  end if;
 
   select profile.display_name
     into member_b_name

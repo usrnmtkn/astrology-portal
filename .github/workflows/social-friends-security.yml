@@ -39,14 +39,18 @@ jobs:
 
   database-authorization:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      SUPABASE_TEST_DB_URL: ${{ secrets.SUPABASE_TEST_DB_URL }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.113.0
+      - name: Start ephemeral Supabase database
+        run: supabase db start --workdir apps/web
+      - name: Apply migrations to a clean database
+        run: supabase db reset --local --workdir apps/web
       - name: Run rollback-only cross-user authorization test
-        if: env.SUPABASE_TEST_DB_URL != ''
-        run: psql "$SUPABASE_TEST_DB_URL" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/social_friend_authorization.sql
-      - name: Explain missing test database
-        if: env.SUPABASE_TEST_DB_URL == ''
-        run: echo "Set SUPABASE_TEST_DB_URL to enable the rollback-only cross-user database gate."
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/social_friend_authorization.sql
+      - name: Stop ephemeral Supabase database
+        if: always()
+        run: supabase stop --workdir apps/web --no-backup
