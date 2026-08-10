@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-037",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/saturn",
+  "workbookKey": "lilith|conjunction|saturn",
+  "payloadSha256": "2017b697507b96a7286f58328e0c3c7cf859e7ae7853dab103f280e570756f2a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to create a strict system, follow it until it feels unbearable, and then abandon it all at once. The schedule, budget, or standard is meant to keep life under control, but it can also reproduce the limits you resent most. This often comes from learning that discipline required suppressing desire and that freedom meant rejecting structure. Build one rule around what you actually need rather than what you think should control you.",
+    "astroHint": "Lilith conjunct Saturn can make rules and refusal come from the same part of you.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Saturn primitive: Saturn describes time, structure, boundaries, maturity, responsibility, limits, discipline, and the lessons that ask someone to become more capable and realistic. It shows where life may move slowly, but also where lasting strength can be built. Pair frame: The obligation reads as a cage and the refusal finally gets representation. Aspect operation: Conjunction fuses the two functions and intensifies them. Traditional nature: takes the combined nature of the two planets. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/saturn.json; packages/astro-knowledge/data/pairs/saturn-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/saturn/conjunction."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 38,
+    "approvedBodyCell": "E38",
+    "approvedAstroHintCell": "F38",
+    "ownerStatusCell": "H38"
+  },
+  "additionalBilledCalls": 0
+}

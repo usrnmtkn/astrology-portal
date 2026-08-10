@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-007",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/moon",
+  "workbookKey": "lilith|conjunction|moon",
+  "payloadSha256": "26573a9f00f10101ab8f451aa07c95a971cfd13dd89cd50a1441a6e5c03096f7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to say you are fine until a basic need changes your whole mood. Hunger, rest, privacy, reassurance, or time alone can become difficult to ask for directly, even when the need itself is simple. This often begins with learning that your feelings were too much, badly timed, or inconvenient for the people around you. Name the need while it is still small enough to say in one sentence.",
+    "astroHint": "Lilith conjunct the Moon can make private needs feel urgent when they have been hidden or treated as unacceptable.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Moon primitive: The Moon describes the emotional body: instinct, memory, mood, safety, belonging, and the private responses that happen before everything has been explained. It shows what helps someone feel settled and what can unsettle them when their needs have gone unnoticed. Pair frame: Restlessness inside a pleasant routine; ask what the want underneath would order if it could speak. Aspect operation: Conjunction fuses the two functions and intensifies them. Traditional nature: takes the combined nature of the two planets. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/moon.json; packages/astro-knowledge/data/pairs/moon-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/moon/conjunction."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 8,
+    "approvedBodyCell": "E8",
+    "approvedAstroHintCell": "F8",
+    "ownerStatusCell": "H8"
+  },
+  "additionalBilledCalls": 0
+}

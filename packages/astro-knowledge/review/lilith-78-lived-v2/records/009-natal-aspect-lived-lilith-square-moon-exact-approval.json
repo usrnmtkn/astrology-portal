@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-009",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/moon",
+  "workbookKey": "lilith|square|moon",
+  "payloadSha256": "c218cc63351be82ecc9525e3abc92b9f3fd5a6df54563101e57f5b3aaf63d8bc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to let a need go unspoken until it appears as a sharp reply, a quick change of mood, or resentment over something small. The dishes, the late message, or the changed plan becomes harder to tolerate than it would have been on its own. This usually happens because you learned that asking earlier would not help or would make you seem demanding. Say what would help before listing everything that has already gone wrong.",
+    "astroHint": "Lilith square the Moon can make a small domestic irritation bring up older feelings about needs that went unheard.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Moon primitive: The Moon describes the emotional body: instinct, memory, mood, safety, belonging, and the private responses that happen before everything has been explained. It shows what helps someone feel settled and what can unsettle them when their needs have gone unnoticed. Pair frame: The mood with no name that is a want with no permission; comfort eating standing in for desire. Aspect operation: Square creates friction that presses the two functions into a forced adjustment. Traditional nature: malefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/moon.json; packages/astro-knowledge/data/pairs/moon-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/moon/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 10,
+    "approvedBodyCell": "E10",
+    "approvedAstroHintCell": "F10",
+    "ownerStatusCell": "H10"
+  },
+  "additionalBilledCalls": 0
+}

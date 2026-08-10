@@ -46,6 +46,7 @@ export interface HookRow {
   render_policy?: string;
   reader_only?: boolean;
   sourceMechanism?: string;
+  astroHint?: string;
   fact_line?: string;
   aspect_insert?: string;
   opening?: string;
@@ -92,7 +93,7 @@ export interface EmptyHouseFacts {
   voice?: Voice;
 }
 export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx"; voice: Voice }
-export interface RenderResult { headline: string; parts: string[]; body: string; templateKey: string }
+export interface RenderResult { headline: string; parts: string[]; body: string; templateKey: string; astroHint?: string }
 export interface RenderOpts { allowUnreviewed?: boolean }
 
 export class SourceGapError extends Error {}
@@ -310,6 +311,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
         parts: [exactLived.body ?? ""],
         body: exactLived.body ?? "",
+        astroHint: exactLived.astroHint,
         templateKey: exactLived.contentKey,
       };
     }

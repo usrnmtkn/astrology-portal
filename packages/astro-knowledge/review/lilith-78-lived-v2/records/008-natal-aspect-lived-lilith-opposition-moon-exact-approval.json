@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-008",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/moon",
+  "workbookKey": "lilith|opposition|moon",
+  "payloadSha256": "cbb0374f8461dd169a5701c8cc0504f67f462af9ae85b650d88af02c4d637170",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to anticipate what everyone else needs and then resent being asked for one more thing. At other times, you refuse care or closeness before anyone has actually demanded too much. Underneath is often a history in which being needed brought connection but left little room for your own feelings. Ask what is actually expected before choosing between overgiving and withdrawing.",
+    "astroHint": "Lilith opposite the Moon can pull you between caring for other people and refusing any expectation that you will keep doing it.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Moon primitive: The Moon describes the emotional body: instinct, memory, mood, safety, belonging, and the private responses that happen before everything has been explained. It shows what helps someone feel settled and what can unsettle them when their needs have gone unnoticed. Pair frame: The mood with no name that is a want with no permission; comfort eating standing in for desire. Aspect operation: Opposition brings the two functions face-to-face through polarity, awareness, or confrontation. Traditional nature: malefic-leaning, oriented to awareness and relationship. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/moon.json; packages/astro-knowledge/data/pairs/moon-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/moon/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 9,
+    "approvedBodyCell": "E9",
+    "approvedAstroHintCell": "F9",
+    "ownerStatusCell": "H9"
+  },
+  "additionalBilledCalls": 0
+}
