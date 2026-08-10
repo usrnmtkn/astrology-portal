@@ -1,0 +1,33 @@
+{
+  "version": "card-judge-v3.1-live-evaluation-run-2",
+  "status": "errored",
+  "startedAt": "2026-08-10T02:41:38.344Z",
+  "completedAt": "2026-08-10T02:41:38.345Z",
+  "completedCalls": 0,
+  "authorization": {
+    "authorizedCalls": 20,
+    "retriesAuthorized": 0,
+    "run": 2
+  },
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "high",
+  "retries": 0,
+  "approvedSources": {
+    "rubric": {
+      "path": "tldr-astro-phrasebank/TLDR-CARD-JUDGE-RUBRIC-V3-1-DRAFT.md",
+      "sha256": "13efcb054da3187238d1f58c177c2f11071b58c27f65c5fe4337b2e9966b70ca"
+    },
+    "critique": {
+      "path": "tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-1-DRAFT.md",
+      "sha256": "ce9c9556e8325fd16d417baf5277e12c05064f89e61fb9cec6f3ffc4dabedf35"
+    },
+    "mechanisms": {
+      "path": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-mechanism-records.json",
+      "sha256": "23a1bf1d97daeb66f741b8967d64b702e90518d2ce3dd95f4ee3e297526a68e3"
+    }
+  },
+  "candidateWriterActive": false,
+  "writerPromotionAuthorized": false,
+  "error": "Unknown astrology prose role: CARD_REVIEWER_V3_1",
+  "rows": []
+}
