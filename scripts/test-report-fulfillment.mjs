@@ -469,6 +469,8 @@ assert.ok(adminPanelSource.includes("Report granted. The fulfillment queue was r
 assert.ok(adminPanelSource.includes("The report was granted, but the fulfillment queue could not refresh"), "A post-grant refresh failure must warn the owner not to grant again.");
 assert.ok(adminPanelSource.includes("scrollIntoView"), "Successful comp grants must move the new queue row into view.");
 assert.ok(adminPanelSource.includes("ACTIVE_COMP_EXISTS") || adminSource.includes("ACTIVE_COMP_EXISTS"), "Duplicate comp conflicts need a stable UI contract.");
+assert.ok(adminPanelSource.includes("admin-report-feedback"), "Fulfillment feedback must render in the page flow instead of covering queue actions.");
+assert.ok(adminPanelSource.includes("Dismiss fulfillment message"), "Fulfillment feedback must be dismissible.");
 for (const route of ["../api/report-checkout.ts", "../api/report-customer-portal.ts"]) {
   const source = fs.readFileSync(new URL(route, import.meta.url), "utf8");
   assert.ok(source.indexOf('reportBillingMode() === "free_test"') < source.indexOf("!process.env.STRIPE_SECRET_KEY"), `${route} must disable Stripe before inspecting Stripe credentials.`);

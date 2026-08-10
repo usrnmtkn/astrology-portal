@@ -120,7 +120,12 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
           <button type="button" onClick={() => void load()} disabled={loading}><RefreshCw size={16} aria-hidden="true" />Refresh</button>
         </div>
       </section>
-      {message && <p className={`admin-save-toast ${messageTone === "error" ? "is-error" : ""}`} role="status">{message}</p>}
+      {message && (
+        <div className={`admin-report-feedback ${messageTone === "error" ? "is-error" : ""}`} role={messageTone === "error" ? "alert" : "status"}>
+          <p>{message}</p>
+          <button type="button" onClick={() => setMessage("")} aria-label="Dismiss fulfillment message">Dismiss</button>
+        </div>
+      )}
       <section className="admin-content-toolbar">
         <div><p className="admin-eyebrow">{dashboard?.billingMode === "free_test" ? "Free-test shadow launch" : "Owner-only comp path"}</p><h3>Grant report</h3><p>Creates the fulfillment envelope directly, with no Stripe request, then pauses before any billed model call.</p></div>
         <div className="admin-toolbar-actions">
