@@ -108,7 +108,11 @@ function summarize(results, metadata = {}) {
   };
 }
 
-const outputPath = path.resolve("packages/astro-knowledge/review/writing-harness-v2/lilith-live-semantic-review-eval.json");
+const round = argValue("--round");
+const outputName = round
+  ? `lilith-live-semantic-review-calibration-round-${round}.json`
+  : "lilith-live-semantic-review-eval.json";
+const outputPath = path.resolve("packages/astro-knowledge/review/writing-harness-v2", outputName);
 if (process.argv.includes("--recompute-existing")) {
   const existing = JSON.parse(fs.readFileSync(outputPath, "utf8"));
   const report = summarize(existing.results, {
@@ -131,7 +135,8 @@ loadExplicitEnv(argValue("--env-file"));
 if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured.");
 
 const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
-const reasoningEffort = "low";
+const reasoningEffort = argValue("--reasoning-effort") ?? process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium";
+if (!new Set(["medium", "high", "xhigh"]).has(reasoningEffort)) throw new Error("Live calibration reasoning effort must be medium, high, or xhigh.");
 const gold = readJsonl(path.resolve("data/writing/owner-approved-examples.jsonl"));
 const negatives = readJsonl(path.resolve("data/writing/negative-regression-fixtures.jsonl"));
 if (gold.length !== 12 || negatives.length !== 8) throw new Error("Live vertical slice requires exactly 12 gold and 8 negative fixtures.");
@@ -192,7 +197,8 @@ for (const fixture of fixtures) {
     register: "collective",
     modelClient,
     expectedPlaceholders: fixture.fixtureKind === "gold" ? ["exitDate"] : [],
-    requiredFields: fixture.fixtureKind === "gold" ? ["tagline", "hook", "lived", "turn"] : ["body"]
+    requiredFields: fixture.fixtureKind === "gold" ? ["tagline", "hook", "lived", "turn"] : ["body"],
+    protectedOwnerLines: fixture.fixtureKind === "gold" ? Object.values(draft) : []
   });
   const modelCategories = [...new Set((liveModelReview?.violations ?? []).map((item) => item.category))];
   const finalCategories = [...new Set(finalReview.violations.map((item) => item.category))];
@@ -224,6 +230,7 @@ for (const fixture of fixtures) {
   fs.writeFileSync(outputPath, `${JSON.stringify({
     schemaVersion: 1,
     status: "running",
+    round: round ?? null,
     model,
     reasoningEffort,
     callCount,
@@ -234,6 +241,7 @@ for (const fixture of fixtures) {
 }
 
 const report = summarize(results, {
+  round: round ?? null,
   model,
   reasoningEffort,
   callCount,
