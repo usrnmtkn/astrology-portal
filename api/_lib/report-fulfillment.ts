@@ -5,7 +5,14 @@ import type { ReportFulfillmentStore, FulfillmentJobRow, FulfillmentReportRow } 
 import { verifyReportFactLock } from "./report-fact-lock.ts";
 import { judgeReportUnit, type ReportJudgeResult } from "./report-judge.ts";
 import { createReportMailProvider, type ReportMailProvider } from "./report-mail.ts";
-import { assertReportDomainFulfillmentReady, assembleReportGenerationPayload, validateReportDraft, type ReportDraft } from "./report-generation.ts";
+import {
+  assertReportDomainFulfillmentReady,
+  assembleReportGenerationPayload,
+  validateReportDraft,
+  type ReportDomain,
+  type ReportDraft,
+  type ReportHorizon
+} from "./report-generation.ts";
 import { reportSystemPromptVersions } from "./report-prompt-versions.ts";
 import type { ReportModelCall } from "./report-model-client.ts";
 import { runReportWriterChain } from "./report-writer-chain.ts";
@@ -18,6 +25,17 @@ const unitsByHorizon = {
   "6_months": ["overview", "period-theme", "phase-1", "phase-2", "key-dates", "review"],
   "12_months": ["overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"]
 } as const;
+
+const personalHealthYearUnits = [
+  "overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn",
+  "health-capacity", "key-dates", "review-current-year", "winter-next"
+] as const;
+
+function fulfillmentUnitIds(reportDomain: ReportDomain, reportHorizon: ReportHorizon) {
+  return reportDomain === "personal_health" && reportHorizon === "12_months"
+    ? personalHealthYearUnits
+    : unitsByHorizon[reportHorizon];
+}
 
 export type ReportFactsCalculator = (report: FulfillmentReportRow) => Promise<{ facts: Record<string, unknown>; facts_engine: string }>;
 export type ReportJudgeCall = typeof judgeReportUnit;
@@ -101,7 +119,7 @@ export async function processReportFulfillmentJob(input: {
   let validatorAttempts = report.attempt_counts?.validator ?? 0;
   let judgeAttempts = report.attempt_counts?.judge ?? 0;
 
-  for (const unitId of unitsByHorizon[report.report_horizon]) {
+  for (const unitId of fulfillmentUnitIds(report.report_domain, report.report_horizon)) {
     const existing = await input.store.unit(report.id, unitId);
     if (existing?.source_snapshot?.fulfillmentPassed === true) {
       const snapshot = existing.source_snapshot;

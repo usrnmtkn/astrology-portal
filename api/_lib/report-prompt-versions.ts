@@ -2,8 +2,10 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-export const REPORT_CRITIQUE_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-OWNER.md";
-export const REPORT_JUDGE_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-OWNER.md";
+export const REPORT_CRITIQUE_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md";
+export const REPORT_JUDGE_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md";
+export const REPORT_CRITIQUE_PROMPT_VERSION = "report-critique-checklist-v3";
+export const REPORT_JUDGE_PROMPT_VERSION = "report-judge-rubric-v3.1";
 
 export function loadVersionedReportPrompt(sourcePath: string) {
   const text = fs.readFileSync(path.join(process.cwd(), sourcePath), "utf8");
