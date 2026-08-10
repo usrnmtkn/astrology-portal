@@ -116,6 +116,7 @@
     "typecheck": "npm run typecheck -w @tldr/web",
     "visual:smoke": "npm run qa:friends-loading-matrix && playwright test -c playwright.config.ts --workers=1 tests/visual/swisseph-web-data-parity.spec.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/client-facing-user-flows.spec.ts tests/visual/fallback-cache-self-heal.spec.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts",
     "audit:daily-glance-voice": "npm run audit:daily-glance-voice -w @tldr/astro-knowledge --",
+    "audit:record-verdict": "npm run audit:record-verdict -w @tldr/astro-knowledge --",
     "build:fallback-manifest": "node scripts/generate-fallback-package-manifest.mjs",
     "build:knowledge": "npm run build -w @tldr/astro-knowledge",
     "build:web": "npm run build -w @tldr/web"

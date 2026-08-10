@@ -26,6 +26,13 @@ const {
   renderModelInput
 } = require("./daily-glance-writer-runtime.js");
 const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
+const {
+  agreementSummary,
+  appendPendingFlags,
+  ledgerPath,
+  loadLedger,
+  writeLedger
+} = require("./daily-glance-verdict-ledger.js");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
@@ -243,6 +250,10 @@ function renderAuditMarkdown(report) {
       `- Estimated Step 4 total: $${report.candidateGeneration.totalCostUsd.toFixed(6)}`
     ] : []),
     `- Estimated all-call total: $${(Number(report.calibration.estimatedCostUsd || 0) + report.estimatedCostUsd + Number(report.candidateGeneration?.totalCostUsd || 0)).toFixed(6)}`,
+    `- Owner-verdict ledger: ${report.ledgerAgreement.ruled} ruled, ${report.ledgerAgreement.pending} pending`,
+    `- Judge agreement with ruled owner verdicts: ${report.ledgerAgreement.agreementRate === null ? "not yet measurable" : `${(report.ledgerAgreement.agreementRate * 100).toFixed(1)}% (${report.ledgerAgreement.agreements}/${report.ledgerAgreement.ruled})`}`,
+    `- Agreement definition: ${report.ledgerAgreement.definition}`,
+    `- Ledger: \`${path.relative(repoRoot, ledgerPath)}\``,
     "- Ordering: lowest triage score first, then most failed dimensions. In flag-only mode this is a reading queue, not a quality ranking.",
     "",
     "## Ranked flags",
@@ -647,18 +658,22 @@ async function runServingAudit(sourceRows, calibration) {
     },
     rows: ranked
   };
-  writeFile(auditJsonPath, JSON.stringify(report, null, 2));
-  writeFile(auditMarkdownPath, renderAuditMarkdown(report));
   return report;
 }
 
 async function main() {
   const args = process.argv.slice(2);
-  if (!args.includes("--authorize-live")) {
+  const reportOnly = args.includes("--report-only");
+  if (!reportOnly && !args.includes("--authorize-live")) {
     throw new Error("Pass --authorize-live to bill. Owner authorization required.");
   }
-  loadLocalEnv();
-  if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured.");
+  if (reportOnly && !args.includes("--from-existing-audit")) {
+    throw new Error("--report-only requires --from-existing-audit so it cannot trigger model calls.");
+  }
+  if (!reportOnly) {
+    loadLocalEnv();
+    if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured.");
+  }
   const resolvedCalibrationReportPath = latestCalibrationReportPath();
   const calibration = readJson(resolvedCalibrationReportPath);
   const durableMode = judgeOperatingMode();
@@ -677,15 +692,20 @@ async function main() {
     usage: calibration.usage,
     estimatedCostUsd: calibration.estimatedCostUsd
   };
+  const ledger = loadLedger();
+  const appendedLedgerEntries = appendPendingFlags(ledger, audit);
+  writeLedger(ledger);
+  audit.ledgerAgreement = agreementSummary(ledger);
+  audit.ledgerAgreement.path = path.relative(repoRoot, ledgerPath);
+  audit.ledgerAgreement.appendedThisRun = appendedLedgerEntries;
   const dodont = buildDodontInventory(sourceRows, calibration);
+  writeFile(auditJsonPath, JSON.stringify(audit, null, 2));
+  writeFile(auditMarkdownPath, renderAuditMarkdown(audit));
   process.stdout.write(`audit=${path.relative(repoRoot, auditMarkdownPath)}\n`);
   process.stdout.write(`auditJson=${path.relative(repoRoot, auditJsonPath)}\n`);
   process.stdout.write(`dodont=${path.relative(repoRoot, dodont.path)}\n`);
   process.stdout.write(`mode=${audit.operatingMode} scoreOnes=${audit.summary.scoreOnes} step2CostUsd=${audit.estimatedCostUsd}\n`);
-  if (args.includes("--report-only")) {
-    writeFile(auditJsonPath, JSON.stringify(audit, null, 2));
-    writeFile(auditMarkdownPath, renderAuditMarkdown(audit));
-  } else if (!args.includes("--audit-only")) {
+  if (!reportOnly && !args.includes("--audit-only")) {
     const candidates = await generateBottomFive(audit);
     process.stdout.write(`candidates=${candidates.outputDirectory}\n`);
     process.stdout.write(`step4CostUsd=${candidates.totalCostUsd}\n`);

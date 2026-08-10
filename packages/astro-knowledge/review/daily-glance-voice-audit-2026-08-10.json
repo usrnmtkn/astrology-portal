@@ -3919,5 +3919,16 @@
     "totalCostUsd": 2.038025,
     "outputDirectory": "packages/astro-knowledge/review/daily-glance-voice-audit-2026-08-10-candidates",
     "governance": "GR-003 and DG-P1: candidates remain UNAPPROVED and cannot change serving rows or review statuses."
+  },
+  "ledgerAgreement": {
+    "flagged": 66,
+    "pending": 66,
+    "ruled": 0,
+    "agreements": 0,
+    "disagreements": 0,
+    "agreementRate": null,
+    "definition": "owner-rewrote and took-candidate mean the flag was actionable; kept means the owner rejected the flag. Pending entries are excluded from the agreement denominator.",
+    "path": "packages/astro-knowledge/review/daily-glance-judge-verdict-ledger.json",
+    "appendedThisRun": 66
   }
 }
