@@ -401,6 +401,34 @@ await assert.rejects(processReportFulfillmentJob({
   store: unauthorizedStore, calculateFacts, callModel: modelCallWithCrash(), judgeCall
 }), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
 
+const preflightStore = createMemoryStore();
+preflightStore.reports.set("preflight-report", {
+  ...structuredClone([...store.reports.values()][0]), id: "preflight-report", user_id: "preflight-user",
+  fulfillment_status: "queued", facts: {}, facts_engine: "pending", facts_hash: null
+});
+preflightStore.entitlements.set("preflight-ent", { id: "preflight-ent", user_id: "preflight-user", status: "active", source: "comp", product_key: "general_1m" });
+let preflightClaimed = false;
+preflightStore.claimFacts = async () => { preflightClaimed = true; return true; };
+let preflightJobPatch = null;
+preflightStore.updateJob = async (_id, patch) => { preflightJobPatch = patch; };
+preflightStore.claimJobs = async () => [authorizedJob({
+  id: "preflight-job", report_id: "preflight-report", entitlement_id: "preflight-ent",
+  state: "running", step: "calculating", attempt: 1
+})];
+const unavailableCalculation = Object.assign(async (report) => calculateFacts(report), {
+  async preflight() {
+    throw new Error("CALCULATION_API_PREFLIGHT_FAILED: POST /timing/report-window contract probe returned 404; expected 422 for an intentionally incomplete payload.");
+  }
+});
+const preflightBatch = await runReportFulfillmentBatch({
+  workerId: "preflight-worker", store: preflightStore, calculateFacts: unavailableCalculation,
+  callModel: modelCallWithCrash(), judgeCall
+});
+assert.equal(preflightClaimed, false, "The calculation API preflight must run before a facts-window claim.");
+assert.equal(preflightBatch.processed[0].retryable, false, "A missing calculation endpoint must fail terminally without retries.");
+assert.equal(preflightJobPatch.state, "exception");
+assert.match(preflightJobPatch.last_error, /CALCULATION_API_PREFLIGHT_FAILED/u);
+
 const concurrentStore = createMemoryStore();
 const concurrentBase = {
   user_id: "concurrent-user", subject_id: null, report_horizon: "1_month",
