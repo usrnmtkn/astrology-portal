@@ -26,6 +26,10 @@ const livedPrefixes = [
 const lived108ApprovalPrefix = "packages/astro-knowledge/review/lived-experience-108-v1/records/";
 const lilithLivedPrefix = "fallback-hook/natal-aspect-lived/lilith/";
 const lilithLivedApprovalPrefix = "packages/astro-knowledge/review/lilith-78-lived-v2/records/";
+const lilithLivedPayloadsPath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/lilith-78-lived-v2/lilith-78-lived-payloads.json",
+);
 const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
   "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
@@ -99,6 +103,19 @@ function exactServingPayload(row) {
 const sourceText = fs.readFileSync(sourcePath, "utf8");
 const source = JSON.parse(sourceText);
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+const lilithLivedPayloads = JSON.parse(fs.readFileSync(lilithLivedPayloadsPath, "utf8"));
+const lilithLivedPayloadsByContentKey = new Map(
+  Object.entries(lilithLivedPayloads.payloads ?? {}).map(([workbookKey, entry]) => {
+    const [object, aspect, counterpart] = workbookKey.split("|");
+    assert.equal(object, "lilith", `${workbookKey}: canonical lived payload object mismatch`);
+    assert.ok(aspect && counterpart, `${workbookKey}: canonical lived payload key is incomplete`);
+    return [
+      `${lilithLivedPrefix}${aspect}/${counterpart.replaceAll("_", "-")}`,
+      entry,
+    ];
+  }),
+);
+assert.equal(lilithLivedPayloadsByContentKey.size, 78, "Expected 78 canonical Lilith payload hashes");
 const rows = source.hookRows.filter((row) => row.contentKey?.startsWith(synastryPrefix));
 const statusCounts = {};
 const levelCounts = { exact_owner_approved: 0, owner_signoff_untraced: 0 };
@@ -239,6 +256,23 @@ function assertExactLivedApproval(row) {
   assert.equal(record.payload.body, row.body, `${row.contentKey}: lived body differs from exact record`);
   assert.equal(record.payload.sourceMechanism, row.sourceMechanism, `${row.contentKey}: lived sourceMechanism differs from record`);
   if (isLilith) {
+    const canonicalEntry = lilithLivedPayloadsByContentKey.get(row.contentKey);
+    assert.ok(canonicalEntry, `${row.contentKey}: canonical Lilith payload is missing`);
+    assert.equal(
+      sha256(JSON.stringify(canonicalEntry.payload)),
+      canonicalEntry.sha256,
+      `${row.contentKey}: canonical Lilith payload hash is stale`,
+    );
+    assert.equal(
+      row.approval.payloadSha256,
+      canonicalEntry.sha256,
+      `${row.contentKey}: serving approval hash differs from canonical Lilith payload`,
+    );
+    assert.deepEqual(
+      record.payload,
+      canonicalEntry.payload,
+      `${row.contentKey}: exact record differs from canonical Lilith payload`,
+    );
     assert.equal(record.payload.astroHint, row.astroHint, `${row.contentKey}: lived astroHint differs from record`);
   } else {
     assert.equal(Object.hasOwn(row, "astroHint"), false, `${row.contentKey}: original lived row unexpectedly gained astroHint`);
