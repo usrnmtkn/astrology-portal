@@ -6,13 +6,17 @@ type Dashboard = {
   metrics: {
     orders: number; entitlementStatuses: Record<string, number>; fulfillmentStatuses: Record<string, number>;
     jobStates: Record<string, number>; exceptionDepth: number; auditDepth: number;
-    averageDeliveryMinutes: number | null; averageJudgeScore: number | null; averageTokenCount: number; averageTokenSpendUsd: number;
+    averageDeliveryMinutes: number | null; averageJudgeScore: number | null;
+    averageAcceptedTokenCount: number; averageTotalTokenCount: number; averageEstimatedSpendUsd: number;
     validatorPassRate: number | null; judgePassRate: number | null; attemptDistribution: Record<string, number>; judgeScoreDistribution: Record<string, number>;
   };
   reports: Array<Record<string, unknown>>;
   audits: Array<Record<string, unknown>>;
   users: Array<{ id: string; label: string }>;
-  callEstimates: Record<string, { unitCount: number; cleanPathCalls: number; recommendedCallBudget: number; tokenBudget: number; configuredMaxCostUsd: number }>;
+  callEstimates: Record<string, {
+    unitCount: number; cleanPathCalls: number; expectedCallBudget: number; safetyMarginCalls: number;
+    recommendedCallBudget: number; tokenBudget: number; planning: { estimatedCostUsd: number; totalTokens: number } | null;
+  }>;
 };
 
 export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
@@ -96,20 +100,23 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
           <article className="admin-status-card"><span>Judge average</span><strong>{metrics.averageJudgeScore?.toFixed(3) ?? "n/a"}</strong></article>
           <article className="admin-status-card"><span>Validator pass</span><strong>{metrics.validatorPassRate === null ? "n/a" : `${(metrics.validatorPassRate * 100).toFixed(1)}%`}</strong></article>
           <article className="admin-status-card"><span>Judge pass</span><strong>{metrics.judgePassRate === null ? "n/a" : `${(metrics.judgePassRate * 100).toFixed(1)}%`}</strong></article>
-          <article className="admin-status-card"><span>Tokens/report</span><strong>{metrics.averageTokenCount.toFixed(0)}</strong></article>
-          <article className="admin-status-card"><span>Spend/report</span><strong>${metrics.averageTokenSpendUsd.toFixed(4)}</strong></article>
+          <article className="admin-status-card"><span>Accepted tokens/report</span><strong>{metrics.averageAcceptedTokenCount.toFixed(0)}</strong></article>
+          <article className="admin-status-card"><span>Total tokens/report</span><strong>{metrics.averageTotalTokenCount.toFixed(0)}</strong></article>
+          <article className="admin-status-card"><span>Estimated spend/report</span><strong>${metrics.averageEstimatedSpendUsd.toFixed(4)}</strong></article>
           <article className="admin-status-card"><span>Attempt distribution</span><strong><code>{JSON.stringify(metrics.attemptDistribution)}</code></strong></article>
           <article className="admin-status-card"><span>Judge distribution</span><strong><code>{JSON.stringify(metrics.judgeScoreDistribution)}</code></strong></article>
         </div>
       )}
       <div className="admin-content-table-scroll">
         <table className="admin-content-table">
-          <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Attempts</th><th>Last failure</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Estimated USD</th><th>Attempts</th><th>Last failure</th><th>Actions</th></tr></thead>
           <tbody>{dashboard?.reports.map((report) => (
             <tr key={String(report.id)}>
               <td><code>{String(report.id)}</code></td>
               <td>{String(report.entitlement_source)}</td>
               <td>{String(report.report_domain)}</td><td>{String(report.report_horizon)}</td><td>{String(report.fulfillment_status)}</td>
+              <td>{Number(report.token_count ?? 0).toLocaleString()} / {Number(report.token_count_total ?? 0).toLocaleString()}</td>
+              <td>${Number(report.token_spend_usd_estimate ?? 0).toFixed(4)} est.</td>
               <td><code>{JSON.stringify(report.attempt_counts ?? {})}</code></td>
               <td><code>{JSON.stringify(Array.isArray(report.failure_history) ? report.failure_history.at(-1) ?? null : null)}</code></td>
               <td>

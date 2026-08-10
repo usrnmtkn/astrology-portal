@@ -65,8 +65,9 @@ async function dashboard() {
       validatorPassRate: validatorOutcomes.length ? validatorOutcomes.filter(Boolean).length / validatorOutcomes.length : null,
       judgePassRate: judgeOutcomes.length ? judgeOutcomes.filter(Boolean).length / judgeOutcomes.length : null,
       attemptDistribution,
-      averageTokenCount: reports.length ? reports.reduce((sum, row) => sum + Number(row.token_count ?? 0), 0) / reports.length : 0,
-      averageTokenSpendUsd: reports.length ? reports.reduce((sum, row) => sum + Number(row.token_spend_usd ?? 0), 0) / reports.length : 0
+      averageAcceptedTokenCount: reports.length ? reports.reduce((sum, row) => sum + Number(row.token_count ?? 0), 0) / reports.length : 0,
+      averageTotalTokenCount: reports.length ? reports.reduce((sum, row) => sum + Number(row.token_count_total ?? 0), 0) / reports.length : 0,
+      averageEstimatedSpendUsd: reports.length ? reports.reduce((sum, row) => sum + Number(row.token_spend_usd_estimate ?? 0), 0) / reports.length : 0
     },
     reports: reportsWithSource,
     jobs,

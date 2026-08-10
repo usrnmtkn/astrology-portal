@@ -8,7 +8,8 @@ export type FulfillmentJobRow = {
 export type FulfillmentReportRow = {
   id: string; user_id: string; subject_id: string | null; report_domain: ReportDomain; report_horizon: ReportHorizon;
   period_start: string; period_end: string; facts: Record<string, unknown>; facts_engine: string; facts_hash: string | null;
-  fulfillment_status: string; prompt_versions: Record<string, unknown>; token_count: number; attempt_counts: { validator?: number; judge?: number };
+  fulfillment_status: string; prompt_versions: Record<string, unknown>; token_count: number; token_count_total?: number;
+  token_spend_usd_estimate?: number; attempt_counts: { validator?: number; judge?: number };
   failure_history: unknown[];
 };
 export type FulfillmentEntitlementRow = { id: string; user_id: string; status: string; product_key: string; period_start: string; period_end: string };
@@ -20,7 +21,11 @@ export type ReportFulfillmentStore = {
   entitlement(id: string): Promise<FulfillmentEntitlementRow | null>;
   updateReport(id: string, patch: Record<string, unknown>): Promise<void>;
   updateJob(id: string, patch: Record<string, unknown>): Promise<void>;
-  consumeAuthorizedCall(jobId: string, authorizationToken: string): Promise<number>;
+  beginAuthorizedCall(jobId: string, authorizationToken: string, attempt: { provider: string; model: string; schemaName: string }): Promise<{ callId: string; callNumber: number }>;
+  finishAuthorizedCall(callId: string, result: {
+    state: "complete" | "error" | "interrupted"; inputTokens?: number; cachedInputTokens?: number; outputTokens?: number;
+    totalTokens?: number; estimatedCostUsd?: number; responseId?: string; error?: string;
+  }): Promise<boolean>;
   reusableFacts(report: FulfillmentReportRow): Promise<{ facts: Record<string, unknown>; facts_hash: string; facts_engine: string } | null>;
   claimFacts(report: FulfillmentReportRow, workerId: string): Promise<boolean>;
   releaseFactsClaim(report: FulfillmentReportRow): Promise<void>;
@@ -52,10 +57,25 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
     entitlement: (id) => admin.selectOne("report_entitlements", new URLSearchParams({ id: `eq.${id}`, select: "*" })),
     async updateReport(id, patch) { await admin.update("user_reports", `id=eq.${id}`, patch); },
     async updateJob(id, patch) { await admin.update("report_fulfillment_jobs", `id=eq.${id}`, patch); },
-    async consumeAuthorizedCall(jobId, authorizationToken) {
-      return admin.request<number>("rpc/consume_report_fulfillment_call", {
+    async beginAuthorizedCall(jobId, authorizationToken, attempt) {
+      return admin.request<{ callId: string; callNumber: number }>("rpc/begin_report_fulfillment_call", {
         method: "POST",
-        body: JSON.stringify({ job_id: jobId, call_authorization_token: authorizationToken })
+        body: JSON.stringify({
+          job_id: jobId, call_authorization_token: authorizationToken,
+          call_provider: attempt.provider, call_model: attempt.model, call_schema_name: attempt.schemaName
+        })
+      });
+    },
+    async finishAuthorizedCall(callId, result) {
+      return admin.request<boolean>("rpc/finish_report_fulfillment_call", {
+        method: "POST",
+        body: JSON.stringify({
+          call_id: callId, call_state: result.state,
+          call_input_tokens: result.inputTokens ?? 0, call_cached_input_tokens: result.cachedInputTokens ?? 0,
+          call_output_tokens: result.outputTokens ?? 0, call_total_tokens: result.totalTokens ?? 0,
+          call_estimated_cost_usd: result.estimatedCostUsd ?? 0,
+          call_response_id: result.responseId ?? null, call_error: result.error ?? null
+        })
       });
     },
     reusableFacts: (report) => admin.selectOne("report_facts_bundles", new URLSearchParams({

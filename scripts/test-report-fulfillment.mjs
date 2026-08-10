@@ -8,12 +8,18 @@ import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } fr
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { createReportMailProvider } from "../api/_lib/report-mail.ts";
 import { reportUrl } from "../api/_lib/report-http.ts";
+import { estimateReportModelCost, estimateReportPlanningProfile, reportModelPricing } from "../api/_lib/report-model-pricing.ts";
 import { releaseReviewedReport } from "../api/_lib/report-release.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
-import { enforceReportRevisionStopRule, ReportStopRuleError } from "../api/_lib/report-writer-chain.ts";
+import { assembleReportGenerationPayload } from "../api/_lib/report-generation.ts";
+import {
+  enforceReportRevisionStopRule, ReportRevisionScopeError, ReportStopRuleError,
+  runReportWriterChain, spliceReportRevision
+} from "../api/_lib/report-writer-chain.ts";
 
 process.env.REPORT_AUTO_PUBLISH = "false";
 const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
+const spliceReplay = JSON.parse(fs.readFileSync(new URL("./fixtures/report-run1-overview-splice-replay.json", import.meta.url), "utf8"));
 const skuCatalog = JSON.parse(fs.readFileSync(new URL("../config/report-sku-catalog-v1.json", import.meta.url), "utf8"));
 const ruling = fs.readFileSync(REPORT_AUTOMATION_RULING_PATH, "utf8");
 assert.ok(ruling.includes(`**Version:** \`${REPORT_AUTOMATION_RULING_VERSION}\``));
@@ -39,6 +45,13 @@ delete process.env.REPORT_BILLING_MODE;
 
 process.env.REPORT_AUTO_PUBLISH = "true";
 delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
+assert.equal(reportCallEstimate("12_months").expectedCallBudget, 44);
+assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 11);
+assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 55);
+assert.equal(reportFulfillmentConfig().tokenBudget, 1_450_000);
+assert.equal(reportModelPricing().version, "2026-08-10");
+assert.equal(estimateReportModelCost("gpt-5.6-sol", { inputTokens: 1_000_000, outputTokens: 0, totalTokens: 1_000_000 }), 5);
+assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.3415);
 delete process.env.REPORT_JUDGE_THRESHOLD;
 assert.equal(reportFulfillmentConfig().judgeThreshold, 0.85, "V3.1 must default to the owner-approved 0.85 threshold.");
 assert.equal(reportFulfillmentConfig().autoPublishEnabled, false, "Auto-publish requires the owner ruling version as well as its feature flag.");
@@ -67,6 +80,73 @@ assert.throws(() => enforceReportRevisionStopRule(scopedDraft, scopedRevision, [
   id: "multi-1", category: "interpretive_gap", location: "body", sentence_index: 1,
   quote: "SECOND_SENTENCE.", evidence: "FIXTURE_ONLY", instruction: "FIXTURE_ONLY"
 }]), ReportStopRuleError, "The same multi-paragraph edit without a scope declaration must fail.");
+
+const spliceDefects = [
+  { id: "splice-body", category: "unlived_abstraction", location: "body", sentence_index: 1, scope_start: 1, scope_end: 2, quote: "SECOND_SENTENCE. THIRD_SENTENCE.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY" },
+  { id: "splice-timing", category: "astrology_chronology", location: "timing", sentence_index: 0, scope_start: 0, scope_end: 0, quote: "FIXTURE_ONLY_TIMING.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY" }
+];
+const spliceInput = { ...scopedDraft, timing: "FIXTURE_ONLY_TIMING." };
+const spliced = spliceReportRevision(spliceInput, spliceDefects, { replacements: [
+  { defect_id: "splice-body", location: "body", scope_start: 1, scope_end: 2, replacement: "REPLACED_SCOPE." },
+  { defect_id: "splice-timing", location: "timing", scope_start: 0, scope_end: 0, replacement: "REPLACED_TIMING." }
+] });
+assert.equal(spliced.body, "FIRST_SENTENCE.\n\nREPLACED_SCOPE.\n\nFOURTH_SENTENCE.", "Runtime must splice multi-defect replacements in one response.");
+assert.equal(spliced.timing, "REPLACED_TIMING.");
+assert.ok(spliced.body.startsWith(spliceInput.body.slice(0, spliceInput.body.indexOf("SECOND_SENTENCE."))), "Bytes before a named scope must remain identical.");
+assert.ok(spliced.body.endsWith(spliceInput.body.slice(spliceInput.body.indexOf("FOURTH_SENTENCE."))), "Bytes after a named scope must remain identical.");
+assert.throws(() => spliceReportRevision(spliceInput, spliceDefects, { replacements: [
+  { defect_id: "splice-body", location: "summary", scope_start: 1, scope_end: 2, replacement: "SPILL." },
+  { defect_id: "splice-timing", location: "timing", scope_start: 0, scope_end: 0, replacement: "REPLACED_TIMING." }
+] }), ReportRevisionScopeError, "A changed location/index token must be rejected as scope spill.");
+
+assert.throws(() => enforceReportRevisionStopRule(spliceReplay.draft, spliceReplay.failedWholeUnitRevision, spliceReplay.defects), ReportStopRuleError,
+  "Run 1's whole-unit revision must preserve the recorded old stop-rule failure.");
+const replaySpliced = spliceReportRevision(spliceReplay.draft, spliceReplay.defects, { replacements: [
+  { defect_id: "defect-1", location: "body", scope_start: 0, scope_end: 0, replacement: "Private work, unfinished obligations, and changing responsibilities develop before their public result appears." },
+  { defect_id: "defect-2", location: "timing", scope_start: 0, scope_end: 0, replacement: "February 18, 2026 through February 18, 2027" }
+] });
+assert.equal(replaySpliced.timing, "February 18, 2026 through February 18, 2027");
+assert.ok(replaySpliced.body.includes("You may spend the first half of the year finishing work privately"));
+assert.equal(replaySpliced.action, spliceReplay.draft.action, "Replay must leave every unnamed field byte-identical.");
+
+const missingComparisonPayload = assembleReportGenerationPayload({
+  reportId: "fixture-missing-comparisons", reportDomain: "general", reportHorizon: "12_months", unitId: "overview", frozenFacts: frozen
+});
+assert.ok(missingComparisonPayload.ownerComparisonSet.length >= 2, "The assembled Jupiter-capable report packet must include its V3 owner comparison set.");
+delete missingComparisonPayload.ownerComparisonSet;
+let missingComparisonProviderCalls = 0;
+await assert.rejects(runReportWriterChain({ payload: missingComparisonPayload, callModel: async () => {
+  missingComparisonProviderCalls += 1;
+  throw new Error("Provider must not be called.");
+} }), /REPORT_COMPARISON_SET_MISSING/u);
+assert.equal(missingComparisonProviderCalls, 0, "Missing owner comparisons must fail closed before a billed draft call.");
+
+const spliceChainPayload = assembleReportGenerationPayload({
+  reportId: "fixture-splice-chain", reportDomain: "general", reportHorizon: "12_months", unitId: "overview", frozenFacts: frozen
+});
+const spliceChainDraft = {
+  headline: "FIXTURE_ONLY_HEADLINE.", tldr: "FIXTURE_ONLY_TLDR.", summary: "FIXTURE_ONLY_SUMMARY.",
+  body: "FIXTURE_ONLY_FIRST. FIXTURE_ONLY_SECOND.", action: "FIXTURE_ONLY_ACTION.",
+  timing: "FIXTURE_ONLY_OLD_TIMING.", sections: []
+};
+const spliceChainDefects = [
+  { id: "chain-body", category: "density_violation", location: "body", sentence_index: 0, scope_start: 0, scope_end: 0, quote: "FIXTURE_ONLY_FIRST.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE" },
+  { id: "chain-timing", category: "astrology_chronology", location: "timing", sentence_index: 0, scope_start: 0, scope_end: 0, quote: "FIXTURE_ONLY_OLD_TIMING.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE" }
+];
+const spliceChainSchemas = [];
+const spliceChain = await runReportWriterChain({ payload: spliceChainPayload, callModel: async (input) => {
+  spliceChainSchemas.push(input.schemaName);
+  const value = input.schemaName === "report_unit_draft" ? spliceChainDraft
+    : input.schemaName === "report_unit_critique" ? { result: "defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: spliceChainDefects }
+      : { replacements: [
+        { defect_id: "chain-body", location: "body", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_REPLACED." },
+        { defect_id: "chain-timing", location: "timing", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_NEW_TIMING." }
+      ] };
+  return { value, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
+} });
+assert.deepEqual(spliceChainSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_revision_spans"], "All named defects must be revised in one span-only call.");
+assert.equal(spliceChain.revised.body, "FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECOND.");
+assert.equal(spliceChain.revised.summary, spliceChainDraft.summary, "The writer chain must keep unnamed text byte-identical.");
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
@@ -171,13 +251,15 @@ function createMemoryStore() {
     async entitlement(id) { return entitlements.get(id) ?? null; },
     async updateReport(id, patch) { Object.assign(reports.get(id), patch); },
     async updateJob() {},
-    async consumeAuthorizedCall(jobId, token) {
+    async beginAuthorizedCall(jobId, token, attempt) {
       if (token !== "fixture-authorization") throw new Error("REPORT_CALL_AUTHORIZATION_REQUIRED");
       const key = `calls:${jobId}`;
       const next = Number(facts.get(key) ?? 0) + 1;
       facts.set(key, next);
-      return next;
+      facts.set(`call:${jobId}:${next}`, { ...attempt, state: "authorized" });
+      return { callId: `${jobId}:${next}`, callNumber: next };
     },
+    async finishAuthorizedCall(callId, result) { facts.set(`finished:${callId}`, result); return true; },
     async reusableFacts(report) { return facts.get(`${report.user_id}:${report.report_horizon}:${report.period_start}`) ?? null; },
     async claimFacts(report) {
       const key = `${report.user_id}:${report.report_horizon}:${report.period_start}`;
@@ -209,8 +291,13 @@ function modelCallWithCrash(crashAt = Infinity) {
   let calls = 0;
   const call = async (input) => {
     calls += 1;
-    await input.beforeProviderCall?.();
-    if (calls === crashAt) throw new Error("FIXTURE_ONLY_CRASH");
+    const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
+    await input.beforeProviderCall?.(attempt);
+    if (calls === crashAt) {
+      const error = new Error("FIXTURE_ONLY_CRASH");
+      await input.onProviderCallError?.(attempt, error);
+      throw error;
+    }
     if (input.schemaName === "report_unit_draft") {
       assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*INTERNAL PRE-DRAFT EXTRACTION \(REQUIRED\)[\s\S]*REPORT_GENERATION_PAYLOAD/u);
     }
@@ -218,15 +305,17 @@ function modelCallWithCrash(crashAt = Infinity) {
       assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE[\s\S]*COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARISON_SET/u);
       assert.match(input.prompt, /Never return flatness or lived_prose as a defect category\./u);
     }
-    return {
+    const result = {
       value: input.schemaName === "report_unit_critique" ? {
         result: "no_defects",
         applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
         defects: []
       } : structuredClone(modelDraft),
-      model: "FIXTURE_ONLY_MODEL", provider: "FIXTURE_ONLY_PROVIDER",
+      model: input.model, provider: input.provider,
       usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
     };
+    await input.afterProviderCall?.(attempt, result);
+    return result;
   };
   call.count = () => calls;
   return call;
@@ -265,7 +354,7 @@ for (const [index, sku] of activeSkus.entries()) {
   store.entitlements.set(entitlementId, { id: entitlementId, user_id: "user-1", status: "active", source: isCompEndToEnd ? "comp" : "stripe", product_key: sku.key, period_start: frozen.startsAt.slice(0, 10), period_end: factsForHorizon(sku.reportHorizon).endsAt.slice(0, 10) });
   const providerMock = modelCallWithCrash();
   const meteredJudgeCall = isCompEndToEnd ? async (judgeInput) => {
-    await judgeInput.callModel({ provider: "FIXTURE_ONLY_PROVIDER", model: "FIXTURE_ONLY_MODEL", prompt: "FIXTURE_ONLY", schemaName: "fixture_judge_meter", schema: {} });
+    await judgeInput.callModel({ provider: "openai", model: "gpt-5.6-terra", prompt: "FIXTURE_ONLY", schemaName: "fixture_judge_meter", schema: {} });
     return judgeCall();
   } : judgeCall;
   const result = await processReportFulfillmentJob({
