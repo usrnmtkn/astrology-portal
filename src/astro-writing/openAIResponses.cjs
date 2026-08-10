@@ -1,17 +1,26 @@
 "use strict";
 
 const {
+  candidateCardAstrologyWritingInstructions,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions
 } = require("./canonicalInstructions.cjs");
 
-const ROLES = new Set(["MEANING_PLANNER", "WRITER", "REVIEWER", "REVISER"]);
+const CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS = `ROLE: TLDR ASTRO CARD JUDGE V3 CANDIDATE
+
+This role is calibration-only and is not active in production. Apply only the supplied CARD-surface rubric and same-surface comparison evidence. Return findings only. Never return a verdict, severity, score, or replacement prose.`;
+
+const ROLES = new Set(["MEANING_PLANNER", "WRITER", "REVIEWER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3", "CARD_REVIEWER_V3"]);
 
 function instructionsForRole(role, taskInstructions = "") {
   if (!ROLES.has(role)) throw new Error(`Unknown astrology prose role: ${role}`);
-  const canonical = role === "REVIEWER"
-    ? canonicalAstrologyReviewInstructions
-    : canonicalAstrologyWritingInstructions;
+  const canonical = role === "CARD_REVIEWER_V3"
+    ? CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS
+    : role === "CARD_WRITER_V3" || role === "CARD_REVISER_V3"
+      ? candidateCardAstrologyWritingInstructions
+      : role === "REVIEWER"
+        ? canonicalAstrologyReviewInstructions
+        : canonicalAstrologyWritingInstructions;
   return taskInstructions.trim() ? `${canonical}\n\n${taskInstructions.trim()}` : canonical;
 }
 
@@ -48,6 +57,7 @@ async function callOpenAIResponses({
 }
 
 module.exports = {
+  CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS,
   callOpenAIResponses,
   instructionsForRole
 };

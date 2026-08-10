@@ -21,6 +21,8 @@ const STOCK_TROPES = [
   "toilet seat"
 ];
 
+const INTERNAL_GUARD_FIELDS = new Set(["DO_NOT_ASSUME", "do_not_assume"]);
+
 const HOUSE_BLEED_NOUNS = Object.freeze({
   aries: ["appearance", "body image", "first impression", "identity", "self-presentation"],
   taurus: ["salary", "income", "budget", "bank", "wealth"],
@@ -42,9 +44,32 @@ const HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS = 4;
 
 function copyText(copy) {
   if (typeof copy === "string") return copy;
-  return Object.values(copy ?? {}).flatMap((value) => (
-    typeof value === "string" ? [value] : Array.isArray(value) ? value.filter((item) => typeof item === "string") : []
-  )).join("\n");
+  return Object.entries(copy ?? {})
+    .filter(([field]) => !INTERNAL_GUARD_FIELDS.has(field))
+    .flatMap(([, value]) => (
+      typeof value === "string" ? [value] : Array.isArray(value) ? value.filter((item) => typeof item === "string") : []
+    )).join("\n");
+}
+
+function normalizedGuard(value) {
+  return String(value ?? "").trim().toLowerCase().replace(/\s+/gu, " ");
+}
+
+function internalGuardLeaks(text, plan) {
+  const normalized = normalizedGuard(text);
+  const findings = [];
+  if (/\bdo[ -]?not[ _-]?assume\b/iu.test(text)) findings.push("DO NOT ASSUME label appeared in reader copy.");
+  if (/\b(?:this|the) (?:transit|aspect|placement) (?:does not|doesn't) necessarily mean\b/iu.test(text)) {
+    findings.push("An internal guard became a reader-facing disclaimer.");
+  }
+  const guards = [...new Set([
+    ...(Array.isArray(plan?.do_not_assume) ? plan.do_not_assume : []),
+    ...(Array.isArray(plan?.DO_NOT_ASSUME) ? plan.DO_NOT_ASSUME : [])
+  ].map(normalizedGuard).filter(Boolean))];
+  for (const guard of guards) {
+    if (normalized.includes(guard)) findings.push(`Internal guard text leaked: ${guard}`);
+  }
+  return [...new Set(findings)];
 }
 
 function placeholders(value) {
@@ -78,6 +103,9 @@ export function validateCopy(copy, {
   );
   const unprotectedNormalized = unprotectedText.toLowerCase();
   const violations = [];
+  for (const detail of internalGuardLeaks(text, plan)) {
+    violations.push({ category: "shared_ban", detail });
+  }
   if (text.includes("—")) violations.push({ category: "em_dash", detail: "Em dash is forbidden." });
   for (const phrase of banned) {
     if (hasBanned(unprotectedNormalized, phrase)) violations.push({ category: "banned_language", detail: String(phrase) });

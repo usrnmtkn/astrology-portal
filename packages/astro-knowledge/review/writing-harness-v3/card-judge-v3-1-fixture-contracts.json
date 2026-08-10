@@ -1,0 +1,218 @@
+{
+  "version": "card-judge-v3.1-fixture-contracts-2026-08-09",
+  "status": "owner_approved",
+  "ownerApproved": true,
+  "activeInHarness": true,
+  "activeInProduction": false,
+  "promotionAuthorized": false,
+  "surface": "card",
+  "fixtureSetStatus": "owner_approved",
+  "approvedAt": "2026-08-10",
+  "approvedSourceSha256": {
+    "critiqueChecklist": "ce9c9556e8325fd16d417baf5277e12c05064f89e61fb9cec6f3ffc4dabedf35",
+    "judgeRubric": "13efcb054da3187238d1f58c177c2f11071b58c27f65c5fe4337b2e9966b70ca",
+    "mechanismRecords": "23a1bf1d97daeb66f741b8967d64b702e90518d2ce3dd95f4ee3e297526a68e3"
+  },
+  "baseFixtureManifest": "card-judge-v3-paired-fixtures-2026-08-09",
+  "mechanismRecordPath": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-mechanism-records.json",
+  "comparisonInteriority": {
+    "gold-lilith-aries-v5": "internal",
+    "gold-lilith-taurus-v5": "external",
+    "gold-lilith-gemini-v5": "external",
+    "gold-lilith-cancer-v5": "internal",
+    "gold-lilith-leo-v5": "external",
+    "gold-lilith-virgo-v5": "external",
+    "gold-lilith-libra-v5": "external",
+    "gold-lilith-scorpio-v5": "external",
+    "gold-lilith-sagittarius-v5": "internal",
+    "gold-lilith-capricorn-v5": "external",
+    "gold-lilith-aquarius-v5": "external",
+    "gold-lilith-pisces-v5": "internal"
+  },
+  "goldFindingRulings": [
+    {
+      "call": 9,
+      "fixtureId": "gold-lilith-sagittarius-v5",
+      "decision": "judge_error",
+      "prohibitedRecurrence": "owner_voice_drift",
+      "mechanismExteriority": "internal_behavior",
+      "comparisonSet": ["gold-lilith-aries-v5", "gold-lilith-cancer-v5", "gold-lilith-pisces-v5"]
+    },
+    {
+      "call": 12,
+      "fixtureId": "gold-lilith-pisces-v5",
+      "decision": "judge_error",
+      "prohibitedRecurrence": "owner_voice_drift",
+      "mechanismExteriority": "internal_behavior",
+      "comparisonSet": ["gold-lilith-aries-v5", "gold-lilith-cancer-v5", "gold-lilith-sagittarius-v5"]
+    }
+  ],
+  "themeViolationPlan": [
+    { "sign": "aries", "status": "planned" },
+    { "sign": "taurus", "status": "planned" },
+    { "sign": "gemini", "status": "planned" },
+    { "sign": "cancer", "status": "planned" },
+    { "sign": "leo", "status": "planned" },
+    { "sign": "virgo", "status": "planned" },
+    { "sign": "libra", "status": "planned" },
+    { "sign": "scorpio", "status": "planned" },
+    { "sign": "sagittarius", "status": "seeded", "pairId": "sagittarius-house-bleed", "negativeFixtureId": "neg-sagittarius-9th", "violatedMechanismElement": "core_theme_wound" },
+    { "sign": "capricorn", "status": "seeded", "pairId": "capricorn-house-bleed", "negativeFixtureId": "neg-capricorn-career", "violatedMechanismElement": "core_theme_wound" },
+    { "sign": "aquarius", "status": "planned" },
+    { "sign": "pisces", "status": "planned" }
+  ],
+  "liveRunAuthorized": false,
+  "preservedErroredRuns": [
+    "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json",
+    "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json"
+  ],
+  "preservedEvaluationRuns": [
+    {
+      "run": "2b",
+      "path": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2b.json",
+      "sha256": "d3532fef2f78b4f6763a0d0cb70cc0fa8d28bdd6972a849cef71ed24c2a076ff",
+      "status": "failed",
+      "completedCalls": 20,
+      "contractsPassed": 19,
+      "contractsTotal": 20
+    },
+    {
+      "run": "2c",
+      "path": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2c.json",
+      "sha256": "c04c384486e577809e083e0a72af6ac9b0fedc8e40311b5acbf7ec5d722d6db3",
+      "status": "passed",
+      "completedCalls": 1,
+      "contractsPassed": 1,
+      "contractsTotal": 1
+    }
+  ],
+  "liveRunStatus": "calibration_complete",
+  "completedCalls": 21,
+  "proposedLiveRun": {
+    "run": "2c",
+    "calls": 1,
+    "model": "gpt-5.6-terra",
+    "reasoningEffort": "high",
+    "retries": 0,
+    "fixtureIds": ["neg-gemini-advocacy"],
+    "authorizationStatus": "consumed_by_run_2c_artifact"
+  },
+  "calibration": {
+    "status": "complete",
+    "completedAt": "2026-08-10",
+    "runs": ["2b", "2c"],
+    "goldContractsPassed": 12,
+    "goldContractsTotal": 12,
+    "negativeContractsPassed": 8,
+    "negativeContractsTotal": 8,
+    "retries": 0
+  },
+  "contractAmendmentRulings": [
+    {
+      "date": "2026-08-10",
+      "fixtureId": "neg-gemini-advocacy",
+      "ruling": "judge_classification_defensible_contract_too_narrow",
+      "addedAcceptedPrimary": "owner_voice_drift",
+      "basis": "alternates_rule",
+      "preserveRunArtifact": "card-judge-v3-1-live-evaluation-run-2b.json"
+    }
+  ],
+  "pairs": [
+    {
+      "id": "aries-generic-prop",
+      "positiveFixtureId": "gold-lilith-aries-v5",
+      "negativeFixtureId": "neg-aries-dishes",
+      "dimension": "generic example replaces mechanism",
+      "replacementField": "lived",
+      "comparisonSet": ["gold-lilith-cancer-v5", "gold-lilith-sagittarius-v5", "gold-lilith-pisces-v5"],
+      "required_primary": "example_proves_astrology",
+      "allowed_primary_alternates": ["stock_trope"],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    },
+    {
+      "id": "capricorn-house-bleed",
+      "positiveFixtureId": "gold-lilith-capricorn-v5",
+      "negativeFixtureId": "neg-capricorn-career",
+      "dimension": "associated house domain replaces sign mechanism",
+      "replacementField": "lived",
+      "comparisonSet": ["gold-lilith-taurus-v5", "gold-lilith-virgo-v5", "gold-lilith-aquarius-v5"],
+      "required_primary": "house_bleed",
+      "allowed_primary_alternates": [],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    },
+    {
+      "id": "sagittarius-house-bleed",
+      "positiveFixtureId": "gold-lilith-sagittarius-v5",
+      "negativeFixtureId": "neg-sagittarius-9th",
+      "dimension": "associated house domain replaces sign mechanism",
+      "replacementField": "lived",
+      "comparisonSet": ["gold-lilith-aries-v5", "gold-lilith-cancer-v5", "gold-lilith-pisces-v5"],
+      "required_primary": "house_bleed",
+      "allowed_primary_alternates": [],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    },
+    {
+      "id": "pisces-untranslated-metaphor",
+      "positiveFixtureId": "gold-lilith-pisces-v5",
+      "negativeFixtureId": "neg-pisces-well",
+      "dimension": "ordinary consequence replaced by untranslated metaphor",
+      "replacementField": "turn",
+      "comparisonSet": ["gold-lilith-aries-v5", "gold-lilith-cancer-v5", "gold-lilith-sagittarius-v5"],
+      "required_primary": "metaphor_requires_translation",
+      "allowed_primary_alternates": [],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    },
+    {
+      "id": "taurus-undeveloped-hook",
+      "positiveFixtureId": "gold-lilith-taurus-v5",
+      "negativeFixtureId": "neg-taurus-tagline",
+      "dimension": "earned tagline replaced by undeveloped hook",
+      "replacementField": "tagline",
+      "comparisonSet": ["gold-lilith-virgo-v5", "gold-lilith-capricorn-v5", "gold-lilith-libra-v5"],
+      "required_primary": "tagline_stands_alone",
+      "allowed_primary_alternates": [],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    },
+    {
+      "id": "aquarius-stock-self-help",
+      "positiveFixtureId": "gold-lilith-aquarius-v5",
+      "negativeFixtureId": "neg-aquarius-selfhelp",
+      "dimension": "developed mechanism replaced by generic empowerment",
+      "replacementField": "turn",
+      "comparisonSet": ["gold-lilith-gemini-v5", "gold-lilith-leo-v5", "gold-lilith-libra-v5"],
+      "required_primary": "stock_trope",
+      "allowed_primary_alternates": ["owner_voice_drift"],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    },
+    {
+      "id": "gemini-advocacy-abstraction",
+      "positiveFixtureId": "gold-lilith-gemini-v5",
+      "negativeFixtureId": "neg-gemini-advocacy",
+      "dimension": "observable card voice replaced by advocacy abstraction",
+      "replacementField": "lived",
+      "comparisonSet": ["gold-lilith-leo-v5", "gold-lilith-libra-v5", "gold-lilith-scorpio-v5"],
+      "required_primary": "example_proves_astrology",
+      "allowed_primary_alternates": ["stock_trope", "owner_voice_drift"],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    },
+    {
+      "id": "virgo-clinical-shorthand",
+      "positiveFixtureId": "gold-lilith-virgo-v5",
+      "negativeFixtureId": "neg-virgo-clinical",
+      "dimension": "observable mechanism replaced by therapy shorthand",
+      "replacementField": "turn",
+      "comparisonSet": ["gold-lilith-taurus-v5", "gold-lilith-capricorn-v5", "gold-lilith-aquarius-v5"],
+      "required_primary": "stock_trope",
+      "allowed_primary_alternates": [],
+      "verdict": "REVISE",
+      "forbidden_escalations": ["specificity_ceiling", "shared_ban"]
+    }
+  ]
+}

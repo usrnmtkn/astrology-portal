@@ -1,0 +1,624 @@
+{
+  "version": "card-judge-v3-live-evaluation-run-1",
+  "status": "failed",
+  "startedAt": "2026-08-10T01:37:54.705Z",
+  "completedCalls": 20,
+  "authorization": {
+    "authorizedCalls": 20,
+    "retriesAuthorized": 0
+  },
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "high",
+  "rubric": {
+    "sourcePath": "tldr-astro-phrasebank/TLDR-CARD-JUDGE-RUBRIC-V3-DRAFT.md",
+    "version": "card-writing-judge-rubric-v3",
+    "status": "owner_approved",
+    "ownerApproved": true,
+    "activeInHarness": true,
+    "activeInProduction": false,
+    "approvedSourceSha256": "c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983"
+  },
+  "approval": {
+    "recordedAt": "2026-08-09",
+    "registerSourceSha256": "db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2",
+    "critiqueSourceSha256": "3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043",
+    "rubricSourceSha256": "c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983",
+    "question13Category": "specificity_ceiling",
+    "question13RuntimeAction": "FAIL"
+  },
+  "writerPromotionAuthorized": false,
+  "rows": [
+    {
+      "fixtureId": "gold-lilith-aries-v5",
+      "kind": "gold",
+      "pairId": "aries-generic-prop",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_06bdc16a9bd81f2a006a792b736160819d856b9d26fc1ed058",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5222,
+          "input_tokens_details": {
+            "cache_write_tokens": 5219,
+            "cached_tokens": 0
+          },
+          "output_tokens": 174,
+          "output_tokens_details": {
+            "reasoning_tokens": 154
+          },
+          "total_tokens": 5396
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-taurus-v5",
+      "kind": "gold",
+      "pairId": "taurus-undeveloped-hook",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_098fa0c8477aa802006a792b762b00819e96c9b403772eb699",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5197,
+          "input_tokens_details": {
+            "cache_write_tokens": 5194,
+            "cached_tokens": 0
+          },
+          "output_tokens": 221,
+          "output_tokens_details": {
+            "reasoning_tokens": 201
+          },
+          "total_tokens": 5418
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-gemini-v5",
+      "kind": "gold",
+      "pairId": "gemini-advocacy-abstraction",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_03222d04006e97c6006a792b79b104819f836768d4bd32a5ab",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5207,
+          "input_tokens_details": {
+            "cache_write_tokens": 5204,
+            "cached_tokens": 0
+          },
+          "output_tokens": 207,
+          "output_tokens_details": {
+            "reasoning_tokens": 187
+          },
+          "total_tokens": 5414
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-cancer-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0852cb50cf800e00006a792b7cd2cc81919ece4fe89614532d",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5189,
+          "input_tokens_details": {
+            "cache_write_tokens": 5186,
+            "cached_tokens": 0
+          },
+          "output_tokens": 594,
+          "output_tokens_details": {
+            "reasoning_tokens": 574
+          },
+          "total_tokens": 5783
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-leo-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0a8519320799fd09006a792b83f1bc8192975799d068db30b0",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5196,
+          "input_tokens_details": {
+            "cache_write_tokens": 5193,
+            "cached_tokens": 0
+          },
+          "output_tokens": 144,
+          "output_tokens_details": {
+            "reasoning_tokens": 124
+          },
+          "total_tokens": 5340
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-virgo-v5",
+      "kind": "gold",
+      "pairId": "virgo-clinical-shorthand",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0d745fe75f6cd8d4006a792b863e40819fabab1c17f4aaa7fe",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5209,
+          "input_tokens_details": {
+            "cache_write_tokens": 5206,
+            "cached_tokens": 0
+          },
+          "output_tokens": 184,
+          "output_tokens_details": {
+            "reasoning_tokens": 164
+          },
+          "total_tokens": 5393
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-libra-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_08fe0923df273e48006a792b88be00819ebdea6f578b96a441",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5244,
+          "input_tokens_details": {
+            "cache_write_tokens": 5241,
+            "cached_tokens": 0
+          },
+          "output_tokens": 147,
+          "output_tokens_details": {
+            "reasoning_tokens": 127
+          },
+          "total_tokens": 5391
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-scorpio-v5",
+      "kind": "gold",
+      "pairId": null,
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0d4a94fbdb9381d2006a792b8b1000819eb756c68bd9935cca",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5162,
+          "input_tokens_details": {
+            "cache_write_tokens": 5159,
+            "cached_tokens": 0
+          },
+          "output_tokens": 138,
+          "output_tokens_details": {
+            "reasoning_tokens": 118
+          },
+          "total_tokens": 5300
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-sagittarius-v5",
+      "kind": "gold",
+      "pairId": "sagittarius-house-bleed",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "REVISE",
+      "categories": [
+        "owner_voice_drift"
+      ],
+      "missingCategories": [],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_045d6e66796dd735006a792b8d96ac81a39ec324b04034b7ed",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5274,
+          "input_tokens_details": {
+            "cache_write_tokens": 5271,
+            "cached_tokens": 0
+          },
+          "output_tokens": 945,
+          "output_tokens_details": {
+            "reasoning_tokens": 795
+          },
+          "total_tokens": 6219
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-capricorn-v5",
+      "kind": "gold",
+      "pairId": "capricorn-house-bleed",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0c1f66ae005cd4d2006a792b99c75c81a3913f792687bce3aa",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5262,
+          "input_tokens_details": {
+            "cache_write_tokens": 5259,
+            "cached_tokens": 0
+          },
+          "output_tokens": 106,
+          "output_tokens_details": {
+            "reasoning_tokens": 86
+          },
+          "total_tokens": 5368
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-aquarius-v5",
+      "kind": "gold",
+      "pairId": "aquarius-stock-self-help",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [],
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0e087c3b356928f6006a792b9bb5cc81a2b41c3987a6487682",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5239,
+          "input_tokens_details": {
+            "cache_write_tokens": 5236,
+            "cached_tokens": 0
+          },
+          "output_tokens": 187,
+          "output_tokens_details": {
+            "reasoning_tokens": 167
+          },
+          "total_tokens": 5426
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-pisces-v5",
+      "kind": "gold",
+      "pairId": "pisces-untranslated-metaphor",
+      "expectedVerdict": "PASS",
+      "targetCategories": [],
+      "verdict": "REVISE",
+      "categories": [
+        "owner_voice_drift"
+      ],
+      "missingCategories": [],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_0c1ddce486d09bbb006a792b9eaec881919bab8e8c09f8daae",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5210,
+          "input_tokens_details": {
+            "cache_write_tokens": 5207,
+            "cached_tokens": 0
+          },
+          "output_tokens": 1200,
+          "output_tokens_details": {
+            "reasoning_tokens": 1058
+          },
+          "total_tokens": 6410
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-aries-dishes",
+      "kind": "negative",
+      "pairId": "aries-generic-prop",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "stock_trope",
+        "example_proves_astrology"
+      ],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [
+        "stock_trope",
+        "example_proves_astrology"
+      ],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_098c2a815d82f692006a792bab82a481a2836debece8a323a5",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5155,
+          "input_tokens_details": {
+            "cache_write_tokens": 5152,
+            "cached_tokens": 0
+          },
+          "output_tokens": 169,
+          "output_tokens_details": {
+            "reasoning_tokens": 149
+          },
+          "total_tokens": 5324
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-capricorn-career",
+      "kind": "negative",
+      "pairId": "capricorn-house-bleed",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "house_bleed"
+      ],
+      "verdict": "FAIL",
+      "categories": [
+        "specificity_ceiling",
+        "owner_voice_drift"
+      ],
+      "missingCategories": [
+        "house_bleed"
+      ],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_04d09ec86b89043a006a792bae0b8c819c8e0bacc44e52b0fa",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5194,
+          "input_tokens_details": {
+            "cache_write_tokens": 5191,
+            "cached_tokens": 0
+          },
+          "output_tokens": 766,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 5960
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-sagittarius-9th",
+      "kind": "negative",
+      "pairId": "sagittarius-house-bleed",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "house_bleed"
+      ],
+      "verdict": "REVISE",
+      "categories": [
+        "owner_voice_drift"
+      ],
+      "missingCategories": [
+        "house_bleed"
+      ],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_0983af879e9b50f5006a792bb6db90819c8fddef3a9c104ddd",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5210,
+          "input_tokens_details": {
+            "cache_write_tokens": 5207,
+            "cached_tokens": 0
+          },
+          "output_tokens": 1012,
+          "output_tokens_details": {
+            "reasoning_tokens": 871
+          },
+          "total_tokens": 6222
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-pisces-well",
+      "kind": "negative",
+      "pairId": "pisces-untranslated-metaphor",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "metaphor_requires_translation"
+      ],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [
+        "metaphor_requires_translation"
+      ],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_0602cbf63d004c3b006a792bc258dc81a098cf47b6b58bc18b",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5134,
+          "input_tokens_details": {
+            "cache_write_tokens": 5131,
+            "cached_tokens": 0
+          },
+          "output_tokens": 889,
+          "output_tokens_details": {
+            "reasoning_tokens": 869
+          },
+          "total_tokens": 6023
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-taurus-tagline",
+      "kind": "negative",
+      "pairId": "taurus-undeveloped-hook",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "tagline_stands_alone"
+      ],
+      "verdict": "PASS",
+      "categories": [],
+      "missingCategories": [
+        "tagline_stands_alone"
+      ],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_05a12661d23bd725006a792bcd054081a08b3dffad19b30ef4",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5193,
+          "input_tokens_details": {
+            "cache_write_tokens": 5190,
+            "cached_tokens": 0
+          },
+          "output_tokens": 911,
+          "output_tokens_details": {
+            "reasoning_tokens": 891
+          },
+          "total_tokens": 6104
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-aquarius-selfhelp",
+      "kind": "negative",
+      "pairId": "aquarius-stock-self-help",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "stock_trope",
+        "owner_voice_drift"
+      ],
+      "verdict": "FAIL",
+      "categories": [
+        "specificity_ceiling",
+        "stock_trope",
+        "owner_voice_drift"
+      ],
+      "missingCategories": [],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_0165caa71a207bba006a792bd8dcc881a0aacc79c8ea2560f2",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5177,
+          "input_tokens_details": {
+            "cache_write_tokens": 5174,
+            "cached_tokens": 0
+          },
+          "output_tokens": 1041,
+          "output_tokens_details": {
+            "reasoning_tokens": 801
+          },
+          "total_tokens": 6218
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-gemini-advocacy",
+      "kind": "negative",
+      "pairId": "gemini-advocacy-abstraction",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "owner_voice_drift",
+        "example_proves_astrology"
+      ],
+      "verdict": "REVISE",
+      "categories": [
+        "stock_trope",
+        "owner_voice_drift"
+      ],
+      "missingCategories": [
+        "example_proves_astrology"
+      ],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_0fb146f89d4e0007006a792be3cb58819f93c40870b5a405ce",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5137,
+          "input_tokens_details": {
+            "cache_write_tokens": 5134,
+            "cached_tokens": 0
+          },
+          "output_tokens": 704,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 5841
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-virgo-clinical",
+      "kind": "negative",
+      "pairId": "virgo-clinical-shorthand",
+      "expectedVerdict": "REVISE",
+      "targetCategories": [
+        "stock_trope"
+      ],
+      "verdict": "FAIL",
+      "categories": [
+        "shared_ban"
+      ],
+      "missingCategories": [
+        "stock_trope"
+      ],
+      "passed": false,
+      "provider": {
+        "responseId": "resp_0c96bba09a896cfc006a792bec4eb48192a20aa662875de106",
+        "responseModel": "gpt-5.6-terra",
+        "usage": {
+          "input_tokens": 5136,
+          "input_tokens_details": {
+            "cache_write_tokens": 5133,
+            "cached_tokens": 0
+          },
+          "output_tokens": 234,
+          "output_tokens_details": {
+            "reasoning_tokens": 163
+          },
+          "total_tokens": 5370
+        }
+      }
+    }
+  ]
+}
