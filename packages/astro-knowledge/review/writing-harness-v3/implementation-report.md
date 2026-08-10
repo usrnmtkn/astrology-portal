@@ -1,0 +1,52 @@
+# Writing harness v3 candidate implementation report
+
+Date: 2026-08-09
+
+Status: `needs_review`. Owner approved: `false`. Active: `false`. Writer promotion authorized: `false`.
+
+## Architecture
+
+The v2 live baseline's seven gold false positives and four negative verdict mismatches are treated as architecture failures. The v3 candidate uses complete-card packets, two or three same-surface owner comparison cards, labeled negative evidence, supplied location tokens, findings-only model output, and runtime-computed verdicts. It does not tune a threshold and does not activate the writer.
+
+Low reasoning is the documented suspect in the v2 false-positive rate. The proposed live runner is fixed to `gpt-5.6-terra` at `high` reasoning and cannot run from a generic CLI authorization switch.
+
+## Card-scoped categories
+
+| Category | Definition | Runtime action |
+| --- | --- | --- |
+| `astrology_integrity` | Contradicts the supplied astrology facts or astrological function. | `FAIL` |
+| `shared_ban` | Violates a shared register ban. | `FAIL` |
+| `specificity_ceiling` | Invents an unsupported event, motive, status, or outcome. | `FAIL` |
+| `house_bleed` | Replaces a sign mechanism with its associated house domain. | `REVISE` |
+| `stock_trope` | Uses a familiar shortcut in place of the mechanism. | `REVISE` |
+| `example_proves_astrology` | Uses an example that does not demonstrate the mechanism. | `REVISE` |
+| `metaphor_requires_translation` | Makes the reader translate compression into ordinary events. | `REVISE` |
+| `tagline_stands_alone` | Leaves a hook undeveloped by the complete card. | `REVISE` |
+| `owner_voice_drift` | Observably drifts from supplied card exemplars; evidence IDs required. | `REVISE` |
+
+## Paired fixture contracts
+
+These are configured contracts only. No live results exist and no model calls were made.
+
+| Pair | Positive | Negative | Named dimension | Target categories | Verdict contract |
+| --- | --- | --- | --- | --- | --- |
+| Aries generic prop | `gold-lilith-aries-v5` | `neg-aries-dishes` | Generic example replaces mechanism | `stock_trope`, `example_proves_astrology` | PASS / REVISE |
+| Capricorn house bleed | `gold-lilith-capricorn-v5` | `neg-capricorn-career` | Associated house replaces sign mechanism | `house_bleed` | PASS / REVISE |
+| Sagittarius house bleed | `gold-lilith-sagittarius-v5` | `neg-sagittarius-9th` | Associated house replaces sign mechanism | `house_bleed` | PASS / REVISE |
+| Pisces untranslated metaphor | `gold-lilith-pisces-v5` | `neg-pisces-well` | Consequence replaced by untranslated metaphor | `metaphor_requires_translation` | PASS / REVISE |
+| Taurus undeveloped hook | `gold-lilith-taurus-v5` | `neg-taurus-tagline` | Earned tagline replaced by undeveloped hook | `tagline_stands_alone` | PASS / REVISE |
+| Aquarius generic empowerment | `gold-lilith-aquarius-v5` | `neg-aquarius-selfhelp` | Mechanism replaced by generic self-help | `stock_trope`, `owner_voice_drift` | PASS / REVISE |
+| Gemini advocacy abstraction | `gold-lilith-gemini-v5` | `neg-gemini-advocacy` | Observable card voice replaced by abstraction | `owner_voice_drift`, `example_proves_astrology` | PASS / REVISE |
+| Virgo clinical shorthand | `gold-lilith-virgo-v5` | `neg-virgo-clinical` | Mechanism replaced by therapy shorthand | `stock_trope` | PASS / REVISE |
+
+The remaining four gold cards run as additional positive contracts, producing the proposed 12 gold plus 8 negative call set. Each pair shares the same non-candidate packet and comparison set; the degradation changes only its named card field.
+
+## Governance and authorization
+
+The exact surface ruling is SHA-locked in the contract test and remains `needs_review`. The rubric remains `needs_review`. The model schema contains findings only; runtime maps category actions to PASS, REVISE, or FAIL. The one-use environment token names the 20-call budget, allows no retries, and is rejected after the run artifact exists.
+
+## Owner-pending items
+
+1. Explicit approval of the register-per-surface ruling.
+2. Explicit approval of the card judge rubric v3.
+3. Separate authorization for one 20-call live evaluation, no retries, using the same 12 gold and 8 paired negative fixtures at high reasoning.
