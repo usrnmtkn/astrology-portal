@@ -1,0 +1,798 @@
+{
+  "schemaVersion": 1,
+  "key": "square/sun",
+  "status": "UNAPPROVED",
+  "operatingMode": "flag-only",
+  "calibrationFailed": true,
+  "modeNotice": "Terra failed calibration. Score-1 and failed-dimension counts are advisory triage only, never quality verdicts.",
+  "immutableRawOutputs": true,
+  "revisionsMade": 0,
+  "candidates": [
+    {
+      "sample": 1,
+      "candidate": {
+        "headline": "Looking capable starts costing you time you actually need.",
+        "body": "You keep the meeting moving and volunteer for the follow-up, even though you have not eaten and needed the next hour free. By protecting your dependable reputation, you turn one delayed meal into another demand on your time. You lose the break. Over the next few hours, withdraw your offer to handle the follow-up and take the break you planned."
+      },
+      "raw": "{\"headline\":\"Looking capable starts costing you time you actually need.\",\"body\":\"You keep the meeting moving and volunteer for the follow-up, even though you have not eaten and needed the next hour free. By protecting your dependable reputation, you turn one delayed meal into another demand on your time. You lose the break. Over the next few hours, withdraw your offer to handle the follow-up and take the break you planned.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_03299eec8a7b4280006a7a03509310819dbfa7f32db7e3bc5a",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4067,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 4064,
+          "outputTokens": 2161,
+          "reasoningTokens": 2070,
+          "totalTokens": 6228
+        },
+        "estimatedCostUsd": 0.090245
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "square/sun",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "9 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "62 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 0 detected instruction(s); final sentence: Over the next few hours, withdraw your offer to handle the follow-up and take the break you planned."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": "No detectable self-friction cue."
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": [
+              "Over the next few hours"
+            ]
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "squareGrammar": false,
+              "otherGrammar": false,
+              "softGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "0 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You lose the break."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "square/sun",
+                "matches": [
+                  "needs-conflict"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 9,
+          "headlineSentences": 1,
+          "bodyWords": 62,
+          "bodySentences": 4,
+          "instructions": 0,
+          "timeAnchors": 1,
+          "mayUsages": 0,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "square/sun",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 6,
+        "verdict": {
+          "score": 2,
+          "verdict": "Close, but the mechanical time anchor and instruction-heavy ending make it read more templated than the strongest owner examples.",
+          "dimensions": {
+            "voice": true,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": false,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "You lose the break.",
+          "why": "This is the cleanest consequence in the draft: plain, specific, and impossible to mistake for a vague productivity warning. The rest is solid, but “Over the next few hours” and the two-part directive close give it a familiar horoscope-template finish rather than the less assembled owner rhythm."
+        },
+        "usage": {
+          "inputTokens": 14622,
+          "cachedInputTokens": 13358,
+          "outputTokens": 901,
+          "reasoningTokens": 417,
+          "totalTokens": 15523
+        },
+        "estimatedCostUsd": 0.016012,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 2,
+      "candidate": {
+        "headline": "Acting fully capable hides how much help you need.",
+        "body": "You keep the meeting moving and volunteer to handle one more change. Ten minutes later, you read the follow-up message and push your own work later to make the new request fit. You need help. Now you have less time, and you are still keeping your existing workload out of the conversation to preserve that plan. In the next exchange, name the deadline you can meet and ask someone else to take the added task."
+      },
+      "raw": "{\"headline\":\"Acting fully capable hides how much help you need.\",\"body\":\"You keep the meeting moving and volunteer to handle one more change. Ten minutes later, you read the follow-up message and push your own work later to make the new request fit. You need help. Now you have less time, and you are still keeping your existing workload out of the conversation to preserve that plan. In the next exchange, name the deadline you can meet and ask someone else to take the added task.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_078df7436949e7b1006a7a035095dc81a0bde217e1298bdc35",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4067,
+          "cachedInputTokens": 4064,
+          "cacheWriteTokens": 0,
+          "outputTokens": 4818,
+          "reasoningTokens": 4711,
+          "totalTokens": 8885
+        },
+        "estimatedCostUsd": 0.146587
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "square/sun",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "9 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "5 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "76 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: In the next exchange, name the deadline you can meet and ask someone else to take the added task."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": "No detectable self-friction cue."
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "squareGrammar": false,
+              "otherGrammar": false,
+              "softGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "0 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You need help."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "square/sun",
+                "matches": [
+                  "needs-conflict"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 9,
+          "headlineSentences": 1,
+          "bodyWords": 76,
+          "bodySentences": 5,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 0,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "square/sun",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 3,
+        "verdict": {
+          "score": 2,
+          "verdict": "Clear and usable, but the work-overload scene and coaching close could belong to too many keys. It does not yet carry a distinct square/sun register strongly enough for a 3.",
+          "dimensions": {
+            "voice": false,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": false,
+            "screenshot_line": false,
+            "specificity": false
+          },
+          "best_line": "You need help. Now you have less time, and you are still keeping your existing workload out of the conversation to preserve that plan.",
+          "why": "This is the one sentence that names the actual cost instead of just describing busyness: preserving the appearance of capability is costing time and keeping the workload hidden. The rest leans on a familiar meeting-and-deadline template, and “In the next exchange” gives the ending a mechanical coaching cadence."
+        },
+        "usage": {
+          "inputTokens": 14667,
+          "cachedInputTokens": 13388,
+          "outputTokens": 1027,
+          "reasoningTokens": 526,
+          "totalTokens": 15694
+        },
+        "estimatedCostUsd": 0.01756,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 3,
+      "candidate": {
+        "headline": "Looking dependable is costing you the break you still need.",
+        "body": "You keep sounding available in messages after realizing you need an hour to yourself, then accept one more request and lose the only open space. You still need the hour. You keep replying as if the plan works, so each message makes the adjustment more awkward. Send one follow-up while the request is still fresh and give the time you can actually offer."
+      },
+      "raw": "{\"headline\":\"Looking dependable is costing you the break you still need.\",\"body\":\"You keep sounding available in messages after realizing you need an hour to yourself, then accept one more request and lose the only open space. You still need the hour. You keep replying as if the plan works, so each message makes the adjustment more awkward. Send one follow-up while the request is still fresh and give the time you can actually offer.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0c45aeedd76c6414006a7a035099ec81a2836f9f74ca28a92a",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4067,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 0,
+          "outputTokens": 3199,
+          "reasoningTokens": 3106,
+          "totalTokens": 7266
+        },
+        "estimatedCostUsd": 0.116305
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "square/sun",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "10 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "64 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send one follow-up while the request is still fresh and give the time you can actually offer."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": "Self-friction cue present."
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "squareGrammar": false,
+              "otherGrammar": false,
+              "softGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "0 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You still need the hour."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "square/sun",
+                "matches": [
+                  "needs-conflict"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [
+                {
+                  "key": "soft/chiron",
+                  "matches": [
+                    "care-old-hurt",
+                    "mild-ease"
+                  ],
+                  "passed": true
+                },
+                {
+                  "key": "square/uranus",
+                  "matches": [
+                    "disruption",
+                    "recoil"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": true,
+            "details": [
+              "You still need the hour."
+            ]
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 10,
+          "headlineSentences": 1,
+          "bodyWords": 64,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 0,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 1
+        }
+      },
+      "judge": {
+        "key": "square/sun",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 3,
+        "allScores": [
+          3,
+          3,
+          3
+        ],
+        "dimScore": 7,
+        "verdict": {
+          "score": 3,
+          "verdict": "Rubric-acceptable. The cost is immediate and concrete: performing availability costs the only open hour, then makes the correction harder with every reply.",
+          "dimensions": {
+            "voice": true,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": true,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "You keep replying as if the plan works, so each message makes the adjustment more awkward.",
+          "why": "This names the actual trap without dressing it up: the problem is not merely having too much to do, but continuing to act available after the limit is already clear. It carries the square's friction between maintaining an outward role and honoring a personal need."
+        },
+        "usage": {
+          "inputTokens": 14628,
+          "cachedInputTokens": 13362,
+          "outputTokens": 835,
+          "reasoningTokens": 413,
+          "totalTokens": 15463
+        },
+        "estimatedCostUsd": 0.015224,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    }
+  ]
+}

@@ -8,9 +8,13 @@ const { loadLocalEnv } = require("./daily-glance-writer-runtime.js");
 const { canonicalAstrologyReviewInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
 const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
 
-const JUDGE_MODEL = "gpt-4.1-mini";
+const JUDGE_MODEL = "gpt-5.6-terra";
+const JUDGE_REASONING_EFFORT = "low";
 const RUBRIC_VERSION = "daily-glance-voice-v2:boundary-discipline+median3";
 const evalSetPath = path.join(packageRoot, "review", "daily-glance-judge-calibration-set-v1.json");
+const calibrationReportPath = path.join(packageRoot, "review", `daily-glance-judge-calibration-report-terra-${new Date().toISOString().slice(0, 10)}.json`);
+const operatingModePath = path.join(packageRoot, "review", "daily-glance-judge-operating-mode-v1.json");
+const TERRA_PRICING_PER_MILLION = Object.freeze({ input: 2, cachedInput: 0.2, output: 12 });
 
 const RUBRIC = `You judge one Daily At-a-Glance horoscope candidate (headline + body) against the owner's voice.
 Score 1 (off-voice), 2 (near, needs owner rewrite), or 3 (rubric-acceptable; still never auto-approved).
@@ -66,7 +70,7 @@ async function callJudge(prompt) {
     request: {
       model: JUDGE_MODEL,
       input: prompt,
-      temperature: 0.2,
+      reasoning: { effort: JUDGE_REASONING_EFFORT },
       max_output_tokens: 700
     }
   });
@@ -76,19 +80,72 @@ async function callJudge(prompt) {
   return { verdict: parseVerdict(text), usage: payload.usage || {}, raw: text };
 }
 
+function normalizeUsage(usage = {}) {
+  return {
+    inputTokens: Number(usage.input_tokens || 0),
+    cachedInputTokens: Number(usage.input_tokens_details?.cached_tokens || 0),
+    outputTokens: Number(usage.output_tokens || 0),
+    reasoningTokens: Number(usage.output_tokens_details?.reasoning_tokens || 0),
+    totalTokens: Number(usage.total_tokens || 0)
+  };
+}
+
+function addUsage(left, right) {
+  return Object.fromEntries(Object.keys(left).map((key) => [key, Number(left[key] || 0) + Number(right[key] || 0)]));
+}
+
+function estimateTerraCost(usage) {
+  const uncached = Math.max(0, usage.inputTokens - usage.cachedInputTokens);
+  return (uncached * TERRA_PRICING_PER_MILLION.input
+    + usage.cachedInputTokens * TERRA_PRICING_PER_MILLION.cachedInput
+    + usage.outputTokens * TERRA_PRICING_PER_MILLION.output) / 1_000_000;
+}
+
+function judgeOperatingMode() {
+  if (!fs.existsSync(operatingModePath)) return { mode: "uncalibrated", permanentlyDemoted: false };
+  return JSON.parse(fs.readFileSync(operatingModePath, "utf8"));
+}
+
 async function judgeCandidate(candidate, key, samples = 1) {
   const prompt = buildJudgePrompt(candidate, key);
-  const runs = [];
-  for (let i = 0; i < Math.max(1, samples); i += 1) runs.push(await callJudge(prompt));
+  const runs = await Promise.all(Array.from({ length: Math.max(1, samples) }, () => callJudge(prompt)));
   const scores = runs.map((r) => Number(r.verdict.score) || 1).sort((a, b) => a - b);
   const median = scores[Math.floor((scores.length - 1) / 2)];
   const primary = runs.find((r) => Number(r.verdict.score) === median) || runs[0];
   const dims = primary.verdict.dimensions || {};
   const dimScore = Object.values(dims).filter(Boolean).length;
-  return { key, rubricVersion: RUBRIC_VERSION, judgeModel: JUDGE_MODEL, score: median, allScores: scores, dimScore, verdict: primary.verdict, advisoryOnly: true };
+  const emptyUsage = { inputTokens: 0, cachedInputTokens: 0, outputTokens: 0, reasoningTokens: 0, totalTokens: 0 };
+  const usage = runs.reduce((sum, run) => addUsage(sum, normalizeUsage(run.usage)), emptyUsage);
+  return {
+    key,
+    rubricVersion: RUBRIC_VERSION,
+    judgeModel: JUDGE_MODEL,
+    reasoningEffort: JUDGE_REASONING_EFFORT,
+    score: median,
+    allScores: scores,
+    dimScore,
+    verdict: primary.verdict,
+    usage,
+    estimatedCostUsd: Number(estimateTerraCost(usage).toFixed(6)),
+    responseCount: runs.length,
+    advisoryOnly: true,
+    operatingMode: judgeOperatingMode().mode
+  };
 }
 
-module.exports = { judgeCandidate, buildJudgePrompt, parseVerdict, readEvalSet, RUBRIC_VERSION, JUDGE_MODEL };
+module.exports = {
+  calibrationReportPath,
+  estimateTerraCost,
+  judgeCandidate,
+  buildJudgePrompt,
+  parseVerdict,
+  readEvalSet,
+  RUBRIC_VERSION,
+  JUDGE_MODEL,
+  JUDGE_REASONING_EFFORT,
+  judgeOperatingMode,
+  operatingModePath
+};
 
 async function calibrate() {
   loadLocalEnv();
@@ -98,27 +155,75 @@ async function calibrate() {
   for (const [tier, list] of [["gold", es.golds], ["negative", es.negatives]]) {
     for (const e of list) {
       const r = await judgeCandidate(e, e.key, 3);
-      rows.push({ tier, key: e.key, source: e.source, score: r.score, dimScore: r.dimScore, why: (r.verdict.why || "").slice(0, 160) });
+      rows.push({
+        tier,
+        key: e.key,
+        source: e.source,
+        score: r.score,
+        allScores: r.allScores,
+        dimScore: r.dimScore,
+        dimensions: r.verdict.dimensions || {},
+        best_line: r.verdict.best_line || "",
+        why: r.verdict.why || "",
+        verdict: r.verdict.verdict || "",
+        usage: r.usage,
+        estimatedCostUsd: r.estimatedCostUsd
+      });
       process.stdout.write(`${tier} ${e.key} -> ${r.score} (${r.dimScore}/7)\n`);
     }
   }
   const mean = (t) => rows.filter((r) => r.tier === t).reduce((a, r) => a + r.score, 0) / rows.filter((r) => r.tier === t).length;
   const negThrees = rows.filter((r) => r.tier === "negative" && r.score === 3).length;
+  const passed = mean("gold") >= es.acceptance.goldMeanMin && mean("negative") <= es.acceptance.negativeMeanMax && negThrees <= es.acceptance.negativeScoreThreeMax;
+  const emptyUsage = { inputTokens: 0, cachedInputTokens: 0, outputTokens: 0, reasoningTokens: 0, totalTokens: 0 };
+  const usage = rows.reduce((sum, row) => addUsage(sum, row.usage), emptyUsage);
+  const priorMode = judgeOperatingMode();
+  const permanentlyDemoted = priorMode.permanentlyDemoted || !passed;
+  const operatingMode = permanentlyDemoted ? "flag-only" : "calibrated";
   const summary = {
-    schemaVersion: 1, rubricVersion: RUBRIC_VERSION, judgeModel: JUDGE_MODEL, calibratedAt: new Date().toISOString(),
+    schemaVersion: 2, rubricVersion: RUBRIC_VERSION, judgeModel: JUDGE_MODEL, reasoningEffort: JUDGE_REASONING_EFFORT, calibratedAt: new Date().toISOString(),
     goldMean: Number(mean("gold").toFixed(2)), negativeMean: Number(mean("negative").toFixed(2)), negativeScoreThrees: negThrees,
     acceptance: es.acceptance,
-    passed: mean("gold") >= es.acceptance.goldMeanMin && mean("negative") <= es.acceptance.negativeMeanMax && negThrees <= es.acceptance.negativeScoreThreeMax,
+    passed,
+    operatingMode,
+    permanentlyDemoted,
+    permanence: permanentlyDemoted
+      ? "This judge is permanently demoted to flag-only mode: score-1 and failed-dimension counts are advisory triage, never quality verdicts. A later calibration run cannot promote it."
+      : passed
+      ? "Calibration passed. Scores remain advisory under GR-003 and never approve content."
+      : "Calibration failed. This judge is permanently demoted to flag-only mode: score-1 and failed-dimension counts are advisory triage, never quality verdicts.",
+    responseCount: rows.length * 3,
+    usage,
+    pricingPerMillionUsd: TERRA_PRICING_PER_MILLION,
+    estimatedCostUsd: Number(estimateTerraCost(usage).toFixed(6)),
     rows
   };
-  fs.writeFileSync(path.join(packageRoot, "review", "daily-glance-judge-calibration-report-v1.json"), JSON.stringify(summary, null, 1));
+  fs.writeFileSync(calibrationReportPath, `${JSON.stringify(summary, null, 2)}\n`);
+  if (permanentlyDemoted && !priorMode.permanentlyDemoted) {
+    fs.writeFileSync(operatingModePath, `${JSON.stringify({
+      schemaVersion: 1,
+      mode: "flag-only",
+      permanentlyDemoted: true,
+      judgeModel: JUDGE_MODEL,
+      reasoningEffort: JUDGE_REASONING_EFFORT,
+      establishedAt: summary.calibratedAt,
+      basisReport: path.relative(repoRoot, calibrationReportPath),
+      policy: "Score-1 and failed-dimension counts are advisory triage only, never quality verdicts. GR-003 and DG-P1 remain absolute."
+    }, null, 2)}\n`);
+  }
   process.stdout.write(`\ngoldMean=${summary.goldMean} negativeMean=${summary.negativeMean} negativeThrees=${negThrees} passed=${summary.passed}\n`);
+  process.stdout.write(`mode=${summary.operatingMode} responses=${summary.responseCount} estimatedCostUsd=${summary.estimatedCostUsd}\nreport=${path.relative(repoRoot, calibrationReportPath)}\n`);
 }
 
 if (require.main === module) {
   const mode = process.argv[2];
-  if (mode === "--calibrate") calibrate().catch((error) => { console.error(error.message); process.exit(1); });
-  else { console.error("usage: node scripts/judge-daily-glance.js --calibrate"); process.exit(1); }
+  if (mode === "--calibrate") {
+    if (!process.argv.includes("--authorize-live")) {
+      console.error("Pass --authorize-live to bill. Owner authorization required.");
+      process.exit(1);
+    }
+    calibrate().catch((error) => { console.error(error.message); process.exit(1); });
+  } else if (mode !== "--rejudge") { console.error("usage: node scripts/judge-daily-glance.js --calibrate --authorize-live"); process.exit(1); }
 }
 
 // --rejudge <dir>: re-score saved candidates.json files with the current rubric and rewrite winners.
