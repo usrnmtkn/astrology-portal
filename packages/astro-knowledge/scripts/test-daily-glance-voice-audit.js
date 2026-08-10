@@ -29,6 +29,11 @@ const {
   selectLintCleanWinner,
   selfAuditPacketLint
 } = require("./daily-glance-self-audit-candidates.js");
+const {
+  DEFAULT_KEYS,
+  parseKeys,
+  summarizeResults
+} = require("./run-daily-glance-self-audit-pilot.js");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
@@ -43,6 +48,24 @@ assert.strictEqual(servingPairs(sourceRows).length, 68);
 assert.strictEqual(sourceRows.vocabularyRows.filter((row) => row.contentKey.startsWith("fallback-vocab/dodont-")).length, 184);
 assert(mechanicalFindings("A transformative journey—begin now.").some((finding) => finding.source === "machine-era-register"));
 assert(!loadDirective(config).includes("Pipeline notes"));
+assert.deepStrictEqual(parseKeys([]), [...DEFAULT_KEYS]);
+assert.deepStrictEqual(parseKeys(["--keys", "soft/chiron,square/uranus"]), ["soft/chiron", "square/uranus"]);
+assert.throws(() => parseKeys(["--keys", "soft/chiron,soft/chiron"]), /unique/u);
+const pilotSummary = summarizeResults([
+  { key: "soft/chiron", candidates: [
+    { lint: { passed: true }, provider: { usage: { inputTokens: 10 }, estimatedCostUsd: 0.1 } },
+    { lint: { passed: false }, provider: { usage: { inputTokens: 20 }, estimatedCostUsd: 0.2 } },
+    { lint: { passed: false }, provider: { usage: { inputTokens: 30 }, estimatedCostUsd: 0.3 } }
+  ] },
+  { key: "square/uranus", candidates: [
+    { lint: { passed: false }, provider: { usage: { inputTokens: 10 }, estimatedCostUsd: 0.1 } },
+    { lint: { passed: false }, provider: { usage: { inputTokens: 20 }, estimatedCostUsd: 0.2 } },
+    { lint: { passed: false }, provider: { usage: { inputTokens: 30 }, estimatedCostUsd: 0.3 } }
+  ] }
+]);
+assert.strictEqual(pilotSummary.calls, 6);
+assert.strictEqual(pilotSummary.lintClean, 1);
+assert.deepStrictEqual(pilotSummary.noLintCleanCandidateKeys, ["square/uranus"]);
 
 const ranked = rankAuditRows([
   { key: "b", score: 1, failedDimensions: ["voice"] },
