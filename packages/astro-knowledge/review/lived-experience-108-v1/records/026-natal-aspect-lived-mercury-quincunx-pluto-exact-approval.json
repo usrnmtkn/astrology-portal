@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-026",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/pluto",
+  "workbookKey": "mercury|inconjunct|pluto",
+  "payloadSha256": "b4121ece21158a7c6c169522a23fed768a044a0a1b867a3ae583c956ba6fc61d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct Pluto can turn a strong idea into a sentence nobody wants to read twice. You add the specialized term, the extra clause, and three more details because the subject is complicated. The research may be excellent. The point gets stronger when the language stops trying to prove how much you know.",
+    "sourceMechanism": "Mercury inconjunct Pluto can make complicated language feel like proof of intelligence. The person may use vocabulary that obscures a strong idea rather than clarifying it. Plain speech does not make a deep idea less intelligent."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 27,
+    "approvedBodyCell": "E27",
+    "ownerStatusCell": "G27"
+  },
+  "additionalBilledCalls": 0
+}

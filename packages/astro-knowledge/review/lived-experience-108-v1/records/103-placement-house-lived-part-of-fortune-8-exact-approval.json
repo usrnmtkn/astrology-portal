@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-103",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/8",
+  "workbookKey": "part-of-fortune|8th house",
+  "payloadSha256": "9aa9da9680e0a6cbbf3001cd0556805d47f058ead5e344b37ab456d9530702c3",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Part of Fortune in the 8th house can make anxiety about shared money or responsibility easier to handle once the numbers are in front of you. You open the account, divide the bill, confirm who owes what, and say what you can contribute. The same imbalance keeps returning when the arrangement changes but the way the responsibility is shared does not.",
+    "sourceMechanism": "Part of Fortune in the 8th house gives emotional pressure somewhere concrete to go through sharing, trust, and joint responsibility. The numbers get discussed. The obligation gets divided. Someone says what they can contribute and what they cannot. Repeatedly entering and leaving partnerships, or relying on other people's resources without developing personal resources too, avoids the deeper work of sharing on fairer terms."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 104,
+    "approvedBodyCell": "E104",
+    "ownerStatusCell": "G104"
+  },
+  "additionalBilledCalls": 0
+}

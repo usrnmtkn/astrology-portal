@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-104",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/planet-lived/jupiter",
+  "workbookKey": "jupiter",
+  "payloadSha256": "b55591e6ca8955de1baf092f72de292462e776b7542f4b185c145646e76fb0b0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter describes what gets bigger. One invitation turns into three. A raise creates more room in the budget and spending grows with it. Confidence can expand too, along with appetite, certainty, generosity, or a problem that was already there. More is not automatically better. Jupiter shows what happens when there is suddenly more to work with.",
+    "sourceMechanism": "Jupiter describes expansion and opportunity. It increases whatever it touches, which is why growth can feel generous and excessive at the same time.\n\nJupiter has an explicitly spiritual purpose: growth is meant to move beyond purely material desire. The same expansiveness can become extravagance, indulgence, bigotry, or fanaticism when more is treated as automatically better.\n\nWhere Jupiter falls in the chart is where something wants to grow. More becomes useful only when someone actually does something with what expanded."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 105,
+    "approvedBodyCell": "E105",
+    "ownerStatusCell": "G105"
+  },
+  "additionalBilledCalls": 0
+}

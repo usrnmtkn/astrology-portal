@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-034",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/mars",
+  "workbookKey": "moon|conjunction|mars",
+  "payloadSha256": "20055f82ccde15d8b7068765729a717b2677437e345ddef081827009d296af5b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon conjunct Mars can make one strong feeling sound like the whole truth. A comment lands wrong and suddenly you want to cancel the plan, send the sharp reply, or decide you are done. The mood is real. It is also moving quickly, which is why today's reaction can feel much more permanent than it actually is.",
+    "sourceMechanism": "Moon conjunct Mars gives emotion a lot of energy. Courage, warmth, immediacy, and passion can be strong, but irritation can rise just as quickly when someone feels criticized or blocked. Living in the present is a strength until every strong feeling starts sounding like a final verdict."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 35,
+    "approvedBodyCell": "E35",
+    "ownerStatusCell": "G35"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-082",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/neptune",
+  "workbookKey": "uranus|inconjunct|neptune",
+  "payloadSha256": "a3faee443026bfc50d023e7f34ebed5e2265d27ce2b80128206b53436f257000",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus inconjunct Neptune can make someone else's belief bother you more than the conversation should. You roll your eyes at the practice, dismiss the philosophy, or argue harder than usual, then spend the ride home wondering why it got under your skin. Sometimes another person's certainty is irritating because your own answer is less settled than you want to admit.",
+    "sourceMechanism": "Uranus inconjunct Neptune can make spiritual certainty feel unstable. The person may condemn an unfamiliar philosophy while privately feeling confused about their own beliefs. Studying more than one tradition gives the uncertainty somewhere to go besides immediate judgment."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 83,
+    "approvedBodyCell": "E83",
+    "ownerStatusCell": "G83"
+  },
+  "additionalBilledCalls": 0
+}

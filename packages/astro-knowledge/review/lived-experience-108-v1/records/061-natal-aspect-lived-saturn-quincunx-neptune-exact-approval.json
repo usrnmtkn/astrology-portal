@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-061",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/neptune",
+  "workbookKey": "saturn|inconjunct|neptune",
+  "payloadSha256": "91a5e11e6331c32328aa175ac0e2aaf5ed2024aaaf580ee757222560766f3a78",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn inconjunct Neptune can finish the project and move the finish line before you have time to enjoy it. Someone thanks you, the work is good, or something beautiful exists, and your mind is already listing why it does not count yet. Satisfaction stays out of reach when every completed effort immediately needs to become bigger or more important.",
+    "sourceMechanism": "Saturn inconjunct Neptune can make capable people feel as if they have nothing valuable to contribute. Creativity and hard work may be real while the internal standard keeps moving far enough away that satisfaction never arrives. Contribution does not have to become a permanent public monument to count."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 62,
+    "approvedBodyCell": "E62",
+    "ownerStatusCell": "G62"
+  },
+  "additionalBilledCalls": 0
+}

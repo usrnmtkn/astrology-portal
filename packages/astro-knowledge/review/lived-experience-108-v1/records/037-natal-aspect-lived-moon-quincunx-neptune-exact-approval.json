@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-037",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/neptune",
+  "workbookKey": "moon|inconjunct|neptune",
+  "payloadSha256": "e528a2bd3da8b41cdfb5951e25916fd3e00b94ce2567e65234b03fcea8413cc5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid.",
+    "sourceMechanism": "Moon inconjunct Neptune can make ordinary reality feel harsher than the inner world. The person may withdraw from people to avoid absorbing their moods, then become even more isolated from the experience they are trying to understand. Sensitivity becomes easier to live with when every negative atmosphere does not become a reason to leave."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 38,
+    "approvedBodyCell": "E38",
+    "ownerStatusCell": "G38"
+  },
+  "additionalBilledCalls": 0
+}

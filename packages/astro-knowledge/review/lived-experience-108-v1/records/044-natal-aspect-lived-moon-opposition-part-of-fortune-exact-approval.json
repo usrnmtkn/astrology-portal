@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-044",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/part-of-fortune",
+  "workbookKey": "moon|opposition|part_of_fortune",
+  "payloadSha256": "af88a46079188a783adfbbfdd07f61778ef9939bd5ba07bf50e8192041d4d5b1",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon opposite the Part of Fortune can make ordinary emotional needs feel embarrassingly small next to a spiritual goal. You skip rest, cancel the dinner, or keep telling yourself that needing reassurance should not matter because there is something more important to focus on. The spiritual practice gets thinner when your actual emotional life is treated like an inconvenience.",
+    "sourceMechanism": "Moon opposite Part of Fortune can make personal growth seem less important than soul growth, or vice versa. Developing the emotional personality is part of the spiritual work, not a distraction from it. Both matter, and neglecting one eventually weakens the other."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 45,
+    "approvedBodyCell": "E45",
+    "ownerStatusCell": "G45"
+  },
+  "additionalBilledCalls": 0
+}

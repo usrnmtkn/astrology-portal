@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-025",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/north-node",
+  "workbookKey": "mercury|inconjunct|north_node",
+  "payloadSha256": "009d7bb269f7ab5b869b2383be9a1f7842bcb09750c016bf23c11c2bffdf6f9c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct the North Node can make you think you have no business teaching something you are still changing your mind about. You correct an old opinion, learn new material, or admit that you got part of it wrong. That does not erase what you already understand well enough to explain clearly.",
+    "sourceMechanism": "Mercury inconjunct North Node can make a teacher's own unfinished mental work seem like proof that they cannot help anyone else. A teacher can still offer useful guidance while revising their own thinking."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 26,
+    "approvedBodyCell": "E26",
+    "ownerStatusCell": "G26"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-018",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/saturn",
+  "workbookKey": "mars|opposition|saturn",
+  "payloadSha256": "6c981ccec0511d71fc3670768007b872691dbb4a35cbdec5f1256c0c9b4bc20a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars opposite Saturn can make a week of responsibilities feel like proof that your personal life never gets a turn. You do the work, keep the promise, say you are fine, and then snap at someone over a small request. The anger is often less about that moment than about how long duty has been taking up all the available space.",
+    "sourceMechanism": "Mars opposite Saturn can make responsibility feel like proof that personal desire never gets a turn. Anger builds when the person assumes there is no choice, then comes out as sarcasm, bitterness, or resentment. Real obligations and personal enjoyment can both exist once neither one is treated as all-or-nothing."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 19,
+    "approvedBodyCell": "E19",
+    "ownerStatusCell": "G19"
+  },
+  "additionalBilledCalls": 0
+}

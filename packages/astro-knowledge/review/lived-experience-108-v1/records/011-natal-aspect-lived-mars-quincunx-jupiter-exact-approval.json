@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-011",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/jupiter",
+  "workbookKey": "mars|inconjunct|jupiter",
+  "payloadSha256": "b65188507350239583639ce12b248d3e05a16a5bd121ab1b375e945adada4540",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars inconjunct Jupiter can say yes before you check the distance, the price, or how tired you already are. The hike looks manageable, the extra project sounds exciting, or one more round feels harmless because moving feels better than waiting. The problem usually becomes obvious later, when your body, budget, or schedule has to absorb the decision.",
+    "sourceMechanism": "Mars inconjunct Jupiter can make excess energy look like bad luck when the real issue is carelessness. The person may take risks simply because sitting still feels harder than moving. Momentum still needs judgment, especially when the body would rather move than wait."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 12,
+    "approvedBodyCell": "E12",
+    "ownerStatusCell": "G12"
+  },
+  "additionalBilledCalls": 0
+}

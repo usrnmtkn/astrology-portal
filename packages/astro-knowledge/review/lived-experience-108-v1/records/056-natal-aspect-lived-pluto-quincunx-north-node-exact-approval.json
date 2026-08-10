@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-056",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/north-node",
+  "workbookKey": "pluto|inconjunct|north_node",
+  "payloadSha256": "e12c3aee8b073983c3d9e78e3416262b59e35023a62fa6ff9676c7cb452184e0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Pluto inconjunct the North Node can make you think you need to be completely done with your own control issues before anything you know can help somebody else. Then someone asks about a pattern you have spent years wrestling with, and you realize you understand more than you give yourself credit for. Being unfinished is not the same as knowing nothing.",
+    "sourceMechanism": "Pluto inconjunct North Node can make a teacher's own unfinished transformation seem like proof that they cannot help anyone else. A teacher does not have to complete every stage of transformation before something they know becomes useful."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 57,
+    "approvedBodyCell": "E57",
+    "ownerStatusCell": "G57"
+  },
+  "additionalBilledCalls": 0
+}

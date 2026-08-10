@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-004",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/pluto",
+  "workbookKey": "jupiter|inconjunct|pluto",
+  "payloadSha256": "0279524d7b0053d11fa99693fc83f4049393734b1a492166a1aa8aceb458170b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "With Jupiter inconjunct Pluto, you can walk into a meeting already knowing which argument will win people over. Support, funding, permission, or agreement may come quickly because you know how to frame the plan. The problem shows up when nobody has much room to question it and every conversation somehow lands at the result you wanted from the beginning.",
+    "sourceMechanism": "Jupiter inconjunct Pluto can make influence easy enough to misuse. The person may know how to persuade people toward a goal and still have to examine whose goal is being served. Influence becomes more useful when it expands possibility instead of manipulating the outcome."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 5,
+    "approvedBodyCell": "E5",
+    "ownerStatusCell": "G5"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-019",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/jupiter",
+  "workbookKey": "mars|sextile|jupiter",
+  "payloadSha256": "60a9137bdc13d6d82885013c0bda9033ddf7051cd02417723d600652b8654d50",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "The part of the project you expected to drag takes half the time. You have enough energy left for the presentation, the workout, or the errand you thought would have to wait until tomorrow. Mars sextile Jupiter can make effort go further, so a difficult job feels satisfying instead of draining.",
+    "sourceMechanism": "Mars sextile Jupiter can make favorable circumstances easier to use. Energy is abundant, work often feels easier than expected, and athletics or physical movement can provide a natural outlet. In this karmic framework, favorable timing is treated as something carried forward from earlier lives."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 20,
+    "approvedBodyCell": "E20",
+    "ownerStatusCell": "G20"
+  },
+  "additionalBilledCalls": 0
+}

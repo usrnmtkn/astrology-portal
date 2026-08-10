@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-059",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/south-node",
+  "workbookKey": "pluto|sextile|south_node",
+  "payloadSha256": "62fe2026171c8ee30f684ceca790bfc321c562d98ca8ce8de9059295bbaaec52",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Pluto sextile the South Node can make the deeper pattern easier to see inside a familiar problem. The same conflict comes back and, instead of only wanting out, you notice what it keeps exposing about control, fear, or the role you fall into. The situation may look familiar because the part underneath it is familiar too.",
+    "sourceMechanism": "Pluto sextile South Node can make karmic situations easier to use for deeper spiritual development. The familiar circumstance is easier to recognize as pressure for deeper change before resistance takes over."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 60,
+    "approvedBodyCell": "E60",
+    "ownerStatusCell": "G60"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-074",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/neptune",
+  "workbookKey": "sun|inconjunct|neptune",
+  "payloadSha256": "87ee618f87dc5faac99f6e463c76c165fcef3bd3fda6517406679fb38e62aa8d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun inconjunct Neptune can make a real preference sound like a suggestion. You say you are fine with either restaurant, hint that the later time might be hard, and leave room for everybody else to decide. Then the reservation is made and you are upset that your needs disappeared from a plan you never clearly asked to change.",
+    "sourceMechanism": "Sun inconjunct Neptune can make it hard to say what is wanted firmly enough for other people to take it seriously. The person may become overly accommodating, then feel manipulated by children, lovers, creative situations, or friends whose motives were not clear. Compassion and self-assertion have to fit in the same sentence."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 75,
+    "approvedBodyCell": "E75",
+    "ownerStatusCell": "G75"
+  },
+  "additionalBilledCalls": 0
+}

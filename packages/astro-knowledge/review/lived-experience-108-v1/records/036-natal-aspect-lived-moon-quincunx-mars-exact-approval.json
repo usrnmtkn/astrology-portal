@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-036",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/mars",
+  "workbookKey": "moon|inconjunct|mars",
+  "payloadSha256": "9b7ac4b605dfa8401fe2fb755e969b8bf008961baab310dd85e45b9485e50ff0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon inconjunct Mars can hear criticism as an attack before the sentence is finished. You hold the irritation in, tell yourself it is fine, and then answer much harder once you feel cornered. A disagreement about a task, opinion, or plan gets bigger when it starts feeling like something you have to defend yourself from.",
+    "sourceMechanism": "Moon inconjunct Mars can make criticism feel like attack. Emotional rages may stay under control until the person feels cornered, then come out as verbal strikes, defensiveness, or possessiveness. When ideas, people, or possessions are held too tightly, an ordinary disagreement can start feeling like a threat."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 37,
+    "approvedBodyCell": "E37",
+    "ownerStatusCell": "G37"
+  },
+  "additionalBilledCalls": 0
+}

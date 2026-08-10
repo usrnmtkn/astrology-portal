@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-042",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+  "workbookKey": "moon|opposition|ascendant",
+  "payloadSha256": "037121fac6ce7448bed7da5b66666b12f5bce557ab0d20fd211aec258e7b90cd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon opposite the Ascendant can make another person's bad day become the schedule for yours. You cancel the plan, monitor their mood, change what you were going to do, and realize hours later that you never checked what you needed. Empathy gets costly when somebody else's emotional weather keeps deciding the whole day.",
+    "sourceMechanism": "Moon opposite Ascendant can make other people's lives emotionally absorbing. The person may become so involved in a partner's mood or problem that their own emotional center gets lost. Empathy stops being useful when another person's emotional life replaces their own center."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 43,
+    "approvedBodyCell": "E43",
+    "ownerStatusCell": "G43"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-052",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/part-of-fortune",
+  "workbookKey": "neptune|sextile|part_of_fortune",
+  "payloadSha256": "cd117e0cd9bb6ce265745115361f8b46a60d6e0c92e772da4b058b7c33b4df02",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Neptune sextile the Part of Fortune can make a quiet impression stay with you long enough to notice it. A dream is still vivid over breakfast, a feeling about a conversation follows you through the afternoon, or an image keeps returning after you thought you forgot it. The useful part is that it does not disappear before you have time to look at it.",
+    "sourceMechanism": "Neptune sextile Part of Fortune gives astral or psychic perception a workable opening. Subtle impressions are easier to notice before confusion turns them into noise."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 53,
+    "approvedBodyCell": "E53",
+    "ownerStatusCell": "G53"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-080",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/square/moon",
+  "workbookKey": "sun|square|moon",
+  "payloadSha256": "d3aad13231dba1c124972025ca864fe3c1dd6e19fb13497f8fd3a6929167dd8a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice.",
+    "sourceMechanism": "Sun square Moon can feel like two parts of the same person arguing from different places. What the person intends and what they feel may pull in opposite directions, creating emotional upheaval around children, lovers, creative work, parents, especially the mother, or household life. Growth comes from using the stronger Sun-sign qualities without treating emotion as something that has to be defeated."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 81,
+    "approvedBodyCell": "E81",
+    "ownerStatusCell": "G81"
+  },
+  "additionalBilledCalls": 0
+}

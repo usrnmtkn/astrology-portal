@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-081",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/midheaven",
+  "workbookKey": "uranus|inconjunct|midheaven",
+  "payloadSha256": "145b012a5c71186f212f86a052c4df0cb309c6ff84042567bafda61b90285dea",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus inconjunct the Midheaven can make the impressive job feel less impressive once you realize how little freedom comes with it. You may turn down the title, choose unusual work, work for yourself, or accept less status for more control over your day. The decision can look smaller from the outside and feel much more like success from inside your actual life.",
+    "sourceMechanism": "Uranus inconjunct Midheaven can make simple, personally chosen goals more satisfying than society's version of success. Not wanting public status is still a valid career decision."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 82,
+    "approvedBodyCell": "E82",
+    "ownerStatusCell": "G82"
+  },
+  "additionalBilledCalls": 0
+}

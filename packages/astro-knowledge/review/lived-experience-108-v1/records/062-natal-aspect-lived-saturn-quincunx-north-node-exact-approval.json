@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-062",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/north-node",
+  "workbookKey": "saturn|inconjunct|north_node",
+  "payloadSha256": "5d777d95815ea3363ab57babdafaf69aecaf8c1ab4f86af9810805e676d7de94",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn inconjunct the North Node can make your own struggles with responsibility or authority feel like proof that you should not advise anyone else. Then someone asks a question about the exact lesson you have spent years learning the hard way. A useful guide can still have the same problem in their own life.",
+    "sourceMechanism": "Saturn inconjunct North Node can make a teacher's own unfinished work with pride or responsibility seem like proof that they cannot help anyone else. Useful guidance does not require a flawless guide."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 63,
+    "approvedBodyCell": "E63",
+    "ownerStatusCell": "G63"
+  },
+  "additionalBilledCalls": 0
+}

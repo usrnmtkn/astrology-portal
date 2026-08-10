@@ -14192,6 +14192,18 @@ function natalPlacementV3NormalizedSections(
       "tldrastro-fallback-architecture-v3",
       rendered.templateKey
     ].filter(Boolean);
+    if (rendered.templateKey.startsWith("fallback-hook/placement-house-lived/")) {
+      const exactHouseSections: NormalizedNatalPlacementSection[] = [{
+        slot: "house",
+        required: true,
+        layer: "fallback",
+        tier: "fallback-architecture-v3",
+        sourceKeys,
+        heading: `${position.planet} in the ${ordinalHouse(position.house ?? 0)} house`,
+        body: parts[0] ?? ""
+      }];
+      return exactHouseSections.filter((section) => isReaderFacingCopy(section.body));
+    }
     const sections: NormalizedNatalPlacementSection[] = [{
       slot: "sign",
       required: true,

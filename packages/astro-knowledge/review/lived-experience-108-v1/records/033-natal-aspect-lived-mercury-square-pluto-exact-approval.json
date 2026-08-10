@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-033",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/pluto",
+  "workbookKey": "mercury|square|pluto",
+  "payloadSha256": "ae0ed288ed8b662752e1b83b31f182ebd22118bb88230020f889b5fe32546d1c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury square Pluto can turn a reasonable request for proof into refusing to consider anything that cannot be proven immediately. You keep asking for another source, another explanation, another test, and at some point the investigation has quietly become a verdict. Skepticism helps when it keeps looking. It stops helping when ridicule ends the search early.",
+    "sourceMechanism": "Mercury square Pluto can make proof feel like the only safe route to belief. Doubt protects the person from being fooled, but it can also block the very inner perception they want evidence for. Ridicule closes the investigation before the evidence has had a chance to answer."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 34,
+    "approvedBodyCell": "E34",
+    "ownerStatusCell": "G34"
+  },
+  "additionalBilledCalls": 0
+}

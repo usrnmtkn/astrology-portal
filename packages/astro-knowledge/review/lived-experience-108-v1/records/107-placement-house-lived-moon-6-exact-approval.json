@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-107",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/moon/6",
+  "workbookKey": "moon|6th house",
+  "payloadSha256": "f2a3ee040f45696e9ba6c0b73ca692b29efc25dca52d15074be5f38aa3de81a7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon in the 6th house can make one small problem take over the whole day. The missed detail is hard to ignore, so is the unfinished task, the physical symptom, or the coworker who suddenly needs help. Stress can follow you into meals too, especially when you eat exhausted or upset. There is a real instinct for fixing what is not working. The trouble starts when every flaw gets promoted to an emergency.",
+    "sourceMechanism": "Moon in the 6th house can turn ordinary worry into a full-body experience. Work, health, service, repair, and the daily environment all carry emotional weight, and eating while exhausted or upset may be especially hard on digestion. People often have a genuine instinct for improving what is not working. Every flaw does not need to become an emergency."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 108,
+    "approvedBodyCell": "E108",
+    "ownerStatusCell": "G108"
+  },
+  "additionalBilledCalls": 0
+}

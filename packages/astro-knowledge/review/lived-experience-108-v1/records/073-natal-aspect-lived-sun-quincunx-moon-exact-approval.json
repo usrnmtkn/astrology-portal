@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-073",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/moon",
+  "workbookKey": "sun|inconjunct|moon",
+  "payloadSha256": "b66c0735f08cf643bd7567ad2e13650da50791b0f58caab39d3bd72782fa8cff",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun inconjunct Moon can make the reaction happen before you know what you actually wanted to say. You snap during the family conversation, leave the room, and understand your real point later while replaying it in your head. The feeling is not wrong. It gets harder when you think you have to stop feeling it before you can make a reasonable decision.",
+    "sourceMechanism": "Sun inconjunct Moon can make emotional reactions harder to manage in the moment. Logic may arrive after the feeling, especially around children, lovers, creative work, parents, or home life. Reason has to enter the response without treating the feeling as something that needs to be suppressed."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 74,
+    "approvedBodyCell": "E74",
+    "ownerStatusCell": "G74"
+  },
+  "additionalBilledCalls": 0
+}

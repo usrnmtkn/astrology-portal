@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-053",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/south-node",
+  "workbookKey": "neptune|sextile|south_node",
+  "payloadSha256": "8db6efd2e158ecbb74a14e84b88c94bce53abfa699f24c7bf86827a0fd8d04ee",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Neptune sextile the South Node can make a familiar strange feeling easier to stay with. The dream comes back, the memory returns, or a place gives you the same hard-to-name reaction and you do not immediately shut it down. You have more room to notice what it brings up before fear decides what it means.",
+    "sourceMechanism": "Neptune sextile South Node can make karmic situations easier to use as openings into subtle perception. The unknown becomes easier to experience without immediately treating it as a threat."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 54,
+    "approvedBodyCell": "E54",
+    "ownerStatusCell": "G54"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-030",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+  "workbookKey": "mercury|opposition|midheaven",
+  "payloadSha256": "ae71b7fcbb210f98fda3a156b5b1b05fb0f228f2a897b601bb7af19bf9bedb35",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury opposite the Midheaven can make one coworker's comment follow you home. By dinner, a rumor or criticism has started sounding louder than the career plan you were confident about that morning. Gossip gains power when people who do not have to live with your decision start deciding how you feel about it.",
+    "sourceMechanism": "Mercury opposite Midheaven can make coworker gossip feel powerful enough to change the person's relationship with ambition. Other people's gossip becomes most powerful when it starts deciding the person's public direction for them."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 31,
+    "approvedBodyCell": "E31",
+    "ownerStatusCell": "G31"
+  },
+  "additionalBilledCalls": 0
+}

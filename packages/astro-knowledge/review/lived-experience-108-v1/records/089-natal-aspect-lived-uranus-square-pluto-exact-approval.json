@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-089",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/pluto",
+  "workbookKey": "uranus|square|pluto",
+  "payloadSha256": "24de301981961df9e4d0530582f546e4cd15e0bb3685703ea424d247d0ba714d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus square Pluto can make independence feel exciting until you realize what support might disappear with it. You leave the role, step away from the group, or insist on doing it yourself and then feel exposed when nobody is automatically there to catch the loose ends. Change can feel like abandonment even when nobody has actually left.",
+    "sourceMechanism": "Uranus square Pluto can make independence feel necessary and frightening at the same time. The person senses the need to stand alone but still wants emotional support from people they love, and repeated upheaval can make stability feel impossible. Change feels less like abandonment once the person has enough inner footing to survive not knowing what comes next."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 90,
+    "approvedBodyCell": "E90",
+    "ownerStatusCell": "G90"
+  },
+  "additionalBilledCalls": 0
+}

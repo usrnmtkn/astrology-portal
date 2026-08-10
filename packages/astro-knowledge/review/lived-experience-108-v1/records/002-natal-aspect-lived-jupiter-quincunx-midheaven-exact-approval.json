@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-002",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/midheaven",
+  "workbookKey": "jupiter|inconjunct|midheaven",
+  "payloadSha256": "044b94b2c145fbbe1307a94d5e15e8f88a9b5256fc31658a7d2a661f648f1c9c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter inconjunct the Midheaven can make the better title look less impressive once you see the life attached to it. The salary goes up, but so do the hours. The role carries more status, but the travel or free time disappears. You may still want the opportunity and decide that you do not want the schedule that comes with it.",
+    "sourceMechanism": "Jupiter inconjunct Midheaven can make freedom more appealing than conventional success. A career that limits travel or spontaneity may feel too expensive even if it brings status. The career has to leave enough room for the life the person actually wants, not only the achievement they could collect."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 3,
+    "approvedBodyCell": "E3",
+    "ownerStatusCell": "G3"
+  },
+  "additionalBilledCalls": 0
+}

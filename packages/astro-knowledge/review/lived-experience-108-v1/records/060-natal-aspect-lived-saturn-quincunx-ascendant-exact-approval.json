@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-060",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/ascendant",
+  "workbookKey": "saturn|inconjunct|ascendant",
+  "payloadSha256": "20bc4b7edf3c231630c56fc28ac50a95fbebd8068db61760391d897defd972ac",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn inconjunct the Ascendant can let serious work eat the part of the day you meant to enjoy. You stay late, cancel the lighter plan, finish one more task, and tell yourself rest will feel better once everything is done. The trouble is that everything is rarely done at the same time.",
+    "sourceMechanism": "Saturn inconjunct Ascendant can make important work so absorbing that pleasure starts looking frivolous. Seriousness does not become more valuable simply because the person never relaxes."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 61,
+    "approvedBodyCell": "E61",
+    "ownerStatusCell": "G61"
+  },
+  "additionalBilledCalls": 0
+}

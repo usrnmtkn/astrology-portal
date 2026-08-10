@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-039",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/saturn",
+  "workbookKey": "moon|inconjunct|saturn",
+  "payloadSha256": "f459f7319f80e92db49e2b9ad66312ec82d7710b125805a3e0616905a046233a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon inconjunct Saturn can make the promotion feel good until the first criticism lands. You wanted more responsibility and respect, but now a difficult meeting follows you home and sounds personal long after work is over. Leadership gets lonely when approval is still doing too much work as proof that you are doing well.",
+    "sourceMechanism": "Moon inconjunct Saturn can make love and ambition feel like competing needs. The person wants emotional reassurance and public achievement, but criticism that comes with leadership can feel personally wounding. Being respected does not require being liked by everyone."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 40,
+    "approvedBodyCell": "E40",
+    "ownerStatusCell": "G40"
+  },
+  "additionalBilledCalls": 0
+}

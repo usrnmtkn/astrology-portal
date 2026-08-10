@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-045",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/pluto",
+  "workbookKey": "moon|opposition|pluto",
+  "payloadSha256": "b9bb68a9edb51df94ea835d08dcf45ef2aa5da22073d7345dd236345c9408387",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon opposite Pluto can want complete freedom and complete reassurance at the same time. You dislike being questioned about your plans, then notice yourself checking where someone is, why they have not replied, or what a change in tone means. Intimacy gets difficult when independence is only allowed on one side.",
+    "sourceMechanism": "Moon opposite Pluto can make emotion swing from very high to very low with little middle ground. Loved ones may be idealized, possessed, or feared as potential sources of rejection, even while the person wants plenty of freedom themselves. Intimacy breaks down quickly when one person wants freedom for themselves and different rules for everyone else."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 46,
+    "approvedBodyCell": "E46",
+    "ownerStatusCell": "G46"
+  },
+  "additionalBilledCalls": 0
+}

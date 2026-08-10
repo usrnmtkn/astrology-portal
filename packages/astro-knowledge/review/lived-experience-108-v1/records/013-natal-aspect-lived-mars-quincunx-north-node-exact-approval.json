@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-013",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/north-node",
+  "workbookKey": "mars|inconjunct|north_node",
+  "payloadSha256": "d12c2f44f8047ed942fd3363c48f71e53451af6f77d4393306ba2f0eb5f76f3c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars inconjunct the North Node can make it hard to take advice from someone who still loses their temper, chases the wrong desire, or struggles with self-control themselves. The contradiction is easy to see. It does not mean they understand nothing about the problem. Someone can know where the trap is and still step in it sometimes.",
+    "sourceMechanism": "Mars inconjunct North Node can make a teacher's own struggles with desire seem like proof that they cannot help anyone else. A teacher can still be useful while doing their own work around desire."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 14,
+    "approvedBodyCell": "E14",
+    "ownerStatusCell": "G14"
+  },
+  "additionalBilledCalls": 0
+}

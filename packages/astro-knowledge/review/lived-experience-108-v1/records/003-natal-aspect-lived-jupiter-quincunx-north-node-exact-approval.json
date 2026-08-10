@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-003",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/north-node",
+  "workbookKey": "jupiter|inconjunct|north_node",
+  "payloadSha256": "70882554143f7f07c5a7f97111007a37a5dd19c0caa5b30420b3d251cd91af86",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter inconjunct the North Node can make you lose respect for a teacher the minute you see them struggling with the same lesson they teach. Maybe their advice is useful and their own life is still messy. Both can be true. An imperfect example does not automatically make the useful part of what they know worthless.",
+    "sourceMechanism": "Jupiter inconjunct North Node can make a teacher's own unfinished spiritual work seem like proof that their insight has no value. A teacher can still offer a useful perspective while continuing to grow."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 4,
+    "approvedBodyCell": "E4",
+    "ownerStatusCell": "G4"
+  },
+  "additionalBilledCalls": 0
+}
