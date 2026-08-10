@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/neptune",
+  "status": "UNAPPROVED",
+  "operatingMode": "flag-only",
+  "calibrationFailed": true,
+  "modeNotice": "Terra failed calibration. Score-1 and failed-dimension counts are advisory triage only, never quality verdicts.",
+  "selectionBasis": "Deterministic output lint first; then flag-only score-1 avoidance and failed-dimension triage. This is not a quality verdict.",
+  "winner": {
+    "headline": "One worried voice can change your plans before anyone explains the problem.",
+    "body": "You hear worry in one voice and may imagine the whole group feels the same. You start rearranging your work to cover tasks no one has asked you to take. Only one person has spoken. Ask what help is actually needed before you spend the next few hours fixing a problem no one has described."
+  },
+  "lint": {
+    "schemaVersion": 1,
+    "key": "conjunction/neptune",
+    "passed": false,
+    "immutableRawOutput": true,
+    "revisionsMade": 0,
+    "ownerPlacementApproval": {
+      "required": false
+    },
+    "checks": [
+      {
+        "id": "P4-headline-one-declarative-sentence",
+        "passed": true,
+        "details": "1 sentence(s)"
+      },
+      {
+        "id": "P4-headline-word-count",
+        "passed": true,
+        "details": "12 words"
+      },
+      {
+        "id": "P4-body-sentence-count",
+        "passed": true,
+        "details": "4 sentences"
+      },
+      {
+        "id": "P4-body-word-count",
+        "passed": true,
+        "details": "55 words"
+      },
+      {
+        "id": "P4-one-final-instruction",
+        "passed": true,
+        "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask what help is actually needed before you spend the next few hours fixing a problem no one has described."
+      },
+      {
+        "id": "P4-body-supports-without-repeating",
+        "passed": true,
+        "details": "Body does not repeat the full headline."
+      },
+      {
+        "id": "global+VC-016+DG+SM-output-bans",
+        "passed": true,
+        "details": "No prohibited match."
+      },
+      {
+        "id": "DG-R2-register",
+        "passed": true,
+        "details": {
+          "saturationCue": true,
+          "target": "neptune"
+        }
+      },
+      {
+        "id": "DG-R3-no-slogan-or-restatement-closer",
+        "passed": true,
+        "details": "No known slogan or full-headline restatement detected."
+      },
+      {
+        "id": "DG-R4-no-outcome-promise",
+        "passed": true,
+        "details": "No deterministic outcome promise detected."
+      },
+      {
+        "id": "DG-R7-varied-opener",
+        "passed": true,
+        "details": "Body uses a non-fixed opener."
+      },
+      {
+        "id": "DG-R9-enumerated-instruction-allowed",
+        "passed": true,
+        "details": "No enumerated one-X/one-Y instruction present."
+      },
+      {
+        "id": "B1-L1-time-anchor-max-once",
+        "passed": true,
+        "details": "No time-anchor phrase used."
+      },
+      {
+        "id": "B1-L2-may-inner-states-only",
+        "passed": false,
+        "details": [
+          "may imagine the whole group feels the same"
+        ]
+      },
+      {
+        "id": "B1-L3+L4-headline-group-grammar",
+        "passed": true,
+        "details": {
+          "originalConjunctionGrammar": true,
+          "otherGrammar": false,
+          "softGrammar": false,
+          "squareGrammar": false
+        }
+      },
+      {
+        "id": "SM-DG-2-no-diagnostic-history",
+        "passed": true,
+        "details": "No diagnostic reader-history frame detected."
+      },
+      {
+        "id": "DG-R11-unhedged-headline",
+        "passed": true,
+        "details": "Headline makes an unhedged claim."
+      },
+      {
+        "id": "DG-R12-no-time-anchor-opener",
+        "passed": true,
+        "details": "Body opens inside the scene."
+      },
+      {
+        "id": "DG-R13-may-max-once",
+        "passed": true,
+        "details": "1 may usage(s)"
+      },
+      {
+        "id": "DG-R14-scene-not-biographical",
+        "passed": true,
+        "details": "No biographical anchor detected."
+      },
+      {
+        "id": "DG-R15-action-repairs-moment",
+        "passed": true,
+        "details": []
+      },
+      {
+        "id": "DG-R16-owner-reserved-construction",
+        "passed": true,
+        "details": []
+      },
+      {
+        "id": "DG-R17-quoted-dialogue-max-one",
+        "passed": true,
+        "details": "No quoted-dialogue line used."
+      },
+      {
+        "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+        "passed": true,
+        "advisory": true,
+        "details": "No quoted-dialogue judgment needed."
+      },
+      {
+        "id": "OWNER-DIRECTIVE-short-blunt-line",
+        "passed": true,
+        "details": [
+          "Only one person has spoken."
+        ]
+      },
+      {
+        "id": "OWNER-TEST-specificity",
+        "passed": false,
+        "advisory": false,
+        "details": {
+          "own": {
+            "key": "conjunction/neptune",
+            "matches": [],
+            "required": 2,
+            "passed": false
+          },
+          "comparisonScope": [
+            "soft/chiron",
+            "square/sun",
+            "square/uranus",
+            "conjunction/pluto"
+          ],
+          "swappableTo": [],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "id": "OWNER-TEST-morning-read",
+        "passed": true,
+        "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+      },
+      {
+        "id": "OWNER-TEST-screenshot",
+        "passed": false,
+        "details": "No candidate body line detected."
+      }
+    ],
+    "findings": [],
+    "counts": {
+      "headlineWords": 12,
+      "headlineSentences": 1,
+      "bodyWords": 55,
+      "bodySentences": 4,
+      "instructions": 1,
+      "timeAnchors": 0,
+      "mayUsages": 1,
+      "quotedDialogueLines": 0,
+      "screenshotCandidateLines": 0
+    }
+  },
+  "judge": {
+    "key": "conjunction/neptune",
+    "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+    "judgeModel": "gpt-5.6-terra",
+    "reasoningEffort": "low",
+    "score": 3,
+    "allScores": [
+      2,
+      3,
+      3
+    ],
+    "dimScore": 7,
+    "verdict": {
+      "score": 3,
+      "verdict": "Rubric-acceptable; the vague group concern is treated as a practical planning problem, not a feeling to decode.",
+      "dimensions": {
+        "voice": true,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Only one person has spoken.",
+      "why": "This is the sentence that cuts through the Neptune-style projection without sounding mystical or corrective. The body names the actual cost—rearranging work and losing hours to an undefined problem—then gives a direct way to verify what is real before taking it on."
+    },
+    "usage": {
+      "inputTokens": 14691,
+      "cachedInputTokens": 13404,
+      "outputTokens": 749,
+      "reasoningTokens": 328,
+      "totalTokens": 15440
+    },
+    "estimatedCostUsd": 0.014243,
+    "responseCount": 3,
+    "advisoryOnly": true,
+    "operatingMode": "flag-only",
+    "calibrationFailed": true
+  }
+}

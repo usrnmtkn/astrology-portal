@@ -1,0 +1,752 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "pending": "Automatically appended audit flag awaiting an owner ruling.",
+    "agreement": "owner-rewrote and took-candidate mean the flag was actionable; kept means the owner rejected the flag. Pending entries are excluded from the agreement denominator."
+  },
+  "entries": [
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/chiron",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/jupiter",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/lilith",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "stakes",
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/mars",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/mercury",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "structure",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/moon",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/neptune",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "structure",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/north-node",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/pluto",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "hedging",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/south-node",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/sun",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "stakes",
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/uranus",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "structure",
+        "formula",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "conjunction/venus",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/1",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/10",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "structure",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/11",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/12",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/2",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "structure"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/3",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/4",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/5",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/6",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/7",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/8",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "structure",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "house/9",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/chiron",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/jupiter",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/lilith",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/mars",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/mercury",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/moon",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/neptune",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/north-node",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/pluto",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "structure",
+        "formula",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/south-node",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/sun",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/uranus",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "opposition/venus",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/chiron",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "structure",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/jupiter",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "structure",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/lilith",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/mars",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "stakes",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/mercury",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/moon",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "hedging",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/neptune",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "structure",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/north-node",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/pluto",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/saturn",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "structure",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/south-node",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "hedging",
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/sun",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/uranus",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "soft/venus",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/chiron",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/jupiter",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "screenshot_line"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/lilith",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/mars",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/mercury",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/moon",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/neptune",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/north-node",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/pluto",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/saturn",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "hedging",
+        "formula"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/south-node",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/sun",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "structure",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "kept",
+      "ownerNote": "Owner prefers the serving copy."
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/uranus",
+      "judgeScore": 1,
+      "failedDimensions": [
+        "voice",
+        "stakes",
+        "structure",
+        "formula",
+        "screenshot_line",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    },
+    {
+      "auditDate": "2026-08-10",
+      "key": "square/venus",
+      "judgeScore": 2,
+      "failedDimensions": [
+        "voice",
+        "formula",
+        "specificity"
+      ],
+      "ownerVerdict": "pending"
+    }
+  ]
+}
