@@ -14,6 +14,7 @@ await db.exec(`
   create role service_role;
   create schema auth;
   create table auth.users (id uuid primary key);
+  create table public.user_profiles (user_id uuid primary key, data jsonb not null default '{}'::jsonb, updated_at timestamptz not null default now());
   create function auth.uid() returns uuid language sql stable as 'select null::uuid';
   create table public.user_reports (
     id uuid primary key default gen_random_uuid(), user_id uuid not null, report_type text not null,
@@ -28,13 +29,28 @@ const migration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260
 const personalHealthMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809160000_personal_health_report_domain.sql", import.meta.url), "utf8");
 const compMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810120000_comp_report_entitlements.sql", import.meta.url), "utf8");
 const accountingMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810130000_report_call_accounting.sql", import.meta.url), "utf8");
+const birthTimeMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810210000_birth_time_normalization.sql", import.meta.url), "utf8");
 await db.exec("begin");
 try {
+  const userId = "00000000-0000-0000-0000-000000000001";
   await db.exec(migration);
   await db.exec(personalHealthMigration);
   await db.exec(compMigration);
   await db.exec(accountingMigration);
-  const userId = "00000000-0000-0000-0000-000000000001";
+  await db.query("insert into public.user_profiles (user_id, data) values ($1, $2::jsonb)", [userId, JSON.stringify({ profile: { charts: [
+    { name: "Marie", birthTime: "11:20 aM" },
+    { name: "Compact", birthTime: "1120" },
+    { name: "Dot", birthTime: "11.20" },
+    { name: "Database", birthTime: "21:05:00" },
+    { name: "Unknown", birthTime: "Time unknown" }
+  ] } })]);
+  await db.exec(birthTimeMigration);
+  const normalizedCharts = (await db.query("select data -> 'profile' -> 'charts' as charts from public.user_profiles where user_id = $1", [userId])).rows[0].charts;
+  assert.deepEqual(normalizedCharts.map((chart) => chart.birthTime), ["11:20", "11:20", "11:20", "21:05", "Time unknown"]);
+  await db.exec("savepoint invalid_birth_time");
+  await assert.rejects(db.query("update public.user_profiles set data = $2::jsonb where user_id = $1", [userId, JSON.stringify({ profile: { charts: [{ birthTime: "not a time" }] } })]), /Enter a valid birth time/u);
+  await db.exec("rollback to savepoint invalid_birth_time");
+  await db.exec("release savepoint invalid_birth_time");
   await db.query("insert into auth.users (id) values ($1)", [userId]);
   await db.query(`insert into public.report_entitlements
     (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
@@ -74,6 +90,11 @@ try {
   assert.equal(compReport.fulfillment_status, "awaiting_authorization");
   const compJob = (await db.query("select id, state from public.report_fulfillment_jobs where entitlement_id = $1", [compId])).rows[0];
   assert.equal(compJob.state, "paused");
+  await db.query("update public.report_fulfillment_jobs set state = 'queued' where id = $1", [compJob.id]);
+  const immediateClaim = (await db.query("select * from public.claim_report_fulfillment_job('authorize-worker', $1)", [compJob.id])).rows[0];
+  assert.equal(immediateClaim.id, compJob.id);
+  assert.equal(immediateClaim.attempt, 1);
+  await db.query("update public.report_fulfillment_jobs set state = 'paused', attempt = 0, locked_at = null, locked_by = null where id = $1", [compJob.id]);
   await db.exec("savepoint duplicate_comp");
   await assert.rejects(db.query(`insert into public.report_entitlements
     (user_id, product_key, report_domain, report_horizon, window_anchor, selected_start, period_start, period_end, requires_birth_time, status, source, purchased_at)

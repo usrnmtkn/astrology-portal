@@ -7,11 +7,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   if (req.method !== "POST" && req.method !== "GET") return sendJson(res, 405, { error: "Use GET or POST." });
   if (!requireInternalRunner(req)) return sendJson(res, 401, { error: "Unauthorized." });
   try {
+    const jobId = new URL(req.url ?? "/", "https://tldrastro.invalid").searchParams.get("jobId") ?? undefined;
     const workerId = `report-worker-${process.pid}-${Date.now()}`;
     sendJson(res, 200, await runReportFulfillmentBatch({
       workerId,
       store: createReportFulfillmentStore(),
-      calculateFacts: createReportFactsCalculator()
+      calculateFacts: createReportFactsCalculator(),
+      jobId
     }));
   } catch (error) {
     sendJson(res, 500, { error: error instanceof Error ? error.message : "Report fulfillment runner failed." });

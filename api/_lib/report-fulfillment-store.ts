@@ -12,14 +12,18 @@ export type FulfillmentReportRow = {
   token_spend_usd_estimate?: number; attempt_counts: { validator?: number; judge?: number };
   failure_history: unknown[];
 };
-export type FulfillmentEntitlementRow = { id: string; user_id: string; status: string; product_key: string; period_start: string; period_end: string };
+export type FulfillmentEntitlementRow = {
+  id: string; user_id: string; status: string; product_key: string; period_start: string; period_end: string; requires_birth_time?: boolean;
+};
 
 export type ReportFulfillmentStore = {
   claimJobs(workerId: string, limit: number): Promise<FulfillmentJobRow[]>;
+  claimJob(workerId: string, jobId: string): Promise<FulfillmentJobRow[]>;
   workerPaused(): Promise<boolean>;
   report(id: string): Promise<FulfillmentReportRow | null>;
   entitlement(id: string): Promise<FulfillmentEntitlementRow | null>;
   updateReport(id: string, patch: Record<string, unknown>): Promise<void>;
+  updateEntitlement(id: string, patch: Record<string, unknown>): Promise<void>;
   updateJob(id: string, patch: Record<string, unknown>): Promise<void>;
   beginAuthorizedCall(jobId: string, authorizationToken: string, attempt: { provider: string; model: string; schemaName: string }): Promise<{ callId: string; callNumber: number }>;
   finishAuthorizedCall(callId: string, result: {
@@ -49,6 +53,7 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
   };
   return {
     claimJobs: (workerId, limit) => rpc<FulfillmentJobRow>(admin, "claim_report_fulfillment_jobs", { worker_id: workerId, batch_limit: limit }),
+    claimJob: (workerId, jobId) => rpc<FulfillmentJobRow>(admin, "claim_report_fulfillment_job", { worker_id: workerId, target_job_id: jobId }),
     async workerPaused() {
       const row = await admin.selectOne<{ worker_paused: boolean }>("report_fulfillment_controls", new URLSearchParams({ id: "eq.true", select: "worker_paused" }));
       return row?.worker_paused === true;
@@ -56,6 +61,7 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
     report: (id) => admin.selectOne("user_reports", new URLSearchParams({ id: `eq.${id}`, select: "*" })),
     entitlement: (id) => admin.selectOne("report_entitlements", new URLSearchParams({ id: `eq.${id}`, select: "*" })),
     async updateReport(id, patch) { await admin.update("user_reports", `id=eq.${id}`, patch); },
+    async updateEntitlement(id, patch) { await admin.update("report_entitlements", `id=eq.${id}`, patch); },
     async updateJob(id, patch) { await admin.update("report_fulfillment_jobs", `id=eq.${id}`, patch); },
     async beginAuthorizedCall(jobId, authorizationToken, attempt) {
       return admin.request<{ callId: string; callNumber: number }>("rpc/begin_report_fulfillment_call", {

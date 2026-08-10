@@ -91,7 +91,7 @@ export async function authorizeReportGeneration(admin: SupabaseReportAdmin, inpu
   await admin.update("user_reports", `id=eq.${encodeURIComponent(input.reportId)}&fulfillment_status=eq.awaiting_authorization`, {
     fulfillment_status: "queued"
   });
-  return { authorized: true, callBudget: input.callBudget };
+  return { authorized: true, callBudget: input.callBudget, jobId: jobs[0].id };
 }
 
 export async function revokeEntitlement(admin: SupabaseReportAdmin, input: {
