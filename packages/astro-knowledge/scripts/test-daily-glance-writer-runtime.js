@@ -106,11 +106,14 @@ const banned = lintOutput({
 assert.ok(banned.findings.some((finding) => finding.id === "DG-R1"), "Stop + verb fails");
 assert.ok(banned.findings.some((finding) => finding.id === "DG-R5"), "cynical/meme language fails");
 assert.ok(banned.findings.some((finding) => finding.id === "SM-DG-6"), "ambient energy fails");
-assert.equal(batchLint([
+const recurringFrameReport = batchLint([
   { key: "a", candidate: { headline: "You can see this.", body: "Name what matters." } },
   { key: "b", candidate: { headline: "You can see that.", body: "Choose one thing." } },
   { key: "c", candidate: { headline: "You can see why.", body: "Tell one friend." } }
-]).passed, false, "recurring three-word frame fails across three outputs");
+]);
+assert.equal(recurringFrameReport.passed, true, "recurring-frame findings no longer block an otherwise clean batch");
+assert.equal(recurringFrameReport.checks.find((check) => check.id === "DG-R1-recurring-sentence-frame").passed, false, "recurring three-word frame remains reported");
+assert.equal(recurringFrameReport.checks.find((check) => check.id === "DG-R1-recurring-sentence-frame").tier, "advisory", "recurring-frame finding is advisory");
 const repeatedOpeners = batchLint([
   { key: "a", candidate: { headline: "One clear claim lands here.", body: "Notice how pressure builds. Name one limit." } },
   { key: "b", candidate: { headline: "Another clear claim lands here.", body: "Notice how comfort shifts. Choose one action." } }

@@ -1,0 +1,821 @@
+{
+  "schemaVersion": 1,
+  "key": "soft/chiron",
+  "status": "UNAPPROVED",
+  "terraCalls": 0,
+  "winnersSelected": 0,
+  "candidates": [
+    {
+      "sample": 1,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "soft/chiron",
+        "headline": "You accept help while the criticism still stings.",
+        "body": "After your manager calls the draft careless, you start rebuilding every slide before anyone else can review it. A coworker asks for the current file and offers to check only the figures before the next meeting. You may still feel stung, but you do not start explaining or defending the draft. You lose your only free hour today by checking every figure alone. Send them the file before you revise another slide.",
+        "screenshot_line": "You may still feel stung, but you do not start explaining or defending the draft.",
+        "portability_check": "Only this key pairs accepted care with a lingering hurt and no promise that the struggle is finished."
+      },
+      "raw": "{\"transit_key\":\"soft/chiron\",\"headline\":\"You accept help while the criticism still stings.\",\"body\":\"After your manager calls the draft careless, you start rebuilding every slide before anyone else can review it. A coworker asks for the current file and offers to check only the figures before the next meeting. You may still feel stung, but you do not start explaining or defending the draft. You lose your only free hour today by checking every figure alone. Send them the file before you revise another slide.\",\"screenshot_line\":\"You may still feel stung, but you do not start explaining or defending the draft.\",\"portability_check\":\"Only this key pairs accepted care with a lingering hurt and no promise that the struggle is finished.\"}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "soft/chiron",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "8 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "5 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "72 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send them the file before you revise another slide."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": {
+              "mildEaseCue": false,
+              "target": "chiron"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": [
+              "today"
+            ]
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may still feel stung"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "softGrammar": false,
+              "otherGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": false,
+            "details": "No 2-8 word body sentence found."
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "soft/chiron",
+                "matches": [
+                  "care-old-hurt"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": true,
+            "details": [
+              "After your manager calls the draft careless, you start rebuilding every slide before anyone else can review it."
+            ]
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "soft/chiron"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "8 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "72 words; 5 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "18 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 8,
+          "headlineSentences": 1,
+          "bodyWords": 72,
+          "bodySentences": 5,
+          "instructions": 1,
+          "timeAnchors": 1,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 1
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_06e7f59fce651d75006a7a382e7048819f9d0a4374e810cc5a",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7545,
+          "cachedInputTokens": 7542,
+          "cacheWriteTokens": 0,
+          "outputTokens": 8442,
+          "reasoningTokens": 8286,
+          "totalTokens": 15987
+        },
+        "estimatedCostUsd": 0.257046
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    },
+    {
+      "sample": 2,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "soft/chiron",
+        "headline": "You accept help while the problem is still there.",
+        "body": "You show a friend the overdue bill you cannot pay in full, and they offer to sit beside you during the payment-plan call. You say yes instead of saying, \"I can handle it alone.\" For the next hour, you can answer the payment questions with your friend beside you. You still owe the money. Start the payment-plan call with them beside you.",
+        "screenshot_line": "You say yes instead of saying, \"I can handle it alone.\"",
+        "portability_check": "This fits only the brief opening where you accept care instead of repeating an old refusal while the original problem remains."
+      },
+      "raw": "{\"transit_key\":\"soft/chiron\",\"headline\":\"You accept help while the problem is still there.\",\"body\":\"You show a friend the overdue bill you cannot pay in full, and they offer to sit beside you during the payment-plan call. You say yes instead of saying, \\\"I can handle it alone.\\\" For the next hour, you can answer the payment questions with your friend beside you. You still owe the money. Start the payment-plan call with them beside you.\",\"screenshot_line\":\"You say yes instead of saying, \\\"I can handle it alone.\\\"\",\"portability_check\":\"This fits only the brief opening where you accept care instead of repeating an old refusal while the original problem remains.\"}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "soft/chiron",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "9 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "5 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "64 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Start the payment-plan call with them beside you."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": {
+              "mildEaseCue": false,
+              "target": "chiron"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "softGrammar": false,
+              "otherGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "0 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": [
+              "You say yes instead of saying, \"I can handle it alone.\""
+            ]
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "One quoted-dialogue line used; owner review determines whether it earns its place."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You still owe the money."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "soft/chiron",
+                "matches": [],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "soft/chiron"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "9 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "64 words; 5 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "0 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "21 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 9,
+          "headlineSentences": 1,
+          "bodyWords": 64,
+          "bodySentences": 5,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 0,
+          "quotedDialogueLines": 1,
+          "screenshotCandidateLines": 0
+        },
+        "directiveCounts": {
+          "hedgeCount": 0,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0b3c523a5e579f05006a7a382e71f8819cb3bd1f45e94c2f35",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7545,
+          "cachedInputTokens": 7542,
+          "cacheWriteTokens": 0,
+          "outputTokens": 13183,
+          "reasoningTokens": 13035,
+          "totalTokens": 20728
+        },
+        "estimatedCostUsd": 0.399276
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    },
+    {
+      "sample": 3,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "soft/chiron",
+        "headline": "Help is available before the problem is over.",
+        "body": "You are staring at your reduced work schedule when a friend texts that they can leave dinner at your door. You may be ready to type \"I'm fine\" because one meal does not restore the missing hours. You still have fewer hours. If you refuse the food, you also pay for dinner yourself. Reply with a drop-off time.",
+        "screenshot_line": "You may be ready to type \"I'm fine\" because one meal does not restore the missing hours.",
+        "portability_check": "This fits only this key because you accept modest care while the larger hurt and the impulse to refuse help remain."
+      },
+      "raw": "{\"transit_key\":\"soft/chiron\",\"headline\":\"Help is available before the problem is over.\",\"body\":\"You are staring at your reduced work schedule when a friend texts that they can leave dinner at your door. You may be ready to type \\\"I'm fine\\\" because one meal does not restore the missing hours. You still have fewer hours. If you refuse the food, you also pay for dinner yourself. Reply with a drop-off time.\",\"screenshot_line\":\"You may be ready to type \\\"I'm fine\\\" because one meal does not restore the missing hours.\",\"portability_check\":\"This fits only this key because you accept modest care while the larger hurt and the impulse to refuse help remain.\"}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "soft/chiron",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "8 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "5 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "59 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 0 detected instruction(s); final sentence: Reply with a drop-off time."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "mildEaseCue": true,
+              "target": "chiron"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "softGrammar": false,
+              "otherGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": [
+              "You may be ready to type \"I'm fine\" because one meal does not restore the missing hours."
+            ]
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "One quoted-dialogue line used; owner review determines whether it earns its place."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You still have fewer hours.",
+              "Reply with a drop-off time."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "soft/chiron",
+                "matches": [],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [
+                {
+                  "key": "square/uranus",
+                  "matches": [
+                    "disruption",
+                    "recoil"
+                  ],
+                  "passed": true
+                }
+              ],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "soft/chiron"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "8 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "59 words; 5 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "21 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 8,
+          "headlineSentences": 1,
+          "bodyWords": 59,
+          "bodySentences": 5,
+          "instructions": 0,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 1,
+          "screenshotCandidateLines": 0
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0ffcee378d695734006a7a382e696081a181a7f0a50b93288e",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7545,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 7542,
+          "outputTokens": 8301,
+          "reasoningTokens": 8155,
+          "totalTokens": 15846
+        },
+        "estimatedCostUsd": 0.296183
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    }
+  ]
+}

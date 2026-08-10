@@ -1,0 +1,809 @@
+{
+  "schemaVersion": 1,
+  "key": "square/uranus",
+  "status": "UNAPPROVED",
+  "terraCalls": 0,
+  "winnersSelected": 0,
+  "candidates": [
+    {
+      "sample": 1,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "square/uranus",
+        "headline": "One restrictive rule makes a total rewrite feel necessary.",
+        "body": "You sit down to finish a presentation, but the required template may suddenly feel so restrictive that you want to rebuild every slide. You start over. You lose half an hour, spot fresh problems in the new version, and rush the final checks. Keep the original delivery plan, but change the one part of the layout you control instead of rebuilding the whole presentation.",
+        "screenshot_line": "You sit down to finish a presentation, but the required template may suddenly feel so restrictive that you want to rebuild every slide.",
+        "portability_check": "This fits only the requested key because you recoil from a restriction, start over abruptly, and then preserve the larger plan."
+      },
+      "raw": "{\n  \"transit_key\": \"square/uranus\",\n  \"headline\": \"One restrictive rule makes a total rewrite feel necessary.\",\n  \"body\": \"You sit down to finish a presentation, but the required template may suddenly feel so restrictive that you want to rebuild every slide. You start over. You lose half an hour, spot fresh problems in the new version, and rush the final checks. Keep the original delivery plan, but change the one part of the layout you control instead of rebuilding the whole presentation.\",\n  \"screenshot_line\": \"You sit down to finish a presentation, but the required template may suddenly feel so restrictive that you want to rebuild every slide.\",\n  \"portability_check\": \"This fits only the requested key because you recoil from a restriction, start over abruptly, and then preserve the larger plan.\"\n}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "square/uranus",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "9 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "64 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: Keep the original delivery plan, but change the one part of the layout you control instead of rebuilding the whole presentation."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": "Self-friction cue present."
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may suddenly feel so restrictive that you want to rebuild every "
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "squareGrammar": false,
+              "otherGrammar": false,
+              "softGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You start over."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "square/uranus",
+                "matches": [
+                  "disruption"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "square/uranus"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "9 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "64 words; 4 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "21 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 9,
+          "headlineSentences": 1,
+          "bodyWords": 64,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0b382f510002c8cf006a7a3926c4088191b5765c74142e17bd",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7588,
+          "cachedInputTokens": 7585,
+          "cacheWriteTokens": 0,
+          "outputTokens": 4713,
+          "reasoningTokens": 4538,
+          "totalTokens": 12301
+        },
+        "estimatedCostUsd": 0.145198
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    },
+    {
+      "sample": 2,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "square/uranus",
+        "headline": "The temptation is to cancel everything when one hour feels fixed.",
+        "body": "You sit down to finish a report, but you may suddenly resent the fixed work block and want to cancel every task planned for the afternoon. You start rearranging the schedule to avoid one rigid hour, even though you still need the report completed. You lose the hour and leave the report unfinished. Shorten the work block by thirty minutes instead of deleting it from your calendar.",
+        "screenshot_line": "You start rearranging the schedule to avoid one rigid hour, even though you still need the report completed.",
+        "portability_check": "This copy fits only the key built around a sudden recoil from confinement, internal friction, and a limited plan adjustment."
+      },
+      "raw": "{\"transit_key\":\"square/uranus\",\"headline\":\"The temptation is to cancel everything when one hour feels fixed.\",\"body\":\"You sit down to finish a report, but you may suddenly resent the fixed work block and want to cancel every task planned for the afternoon. You start rearranging the schedule to avoid one rigid hour, even though you still need the report completed. You lose the hour and leave the report unfinished. Shorten the work block by thirty minutes instead of deleting it from your calendar.\",\"screenshot_line\":\"You start rearranging the schedule to avoid one rigid hour, even though you still need the report completed.\",\"portability_check\":\"This copy fits only the key built around a sudden recoil from confinement, internal friction, and a limited plan adjustment.\"}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "square/uranus",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "11 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "67 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": false,
+            "details": "skeleton=instruction-first; instruction optional per D2-3; 0 detected instruction(s); final sentence: Shorten the work block by thirty minutes instead of deleting it from your calendar."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": "Self-friction cue present."
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may suddenly resent the fixed work block and want to cancel ever"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "squareGrammar": false,
+              "otherGrammar": false,
+              "softGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": false,
+            "details": "No 2-8 word body sentence found."
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "square/uranus",
+                "matches": [
+                  "disruption"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": true,
+            "details": [
+              "You start rearranging the schedule to avoid one rigid hour, even though you still need the report completed."
+            ]
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "square/uranus"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "11 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "67 words; 4 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "20 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 11,
+          "headlineSentences": 1,
+          "bodyWords": 67,
+          "bodySentences": 4,
+          "instructions": 0,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 1
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_02253ca006196b9a006a7a3926a114819e9c0c78df73267dce",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7588,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 7585,
+          "outputTokens": 4820,
+          "reasoningTokens": 4660,
+          "totalTokens": 12408
+        },
+        "estimatedCostUsd": 0.192021
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    },
+    {
+      "sample": 3,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "square/uranus",
+        "headline": "The urge is to cancel the whole afternoon.",
+        "body": "You sit down to finish a report, and you may suddenly resent the deadline, the file, and the afternoon you set aside. You abandon the report and rewrite the entire schedule, losing the only open hour while the same work remains unfinished. You still face the same report tomorrow. Move one work block to a later hour, then leave the deadline and the rest of the schedule alone.",
+        "screenshot_line": "You abandon the report and rewrite the entire schedule, losing the only open hour while the same work remains unfinished.",
+        "portability_check": "The copy fits only this key because you suddenly recoil from a fixed schedule, disrupt your own day, and then make one limited adjustment."
+      },
+      "raw": "{\n  \"transit_key\": \"square/uranus\",\n  \"headline\": \"The urge is to cancel the whole afternoon.\",\n  \"body\": \"You sit down to finish a report, and you may suddenly resent the deadline, the file, and the afternoon you set aside. You abandon the report and rewrite the entire schedule, losing the only open hour while the same work remains unfinished. You still face the same report tomorrow. Move one work block to a later hour, then leave the deadline and the rest of the schedule alone.\",\n  \"screenshot_line\": \"You abandon the report and rewrite the entire schedule, losing the only open hour while the same work remains unfinished.\",\n  \"portability_check\": \"The copy fits only this key because you suddenly recoil from a fixed schedule, disrupt your own day, and then make one limited adjustment.\"\n}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "square/uranus",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "8 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "68 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=instruction-first; instruction optional per D2-3; 1 detected instruction(s); final sentence: Move one work block to a later hour, then leave the deadline and the rest of the schedule alone."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": "Self-friction cue present."
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may suddenly resent the deadline"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "squareGrammar": false,
+              "otherGrammar": false,
+              "softGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You still face the same report tomorrow."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "square/uranus",
+                "matches": [
+                  "disruption"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": true,
+            "details": [
+              "You abandon the report and rewrite the entire schedule, losing the only open hour while the same work remains unfinished."
+            ]
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "square/uranus"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "8 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "68 words; 4 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "24 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 8,
+          "headlineSentences": 1,
+          "bodyWords": 68,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 1
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_068790dcd2570ee1006a7a3926c10881a094169fa2bd44eef3",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7588,
+          "cachedInputTokens": 7585,
+          "cacheWriteTokens": 0,
+          "outputTokens": 2676,
+          "reasoningTokens": 2497,
+          "totalTokens": 10264
+        },
+        "estimatedCostUsd": 0.084087
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    }
+  ]
+}

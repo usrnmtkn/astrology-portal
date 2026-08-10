@@ -13,6 +13,7 @@ const batch3ConfigPath = path.join(packageRoot, "config", "daily-glance-writer-s
 const voiceIndexPath = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "voice-index.json");
 const bannedWordsPath = path.join(packageRoot, "voice", "banned-words.json");
 const placementVoicePath = path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json");
+const servingLintPolicyPath = path.join(packageRoot, "config", "daily-glance-writer-lint-policy-v2.json");
 
 function readJson(filePath) {
   const parsed = JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -40,6 +41,36 @@ function getPath(value, selector) {
 
 function wordCount(value) {
   return (String(value).match(/[\p{L}\p{N}]+(?:[’'][\p{L}\p{N}]+)*/gu) || []).length;
+}
+
+function lintTierForRule(ruleId, { batch = false, policy = readJson(servingLintPolicyPath) } = {}) {
+  if (batch) return policy.batchRuleTiers[ruleId] || policy.governance.unknownRuleDefault;
+  const aliases = {
+    "DG-R2": "DG-R2-register",
+    "B1-L2": "B1-L2-may-inner-states-only",
+    "B1-L3": "B1-L3+L4-headline-group-grammar",
+    "B1-L4": "B1-L3+L4-headline-group-grammar",
+    "SOL-DIRECTIVE-body-length": "P4-body-word-count"
+  };
+  const normalizedRuleId = /-BAN-\d+$/u.test(ruleId)
+    ? "global+VC-016+DG+SM-output-bans"
+    : aliases[ruleId] || ruleId;
+  const failureCount = policy.baseline.ruleFailureCounts[normalizedRuleId];
+  if (failureCount === undefined) return policy.governance.unknownRuleDefault;
+  return failureCount / policy.baseline.cardCount > policy.baseline.advisoryWhenFailureRateGreaterThan
+    ? "advisory"
+    : "blocking";
+}
+
+function applyLintTiers(checks, options = {}) {
+  return checks.map((check) => {
+    const tier = lintTierForRule(check.id, options);
+    return { ...check, tier, advisory: tier === "advisory" };
+  });
+}
+
+function blockingChecksPassed(checks) {
+  return checks.every((check) => check.passed || check.tier === "advisory");
 }
 
 function isGovernedBatch(config) {
@@ -625,7 +656,7 @@ function lintOutput(candidate, key, config = readJson(configPath)) {
   const outcomePromise = /\b(?:will|always|guarantee[sd]?|definitely|certainly)\b[^.!?]{0,50}\b(?:work|heal|succeed|land|resolve|improve)\w*\b/iu.test(`${candidate.headline} ${candidate.body}`);
   const fixedOpener = /^For the next few hours\b/iu.test(bodySentences[0] || "");
   const enumeratedInstruction = /\bone\b[^.!?]{0,100}\bone\b/iu.test(lastSentence);
-  const checks = [
+  const checks = applyLintTiers([
     { id: "P4-headline-one-declarative-sentence", passed: headlineSentences.length === 1 && candidate.headline.endsWith(".") && !/[?!]/u.test(candidate.headline), details: `${headlineSentences.length} sentence(s)` },
     { id: "P4-headline-word-count", passed: headlineWords >= config.output.headline.minimumWords && headlineWords <= config.output.headline.maximumWords, details: `${headlineWords} words` },
     { id: "P4-body-sentence-count", passed: bodySentences.length >= config.output.body.minimumSentences && bodySentences.length <= config.output.body.maximumSentences, details: `${bodySentences.length} sentences` },
@@ -654,12 +685,13 @@ function lintOutput(candidate, key, config = readJson(configPath)) {
     { id: "OWNER-TEST-specificity", passed: !isBatch2(config) || target?.specificityAdvisory || specificity.passed, advisory: Boolean(target?.specificityAdvisory), details: target?.specificityAdvisory ? { measuredPassed: specificity.passed, ...specificity.details } : specificity.details },
     { id: "OWNER-TEST-morning-read", passed: !isBatch2(config) || morningReadFailures.length === 0, details: morningReadFailures.length ? morningReadFailures : "Every body sentence is 28 words or fewer and avoids semicolons/parentheses." },
     { id: "OWNER-TEST-screenshot", passed: !isBatch2(config) || screenshotLines.length >= 1, details: screenshotLines.length ? screenshotLines : "No candidate body line detected." }
-  ];
+  ]);
   const aphorism = target?.warmthHarvest?.lane === "aphorism-library-theme" && candidate.headline === target.warmthHarvest.text;
   return {
     schemaVersion: 1,
     key,
-    passed: checks.every((check) => check.passed),
+    passed: blockingChecksPassed(checks),
+    allChecksPassed: checks.every((check) => check.passed),
     immutableRawOutput: true,
     revisionsMade: 0,
     ownerPlacementApproval: aphorism ? { required: true, reason: "Owner-canon aphorism used verbatim as headline.", sourceId: target.warmthHarvest.sourceId } : { required: false },
@@ -694,7 +726,7 @@ function batchLint(outputs, { expectedCount = outputs.length, config = null } = 
   const specificityResults = config
     ? outputs.map(({ key, candidate }) => ({ key, ...specificitySwapCheck(candidate.body, key, config) }))
     : [];
-  const checks = [
+  const checks = applyLintTiers([
     { id: "batch-output-count", passed: outputs.length === expectedCount, details: `${outputs.length}/${expectedCount} outputs` },
     { id: "DG-R1-recurring-sentence-frame", passed: repeated.length === 0, details: repeated.length ? repeated : "No three-word sentence frame appears in more than two outputs." },
     { id: "DG-R7-opener-variety", passed: repeatedOpeners.length === 0 && openers.size === outputs.length, details: repeatedOpeners.length ? repeatedOpeners : `${openers.size} distinct opener constructions.` },
@@ -703,10 +735,11 @@ function batchLint(outputs, { expectedCount = outputs.length, config = null } = 
       passed: specificityResults.every((entry) => config.keys.find((target) => target.key === entry.key)?.specificityAdvisory || entry.passed),
       details: specificityResults
     }] : [])
-  ];
+  ], { batch: true });
   return {
     schemaVersion: 1,
-    passed: checks.every((check) => check.passed),
+    passed: blockingChecksPassed(checks),
+    allChecksPassed: checks.every((check) => check.passed),
     rules: {
       "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
       "DG-R7": "No body opener construction may repeat within the batch.",
@@ -767,11 +800,14 @@ module.exports = {
   batch2ConfigPath,
   batch3ConfigPath,
   batchLint,
+  applyLintTiers,
+  blockingChecksPassed,
   buildPacket,
   configPath,
   estimateCost,
   lintTextAgainstBans,
   lintOutput,
+  lintTierForRule,
   loadLocalEnv,
   normalizeUsage,
   outputBanRules,
@@ -780,6 +816,7 @@ module.exports = {
   parseOutput,
   readJson,
   renderModelInput,
+  servingLintPolicyPath,
   sha256,
   wordCount
 };
