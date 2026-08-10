@@ -1,4 +1,5 @@
 import type { ReportHorizon } from "./report-types.ts";
+import { BirthTimeValidationError, normalizeBirthTime } from "../../apps/web/src/services/chartTime.js";
 
 export type BirthProfile = {
   birthDate: string;
@@ -6,6 +7,16 @@ export type BirthProfile = {
   birthTimeUnknown: boolean;
   birthLocation: { label: string; latitude: number; longitude: number; timeZone?: string } | null;
 };
+
+export class ReportBirthDataError extends Error {
+  readonly code: "BIRTH_DATA_MISSING" | "BIRTH_DATA_INVALID";
+
+  constructor(code: "BIRTH_DATA_MISSING" | "BIRTH_DATA_INVALID", message: string) {
+    super(`${code}: ${message}`);
+    this.code = code;
+    this.name = "ReportBirthDataError";
+  }
+}
 
 function recordValue(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
@@ -28,9 +39,13 @@ export function birthProfileFromPersistedData(data: unknown): BirthProfile | nul
   const latitude = typeof location?.latitude === "number" ? location.latitude : NaN;
   const longitude = typeof location?.longitude === "number" ? location.longitude : NaN;
   if (!/^\d{4}-\d{2}-\d{2}$/u.test(birthDate)) return null;
+  let birthTime: string | null = null;
+  if (!birthTimeUnknown && rawBirthTime !== "Birth time needed" && rawBirthTime) {
+    birthTime = normalizeBirthTime(rawBirthTime);
+  }
   return {
     birthDate,
-    birthTime: birthTimeUnknown || rawBirthTime === "Birth time needed" || !rawBirthTime ? null : rawBirthTime,
+    birthTime,
     birthTimeUnknown,
     birthLocation: location && Number.isFinite(latitude) && Number.isFinite(longitude) ? {
       label: stringValue(location.label),
@@ -39,6 +54,25 @@ export function birthProfileFromPersistedData(data: unknown): BirthProfile | nul
       timeZone: stringValue(location.timeZone) || undefined
     } : null
   };
+}
+
+export function requireReportBirthProfile(data: unknown, requiresBirthTime: boolean) {
+  let profile: BirthProfile | null;
+  try {
+    profile = birthProfileFromPersistedData(data);
+  } catch (error) {
+    if (error instanceof BirthTimeValidationError) {
+      throw new ReportBirthDataError("BIRTH_DATA_INVALID", error.message);
+    }
+    throw error;
+  }
+  if (!profile?.birthDate || !profile.birthLocation) {
+    throw new ReportBirthDataError("BIRTH_DATA_MISSING", "Add a valid birth date and birth place before generating this report.");
+  }
+  if (requiresBirthTime && (!profile.birthTime || profile.birthTimeUnknown)) {
+    throw new ReportBirthDataError("BIRTH_DATA_MISSING", "Add a valid birth time before generating this report.");
+  }
+  return profile;
 }
 
 function isoDate(date: Date) {
