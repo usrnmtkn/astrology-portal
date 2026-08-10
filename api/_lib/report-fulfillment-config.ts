@@ -1,4 +1,5 @@
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
+import { estimateReportPlanningProfile } from "./report-model-pricing.ts";
 
 export const REPORT_AUTOMATION_RULING_VERSION = "owner-approved-v1";
 export const REPORT_AUTOMATION_RULING_PATH = "tldr-astro-phrasebank/TLDR-REPORT-AUTOMATED-FULFILLMENT-RULING-OWNER.md";
@@ -73,8 +74,7 @@ export function reportFulfillmentConfig() {
     judgeAttemptCap: integerEnv("REPORT_JUDGE_ATTEMPT_CAP", 2, 1),
     auditSampleRate: decimalEnv("REPORT_AUDIT_SAMPLE_RATE", 0.05),
     firstCombinationAuditCount: integerEnv("REPORT_FIRST_COMBINATION_AUDIT_COUNT", 3),
-    tokenBudget: integerEnv("REPORT_TOKEN_BUDGET", 120_000, 1),
-    tokenCostPerMillion: Number.parseFloat(process.env.REPORT_TOKEN_COST_PER_MILLION ?? "0") || 0,
+    tokenBudget: integerEnv("REPORT_TOKEN_BUDGET", 1_450_000, 1),
     jobAttemptCap: integerEnv("REPORT_JOB_ATTEMPT_CAP", 5, 1),
     workerBatchSize: integerEnv("REPORT_WORKER_BATCH_SIZE", 5, 1),
     workerPaused: process.env.REPORT_WORKER_PAUSED === "true",
@@ -91,13 +91,18 @@ export function resolvedStripePriceId(sku: ReportSku) {
 export function reportCallEstimate(horizon: ReportHorizon) {
   const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 11;
   const cleanPathCalls = unitCount * 3; // draft + critique + judge
-  const recommendedCallBudget = unitCount * 4; // allows one revise call per unit
+  const expectedCallBudget = unitCount * 4; // draft + critique + one splice revision + judge
+  const safetyMarginCalls = unitCount; // one additional provider attempt per unit on average
+  const recommendedCallBudget = expectedCallBudget + safetyMarginCalls;
   const config = reportFulfillmentConfig();
+  const planning = horizon === "12_months" ? estimateReportPlanningProfile(horizon) : null;
   return {
     unitCount,
     cleanPathCalls,
+    expectedCallBudget,
+    safetyMarginCalls,
     recommendedCallBudget,
     tokenBudget: config.tokenBudget,
-    configuredMaxCostUsd: Number(((config.tokenBudget / 1_000_000) * config.tokenCostPerMillion).toFixed(4))
+    planning
   };
 }

@@ -15,6 +15,7 @@ import {
 } from "./report-generation.ts";
 import { reportSystemPromptVersions } from "./report-prompt-versions.ts";
 import { callReportModel, type ReportModelCall } from "./report-model-client.ts";
+import { estimateReportModelCost } from "./report-model-pricing.ts";
 import { runReportWriterChain } from "./report-writer-chain.ts";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.ts";
 import { birthProfileFromPersistedData } from "./report-billing-window.ts";
@@ -102,12 +103,45 @@ export async function processReportFulfillmentJob(input: {
   if (!input.job.authorization_token || !input.job.authorized_call_budget) {
     throw new Error("REPORT_CALL_AUTHORIZATION_REQUIRED: fulfillment has no owner-issued call budget.");
   }
+  let tokenCountTotal = report.token_count_total ?? 0;
+  let estimatedCostTotal = report.token_spend_usd_estimate ?? 0;
   const providerCall = input.callModel ?? callReportModel;
+  let activeLedgerCallId: string | null = null;
   const authorizedCall: ReportModelCall = (modelInput) => providerCall({
     ...modelInput,
-    beforeProviderCall: async () => {
-      await modelInput.beforeProviderCall?.();
-      await input.store.consumeAuthorizedCall(input.job.id, input.job.authorization_token as string);
+    beforeProviderCall: async (attempt) => {
+      await modelInput.beforeProviderCall?.(attempt);
+      // Missing pricing is configuration failure and must be discovered before
+      // an authorization is consumed or a provider request is sent.
+      estimateReportModelCost(attempt.model, { inputTokens: 0, outputTokens: 0, totalTokens: 0 });
+      const begun = await input.store.beginAuthorizedCall(input.job.id, input.job.authorization_token as string, attempt);
+      activeLedgerCallId = begun.callId;
+    },
+    afterProviderCall: async (attempt, result) => {
+      await modelInput.afterProviderCall?.(attempt, result);
+      if (!activeLedgerCallId) throw new Error("REPORT_CALL_LEDGER_MISSING: provider completed without an active ledger row.");
+      const callId = activeLedgerCallId;
+      activeLedgerCallId = null;
+      const estimatedCostUsd = estimateReportModelCost(attempt.model, result.usage);
+      await input.store.finishAuthorizedCall(callId, {
+        state: "complete", inputTokens: result.usage.inputTokens, cachedInputTokens: result.usage.cachedInputTokens,
+        outputTokens: result.usage.outputTokens, totalTokens: result.usage.totalTokens,
+        estimatedCostUsd, responseId: result.responseId
+      });
+      tokenCountTotal += result.usage.totalTokens;
+      estimatedCostTotal = Number((estimatedCostTotal + estimatedCostUsd).toFixed(6));
+      if (tokenCountTotal > config.tokenBudget) {
+        throw new Error(`Report total token budget exceeded (${tokenCountTotal}/${config.tokenBudget}).`);
+      }
+    },
+    onProviderCallError: async (attempt, error) => {
+      await modelInput.onProviderCallError?.(attempt, error);
+      if (!activeLedgerCallId) return;
+      const callId = activeLedgerCallId;
+      activeLedgerCallId = null;
+      await input.store.finishAuthorizedCall(callId, {
+        state: "error", error: error instanceof Error ? error.message : "Provider call failed."
+      });
     }
   });
   assertReportDomainFulfillmentReady(report.report_domain);
@@ -153,14 +187,13 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.judge = versions.judge.version;
     let feedback: string[] = [];
     let draft: ReportDraft | null = null;
+    let acceptedChainTokens = 0;
     let validatorResults: unknown[] = [];
     for (let attempt = 0; attempt < config.validatorAttemptCap; attempt += 1) {
       await input.store.updateReport(report.id, nowPatch("writing"));
       await input.store.updateJob(input.job.id, { step: "writing" });
       validatorAttempts += 1;
       const chain = await runReportWriterChain({ payload, failureContext: feedback, callModel: authorizedCall });
-      tokenCount += totalTokens(chain.calls);
-      if (tokenCount > config.tokenBudget) throw new Error(`Report token budget exceeded (${tokenCount}/${config.tokenBudget}).`);
       await input.store.updateReport(report.id, nowPatch("validating"));
       await input.store.updateJob(input.job.id, { step: "validating" });
       const validation = validateReportDraft(chain.revised, payload);
@@ -168,6 +201,7 @@ export async function processReportFulfillmentJob(input: {
       validatorResults = [...validation, ...factLock.issues];
       if (validatorResults.length === 0) {
         draft = chain.revised;
+        acceptedChainTokens = totalTokens(chain.calls);
         break;
       }
       feedback = validatorResults.map((issue) => JSON.stringify(issue));
@@ -177,23 +211,27 @@ export async function processReportFulfillmentJob(input: {
     await input.store.updateReport(report.id, nowPatch("judging"));
     await input.store.updateJob(input.job.id, { step: "judging" });
     let judged: Awaited<ReturnType<typeof judgeReportUnit>> | null = null;
+    let acceptedJudgeTokens = 0;
     for (let attempt = 0; attempt < config.judgeAttemptCap; attempt += 1) {
       judgeAttempts += 1;
       judged = await (input.judgeCall ?? judgeReportUnit)({ payload, draft, validatorResults, threshold: config.judgeThreshold, callModel: authorizedCall });
-      tokenCount += judged.usage.totalTokens;
-      if (judged.result.verdict === "pass") break;
+      if (judged.result.verdict === "pass") {
+        acceptedJudgeTokens = judged.usage.totalTokens;
+        break;
+      }
       await input.store.updateReport(report.id, nowPatch("writing"));
       await input.store.updateJob(input.job.id, { step: "writing" });
       const chain = await runReportWriterChain({ payload, failureContext: judged.result.findings.map((finding) => JSON.stringify(finding)), callModel: authorizedCall });
-      tokenCount += totalTokens(chain.calls);
       await input.store.updateReport(report.id, nowPatch("validating"));
       await input.store.updateJob(input.job.id, { step: "validating" });
       const validation = validateReportDraft(chain.revised, payload);
       const factLock = verifyReportFactLock(chain.revised, payload.frozenFacts);
       if (validation.length || !factLock.passed) throw new Error(`Judge-driven revision failed hard validators for ${unitId}.`);
       draft = chain.revised;
+      acceptedChainTokens = totalTokens(chain.calls);
     }
     if (!judged || judged.result.verdict !== "pass") throw new Error(`Judge attempt cap exhausted for ${unitId}.`);
+    tokenCount += acceptedChainTokens + acceptedJudgeTokens;
     judgeScores.push({ unitId, result: judged.result });
     await input.store.saveUnit(report, unitId, draft, {
       fulfillmentPassed: true, validatorResults, judge: judged.result, promptVersions,
@@ -201,7 +239,6 @@ export async function processReportFulfillmentJob(input: {
     });
     await input.store.updateReport(report.id, {
       token_count: tokenCount,
-      token_spend_usd: Number(((tokenCount / 1_000_000) * config.tokenCostPerMillion).toFixed(4)),
       attempt_counts: { validator: validatorAttempts, judge: judgeAttempts }
     });
   }
@@ -210,7 +247,6 @@ export async function processReportFulfillmentJob(input: {
   await input.store.updateReport(report.id, {
     ...nowPatch(publicationStatus), status: publicationStatus, prompt_versions: promptVersions,
     judge_scores: judgeScores, token_count: tokenCount,
-    token_spend_usd: Number(((tokenCount / 1_000_000) * config.tokenCostPerMillion).toFixed(4)),
     validator_results: validatorSummary,
     attempt_counts: { validator: validatorAttempts, judge: judgeAttempts },
     ...(config.autoPublishEnabled ? { delivered_at: new Date().toISOString() } : {})
@@ -236,7 +272,7 @@ export async function processReportFulfillmentJob(input: {
       await input.store.recordDelivery(report.id, { provider: "unconfigured", status: "failed", error: error instanceof Error ? error.message : "Mail delivery failed." });
     }
   }
-  return { status: publicationStatus, tokenCount, judgeScores };
+  return { status: publicationStatus, tokenCount, tokenCountTotal, estimatedCostUsd: estimatedCostTotal, judgeScores };
 }
 
 export async function runReportFulfillmentBatch(input: {
