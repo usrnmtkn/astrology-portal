@@ -87,11 +87,11 @@ assert.equal(fixtureContracts.ownerApproved, true);
 assert.equal(fixtureContracts.activeInHarness, true);
 assert.equal(fixtureContracts.activeInProduction, false);
 assert.equal(fixtureContracts.liveRunAuthorized, false);
-assert.equal(fixtureContracts.liveRunStatus, "errored_pre_call");
+assert.equal(fixtureContracts.liveRunStatus, "errored_invalid_api_key");
 assert.equal(fixtureContracts.completedCalls, 0);
 assert.equal(fixtureContracts.fixtureSetStatus, "owner_approved");
 assert.deepEqual(fixtureContracts.proposedLiveRun, {
-  run: 2,
+  run: "2a",
   calls: 20,
   model: "gpt-5.6-terra",
   reasoningEffort: "high",
@@ -190,11 +190,11 @@ assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "R
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "FAIL", categories: ["specificity_ceiling"] }).passed, false);
 
 assert.equal(CARD_JUDGE_V3_1_CALL_BUDGET, 20);
-assert.equal(CARD_JUDGE_V3_1_ARTIFACT_PATH, "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json");
+assert.equal(CARD_JUDGE_V3_1_ARTIFACT_PATH, "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json");
 assert.deepEqual(assertCardJudgeV31LiveAuthorization({
   env: { [CARD_JUDGE_V3_1_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN },
   artifactExists: false
-}), { authorizedCalls: 20, retriesAuthorized: 0, run: 2 });
+}), { authorizedCalls: 20, retriesAuthorized: 0, run: "2a" });
 assert.throws(() => assertCardJudgeV31LiveAuthorization({
   env: { [CARD_JUDGE_V3_1_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN },
   artifactExists: true
