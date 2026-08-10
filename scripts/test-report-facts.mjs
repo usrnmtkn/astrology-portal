@@ -85,6 +85,7 @@ const input = {
 const store = new MemoryStore();
 let calls = 0;
 const astroClient = {
+  async preflight() {},
   async serviceVersion() {
     return "fixture-version";
   },
@@ -150,17 +151,57 @@ const client = createTldrAstroReportFactsClient({
   fetchImpl: async (url, init) => {
     fetchCalls.push({ url, init });
     if (url.endsWith("/meta/status")) {
-      return new Response(JSON.stringify({ version: "fixture-version" }), { status: 200 });
+      return new Response(JSON.stringify({
+        version: "fixture-version",
+        features: [
+          { id: "timing.report_window", path: "/timing/report-window", method: "POST" },
+          { id: "timing.solar_return", path: "/timing/solar-return", method: "POST" }
+        ]
+      }), { status: 200 });
     }
+    if (init?.body === "{}") return new Response(JSON.stringify({ detail: [] }), { status: 422 });
     return new Response(JSON.stringify({ reportHorizon: "1_month" }), { status: 200 });
   }
 });
+await client.preflight();
 assert.equal(await client.serviceVersion(), "fixture-version");
 await client.reportWindow(input);
-assert.equal(fetchCalls[1].url, "https://fixture.invalid/timing/report-window");
-const sent = JSON.parse(fetchCalls[1].init.body);
+assert.deepEqual(fetchCalls.slice(0, 3).map((call) => [call.init.method, call.url]), [
+  ["GET", "https://fixture.invalid/meta/status"],
+  ["POST", "https://fixture.invalid/timing/report-window"],
+  ["POST", "https://fixture.invalid/timing/solar-return"]
+]);
+assert.equal(fetchCalls[4].url, "https://fixture.invalid/timing/report-window");
+const sent = JSON.parse(fetchCalls[4].init.body);
 assert.equal(sent.includeSolarReturn, false);
 assert.equal(sent.includeContentFacts, false);
+
+const missingEndpointClient = createTldrAstroReportFactsClient({
+  baseUrl: "https://missing-fixture.invalid",
+  fetchImpl: async (url) => url.endsWith("/meta/status")
+    ? new Response(JSON.stringify({ features: [
+      { id: "timing.report_window", path: "/timing/report-window", method: "POST" }
+    ] }), { status: 200 })
+    : new Response(JSON.stringify({ ok: false }), { status: 404 })
+});
+await assert.rejects(
+  missingEndpointClient.preflight(),
+  /CALCULATION_API_PREFLIGHT_FAILED: GET \/meta\/status is missing POST \/timing\/solar-return/u
+);
+
+const unresponsiveEndpointClient = createTldrAstroReportFactsClient({
+  baseUrl: "https://unresponsive-fixture.invalid",
+  fetchImpl: async (url) => url.endsWith("/meta/status")
+    ? new Response(JSON.stringify({ features: [
+      { id: "timing.report_window", path: "/timing/report-window", method: "POST" },
+      { id: "timing.solar_return", path: "/timing/solar-return", method: "POST" }
+    ] }), { status: 200 })
+    : new Response(JSON.stringify({ ok: false }), { status: url.endsWith("/timing/report-window") ? 404 : 422 })
+});
+await assert.rejects(
+  unresponsiveEndpointClient.preflight(),
+  /CALCULATION_API_PREFLIGHT_FAILED: POST \/timing\/report-window contract probe returned 404/u
+);
 
 const endpoint = fs.readFileSync(new URL("../api/report-facts.ts", import.meta.url), "utf8");
 assert.doesNotMatch(endpoint, /generateContent|api\.openai|api\.anthropic/iu);
