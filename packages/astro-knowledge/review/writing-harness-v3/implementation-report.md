@@ -8,6 +8,10 @@ Status: `needs_review`. Owner approved: `false`. Active: `false`. Writer promoti
 
 The v2 live baseline's seven gold false positives and four negative verdict mismatches are treated as architecture failures. The v3 candidate uses complete-card packets, two or three same-surface owner comparison cards, labeled negative evidence, supplied location tokens, findings-only model output, and runtime-computed verdicts. It does not tune a threshold and does not activate the writer.
 
+The card generation boundary now loads `TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md` byte-for-byte. Its section 23 instruction is the top-level writer direction. Its section 22 workflow is represented as an ordered seven-pass chain in both draft and surgical-revision packets: astrology integrity, doctrine removal, voice, lived consequence, cut, full-family comparison, and full-file consistency. Missing family context is named in the packet, so a single-card call cannot claim family-level completion.
+
+`TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md` implements the owner's fifteen-question section 21 editorial test, finding routing, direct correction notes, and paired before/after controls. It is supplied to the card judge and writer chain as a CARD-scoped candidate. `DO_NOT_ASSUME` remains internal: deterministic validation rejects the label, leaked guard text, and reader-facing disclaimers without treating the internal data field as prose.
+
 Low reasoning is the documented suspect in the v2 false-positive rate. The proposed live runner is fixed to `gpt-5.6-terra` at `high` reasoning and cannot run from a generic CLI authorization switch.
 
 ## Card-scoped categories
@@ -43,10 +47,11 @@ The remaining four gold cards run as additional positive contracts, producing th
 
 ## Governance and authorization
 
-The exact surface ruling is SHA-locked in the contract test and remains `needs_review`. The rubric remains `needs_review`. The model schema contains findings only; runtime maps category actions to PASS, REVISE, or FAIL. The one-use environment token names the 20-call budget, allows no retries, and is rejected after the run artifact exists.
+The exact surface ruling and exact owner card-writing standard are SHA-locked in the contract test. The surface ruling, critique checklist, and rubric remain `needs_review`. The model schema contains findings only; runtime maps category actions to PASS, REVISE, or FAIL. The one-use environment token names the 20-call budget, allows no retries, and is rejected after the run artifact exists.
 
 ## Owner-pending items
 
 1. Explicit approval of the register-per-surface ruling.
-2. Explicit approval of the card judge rubric v3.
-3. Separate authorization for one 20-call live evaluation, no retries, using the same 12 gold and 8 paired negative fixtures at high reasoning.
+2. Explicit approval of the card critique checklist v3.
+3. Explicit approval of the card judge rubric v3.
+4. Separate authorization for one 20-call live evaluation, no retries, using the same 12 gold and 8 paired negative fixtures at high reasoning.

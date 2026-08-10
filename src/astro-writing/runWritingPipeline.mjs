@@ -13,6 +13,8 @@ export async function runWritingPipeline({
   task,
   family = "sky-placement",
   register = "collective",
+  surface = "card",
+  familyContext = null,
   plannerClient,
   writerClient,
   reviewerClient,
@@ -27,7 +29,16 @@ export async function runWritingPipeline({
   }
   const plan = await resolveAstrology(meaningInput, { plannerClient });
   const context = retrieveOwnerContext(plan, { examples, corrections, contentFamily: family, register });
-  const firstDraft = await generateDraft({ plan, context, task, family, register, modelClient: writerClient });
+  const firstDraft = await generateDraft({
+    plan,
+    context,
+    task,
+    family,
+    register,
+    surface,
+    familyContext,
+    modelClient: writerClient
+  });
   const reviews = [];
   let draft = firstDraft;
   let review = await reviewDraft({
@@ -42,6 +53,9 @@ export async function runWritingPipeline({
       draft,
       review,
       plan,
+      family,
+      surface,
+      familyContext,
       protectedOwnerLines,
       modelClient: reviserClient
     });

@@ -1,4 +1,9 @@
-import { canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import {
+  buildCardWriterChain,
+  cardCritiqueChecklist,
+  isCardWritingSurface
+} from "./cardWritingStandard.mjs";
 import { generatedApprovalState } from "./approvalGovernance.mjs";
 import { attachGenerationMetadata, writeGenerationMetadata } from "./generationMetadata.mjs";
 
@@ -14,17 +19,35 @@ export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   }
 });
 
-export function buildDraftInput({ plan, context, task, family = "sky-placement", register = "collective" }) {
-  return [
+export function buildDraftInput({
+  plan,
+  context,
+  task,
+  family = "sky-placement",
+  register = "collective",
+  surface = "card",
+  familyContext = null
+}) {
+  const sections = [
     `TASK\n${String(task ?? "Write one TLDR Astro passage.").trim()}`,
+    `SURFACE\n${surface}`,
     `CONTENT FAMILY\n${family}`,
     `REGISTER\n${register}`,
     `ASTROLOGY MEANING PLAN\n${JSON.stringify(plan, null, 2)}`,
     `OWNER-APPROVED EXAMPLES\n${JSON.stringify(context.examples, null, 2)}`,
     `OWNER CORRECTIONS\n${JSON.stringify(context.corrections, null, 2)}`,
-    "Write from the meaning plan. Owner material establishes voice and judgment; do not cosmetically paraphrase its narrative.",
-    "Return only the requested JSON."
-  ].join("\n\n");
+    "Write from the meaning plan. Owner material establishes voice and judgment; do not cosmetically paraphrase its narrative."
+  ];
+  if (isCardWritingSurface({ surface, family })) {
+    sections.push(
+      `CARD WRITER SEVEN-PASS CHAIN\n${JSON.stringify(buildCardWriterChain({ familyContext }), null, 2)}`,
+      `CARD CRITIQUE CHECKLIST\n${cardCritiqueChecklist}`,
+      "The meaning plan's DO_NOT_ASSUME and do_not_assume values are internal generation constraints. Never echo the label, guard text, or a reader-facing disclaimer derived from them.",
+      `PLANETARY FAMILY CONTEXT\n${familyContext == null ? "NOT_SUPPLIED: passes 6 and 7 remain owner-review checks; do not claim family-level completion." : JSON.stringify(familyContext, null, 2)}`
+    );
+  }
+  sections.push("Return only the requested JSON.");
+  return sections.join("\n\n");
 }
 
 function unapprovedDraft(value) {
@@ -45,20 +68,25 @@ export async function generateDraft({
   task,
   family = "sky-placement",
   register = "collective",
+  surface = "card",
+  familyContext = null,
   modelClient,
   schema = PLACEMENT_DRAFT_SCHEMA
 }) {
   if (typeof modelClient !== "function") throw new Error("generateDraft requires an injected modelClient; no implicit billed call is allowed.");
+  const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
   const value = await modelClient({
     stage: "draft",
-    role: "WRITER",
-    instructions: canonicalAstrologyWritingInstructions,
-    input: buildDraftInput({ plan, context, task, family, register }),
+    role,
+    instructions: isCardWritingSurface({ surface, family })
+      ? candidateCardAstrologyWritingInstructions
+      : canonicalAstrologyWritingInstructions,
+    input: buildDraftInput({ plan, context, task, family, register, surface, familyContext }),
     schema
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
   return attachGenerationMetadata(unapprovedDraft(value), writeGenerationMetadata({
-    role: "WRITER",
+    role,
     model: modelClient.model ?? null,
     reasoningEffort: modelClient.reasoningEffort ?? null,
     sourceIds: [

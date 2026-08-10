@@ -51,13 +51,13 @@ async function responsesClient({ stage, role, instructions, input, schema }) {
   return JSON.parse(text);
 }
 
-const writerClient = (request) => responsesClient({ ...request, role: "WRITER" });
+const writerClient = (request) => responsesClient(request);
 writerClient.model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? "gpt-5.6-sol";
 writerClient.reasoningEffort = process.env.OPENAI_REASONING_EFFORT ?? "xhigh";
 const reviewerClient = (request) => responsesClient({ ...request, role: "REVIEWER" });
 reviewerClient.model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
 reviewerClient.reasoningEffort = process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium";
-const reviserClient = (request) => responsesClient({ ...request, role: "REVISER" });
+const reviserClient = (request) => responsesClient(request);
 reviserClient.model = writerClient.model;
 reviserClient.reasoningEffort = writerClient.reasoningEffort;
 

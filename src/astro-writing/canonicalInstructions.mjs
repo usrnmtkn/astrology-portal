@@ -3,8 +3,10 @@
 // docs/writing/REVIEW_RUBRIC.md. Tests prevent these excerpts from drifting.
 
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
+import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
 export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v2-2026-08-09";
+export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
 export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v3-owner-gold-2026-08-09";
 
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
@@ -30,6 +32,8 @@ If any answer is no, revise the line.
 House bleed can survive even when the prose is good. Do not judge sign-house separation by how natural the paragraph sounds. Inspect the nouns. Apply the same noun-level test to every sign before PASS.
 
 Governance: Never label generated or refined wording as owner-authored, owner-approved, exact, settled, or locked until the owner explicitly approves that exact wording.`;
+
+export const candidateCardAstrologyWritingInstructions = buildCardWriterInstructions(canonicalAstrologyWritingInstructions);
 
 export const canonicalAstrologyReviewInstructions = `# RUNTIME REVIEWER PROMPT (owner-authored, verbatim, 2026-08-09)
 (The reviewer diagnoses only. The reviser is a separate call receiving only failed lines

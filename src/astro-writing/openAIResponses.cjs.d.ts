@@ -1,4 +1,4 @@
-export type AstrologyProseRole = "MEANING_PLANNER" | "WRITER" | "REVIEWER" | "REVISER";
+export type AstrologyProseRole = "MEANING_PLANNER" | "WRITER" | "REVIEWER" | "REVISER" | "CARD_WRITER_V3" | "CARD_REVISER_V3" | "CARD_REVIEWER_V3";
 
 export function instructionsForRole(role: AstrologyProseRole, taskInstructions?: string): string;
 

@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 import {
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   CANONICAL_WRITING_INSTRUCTIONS_VERSION,
+  CARD_WRITING_INSTRUCTIONS_VERSION,
+  candidateCardAstrologyWritingInstructions,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
   HARD_REVISE_FIELDS,
@@ -16,6 +18,8 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const payload = {
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   CANONICAL_WRITING_INSTRUCTIONS_VERSION,
+  CARD_WRITING_INSTRUCTIONS_VERSION,
+  candidateCardAstrologyWritingInstructions,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
   HARD_REVISE_FIELDS,

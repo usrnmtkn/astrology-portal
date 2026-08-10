@@ -1,4 +1,5 @@
 import {
+  CARD_WRITING_INSTRUCTIONS_VERSION,
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   CANONICAL_WRITING_INSTRUCTIONS_VERSION
 } from "./canonicalInstructions.mjs";
@@ -14,11 +15,15 @@ export const WRITING_COMPONENT_VERSIONS = Object.freeze({
 });
 
 export function writeGenerationMetadata({ role, model = null, reasoningEffort = null, sourceIds = [] } = {}) {
+  const cardCandidate = String(role ?? "").startsWith("CARD_");
   return {
     role: role ?? "WRITER",
     model,
     reasoningEffort,
-    components: { ...WRITING_COMPONENT_VERSIONS },
+    components: {
+      ...WRITING_COMPONENT_VERSIONS,
+      ...(cardCandidate ? { writer_prompt: CARD_WRITING_INSTRUCTIONS_VERSION } : {})
+    },
     sourceIds: [...new Set(sourceIds)].sort()
   };
 }

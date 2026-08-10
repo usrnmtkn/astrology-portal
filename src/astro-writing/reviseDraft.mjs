@@ -1,4 +1,9 @@
-import { canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import {
+  buildCardWriterChain,
+  cardCritiqueChecklist,
+  isCardWritingSurface
+} from "./cardWritingStandard.mjs";
 import { unapprovedDraft } from "./generateDraft.mjs";
 
 function permittedFields(review) {
@@ -9,7 +14,16 @@ function failedLines(draft, fields) {
   return Object.fromEntries([...fields].map((field) => [field, String(draft?.[field] ?? "")]));
 }
 
-export async function reviseDraft({ draft, review, plan, protectedOwnerLines = [], modelClient }) {
+export async function reviseDraft({
+  draft,
+  review,
+  plan,
+  family = "sky-placement",
+  surface = "card",
+  familyContext = null,
+  protectedOwnerLines = [],
+  modelClient
+}) {
   if (review.decision === "PASS") return draft;
   if (typeof modelClient !== "function") throw new Error("reviseDraft requires an injected reviserClient; no implicit billed call is allowed.");
   const allowed = permittedFields(review);
@@ -17,14 +31,21 @@ export async function reviseDraft({ draft, review, plan, protectedOwnerLines = [
   const relevantViolations = (review.violations ?? []).filter((entry) => allowed.has(entry.location));
   const patch = await modelClient({
     stage: "revision",
-    role: "REVISER",
-    instructions: canonicalAstrologyWritingInstructions,
+    role: isCardWritingSurface({ surface, family }) ? "CARD_REVISER_V3" : "REVISER",
+    instructions: isCardWritingSurface({ surface, family })
+      ? candidateCardAstrologyWritingInstructions
+      : canonicalAstrologyWritingInstructions,
     input: JSON.stringify({
       instruction: "Revise only the supplied failed lines. Return a JSON patch containing only those fields. Do not rewrite successful material.",
+      surface,
+      family,
       plan,
       failedLines: failedLines(draft, allowed),
       violations: relevantViolations,
-      protectedOwnerLines
+      protectedOwnerLines,
+      cardCritiqueChecklist: isCardWritingSurface({ surface, family }) ? cardCritiqueChecklist : null,
+      writerChain: isCardWritingSurface({ surface, family }) ? buildCardWriterChain({ familyContext }) : null,
+      familyContext
     }, null, 2),
     schema: {
       type: "object",
