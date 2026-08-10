@@ -154,6 +154,8 @@
     "write:daily-glance-writer-batch-3v2:plan": "node scripts/run-daily-glance-writer-pilots.js --plan --config config/daily-glance-writer-sol-xhigh-batch-3-v2.json --out review/daily-glance-batch-3-v2",
     "write:daily-glance-writer-batch-3v2:live": "node scripts/run-daily-glance-writer-pilots.js --authorize-live --config config/daily-glance-writer-sol-xhigh-batch-3-v2.json --out review/daily-glance-batch-3-v2",
     "judge:daily-glance:calibrate": "node scripts/judge-daily-glance.js --calibrate",
+    "audit:daily-glance-voice": "node scripts/audit-daily-glance-voice.js",
+    "test:daily-glance-voice-audit": "node scripts/test-daily-glance-voice-audit.js",
     "write:daily-glance-batch-3:judged": "node scripts/run-daily-glance-judged.js --authorize-live --config config/daily-glance-writer-sol-xhigh-batch-3-v2.json --out review/daily-glance-batch-3-judged --samples 4",
     "judge:daily-glance:rejudge": "node scripts/judge-daily-glance.js --rejudge review/daily-glance-batch-3-judged"
   },

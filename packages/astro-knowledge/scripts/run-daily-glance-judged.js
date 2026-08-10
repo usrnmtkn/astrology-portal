@@ -1,5 +1,5 @@
 "use strict";
-// Judged best-of-N selection for the daily glance. Writer: config-routed Sol. Judge: advisory gpt-4.1-mini (GR-003).
+// Judged best-of-N selection for the daily glance. Writer: config-routed Sol. Judge: advisory Terra-low (GR-003).
 const fs = require("fs");
 const path = require("path");
 const packageRoot = path.resolve(__dirname, "..");

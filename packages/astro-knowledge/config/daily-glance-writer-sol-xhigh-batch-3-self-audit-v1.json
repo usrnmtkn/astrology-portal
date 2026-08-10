@@ -1,0 +1,284 @@
+{
+  "$extends": "daily-glance-writer-sol-xhigh-batch-3-v2.json",
+  "schemaVersion": 1,
+  "configId": "daily-glance-writer-sol-xhigh-batch-3-self-audit-v1",
+  "packetVersion": "daily-glance-writer-packet-v7:self-audit-bottom-five+harvest+scene+owner-six+key-facts+p4+sm-dg+dg-r1-r17",
+  "promptVersion": "daily-glance-writer-v7:self-audit-unapproved-best-of-three",
+  "status": "owner-authorized-self-audit-2026-08-10",
+  "authorities": [
+    "packages/astro-knowledge/review/daily-glance-autonomy-roadmap-2026-08-05.md",
+    "packages/astro-knowledge/review/daily-glance-judge-calibration-set-v1.json"
+  ],
+  "routing": {
+    "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-self-audit-v1",
+    "writerCalls": 5,
+    "judgeCalls": 0,
+    "terraEnabled": false,
+    "maxOutputTokens": 24000
+  },
+  "keys": [
+    {
+      "key": "conjunction/neptune",
+      "register": "saturation",
+      "emotionalCore": "other people's feelings and the reader's imagination becoming difficult to separate",
+      "groupGuidance": "Let sensitivity and imagination saturate the moment; name the practical cost of acting before the reader knows which feeling is theirs.",
+      "exemplarPolicy": "the approved conjunction/moon pair supplies conjunction-register evidence only",
+      "matchingExemplarSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body"
+      ],
+      "ownerPassageSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "warmthHarvest": {
+        "harvest_mode": "none_found",
+        "emotionalCore": "other people's feelings and the reader's imagination becoming difficult to separate"
+      },
+      "sceneEvidence": {
+        "mode": "owner-five-beat",
+        "sourceId": "sky.moon.conjunction.neptune#humanMoment+developmentDetail",
+        "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json",
+        "recordId": "sky.moon.conjunction.neptune",
+        "humanMoment": "A shared feeling moves through a family, crowd, or community before anyone can say exactly what happened.",
+        "developmentDetail": "Grief, hope, fear, or relief shapes the room and changes decisions even while the facts remain incomplete."
+      },
+      "specificity": {
+        "minimumGroups": 2,
+        "cueGroups": [
+          { "id": "sensitivity", "pattern": "\\b(?:mood|feeling|sensitive|absorb|pick up|atmosphere|imagination|memory|dream)\\w*\\b" },
+          { "id": "boundary", "pattern": "\\b(?:whose|yours|someone else's|noise|opinion|decision|separate|boundary|unclear)\\w*\\b" }
+        ]
+      },
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/data/pairs/moon-neptune.json",
+          "selector": "modern.blend",
+          "text": "Feelings meet imagination and dissolution. A need for escape and reverie, high sensitivity, and compassion."
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F2.conjunction",
+          "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day."
+        }
+      ],
+      "skeleton": "consequence-close"
+    },
+    {
+      "key": "soft/chiron",
+      "register": "mild-ease",
+      "emotionalCore": "care reaching the old sore place without immediately waking the defense",
+      "groupGuidance": "Offer a modest opening for accepting care while the struggle is still present; never imply a cure.",
+      "exemplarPolicy": "the approved soft/lilith pair supplies soft-register evidence only",
+      "matchingExemplarSourceIds": [
+        "daily-glance-soft-lilith-owner-headline",
+        "daily-glance-soft-lilith-owner-body"
+      ],
+      "ownerPassageSourceIds": [
+        "daily-glance-soft-lilith-owner-headline",
+        "daily-glance-soft-lilith-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "warmthHarvest": {
+        "harvest_mode": "matched",
+        "lane": "owner-corpus",
+        "sourceId": "owner-article:venus-in-cancer#not-weak-for-needing-care",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+        "selector": "exact-sentence",
+        "text": "You’re not weak for needing care."
+      },
+      "sceneEvidence": {
+        "mode": "invented_allowed",
+        "permission": "OV-028",
+        "reason": "No owner-authored Moon-Chiron five-beat entry exists; generated drafts are excluded from positive evidence."
+      },
+      "expectedFactCount": 3,
+      "specificity": {
+        "minimumGroups": 2,
+        "cueGroups": [
+          { "id": "care-old-hurt", "pattern": "\\b(?:care|comfort|help|support|need|hurt|ache|sore|sensitive|wound|tend)\\w*\\b" },
+          { "id": "mild-ease", "pattern": "\\b(?:easier|ease|flow|accept|less effort|less resistance|available|without triggering|mid-struggle)\\w*\\b" }
+        ]
+      },
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/data/pairs/moon-chiron.json",
+          "selector": "modern.harmonious",
+          "text": "Tending flows without triggering the old defense; help gets accepted mid-struggle."
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/data/planetary/chiron.json",
+          "selector": "overview",
+          "match": "includes",
+          "text": "the tender place where an early, unearned hurt shaped a survival response"
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F2.soft",
+          "match": "includes",
+          "text": "a supportive opening is offered, not automatic"
+        }
+      ],
+      "skeleton": "permission-after-recognition"
+    },
+    {
+      "key": "square/sun",
+      "register": "self-friction",
+      "emotionalCore": "the public role and the reader's actual needs pulling against each other",
+      "groupGuidance": "Keep the conflict inside the reader's day; show the cost of maintaining a presentable version while a real need is being ignored.",
+      "exemplarPolicy": "the approved square/chiron pair supplies square-register evidence only",
+      "matchingExemplarSourceIds": [
+        "daily-glance-square-chiron-owner-headline",
+        "daily-glance-square-chiron-owner-body"
+      ],
+      "ownerPassageSourceIds": [
+        "daily-glance-square-chiron-owner-headline",
+        "daily-glance-square-chiron-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "warmthHarvest": {
+        "harvest_mode": "none_found",
+        "emotionalCore": "the public role and the reader's actual needs pulling against each other"
+      },
+      "sceneEvidence": {
+        "mode": "invented_allowed",
+        "permission": "OV-028",
+        "reason": "The available owner five-beat scene contains a current output-ban term, so it cannot enter the positive packet."
+      },
+      "specificity": {
+        "minimumGroups": 2,
+        "cueGroups": [
+          { "id": "outer-inner", "pattern": "\\b(?:public|private|present|appear|composure|role|serious|approve|perception|actually feel)\\w*\\b" },
+          { "id": "needs-conflict", "pattern": "\\b(?:need|burnt out|tired|defensive|conflict|cross purposes|cost|resent|schedule)\\w*\\b" }
+        ]
+      },
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/data/pairs/sun-moon.json",
+          "selector": "modern.hard",
+          "text": "Ego needs and emotional needs pull from conflicting sources, so the public self and the private self work at cross purposes and have to be reconciled."
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F2.square",
+          "text": "friction that builds toward an adjustment; malefic-leaning; the friction is internal to the person's own day (self-friction register per DG-R2)."
+        }
+      ],
+      "skeleton": "consequence-close"
+    },
+    {
+      "key": "square/uranus",
+      "register": "self-friction",
+      "emotionalCore": "a sudden mood shift recoiling against the routine from inside the reader's own day",
+      "groupGuidance": "Let change and confinement create internal friction; the final action adjusts the plan without glorifying rupture.",
+      "exemplarPolicy": "the approved square/chiron pair supplies square-register evidence only",
+      "matchingExemplarSourceIds": [
+        "daily-glance-square-chiron-owner-headline",
+        "daily-glance-square-chiron-owner-body"
+      ],
+      "ownerPassageSourceIds": [
+        "daily-glance-square-chiron-owner-headline",
+        "daily-glance-square-chiron-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "warmthHarvest": {
+        "harvest_mode": "matched",
+        "lane": "owner-corpus",
+        "sourceId": "owner-article:chiron-retrograde-in-aries#change-direction",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+        "selector": "exact-sentence",
+        "text": "You’re allowed to change your direction as you learn more about who you are."
+      },
+      "sceneEvidence": {
+        "mode": "invented_allowed",
+        "permission": "OV-028",
+        "reason": "The owner five-beat record contains a globally banned output term, so it cannot enter the positive packet."
+      },
+      "specificityAdvisoryKeys": ["soft/uranus"],
+      "specificity": {
+        "minimumGroups": 2,
+        "cueGroups": [
+          { "id": "disruption", "pattern": "\\b(?:change|routine|plan|schedule|sudden|different|unexpected|mood)\\w*\\b" },
+          { "id": "recoil", "pattern": "\\b(?:trapped|confined|restless|recoil|push back|resist|bolt|yourself|volatile)\\w*\\b" }
+        ]
+      },
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/data/pairs/moon-uranus.json",
+          "selector": "modern.hard",
+          "text": "Emotional volatility, sudden moods, and a recoil from anything that feels confining."
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F2.square",
+          "text": "friction that builds toward an adjustment; malefic-leaning; the friction is internal to the person's own day (self-friction register per DG-R2)."
+        }
+      ],
+      "skeleton": "instruction-first"
+    },
+    {
+      "key": "conjunction/pluto",
+      "register": "saturation",
+      "emotionalCore": "a deep feeling and the urge to control its outcome arriving together",
+      "groupGuidance": "Let emotional intensity fill the moment; replace diagnosis with an observable control move and its immediate relational cost.",
+      "exemplarPolicy": "the approved conjunction/moon pair supplies conjunction-register evidence only",
+      "matchingExemplarSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body"
+      ],
+      "ownerPassageSourceIds": [
+        "daily-glance-conjunction-moon-owner-headline",
+        "daily-glance-conjunction-moon-owner-body",
+        "owner-active:TLDR-Article-Edition-Uranus-Rx-Gemini-2025-OWNER:e001",
+        "owner-article:venus-in-virgo-2025:p009",
+        "owner-article:mercury-in-taurus-2025:p005",
+        "owner-article:virgo-season-2025:p003"
+      ],
+      "warmthHarvest": {
+        "harvest_mode": "none_found",
+        "emotionalCore": "a deep feeling and the urge to control its outcome arriving together"
+      },
+      "sceneEvidence": {
+        "mode": "owner-five-beat",
+        "sourceId": "sky.moon.conjunction.pluto#humanMoment+developmentDetail",
+        "sourcePath": "packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json",
+        "recordId": "sky.moon.conjunction.pluto",
+        "humanMoment": "A feeling contained for years changes the terms of the entire conversation.",
+        "developmentDetail": "Grief, resentment, fear, or a family secret surfaces during a decision that can no longer proceed as though the history were irrelevant."
+      },
+      "specificity": {
+        "minimumGroups": 2,
+        "cueGroups": [
+          { "id": "intensity", "pattern": "\\b(?:deep|intense|larger|strong|extreme|hurt|upset|resent|grief|fear)\\w*\\b" },
+          { "id": "control", "pattern": "\\b(?:control|push|withhold|test|win|power|force|leverage|admit|exposing)\\w*\\b" }
+        ]
+      },
+      "facts": [
+        {
+          "sourcePath": "packages/astro-knowledge/data/pairs/moon-pluto.json",
+          "selector": "modern.blend",
+          "text": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings."
+        },
+        {
+          "sourcePath": "packages/astro-knowledge/review/daily-glance-fact-boundaries-2026-08-04.md",
+          "selector": "F2.conjunction",
+          "text": "the two meanings fuse and intensify; the target's whole theme saturates the mood of the day."
+        }
+      ],
+      "skeleton": "consequence-close"
+    }
+  ]
+}
