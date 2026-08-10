@@ -14,6 +14,7 @@ import {
   evaluateLilithVerticalSlice,
   extractNeutralExternalMeaning,
   HARD_REVISE_FIELDS,
+  HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,
   HOUSE_BLEED_NOUNS,
   MEANING_PLAN_SCHEMA,
   promoteCandidateWriter,
@@ -141,10 +142,14 @@ assert.deepEqual(
 assert.equal(indexedServingKeys.size, approvedServingKeys.size);
 
 for (const [sign, nouns] of Object.entries(HOUSE_BLEED_NOUNS)) {
-  const result = validateCopy(`${nouns[0]} and ${nouns[1]} keep defining the whole passage.`, {
+  const legitimateExample = validateCopy(`One example involves ${nouns[0]}.`, {
     plan: { sign, house: null }
   });
-  assert.ok(result.violations.some((entry) => entry.category === "sign_house_separation"), `${sign} must receive the noun-level house-bleed test.`);
+  assert.ok(!legitimateExample.violations.some((entry) => entry.category === "sign_house_separation"), `${sign} must allow one legitimate domain example.`);
+  const cluster = validateCopy(`${nouns.slice(0, HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS).join(", ")} keep defining the whole passage.`, {
+    plan: { sign, house: null }
+  });
+  assert.ok(cluster.violations.some((entry) => entry.category === "sign_house_separation"), `${sign} must reject a domain-noun cluster.`);
 }
 
 const protectedOwnerLine = "Compassion that was really self-erasure starts coming with limits attached.";
@@ -248,6 +253,25 @@ assert.equal(inconsistentReviewer.decision, "REVISE", "Any reviewer field marked
 
 const gold = jsonl("data/writing/owner-approved-examples.jsonl");
 const negatives = jsonl("data/writing/negative-regression-fixtures.jsonl");
+for (const fixture of gold) {
+  const draft = Object.fromEntries(["tagline", "hook", "lived", "turn"].map((field) => [field, fixture[field]]));
+  const lint = validateCopy(draft, {
+    family: fixture.content_family,
+    register: "collective",
+    plan: { sign: fixture.astrology_context.sign, house: null },
+    expectedPlaceholders: ["exitDate"],
+    requiredFields: ["tagline", "hook", "lived", "turn"],
+    protectedOwnerLines: Object.values(draft)
+  });
+  assert.equal(lint.passed, true, `${fixture.fixture_id} must pass the complete deterministic gate: ${JSON.stringify(lint.violations)}`);
+}
+const negativeCapricorn = negatives.find((fixture) => fixture.fixture_id === "neg-capricorn-career");
+const negativeCapricornLint = validateCopy(negativeCapricorn.bad_text, {
+  family: negativeCapricorn.content_family,
+  register: "collective",
+  plan: { sign: "capricorn", house: null }
+});
+assert.ok(negativeCapricornLint.violations.some((entry) => entry.category === "sign_house_separation"), "The all-career Capricorn negative must still fail the cluster rule.");
 const verticalSlice = evaluateLilithVerticalSlice({ gold, negatives });
 assert.equal(gold.length, 12);
 assert.equal(negatives.length, 8);
