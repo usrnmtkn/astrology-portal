@@ -72,6 +72,15 @@ type TransitNatalEntry = {
   plainTranslation?: string;
   policy?: string;
   note?: string;
+  readerCopy?: {
+    headline?: string;
+    body?: string;
+    attribution?: string;
+    doNotAssume?: string[];
+    approvedVia?: string;
+    sourcePath?: string;
+    sourceSha256?: string;
+  };
   status?: string;
 };
 
@@ -578,10 +587,11 @@ export function createDomainRegistry(bundleInput: unknown) {
     }
 
     const id = transitNatalContentId(transit.transiting, transit.aspect, transit.natal);
-    const sourceSummary = cleanText(transit.plainTranslation);
-    const sourceDetail = sourceSummary && !/\b(days?|weeks?|months?|years?)\.$/i.test(sourceSummary)
-      ? sourceSummary
-      : undefined;
+    const sourceSummary = cleanText(transit.readerCopy?.headline) || cleanText(transit.plainTranslation);
+    const sourceDetail = cleanText(transit.readerCopy?.body)
+      || (sourceSummary && !/\b(days?|weeks?|months?|years?)\.$/i.test(sourceSummary)
+        ? sourceSummary
+        : undefined);
 
     addKnowledge({
       id,
@@ -597,12 +607,12 @@ export function createDomainRegistry(bundleInput: unknown) {
       interpretation: {
         coreTheme: sourceSummary,
         displaySummary: sourceSummary,
-        detailParagraphs: cleanParagraphs([sourceDetail, transit.policy]),
+        detailParagraphs: cleanParagraphs([sourceDetail]),
         livedExperience: sourceSummary,
         gift: "",
         challenge: ""
       },
-      sources: ["@tldr/astro-knowledge/natal"],
+      sources: [transit.readerCopy?.sourcePath || "@tldr/astro-knowledge/natal"],
       status: reviewStatus(transit.status)
     });
   }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "venus",
   "aspect": "trine",
-  "plainTranslation": "Affection and abundance flow. A genuinely lucky window for love and money. Don't overindulge.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Let yourself enjoy what is working.",
+  "policy": "Do not assume romance, financial gain, artistic success, or that every pleasant connection should deepen.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Let yourself enjoy what is working.",
+    "body": "A connection may feel less complicated. Plans come together without endless rescheduling. A creative choice gets a warm response. You may simply have more chances to enjoy yourself without needing every pleasant moment to prove something about the future.\n\nJupiter trine Venus can make the good part easy to trust. Take the win. Just remember that every easy yes still takes an evening, a dollar, or some part of your attention. Pleasure works better when it does not leave the rest of the week paying for it.",
+    "attribution": "Jupiter trine your Venus",
+    "doNotAssume": [
+      "Do not assume romance, financial gain, artistic success, or that every pleasant connection should deepen."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

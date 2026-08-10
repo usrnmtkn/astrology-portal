@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "mercury",
   "aspect": "opposition",
-  "plainTranslation": "A debate or offer comes through someone else. Big ideas meet pushback. Reconcile vision with detail.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "The bigger idea meets another point of view.",
+  "policy": "Do not assume lying, incompetence, legal conflict, or that one perspective is automatically correct.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The bigger idea meets another point of view.",
+    "body": "Someone may have a different answer and enough evidence to make you stop. A negotiation can widen because each person is solving a different problem. You may both sound completely reasonable while using different assumptions, dates, or definitions underneath the conversation.\n\nJupiter opposing Mercury can make each side more certain because each side can see a larger story. Do not answer volume with volume. Find the fact, deadline, term, or decision that actually changes the outcome. You may still disagree after that, but at least you will know what the disagreement is.",
+    "attribution": "Jupiter opposition your Mercury",
+    "doNotAssume": [
+      "Do not assume lying, incompetence, legal conflict, or that one perspective is automatically correct."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

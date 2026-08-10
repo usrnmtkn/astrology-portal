@@ -64,6 +64,15 @@ type CanonicalTransitNatal = {
   plainTranslation: string;
   policy?: string;
   note?: string;
+  readerCopy?: {
+    headline?: string;
+    body?: string;
+    attribution?: string;
+    doNotAssume?: string[];
+    approvedVia?: string;
+    sourcePath?: string;
+    sourceSha256?: string;
+  };
   status?: string;
 };
 
@@ -432,6 +441,8 @@ function canonicalInsightToKnowledgeItem(card: CanonicalInsightCard): KnowledgeI
 }
 
 function canonicalTransitToKnowledgeItem(transit: CanonicalTransitNatal): KnowledgeItem {
+  const readerSummary = cleanDisplayText(transit.readerCopy?.headline) || cleanDisplayText(transit.plainTranslation);
+  const readerBody = cleanDisplayText(transit.readerCopy?.body);
   return {
     id: transit.id.replace(/_/g, "-"),
     type: "transit-to-natal",
@@ -453,15 +464,15 @@ function canonicalTransitToKnowledgeItem(transit: CanonicalTransitNatal): Knowle
       [transit.natal]: planetPrimitiveMap[transit.natal]?.keywords ?? []
     },
     interpretation: {
-      coreTheme: cleanDisplayText(transit.plainTranslation),
-      displaySummary: cleanDisplayText(transit.plainTranslation),
-      detailParagraphs: cleanParagraphs([transit.policy, transit.note]),
-      livedExperience: cleanDisplayText(transit.plainTranslation),
+      coreTheme: readerSummary,
+      displaySummary: readerSummary,
+      detailParagraphs: cleanParagraphs([readerBody || transit.policy]),
+      livedExperience: readerBody || readerSummary,
       gift: "",
       challenge: ""
     },
     sources: [
-      "data/transits/natal",
+      transit.readerCopy?.sourcePath || "data/transits/natal",
       "data/primitives/planets.json",
       "data/primitives/aspects.json"
     ],

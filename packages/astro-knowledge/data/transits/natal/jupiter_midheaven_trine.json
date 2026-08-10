@@ -1,0 +1,23 @@
+{
+  "id": "jupiter_midheaven_trine",
+  "kind": "transit-to-natal",
+  "transiting": "jupiter",
+  "natal": "midheaven",
+  "aspect": "trine",
+  "plainTranslation": "The work may not need as much convincing right now.",
+  "policy": "Do not assume a career peak, permanent success, employment, or that every opportunity deserves a yes.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The work may not need as much convincing right now.",
+    "body": "A proposal gets accepted. Someone recommends you before you ask. The work reaches the people you hoped would see it. Credit comes without another round of reminding everyone whose idea it was. An offer or invitation may arrive with less resistance than you have gotten used to.\n\nJupiter trine your Midheaven gives work that is already moving a little more help. Take the win. Put your name on something, submit the work, or accept the opportunity that genuinely fits. Just remember that good news still goes on a calendar. Three easy yeses can create one impossible week.",
+    "attribution": "Jupiter trine your Midheaven",
+    "doNotAssume": [
+      "Do not assume a career peak, permanent success, employment, or that every opportunity deserves a yes."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
+  "voiceNeutral": true,
+  "status": "LIVE"
+}

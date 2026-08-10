@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "sun",
   "aspect": "square",
-  "plainTranslation": "Optimism outruns reality. You overcommit or overspend on a vision. Dream big, then cut it to a plan.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Confidence is not the same as proof.",
+  "policy": "Do not assume ego problems, failure, conflict with authority, or that the reader is overestimating every opportunity.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Confidence is not the same as proof.",
+    "body": "A bigger role or plan can feel obvious because you can already picture yourself doing it. Then the schedule, skill, authority, or cost shows you what is still missing. You may also take a delay or a smaller response more personally because you were already living in the larger version in your head.\n\nJupiter square Sun can make ambition outrun the current setup. Do not play small, but do not make certainty do the work preparation still needs to do. Find the missing piece and build it. A good idea does not become less good because it needs another step.",
+    "attribution": "Jupiter square your Sun",
+    "doNotAssume": [
+      "Do not assume ego problems, failure, conflict with authority, or that the reader is overestimating every opportunity."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

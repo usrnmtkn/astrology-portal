@@ -23,9 +23,36 @@ export type ManifestationSetRecord = {
   domain: string[];
   possibleLivedManifestations: string[];
   doNotAssume: string[];
-  copyClaim: { text: null; review_status: "needs_review" };
+  copyClaim:
+    | { text: null; review_status: "needs_review" }
+    | {
+      text: {
+        headline: string;
+        body: string;
+        attribution: string;
+      };
+      review_status: "approved";
+    };
   provenance: string;
-  review_status: "needs_review";
+  review_status: "needs_review" | "approved";
+};
+
+export type TransitNatalDoctrineEntry = {
+  id: string;
+  kind: "transit-to-natal";
+  transiting: string;
+  natal: string;
+  aspect: string;
+  readerCopy: {
+    headline: string;
+    body: string;
+    attribution: string;
+    doNotAssume: string[];
+    approvedVia: string;
+    sourcePath: string;
+    sourceSha256: string;
+  };
+  status: "LIVE";
 };
 
 export type ReportFactor = {
@@ -42,6 +69,11 @@ export type ReportFactor = {
 export type ResolvedManifestationSet = {
   factor: ReportFactor;
   record: ManifestationSetRecord;
+};
+
+export type ResolvedTransitNatalDoctrine = {
+  factor: ReportFactor;
+  entry: TransitNatalDoctrineEntry;
 };
 
 export type ReportFactorSelection = {
@@ -85,6 +117,7 @@ export type ReportGenerationPayload = {
   factors: ReportFactor[];
   factorSelection: ReportFactorSelection[];
   manifestationSets: ResolvedManifestationSet[];
+  transitNatalDoctrine: ResolvedTransitNatalDoctrine[];
   sourceGaps: ReportSourceGap[];
   writingQueue: ReportSourceGap[];
   voiceEvidence: Array<{
@@ -136,6 +169,7 @@ const GENERATION_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATI
 const LIVED_PROSE_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md";
 export const PERSONAL_HEALTH_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md";
 const MANIFESTATION_SETS_PATH = "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json";
+const TRANSIT_NATAL_DOCTRINE_PATH = "packages/astro-knowledge/data/transits/natal";
 
 type FactorRuleMatch = {
   factorTypes?: ManifestationSetRecord["factorType"][];
@@ -688,6 +722,61 @@ function loadManifestationRecords() {
   return Object.entries(collection.records).map(([id, record]) => ({ id, ...record }));
 }
 
+function loadTransitNatalDoctrine() {
+  const doctrineRoot = path.join(process.cwd(), TRANSIT_NATAL_DOCTRINE_PATH);
+  return fs.readdirSync(doctrineRoot)
+    .filter((fileName) => fileName.endsWith(".json"))
+    .map((fileName) => JSON.parse(fs.readFileSync(path.join(doctrineRoot, fileName), "utf8")) as Partial<TransitNatalDoctrineEntry>)
+    .filter((entry): entry is TransitNatalDoctrineEntry => (
+      entry.kind === "transit-to-natal"
+      && entry.status === "LIVE"
+      && Boolean(entry.transiting && entry.natal && entry.aspect)
+      && Boolean(entry.readerCopy?.headline && entry.readerCopy?.body && entry.readerCopy?.attribution)
+      && Boolean(entry.readerCopy?.doNotAssume?.length)
+    ));
+}
+
+function transitNatalDoctrineForFactor(
+  entries: TransitNatalDoctrineEntry[],
+  factor: ReportFactor
+) {
+  if (!["slow-transit-to-natal", "return"].includes(factor.factorType)) return undefined;
+  return entries.find((entry) => (
+    entry.transiting.toLowerCase() === factor.transitPlanet?.toLowerCase()
+    && entry.natal.toLowerCase() === factor.natalPoint?.toLowerCase()
+    && entry.aspect.toLowerCase() === factor.aspect?.toLowerCase()
+  ));
+}
+
+function approvedDoctrineManifestation(
+  factor: ReportFactor,
+  entry: TransitNatalDoctrineEntry
+): ManifestationSetRecord {
+  return {
+    id: `approved-doctrine-${entry.id.replaceAll("_", "-")}`,
+    factorType: factor.factorType,
+    match: {
+      ...(factor.house === undefined ? {} : { house: factor.house }),
+      natalPoint: factor.natalPoint,
+      transitPlanet: factor.transitPlanet,
+      aspect: factor.aspect
+    },
+    domain: ["governed transit-to-natal doctrine"],
+    possibleLivedManifestations: [entry.readerCopy.body],
+    doNotAssume: [...entry.readerCopy.doNotAssume],
+    copyClaim: {
+      text: {
+        headline: entry.readerCopy.headline,
+        body: entry.readerCopy.body,
+        attribution: entry.readerCopy.attribution
+      },
+      review_status: "approved"
+    },
+    provenance: `${entry.readerCopy.sourcePath}#sha256=${entry.readerCopy.sourceSha256}`,
+    review_status: "approved"
+  };
+}
+
 function factorKey(factor: ReportFactor) {
   return [
     factor.factorType,
@@ -850,7 +939,7 @@ function projectedRecord(
   configuration: ReportDomainConfiguration,
   selection: ReportFactorSelection | undefined
 ): ManifestationSetRecord {
-  if (configuration === REPORT_DOMAIN_CONFIG.general) return record;
+  if (configuration === REPORT_DOMAIN_CONFIG.general || record.review_status === "approved") return record;
   const excluded = (value: string) => configuration.excludedProjectionTerms.some((term) => phrasePresent(value, term));
   const selectedRules = new Set(selection?.matchedRuleIds ?? []);
   const projectionTerms = domainRules(configuration)
@@ -961,13 +1050,17 @@ export function resolveManifestationSets(
   selection: ReportFactorSelection[] = []
 ) {
   const records = loadManifestationRecords();
+  const doctrine = loadTransitNatalDoctrine();
   const configuration = REPORT_DOMAIN_CONFIG[reportDomain];
   const selectionByFactor = new Map(selection.map((item) => [item.factorId, item]));
   const resolved: ResolvedManifestationSet[] = [];
+  const doctrineEntries: ResolvedTransitNatalDoctrine[] = [];
   const gaps: ReportSourceGap[] = [];
 
   for (const factor of factors) {
     const record = bestManifestationRecord(records, factor);
+    const doctrineEntry = transitNatalDoctrineForFactor(doctrine, factor);
+    if (doctrineEntry) doctrineEntries.push({ factor, entry: doctrineEntry });
     if (record) {
       resolved.push({
         factor,
@@ -977,12 +1070,17 @@ export function resolveManifestationSets(
           selectionByFactor.get(factor.id)
         )
       });
+    } else if (doctrineEntry) {
+      resolved.push({
+        factor,
+        record: approvedDoctrineManifestation(factor, doctrineEntry)
+      });
     } else {
       gaps.push({ factorId: factor.id, requestedKey: factorKey(factor), reason: "SOURCE_GAP" });
     }
   }
 
-  return { resolved, gaps };
+  return { resolved, doctrineEntries, gaps };
 }
 
 export function assembleReportGenerationPayload(
@@ -993,7 +1091,7 @@ export function assembleReportGenerationPayload(
   const configuration = REPORT_DOMAIN_CONFIG[input.reportDomain];
   const completeFactors = reportFactors(input.frozenFacts);
   const { factors, selection } = selectReportFactors(completeFactors, input.reportDomain);
-  const { resolved, gaps } = resolveManifestationSets(factors, input.reportDomain, selection);
+  const { resolved, doctrineEntries, gaps } = resolveManifestationSets(factors, input.reportDomain, selection);
   return {
     schemaVersion: "report-generation-v3",
     reportId: input.reportId,
@@ -1018,6 +1116,7 @@ export function assembleReportGenerationPayload(
     factors,
     factorSelection: selection,
     manifestationSets: resolved,
+    transitNatalDoctrine: doctrineEntries,
     sourceGaps: gaps,
     writingQueue: [...gaps],
     voiceEvidence: [{

@@ -327,6 +327,17 @@ assert.deepEqual(reportFactors({ reportWindow: facts }), factors);
 assert.equal(factors.filter((factor) => factor.id === "jupiter-conjunction-jupiter").length, 1);
 assert.equal(factors.find((factor) => factor.id === "jupiter-conjunction-jupiter").factorType, "return");
 assert.ok(!factors.some((factor) => factor.id === "neptune-conjunction-neptune"));
+for (const payload of [payloads.get("12_months"), workMoneyPayload, loveConnectionPayload]) {
+  const doctrine = payload.transitNatalDoctrine.find((item) => (
+    item.factor.id === "jupiter-opposition-midheaven"
+  ));
+  assert.ok(doctrine, "Sep 15 Jupiter opposition Midheaven must resolve from approved transit-to-natal doctrine.");
+  assert.equal(doctrine.entry.status, "LIVE");
+  assert.equal(doctrine.entry.readerCopy.headline, "Work is asking for more. Home may be doing the same.");
+  assert.equal(doctrine.entry.readerCopy.doNotAssume.length, 1);
+  assert.ok(!payload.sourceGaps.some((gap) => gap.factorId === "jupiter-opposition-midheaven"));
+  assert.ok(!payload.writingQueue.some((gap) => gap.factorId === "jupiter-opposition-midheaven"));
+}
 for (const payload of payloads.values()) {
   assert.ok(!payload.sourceGaps.some((gap) => gap.requestedKey.includes("return/neptune")));
   assert.ok(!payload.sourceGaps.some((gap) => gap.factorId === "neptune-conjunction-neptune"));

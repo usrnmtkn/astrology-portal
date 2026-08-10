@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "pluto",
   "aspect": "sextile",
-  "plainTranslation": "Growth and opportunity opens a door in your power and depth — if you take it. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "A small opening can change who has leverage.",
+  "policy": "Do not assume a financial windfall, authority figure, inheritance, or conflict.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "A small opening can change who has leverage.",
+    "body": "A negotiation gets reopened. Someone with authority backs a change you could not make alone. One part of an agreement that used to be untouchable becomes negotiable. You may not need to win the whole battle. One better term can change what the rest of the arrangement costs you.\n\nJupiter sextile Pluto can make a strategic change possible without a full confrontation. Use the opening to improve the part that matters most. Better access, clearer authority, or one removed obligation may do more than a dramatic show of power ever would.",
+    "attribution": "Jupiter sextile your Pluto",
+    "doNotAssume": [
+      "Do not assume a financial windfall, authority figure, inheritance, or conflict."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

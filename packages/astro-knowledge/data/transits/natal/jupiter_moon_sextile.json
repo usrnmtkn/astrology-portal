@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "moon",
   "aspect": "sextile",
-  "plainTranslation": "A warm opening for home, family, or feeling cared for. Make the kind move.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Let someone make life easier for you.",
+  "policy": "Do not assume a family event, reconciliation, or that support comes from a specific person.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Let someone make life easier for you.",
+    "body": "Help may show up in a form that looks almost too ordinary to count. Someone brings food. A schedule changes in your favor. A home problem becomes easier to solve because another person finally has time to help. You may also find it easier to say what you need before you are already overwhelmed.\n\nJupiter sextile Moon opens room for care that does not need a crisis to justify it. Accept the help. Use the calmer moment to make one part of daily life easier to keep. Support works better when it changes the actual week, not only the mood for an afternoon.",
+    "attribution": "Jupiter sextile your Moon",
+    "doNotAssume": [
+      "Do not assume a family event, reconciliation, or that support comes from a specific person."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "neptune",
   "aspect": "opposition",
-  "plainTranslation": "Growth and opportunity shows up in your dreams and ideals, often through other people. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "The vision is big enough to hide the missing details.",
+  "policy": "Do not assume deception, institutional failure, relationship betrayal, or that the vision cannot work.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The vision is big enough to hide the missing details.",
+    "body": "Another person or institution may bring you a plan that sounds expansive but depends on assumptions nobody has named. The future looks good from far away. Up close, the dates are still moving, the money is not confirmed, or the person making the promise does not control the final answer.\n\nJupiter opposing Neptune can make hope and evidence feel like competing loyalties. You do not have to choose cynicism to ask for facts. Find out what is confirmed, what is still hoped for, and who handles the gap. A real opportunity can survive a clearer question.",
+    "attribution": "Jupiter opposition your Neptune",
+    "doNotAssume": [
+      "Do not assume deception, institutional failure, relationship betrayal, or that the vision cannot work."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "sun",
   "aspect": "trine",
-  "plainTranslation": "Confidence and opportunity flow. The easiest stretch to expand. Use it before it passes; ease breeds laziness.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "You have more room to be seen.",
+  "policy": "Do not assume fame, promotion, universal approval, or permanent success.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "You have more room to be seen.",
+    "body": "Work may get a warmer response. People may trust your direction more quickly. You may find it easier to take credit for something you actually did or step into a role that already fits. The recognition can feel less like a fight and more like other people finally seeing what was already there.\n\nJupiter trine Sun is a good time to submit the work, ask for the credit, or take the place you have already earned. Enjoy the recognition. It is not a reason to give every audience permanent access to you.",
+    "attribution": "Jupiter trine your Sun",
+    "doNotAssume": [
+      "Do not assume fame, promotion, universal approval, or permanent success."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "ascendant",
   "aspect": "trine",
-  "plainTranslation": "Jupiter flows into your presence. Optimistic, expansive, well-received. A lucky stretch for visibility, new ventures, and backing yourself.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "People may meet you halfway.",
+  "policy": "Do not assume universal popularity, physical vitality, or that every relationship becomes supportive.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "People may meet you halfway.",
+    "body": "The email gets answered. The introduction is warmer. A room that usually feels difficult may feel less guarded. You may find it easier to ask for the meeting, join the conversation, or let people know what you are working on without feeling like you have to prove the entire case first.\n\nJupiter trine your Ascendant can make confidence and goodwill easier to access. Use the easier response while it is available. Let people help, make the introduction, or open the door. Just remember that a warm reception is not the same as unlimited availability. You still get to decide how much access comes after the first yes.",
+    "attribution": "Jupiter trine your Ascendant",
+    "doNotAssume": [
+      "Do not assume universal popularity, physical vitality, or that every relationship becomes supportive."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

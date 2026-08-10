@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "pluto",
   "aspect": "trine",
-  "plainTranslation": "Growth and opportunity flows easily through your power and depth. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "You may have more influence than you are used to.",
+  "policy": "Do not assume a promotion, financial gain, political influence, or permanent power.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "You may have more influence than you are used to.",
+    "body": "A long effort gets traction. Someone with access says yes. A change that once required a fight may now be possible because you have better information, stronger support, or more credibility than you had before. You may not need to push nearly as hard as you expected.\n\nJupiter trine Pluto is useful when you know what you want the influence for. Move the part that matters. Negotiate the better term. Remove the condition that has been draining the whole arrangement. Stop before useful leverage turns into control for its own sake.",
+    "attribution": "Jupiter trine your Pluto",
+    "doNotAssume": [
+      "Do not assume a promotion, financial gain, political influence, or permanent power."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

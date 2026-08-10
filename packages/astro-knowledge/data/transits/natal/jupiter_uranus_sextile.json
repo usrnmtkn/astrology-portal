@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "uranus",
   "aspect": "sextile",
-  "plainTranslation": "Growth and opportunity opens a door in your need for freedom — if you take it. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Try the different way.",
+  "policy": "Do not assume a major life change, new technology, freedom, or that the experimental option is better.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Try the different way.",
+    "body": "A new tool, route, schedule, or contact can solve a problem you had started treating as permanent. The change does not need to be dramatic. One different meeting day, one new system, or one person taking a different part of the work may be enough to show you another way.\n\nJupiter sextile Uranus rewards curiosity with evidence. Change one variable and see what actually gets easier. You can keep the experiment if it helps and leave it behind if it creates more maintenance than it removes.",
+    "attribution": "Jupiter sextile your Uranus",
+    "doNotAssume": [
+      "Do not assume a major life change, new technology, freedom, or that the experimental option is better."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

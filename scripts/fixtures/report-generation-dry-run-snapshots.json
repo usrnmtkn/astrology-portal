@@ -66,8 +66,8 @@
         "winter-next"
       ]
     },
-    "factorCount": 18,
-    "resolvedCount": 18,
+    "factorCount": 19,
+    "resolvedCount": 19,
     "sourceGapCount": 0
   },
   "work_money_12_months": {
@@ -101,6 +101,7 @@
       "saturn-sextile-ascendant",
       "jupiter-conjunction-jupiter",
       "jupiter-square-moon",
+      "jupiter-opposition-midheaven",
       "jupiter-trine-neptune",
       "jupiter-square-uranus",
       "jupiter-opposition-mars",
@@ -109,7 +110,7 @@
       "lunar-eclipse-2026-08-28-mercury",
       "solar-eclipse-2027-02-06-midheaven"
     ],
-    "resolvedCount": 18,
+    "resolvedCount": 19,
     "sourceGapCount": 0,
     "bridgeSelection": {
       "factorId": "lunar-eclipse-2026-03-03-saturn",
@@ -185,6 +186,7 @@
       "saturn-sextile-ascendant",
       "jupiter-conjunction-jupiter",
       "jupiter-square-moon",
+      "jupiter-opposition-midheaven",
       "jupiter-trine-neptune",
       "jupiter-square-uranus",
       "jupiter-opposition-mars",
@@ -327,6 +329,7 @@
       "saturn-sextile-ascendant",
       "jupiter-conjunction-jupiter",
       "jupiter-square-moon",
+      "jupiter-opposition-midheaven",
       "jupiter-trine-neptune",
       "jupiter-square-uranus",
       "jupiter-opposition-mars",

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "pluto",
   "aspect": "square",
-  "plainTranslation": "Growth and opportunity presses on your power and depth, forcing an adjustment. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "More power does not make the terms fair.",
+  "policy": "Do not assume exploitation, a bad employer, legal trouble, or that the opportunity must be rejected.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "More power does not make the terms fair.",
+    "body": "The deal may look different once you see who can change the scope, hold access, set the price, or take credit. A bigger opportunity can come with more dependence on one person or system. You may be offered responsibility that sounds flattering until you notice how little authority you actually have over the outcome.\n\nJupiter square Pluto raises the stakes on the agreement. Read the part after the flattering part. If the responsibility grew, the authority, pay, support, or right to say no should be visible too. More is not automatically better when somebody else controls the terms.",
+    "attribution": "Jupiter square your Pluto",
+    "doNotAssume": [
+      "Do not assume exploitation, a bad employer, legal trouble, or that the opportunity must be rejected."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

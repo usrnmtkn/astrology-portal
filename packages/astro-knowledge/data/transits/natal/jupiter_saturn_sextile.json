@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "saturn",
   "aspect": "sextile",
-  "plainTranslation": "Growth and opportunity opens a door in your structures and commitments — if you take it. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "You already have something solid to build on.",
+  "policy": "Do not assume financial gain, institutional support, a specific authority figure, or guaranteed long-term success.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "You already have something solid to build on.",
+    "body": "Something you have been doing quietly for a long time may finally make the next step easier. The experience is already there. The routine is already working. The difficult part may be realizing that you do not need to start over to grow.\n\nJupiter sextile Saturn favors adding to what is already reliable. Use the system, skill, savings, or boundary that proved itself. Add one piece instead of rebuilding the whole structure because the next opportunity makes the old work look less exciting.",
+    "attribution": "Jupiter sextile your Saturn",
+    "doNotAssume": [
+      "Do not assume financial gain, institutional support, a specific authority figure, or guaranteed long-term success."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }
