@@ -99,6 +99,8 @@ for (const target of config.keys) {
   assert(!directiveInput.includes(currentPair.body));
   assert(directiveInput.includes("Write exactly one candidate"));
   assert(directiveInput.includes('"screenshot_line"'));
+  assert(directiveInput.includes("[ADVISORY] OWNER-TEST-specificity"));
+  assert(directiveInput.includes("[BLOCKING] DG-R13:"));
   assert.strictEqual((directiveInput.match(/SOL-DIRECTIVE-output-schema/gu) || []).length, 1);
   assert.strictEqual((directiveInput.match(/the transit mechanism supplied above/gu) || []).length, 1);
   assert.strictEqual(selfAuditPacketLint(packet, directiveInput, config, examples, currentPair).passed, true, `${target.key} directive packet self-lint`);
