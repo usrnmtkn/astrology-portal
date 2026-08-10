@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "moon",
   "aspect": "square",
-  "plainTranslation": "Feelings inflate. You overpromise emotionally or overindulge. Right-size it. Comfort isn't fullness.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "One more yes can take the rest of the day with it.",
+  "policy": "Do not assume family conflict, illness, overspending, or that the reader should refuse care.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "One more yes can take the rest of the day with it.",
+    "body": "A family request, guest, home expense, or emotional promise can look small while you are agreeing to it and take much more time once it arrives. You want to help. You may even have the money or the afternoon. The problem is what that yes pushes into tomorrow.\n\nJupiter square Moon makes generosity easy before the logistics are clear. Find out what the help actually requires before you become the default person handling it. One afternoon is one afternoon. Something that happens every week is a different agreement.",
+    "attribution": "Jupiter square your Moon",
+    "doNotAssume": [
+      "Do not assume family conflict, illness, overspending, or that the reader should refuse care."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

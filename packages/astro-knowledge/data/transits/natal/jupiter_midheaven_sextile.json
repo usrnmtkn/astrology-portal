@@ -1,0 +1,23 @@
+{
+  "id": "jupiter_midheaven_sextile",
+  "kind": "transit-to-natal",
+  "transiting": "jupiter",
+  "natal": "midheaven",
+  "aspect": "sextile",
+  "plainTranslation": "Follow the introduction.",
+  "policy": "Do not assume employment, a promotion, that the opening is obvious, or that the reader will take it.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Follow the introduction.",
+    "body": "Someone recommends you, sends your work to the right person, tells you to apply, or makes an introduction you almost dismiss because it seems too casual to matter. The email can lead to a meeting. The meeting can lead to a project. A smaller assignment can put your work in front of someone who remembers your name six months from now.\n\nJupiter sextile your Midheaven gives opportunity somewhere to enter, but it may arrive looking surprisingly ordinary. Follow up. Send the application. Take the meeting that gives the work somewhere new to go. You can decide later how large you want the role to become.",
+    "attribution": "Jupiter sextile your Midheaven",
+    "doNotAssume": [
+      "Do not assume employment, a promotion, that the opening is obvious, or that the reader will take it."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
+  "voiceNeutral": true,
+  "status": "LIVE"
+}

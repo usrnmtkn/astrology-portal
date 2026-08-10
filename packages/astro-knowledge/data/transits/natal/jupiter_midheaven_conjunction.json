@@ -1,0 +1,23 @@
+{
+  "id": "jupiter_midheaven_conjunction",
+  "kind": "transit-to-natal",
+  "transiting": "jupiter",
+  "natal": "midheaven",
+  "aspect": "conjunction",
+  "plainTranslation": "More people are paying attention now.",
+  "policy": "Do not assume employment, a promotion, fame, or that the reader wants a larger public role.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "More people are paying attention now.",
+    "body": "Something you have been building may be ready for a larger audience. Your name gets passed around. A project gets published. A client wants more. The title finally catches up with work you have already been doing. An opportunity that once felt far away may suddenly be sitting in your inbox asking for an answer.\n\nJupiter crossing your Midheaven expands the part of your life other people can see and recognize. Enjoy the recognition, but read the whole offer. More visibility often comes with more requests, more decisions, and more people expecting access to your time. Let the work grow. You still get to decide how much of your life grows around it.",
+    "attribution": "Jupiter conjunction your Midheaven",
+    "doNotAssume": [
+      "Do not assume employment, a promotion, fame, or that the reader wants a larger public role."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
+  "voiceNeutral": true,
+  "status": "LIVE"
+}

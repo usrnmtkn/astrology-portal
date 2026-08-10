@@ -14,6 +14,32 @@
     "plainTranslation": { "type": "string" },
     "policy": { "type": "string" },
     "note": { "type": "string" },
+    "readerCopy": {
+      "type": "object",
+      "required": [
+        "headline",
+        "body",
+        "attribution",
+        "doNotAssume",
+        "approvedVia",
+        "sourcePath",
+        "sourceSha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "headline": { "type": "string", "minLength": 1 },
+        "body": { "type": "string", "minLength": 1 },
+        "attribution": { "type": "string", "minLength": 1 },
+        "doNotAssume": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "approvedVia": { "type": "string", "minLength": 1 },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "sourceSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
     "voiceNeutral": { "const": true },
     "status": { "type": "string", "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
   }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "mercury",
   "aspect": "square",
-  "plainTranslation": "You overstate or overpromise. Scattered optimism. Pin down the facts before you commit.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "The idea is persuasive. Check the details anyway.",
+  "policy": "Do not assume deception, paperwork trouble, or that the reader's judgment is impaired.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The idea is persuasive. Check the details anyway.",
+    "body": "You can talk a little further ahead of the information than usual. The plan sounds obvious. The deadline feels generous. The paragraph you skim is the one that changes the agreement. You may promise more than the calendar can hold because the whole idea makes sense in your head.\n\nJupiter square Mercury makes everything sound convincing, including the mistakes. Before you sign, send, book, or announce, read the part you are bored of. Check the date, price, scope, and person responsible for the next step. A big plan may still work. It will work better with the right facts underneath it.",
+    "attribution": "Jupiter square your Mercury",
+    "doNotAssume": [
+      "Do not assume deception, paperwork trouble, or that the reader's judgment is impaired."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

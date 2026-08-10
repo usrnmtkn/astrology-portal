@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "sun",
   "aspect": "sextile",
-  "plainTranslation": "An opening to grow your reach or your standing. It won't knock twice. Reach for it.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Take the invitation seriously.",
+  "policy": "Do not assume employment, public recognition, leadership, or that the reader should accept the role.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Take the invitation seriously.",
+    "body": "Someone gives you a chance to present the work, take a larger role, or put your name forward. You may be noticed before you feel completely ready. The opening matters because another person can already see enough to give you somewhere to go next.\n\nJupiter sextile Sun responds to participation. Step through enough for people to see what you can actually do. You can decide later if you want the whole role. First, give the opportunity a real answer instead of waiting to feel like the most qualified person in the room.",
+    "attribution": "Jupiter sextile your Sun",
+    "doNotAssume": [
+      "Do not assume employment, public recognition, leadership, or that the reader should accept the role."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

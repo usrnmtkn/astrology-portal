@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "ascendant",
   "aspect": "square",
-  "plainTranslation": "Jupiter over-inflates your presentation. Overconfidence, taking on too much, promising big. Grow, but right-size it; not every opportunity is yours to grab.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Your life is getting bigger faster than your schedule.",
+  "policy": "Do not assume a crisis, body problem, or that growth must be refused.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Your life is getting bigger faster than your schedule.",
+    "body": "More people want your time. More plans sound worth doing. You may feel confident enough to take on a role, trip, project, or responsibility that would normally make you hesitate. The problem shows up later when three good ideas all assume they get Thursday, and the rest of your life is still waiting exactly where you left it.\n\nJupiter square your Ascendant can make your sense of possibility expand faster than the hours available to live it. The answer is not to play small. It is to stop treating enthusiasm as proof that the calendar will somehow make room. Choose the version that still leaves space for the life you already need to maintain.",
+    "attribution": "Jupiter square your Ascendant",
+    "doNotAssume": [
+      "Do not assume a crisis, body problem, or that growth must be refused."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

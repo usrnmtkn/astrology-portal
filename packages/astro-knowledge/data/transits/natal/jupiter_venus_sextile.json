@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "venus",
   "aspect": "sextile",
-  "plainTranslation": "An opening for romance, beauty, or income. Say yes to the good thing.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Say yes to the invitation you actually want.",
+  "policy": "Do not assume romance, a purchase, financial luck, or a specific relationship status.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Say yes to the invitation you actually want.",
+    "body": "Someone reaches out. A plan you genuinely enjoy becomes easy to make. A small creative decision gets a warmer response than expected. The opening may not look life-changing. It can still matter because the connection is pleasant enough to keep following.\n\nJupiter sextile Venus opens a door through goodwill. Follow what feels good and still makes sense tomorrow. You do not need to accept the invitation just because it is flattering. The useful yes is the one you would still want without the compliment attached.",
+    "attribution": "Jupiter sextile your Venus",
+    "doNotAssume": [
+      "Do not assume romance, a purchase, financial luck, or a specific relationship status."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

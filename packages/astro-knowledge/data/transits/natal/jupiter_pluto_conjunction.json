@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "pluto",
   "aspect": "conjunction",
-  "plainTranslation": "Growth and opportunity arrives full-force in your power and depth. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "The stakes are getting higher.",
+  "policy": "Do not assume a power struggle, wealth, corruption, legal conflict, or a dramatic transformation.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The stakes are getting higher.",
+    "body": "You may be offered more influence and discover that influence comes with terms. A decision that once felt minor can suddenly affect more people, more money, or more of the future than you expected. A long effort may finally give you enough leverage to change an arrangement that used to feel fixed.\n\nJupiter conjunct Pluto can make power feel useful and urgent at the same time. Use any extra leverage cleanly. If the win depends on someone else having no room to say no, read the terms again. More influence is valuable when it improves the decision, not only your ability to force it.",
+    "attribution": "Jupiter conjunction your Pluto",
+    "doNotAssume": [
+      "Do not assume a power struggle, wealth, corruption, legal conflict, or a dramatic transformation."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

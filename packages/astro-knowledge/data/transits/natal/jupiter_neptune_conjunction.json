@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "neptune",
   "aspect": "conjunction",
-  "plainTranslation": "Growth and opportunity arrives full-force in your dreams and ideals. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "The dream gets convincing fast.",
+  "policy": "Do not assume psychic ability, deception, addiction, spiritual awakening, or that inspiration guarantees a result.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The dream gets convincing fast.",
+    "body": "An idea that has been floating around may suddenly feel like the answer to a much bigger question. A creative direction can become absorbing. A spiritual practice can feel unusually meaningful. A person or plan may seem to carry more promise because you can see everything it could become.\n\nJupiter conjunct Neptune expands faith and imagination, but it can also expand assumption. Give the vision a date, budget, boundary, or next step before building your life around it. You do not need to make the dream smaller. Give it enough form to find out what is actually there.",
+    "attribution": "Jupiter conjunction your Neptune",
+    "doNotAssume": [
+      "Do not assume psychic ability, deception, addiction, spiritual awakening, or that inspiration guarantees a result."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

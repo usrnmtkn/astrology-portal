@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "jupiter",
   "aspect": "opposition",
-  "plainTranslation": "Growth and opportunity shows up in your sense of growth and faith, often through other people. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "A bigger option can make the life you already built look suddenly too small.",
+  "policy": "Do not assume a break, move, career change, or that the outside option should win.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "A bigger option can make the life you already built look suddenly too small.",
+    "body": "Someone else's offer, belief, or plan may make another future look possible very quickly. You can become aware of what is missing in the life you already have, or feel impatient with a direction that seemed perfectly reasonable last month. Both futures can look convincing from where you are standing.\n\nJupiter opposite Jupiter can make comparison inflate the difference between what you have and what is possible. Do not discard a working life just because a larger option appeared. Compare the actual time, money, responsibility, and consequences attached to each direction before choosing the one with more shine.",
+    "attribution": "Jupiter opposition your Jupiter",
+    "doNotAssume": [
+      "Do not assume a break, move, career change, or that the outside option should win."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

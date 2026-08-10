@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "jupiter",
   "aspect": "conjunction",
-  "plainTranslation": "Growth and opportunity arrives full-force in your sense of growth and faith. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "A new twelve-year chapter starts with one bigger yes.",
+  "policy": "Do not assume luck, travel, education, wealth, or a positive outcome without house and chart support.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "A new twelve-year chapter starts with one bigger yes.",
+    "body": "A plan you once thought was too large may suddenly feel possible enough to begin. You may return to an old ambition with better timing, or notice that your idea of what counts as a big life has changed. The first step may look small compared with the chapter it eventually starts.\n\nJupiter returning to Jupiter can make possibility feel abundant, and that is exactly why proportion matters. Pick one direction with enough substance to keep developing after the excitement wears off. You do not need to know where the next twelve years end. Give the next chapter a real beginning.",
+    "attribution": "Jupiter conjunction your Jupiter",
+    "doNotAssume": [
+      "Do not assume luck, travel, education, wealth, or a positive outcome without house and chart support."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "saturn",
   "aspect": "trine",
-  "plainTranslation": "Growth and opportunity flows easily through your structures and commitments. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "The plan can grow without collapsing under its own weight.",
+  "policy": "Do not assume permanent stability, financial success, or that growth must be slow.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The plan can grow without collapsing under its own weight.",
+    "body": "A careful investment of time or effort may finally start paying because the foundation is already there. You may be able to take on more without the rest of the week falling apart. The sequence makes sense. The responsibility has somewhere to go.\n\nJupiter trine Saturn is useful for building the version you can keep. Use the easier conditions to commit, finish, or add the next level. Do not spend the whole favorable window perfecting what is already ready enough to use.",
+    "attribution": "Jupiter trine your Saturn",
+    "doNotAssume": [
+      "Do not assume permanent stability, financial success, or that growth must be slow."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "neptune",
   "aspect": "square",
-  "plainTranslation": "Growth and opportunity presses on your dreams and ideals, forcing an adjustment. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "A beautiful story can still need receipts.",
+  "policy": "Do not assume fraud, betrayal, confusion, illness, or that the hopeful option is false.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "A beautiful story can still need receipts.",
+    "body": "An offer, relationship, or plan may sound so good that the basic questions start feeling almost rude. Someone may be completely sincere and still not know the answer. A promise can be inspiring and still depend on money, timing, approval, or work nobody has assigned yet.\n\nJupiter square Neptune enlarges hope and uncertainty at the same time. Check what is confirmed, who is responsible, and what happens if the promise slips. You can believe in the possibility and still need evidence before you reorganize your life around it.",
+    "attribution": "Jupiter square your Neptune",
+    "doNotAssume": [
+      "Do not assume fraud, betrayal, confusion, illness, or that the hopeful option is false."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

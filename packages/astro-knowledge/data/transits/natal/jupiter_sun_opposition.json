@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "sun",
   "aspect": "opposition",
-  "plainTranslation": "Growth shows up through other people: offers, allies, overreach. Take the opportunity, mind the excess.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "The room gets bigger, and so does the question of who gets to lead.",
+  "policy": "Do not assume rivalry, conflict with a boss, relationship trouble, or that another person's opportunity diminishes the reader.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The room gets bigger, and so does the question of who gets to lead.",
+    "body": "Someone else may arrive with a bigger plan, stronger backing, or more confidence than you expected. You can be impressed and still disagree. A shared project may suddenly need a clearer decision about who leads which part because both people can see a convincing way forward.\n\nJupiter opposing Sun can make both sides certain they see the larger picture. Keep the disagreement on the decision. Who decides this part? What outcome are you trying to protect? What would each choice change? Respect does not require handing over your own direction.",
+    "attribution": "Jupiter opposition your Sun",
+    "doNotAssume": [
+      "Do not assume rivalry, conflict with a boss, relationship trouble, or that another person's opportunity diminishes the reader."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "uranus",
   "aspect": "square",
-  "plainTranslation": "Growth and opportunity presses on your need for freedom, forcing an adjustment. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Freedom gets loud.",
+  "policy": "Do not assume impulsiveness, rebellion, quitting, a breakup, or that all sudden change is self-chosen.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Freedom gets loud.",
+    "body": "The urge to quit, move, replace the system, or reinvent the whole plan can arrive quickly. Sometimes that is because a real opening has appeared. Sometimes a role, schedule, or agreement has become unworkable because circumstances changed. Sometimes one tedious part of the week is making the entire life look like the problem.\n\nJupiter square Uranus can make escape and opportunity feel identical. Name the exact part that no longer works before you blow up what still does. If the schedule is the problem, change the schedule before assuming the whole direction has to go.",
+    "attribution": "Jupiter square your Uranus",
+    "doNotAssume": [
+      "Do not assume impulsiveness, rebellion, quitting, a breakup, or that all sudden change is self-chosen."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

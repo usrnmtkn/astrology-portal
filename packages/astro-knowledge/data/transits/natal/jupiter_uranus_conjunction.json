@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "uranus",
   "aspect": "conjunction",
-  "plainTranslation": "Growth and opportunity arrives full-force in your need for freedom. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "A new option can change the whole map.",
+  "policy": "Do not assume rebellion, quitting, relocation, technological change, or that disruption is voluntary.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "A new option can change the whole map.",
+    "body": "An unexpected offer may appear. A new tool makes an old process look unnecessary. A schedule changes and reveals that the arrangement only worked because nobody had tested another version. The change can also come from circumstance rather than a sudden desire for freedom. Something that used to be workable may simply stop fitting.\n\nJupiter conjunct Uranus makes change arrive with possibility attached. Take the surprise seriously, but do not treat it as an instruction to burn everything down. Test what the new option actually improves before making it permanent.",
+    "attribution": "Jupiter conjunction your Uranus",
+    "doNotAssume": [
+      "Do not assume rebellion, quitting, relocation, technological change, or that disruption is voluntary."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

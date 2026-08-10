@@ -58,8 +58,8 @@ const entryShapes = {
   transitNatal: {
     schemaFile: "transit-natal.schema.json",
     required: ["id", "kind", "transiting", "natal", "aspect", "plainTranslation", "policy", "voiceNeutral", "status"],
-    optional: ["note"],
-    types: { id: "string", kind: "string", transiting: "string", natal: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string" },
+    optional: ["note", "readerCopy"],
+    types: { id: "string", kind: "string", transiting: "string", natal: "string", aspect: "string", plainTranslation: "string", policy: "string", note: "string", readerCopy: "object" },
     enums: { kind: ["transit-to-natal"] }
   },
   transitHouse: {
@@ -314,6 +314,24 @@ function validateEntryFile(filePath, kind, errors) {
     }
     if (json.status !== "LIVE") {
       errors.push(`${rel(filePath)}: readerCopy requires status LIVE`);
+    }
+  }
+  if (kind === "transitNatal" && json.readerCopy) {
+    const readerCopy = json.readerCopy;
+    for (const field of ["headline", "body", "attribution", "approvedVia", "sourcePath", "sourceSha256"]) {
+      if (typeof readerCopy[field] !== "string" || readerCopy[field].trim() === "") {
+        errors.push(`${rel(filePath)}: field readerCopy.${field} must be a non-empty string`);
+      }
+    }
+    if (!Array.isArray(readerCopy.doNotAssume) || readerCopy.doNotAssume.length === 0
+      || !readerCopy.doNotAssume.every((guard) => typeof guard === "string" && guard.trim() !== "")) {
+      errors.push(`${rel(filePath)}: field readerCopy.doNotAssume must be a non-empty string array`);
+    }
+    if (!/^[a-f0-9]{64}$/u.test(readerCopy.sourceSha256 ?? "")) {
+      errors.push(`${rel(filePath)}: field readerCopy.sourceSha256 must be a SHA-256 digest`);
+    }
+    if (json.status !== "LIVE") {
+      errors.push(`${rel(filePath)}: transit-natal readerCopy requires status LIVE`);
     }
   }
   const expectedName = `${json.id}.json`;

@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "moon",
   "aspect": "opposition",
-  "plainTranslation": "Warmth arrives through others, or you over-give and run dry. Balance generosity with what you actually need.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Someone else may need more at the exact moment you do.",
+  "policy": "Do not assume caregiving, illness, family conflict, or that another person's need is excessive.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Someone else may need more at the exact moment you do.",
+    "body": "Someone close may suddenly need more of your time. You may want to be there and still have work in the morning, an appointment you cannot move, or a quiet evening you were counting on. The tension does not require anyone to be unreasonable. Two real needs can still be trying to use the same hours.\n\nJupiter opposing Moon can enlarge giving and receiving at the same time. Decide what you can actually do before care turns into a promise you cannot keep without taking from yourself somewhere else. Help can be loving and still need a limit.",
+    "attribution": "Jupiter opposition your Moon",
+    "doNotAssume": [
+      "Do not assume caregiving, illness, family conflict, or that another person's need is excessive."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

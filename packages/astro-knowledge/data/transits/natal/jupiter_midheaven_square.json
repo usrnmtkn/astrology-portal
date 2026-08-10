@@ -1,0 +1,23 @@
+{
+  "id": "jupiter_midheaven_square",
+  "kind": "transit-to-natal",
+  "transiting": "jupiter",
+  "natal": "midheaven",
+  "aspect": "square",
+  "plainTranslation": "The opportunity is getting bigger. The agreement around it is not.",
+  "policy": "Do not assume a job change, conflict with a boss, promotion, or that the larger opportunity should win.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "The opportunity is getting bigger. The agreement around it is not.",
+    "body": "You may find yourself doing a larger job under the same title, taking on a project that keeps growing past the original conversation, or being offered more responsibility before anyone explains what is supposed to come off your plate. The opportunity can be exciting and still be impossible under the terms first offered.\n\nJupiter square your Midheaven exposes every part of the current arrangement that was built for a smaller version of the role. Do the math before enthusiasm answers for you. More work may deserve more money. More responsibility may need more authority. A bigger project may need another deadline. You do not need to make yourself smaller to keep the old agreement intact.",
+    "attribution": "Jupiter square your Midheaven",
+    "doNotAssume": [
+      "Do not assume a job change, conflict with a boss, promotion, or that the larger opportunity should win."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
+  "voiceNeutral": true,
+  "status": "LIVE"
+}

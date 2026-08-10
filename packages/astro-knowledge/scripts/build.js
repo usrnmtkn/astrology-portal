@@ -209,6 +209,7 @@ function webNatalKnowledge(packageJson, generatedAt, collections) {
       "aspect",
       "plainTranslation",
       "policy",
+      "readerCopy",
       "status"
     ])),
     placements: runtimeEligiblePlacements(collections.placements).map((entry) => pick(entry, [

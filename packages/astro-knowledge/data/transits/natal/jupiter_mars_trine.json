@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "mars",
   "aspect": "trine",
-  "plainTranslation": "Drive and luck align. Confident, effective action. Move now; don't get sloppy.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "You know what you want and have the nerve to move.",
+  "policy": "Do not assume victory, physical strength, or universal cooperation.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "You know what you want and have the nerve to move.",
+    "body": "A project can gain momentum without every step feeling like a fight. You may be more willing to make the first move, state what you want, or take on a challenge that requires real effort. Other people may cooperate because the direction is clear and the effort is visible.\n\nJupiter trine Mars is useful when action already has somewhere to go. Use the momentum for the goal that matters instead of adding three more because the first one is going well. Easy progress can still overfill the week if every success becomes another commitment.",
+    "attribution": "Jupiter trine your Mars",
+    "doNotAssume": [
+      "Do not assume victory, physical strength, or universal cooperation."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

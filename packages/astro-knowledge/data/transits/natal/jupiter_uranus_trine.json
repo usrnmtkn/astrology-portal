@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "uranus",
   "aspect": "trine",
-  "plainTranslation": "Growth and opportunity flows easily through your need for freedom. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "A change you were ready for may finally become easy to make.",
+  "policy": "Do not assume a breakthrough, invention, relocation, or that the new option has no downside.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "A change you were ready for may finally become easy to make.",
+    "body": "Something that once felt disruptive may now have a clear opening. A different method is affordable enough to try. A schedule change is finally acceptable to everyone involved. A new idea arrives at the same moment you have enough information to use it instead of only talking about it.\n\nJupiter trine Uranus favors the change that solves a real problem. Use the opening while the cost of trying is low. You do not need to make the new version permanent before it has had a chance to live through an ordinary week.",
+    "attribution": "Jupiter trine your Uranus",
+    "doNotAssume": [
+      "Do not assume a breakthrough, invention, relocation, or that the new option has no downside."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }

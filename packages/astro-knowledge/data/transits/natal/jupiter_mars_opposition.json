@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "mars",
   "aspect": "opposition",
-  "plainTranslation": "Action meets resistance through others, or you overextend. Agree on the direction first.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Your plan may run straight into somebody else's.",
+  "policy": "Do not assume hostility, breakup, legal conflict, or that either side is objectively right.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Your plan may run straight into somebody else's.",
+    "body": "A deadline collides with another deadline. Someone wants a faster answer than you planned to give. A disagreement about timing can suddenly sound like a disagreement about the entire relationship. Both sides may feel reasonable and still be trying to use the same afternoon.\n\nJupiter opposing Mars makes each position feel larger and more urgent. Keep the conflict attached to the actual decision. Name who needs what, what can move, and what cannot. You may still disagree. At least the disagreement will be about the problem in front of you instead of every frustration that came before it.",
+    "attribution": "Jupiter opposition your Mars",
+    "doNotAssume": [
+      "Do not assume hostility, breakup, legal conflict, or that either side is objectively right."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "REVIEWED"
+  "status": "LIVE"
 }

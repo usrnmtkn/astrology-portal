@@ -1,0 +1,23 @@
+{
+  "id": "jupiter_midheaven_opposition",
+  "kind": "transit-to-natal",
+  "transiting": "jupiter",
+  "natal": "midheaven",
+  "aspect": "opposition",
+  "plainTranslation": "Work is asking for more. Home may be doing the same.",
+  "policy": "Do not assume employment, a move, family illness, or that work or home should automatically win.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Work is asking for more. Home may be doing the same.",
+    "body": "A professional opportunity could bring more hours, travel, attention, or responsibility at the same time something in your private life needs more of you. A move changes the commute. Someone in the family needs more help. The household changes. A private project becomes important enough that you no longer want to give every useful hour to public work.\n\nJupiter opposing your Midheaven stretches the distance between what the outside world wants from you and what private life needs in order to function. Look at the week both choices create. The answer does not have to be work or home. The arrangement may be what needs to change.",
+    "attribution": "Jupiter opposition your Midheaven",
+    "doNotAssume": [
+      "Do not assume employment, a move, family illness, or that work or home should automatically win."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
+  "voiceNeutral": true,
+  "status": "LIVE"
+}

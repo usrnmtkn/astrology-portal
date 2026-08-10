@@ -4,9 +4,20 @@
   "transiting": "jupiter",
   "natal": "saturn",
   "aspect": "opposition",
-  "plainTranslation": "Growth and opportunity shows up in your structures and commitments, often through other people. Months.",
-  "policy": "Transit-to-natal entries are ordered: transiting planet to natal point. Do not apply same-moment aspect exclusions. Interpret as an active pressure or opening, not a guaranteed event.",
-  "note": "Imported from project-authored transit-to-natal matrix material. Source file was not copied into the repository.",
+  "plainTranslation": "Growth and duty want different answers.",
+  "policy": "Do not assume a breakup, resignation, financial loss, or that duty should automatically win.",
+  "note": "Verbatim owner-approved Jupiter transit-to-natal family; imported deterministically from the governed source document.",
+  "readerCopy": {
+    "headline": "Growth and duty want different answers.",
+    "body": "The opportunity says go. The existing commitment says stay. Money may feel tight at the exact moment the larger option looks most tempting. You may want both and still discover that both plans assume they get the same part of your week.\n\nJupiter opposing Saturn does not require a dramatic exit. You may need to decide what comes off the calendar, which responsibility can be shared, or which term has to change before the new direction fits. The useful answer is the one that survives after the excitement and the obligation are both still there.",
+    "attribution": "Jupiter opposition your Saturn",
+    "doNotAssume": [
+      "Do not assume a breakup, resignation, financial loss, or that duty should automatically win."
+    ],
+    "approvedVia": "Owner approval recorded 2026-08-09",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md",
+    "sourceSha256": "c30daa671bbb85b644c768d2896b1615496226e06e140233450eed0b8cb98cb6"
+  },
   "voiceNeutral": true,
-  "status": "DRAFT"
+  "status": "LIVE"
 }
