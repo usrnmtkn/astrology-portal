@@ -1,0 +1,31 @@
+name: Production report smoke
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: read
+
+jobs:
+  report-smoke:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       (startsWith(github.event.deployment.environment, 'Production') ||
+        startsWith(github.event.deployment.environment, 'production')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PRODUCTION_BASE_URL: https://tldrastro.vercel.app
+      CONTENT_GENERATION_SECRET: ${{ secrets.CONTENT_GENERATION_SECRET }}
+      PRODUCTION_SMOKE_ATTEMPTS: "6"
+      PRODUCTION_SMOKE_DELAY_MS: "10000"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify health and authenticated report fulfillment
+        run: node scripts/smoke-production-report-deployment.mjs
