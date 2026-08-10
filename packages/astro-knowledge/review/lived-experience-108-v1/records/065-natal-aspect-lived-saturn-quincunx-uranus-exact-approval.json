@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-065",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/uranus",
+  "workbookKey": "saturn|inconjunct|uranus",
+  "payloadSha256": "ea55b42033d7fface97e8ca55d03e094720bc2342d25f3224dc9bc780dfe684f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn inconjunct Uranus can make your body complain about a schedule you keep insisting is manageable. You take the extra shift, handle somebody else's responsibility, say yes again, and then wonder why your shoulders are tight and every obligation feels unbearable. The urge to escape often gets loud after too much has quietly become yours.",
+    "sourceMechanism": "Saturn inconjunct Uranus can make the body carry a conflict the schedule has not admitted yet. Nervousness or muscle tension can build when the person keeps taking on responsibilities that belong to someone else while also craving more freedom. Some of the tension belongs to responsibilities that were never actually theirs to carry."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 66,
+    "approvedBodyCell": "E66",
+    "ownerStatusCell": "G66"
+  },
+  "additionalBilledCalls": 0
+}

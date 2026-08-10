@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-088",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/south-node",
+  "workbookKey": "uranus|sextile|south_node",
+  "payloadSha256": "8a912185d6a800a1a2632ddcbedefcb552be37ae3d2698632076e87103a47709",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus sextile the South Node can make a small argument reveal that you are reacting to much more than tonight. The comment is ordinary, but your response is huge, and suddenly you recognize the older experience sitting underneath it. Seeing the connection early keeps the surface story from taking all the blame.",
+    "sourceMechanism": "Uranus sextile South Node can make karmic situations easier to use as openings into the unconscious. The familiar event is easier to recognize as a trigger for something deeper before the obvious story takes over."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 89,
+    "approvedBodyCell": "E89",
+    "ownerStatusCell": "G89"
+  },
+  "additionalBilledCalls": 0
+}

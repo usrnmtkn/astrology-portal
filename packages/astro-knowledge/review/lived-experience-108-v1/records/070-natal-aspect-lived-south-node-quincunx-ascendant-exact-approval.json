@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-070",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/south-node/quincunx/ascendant",
+  "workbookKey": "south_node|inconjunct|ascendant",
+  "payloadSha256": "ccf15ead8e21db70a24b142618083b0e227458f4e5038a64d2279965fb4c5dc4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "South Node inconjunct the Ascendant can make an older version of you answer before the present situation has had a chance. A tense conversation starts and you become agreeable, defensive, distant, or controlling almost on cue. The reaction is fast because it is familiar, not because it fits what is happening now.",
+    "sourceMechanism": "South Node inconjunct Ascendant can make the person shift quickly among several old personality patterns. The response that belongs to the present situation can get lost when an older personality pattern answers first."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 71,
+    "approvedBodyCell": "E71",
+    "ownerStatusCell": "G71"
+  },
+  "additionalBilledCalls": 0
+}

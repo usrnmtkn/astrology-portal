@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-094",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/south-node",
+  "workbookKey": "venus|inconjunct|south_node",
+  "payloadSha256": "cc8166c74697d801254e354e77ce11525c752fb70ab310597fcc8e848a5f2297",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus inconjunct the South Node can make the same want keep arriving inside a familiar problem. The person is different, the purchase is different, or the situation looks new, but you are once again chasing the same approval, comfort, or relationship outcome. The repetition starts asking a harder question about the desire itself.",
+    "sourceMechanism": "Venus inconjunct South Node can make karmic necessity difficult to accept when it interferes with what the person values. The same desire keeps landing inside a difficult situation because the desire itself still needs examination."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 95,
+    "approvedBodyCell": "E95",
+    "ownerStatusCell": "G95"
+  },
+  "additionalBilledCalls": 0
+}

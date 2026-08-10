@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-083",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/north-node",
+  "workbookKey": "uranus|inconjunct|north_node",
+  "payloadSha256": "c0e7540702f489390dc83e1c1c577c71a5d17e49e3a3742dbe456f9ebb2a3d92",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus inconjunct the North Node can make a teacher's blind spot hard to ignore. You can see exactly where they contradict themselves and still find that one idea they offered keeps helping you. Insight does not always arrive after the person giving it has solved every version of the problem.",
+    "sourceMechanism": "Uranus inconjunct North Node can make a teacher's own unfinished inner work seem like proof that they cannot help anyone else. Useful guidance can come from someone who is still integrating their own unconscious material."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 84,
+    "approvedBodyCell": "E84",
+    "ownerStatusCell": "G84"
+  },
+  "additionalBilledCalls": 0
+}

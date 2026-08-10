@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-093",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/saturn",
+  "workbookKey": "venus|inconjunct|saturn",
+  "payloadSha256": "0c7da57d4652691ca75c694d8cb1c4a7703a3dad14018c20ca15319c860f29ec",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus inconjunct Saturn can fill the calendar with enough work that there is nobody left to see by the end of the week. Dinner gets postponed, the date gets rescheduled, the friend stops asking, and the hobby waits because another task looks more legitimate. Loneliness can become the first sign that responsibility has been taking too much.",
+    "sourceMechanism": "Venus inconjunct Saturn can make duty crowd out enjoyment until the person realizes how lonely the schedule has become. Ambition and responsibility are strong, but social life and pleasure can keep being postponed for work that never really ends. Enjoyment has to count as part of a life, not only as the reward for finishing one."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 94,
+    "approvedBodyCell": "E94",
+    "ownerStatusCell": "G94"
+  },
+  "additionalBilledCalls": 0
+}

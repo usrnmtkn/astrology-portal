@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-084",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/pluto",
+  "workbookKey": "uranus|inconjunct|pluto",
+  "payloadSha256": "4e4cf6042ab026bfa3bc0412bb3b7120c6499e351921c773fd0e33b6a843f347",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus inconjunct Pluto can make one belief become the part of life you refuse to reconsider while everything else is changing. The job shifts, the relationship changes, the schedule moves, and suddenly somebody questioning that one idea feels unbearable. Rigidity can become a way to create one fixed point when the rest of life will not hold still.",
+    "sourceMechanism": "Uranus inconjunct Pluto can make familiar beliefs feel like the only stable ground in a rapidly changing world. The person may cling to an idea precisely because everything else is shifting. Another person's viewpoint can exist without becoming another threat to stability."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 85,
+    "approvedBodyCell": "E85",
+    "ownerStatusCell": "G85"
+  },
+  "additionalBilledCalls": 0
+}

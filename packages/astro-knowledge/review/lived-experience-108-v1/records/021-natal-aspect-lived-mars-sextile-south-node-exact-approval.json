@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-021",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/south-node",
+  "workbookKey": "mars|sextile|south_node",
+  "payloadSha256": "dcb54ac89c63d7098c8ed9ef3baf2083079804fc3f3741b22d779595c2c6185f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars sextile the South Node can make the familiar pursuit obvious as soon as it shows up. The same kind of offer, challenge, or temptation appears and you already know the route it tends to take. You still feel the pull, but you are not halfway through the repeat before recognizing it.",
+    "sourceMechanism": "Mars sextile South Node can make karmic situations easier to use for changing desire. The old pursuit is easier to recognize before it becomes the next automatic choice."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 22,
+    "approvedBodyCell": "E22",
+    "ownerStatusCell": "G22"
+  },
+  "additionalBilledCalls": 0
+}

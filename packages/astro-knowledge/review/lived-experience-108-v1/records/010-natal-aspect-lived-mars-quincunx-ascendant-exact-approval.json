@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-010",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/ascendant",
+  "workbookKey": "mars|inconjunct|ascendant",
+  "payloadSha256": "219e937e4a532897196799f7a26a3f3015fd5b4d844385cb983695f21a25f4b0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars inconjunct the Ascendant can make a shared project feel slower than simply doing it yourself. You know how you would handle the job, but now you have to explain the plan, wait for an answer, or change part of it because somebody else is involved. The irritation starts when every adjustment feels like interference.",
+    "sourceMechanism": "Mars inconjunct Ascendant can make cooperation feel like a compromise of personal effort. A shared decision does not automatically reduce the person's ability to pursue a personal goal."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 11,
+    "approvedBodyCell": "E11",
+    "ownerStatusCell": "G11"
+  },
+  "additionalBilledCalls": 0
+}

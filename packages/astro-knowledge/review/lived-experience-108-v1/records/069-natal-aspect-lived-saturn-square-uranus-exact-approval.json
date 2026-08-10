@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-069",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/uranus",
+  "workbookKey": "saturn|square|uranus",
+  "payloadSha256": "a0ac82f0c8c3ab95f4224ccc65352d66c10d144d8f5a9dd4c36a77408b6101df",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn square Uranus can make you keep doing what is required until one more obligation feels unbearable. You say yes for weeks, resent every yes, and then want to quit the job, leave the group, or blow up the agreement all at once. By the time freedom looks like an emergency exit, the problem has usually been building for a while.",
+    "sourceMechanism": "Saturn square Uranus can make obligation feel like the enemy of freedom. The person may do what is required while resentment keeps building, then release all of it at once through anger, rupture, or a sudden exit. By the time freedom starts looking like an emergency exit, the problem has usually been building for a while."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 70,
+    "approvedBodyCell": "E70",
+    "ownerStatusCell": "G70"
+  },
+  "additionalBilledCalls": 0
+}

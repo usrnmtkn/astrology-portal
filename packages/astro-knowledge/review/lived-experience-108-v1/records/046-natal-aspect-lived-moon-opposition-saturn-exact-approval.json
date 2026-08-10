@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-046",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/saturn",
+  "workbookKey": "moon|opposition|saturn",
+  "payloadSha256": "57d759736181a24cfebf56e036b6c9471e0a0f6d0981c9bfe0f12142ab891cfd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out.",
+    "sourceMechanism": "Moon opposite Saturn can make rejection feel older than the current relationship. The person may keep love at a distance because past experience taught them that reaching out ends in disappointment. Emotional stability cannot be built entirely from another person's response; there is warmth here, but fear keeps it under heavy supervision."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 47,
+    "approvedBodyCell": "E47",
+    "ownerStatusCell": "G47"
+  },
+  "additionalBilledCalls": 0
+}
