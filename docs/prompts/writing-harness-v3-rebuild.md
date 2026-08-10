@@ -52,6 +52,10 @@ Em dashes; "whether"; wellness/therapy vocabulary (honor your needs, protect you
 4. This ruling is version-pinned like all canonical documents. Changes require a new version and fresh owner approval.
 ````
 
+## 1b. Load the card-transit writing standard
+
+A second owner ruling now exists: `tldr-astro-phrasebank/TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md` (owner text verbatim, 23 sections; the owner will supply it if not in your checkout). It is the card-register counterpart of the report lived-prose standard. Wire it in three places: (a) the writer prompt for all card-surface generation loads it verbatim, with §23 as the top-level direction for planetary-file rewrites; (b) the card critique checklist derives its diagnostic questions from §21 (the 15-question editorial test, with its astrology-failure vs writing-failure split) and its before/after examples from §§1–15 and §20; (c) the writer chain's internal revision passes follow §22 (the seven-pass loop). §17 rules that `DO NOT ASSUME` fields stay internal and never become reader-facing disclaimers — enforce with a validator.
+
 ## 2. Rebuild the rubric as comparison-based judging
 
 Replace the style-adjective checklist (clarity, metaphor, self-help, tagline as freestanding rules) with the v3 pattern:

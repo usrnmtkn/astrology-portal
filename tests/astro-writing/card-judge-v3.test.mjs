@@ -171,6 +171,7 @@ assert.throws(() => buildCardJudgeV3Packet({
   validatorResults: {}
 }), /Cross-surface comparison evidence/u);
 assert.match(cardJudgeV3PacketPrompt(rubric, example.packet), /SURFACE[\s\S]*COMPLETE_CARD[\s\S]*ASTROLOGY_FACTS[\s\S]*OWNER_COMPARISON_SET[\s\S]*LABELED_NEGATIVE_EXAMPLES[\s\S]*VALIDATOR_RESULTS/u);
+assert.match(cardJudgeV3PacketPrompt(rubric, example.packet), /CARD_CRITIQUE_CHECKLIST[\s\S]*Fifteen-question editorial test/u);
 
 assert.throws(() => assertCardJudgeV3LiveAuthorization({ env: {}, artifactExists: false }), /No billed call was made/u);
 assert.deepEqual(assertCardJudgeV3LiveAuthorization({ env: { [CARD_JUDGE_V3_AUTHORIZATION_ENV]: CARD_JUDGE_V3_AUTHORIZATION_TOKEN }, artifactExists: false }), {
