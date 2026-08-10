@@ -80,6 +80,9 @@ if (fs.existsSync(reportPath)) {
   assert.strictEqual(report.calibrationFailed, true);
   assert.strictEqual(report.candidateGeneration.status, "UNAPPROVED");
   assert.strictEqual(report.rows.filter((row) => row.replacementProposal).length, 5);
+  assert.strictEqual(report.ledgerAgreement.flagged, 66);
+  assert.strictEqual(report.ledgerAgreement.pending, 66);
+  assert.strictEqual(report.ledgerAgreement.agreementRate, null);
 }
 
 process.stdout.write("daily-glance voice self-audit tests passed\n");
