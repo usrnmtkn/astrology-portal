@@ -1,5 +1,5 @@
 import type { LocationInput, SkySnapshot } from "../types";
-import { displayTimeToTwentyFourHour } from "./chartTime";
+import { normalizeBirthTime } from "./chartTime";
 import type { TldrAstroChartSettings, TldrAstroSubject } from "./tldrastroApi";
 
 type ChartProfileInput = {
@@ -78,7 +78,14 @@ export function validChartBirthDate(chart?: ChartBirthInput) {
 }
 
 export function validChartBirthTime(chart?: ChartBirthInput) {
-  return chart?.birthTime && chart.birthTime !== "Birth time needed" ? chart.birthTime : "";
+  if (!chart?.birthTime || chart.birthTime === "Birth time needed" || chart.birthTime === "Time unknown") {
+    return chart?.birthTime === "Time unknown" ? "Time unknown" : "";
+  }
+  try {
+    return normalizeBirthTime(chart.birthTime);
+  } catch {
+    return "";
+  }
 }
 
 export function apiSettingsFromChartSettings(
@@ -112,7 +119,7 @@ export function apiSubjectFromUserChart(
     name: profile.name,
     datetime: {
       date: birthDate,
-      time: timeKnown ? displayTimeToTwentyFourHour(birthTime) : "12:00",
+      time: timeKnown ? birthTime : "12:00",
       timeKnown,
       timeZone: birthLocation.timeZone
     },

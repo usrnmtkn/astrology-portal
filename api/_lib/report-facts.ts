@@ -184,6 +184,17 @@ export class ReportCalculationApiPreflightError extends Error {
   }
 }
 
+export class ReportCalculationApiClientError extends Error {
+  readonly code = "CALCULATION_API_CLIENT_ERROR";
+  readonly statusCode: number;
+
+  constructor(statusCode: number, payload: unknown) {
+    super(`CALCULATION_API_CLIENT_ERROR: TLDR Astro API request failed with ${statusCode}: ${JSON.stringify(payload)}`);
+    this.name = "ReportCalculationApiClientError";
+    this.statusCode = statusCode;
+  }
+}
+
 export function createTldrAstroReportFactsClient({
   baseUrl = process.env.TLDRASTRO_API_URL || process.env.VITE_TLDRASTRO_API_URL || DEFAULT_TLDRASTRO_API_URL,
   fetchImpl = fetch,
@@ -217,6 +228,9 @@ export function createTldrAstroReportFactsClient({
     });
     const payload = await response.json().catch(() => null);
     if (!response.ok) {
+      if (response.status >= 400 && response.status < 500) {
+        throw new ReportCalculationApiClientError(response.status, payload);
+      }
       throw new Error(`TLDR Astro API request failed with ${response.status}: ${JSON.stringify(payload)}`);
     }
     return payload as T;

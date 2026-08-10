@@ -1,8 +1,24 @@
 import assert from "node:assert/strict";
 import {
+  BirthTimeValidationError,
   displayTimeToTwentyFourHour,
+  normalizeBirthTime,
   twentyFourHourTimeToDisplay
 } from "../apps/web/src/services/chartTime.ts";
+
+assert.equal(normalizeBirthTime("11:20 aM"), "11:20");
+assert.equal(normalizeBirthTime("11:20 am"), "11:20");
+assert.equal(normalizeBirthTime("1120"), "11:20");
+assert.equal(normalizeBirthTime("11.20"), "11:20");
+assert.equal(normalizeBirthTime("1.20 pm"), "13:20");
+assert.equal(normalizeBirthTime("12:00 AM"), "00:00");
+assert.equal(normalizeBirthTime("12:00 PM"), "12:00");
+assert.equal(normalizeBirthTime("9"), "09:00");
+assert.equal(normalizeBirthTime("21:05:00"), "21:05");
+assert.equal(normalizeBirthTime("21:05:37.5"), "21:05");
+assert.throws(() => normalizeBirthTime("25:00"), BirthTimeValidationError);
+assert.throws(() => normalizeBirthTime("11:72 AM"), BirthTimeValidationError);
+assert.throws(() => normalizeBirthTime("noon-ish"), BirthTimeValidationError);
 
 assert.equal(twentyFourHourTimeToDisplay("00:00"), "12:00 AM");
 assert.equal(twentyFourHourTimeToDisplay("09:05"), "9:05 AM");

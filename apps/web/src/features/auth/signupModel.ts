@@ -1,4 +1,5 @@
 import type { LocationInput } from "../../types";
+import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "../../services/chartTime";
 
 export type SignupProvider = "email" | "google" | "phone";
 export type AuthMode = "create" | "login";
@@ -27,7 +28,13 @@ export type SignupDateParts = {
 };
 
 export function splitSignupBirthTime(value: string): SignupTimeParts {
-  const [, hour = "", minute = "", meridiem = "AM"] = value.match(/^(\d{1,2}):(\d{0,2})\s?(AM|PM)$/i) ?? [];
+  let displayValue = value;
+  try {
+    displayValue = twentyFourHourTimeToDisplay(normalizeBirthTime(value));
+  } catch {
+    // Partial signup input is intentionally allowed while the user is typing.
+  }
+  const [, hour = "", minute = "", meridiem = "AM"] = displayValue.match(/^(\d{1,2}):(\d{0,2})\s?(AM|PM)$/i) ?? [];
 
   return {
     hour,
