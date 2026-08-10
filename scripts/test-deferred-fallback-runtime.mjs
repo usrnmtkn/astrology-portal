@@ -26,8 +26,10 @@ await build({
         fallbackV3DignityLine,
         fallbackV3PlacementSentence,
         isDeferredFallbackArchitectureV3BundleLoaded,
+        isRelationshipFallbackArchitectureV3BundleLoaded,
         loadFallbackArchitectureV3BundledManifest,
         loadDeferredFallbackArchitectureV3Bundle,
+        loadRelationshipFallbackArchitectureV3Bundle,
         transitSynastryFallbackRendererV3
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
     `
@@ -76,6 +78,7 @@ const bundledKeyCount = runtime.fallbackArchitectureV3BundledManifestSummary.key
 assert.ok(bundledKeyCount > 0, "The bundled fallback summary must report its generated key count.");
 assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.length, bundledKeyCount);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
+assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(skyBefore.body, "Sky fallback copy must be available before the transit bundle loads.");
 assert.ok(skyPlacementBefore.body && skySeasonBefore.body && skyLunationBefore.body);
 assert.ok(dignityBefore, "Sky dignity copy must remain in the eager core.");
@@ -144,6 +147,29 @@ assert.match(
   "Friend placement prose must become available after its domain bundle loads."
 );
 assert.equal(transitAfter.contentKey, "authored/transit-aspect/pluto/chiron/square");
+const compatibilityBefore = runtime.transitSynastryFallbackRendererV3.renderCompat({
+  planet: "moon",
+  signA: "aries",
+  signB: "taurus",
+  otherName: "Alex"
+});
+assert.equal(
+  compatibilityBefore.templateKey,
+  "fallback-template/compat.cross-sign",
+  "The core bundle may compose the approved compatibility floor without downloading authored compatibility cards."
+);
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), false);
+
+assert.equal(await runtime.loadRelationshipFallbackArchitectureV3Bundle(), true);
+assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), true);
+const compatibilityAfter = runtime.transitSynastryFallbackRendererV3.renderCompat({
+  planet: "moon",
+  signA: "aries",
+  signB: "taurus",
+  otherName: "Alex"
+});
+assert.equal(compatibilityAfter.contentKey, "authored/compat-deep/moon/aries/taurus");
+assert.ok(compatibilityAfter.body.includes("Alex"));
+assert.equal(await runtime.loadRelationshipFallbackArchitectureV3Bundle(), false);
 
 console.log("Deferred fallback runtime parity passed.");

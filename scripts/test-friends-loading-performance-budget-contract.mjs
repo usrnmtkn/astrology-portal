@@ -15,6 +15,7 @@ const expectedBudgetKeys = [
   "mobileNavigationReadyMs",
   "slowNetworkDetailShellReadyMs",
   "slowNetworkListReadyMs",
+  "slowNetworkRelationshipEnhancedMs",
   "slowNetworkRelationshipReadyMs",
   "warmDetailReadyMs"
 ];
@@ -60,17 +61,23 @@ assert.ok(
     < friendsLoadingPerformanceBudgets.incompleteChartRepairReadyMs,
   "Incomplete charts must paint as rows before their background enhancement completes."
 );
+assert.ok(
+  friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs
+    < friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs,
+  "Progressive relationship copy must paint before the complete natal enhancement finishes."
+);
 
 const hardCeilings = {
   coldListReadyMs: 2_000,
   warmDetailReadyMs: 1_000,
-  directLinkSynastryReadyMs: 4_000,
+  directLinkSynastryReadyMs: 2_000,
   mobileNavigationReadyMs: 2_000,
   incompleteChartListReadyMs: 2_000,
   incompleteChartRepairReadyMs: 4_000,
   slowNetworkListReadyMs: 2_000,
   slowNetworkDetailShellReadyMs: 2_000,
-  slowNetworkRelationshipReadyMs: 10_000
+  slowNetworkRelationshipReadyMs: 4_500,
+  slowNetworkRelationshipEnhancedMs: 7_000
 };
 
 for (const [key, ceiling] of Object.entries(hardCeilings)) {

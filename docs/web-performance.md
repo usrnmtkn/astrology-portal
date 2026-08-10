@@ -9,15 +9,18 @@ releases do not invalidate every content asset:
 - `fallback-content-core-*`
 - `fallback-content-sky-core-*`
 - `fallback-content-deferred-core-*`
+- `fallback-content-transit-*`
 - `fallback-content-relationships-*`
 - `fallback-content-sky-*`
 - `fallback-content-manifest-*`
 
 The small template core and the Sky-specific chunks are synchronous dependencies
-of `App`. The complementary natal/relationship core and the transit/relationship
-snapshot are deferred on the initial Sky route and installed when You, Calendar,
-Friends, or another non-Sky route activates them. A dashboard-installed full
-package always wins a race with the local deferred bundle.
+of `App`. The complementary natal core and transit snapshot are deferred on the
+initial Sky route and installed when You, Calendar, Friends, or another non-Sky
+route activates them. Relationship-authored cards and bond-language rows use a
+narrower second chunk requested only after Friends relationship content is
+requested. A dashboard-installed full package always wins a race with either
+local deferred bundle.
 
 The Lunar Calendar stylesheet follows its lazy route instead of blocking the
 initial Sky render. Route-owned CSS must be imported by the route module so its
@@ -52,18 +55,18 @@ The report measures:
 - reader startup CSS separately from lazy admin CSS;
 - the App chunk, largest JavaScript chunk, total JavaScript, and total CSS.
 
-The August 1, 2026 baseline is:
+The August 9, 2026 baseline is:
 
 | Measurement | Gzip |
 | --- | ---: |
-| Reader boot, including awaited CSS | 546.4 kB |
-| Static App JavaScript graph | 501.9 kB |
+| Reader boot, including awaited CSS | 413.3 kB |
+| Static App JavaScript graph | 368.8 kB |
 | Reader startup CSS | 44.5 kB |
-| App code chunk | 158.8 kB |
+| App code chunk | 142.3 kB |
 
 The governed domain split, Calendar CSS boundary, deferred full manifest, and
-complementary source partitions reduced reader boot from 1.34 MB to 546.4 kB
-gzip, about 59%. The Friends production-layout and comparison-picker layers
+complementary source partitions reduced reader boot from 1.34 MB to 413.3 kB
+gzip, about 69%. The Friends production-layout and comparison-picker layers
 follow their lazy route, moving 6.67 kB gzip out of startup without duplicating
 their rules. Removing 46 unreferenced selectors from the retired social-card
 interface saves another 1.3 kB gzip of startup CSS. The 3.47 kB Friends detail
@@ -71,16 +74,34 @@ layout, relationship explainer, composite/synastry placement, and aspect-row
 stylesheet follows the lazy detail component, so opening the Circle or Charts
 tabs does not request it. The 1.38 kB add/edit chart form-control stylesheet
 loads with the lazy modal; the shared delete-confirmation shell remains eager.
-Friend/natal
-placement sentences follow the non-Sky domain loader instead of shipping with
-the current-sky package. Phone fields use
-dependency-free formatting and a fast US
-numbering-shape check; the compact 29.6 kB metadata chunk then performs strict
-validation before an OTP request reaches Supabase. The 488 kB transit/relationship
-chunk, 226.3 kB deferred core, 29.6 kB phone validator, and 27.1 kB full manifest
-remain available on demand but are prohibited from re-entering the static App
-graph by the budget check. Total production JavaScript remains 2.54 MB gzip, so
-the split does not duplicate the canonical source snapshot.
+Friend/natal placement sentences follow the non-Sky domain loader instead of
+shipping with the current-sky package. Phone fields use dependency-free
+formatting and a fast US numbering-shape check; the compact metadata chunk then
+performs strict validation before an OTP request reaches Supabase. The former
+487.8 kB transit/relationship chunk is now split into a 282.5 kB transit chunk
+and a 205.6 kB relationship chunk. The latter is requested only for relationship
+content, reducing that request by about 58%. Both chunks, the deferred core,
+phone validator, and full manifest remain available on demand but are prohibited
+from re-entering the static App graph by the budget check. Total production
+JavaScript remains 2.11 MB gzip, so the split does not duplicate the canonical
+source snapshot.
+
+Friends Compatibility requests only the relationship-authored slice. Transit,
+Synastry, and Composite request the broader deferred core on active-tab or
+hover/focus intent instead of immediately after the profile shell paints. The
+reader's persisted Sun and Moon signs allow approved Compatibility cards to
+paint while the full local natal calculation continues in the background. On
+the simulated slow-network matrix, first relationship copy improved from about
+8.2 seconds to about 1.6 seconds.
+
+The browser Swiss Ephemeris package retains the planetary, lunar, Chiron,
+orbital, and leap-second files used by the calculation service while omitting
+the unused asteroid-name and fixed-star catalogs. This reduces the on-demand
+data transfer from 12.08 MB to 2.02 MB. The slow-network seven-card enhancement
+now completes in about 4.4 seconds and has a separate 6-second ceiling. Rebuild
+the derived browser data file with `node scripts/build-web-swisseph-data.mjs`
+after a `swisseph-wasm` upgrade; the loader and startup contracts fail closed if
+the upstream package layout changes.
 
 Budgets live in `scripts/web-bundle-budgets.json` and run in the visual-smoke
 workflow. Raise a budget only with an intentional, documented product change.
@@ -101,6 +122,7 @@ True route/domain deferral must preserve these contracts:
 5. The reader-boot budget must decrease by a measured amount; moving bytes to an
    immediately requested chunk does not count as a first-visit improvement.
 
-The next candidates are moving remaining Friends detail styles behind the route
-and making App-level vocabulary constants route-local. Either change must pass
-the same eager/deferred parity and content-precedence requirements.
+The next candidates are making App-level vocabulary constants route-local and
+splitting the transit slice by the route-level demand observed in production.
+Either change must pass the same eager/deferred parity and content-precedence
+requirements.
