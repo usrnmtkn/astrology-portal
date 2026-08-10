@@ -4,6 +4,11 @@
   "buildCommand": "node scripts/assert-vercel-production-source.mjs && npm run build",
   "outputDirectory": "apps/web/dist",
   "framework": "vite",
+  "functions": {
+    "api/**/*.ts": {
+      "includeFiles": "{api/_lib/{content-generation.ts,report-*.ts,supabase-report-admin.ts},artifacts/*.md,config/*.json,packages/astro-knowledge/data/manifestation-sets/*.json,tldr-astro-phrasebank/*.md}"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
