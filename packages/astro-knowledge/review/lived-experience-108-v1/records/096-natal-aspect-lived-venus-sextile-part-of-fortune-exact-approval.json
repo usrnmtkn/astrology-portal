@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-096",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/part-of-fortune",
+  "workbookKey": "venus|sextile|part_of_fortune",
+  "payloadSha256": "cf0bb4f582e28e93053f058410358592e8fa93e4a2d6a21f3deb3ed81b30453c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus sextile the Part of Fortune can catch you halfway through agreeing to the familiar choice. You are about to order the same option, return to the same kind of relationship, or say yes because it is what you usually do, and realize you do not actually want it this time. The old preference is easier to notice before it becomes another decision.",
+    "sourceMechanism": "Venus sextile Part of Fortune gives changing values a workable opening. The old preference is easier to catch before it automatically becomes the next decision."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 97,
+    "approvedBodyCell": "E97",
+    "ownerStatusCell": "G97"
+  },
+  "additionalBilledCalls": 0
+}

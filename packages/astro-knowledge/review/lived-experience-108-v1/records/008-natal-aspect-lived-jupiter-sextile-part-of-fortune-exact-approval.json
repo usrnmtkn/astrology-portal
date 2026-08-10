@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-008",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/part-of-fortune",
+  "workbookKey": "jupiter|sextile|part_of_fortune",
+  "payloadSha256": "9efee7cf863cf2dd0f58161e7ee72d073bacee906d7c08f54e77de3cb36caace",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter sextile the Part of Fortune can make the useful part of a disappointment easier to notice. The plan falls through, but you meet someone you would not have met, find the place you end up loving, or finally ask the question you had been avoiding. The experience can still be disappointing and leave something valuable behind.",
+    "sourceMechanism": "Jupiter sextile Part of Fortune gives spiritual insight a workable opening. Meaning becomes easier to recognize before frustration turns the experience into a simple story of good or bad luck."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 9,
+    "approvedBodyCell": "E9",
+    "ownerStatusCell": "G9"
+  },
+  "additionalBilledCalls": 0
+}

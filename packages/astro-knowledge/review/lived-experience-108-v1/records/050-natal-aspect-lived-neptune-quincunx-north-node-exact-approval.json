@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-050",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/north-node",
+  "workbookKey": "neptune|inconjunct|north_node",
+  "payloadSha256": "da6829023c464a11af082f2175ea6380564183fc38a4b22a75b615871e525c67",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Neptune inconjunct the North Node can make you lose faith in a guide the minute you see that they still have questions of their own. Maybe their practice is inconsistent or they are still learning the lesson they teach. That can be disappointing. It does not automatically make the part they understand useless.",
+    "sourceMechanism": "Neptune inconjunct North Node can make a teacher's own unfinished spiritual work seem like proof that they cannot help anyone else. A person can still offer useful spiritual guidance while continuing to learn themselves."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 51,
+    "approvedBodyCell": "E51",
+    "ownerStatusCell": "G51"
+  },
+  "additionalBilledCalls": 0
+}

@@ -169,7 +169,7 @@ export type AngleFacts = {
 export type AspectFacts = {
   planetA: string;
   planetB: string;
-  aspect: "conjunction" | "opposition" | "square" | "trine" | "sextile";
+  aspect: "conjunction" | "opposition" | "square" | "trine" | "sextile" | "quincunx";
   voice?: "you" | string;
   [key: string]: unknown;
 };

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-087",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/part-of-fortune",
+  "workbookKey": "uranus|sextile|part_of_fortune",
+  "payloadSha256": "605397d64acee78918fcde29f03fc469152dee9ce9757f32a8d8d263a65bcfa0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus sextile the Part of Fortune can make an odd connection hit while you are doing something ordinary. Two ideas suddenly fit together, a dream makes sense hours later, or an unexpected solution appears before you know why. It is easy to talk yourself out of it if you decide too quickly that the thought was random.",
+    "sourceMechanism": "Uranus sextile Part of Fortune gives unconscious insight a workable opening. Intuition, dreams, or sudden understanding are easier to notice before the conscious mind explains them away."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 88,
+    "approvedBodyCell": "E88",
+    "ownerStatusCell": "G88"
+  },
+  "additionalBilledCalls": 0
+}

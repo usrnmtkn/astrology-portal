@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-099",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/10",
+  "workbookKey": "part-of-fortune|10th house",
+  "payloadSha256": "c4bfa750b1988fd70c790351ef3e5e8bdeff4d24a5f6d77fb0292111ed2c17d4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Part of Fortune in the 10th house can make a bad mood easier to move through once there is something finished you can point to. You send the proposal, fix the problem, complete the shift, or put the work where other people can actually see it. Recognition feels better when there is a real contribution underneath it.",
+    "sourceMechanism": "Part of Fortune in the 10th house gives emotional pressure somewhere public and useful to go. Work gets finished. A contribution becomes visible. Someone can point to what they actually did instead of only how they hope to be seen. Status and power become distractions when recognition matters more than what the work contributes."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 100,
+    "approvedBodyCell": "E100",
+    "ownerStatusCell": "G100"
+  },
+  "additionalBilledCalls": 0
+}

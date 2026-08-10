@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-092",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/north-node",
+  "workbookKey": "venus|inconjunct|north_node",
+  "payloadSha256": "eaceb46f5a5c6397d32e920e456f8bac7b0e5e6a9c72254122938f7018bc0dde",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus inconjunct the North Node can make you feel ridiculous giving relationship advice while your own love life or values are still complicated. Then somebody asks a question you have already learned the hard way, and you know exactly what part matters. Your own unfinished choices do not erase every useful lesson you earned from them.",
+    "sourceMechanism": "Venus inconjunct North Node can make a teacher's own imperfect values seem like proof that they cannot help anyone else. A teacher can still be useful while doing their own work."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 93,
+    "approvedBodyCell": "E93",
+    "ownerStatusCell": "G93"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-040",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/south-node",
+  "workbookKey": "moon|inconjunct|south_node",
+  "payloadSha256": "f1e48ecef7341fc98222749ab83ef2c6bda5f8e4769786af96fddf32e4754fb5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon inconjunct the South Node can make a familiar family or home problem bring back the same feeling before you have time to think about it. The conversation starts and the old fear, resentment, or need for reassurance is already there. You may understand the pattern perfectly and still have an emotional reaction that has not caught up.",
+    "sourceMechanism": "Moon inconjunct South Node can make karmic necessity difficult to accept emotionally. The person may understand the logic and still resist the feeling that the situation has anything to teach them. What keeps getting stirred up matters more than the fact that the same house theme returned again."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 41,
+    "approvedBodyCell": "E41",
+    "ownerStatusCell": "G41"
+  },
+  "additionalBilledCalls": 0
+}

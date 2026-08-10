@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-108",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/uranus/10",
+  "workbookKey": "uranus|10th house",
+  "payloadSha256": "3f195dc1900795aa5c8b06078e6bba37e85f46ad973e7815e0068c41fa422dc0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus in the 10th house can make the third conventional job feel just as narrow as the first two. You change fields, work independently, move toward technology or unusual work, or leave when the structure starts costing more freedom than you can tolerate. Reinvention is a real strength. A career still needs enough continuity for all those fresh starts to become something you can build on.",
+    "sourceMechanism": "Uranus in the 10th house can make a conventional career path feel too narrow. Originality, independence, humanitarian interests, rapid decisions, and repeated career changes may all become part of public life. Success comes through doing the work differently rather than fitting the established mold. If every uncomfortable structure becomes a reason to start over, the career never gets enough continuity to become anything substantial."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 109,
+    "approvedBodyCell": "E109",
+    "ownerStatusCell": "G109"
+  },
+  "additionalBilledCalls": 0
+}

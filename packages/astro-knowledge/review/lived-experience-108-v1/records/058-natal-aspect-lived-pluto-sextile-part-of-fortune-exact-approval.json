@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-058",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/part-of-fortune",
+  "workbookKey": "pluto|sextile|part_of_fortune",
+  "payloadSha256": "57bfc64676f2a5962f54a844ebda4971452c3dac56baf2abba49a6a547b32d7c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Pluto sextile the Part of Fortune can make an old belief sound different the moment you hear yourself say it again. A rule about who you are, what life is supposed to look like, or what you can expect no longer feels completely true. You notice the change before a crisis has to prove it for you.",
+    "sourceMechanism": "Pluto sextile Part of Fortune gives deeper spiritual awareness a workable opening. Ordinary assumptions become easier to question without the entire worldview having to collapse at once."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 59,
+    "approvedBodyCell": "E59",
+    "ownerStatusCell": "G59"
+  },
+  "additionalBilledCalls": 0
+}

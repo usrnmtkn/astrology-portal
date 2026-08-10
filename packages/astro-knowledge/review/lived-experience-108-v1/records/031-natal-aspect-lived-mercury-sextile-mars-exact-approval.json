@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-031",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/mars",
+  "workbookKey": "mercury|sextile|mars",
+  "payloadSha256": "9eced37b30c6d28c3e4c1cbced6a1a322f60c44c8637eb25d9bf2c5e2d95a32a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury sextile Mars can make it easy to see the steps while everyone else is still discussing the idea. You can explain how to fix it, write the instructions, run the numbers, or break the job into a sequence and get started. The mind moves quickly without the action having to become rushed.",
+    "sourceMechanism": "Mercury sextile Mars gives desire enough logic to become useful. Mathematics, mechanics, writing, and manual skill can all benefit because the mind knows how to turn energy into a method. There is enough space to think through the desire before acting on it."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 32,
+    "approvedBodyCell": "E32",
+    "ownerStatusCell": "G32"
+  },
+  "additionalBilledCalls": 0
+}

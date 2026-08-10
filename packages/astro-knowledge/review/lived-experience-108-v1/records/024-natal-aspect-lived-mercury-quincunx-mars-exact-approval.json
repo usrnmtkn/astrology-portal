@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-024",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/mars",
+  "workbookKey": "mercury|inconjunct|mars",
+  "payloadSha256": "6439e38726f25b22eb1a7d37b7ab3e1edbc91d1a6735006c5ea137d379ea0632",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct Mars can keep an argument going after the facts have already changed. You hear the new information, know part of your original point no longer holds, and still feel the urge to defend it because backing down is embarrassing. The fight lasts longer when being wrong feels worse than changing your mind.",
+    "sourceMechanism": "Mercury inconjunct Mars can make being wrong feel more threatening than the actual mistake. The person may defend an idea long after the evidence has shifted because embarrassment feels worse than reconsideration. Changing a position does not have to feel like losing."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 25,
+    "approvedBodyCell": "E25",
+    "ownerStatusCell": "G25"
+  },
+  "additionalBilledCalls": 0
+}

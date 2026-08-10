@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-077",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/south-node",
+  "workbookKey": "sun|inconjunct|south_node",
+  "payloadSha256": "c609aff0c34b9561f46447eadbf176721ecc1ca24d7d081919301f0688fae86e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun inconjunct the South Node can make you very good at explaining the pattern and surprisingly quick to repeat it. You know exactly why you keep saying yes to the same role, choosing the same kind of problem, or reacting the same way, then watch yourself do it again. Knowing the story is not always the same as changing the ending.",
+    "sourceMechanism": "Sun inconjunct South Node can make karmic repetition difficult to accept. The person may understand the situation intellectually and still resist the idea that it has anything to teach them. The repeated house theme matters because it keeps returning in a form the old response has not solved."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 78,
+    "approvedBodyCell": "E78",
+    "ownerStatusCell": "G78"
+  },
+  "additionalBilledCalls": 0
+}

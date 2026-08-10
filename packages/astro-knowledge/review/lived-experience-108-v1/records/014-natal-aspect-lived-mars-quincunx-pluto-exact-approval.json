@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-014",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/pluto",
+  "workbookKey": "mars|inconjunct|pluto",
+  "payloadSha256": "b63e40bc94a8af00086379574ce97fab871c63bcaef2daa4c225fb8aa0dfbfbd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars inconjunct Pluto can walk into a shared project with the method already decided. Someone suggests a different approach and you are rejecting it before they finish the sentence. You may genuinely want the best result. Cooperation becomes impossible when the only acceptable result is the one reached your way.",
+    "sourceMechanism": "Mars inconjunct Pluto can make strong will look like the only acceptable way forward. The person may want their own method so badly that another idea is rejected before it is even heard. Compromise does not mean the other person automatically knows better. It means strength does not require controlling every detail."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 15,
+    "approvedBodyCell": "E15",
+    "ownerStatusCell": "G15"
+  },
+  "additionalBilledCalls": 0
+}

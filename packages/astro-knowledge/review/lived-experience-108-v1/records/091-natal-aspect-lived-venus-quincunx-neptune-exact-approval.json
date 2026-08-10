@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-091",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/neptune",
+  "workbookKey": "venus|inconjunct|neptune",
+  "payloadSha256": "8feba2f873cb52ea0ea13d1ef0aa4880b1184d4d28f0822344b528fdb1d1f683",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus inconjunct Neptune can make love feel like another job you are trying to do well enough to keep. You help, fix, forgive, remember, rearrange, and make yourself useful, then quietly wonder if anybody would stay if you stopped doing all of it. Affection gets exhausting when your own needs start feeling like the price of being loved.",
+    "sourceMechanism": "Venus inconjunct Neptune can make love feel like something that has to be earned through sacrifice. The person may serve everyone they care about while privately feeling unworthy of being loved without the work. Service works differently when it comes from choice instead of the belief that personal needs are the price of admission."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 92,
+    "approvedBodyCell": "E92",
+    "ownerStatusCell": "G92"
+  },
+  "additionalBilledCalls": 0
+}

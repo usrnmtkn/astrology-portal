@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-020",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/part-of-fortune",
+  "workbookKey": "mars|sextile|part_of_fortune",
+  "payloadSha256": "4dad888e87ac9fdd05897d815ffc9120110d9c841dd8abfe65a01a0b26ec6f87",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars sextile the Part of Fortune can give you a second before an old desire turns into another commitment. You are about to send the message, take the bait, or say yes to the pursuit you already know well, and you remember what usually happens next. The want is still there. This time you notice it before you are already chasing it.",
+    "sourceMechanism": "Mars sextile Part of Fortune gives desire a workable route toward change. Wanting something no longer has to mean repeating the old pursuit."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 21,
+    "approvedBodyCell": "E21",
+    "ownerStatusCell": "G21"
+  },
+  "additionalBilledCalls": 0
+}

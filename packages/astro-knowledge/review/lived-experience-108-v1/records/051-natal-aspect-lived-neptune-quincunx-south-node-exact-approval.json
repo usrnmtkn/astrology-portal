@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-051",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/south-node",
+  "workbookKey": "neptune|inconjunct|south_node",
+  "payloadSha256": "fffc14bea1f14b57e40a446c39265b7ec2c51546dbfa574e6b5fe6e3ed8c243c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Neptune inconjunct the South Node can make an unfamiliar dream, belief, or intuition feel suspicious simply because you cannot explain it. You wake up from the same strange dream and immediately decide it means nothing, or dismiss an idea because it does not fit what you already trust. Fear of the unknown can sound very reasonable when it wants the subject closed.",
+    "sourceMechanism": "Neptune inconjunct South Node can make fear of the unknown a reason to resist karmic situations that would otherwise deepen perception. Discernment gives fear of the unknown somewhere to go besides avoidance."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 52,
+    "approvedBodyCell": "E52",
+    "ownerStatusCell": "G52"
+  },
+  "additionalBilledCalls": 0
+}

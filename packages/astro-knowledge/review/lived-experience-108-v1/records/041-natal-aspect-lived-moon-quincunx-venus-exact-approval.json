@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-041",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/venus",
+  "workbookKey": "moon|inconjunct|venus",
+  "payloadSha256": "3bb085367c2b9955f5c6d05134573dc3f1986e3321dd13e7b79266817e6a268d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon inconjunct Venus can make one ordinary piece of feedback feel like affection changed overnight. The reply is shorter, the compliment is less enthusiastic, or someone prefers a different plan and suddenly you are looking for proof that they still care. The relationship gets exhausting when every imperfection needs another round of reassurance.",
+    "sourceMechanism": "Moon inconjunct Venus can make love feel fragile enough that ordinary feedback sounds like rejection. The person may want complete reassurance and mistake criticism for withdrawal of affection. Love has to survive ordinary imperfection before giving and receiving it can feel less frightening."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 42,
+    "approvedBodyCell": "E42",
+    "ownerStatusCell": "G42"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-006",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/south-node",
+  "workbookKey": "jupiter|inconjunct|south_node",
+  "payloadSha256": "586e236406b44d763e116c80a032d9bfda232650adbd37058ab8c6bf5f2d95a9",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter inconjunct the South Node can make a belief you have relied on for years stop explaining what keeps happening. You repeat the same reason, defend the same rule, and then another experience does not fit it. Eventually it takes more work to protect the old explanation than to admit your mind has changed.",
+    "sourceMechanism": "Jupiter inconjunct South Node can make karmic necessity difficult to accept because it conflicts with the person's philosophy of how life should work. Repeated experience keeps revising the worldview, even when the worldview would rather revise the facts."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 7,
+    "approvedBodyCell": "E7",
+    "ownerStatusCell": "G7"
+  },
+  "additionalBilledCalls": 0
+}

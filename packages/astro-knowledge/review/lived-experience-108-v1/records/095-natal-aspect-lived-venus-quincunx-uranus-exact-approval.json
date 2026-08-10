@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-095",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/uranus",
+  "workbookKey": "venus|inconjunct|uranus",
+  "payloadSha256": "8e61f74fe409acb628be8ce8c2ea060eb1dfe233e4a3d1b4b8b616e9b34ec6c9",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus inconjunct Uranus can make generosity turn into resentment once other people start expecting it. You answer every call, rearrange your plans, stay available, and then suddenly want everybody to leave you alone. Closeness becomes difficult when the pattern begins with over-giving and ends with needing to escape it.",
+    "sourceMechanism": "Venus inconjunct Uranus can make closeness feel wonderful until it starts to feel expected. The person may over-give, then resent the very pattern they helped establish, or back away when affection starts feeling like obligation. Love does not have to be purchased with endless availability."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 96,
+    "approvedBodyCell": "E96",
+    "ownerStatusCell": "G96"
+  },
+  "additionalBilledCalls": 0
+}
