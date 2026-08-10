@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-022",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/ascendant",
+  "workbookKey": "mercury|inconjunct|ascendant",
+  "payloadSha256": "14944ebc4070730b96f56cf1c82e70e415342268741fb27f54950ccd6be3fb2f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct the Ascendant can turn a simple text into a paragraph nobody asked for. You type the answer, reread it, add context so you do not sound rude, then add one more sentence so nobody can misunderstand you. By the time you hit send, the clear point is buried under the explanation.",
+    "sourceMechanism": "Mercury inconjunct Ascendant can make communication too wordy for the point being made. Nervousness adds more explanation when less would actually be clearer. The main sentence usually needs less explanation than nervousness wants to add."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 23,
+    "approvedBodyCell": "E23",
+    "ownerStatusCell": "G23"
+  },
+  "additionalBilledCalls": 0
+}

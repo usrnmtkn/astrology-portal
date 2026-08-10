@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-029",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/uranus",
+  "workbookKey": "mercury|inconjunct|uranus",
+  "payloadSha256": "b1d8d1acab281fcbfc560fdfa062c88273bb4fe257625f9c601ecc97ffb8611d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct Uranus can open five tabs before the first article is finished. One idea leads to another, then another, and the original question is still sitting there unanswered. The speed is useful when connections matter. After enough unfinished subjects, it starts to feel like mental exhaustion instead of curiosity.",
+    "sourceMechanism": "Mercury inconjunct Uranus can make the mind change subjects before the current one has been understood. Rapid thinking is useful, but unfinished learning eventually becomes nervous exhaustion. The mind needs to stay with the material long enough to understand it before the next subject takes over."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 30,
+    "approvedBodyCell": "E30",
+    "ownerStatusCell": "G30"
+  },
+  "additionalBilledCalls": 0
+}

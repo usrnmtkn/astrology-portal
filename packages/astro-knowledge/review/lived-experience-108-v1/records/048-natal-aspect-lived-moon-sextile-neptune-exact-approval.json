@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-048",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/neptune",
+  "workbookKey": "moon|sextile|neptune",
+  "payloadSha256": "a5d22bc5f2393d1da232ebe03639f0a0c398f4b3ad0f75a37f00193fb6d0fc34",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon sextile Neptune can help you notice a heavy atmosphere without carrying all of it home. You put on music after the tense meeting, take ten quiet minutes after the visit, or let yourself imagine something gentler without pretending the hard mood was not real. Sensitivity works better when every feeling in the room does not become yours.",
+    "sourceMechanism": "Moon sextile Neptune makes emotional sensitivity easier to use deliberately. The person can feel the atmosphere around them and may be able to transform a negative mood through imagination, compassion, or the way they direct attention. Not every feeling in the room belongs to the person noticing it."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 49,
+    "approvedBodyCell": "E49",
+    "ownerStatusCell": "G49"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-035",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/neptune",
+  "workbookKey": "moon|conjunction|neptune",
+  "payloadSha256": "3085d9fdad694bc372e28cba6c3c561032a6c91cf87002bb9559473c14ba401e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Moon conjunct Neptune can make you notice somebody else's mood before they tell you what happened. You walk into the room and know something is off, or a song, movie, or memory changes the whole atmosphere inside you. Sensitivity gets confusing when another person's sadness starts feeling like your own, or when the version of someone in your head is easier to love than the person in front of you.",
+    "sourceMechanism": "Moon conjunct Neptune can make other people's moods feel almost physically present. Compassion, art, music, mysticism, and psychic sensitivity are strong, but idealizing the people someone cares about can make disappointment especially sharp. Sensitivity is useful when it helps another person without making that person's negativity feel personally owned."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 36,
+    "approvedBodyCell": "E36",
+    "ownerStatusCell": "G36"
+  },
+  "additionalBilledCalls": 0
+}

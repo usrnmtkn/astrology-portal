@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-106",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-sign-lived/mercury/aries",
+  "workbookKey": "mercury|aries",
+  "payloadSha256": "94759c8d8c8c2e3a40945ffb60d62b6420eb904053c9d8971d74df6c2d822ee9",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury in Aries can have the answer out before everybody else has finished the question. The joke is quick, the point is clear, and the interruption happens because waiting for the slower explanation is genuinely difficult. Thinking fast is easy here. Staying with one idea long enough to develop it and hear somebody else's answer takes more effort.",
+    "sourceMechanism": "Mercury in Aries thinks quickly and usually speaks before the thought has been polished. Ideas arrive fast, humor can be sharp, and delays or opposition can be irritating. Having a point of view is easy. Staying with it long enough to develop it, while giving another person enough room to answer, takes more effort."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 107,
+    "approvedBodyCell": "E107",
+    "ownerStatusCell": "G107"
+  },
+  "additionalBilledCalls": 0
+}

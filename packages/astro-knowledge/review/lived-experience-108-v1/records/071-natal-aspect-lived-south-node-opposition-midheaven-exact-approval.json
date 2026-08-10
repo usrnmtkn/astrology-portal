@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-071",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/south-node/opposition/midheaven",
+  "workbookKey": "south_node|opposition|midheaven",
+  "payloadSha256": "66f194fa8e1c9b7bf890b4fb604dcf771f9056f5fdce80caef8bd0c4eca50331",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "South Node opposite the Midheaven can make an opportunity arrive while an old responsibility is still asking for time. The interview, promotion, or public role matters, and so does the family obligation or unfinished promise you cannot simply ignore. Guilt gets louder when wanting more for yourself starts sounding selfish.",
+    "sourceMechanism": "South Node opposite Midheaven can make career ambition and karmic responsibility both difficult to ignore. Unfinished obligations can matter without making public achievement automatically selfish or spiritually irrelevant."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 72,
+    "approvedBodyCell": "E72",
+    "ownerStatusCell": "G72"
+  },
+  "additionalBilledCalls": 0
+}

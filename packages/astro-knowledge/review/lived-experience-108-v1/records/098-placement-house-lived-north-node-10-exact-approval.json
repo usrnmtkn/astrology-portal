@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-098",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/north-node/10",
+  "workbookKey": "north-node|10th house",
+  "payloadSha256": "c83fc42ea7f4b3a46b62e4a6764175439e957ccbb95550e19f0b12ffb59d1af8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "North Node in the 10th house can make the finished work feel more uncomfortable once it is time to put your name on it. Staying private is familiar. Sending the application, taking the leadership role, publishing the project, or letting other people see what you can do is the unfamiliar part. The ability has to leave the house before anyone else can benefit from it.",
+    "sourceMechanism": "North Node in the 10th house points toward public achievement and recognition through work or personal accomplishment. The South Node in the 4th carries an older desire to retreat into the safety of home and private life.\n\nThe inner talents need to be used where other people can benefit from them.\n\nA career title by itself does not satisfy this placement. Ability has to become visible instead of spending the whole life protected from public responsibility."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 99,
+    "approvedBodyCell": "E99",
+    "ownerStatusCell": "G99"
+  },
+  "additionalBilledCalls": 0
+}

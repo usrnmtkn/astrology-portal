@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-027",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/saturn",
+  "workbookKey": "mercury|inconjunct|saturn",
+  "payloadSha256": "6293641c1479ecb7c2473ec821f5e636839e443104b0418736f7800c88f78d23",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct Saturn can make you the person who spots the weak point before everyone else gets excited. You hear the pitch and immediately notice the missing number, the bad assumption, or the reason it could fail. That judgment is useful. It becomes limiting when every hopeful idea gets dismissed before it has any evidence of its own.",
+    "sourceMechanism": "Mercury inconjunct Saturn can make cynicism feel more intelligent than hope. The person may be so practiced at noticing what is wrong that beauty, humor, or another person's optimism starts to look naive. Seeing something good does not require pretending life is easy. It is allowing evidence for something good to count too."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 28,
+    "approvedBodyCell": "E28",
+    "ownerStatusCell": "G28"
+  },
+  "additionalBilledCalls": 0
+}

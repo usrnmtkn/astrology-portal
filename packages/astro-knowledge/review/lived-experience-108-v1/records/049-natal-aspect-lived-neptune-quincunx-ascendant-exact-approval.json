@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-049",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/ascendant",
+  "workbookKey": "neptune|inconjunct|ascendant",
+  "payloadSha256": "148a5b5be3ece13617ae54b1a8ece98da725d59a12e455d89f6a658527b3acb9",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Neptune inconjunct the Ascendant can turn a favor into a quiet test without you meaning to. You give the ride, cover the bill, stay late, or make yourself endlessly available, then wait to see if the affection comes back. The help stops feeling generous once it becomes a way to find out if you matter.",
+    "sourceMechanism": "Neptune inconjunct Ascendant can make generosity into a bid for love before the person realizes what is happening. Gifts, service, or self-sacrifice may be offered in hopes of receiving affection in return. Care has more integrity when it is not being used to purchase belonging."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 50,
+    "approvedBodyCell": "E50",
+    "ownerStatusCell": "G50"
+  },
+  "additionalBilledCalls": 0
+}

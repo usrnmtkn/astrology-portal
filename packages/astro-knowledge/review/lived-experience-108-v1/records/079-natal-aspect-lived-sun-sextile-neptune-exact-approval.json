@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-079",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/sextile/neptune",
+  "workbookKey": "sun|sextile|neptune",
+  "payloadSha256": "5d1d0158f4ce449e2e90e678c1eac20e4d563cffa74b7d9168a261a0782b29cc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun sextile Neptune can help an idea leave your head and become something another person can actually see. You write the page, record the song, sketch the design, rehearse the piece, or finally give the dream enough structure to exist outside your imagination. Inspiration feels different once there is something finished in front of you.",
+    "sourceMechanism": "Sun sextile Neptune can make inner imagery and inspiration easier to turn into something useful. Past-life wisdom, artistic ability, and intuitive perception may become more available when the person learns how to listen inwardly without drifting away from the work. A dream becomes more useful once it has a form."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 80,
+    "approvedBodyCell": "E80",
+    "ownerStatusCell": "G80"
+  },
+  "additionalBilledCalls": 0
+}

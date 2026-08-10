@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-017",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/uranus",
+  "workbookKey": "mars|inconjunct|uranus",
+  "payloadSha256": "cc8213cca088a10eb92a0c88c9496f5604c269265ecf76fb321b81b923edf729",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars inconjunct Uranus can make a small delay feel unbearable. Traffic stops, a machine jams, or somebody moves more slowly than you want, and suddenly forcing the next step feels reasonable. Anger makes speed look useful at exactly the moment it is easiest to break something, get hurt, or turn a delay into a bigger problem.",
+    "sourceMechanism": "Mars inconjunct Uranus can make slow progress feel intolerable. Restriction or delay may trigger explosive anger, and working or playing while furious raises the risk of accidents. By the time impatience becomes hostility, moving faster is usually the least useful option."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 18,
+    "approvedBodyCell": "E18",
+    "ownerStatusCell": "G18"
+  },
+  "additionalBilledCalls": 0
+}
