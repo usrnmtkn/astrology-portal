@@ -1,11 +1,14 @@
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
+import { estimateReportPlanningProfile } from "./report-model-pricing.ts";
 
 export const REPORT_AUTOMATION_RULING_VERSION = "owner-approved-v1";
 export const REPORT_AUTOMATION_RULING_PATH = "tldr-astro-phrasebank/TLDR-REPORT-AUTOMATED-FULFILLMENT-RULING-OWNER.md";
 export const REPORT_JUDGE_THRESHOLD = 0.85;
+export const REPORT_BILLING_MODE = "free_test" as const;
 
 export type ReportSku = {
   key: string;
+  legacyKey: string;
   nameEnv: string;
   reportDomain: ReportDomain;
   reportHorizon: ReportHorizon;
@@ -17,12 +20,17 @@ export type ReportSku = {
 const horizons: ReportHorizon[] = ["1_month", "4_months", "6_months", "12_months"];
 const domains: ReportDomain[] = ["general", "work_money", "love_connection", "personal_health"];
 
+function catalogHorizon(horizon: ReportHorizon) {
+  return horizon.replace(/_months?$/u, "m");
+}
+
 function envSuffix(domain: ReportDomain, horizon: ReportHorizon) {
   return `${domain}_${horizon}`.toUpperCase();
 }
 
 export const REPORT_SKUS: ReportSku[] = domains.flatMap((reportDomain) => horizons.map((reportHorizon) => ({
-  key: `${reportDomain}_${reportHorizon}`,
+  key: `${reportDomain}_${catalogHorizon(reportHorizon)}`,
+  legacyKey: `${reportDomain}_${reportHorizon}`,
   nameEnv: `STRIPE_REPORT_NAME_${envSuffix(reportDomain, reportHorizon)}`,
   reportDomain,
   reportHorizon,
@@ -42,7 +50,13 @@ function decimalEnv(name: string, fallback: number, minimum = 0, maximum = 1) {
 }
 
 export function reportSku(key: string) {
-  return REPORT_SKUS.find((sku) => sku.key === key) ?? null;
+  return REPORT_SKUS.find((sku) => sku.key === key || sku.legacyKey === key) ?? null;
+}
+
+export function reportBillingMode() {
+  const configured = process.env.REPORT_BILLING_MODE?.trim() || REPORT_BILLING_MODE;
+  if (configured !== "free_test" && configured !== "stripe") throw new Error(`Unsupported report billing mode '${configured}'.`);
+  return configured;
 }
 
 export function reportFulfillmentConfig() {
@@ -60,8 +74,7 @@ export function reportFulfillmentConfig() {
     judgeAttemptCap: integerEnv("REPORT_JUDGE_ATTEMPT_CAP", 2, 1),
     auditSampleRate: decimalEnv("REPORT_AUDIT_SAMPLE_RATE", 0.05),
     firstCombinationAuditCount: integerEnv("REPORT_FIRST_COMBINATION_AUDIT_COUNT", 3),
-    tokenBudget: integerEnv("REPORT_TOKEN_BUDGET", 120_000, 1),
-    tokenCostPerMillion: Number.parseFloat(process.env.REPORT_TOKEN_COST_PER_MILLION ?? "0") || 0,
+    tokenBudget: integerEnv("REPORT_TOKEN_BUDGET", 1_450_000, 1),
     jobAttemptCap: integerEnv("REPORT_JOB_ATTEMPT_CAP", 5, 1),
     workerBatchSize: integerEnv("REPORT_WORKER_BATCH_SIZE", 5, 1),
     workerPaused: process.env.REPORT_WORKER_PAUSED === "true",
@@ -73,4 +86,23 @@ export function reportFulfillmentConfig() {
 
 export function resolvedStripePriceId(sku: ReportSku) {
   return process.env[sku.priceEnv]?.trim() ?? "";
+}
+
+export function reportCallEstimate(horizon: ReportHorizon) {
+  const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 11;
+  const cleanPathCalls = unitCount * 3; // draft + critique + judge
+  const expectedCallBudget = unitCount * 4; // draft + critique + one splice revision + judge
+  const safetyMarginCalls = unitCount; // one additional provider attempt per unit on average
+  const recommendedCallBudget = expectedCallBudget + safetyMarginCalls;
+  const config = reportFulfillmentConfig();
+  const planning = horizon === "12_months" ? estimateReportPlanningProfile(horizon) : null;
+  return {
+    unitCount,
+    cleanPathCalls,
+    expectedCallBudget,
+    safetyMarginCalls,
+    recommendedCallBudget,
+    tokenBudget: config.tokenBudget,
+    planning
+  };
 }

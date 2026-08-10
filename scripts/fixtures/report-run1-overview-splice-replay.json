@@ -1,0 +1,48 @@
+{
+  "schema": "tldrastro.report-splice-replay.v1",
+  "source": "comp-report run 1 calls 3-5; stored response retrieval; response ids omitted",
+  "draft": {
+    "headline": "2026 OVERVIEW",
+    "tldr": "Protect time for work that needs quiet. Home and family responsibilities may require a decision in March, spring changes roles and agreements that no longer fit, summer expands writing and communication, and autumn tests the new arrangement against an ordinary week.",
+    "summary": "A lot of 2026 develops before anyone else can see the result. Private work, unfinished obligations, and changing responsibilities lead into a more public period for writing, applications, learning, and professional decisions. The opportunity is real, but so are the limits of the calendar.",
+    "body": "A lot of 2026 develops before anyone else can see the result. You may spend the first half of the year finishing work privately, reducing a responsibility that has taken up too much time, or building something that is not ready to be announced yet. Some work gets better when nobody is asking for an update.\n\nMarch puts a long-standing home or family responsibility under pressure to change. A move, living arrangement, repair, caregiving responsibility, property issue, or household obligation may reach a point where the old arrangement no longer works as well as it used to. Something managed quietly for a long time may finally need a decision, handoff, repair, or ending.\n\nSpring puts pressure on roles, schedules, agreements, and responsibilities that have depended on you staying the same. The change may be something you want. The old setup may also stop being workable because your health, available time, caregiving responsibilities, location, access, or priorities have changed. You can still be capable of doing something and feel finished with being known for it.\n\nBy summer, writing, applications, learning, speaking, publishing, and the ideas you want to develop begin moving faster. July starts a longer cycle around communication and learning. August makes the limits just as obvious as the opportunities. Messages multiply. Plans multiply. One easy yes can take three hours you did not have. If sleep, meals, appointments, movement, or the routines that keep the week functioning keep getting pushed aside, the calendar is already telling you the schedule is full.\n\nAutumn tests what you changed earlier in the year. A schedule, boundary, responsibility, relationship agreement, or new way of working has to hold up under ordinary conditions. October shows you which plans only worked when the week was unusually cooperative.\n\nBy the end of 2026, you should know more about what deserves another year of your time, what needs different terms, what your current life can actually support, and what has already run its course.",
+    "action": "Give unfinished work enough privacy to become finished work. When opportunities increase, count the hours they require and notice what keeps getting moved to make them fit.",
+    "timing": "February 18, 2026 through February 17, 2027",
+    "sections": []
+  },
+  "defects": [
+    {
+      "id": "defect-1",
+      "category": "density_violation",
+      "location": "body",
+      "sentence_index": 0,
+      "scope_start": 0,
+      "scope_end": 0,
+      "quote": "A lot of 2026 develops before anyone else can see the result.",
+      "evidence": "This sentence appears verbatim as sentence 0 in the summary, so the body begins by repeating a point that has already landed rather than advancing it.",
+      "evidence_ids": [],
+      "instruction": "Remove the verbatim repetition from the body opening so that the body advances directly into the private work, unfinished obligations, or changing responsibilities already introduced by the summary."
+    },
+    {
+      "id": "defect-2",
+      "category": "astrology_chronology",
+      "location": "timing",
+      "sentence_index": 0,
+      "scope_start": 0,
+      "scope_end": 0,
+      "quote": "February 18, 2026 through February 17, 2027",
+      "evidence": "UNIT_FACTS gives the report window as 2026-02-18T01:59:11Z through 2027-02-18T07:40:22Z. VALIDATOR_RESULTS also identifies February 17 as absent from the scoped frozen facts.",
+      "evidence_ids": [],
+      "instruction": "Correct the displayed report-window end date to match the frozen timing facts; do not alter the start date or any prose outside this field."
+    }
+  ],
+  "failedWholeUnitRevision": {
+    "headline": "2026 OVERVIEW",
+    "tldr": "Protect time for work that needs quiet. Home and family responsibilities may require a decision in March, spring changes roles and agreements that no longer fit, summer expands writing and communication, and autumn tests the new arrangement against an ordinary week.",
+    "summary": "A lot of 2026 develops before anyone else can see the result. Private work, unfinished obligations, and changing responsibilities lead into a more public period for writing, applications, learning, and professional decisions. The opportunity is real, but so are the limits of the calendar.",
+    "body": "You may spend the first half of the year finishing work privately, reducing a responsibility that has taken up too much time, or building something that is not ready to be announced yet. Some work gets better when nobody is asking for an update.\n\nMarch puts a long-standing home or family responsibility under pressure to change. A move, living arrangement, repair, caregiving responsibility, property issue, or household obligation may reach a point where the old arrangement no longer works as well as it used to. Something managed quietly for a long time may finally need a decision, handoff, repair, or ending.\n\nSpring puts pressure on roles, schedules, agreements, and responsibilities that have depended on you staying the same. The change may be something you want. The old setup may also stop being workable because your health, available time, caregiving responsibilities, location, access, or priorities have changed. You can still be capable of doing something and feel finished with being known for it.\n\nBy summer, writing, applications, learning, speaking, publishing, and the ideas you want to develop begin moving faster. July starts a longer cycle around communication and learning. August makes the limits just as obvious as the opportunities. Messages multiply. Plans multiply. One easy yes can take three hours you did not have. If sleep, meals, appointments, movement, or the routines that keep the week functioning keep getting pushed aside, the calendar is already telling you the schedule is full.\n\nAutumn tests what you changed earlier in the year. A schedule, boundary, responsibility, relationship agreement, or new way of working has to hold up under ordinary conditions. October shows you which plans only worked when the week was unusually cooperative.\n\nBy the end of 2026, you should know more about what deserves another year of your time, what needs different terms, what your current life can actually support, and what has already run its course.",
+    "action": "Give unfinished work enough privacy to become finished work. When opportunities increase, count the hours they require and notice what keeps getting moved to make them fit.",
+    "timing": "February 18, 2026 through February 18, 2027",
+    "sections": []
+  }
+}
