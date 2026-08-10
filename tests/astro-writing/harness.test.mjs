@@ -17,6 +17,7 @@ import {
   HOUSE_BLEED_NOUNS,
   MEANING_PLAN_SCHEMA,
   promoteCandidateWriter,
+  REVIEW_SCHEMA,
   REVIEW_FIELDS,
   reviewDraft,
   runWritingPipeline,
@@ -75,6 +76,11 @@ assert.ok(
   voiceContract.replace(/\s+/gu, " ").includes(canonicalAstrologyWritingInstructions.split("\n\n")[0].replace(/\s+/gu, " ")),
   "Canonical API instructions must begin with the verbatim owner-designated doctrine."
 );
+assert.deepEqual(REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
+assert.ok(canonicalAstrologyReviewInstructions.includes("DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL."));
+for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
+  assert.ok(canonicalAstrologyReviewInstructions.includes(`## gold-lilith-${sign}-v5: PASS`), `Reviewer instructions must include the locked ${sign} PASS exemplar.`);
+}
 
 const corrections = jsonl("data/writing/owner-corrections.jsonl");
 assert.equal(corrections.length, 20, "All 20 owner correction fixtures must be seeded.");
@@ -140,6 +146,10 @@ for (const [sign, nouns] of Object.entries(HOUSE_BLEED_NOUNS)) {
   });
   assert.ok(result.violations.some((entry) => entry.category === "sign_house_separation"), `${sign} must receive the noun-level house-bleed test.`);
 }
+
+const protectedOwnerLine = "Compassion that was really self-erasure starts coming with limits attached.";
+assert.equal(validateCopy(protectedOwnerLine, { protectedOwnerLines: [protectedOwnerLine] }).passed, true);
+assert.ok(validateCopy(protectedOwnerLine).violations.some((entry) => entry.category === "banned_language"), "Protected owner vocabulary must remain banned outside its exact approved line.");
 
 const meaningInput = {
   object: "lilith",

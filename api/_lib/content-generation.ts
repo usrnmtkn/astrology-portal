@@ -5120,7 +5120,7 @@ type CanonicalReviewViolation = {
   revision_instruction: string;
 };
 type CanonicalReview = Record<string, CanonicalReviewCheck> & {
-  decision: "PASS" | "REVISE" | "FAIL";
+  decision: "PASS" | "REVISE";
   violations: CanonicalReviewViolation[];
 };
 
@@ -5150,7 +5150,7 @@ async function reviewGeneratedContentWithOpenAI({
         meaningPlan,
         draft
       }),
-      reasoning: { effort: "low" },
+      reasoning: { effort: process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium" },
       max_output_tokens: 2500,
       text: {
         format: {
@@ -5171,7 +5171,7 @@ async function reviewGeneratedContentWithOpenAI({
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI review did not include a verdict.");
   const review = JSON.parse(output) as CanonicalReview;
-  if (!["PASS", "REVISE", "FAIL"].includes(review.decision)) throw new Error("OpenAI review returned an invalid decision.");
+  if (!["PASS", "REVISE"].includes(review.decision)) throw new Error("OpenAI review returned an invalid PASS-or-REVISE decision.");
   for (const field of REVIEW_FIELDS) {
     if (!["PASS", "FAIL"].includes(review[field]?.status) || typeof review[field]?.reason !== "string") {
       throw new Error(`OpenAI review omitted strict result for ${field}.`);
