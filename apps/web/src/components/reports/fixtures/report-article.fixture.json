@@ -1,0 +1,62 @@
+{
+  "id": "fixture-report-foundation",
+  "reportType": "year_ahead",
+  "cover": {
+    "kicker": "FIXTURE_ONLY_REPORT_KICKER",
+    "title": "FIXTURE_ONLY_REPORT_TITLE",
+    "subtitle": "FIXTURE_ONLY_REPORT_SUBTITLE",
+    "meta": ["FIXTURE_ONLY_PERIOD", "FIXTURE_ONLY_SUBJECT"]
+  },
+  "chapters": [
+    {
+      "id": "season-one",
+      "kicker": "FIXTURE_ONLY_CHAPTER_KICKER",
+      "title": "FIXTURE_ONLY_CHAPTER_TITLE",
+      "paragraphs": ["FIXTURE_ONLY_CHAPTER_PARAGRAPH_ONE", "FIXTURE_ONLY_CHAPTER_PARAGRAPH_TWO"],
+      "sourceTag": "FIXTURE_ONLY_SOURCE_TAG",
+      "image": {},
+      "attribution": {
+        "kind": "transit_to_natal",
+        "transitingBody": "Uranus",
+        "natalBody": "Mercury",
+        "aspect": "square",
+        "timeframe": "season"
+      }
+    },
+    {
+      "id": "solar-return",
+      "kicker": "FIXTURE_ONLY_SOLAR_RETURN_KICKER",
+      "title": "FIXTURE_ONLY_SOLAR_RETURN_TITLE",
+      "paragraphs": ["FIXTURE_ONLY_SOLAR_RETURN_PARAGRAPH"],
+      "image": {},
+      "attribution": {
+        "kind": "solar_return_to_natal",
+        "solarReturnBody": "Sun",
+        "natalHouse": 4
+      }
+    }
+  ],
+  "keyDates": [
+    {
+      "id": "pass-two",
+      "date": "May 3, 2027",
+      "title": "FIXTURE_ONLY_KEY_DATE_TITLE",
+      "paragraphs": ["FIXTURE_ONLY_KEY_DATE_PARAGRAPH"],
+      "attribution": {
+        "kind": "transit_to_natal",
+        "transitingBody": "Saturn",
+        "natalBody": "Saturn",
+        "exactDate": "2027-05-03",
+        "passIndex": 2,
+        "passCount": 3
+      }
+    }
+  ],
+  "colophon": {
+    "factsEngine": "FIXTURE_ONLY_FACTS_ENGINE",
+    "generatedAt": "FIXTURE_ONLY_GENERATED_AT",
+    "entries": [
+      { "label": "FIXTURE_ONLY_COLOPHON_LABEL", "value": "FIXTURE_ONLY_COLOPHON_VALUE" }
+    ]
+  }
+}

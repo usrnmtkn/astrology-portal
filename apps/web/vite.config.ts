@@ -149,6 +149,9 @@ export default defineConfig(({ mode }) => {
       react()
     ],
     assetsInclude: ["**/*.wasm"],
+    resolve: {
+      dedupe: ["react", "react-dom"]
+    },
     build: {
       manifest: true,
       modulePreload: {

@@ -7,9 +7,14 @@ import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mj
 import { generatedApprovalState, markPipelineReady } from "../../src/astro-writing/approvalGovernance.mjs";
 import { writeGenerationMetadata } from "../../src/astro-writing/generationMetadata.mjs";
 import { callOpenAIResponses } from "../../src/astro-writing/openAIResponses.cjs";
+import {
+  reportPromptFromPayload,
+  validateReportDraft,
+  type ReportGenerationPayload
+} from "./report-generation.js";
 
-type ContentMode = "feed" | "in_depth" | "article";
-type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type ContentMode = "feed" | "in_depth" | "article" | "report";
+type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "year_ahead";
 type Planet = "Sun" | "Moon" | "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
 
 export type GenerateContentInput = {
@@ -25,6 +30,7 @@ export type GenerateContentInput = {
   sourceSnapshot?: Record<string, unknown>;
   voiceNotes?: string;
   allowQualityFallback?: boolean;
+  reportPayload?: ReportGenerationPayload;
 };
 
 export type GeneratedAstrologyDraft = {
@@ -767,8 +773,13 @@ function styleNotesForGeneratedContent(content: GeneratedContent, input: Generat
 }
 
 function generationQualityDiagnostics(content: GeneratedContent, input: GenerateContentInput) {
+  const reportWarnings = input.reportPayload
+    ? validateReportDraft(content, input.reportPayload)
+      .filter((issue) => issue.severity === "warning")
+      .map((issue) => `${issue.code}: ${issue.message}`)
+    : [];
   return {
-    softWarnings: softVoiceWarningFailures(content, input),
+    softWarnings: [...new Set([...softVoiceWarningFailures(content, input), ...reportWarnings])],
     styleNotes: styleNotesForGeneratedContent(content, input)
   };
 }
@@ -797,7 +808,8 @@ export function hardEditorialFailureResponse(error: ContentGenerationHardEditori
 const requiredHeadingsByMode: Record<ContentMode, string[]> = {
   feed: ["TLDR"],
   in_depth: ["TLDR"],
-  article: []
+  article: [],
+  report: []
 };
 
 const bannedOutputSignatures = ["this is not", "in review", "this entry is", "currently in review"];
@@ -4418,6 +4430,13 @@ function v4ExamplesPrompt(input: GenerateContentInput) {
 }
 
 function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = [], qualityFeedback = "") {
+  if (input.reportPayload) {
+    return [
+      reportPromptFromPayload(input.reportPayload),
+      qualityFeedback ? `QUALITY_FEEDBACK_FROM_PRIOR_DRAFT\n${qualityFeedback}` : ""
+    ].filter(Boolean).join("\n\n");
+  }
+
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
   const lockedHeadline = factualHeadlineFor(input);
   const headlineRule = lockedHeadline
@@ -4594,6 +4613,17 @@ async function loadApprovedExamples(input: GenerateContentInput) {
 }
 
 function validateGeneratedContentQuality(content: GeneratedContent, input: GenerateContentInput) {
+  if (input.reportPayload) {
+    const issues = validateReportDraft(content, input.reportPayload)
+      .filter((issue) => issue.severity !== "warning");
+    if (issues.length) {
+      hardEditorialViolation(
+        issues.map((issue) => issue.code),
+        `Generated report failed report validators: ${issues.map((issue) => issue.message).join(" ")}`
+      );
+    }
+  }
+
   const userFacingText = [
     content.headline,
     content.tldr,
