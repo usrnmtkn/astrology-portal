@@ -50,14 +50,16 @@ try {
     source: "local-swisseph-wasm",
     library: "swisseph-wasm",
     libraryVersion: "0.0.5",
-    ephemerisFiles: ["swisseph.wasm"],
+    ephemerisFiles: ["swisseph.wasm", "swisseph.data", "semo_18.se1"],
     zodiac: "tropical",
     frame: "geocentric",
     houseSystem: "whole_sign",
     planetHouseSystem: "whole_sign",
     nodeType: "true",
     lilithType: "true",
-    calculationVersion: "tldrastro-calculation-v3"
+    calculationVersion: "tldrastro-calculation-v3",
+    actualEphemeris: "swiss",
+    returnedEphemerisFlags: [258]
   };
   const fact = {
     id: "fact.position.sun.2026-07-30T11:55:00.000Z",
@@ -121,6 +123,26 @@ try {
     ),
     false,
     "A v2 mean-Lilith snapshot must fail closed instead of re-entering the verified cache."
+  );
+
+  const moshierFallbackKey = cache.skySnapshotCacheKey(location, "2026-07-28");
+  const moshierProvenance = {
+    ...provenance,
+    actualEphemeris: "swiss",
+    returnedEphemerisFlags: [260]
+  };
+  assert.equal(
+    cache.writeCachedSkySnapshot(
+      moshierFallbackKey,
+      {
+        ...snapshot,
+        calculationProvenance: moshierProvenance,
+        facts: [{ ...fact, provenance: moshierProvenance }]
+      },
+      { now, storage }
+    ),
+    false,
+    "A Moshier fallback flag must fail closed instead of entering the verified cache as Swiss."
   );
 
   const restored = cache.readCachedSkySnapshot(cacheKey, {
