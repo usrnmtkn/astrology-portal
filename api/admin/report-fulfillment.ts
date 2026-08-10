@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { createReportMailProvider } from "../_lib/report-mail.js";
-import { reportCallEstimate, reportFulfillmentConfig, reportSku } from "../_lib/report-fulfillment-config.js";
+import { reportBillingMode, reportCallEstimate, reportSku } from "../_lib/report-fulfillment-config.js";
 import { jsonRequestBody, reportUrl, requireReportAdmin, sendJson } from "../_lib/report-http.js";
 import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
+import { releaseReviewedReport } from "../_lib/report-release.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
 import type { ReportHorizon } from "../_lib/report-types.js";
 
@@ -71,6 +71,7 @@ async function dashboard() {
     reports: reportsWithSource,
     jobs,
     audits,
+    billingMode: reportBillingMode(),
     users: profiles.map((row) => ({ id: row.user_id, label: profileLabel(row.data, row.user_id) })),
     callEstimates: Object.fromEntries((["1_month", "4_months", "6_months", "12_months"] as ReportHorizon[]).map((horizon) => [horizon, reportCallEstimate(horizon)]))
   };
@@ -130,31 +131,7 @@ async function action(body: {
     return { ok: true };
   }
   if (body.action === "release") {
-    if (report.fulfillment_status !== "needs_review") throw new Error("Only a gate-passed needs_review report can be released.");
-    const deliveredAt = new Date().toISOString();
-    await admin.update("user_reports", `id=eq.${report.id}`, { status: "live", fulfillment_status: "live", delivered_at: deliveredAt });
-    const config = reportFulfillmentConfig();
-    const combinationKey = `${report.report_domain}:${report.report_horizon}:${String(report.prompt_versions.canonical ?? "")}`;
-    const samples = await admin.request<Array<{ id: string }>>(`report_audit_samples?select=id&combination_key=eq.${encodeURIComponent(combinationKey)}`);
-    const auditReason = samples.length < config.firstCombinationAuditCount
-      ? "new_combination"
-      : Math.random() < config.auditSampleRate ? "random_sample" : null;
-    if (auditReason) {
-      await admin.insert("report_audit_samples", {
-        report_id: report.id, combination_key: combinationKey, reason: auditReason, prompt_versions: report.prompt_versions
-      }, { onConflict: "report_id", ignoreDuplicates: true });
-    }
-    try {
-      const result = await createReportMailProvider().sendReportReady({ reportId: report.id, userId: report.user_id, reportUrl: reportUrl(`/reports/${report.id}`, req) });
-      await admin.insert("report_delivery_events", {
-        report_id: report.id, channel: "email", provider: result.provider, provider_message_id: result.messageId ?? null,
-        status: result.mode === "sent" ? "sent" : "queued", payload: result.payload,
-        ...(result.mode === "sent" ? { sent_at: deliveredAt } : {})
-      });
-    } catch (error) {
-      await admin.insert("report_delivery_events", { report_id: report.id, channel: "email", provider: "unconfigured", status: "failed", error: error instanceof Error ? error.message : "Mail delivery failed." });
-    }
-    return { ok: true };
+    return releaseReviewedReport({ admin, report, reportUrl: reportUrl(`/reports/${report.id}`, req) });
   }
   throw new Error("Unknown report fulfillment admin action.");
 }

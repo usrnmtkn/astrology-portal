@@ -1,18 +1,20 @@
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
-import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportCallEstimate, reportFulfillmentConfig } from "../api/_lib/report-fulfillment-config.ts";
+import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
 import { processReportFulfillmentJob, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { REPORT_JUDGE_CATEGORIES, reportJudgeOverall, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
 import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../api/_lib/report-entitlements.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { createReportMailProvider } from "../api/_lib/report-mail.ts";
 import { reportUrl } from "../api/_lib/report-http.ts";
+import { releaseReviewedReport } from "../api/_lib/report-release.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
 import { enforceReportRevisionStopRule, ReportStopRuleError } from "../api/_lib/report-writer-chain.ts";
 
 process.env.REPORT_AUTO_PUBLISH = "false";
 const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
+const skuCatalog = JSON.parse(fs.readFileSync(new URL("../config/report-sku-catalog-v1.json", import.meta.url), "utf8"));
 const ruling = fs.readFileSync(REPORT_AUTOMATION_RULING_PATH, "utf8");
 assert.ok(ruling.includes(`**Version:** \`${REPORT_AUTOMATION_RULING_VERSION}\``));
 assert.match(ruling, /\*\*Status:\*\* `owner_approved`/u);
@@ -24,6 +26,16 @@ assert.equal(verifyStripeWebhookSignature({ payload: signaturePayload, signature
 assert.equal(verifyStripeWebhookSignature({ payload: `${signaturePayload}x`, signatureHeader: `t=${timestamp},v1=${signature}`, secret: "whsec_fixture", nowSeconds: timestamp }), false);
 assert.equal(new Set(REPORT_SKUS.map((sku) => sku.key)).size, 16);
 assert.ok(REPORT_SKUS.every((sku) => sku.priceEnv.startsWith("STRIPE_REPORT_PRICE_") && sku.amountEnv.startsWith("STRIPE_REPORT_AMOUNT_") && sku.nameEnv.startsWith("STRIPE_REPORT_NAME_")));
+assert.equal(skuCatalog.schema, "tldrastro.report-sku-catalog.v1");
+assert.equal(skuCatalog.billing_mode, "free_test");
+assert.deepEqual(skuCatalog.skus.map((sku) => sku.sku).sort(), REPORT_SKUS.map((sku) => sku.key).sort());
+assert.ok(skuCatalog.skus.every((sku) => sku.price_cents === 0 && sku.stripe_product_id.startsWith("PLACEHOLDER_") && sku.stripe_price_id.startsWith("PLACEHOLDER_")));
+assert.equal(reportSku("general_1_month").key, "general_1m", "Legacy entitlement keys must resolve to the compact catalog key.");
+delete process.env.REPORT_BILLING_MODE;
+assert.equal(reportBillingMode(), "free_test");
+process.env.REPORT_BILLING_MODE = "stripe";
+assert.equal(reportBillingMode(), "stripe");
+delete process.env.REPORT_BILLING_MODE;
 
 process.env.REPORT_AUTO_PUBLISH = "true";
 delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
@@ -79,9 +91,21 @@ const grantedComp = await grantCompEntitlement({
 }, { userId: "user-1", reportDomain: "work_money", reportHorizon: "12_months", windowStart: "2026-09-01", now: "2026-08-10T12:00:00Z" });
 assert.equal(grantedComp.window.end, "2027-08-31");
 assert.equal(compInserts[0].row.source, "comp");
+assert.equal(compInserts[0].row.product_key, "work_money_12m");
 assert.equal(compInserts[0].row.stripe_event_id, null);
 assert.equal(compInserts[0].row.stripe_checkout_session_id, null);
 assert.equal(compInserts[0].row.status, "active");
+
+const directGrantKeys = [];
+for (const sku of REPORT_SKUS) {
+  await grantCompEntitlement({
+    async selectOne() {
+      return { data: { profile: { charts: [{ birthDate: "1990-02-18", birthTime: "10:30", birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" } }] } } };
+    },
+    async insert(_table, row) { directGrantKeys.push(row.product_key); return [{ id: `fixture-${row.product_key}`, status: row.status }]; }
+  }, { userId: "shadow-user", reportDomain: sku.reportDomain, reportHorizon: sku.reportHorizon, windowStart: "2026-09-01", now: "2026-08-10T12:00:00Z" });
+}
+assert.deepEqual(directGrantKeys.sort(), REPORT_SKUS.map((sku) => sku.key).sort(), "Free-test grants must use all 16 compact catalog keys.");
 
 const authorizationUpdates = [];
 const authorization = await authorizeReportGeneration({
@@ -227,6 +251,7 @@ const calculateFacts = async (report) => {
   return { facts: factsForHorizon(report.report_horizon), facts_engine: "FIXTURE_ONLY_ENGINE" };
 };
 const activeSkus = REPORT_SKUS;
+let completedCompReport = null;
 for (const [index, sku] of activeSkus.entries()) {
   const reportId = `report-${index}`;
   const entitlementId = `entitlement-${index}`;
@@ -236,7 +261,7 @@ for (const [index, sku] of activeSkus.entries()) {
     facts: {}, facts_engine: "pending", facts_hash: null, fulfillment_status: "queued", prompt_versions: {}, token_count: 0,
     attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
   });
-  const isCompEndToEnd = sku.key === "work_money_12_months";
+  const isCompEndToEnd = sku.key === "work_money_12m";
   store.entitlements.set(entitlementId, { id: entitlementId, user_id: "user-1", status: "active", source: isCompEndToEnd ? "comp" : "stripe", product_key: sku.key, period_start: frozen.startsAt.slice(0, 10), period_end: factsForHorizon(sku.reportHorizon).endsAt.slice(0, 10) });
   const providerMock = modelCallWithCrash();
   const meteredJudgeCall = isCompEndToEnd ? async (judgeInput) => {
@@ -250,6 +275,7 @@ for (const [index, sku] of activeSkus.entries()) {
   assert.equal(result.status, "needs_review");
   assert.equal(store.reports.get(reportId).status, "needs_review");
   if (isCompEndToEnd) {
+    completedCompReport = structuredClone(store.reports.get(reportId));
     assert.equal(providerMock.count(), reportCallEstimate("12_months").cleanPathCalls, "The comp mock must traverse draft, critique, and judge for all 12-month units.");
     assert.equal(store.facts.get(`calls:job-${index}`), reportCallEstimate("12_months").cleanPathCalls);
     assert.ok(providerMock.count() <= reportCallEstimate("12_months").recommendedCallBudget);
@@ -260,10 +286,27 @@ assert.equal(activeSkus.length, 16);
 assert.equal(calculationCalls, 4, "One facts calculation per user/window must serve all four active domains.");
 assert.ok([...store.reports.values()].filter((report) => report.report_domain === "personal_health")
   .every((report) => report.status === "needs_review"), "Personal & Health fulfillment must be active and remain review-gated.");
+assert.ok(completedCompReport, "The free-test comp report must complete before release is exercised.");
+const releaseUpdates = [];
+const releaseInserts = [];
+const releaseResult = await releaseReviewedReport({
+  admin: {
+    async update(table, query, patch) { releaseUpdates.push({ table, query, patch }); return [{ id: completedCompReport.id }]; },
+    async request() { return []; },
+    async insert(table, row) { releaseInserts.push({ table, row }); return [row]; }
+  },
+  report: completedCompReport,
+  reportUrl: "/reports/free-test-report",
+  mail: { async sendReportReady(input) { return { provider: "log-only", mode: "log_only", payload: { recipientUserId: input.userId, reportUrl: input.reportUrl } }; } }
+});
+assert.deepEqual(releaseResult, { ok: true, deliveryMode: "log_only" });
+assert.ok(releaseUpdates.some((entry) => entry.table === "user_reports" && entry.patch.fulfillment_status === "live"));
+assert.ok(releaseInserts.some((entry) => entry.table === "report_audit_samples"));
+assert.ok(releaseInserts.some((entry) => entry.table === "report_delivery_events" && entry.row.status === "queued" && entry.row.provider === "log-only"));
 
 const unauthorizedStore = createMemoryStore();
 unauthorizedStore.reports.set("unauthorized-report", { ...structuredClone([...store.reports.values()][0]), id: "unauthorized-report" });
-unauthorizedStore.entitlements.set("unauthorized-ent", { id: "unauthorized-ent", status: "active", source: "comp", product_key: "general_1_month" });
+unauthorizedStore.entitlements.set("unauthorized-ent", { id: "unauthorized-ent", status: "active", source: "comp", product_key: "general_1m" });
 await assert.rejects(processReportFulfillmentJob({
   job: { id: "unauthorized-job", report_id: "unauthorized-report", entitlement_id: "unauthorized-ent", state: "running", step: "calculating", attempt: 1, authorization_token: null, authorized_call_budget: null, model_call_count: 0 },
   store: unauthorizedStore, calculateFacts, callModel: modelCallWithCrash(), judgeCall
@@ -277,8 +320,8 @@ const concurrentBase = {
 };
 concurrentStore.reports.set("concurrent-general", { ...structuredClone(concurrentBase), id: "concurrent-general", report_domain: "general" });
 concurrentStore.reports.set("concurrent-work", { ...structuredClone(concurrentBase), id: "concurrent-work", report_domain: "work_money" });
-concurrentStore.entitlements.set("concurrent-general-ent", { id: "concurrent-general-ent", user_id: "concurrent-user", status: "active", product_key: "general_1_month" });
-concurrentStore.entitlements.set("concurrent-work-ent", { id: "concurrent-work-ent", user_id: "concurrent-user", status: "active", product_key: "work_money_1_month" });
+concurrentStore.entitlements.set("concurrent-general-ent", { id: "concurrent-general-ent", user_id: "concurrent-user", status: "active", product_key: "general_1m" });
+concurrentStore.entitlements.set("concurrent-work-ent", { id: "concurrent-work-ent", user_id: "concurrent-user", status: "active", product_key: "work_money_1m" });
 let releaseCalculation;
 const calculationLatch = new Promise((resolve) => { releaseCalculation = resolve; });
 let concurrentCalculations = 0;
@@ -307,7 +350,7 @@ const resumeReport = {
   fulfillment_status: "queued", prompt_versions: {}, token_count: 0, attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
 };
 resumeStore.reports.set(resumeReport.id, resumeReport);
-resumeStore.entitlements.set("resume-ent", { id: "resume-ent", user_id: "resume-user", status: "active", product_key: "general_1_month" });
+resumeStore.entitlements.set("resume-ent", { id: "resume-ent", user_id: "resume-user", status: "active", product_key: "general_1m" });
 const crashCall = modelCallWithCrash(3);
 await assert.rejects(processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 1 }), store: resumeStore, calculateFacts, callModel: crashCall, judgeCall }), /FIXTURE_ONLY_CRASH/u);
 assert.ok(resumeStore.units.has("resume-report:overview"));
@@ -318,7 +361,7 @@ assert.equal(resumeCall.count(), 6, "Resume must skip the completed unit and mak
 const retryStore = createMemoryStore();
 retryStore.claimJobs = async () => [authorizedJob({ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 })];
 retryStore.reports.set("retry-report", { ...structuredClone(resumeReport), id: "retry-report", fulfillment_status: "writing" });
-retryStore.entitlements.set("retry-ent", { id: "retry-ent", user_id: "resume-user", status: "active", product_key: "general_1_month" });
+retryStore.entitlements.set("retry-ent", { id: "retry-ent", user_id: "resume-user", status: "active", product_key: "general_1m" });
 let retryPatch = null;
 retryStore.updateJob = async (_id, patch) => { retryPatch = patch; };
 await runReportFulfillmentBatch({ workerId: "fixture-worker", store: retryStore, calculateFacts, callModel: modelCallWithCrash(1), judgeCall });
@@ -331,7 +374,11 @@ const adminPanelSource = fs.readFileSync(new URL("../apps/admin/src/ReportFulfil
 for (const label of ["Grant report", "Authorize ", "Revoke comp"]) assert.ok(adminPanelSource.includes(label));
 for (const route of ["../api/report-checkout.ts", "../api/report-customer-portal.ts"]) {
   const source = fs.readFileSync(new URL(route, import.meta.url), "utf8");
-  assert.match(source, /if \(!process\.env\.STRIPE_SECRET_KEY\) return sendJson\(res, 503, \{ configured: false,/u, `${route} must fail cleanly when Stripe is absent.`);
+  assert.ok(source.indexOf('reportBillingMode() === "free_test"') < source.indexOf("!process.env.STRIPE_SECRET_KEY"), `${route} must disable Stripe before inspecting Stripe credentials.`);
 }
+const webhookSource = fs.readFileSync(new URL("../api/stripe-webhook.ts", import.meta.url), "utf8");
+assert.ok(webhookSource.includes('reportBillingMode() === "free_test"'));
+const stripeSetupSource = fs.readFileSync(new URL("./setup-stripe-report-products.mjs", import.meta.url), "utf8");
+assert.ok(stripeSetupSource.indexOf('reportBillingMode() !== "stripe"') < stripeSetupSource.indexOf("for (const sku"));
 
-console.log("Report fulfillment passed: comp grant/revoke, log-only mail, relative links, per-call authorization, 16 active SKUs, mocked comp E2E to needs_review, shared facts, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");
