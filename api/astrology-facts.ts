@@ -123,7 +123,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const includeAspectPatternActivationContexts = includeAspectPatternActivation && booleanParam(requestUrl, "includeAspectPatternActivationContexts");
     const includeAspectPatternActivationCopy = includeAspectPatternActivationContexts && booleanParam(requestUrl, "includeAspectPatternActivationCopy");
     const timeKnown = requestUrl.searchParams.get("timeKnown") == null ? true : booleanParam(requestUrl, "timeKnown");
-    const sky = await getAstrodienstSky(location, date, { includeTransitWindows: true });
+    const sky = await getAstrodienstSky(location, date, {
+      // Aspect-pattern requests are natal calculations. Transit-window
+      // lookbacks are unrelated to the pattern geometry and can cross beyond
+      // the packaged Swiss-file range for slow bodies.
+      includeTransitWindows: !includeAspectPatterns
+    });
     const authoredRecords = includeAspectPatternCopy
       ? await loadAspectPatternProductionAuthoredRecords("natal")
       : undefined;
