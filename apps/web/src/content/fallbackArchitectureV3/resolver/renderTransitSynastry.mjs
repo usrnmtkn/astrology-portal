@@ -9,6 +9,7 @@ import { SourceGapError } from "./renderFallback.mjs";
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
 const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
+const dailyGlanceVariants = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/daily-glance-variants-v1.json"), "utf8"));
 const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
 const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-blend-units-v1.json"), "utf8"));
 const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
@@ -56,6 +57,41 @@ const eligibleRowsByKey = (rows) => {
 const cards = eligibleRowsByKey(lib.authoredCards);
 const vocab = eligibleRowsByKey(rowsFile.vocabularyRows);
 const hooks = eligibleRowsByKey(rowsFile.hookRows);
+const DAILY_GLANCE_READER_ELIGIBLE = new Set(["approved", "approved_reuse", "reviewed"]);
+
+function dailyGlanceHash(value) {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash >>> 0;
+}
+
+function dailyGlanceDayNumber(dateKey) {
+  if (!dateKey) return null;
+  const parsed = Date.parse(`${String(dateKey).slice(0, 10)}T00:00:00.000Z`);
+  return Number.isFinite(parsed) ? Math.floor(parsed / 86_400_000) : null;
+}
+
+export function selectDailyGlanceVariantSet({ variantSet, primary, dateKey, contentKey, userId, previousVariantId, allowUnreviewed = false }) {
+  const fallback = { id: "primary", ...primary };
+  if (!variantSet || variantSet.pairing_policy !== "explicit_pairs_only") return fallback;
+  const eligible = (status) => allowUnreviewed || DAILY_GLANCE_READER_ELIGIBLE.has(status);
+  const headlines = new Map(variantSet.headlines.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const bodies = new Map(variantSet.bodies.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const pairs = variantSet.pairings
+    .filter((pairing) => eligible(pairing.review_status))
+    .map((pairing) => ({ id: pairing.id, headline: headlines.get(pairing.headline_id), body: bodies.get(pairing.body_id) }))
+    .filter((pair) => Boolean(pair.headline && pair.body));
+  if (!pairs.some((pair) => pair.id === "primary")) pairs.unshift(fallback);
+  const dayNumber = dailyGlanceDayNumber(dateKey);
+  if (pairs.length === 1 || dayNumber === null) return pairs[0] ?? fallback;
+  const offset = dailyGlanceHash(`${contentKey}|${userId ?? "shared"}`) % pairs.length;
+  let index = ((dayNumber + offset) % pairs.length + pairs.length) % pairs.length;
+  if (previousVariantId && pairs[index]?.id === previousVariantId && pairs.length > 1) index = (index + 1) % pairs.length;
+  return pairs[index] ?? fallback;
+}
 const FAST = new Set(["moon", "mercury", "venus", "mars"]);
 const ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth", gemini: "air", libra: "air", aquarius: "air", cancer: "water", scorpio: "water", pisces: "water" };
 const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
@@ -2087,17 +2123,25 @@ export function renderLunationEventCard({ eventDate, blendFallbackEnabled = fals
 // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
 // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
 const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-export function renderDailyGlance({ natal, aspect, house }) {
+export function renderDailyGlance({ natal, aspect, house, dateKey, userId, previousVariantId }) {
   if (natal && aspect) {
     const g = DAILY_GROUP[aspect] ?? aspect;
     const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
     const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-    if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+    if (h && b) {
+      const contentKey = `${g}/${natal}`;
+      const selected = selectDailyGlanceVariantSet({ variantSet: dailyGlanceVariants.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId });
+      return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
+    }
   }
   if (house) {
     const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
     const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-    if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+    if (h && b) {
+      const contentKey = `house/${house}`;
+      const selected = selectDailyGlanceVariantSet({ variantSet: dailyGlanceVariants.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId });
+      return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
+    }
   }
   throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
 }

@@ -116,6 +116,17 @@ export type HouseTransitFacts = {
 export type RowsFile = {
   hookRows?: HookRow[];
   vocabularyRows?: VocabRow[];
+  dailyGlanceVariants?: {
+    schema: string;
+    version: string;
+    note?: string;
+    keys: Record<string, {
+      pairing_policy: "explicit_pairs_only";
+      headlines: Array<{ id: string; text: string; review_status: ReviewStatus; provenance?: Record<string, string> }>;
+      bodies: Array<{ id: string; text: string; review_status: ReviewStatus; provenance?: Record<string, string> }>;
+      pairings: Array<{ id: string; headline_id: string; body_id: string; review_status: ReviewStatus; provenance?: Record<string, string> }>;
+    }>;
+  };
 };
 
 export type TemplatesFile = {
@@ -367,7 +378,8 @@ function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArc
     },
     rowsFile: {
       hookRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.hookRows ?? []),
-      vocabularyRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.vocabularyRows ?? [])
+      vocabularyRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.vocabularyRows ?? []),
+      dailyGlanceVariants: bundle.rowsFile.dailyGlanceVariants
     }
   };
 }

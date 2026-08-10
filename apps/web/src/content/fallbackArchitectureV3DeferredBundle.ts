@@ -5,7 +5,8 @@ import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle,
-  HookRow
+  HookRow,
+  RowsFile
 } from "./fallbackArchitectureV3Runtime";
 
 const NEW_MOON_MACRO_OPEN = "New Moons begin a six-month cycle, and what starts now grows on the terms you set first.";
@@ -115,6 +116,7 @@ export const deferredFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle 
     hookRows: [
       ...(bundledDeferredCoreRowsV3.hookRows as HookRow[])
     ],
-    vocabularyRows: bundledDeferredCoreRowsV3.vocabularyRows
+    vocabularyRows: bundledDeferredCoreRowsV3.vocabularyRows,
+    dailyGlanceVariants: bundledDeferredCoreRowsV3.dailyGlanceVariants as unknown as RowsFile["dailyGlanceVariants"]
   }
 };
