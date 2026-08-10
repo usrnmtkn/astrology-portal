@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/pluto",
+  "status": "UNAPPROVED",
+  "operatingMode": "flag-only",
+  "calibrationFailed": true,
+  "modeNotice": "Terra failed calibration. Score-1 and failed-dimension counts are advisory triage only, never quality verdicts.",
+  "selectionBasis": "Deterministic output lint first; then flag-only score-1 avoidance and failed-dimension triage. This is not a quality verdict.",
+  "winner": {
+    "headline": "One strong feeling makes every detail of the decision nonnegotiable.",
+    "body": "You may feel old resentment so strongly that settling one simple plan starts to seem urgent. You repeat your case, dismiss their alternatives, and push for an immediate answer. They stop discussing the plan and start defending themselves. Pause the decision for an hour before they spend the rest of the conversation pushing back."
+  },
+  "lint": {
+    "schemaVersion": 1,
+    "key": "conjunction/pluto",
+    "passed": false,
+    "immutableRawOutput": true,
+    "revisionsMade": 0,
+    "ownerPlacementApproval": {
+      "required": false
+    },
+    "checks": [
+      {
+        "id": "P4-headline-one-declarative-sentence",
+        "passed": true,
+        "details": "1 sentence(s)"
+      },
+      {
+        "id": "P4-headline-word-count",
+        "passed": true,
+        "details": "10 words"
+      },
+      {
+        "id": "P4-body-sentence-count",
+        "passed": true,
+        "details": "4 sentences"
+      },
+      {
+        "id": "P4-body-word-count",
+        "passed": true,
+        "details": "54 words"
+      },
+      {
+        "id": "P4-one-final-instruction",
+        "passed": true,
+        "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Pause the decision for an hour before they spend the rest of the conversation pushing back."
+      },
+      {
+        "id": "P4-body-supports-without-repeating",
+        "passed": true,
+        "details": "Body does not repeat the full headline."
+      },
+      {
+        "id": "global+VC-016+DG+SM-output-bans",
+        "passed": true,
+        "details": "No prohibited match."
+      },
+      {
+        "id": "DG-R2-register",
+        "passed": true,
+        "details": {
+          "saturationCue": true,
+          "target": "pluto"
+        }
+      },
+      {
+        "id": "DG-R3-no-slogan-or-restatement-closer",
+        "passed": true,
+        "details": "No known slogan or full-headline restatement detected."
+      },
+      {
+        "id": "DG-R4-no-outcome-promise",
+        "passed": true,
+        "details": "No deterministic outcome promise detected."
+      },
+      {
+        "id": "DG-R7-varied-opener",
+        "passed": true,
+        "details": "Body uses a non-fixed opener."
+      },
+      {
+        "id": "DG-R9-enumerated-instruction-allowed",
+        "passed": true,
+        "details": "No enumerated one-X/one-Y instruction present."
+      },
+      {
+        "id": "B1-L1-time-anchor-max-once",
+        "passed": true,
+        "details": "No time-anchor phrase used."
+      },
+      {
+        "id": "B1-L2-may-inner-states-only",
+        "passed": true,
+        "details": "Every may clause is an inner state, or may is absent."
+      },
+      {
+        "id": "B1-L3+L4-headline-group-grammar",
+        "passed": true,
+        "details": {
+          "originalConjunctionGrammar": true,
+          "otherGrammar": false,
+          "softGrammar": false,
+          "squareGrammar": false
+        }
+      },
+      {
+        "id": "SM-DG-2-no-diagnostic-history",
+        "passed": true,
+        "details": "No diagnostic reader-history frame detected."
+      },
+      {
+        "id": "DG-R11-unhedged-headline",
+        "passed": true,
+        "details": "Headline makes an unhedged claim."
+      },
+      {
+        "id": "DG-R12-no-time-anchor-opener",
+        "passed": true,
+        "details": "Body opens inside the scene."
+      },
+      {
+        "id": "DG-R13-may-max-once",
+        "passed": true,
+        "details": "1 may usage(s)"
+      },
+      {
+        "id": "DG-R14-scene-not-biographical",
+        "passed": true,
+        "details": "No biographical anchor detected."
+      },
+      {
+        "id": "DG-R15-action-repairs-moment",
+        "passed": true,
+        "details": []
+      },
+      {
+        "id": "DG-R16-owner-reserved-construction",
+        "passed": true,
+        "details": []
+      },
+      {
+        "id": "DG-R17-quoted-dialogue-max-one",
+        "passed": true,
+        "details": "No quoted-dialogue line used."
+      },
+      {
+        "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+        "passed": true,
+        "advisory": true,
+        "details": "No quoted-dialogue judgment needed."
+      },
+      {
+        "id": "OWNER-DIRECTIVE-short-blunt-line",
+        "passed": false,
+        "details": "No 2-8 word body sentence found."
+      },
+      {
+        "id": "OWNER-TEST-specificity",
+        "passed": true,
+        "advisory": false,
+        "details": {
+          "own": {
+            "key": "conjunction/pluto",
+            "matches": [
+              "intensity",
+              "control"
+            ],
+            "required": 2,
+            "passed": true
+          },
+          "comparisonScope": [
+            "conjunction/neptune",
+            "soft/chiron",
+            "square/sun",
+            "square/uranus"
+          ],
+          "swappableTo": [],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "id": "OWNER-TEST-morning-read",
+        "passed": true,
+        "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+      },
+      {
+        "id": "OWNER-TEST-screenshot",
+        "passed": false,
+        "details": "No candidate body line detected."
+      }
+    ],
+    "findings": [],
+    "counts": {
+      "headlineWords": 10,
+      "headlineSentences": 1,
+      "bodyWords": 54,
+      "bodySentences": 4,
+      "instructions": 1,
+      "timeAnchors": 0,
+      "mayUsages": 1,
+      "quotedDialogueLines": 0,
+      "screenshotCandidateLines": 0
+    }
+  },
+  "judge": {
+    "key": "conjunction/pluto",
+    "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+    "judgeModel": "gpt-5.6-terra",
+    "reasoningEffort": "low",
+    "score": 2,
+    "allScores": [
+      2,
+      2,
+      3
+    ],
+    "dimScore": 7,
+    "verdict": {
+      "score": 2,
+      "verdict": "Near owner voice, but the headline is abstract and the body leans on a familiar conflict-escalation sequence rather than making the Pluto pressure feel more distinct.",
+      "dimensions": {
+        "voice": true,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "They stop discussing the plan and start defending themselves.",
+      "why": "This is the clearest consequence in the card: the actual decision gets lost once resentment turns the exchange into self-protection. The rest is competent and concrete, but \"one strong feeling\" and the sequence of insistence, resistance, and a pause feel slightly assembled rather than like a sentence only this transit would produce."
+    },
+    "usage": {
+      "inputTokens": 14724,
+      "cachedInputTokens": 13426,
+      "outputTokens": 844,
+      "reasoningTokens": 392,
+      "totalTokens": 15568
+    },
+    "estimatedCostUsd": 0.015409,
+    "responseCount": 3,
+    "advisoryOnly": true,
+    "operatingMode": "flag-only",
+    "calibrationFailed": true
+  }
+}
