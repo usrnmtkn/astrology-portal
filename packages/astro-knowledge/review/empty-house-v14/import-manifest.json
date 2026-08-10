@@ -1,0 +1,51 @@
+{
+  "schema": "tldrastro.empty-house.import.v14",
+  "version": "v14-owner-approved-full-workbook-2026-08-10",
+  "source_of_truth": "source/TLDR-AR-EMPTY-HOUSES-MATRIX-V14-OWNER-APPROVED.xlsx",
+  "serving_projection_contract": "serving-projection-v14-projection-4.json",
+  "source_sha256": "bbfdc02f6a5684d75dd7ec348e1f62d2e38f7e0487e495e50f9fa626660e4334",
+  "canonical_rows": {
+    "file": "empty-house-v14-owner-approved-rows.json",
+    "sha256": "f932aedc3e29422ee4854e20ffee2b35efcbb7aff37db85128094435d0e18c95",
+    "rows": 550,
+    "served_you_rows": 541,
+    "reference_principles": 9
+  },
+  "source_policy": {
+    "preserve_copy_exactly": true,
+    "governance": "owner_approved_exact_full_workbook_2026-08-10",
+    "archive": "AR",
+    "future_wording_change_requires_owner_approval": true
+  },
+  "ruler_policy": {
+    "phase": "dual-system-modern-launch",
+    "active_launch_system": "modern",
+    "scorpio": "pluto",
+    "aquarius": "uranus",
+    "pisces": "neptune",
+    "traditional_variants": "33 owner-authored house-1 rows deferred to the next additive phase"
+  },
+  "coverage": {
+    "empty_house_essay": 12,
+    "empty_house_sign": 144,
+    "empty_house_ruler_generic": 121,
+    "empty_house_ruler_house1_specific": 132,
+    "empty_house_ruler_planet_example": 132,
+    "principle": 9,
+    "duplicate_keys": 0,
+    "ruler_in_same_house_rows": 0
+  },
+  "friend_variants": {
+    "file": "empty-house-v14-friend-variants-review.json",
+    "payload_sha256": "07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b",
+    "prior_projection_digest_sha256": "74e0052ee3c3ce8660b22317b328ad46b01adb97a23e42e1ec48e4ad28f5568d",
+    "flag_metadata": "body-they-flagged-for-owner.json",
+    "corrections": "body-they-corrections.json",
+    "decision_aid": "body-they-decision-aid.json",
+    "corrected_rows": 34,
+    "approved_as_is_rows": 31,
+    "unresolved_flag_rows": 0,
+    "status": "approved",
+    "serving_blocked": false
+  }
+}

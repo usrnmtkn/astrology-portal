@@ -206,7 +206,7 @@ const personalTransitFriendRows = friendVoiceRows.filter((row) => (
 const prepositionTheyPattern = /\b(?:to|for|with|at|from|of|about|around|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|without|within)\s+they\b|(?<!early )(?<!later )\bon\s+they\b/iu;
 const objectPositionTheyPattern = /(?<!their )\b(?:expect(?:s)?|lift(?:s)?|embarrass(?:es)?|enjoy(?:s)?|trust(?:s)?|grow(?:s)?|enlarge(?:s)?|pair(?:s|ing)?|erase(?:s)?|rebuild(?:s)?|favor(?:s)?|scatter(?:s)?|fuel(?:s)?|shift(?:s)?|run(?:s)?)\s+they\b/iu;
 const themVerbPattern = /\bthem\s+(?:feel|feels|think|thinks|want|wants|need|needs|expect|expects|carry|carries|navigate|navigates|trust|trusts|enjoy|enjoys|lift|lifts|embarrass|embarrasses)\b/giu;
-const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|made|around|of|in|with|nearest)\s+$/iu;
+const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|made|help(?:s|ing|ed)?|around|of|in|with|nearest)\s+$/iu;
 const subjectFormPredicatePattern = /\b(?:is|was)\s+they\b/iu;
 const adjectiveTheyPattern = /\b(?:distinct)\s+they\b/iu;
 const reflexiveObjectPattern = /\b(?:let|make|help|allow)\s+themselves\b/iu;
