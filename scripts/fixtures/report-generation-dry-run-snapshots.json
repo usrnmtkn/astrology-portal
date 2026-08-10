@@ -1,30 +1,94 @@
 {
   "1_month": {
-    "unit": { "horizon": "1_month", "unitId": "overview", "allowedUnitIds": ["overview", "what-matters-most", "domain:*", "key-dates"] },
+    "unit": {
+      "horizon": "1_month",
+      "unitId": "overview",
+      "allowedUnitIds": [
+        "overview",
+        "what-matters-most",
+        "domain:*",
+        "key-dates"
+      ]
+    },
     "factorCount": 4,
     "resolvedCount": 4,
     "sourceGapCount": 0
   },
   "4_months": {
-    "unit": { "horizon": "4_months", "unitId": "development:1", "allowedUnitIds": ["overview", "period-theme", "development:*", "key-dates", "closing-synthesis"] },
+    "unit": {
+      "horizon": "4_months",
+      "unitId": "development:1",
+      "allowedUnitIds": [
+        "overview",
+        "period-theme",
+        "development:*",
+        "key-dates",
+        "closing-synthesis"
+      ]
+    },
     "factorCount": 8,
     "resolvedCount": 8,
     "sourceGapCount": 0
   },
   "6_months": {
-    "unit": { "horizon": "6_months", "unitId": "phase-1", "allowedUnitIds": ["overview", "period-theme", "phase-1", "phase-2", "key-dates", "review"] },
+    "unit": {
+      "horizon": "6_months",
+      "unitId": "phase-1",
+      "allowedUnitIds": [
+        "overview",
+        "period-theme",
+        "phase-1",
+        "phase-2",
+        "key-dates",
+        "review"
+      ]
+    },
     "factorCount": 10,
     "resolvedCount": 10,
     "sourceGapCount": 0
   },
   "12_months": {
-    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "professional-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"] },
-    "factorCount": 18,
+    "unit": {
+      "horizon": "12_months",
+      "unitId": "summer",
+      "allowedUnitIds": [
+        "overview",
+        "year-theme",
+        "professional-theme",
+        "domain:*",
+        "winter-current",
+        "spring",
+        "summer",
+        "autumn",
+        "money",
+        "key-dates",
+        "review-current-year",
+        "winter-next"
+      ]
+    },
+    "factorCount": 19,
     "resolvedCount": 18,
-    "sourceGapCount": 0
+    "sourceGapCount": 1
   },
   "work_money_12_months": {
-    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "professional-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"] },
+    "unit": {
+      "horizon": "12_months",
+      "unitId": "summer",
+      "allowedUnitIds": [
+        "overview",
+        "year-theme",
+        "professional-theme",
+        "domain:*",
+        "winter-current",
+        "spring",
+        "summer",
+        "autumn",
+        "money",
+        "key-dates",
+        "review-current-year",
+        "winter-next"
+      ]
+    },
     "factorIds": [
       "profection-year-house-12",
       "sr-overlay-venus-house-10",
@@ -37,6 +101,7 @@
       "saturn-sextile-ascendant",
       "jupiter-conjunction-jupiter",
       "jupiter-square-moon",
+      "jupiter-opposition-midheaven",
       "jupiter-trine-neptune",
       "jupiter-square-uranus",
       "jupiter-opposition-mars",
@@ -46,22 +111,69 @@
       "solar-eclipse-2027-02-06-midheaven"
     ],
     "resolvedCount": 18,
-    "sourceGapCount": 0,
+    "sourceGapCount": 1,
     "bridgeSelection": {
       "factorId": "lunar-eclipse-2026-03-03-saturn",
       "score": 30,
       "tierId": "condition_changers",
-      "matchedRuleIds": ["home_commute_caregiving"],
-      "matchedTerms": ["home", "family", "caregiving", "property", "move"],
-      "inspectionNotes": ["commute", "hours", "expenses", "availability", "which jobs remain practical"],
-      "doNotAssume": ["a move", "illness", "family conflict", "the professional goal changed"],
-      "bridgeConsequences": ["commute", "hours", "expenses", "availability", "which jobs remain practical"]
+      "matchedRuleIds": [
+        "home_commute_caregiving"
+      ],
+      "matchedTerms": [
+        "home",
+        "family",
+        "caregiving",
+        "property",
+        "move"
+      ],
+      "inspectionNotes": [
+        "commute",
+        "hours",
+        "expenses",
+        "availability",
+        "which jobs remain practical"
+      ],
+      "doNotAssume": [
+        "a move",
+        "illness",
+        "family conflict",
+        "the professional goal changed"
+      ],
+      "bridgeConsequences": [
+        "commute",
+        "hours",
+        "expenses",
+        "availability",
+        "which jobs remain practical"
+      ]
     },
-    "venusProjectedDomains": ["creative work", "career", "recognition", "professional identity"],
+    "venusProjectedDomains": [
+      "creative work",
+      "career",
+      "recognition",
+      "professional identity"
+    ],
     "voiceEvidenceSource": "artifacts/marie-satori-work-money-2026-owner-v1.md"
   },
   "love_connection_12_months": {
-    "unit": { "horizon": "12_months", "unitId": "summer", "allowedUnitIds": ["overview", "year-theme", "professional-theme", "domain:*", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"] },
+    "unit": {
+      "horizon": "12_months",
+      "unitId": "summer",
+      "allowedUnitIds": [
+        "overview",
+        "year-theme",
+        "professional-theme",
+        "domain:*",
+        "winter-current",
+        "spring",
+        "summer",
+        "autumn",
+        "money",
+        "key-dates",
+        "review-current-year",
+        "winter-next"
+      ]
+    },
     "factorIds": [
       "profection-year-house-12",
       "sr-overlay-venus-house-10",
@@ -74,6 +186,7 @@
       "saturn-sextile-ascendant",
       "jupiter-conjunction-jupiter",
       "jupiter-square-moon",
+      "jupiter-opposition-midheaven",
       "jupiter-trine-neptune",
       "jupiter-square-uranus",
       "jupiter-opposition-mars",
@@ -82,38 +195,227 @@
       "lunar-eclipse-2026-08-28-mercury",
       "solar-eclipse-2027-02-06-midheaven"
     ],
-    "tierIds": ["direct_love_connection", "condition_changers"],
+    "tierIds": [
+      "direct_love_connection",
+      "condition_changers"
+    ],
     "ascendantInspection": {
       "factorId": "sr-overlay-ascendant-house-5",
       "score": 47,
       "tierId": "direct_love_connection",
-      "matchedRuleIds": ["ascendant_descendant_axis", "relationship_houses_and_eclipses", "solar_return_relationship_house_signatures"],
-      "matchedTerms": ["dating", "pleasure"],
-      "inspectionNotes": ["one-to-one relationships", "relationship roles", "availability", "what kind of arrangement fits", "dating", "romance", "pleasure", "sex", "partnership terms", "intimacy", "shared resources", "repeated Solar Return relationship signatures", "SR Ascendant overlays", "SR Venus", "SR Mars", "SR Moon"],
-      "doNotAssume": ["Descendant activation guarantees partnership", "partnership", "commitment", "marriage", "the 8th house is only sex", "one weak Solar Return signature makes relationships the year theme"],
+      "matchedRuleIds": [
+        "ascendant_descendant_axis",
+        "relationship_houses_and_eclipses",
+        "solar_return_relationship_house_signatures"
+      ],
+      "matchedTerms": [
+        "dating",
+        "pleasure"
+      ],
+      "inspectionNotes": [
+        "one-to-one relationships",
+        "relationship roles",
+        "availability",
+        "what kind of arrangement fits",
+        "dating",
+        "romance",
+        "pleasure",
+        "sex",
+        "partnership terms",
+        "intimacy",
+        "shared resources",
+        "repeated Solar Return relationship signatures",
+        "SR Ascendant overlays",
+        "SR Venus",
+        "SR Mars",
+        "SR Moon"
+      ],
+      "doNotAssume": [
+        "Descendant activation guarantees partnership",
+        "partnership",
+        "commitment",
+        "marriage",
+        "the 8th house is only sex",
+        "one weak Solar Return signature makes relationships the year theme"
+      ],
       "bridgeConsequences": []
     },
     "homeInspection": {
       "factorId": "lunar-eclipse-2026-03-03-saturn",
       "score": 31,
       "tierId": "condition_changers",
-      "matchedRuleIds": ["home_and_family"],
-      "matchedTerms": ["home", "family", "property", "caregiving", "living", "move"],
-      "inspectionNotes": ["moving", "cohabitation", "living apart", "privacy", "caregiving", "household labor", "relationship logistics"],
-      "doNotAssume": ["a move", "cohabitation", "separation", "family conflict"],
-      "bridgeConsequences": ["privacy", "caregiving", "household labor", "who lives where", "relationship logistics"]
+      "matchedRuleIds": [
+        "home_and_family"
+      ],
+      "matchedTerms": [
+        "home",
+        "family",
+        "property",
+        "caregiving",
+        "living",
+        "move"
+      ],
+      "inspectionNotes": [
+        "moving",
+        "cohabitation",
+        "living apart",
+        "privacy",
+        "caregiving",
+        "household labor",
+        "relationship logistics"
+      ],
+      "doNotAssume": [
+        "a move",
+        "cohabitation",
+        "separation",
+        "family conflict"
+      ],
+      "bridgeConsequences": [
+        "privacy",
+        "caregiving",
+        "household labor",
+        "who lives where",
+        "relationship logistics"
+      ]
     },
     "domainDisagreement": {
-      "mar3RelationshipConsequences": ["privacy", "caregiving", "household labor", "who lives where", "relationship logistics"],
-      "marsSpineExactDates": ["2026-10-20", "2027-02-05"],
-      "marsSpinePresentInLoveReference": [true, true],
+      "mar3RelationshipConsequences": [
+        "privacy",
+        "caregiving",
+        "household labor",
+        "who lives where",
+        "relationship logistics"
+      ],
+      "marsSpineExactDates": [
+        "2026-10-20",
+        "2027-02-05"
+      ],
+      "marsSpinePresentInLoveReference": [
+        true,
+        true
+      ],
       "workReferenceHasApplicationMaterial": true,
       "loveReferenceHasApplicationMaterial": false,
       "workReferenceHasMoneySection": true,
       "loveReferenceHasMoneySection": false,
-      "feb6RelationshipContext": ["availability", "travel", "location", "money", "schedule"],
+      "feb6RelationshipContext": [
+        "availability",
+        "travel",
+        "location",
+        "money",
+        "schedule"
+      ],
       "feb6ContextPresentInLoveReference": true
     },
     "voiceEvidenceSource": "artifacts/marie-satori-love-connection-2026-owner-v1.md"
+  },
+  "personal_health_12_months": {
+    "promptReadiness": {
+      "reportDomain": "personal_health",
+      "sourcePath": "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
+      "exists": true,
+      "ownerApproved": true,
+      "ready": true
+    },
+    "unit": {
+      "horizon": "12_months",
+      "unitId": "summer",
+      "allowedUnitIds": [
+        "overview",
+        "year-theme",
+        "domain:main",
+        "winter-current",
+        "spring",
+        "summer",
+        "autumn",
+        "health-capacity",
+        "key-dates",
+        "review-current-year",
+        "winter-next"
+      ]
+    },
+    "factorIds": [
+      "profection-year-house-12",
+      "sr-overlay-ascendant-house-5",
+      "saturn-trine-jupiter",
+      "neptune-trine-jupiter",
+      "uranus-square-sun",
+      "jupiter-square-pluto",
+      "jupiter-trine-uranus",
+      "saturn-sextile-ascendant",
+      "jupiter-conjunction-jupiter",
+      "jupiter-square-moon",
+      "jupiter-trine-neptune",
+      "jupiter-square-uranus",
+      "jupiter-opposition-mars",
+      "lunar-eclipse-2026-03-03-saturn",
+      "solar-eclipse-2026-08-12-uranus",
+      "lunar-eclipse-2026-08-28-mercury",
+      "solar-eclipse-2027-02-06-midheaven"
+    ],
+    "tierIds": [
+      "direct_personal_health",
+      "condition_changers"
+    ],
+    "homeInspection": {
+      "tierId": "condition_changers",
+      "bridgeConsequences": [
+        "driving",
+        "cleaning",
+        "maintenance",
+        "stairs",
+        "caregiving",
+        "weekly time"
+      ]
+    },
+    "summerInspection": {
+      "score": 51,
+      "tierId": "direct_personal_health",
+      "matchedRuleIds": [
+        "major_sun_moon_ascendant_transits",
+        "personal_health_house_activations",
+        "work_travel_money_logistics"
+      ],
+      "healthGuards": [
+        "symptoms",
+        "a diagnosis",
+        "a medical crisis",
+        "a psychological cause for symptoms"
+      ]
+    },
+    "midheavenInspection": {
+      "tierId": "condition_changers",
+      "bridgeConsequences": [
+        "hours",
+        "commute",
+        "travel",
+        "physical demands",
+        "appointment schedule",
+        "daily demands",
+        "travel timing",
+        "recovery",
+        "transportation",
+        "housing",
+        "treatment logistics",
+        "routine logistics",
+        "access to help",
+        "daily schedule"
+      ]
+    },
+    "projectedMidheaven": {
+      "domain": [
+        "access"
+      ],
+      "possibleLivedManifestations": []
+    },
+    "canonicalPromptSource": "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
+    "generationStandardSource": "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md",
+    "voiceEvidenceSource": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+    "ownerComparisonIds": [
+      "personal_spring_development",
+      "personal_spring_close",
+      "personal_autumn_complication"
+    ],
+    "livedProseStandardSource": "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md"
   }
 }

@@ -1,0 +1,749 @@
+{
+  "version": "report-judge-v3-calibration-v1",
+  "runAt": "2026-08-09T21:25:10.009Z",
+  "authorization": {
+    "approvedDocuments": [
+      "report-judge-rubric-v3",
+      "report-critique-checklist-v3"
+    ],
+    "threshold": 0.9,
+    "requestedCalls": 9,
+    "judgeCalls": 8,
+    "critiqueCalls": 1,
+    "retriesAuthorized": 0
+  },
+  "inputs": {
+    "manifest": {
+      "sourcePath": "scripts/fixtures/report-judge-complete-unit-regressions-v3.json",
+      "sha256": "4a730470997943388f400966a416ac93a942688c7cb5b874dd7d9ae92c19c2de"
+    },
+    "judge": {
+      "sourcePath": "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-DRAFT.md",
+      "sha256": "a6c06cb37d648b7bd803be449be98703e9aa1d647304b9382d16dcc7a1f3966a"
+    },
+    "critique": {
+      "sourcePath": "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-DRAFT.md",
+      "sha256": "1cc473aa5473f796f22cdd37cad1d476b45eaf56aa74c62133e81c824019e19c"
+    },
+    "livedProse": {
+      "sourcePath": "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md",
+      "sha256": "39d52560dd34ae95babbb81c769f502e6cf26e9961269ccf01dee4160a86245b"
+    }
+  },
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "status": "category_failure",
+  "completedCalls": 9,
+  "rows": [
+    {
+      "call": 1,
+      "type": "judge",
+      "fixtureId": "general_spring_lived_abstraction",
+      "variant": "positive",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 2,
+          "factual_traceability": 2,
+          "lived_experience": 3,
+          "interpretive_movement": 3,
+          "owner_voice": 3,
+          "natural_language": 3,
+          "syntax_variety": 3,
+          "emotional_temperature": 4,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.6944444444444444,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "astrology_chronology",
+            "location": "final body paragraph and MAY 19 key-date bullet",
+            "finding": "The unit calls May 19 the first of three Saturn sextiles and states that October will test the arrangement, but UNIT_FACTS supplies only one Saturn-sextile-Ascendant pass, dated May 19. The asserted three-pass sequence and October chronology are not fact-locked by the scoped facts.",
+            "evidence_ids": [
+              "UNIT_FACTS",
+              "VALIDATOR_RESULTS"
+            ]
+          },
+          {
+            "category": "factual_traceability",
+            "location": "final body paragraph and MAY 19 key-date bullet",
+            "finding": "The claims about a three-pass Saturn sequence and an October review add pass-count and future timing information not supplied in the scoped Saturn transit facts.",
+            "evidence_ids": [
+              "UNIT_FACTS",
+              "VALIDATOR_RESULTS"
+            ]
+          },
+          {
+            "category": "owner_voice",
+            "location": "May 1 transition and Jupiter-square-Pluto paragraph",
+            "finding": "The transition into \"the issue becomes leverage\" and the broad job/client/application/contract/grant list are more explanatory and category-driven than the owner development references, which land the interpretation through a concrete condition and its practical consequence. The unit still has owner-like contradiction and directness, but this passage drifts toward generalized report language.",
+            "evidence_ids": [
+              "work_spring_development",
+              "personal_spring_development",
+              "love_spring_turn"
+            ]
+          },
+          {
+            "category": "natural_language",
+            "location": "May 1 transition and standalone question paragraph",
+            "finding": "\"In May, the issue becomes leverage\" and the separated sequence of rhetorical questions read more like interpretive framing than ordinary reader-facing observation.",
+            "evidence_ids": []
+          },
+          {
+            "category": "syntax_variety",
+            "location": "standalone paragraph beginning \"Who controls access?\"",
+            "finding": "Three isolated rhetorical questions create artificial dramatic formatting instead of developing the consequence inside a regular paragraph.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "body paragraphs 2-6",
+            "finding": "Several consecutive paragraphs restate that an old role, arrangement, or relationship may need different terms. Although later paragraphs add examples, the repeated manifestation menus delay the move into the more specific leverage and scheduling consequences.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.6944444444444444,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains more than two substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0b3651e01d689f5d006a78f036b5c0819eae94c0bb78c15b24",
+      "usage": {
+        "inputTokens": 11924,
+        "outputTokens": 2065,
+        "totalTokens": 13989
+      }
+    },
+    {
+      "call": 2,
+      "type": "judge",
+      "fixtureId": "general_spring_lived_abstraction",
+      "variant": "negative",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 2,
+          "factual_traceability": 2,
+          "lived_experience": 2,
+          "interpretive_movement": 2,
+          "owner_voice": 2,
+          "natural_language": 3,
+          "syntax_variety": 3,
+          "emotional_temperature": 2,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.5555555555555556,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "astrology_chronology",
+            "location": "Saturn paragraph and May 19 key-date bullet",
+            "finding": "The unit calls the May 19 Saturn sextile \"the first of three,\" and says October will test it. UNIT_FACTS supplies only one Saturn sextile pass, on May 19, with no October pass or three-pass sequence.",
+            "evidence_ids": []
+          },
+          {
+            "category": "factual_traceability",
+            "location": "Saturn paragraph",
+            "finding": "\"October will tell you if it works outside the planning stage\" introduces an unsupported later-pass outcome and chronology not present in the scoped facts.",
+            "evidence_ids": []
+          },
+          {
+            "category": "lived_experience",
+            "location": "body paragraphs 2-3",
+            "finding": "The prose relies on abstract wellness language such as \"capacity,\" \"alignment,\" \"needs,\" \"well-being,\" and \"sustainable\" without showing what is displaced, delayed, changed, or made harder in ordinary life. The proposed actions remain generic rather than naming the next practical move inside a circumstance.",
+            "evidence_ids": [
+              "labeled-negative-flat-recovery",
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "body paragraphs 1-6",
+            "finding": "The opening Uranus development moves from a stated role change into repeated generic advice and then broad relationship language. It does not establish a sufficiently specific circumstance, causal consequence, or complication before shifting to the May factors.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "body paragraphs 2-3 and relationship paragraph",
+            "finding": "Compared with development passages work_spring_development (function: development) and personal_spring_development (function: development), the candidate substitutes abstract guidance for observed consequences such as changed hours, a moved appointment, caregiving taking time, or a fixed obligation after a long day. Compared with love_spring_turn (function: turn), its relationship passage expands into generalized \"alignment,\" \"spaciousness,\" and \"healthier balance\" rather than making the changed terms plain and consequential.",
+            "evidence_ids": [
+              "work_spring_development",
+              "personal_spring_development",
+              "love_spring_turn",
+              "labeled-negative-flat-recovery"
+            ]
+          },
+          {
+            "category": "emotional_temperature",
+            "location": "body paragraphs 2-3 and relationship paragraph",
+            "finding": "Repeated therapeutic and wellness framing, including \"honor your capacity,\" \"protect your energy,\" \"well-being,\" \"alignment,\" and \"healthier balance,\" shifts the tone from proportionate observation into generic coaching.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "body paragraphs 2-3, 9, and 10",
+            "finding": "Several sentences restate the same abstract claim about capacity, sustainability, changed terms, and support without advancing a new manifestation, consequence, or factual development.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.5555555556,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_02a119a8c91f8414006a78f04f399081a39d546fec7820abe9",
+      "usage": {
+        "inputTokens": 11850,
+        "outputTokens": 988,
+        "totalTokens": 12838
+      }
+    },
+    {
+      "call": 3,
+      "type": "judge",
+      "fixtureId": "work_money_winter_material_voice_drift",
+      "variant": "positive",
+      "targetDimension": "owner_voice",
+      "result": {
+        "scores": {
+          "astrology_chronology": 3,
+          "factual_traceability": 3,
+          "lived_experience": 3,
+          "interpretive_movement": 3,
+          "owner_voice": 2,
+          "natural_language": 4,
+          "syntax_variety": 3,
+          "emotional_temperature": 4,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.75,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "astrology_chronology",
+            "location": "attribution line",
+            "finding": "The unit calls the March 3 event a \"total lunar eclipse,\" but UNIT_FACTS establishes only a lunar eclipse conjunct natal Saturn. The date and natal-Saturn contact are supported; the eclipse subtype is not scoped.",
+            "evidence_ids": []
+          },
+          {
+            "category": "factual_traceability",
+            "location": "attribution line",
+            "finding": "\"Total\" is an unsupported technical qualifier for the March 3 lunar eclipse under the supplied UNIT_FACTS.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "body paragraphs 2-4 and closing paragraph",
+            "finding": "The candidate relies on polished explanatory abstractions and writer-directed planning language, including \"the purpose behind it becomes clearer,\" \"turning inspiration into something usable,\" and \"That matters this year because,\" rather than staying as consistently inside an observed circumstance and its consequence. Compared with personal_spring_development (development), the owner passage shows what remains fixed after a demanding day; compared with personal_autumn_complication (complication), it lets one changed arrangement create the next problem; compared with love_winter_close (close), its closing is concrete without explaining its own importance.",
+            "evidence_ids": [
+              "personal_spring_development",
+              "personal_autumn_complication",
+              "love_winter_close"
+            ]
+          },
+          {
+            "category": "density",
+            "location": "body paragraph 4 and closing paragraph",
+            "finding": "The planning instructions repeat the Saturn-and-Neptune conclusion after the prior paragraphs have already established imagination meeting practical limits. The final sentence, \"That matters this year because...,\" explains the connection after the preceding household examples have already shown it.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.75,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains seven substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_048ededd0ed90ffa006a78f059c194819e831aeb819a308bb0",
+      "usage": {
+        "inputTokens": 10535,
+        "outputTokens": 1478,
+        "totalTokens": 12013
+      }
+    },
+    {
+      "call": 4,
+      "type": "judge",
+      "fixtureId": "work_money_winter_material_voice_drift",
+      "variant": "negative",
+      "targetDimension": "owner_voice",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 3,
+          "lived_experience": 1,
+          "interpretive_movement": 2,
+          "owner_voice": 1,
+          "natural_language": 3,
+          "syntax_variety": 3,
+          "emotional_temperature": 2,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.5833333333333334,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "factual_traceability",
+            "location": "body paragraph 6",
+            "finding": "The addition of a \"health need\" is not supported by the active Saturn-fourth-house eclipse material in the scoped facts. The remaining home, repair, caregiving, and living-arrangement manifestations are chart-supported work-context consequences, but this extra domain claim is not chart-earned in the unit.",
+            "evidence_ids": []
+          },
+          {
+            "category": "lived_experience",
+            "location": "body paragraphs 2-4",
+            "finding": "The Saturn-Neptune development remains at concept and advice level: meaning, purpose, structure, capacity, sustainable action, and balance. It does not show a work circumstance in which the imagined direction changes the calendar, cost, scope, deadline, pay, or another concrete professional consequence.",
+            "evidence_ids": [
+              "labeled-negative-flat-recovery"
+            ]
+          },
+          {
+            "category": "lived_experience",
+            "location": "body paragraph 6",
+            "finding": "This is a manifestation list rather than an observed causal sequence. Move, commute, family responsibility, health need, repair, expense, and living arrangement are named, but the paragraph does not show which one changes hours, payment, an appointment, a deadline, or an opportunity that must be altered.",
+            "evidence_ids": [
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "body paragraphs 1-7",
+            "finding": "The unit correctly distinguishes Neptune from Saturn and introduces the eclipse as a complication, but it moves from keyword explanation into generic instruction instead of developing a lived professional situation and its consequence. The eclipse section restarts with a broad manifestation menu rather than carrying the earlier plan into a specific constraint or decision.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "body paragraphs 2-7",
+            "finding": "The candidate drifts into polished explanatory and wellness language, especially \"bring inspiration into alignment with sustainable action,\" \"honor your capacity,\" \"trust the process,\" and \"abandon your balance.\" In contrast, the supplied development reference identifies what follows a demanding day and what has to change with it; the complication reference shows an attempted solution creating a second problem; and the close reference lands as a plain, materially grounded observation. The candidate does not supply comparable observed consequence or controlled plainness.",
+            "evidence_ids": [
+              "personal_spring_development (development)",
+              "personal_autumn_complication (complication)",
+              "love_winter_close (close)"
+            ]
+          },
+          {
+            "category": "emotional_temperature",
+            "location": "body paragraph 4",
+            "finding": "The imperative reassurance and therapeutic framing, including \"honor your capacity\" and \"trust the process,\" exceed the proportionate, professionally observant tone supported by the unit's evidence.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "body paragraphs 3-4 and 7",
+            "finding": "The questions about time, cost, and weekly feasibility establish the Saturn constraint, but the following paragraph restates it as generic sustainability advice. The final sentence then supplies a manufactured aphoristic closer rather than advancing the eclipse's concrete work consequence.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.5833333333,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains seven substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_0328f746f6dc1420006a78f06aa79481a1aa29d0d4d28cd400",
+      "usage": {
+        "inputTokens": 10511,
+        "outputTokens": 1672,
+        "totalTokens": 12183
+      }
+    },
+    {
+      "call": 5,
+      "type": "judge",
+      "fixtureId": "love_connection_autumn_flattened_movement",
+      "variant": "positive",
+      "targetDimension": "interpretive_movement",
+      "result": {
+        "scores": {
+          "astrology_chronology": 4,
+          "factual_traceability": 4,
+          "lived_experience": 3,
+          "interpretive_movement": 3,
+          "owner_voice": 3,
+          "natural_language": 4,
+          "syntax_variety": 3,
+          "emotional_temperature": 4,
+          "density": 3
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.8611111111111112,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "lived_experience",
+            "location": "body paragraphs 2 and 5",
+            "finding": "The unit has strong concrete consequences elsewhere, especially time together competing with sleep, work, and recovery, but these paragraphs partly revert to lists of possible subjects. The sex, money, travel, holidays, initiating, and paying examples identify domains without consistently showing which changed condition creates the specific disagreement or what it displaces.",
+            "evidence_ids": []
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "body paragraphs 1-4 and 8",
+            "finding": "The Saturn sequence develops from testing an arrangement to retaining evidence, and the Jupiter material introduces a useful turn. The movement is somewhat flattened by writer-facing pass language such as \"The first pass gave you something to try\" and \"October gives you evidence,\" rather than staying inside the changed arrangement and its consequence.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "body paragraphs 2-5",
+            "finding": "The candidate shares the owner references' plainspoken interest in arrangements that work only under certain conditions, but its repeated questions and manifestation menus are less observed and causally developed than the comparison passages. The owner complication passages move quickly from changed conditions into a concrete result, such as messages multiplying into lost hours or a quiet-week solution failing when deadlines and family demands return.",
+            "evidence_ids": [
+              "general_summer_complication",
+              "work_summer_complication",
+              "personal_autumn_complication"
+            ]
+          },
+          {
+            "category": "syntax_variety",
+            "location": "body paragraphs 2-3",
+            "finding": "The repeated interrogatives and consecutive \"Maybe\" constructions create a somewhat uniform rhetorical rhythm. The questions are functional, but more varied sentence movement would better distinguish the schedule test from the later relationship-logistics examples.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "body paragraphs 1 and 4",
+            "finding": "Writer-facing framing slightly dilutes otherwise efficient prose: \"This is where you find out if it actually works\" and \"The first pass gave you something to try. October gives you evidence\" explain the report's interpretive structure after the surrounding circumstances already establish the test.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.8611111111,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains eight substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_081cfec1dbdb5acd006a78f07bd7d0819f9f0ef80c22f25afa",
+      "usage": {
+        "inputTokens": 11977,
+        "outputTokens": 2609,
+        "totalTokens": 14586
+      }
+    },
+    {
+      "call": 6,
+      "type": "judge",
+      "fixtureId": "love_connection_autumn_flattened_movement",
+      "variant": "negative",
+      "targetDimension": "interpretive_movement",
+      "result": {
+        "scores": {
+          "astrology_chronology": 2,
+          "factual_traceability": 2,
+          "lived_experience": 1,
+          "interpretive_movement": 1,
+          "owner_voice": 1,
+          "natural_language": 3,
+          "syntax_variety": 2,
+          "emotional_temperature": 2,
+          "density": 1
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.4166666666666667,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "astrology_chronology",
+            "location": "opening Saturn paragraph and later Jupiter chronology paragraph",
+            "finding": "The unit calls the October 6 Saturn sextile a second pass and says Jupiter will oppose Mars again in February, but the scoped transit arcs supply only one listed pass for each factor. The October dates and aspects are correct, but the pass chronology is not fully traceable to UNIT_FACTS.",
+            "evidence_ids": []
+          },
+          {
+            "category": "factual_traceability",
+            "location": "Saturn development paragraphs and final Jupiter chronology paragraph",
+            "finding": "The unit makes broad relationship claims and gives generalized instructions, but it does not connect them to a governed, unit-scoped manifestation chain. The unsupported pass framing also makes the claims about integrating prior lessons and preparing for a next stage insufficiently supported by the frozen unit facts.",
+            "evidence_ids": []
+          },
+          {
+            "category": "lived_experience",
+            "location": "body paragraphs 2, 3, 6, 7, and 8",
+            "finding": "The prose relies on abstract directives such as reviewing boundaries, honoring capacity, staying flexible, communicating with intention, and deeper alignment. Lists of sleep, work, recovery, travel, sex, money, and compromise do not show what changes another obligation, what gets delayed or reorganized, or what consequence makes the adjustment necessary.",
+            "evidence_ids": [
+              "labeled-negative-flat-recovery",
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "whole body",
+            "finding": "The unit repeatedly follows transit-to-keyword-to-advice movement. Saturn does not develop from a concrete condition into a tested second-pass consequence, and Jupiter's October manifestation menu does not advance into a distinct February-stage story. The factors sit in separate generic instruction blocks rather than modifying or complicating one another.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "whole body, especially Saturn development and Jupiter close",
+            "finding": "Compared with the supplied complication passages, the candidate uses generalized wellness and coaching language rather than observed contradiction and consequence. The owner complication examples move from a specific condition into what it displaces: 'One easy yes can become three hours you did not have' in work_summer_complication (function: complication), and arrangements that fail once deadlines or family needs intervene in personal_autumn_complication (function: complication). The candidate instead says to honor capacity, maintain balance, practice direct communication, and seek deeper alignment without showing the relationship arrangement that stops working.",
+            "evidence_ids": [
+              "work_summer_complication",
+              "personal_autumn_complication",
+              "general_summer_complication",
+              "labeled-negative-flat-recovery",
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "syntax_variety",
+            "location": "body paragraphs 2, 3, 6, 7, and 8",
+            "finding": "Several paragraphs use the same advisory imperative structure: 'Make sure,' 'Communicate,' 'Honor,' 'plan,' 'stay,' 'Practice,' 'avoid,' and 'Approach.' The repeated instruction rhythm does not develop with the interpretation.",
+            "evidence_ids": []
+          },
+          {
+            "category": "emotional_temperature",
+            "location": "body paragraphs 2, 3, 7, and 8",
+            "finding": "The language shifts into therapeutic and motivational framing, including 'healthier relationship rhythm,' 'mutual well-being,' 'compassion,' 'deeper alignment,' and 'opportunity for growth.' These claims are more reassuring and prescriptive than the evidence supports.",
+            "evidence_ids": []
+          },
+          {
+            "category": "density",
+            "location": "whole body, especially final sentences of the Saturn and Jupiter sections",
+            "finding": "The unit repeats generic instruction after the point is already stated. 'Use the second pass to integrate the lessons, honor the process, and strengthen the new pattern' and 'Every conflict can become an opportunity for growth and deeper alignment' add polished conclusions rather than a new circumstance, consequence, or chronology development.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.4166666667,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains multiple substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_04b0cd080447805f006a78f09a2348819dac37bf37e00cdf15",
+      "usage": {
+        "inputTokens": 11951,
+        "outputTokens": 1207,
+        "totalTokens": 13158
+      }
+    },
+    {
+      "call": 7,
+      "type": "judge",
+      "fixtureId": "personal_health_summer_observed_life",
+      "variant": "positive",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 2,
+          "factual_traceability": 2,
+          "lived_experience": 4,
+          "interpretive_movement": 4,
+          "owner_voice": 4,
+          "natural_language": 4,
+          "syntax_variety": 4,
+          "emotional_temperature": 4,
+          "density": 4
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.8888888888888888,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "astrology_chronology",
+            "location": "body paragraph 2 and AUG 12 key-date bullet",
+            "finding": "The unit places the August 12 solar eclipse in the natal third house. UNIT_FACTS supplies a solar eclipse on August 12 with a square to natal Uranus, whose natal house is 6, but does not support a third-house eclipse placement.",
+            "evidence_ids": []
+          },
+          {
+            "category": "factual_traceability",
+            "location": "body paragraph 2 and AUG 12 key-date bullet",
+            "finding": "The claims that the solar eclipse falls in the natal third house and therefore directly governs third-house plans, paperwork, and organization are not supported by the scoped eclipse facts. The supplied facts identify only the eclipse's square to natal Uranus.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.8888888889,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains five substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_03cab983a649e38d006a78f0a5d6e4819da2250daf1fea2d56",
+      "usage": {
+        "inputTokens": 7452,
+        "outputTokens": 787,
+        "totalTokens": 8239
+      }
+    },
+    {
+      "call": 8,
+      "type": "judge",
+      "fixtureId": "personal_health_summer_observed_life",
+      "variant": "negative",
+      "targetDimension": "lived_experience",
+      "result": {
+        "scores": {
+          "astrology_chronology": 2,
+          "factual_traceability": 2,
+          "lived_experience": 2,
+          "interpretive_movement": 2,
+          "owner_voice": 2,
+          "natural_language": 4,
+          "syntax_variety": 3,
+          "emotional_temperature": 3,
+          "density": 2
+        },
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The fixture contains at least two substantive prose paragraphs."
+        },
+        "overall": 0.6111111111111112,
+        "verdict": "below_threshold",
+        "findings": [
+          {
+            "category": "astrology_chronology",
+            "location": "body paragraph 2 and AUG 12 key-date bullet",
+            "finding": "The unit places the August 12 solar eclipse in the natal third house, but UNIT_FACTS supplies only a square to natal Uranus and does not support a third-house placement for this eclipse.",
+            "evidence_ids": []
+          },
+          {
+            "category": "factual_traceability",
+            "location": "body paragraph 2 and AUG 12 key-date bullet",
+            "finding": "The claim that the solar eclipse falls in the natal third house is not supported by the scoped lunar-event facts. The supplied event record identifies a square to natal Uranus, whose natal house is 6.",
+            "evidence_ids": []
+          },
+          {
+            "category": "lived_experience",
+            "location": "body paragraph 3",
+            "finding": "This is a category list organized around abstract capacity rather than an observed causal chain. Sleep, lunch, appointments, movement, medication, work, and evening tasks are named, but the paragraph does not show what displaces, delays, or makes another obligation harder.",
+            "evidence_ids": [
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "lived_experience",
+            "location": "body paragraph 4",
+            "finding": "The paragraph identifies opportunity but resolves it through generic wellness instruction—\"honor your limits, protect your energy, and create more room\"—instead of naming the practical consequence or next change inside the schedule.",
+            "evidence_ids": []
+          },
+          {
+            "category": "interpretive_movement",
+            "location": "body paragraphs 3-4",
+            "finding": "The unit's chronology advances into the August 28 adjustment, but the central complication flattens into category listing and generic advice. Jupiter square the sixth-house Moon is not translated into a specific circumstance in which one obligation changes another before the final paragraph supplies examples.",
+            "evidence_ids": []
+          },
+          {
+            "category": "owner_voice",
+            "location": "body paragraphs 3-4",
+            "finding": "The complication movement drifts from the owner references' compact observation-to-consequence pattern into abstract category listing and wellness language. The owner complication passages make the pressure concrete—\"more opportunity than room\" and \"One easy yes can become three hours you did not have\"—while this unit says to protect energy and create room without showing the displaced time or obligation.",
+            "evidence_ids": [
+              "general_summer_complication",
+              "work_summer_complication",
+              "labeled-negative-concrete-noun-list"
+            ]
+          },
+          {
+            "category": "density",
+            "location": "body paragraphs 3-4",
+            "finding": "These paragraphs repeat the established idea that the calendar is fuller without advancing the lived consequence as efficiently as the final paragraph does. The category list and generic advice add explanation after the surrounding chronology has already established the pressure.",
+            "evidence_ids": []
+          }
+        ],
+        "modelReported": {
+          "overall": 0.6111111111111112,
+          "verdict": "below_threshold",
+          "applicability": {
+            "interpretive_movement": "applicable",
+            "reason": "The unit contains five substantive prose paragraphs."
+          }
+        }
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_07910424810bc2c8006a78f0af0160819c980430c07c27a489",
+      "usage": {
+        "inputTokens": 7408,
+        "outputTokens": 1109,
+        "totalTokens": 8517
+      }
+    },
+    {
+      "call": 9,
+      "type": "critique",
+      "fixtureId": "work_money_winter_single_aphorism_finding",
+      "variant": "single_aphorism_negative",
+      "result": {
+        "result": "defects",
+        "applicability": {
+          "interpretive_movement": "applicable",
+          "reason": "The unit contains multiple substantive prose paragraphs."
+        },
+        "defects": [
+          {
+            "id": "defect-1",
+            "category": "owner_voice_drift",
+            "location": "body paragraph 8",
+            "sentence_index": 1,
+            "scope_start": 1,
+            "scope_end": 1,
+            "quote": "You need a professional life that leaves enough room for the person who has to live it.",
+            "evidence": "This closing extracts a generalized, prescriptive lesson after the preceding paragraphs have already shown the specific constraint: a home, caregiving, move, repair, health-capacity, or expense change altering the practical terms of work. The supplied close passages remain inside the lived conditions carrying the relationship or arrangement rather than resolving them into an aphoristic instruction. This is materially different in authority and movement, not merely phrasing preference: the sentence shifts from observation to generic professional-life advice.",
+            "evidence_ids": [
+              "love_winter_close",
+              "personal_spring_close"
+            ],
+            "instruction": "Remove the generalized lesson or revise this sentence only into a reader-facing closing observation anchored in the already established home-and-work constraint; do not add a new manifestation or extend the unit."
+          }
+        ]
+      },
+      "model": "gpt-5.6-terra",
+      "responseId": "resp_06be8e0aea6c29a5006a78f0bb70f481a383405532bc6a68d5",
+      "usage": {
+        "inputTokens": 9736,
+        "outputTokens": 647,
+        "totalTokens": 10383
+      }
+    }
+  ],
+  "failures": [
+    "work_money_winter_material_voice_drift.positive.owner_voice=2 expected >=3",
+    "work_money_winter_single_aphorism_finding finding location 'body paragraph 8' does not name paragraph 7"
+  ]
+}

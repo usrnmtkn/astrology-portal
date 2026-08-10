@@ -1,0 +1,604 @@
+{
+  "version": "report-judge-complete-unit-regressions-v3-draft",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "proposedCalibrationCallBudget": {
+    "total": 9,
+    "judgeCalls": 8,
+    "critiqueCalls": 1,
+    "description": "One judge call for each positive and negative in four score-level pairs, plus one critique call for the single-sentence finding-level fixture. No retries without new authorization."
+  },
+  "purpose": "Calibration-only complete-unit pairs for proposed report judge v3. Positive units are extracted verbatim from owner-authored reference reports. Negative units are unapproved mechanical degradations and must never become positive voice evidence or reader-facing copy.",
+  "factsSourcePath": "scripts/fixtures/marie-report-frozen-facts.json",
+  "completeUnitParagraphIndexing": {
+    "convention": "zero_based_supplied_indices",
+    "marker": "[PARAGRAPH_INDEX={index}]",
+    "instruction": "Locations must copy the supplied PARAGRAPH_INDEX value. The model never counts paragraphs."
+  },
+  "ownerFinalityRuling": {
+    "date": "2026-08-09",
+    "verbatim": "WORK & MONEY: final / owner-authored-final reference\nLOVE & CONNECTION: final / owner-authored-final reference\nPERSONAL & HEALTH: final / owner-authored-final reference",
+    "references": {
+      "work_money": { "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "d436634a25a122dc765a5e4167cdf2b99b6e0d4480e1000ba839be91ced24896" },
+      "love_connection": { "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "fd376233984157814190985b7dbe449e014ac8a47e6a140fe11ce169e3e8b534" },
+      "personal_health": { "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "e59f752512bd8f1ca01e8786e26d687344319b4eaac4edd5d479262e85bfa745" }
+    }
+  },
+  "functionVocabulary": [
+    "opening",
+    "development",
+    "complication",
+    "turn",
+    "close"
+  ],
+  "observedLifeContracts": [
+    "Concrete nouns do not establish lived experience unless the reader can see what changed because of what.",
+    "Abstract consequence language does not replace an observable displacement, delay, addition, cancellation, division, rescheduling, or difficulty.",
+    "Writer-facing explanation and manufactured aphoristic closers are voice drift when owner evidence lands inside the reader's life.",
+    "Multi-pass and multi-paragraph movement must advance the interpretation rather than reset to transit keywords and generic advice."
+  ],
+  "ownerPassages": [
+    {
+      "id": "general_autumn_opening",
+      "sourceUnitKey": "general_autumn",
+      "sourcePath": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+      "startMarker": "## AUTUMN 2026:",
+      "endMarker": "## 2026 IN REVIEW",
+      "paragraphIndex": 1,
+      "function": "opening",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "7154a4a247c0dc865d7f3b157b24528c13143b57f6b7828c722360f127c8a704"
+    },
+    {
+      "id": "general_summer_complication",
+      "sourceUnitKey": "general_summer",
+      "sourcePath": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+      "startMarker": "## SUMMER 2026:",
+      "endMarker": "## AUTUMN 2026:",
+      "paragraphIndex": 7,
+      "function": "complication",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "037b808515afb66795dd2de5b4a4e2fc4a65d61a7e7fdc969b598dd4a68eca15"
+    },
+    {
+      "id": "work_spring_development",
+      "sourceUnitKey": "work_spring",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 3,
+      "function": "development",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "ae43f4caf3bd1b815499a66a492db4302b9ad6d40fc2ebe152f4c63d952921f1"
+    },
+    {
+      "id": "work_summer_complication",
+      "sourceUnitKey": "work_summer",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "startMarker": "## SUMMER 2026:",
+      "endMarker": "## AUTUMN 2026:",
+      "paragraphIndex": 6,
+      "function": "complication",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "2354d99335dcde8758c8add2c823c1d4bd31362078922580e809ee67863f06e5"
+    },
+    {
+      "id": "love_spring_turn",
+      "sourceUnitKey": "love_spring",
+      "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 5,
+      "function": "turn",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "e8565333002340cfd4b87d4c19bccfad2a2a88a5eb7cf24021d753987cf17587"
+    },
+    {
+      "id": "love_winter_close",
+      "sourceUnitKey": "love_winter",
+      "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md",
+      "startMarker": "## WINTER 2026",
+      "endMarker": "## SPRING 2026:",
+      "paragraphIndex": 7,
+      "function": "close",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "103cb298557d43de07064c72bad9a5d14452276e3b32960b5249ce8175a0829b"
+    },
+    {
+      "id": "personal_spring_development",
+      "sourceUnitKey": "personal_spring",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 4,
+      "function": "development",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "b7cbbdab47d934d9f74b455c2fcee8939bf2049f9bd4844a6c4b21c95b7d1269"
+    },
+    {
+      "id": "personal_spring_close",
+      "sourceUnitKey": "personal_spring",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "startMarker": "## SPRING 2026:",
+      "endMarker": "## SUMMER 2026:",
+      "paragraphIndex": 9,
+      "function": "close",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "3d3f7cf3b008002db202d7c331a73deec726d14a984b70cce888d0c477d35bf3"
+    },
+    {
+      "id": "personal_autumn_complication",
+      "sourceUnitKey": "personal_autumn",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "startMarker": "## AUTUMN 2026:",
+      "endMarker": "## Health and capacity",
+      "paragraphIndex": 3,
+      "function": "complication",
+      "sourceType": "owner_authored_final",
+      "sourceSha256": "f74754b2f3430bca3e34f68356741266766c9c2441bc4130353ec7b54d29e976"
+    }
+  ],
+  "pairs": [
+    {
+      "id": "general_spring_lived_abstraction",
+      "dimension": "lived_experience",
+      "reportDomain": "general",
+      "reportHorizon": "12_months",
+      "unitId": "spring",
+      "sourcePath": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## SPRING 2026: The old role may stop fitting",
+      "endMarker": "## SUMMER 2026:",
+      "sourceSha256": "315f26db25172c2f4d044d705ec884c6b062613b8c45e7faf3c6c74a37e2d7db",
+      "unitWindow": {
+        "startsOn": "2026-03-20",
+        "endsOn": "2026-06-21"
+      },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "uranus-square-sun", "transitPlanet": "Uranus", "natalPoint": "Sun", "natalHouse": 9, "aspect": "square", "passCount": 1, "passDates": ["2026-04-14"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "jupiter-square-pluto", "transitPlanet": "Jupiter", "natalPoint": "Pluto", "natalHouse": 5, "aspect": "square", "passCount": 1, "passDates": ["2026-05-01"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "jupiter-trine-uranus", "transitPlanet": "Jupiter", "natalPoint": "Uranus", "natalHouse": 6, "aspect": "trine", "passCount": 1, "passDates": ["2026-05-14"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "saturn-sextile-ascendant", "transitPlanet": "Saturn", "natalPoint": "Ascendant", "natalHouse": 1, "aspect": "sextile", "passCount": 3, "passDates": ["2026-05-19", "2026-10-06", "2027-02-10"], "motions": ["direct", "retrograde", "direct"] }
+        ],
+        "claimSupport": [
+          { "claim": "Uranus squares the natal Sun on Apr 14 in a single exact pass.", "supportingFactIds": ["uranus-square-sun"] },
+          { "claim": "Jupiter squares natal Pluto on May 1.", "supportingFactIds": ["jupiter-square-pluto"] },
+          { "claim": "Jupiter trines natal Uranus on May 14.", "supportingFactIds": ["jupiter-trine-uranus"] },
+          { "claim": "May 19 is Saturn's first of three sextiles to the natal Ascendant; the later October review is pass 2 on Oct 6 while Saturn is retrograde.", "supportingFactIds": ["saturn-sextile-ascendant"] }
+        ]
+      },
+      "attributionParagraphIndex": 14,
+      "keyDatesParagraphIndex": 16,
+      "movementApplicable": true,
+      "expected": {
+        "positiveMinimum": {
+          "lived_experience": 3,
+          "owner_voice": 3
+        },
+        "negativeMaximum": {
+          "lived_experience": 2
+        },
+        "minimumPairDelta": {
+          "lived_experience": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace concrete obligations, decisions, and consequences with wellness and capacity abstractions. Leave heading, date range, astrology, attribution, key dates, paragraph count, and all other prose byte-identical.",
+        "replacements": [
+          {
+            "paragraphIndex": 2,
+            "sourceSha256": "fab2f81e66891cef0b5fe316a37bf9513157952cd315e721be315b7742b211f7",
+            "replacement": "The change may be something you choose, or the old setup may simply stop being workable. Your capacity, alignment, needs, and evolving priorities may ask you to honor what fits now instead of what fit before."
+          },
+          {
+            "paragraphIndex": 3,
+            "sourceSha256": "0f1973f9e6a13ca08090ed04065ba8a3a82274d656863ec770f898068c2fc152",
+            "replacement": "You may need to honor your capacity, protect your energy, create more space, or choose terms that support your well-being. You may step back from what no longer feels sustainable. You may change how you relate to the opportunity or release what requires you to remain unchanged."
+          },
+          {
+            "paragraphIndex": 6,
+            "sourceSha256": "5976ed2dbbee04f214512fcb2e031dabd45e4beb0cb3e53ae2d5e30cd6b76346",
+            "replacement": "This can show up in relationships too. A connection may need to reflect your current capacity and the person you are becoming. The relationship may ask for more alignment, more spaciousness, or a healthier balance between your needs and the needs of others. Different terms may help everyone honor the changes already taking place."
+          },
+          {
+            "paragraphIndex": 10,
+            "sourceSha256": "dc2305f8b66712de4041ac5347bb415b9a49d5fb7835788f45fc38988354eb3d",
+            "replacement": "This matters if you are looking for work too. An opportunity may appear aligned while the conditions around it ask you to compromise your capacity or well-being. The process can clarify what supports your growth and what you are no longer available to carry."
+          },
+          {
+            "paragraphIndex": 11,
+            "sourceSha256": "f4a3babbf6e15b7445f5c10f7688c195bc45a65698c1084512835b670ca39662",
+            "replacement": "The same logic applies outside work. A connection or collaboration may look supportive until the energetic exchange reveals that the balance is no longer sustainable."
+          }
+        ]
+      },
+      "ownerComparisonSet": [
+        "work_spring_development",
+        "love_spring_turn",
+        "personal_spring_development"
+      ],
+      "targetFunctions": [
+        "development",
+        "turn"
+      ],
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "id": "work_money_summer_material_voice_drift",
+      "dimension": "owner_voice",
+      "reportDomain": "work_money",
+      "reportHorizon": "12_months",
+      "unitId": "summer",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## SUMMER 2026:",
+      "endMarker": "## AUTUMN 2026:",
+      "sourceSha256": "3d9dbccb9bc4f6b5792da6e0f01393be1abfde15e18c0bcf3073d0f983246f5e",
+      "unitWindow": {
+        "startsOn": "2026-06-21",
+        "endsOn": "2026-09-22"
+      },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "jupiter-conjunction-jupiter", "transitPlanet": "Jupiter", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "conjunction", "passCount": 1, "passDates": ["2026-07-04"], "motions": ["direct"], "isReturn": true },
+          { "factType": "lunar_event", "factId": "solar-eclipse-2026-08-12", "kind": "solar_eclipse", "subtype": "total", "occursOn": "2026-08-12", "natalHouse": 3, "contact": { "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square" } },
+          { "factType": "transit_arc", "factId": "jupiter-square-moon", "transitPlanet": "Jupiter", "natalPoint": "Moon", "natalHouse": 6, "aspect": "square", "passCount": 1, "passDates": ["2026-08-27"], "motions": ["direct"] },
+          { "factType": "lunar_event", "factId": "lunar-eclipse-2026-08-28", "kind": "lunar_eclipse", "subtype": "partial", "occursOn": "2026-08-28", "natalHouse": 10, "contact": { "natalPoint": "Mercury", "natalHouse": 10, "aspect": "conjunction" } },
+          { "factType": "transit_arc", "factId": "jupiter-opposition-midheaven", "transitPlanet": "Jupiter", "natalPoint": "Midheaven", "natalHouse": 9, "aspect": "opposition", "passCount": 1, "passDates": ["2026-09-15"], "motions": ["direct"] }
+        ],
+        "claimSupport": [
+          { "claim": "Jupiter returns to natal Jupiter in the natal 3rd house on Jul 4.", "supportingFactIds": ["jupiter-conjunction-jupiter", "natal-position-jupiter"] },
+          { "claim": "The Aug 12 total solar eclipse falls in the natal 3rd house.", "supportingFactIds": ["solar-eclipse-2026-08-12"] },
+          { "claim": "Jupiter squares the natal 6th-house Moon on Aug 27.", "supportingFactIds": ["jupiter-square-moon", "natal-position-moon"] },
+          { "claim": "The Aug 28 partial lunar eclipse conjoins natal Mercury at the top of the chart.", "supportingFactIds": ["lunar-eclipse-2026-08-28", "natal-position-mercury"] },
+          { "claim": "Jupiter opposes the natal Midheaven on Sep 15.", "supportingFactIds": ["jupiter-opposition-midheaven", "natal-angle-midheaven"] }
+        ]
+      },
+      "attributionParagraphIndex": 10,
+      "keyDatesParagraphIndex": 12,
+      "movementApplicable": true,
+      "expected": {
+        "positiveMinimum": {
+          "owner_voice": 3
+        },
+        "negativeMaximum": {
+          "owner_voice": 2
+        },
+        "minimumPairDelta": {
+          "owner_voice": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace only four named complication and closing paragraphs with generic coaching and capacity abstractions. Leave heading, dates, attribution, structure, calculated facts, and every unnamed paragraph byte-identical.",
+        "replacements": [
+          {
+            "paragraphIndex": 6,
+            "sourceSha256": "2354d99335dcde8758c8add2c823c1d4bd31362078922580e809ee67863f06e5",
+            "replacement": "The complication arrives between those eclipses. Jupiter squares your Moon on August 27, and expanding opportunities may ask you to honor your capacity. Messages, plans, and responsibilities can accumulate quickly, making balance and sustainable pacing more important."
+          },
+          {
+            "paragraphIndex": 7,
+            "sourceSha256": "62057f66898d62118915145cbd10f68eb4412408002f78de5975e187aecd01da",
+            "replacement": "Because your Moon sits in the sixth house of work, health, and daily routines, the increased activity may affect your overall well-being and the balance of the week. You may need more support, more intentional routines, or a more sustainable relationship with productivity as professional demands grow."
+          },
+          {
+            "paragraphIndex": 8,
+            "sourceSha256": "c6da70afce6381792df51f6f3e121676ddf1ca5bb6a0278dfe40a97e7e1a4a57",
+            "replacement": "This is where professional enthusiasm can benefit from greater awareness and discernment. A new project or useful meeting may still require meaningful time and energy. Let your opportunities grow in alignment with your capacity."
+          },
+          {
+            "paragraphIndex": 9,
+            "sourceSha256": "676f53e0b364c546a55c5269df5b5120b18b03f409896bf346fb569fc70daa33",
+            "replacement": "If professional growth repeatedly asks you to compromise your energy or well-being, the career plan may need more balance, support, and sustainable structure."
+          }
+        ]
+      },
+      "ownerComparisonSet": [
+        "personal_spring_development",
+        "love_winter_close",
+        "personal_autumn_complication"
+      ],
+      "targetFunctions": [
+        "development",
+        "complication",
+        "close"
+      ],
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "love_connection_autumn_flattened_movement",
+      "dimension": "interpretive_movement",
+      "reportDomain": "love_connection",
+      "reportHorizon": "12_months",
+      "unitId": "autumn",
+      "sourcePath": "artifacts/marie-satori-love-connection-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## AUTUMN 2026: Desire and logistics meet each other",
+      "endMarker": "## Sex and intimacy",
+      "sourceSha256": "971dfcbd9ac80513dd7a6c2be44f6a5763e13660354c39df78560a27d4270024",
+      "unitWindow": {
+        "startsOn": "2026-09-22",
+        "endsOn": "2026-12-21"
+      },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "saturn-sextile-ascendant", "transitPlanet": "Saturn", "natalPoint": "Ascendant", "natalHouse": 1, "aspect": "sextile", "passCount": 3, "passDates": ["2026-05-19", "2026-10-06", "2027-02-10"], "motions": ["direct", "retrograde", "direct"] },
+          { "factType": "transit_arc", "factId": "jupiter-opposition-mars", "transitPlanet": "Jupiter", "natalPoint": "Mars", "natalHouse": 9, "aspect": "opposition", "passCount": 2, "passDates": ["2026-10-20", "2027-02-05"], "motions": ["direct", "retrograde"] }
+        ],
+        "claimSupport": [
+          { "claim": "Oct 6 is Saturn's retrograde second sextile to the natal Ascendant, returning to the May first pass and followed by the Feb 10 final pass.", "supportingFactIds": ["saturn-sextile-ascendant"] },
+          { "claim": "Oct 20 is Jupiter's first of two oppositions to natal Mars; the second pass returns Feb 5 while Jupiter is retrograde.", "supportingFactIds": ["jupiter-opposition-mars"] }
+        ]
+      },
+      "attributionParagraphIndex": 10,
+      "keyDatesParagraphIndex": 12,
+      "movementApplicable": true,
+      "expected": {
+        "positiveMinimum": {
+          "interpretive_movement": 3
+        },
+        "negativeMaximum": {
+          "interpretive_movement": 2
+        },
+        "minimumPairDelta": {
+          "interpretive_movement": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace the development paragraphs with transit-to-keyword-to-advice summaries while preserving the same paragraph count, chronology, named facts, attribution, key dates, and approximate unit length.",
+        "replacements": [
+          {
+            "paragraphIndex": 1,
+            "sourceSha256": "0c5d9cb12e7021146534f107c81de43b77d29ace7071cdb12ec96768dc24e165",
+            "replacement": "Saturn makes its second sextile to your Ascendant on October 6. This transit brings structure, maturity, boundaries, and responsibility to relationships and daily arrangements. It asks you to build a more sustainable foundation."
+          },
+          {
+            "paragraphIndex": 2,
+            "sourceSha256": "7192ce5b72f779ccce36f67304b434be2f1a23977a68ece1c3c591addebd5f80",
+            "replacement": "This is a time to review your boundaries and create a healthier relationship rhythm. Make sure the schedule supports every area of life. Communicate clearly, divide responsibilities fairly, and remain committed to balance when circumstances become demanding or another person has different expectations."
+          },
+          {
+            "paragraphIndex": 3,
+            "sourceSha256": "a7239eeaac0388ff59cfa78b86c843da82986749045b1fc3349231c976f0d0d8",
+            "replacement": "You may need to balance connection with sleep, work, recovery, travel, and other responsibilities. Honor each person's capacity, plan ahead, and stay flexible. Relationships become more sustainable when both people respect their needs, communicate their limits, and make practical adjustments that support mutual well-being."
+          },
+          {
+            "paragraphIndex": 4,
+            "sourceSha256": "6bbc61e74299d2e1eb38fe7bb466edcdf697e40c90a1c535aad08f386691b29a",
+            "replacement": "Use the second pass to integrate the lessons, honor the process, and strengthen the new pattern."
+          },
+          {
+            "paragraphIndex": 5,
+            "sourceSha256": "1a0b5e9286e6f57a3ce56560553021f68d7ede7e0090f9dc1e9ff6d543a9193e",
+            "replacement": "Jupiter opposes your natal Mars on October 20. This transit expands desire, action, conflict, and the need for greater honesty about what you want."
+          },
+          {
+            "paragraphIndex": 6,
+            "sourceSha256": "1512ae53d2901be1619aa2aaf75a9d4603b105e0e735192d00366867bd4f5a3a",
+            "replacement": "You may experience differences involving sex, timing, money, travel, work, holidays, initiation, payment, or compromise. Practice direct communication, make space for both perspectives, and avoid letting conflict become larger than the issue itself."
+          },
+          {
+            "paragraphIndex": 7,
+            "sourceSha256": "8112cccac52e2c48a8ee8e63efc16e04290bc38393eebb72c8f3e5b59a5db83c",
+            "replacement": "Stay grounded and communicate with intention. Do not assume one disagreement defines the entire relationship. Approach differences with patience, honesty, compassion, and mutual respect so the connection can grow through a clearer understanding of each person's needs and values."
+          },
+          {
+            "paragraphIndex": 8,
+            "sourceSha256": "4bb101c7e98fc8adf6db9de265b226cad3780192bdbde66fedda22b4305d02df",
+            "replacement": "Every conflict can become an opportunity for growth and deeper alignment."
+          },
+          {
+            "paragraphIndex": 9,
+            "sourceSha256": "4165605ae0a1a8e5e1627273195ecdb8602cc1cb6f0983a8682210fbf44e68f7",
+            "replacement": "Jupiter opposes Mars again in February. Use October to identify the issue, learn from the disagreement, and prepare for the next stage with greater clarity, confidence, and awareness."
+          }
+        ]
+      },
+      "ownerComparisonSet": [
+        "general_summer_complication",
+        "work_summer_complication",
+        "personal_autumn_complication"
+      ],
+      "targetFunctions": [
+        "development",
+        "complication",
+        "turn"
+      ],
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "personal_health_summer_observed_life",
+      "dimension": "lived_experience",
+      "reportDomain": "personal_health",
+      "reportHorizon": "12_months",
+      "unitId": "summer",
+      "sourcePath": "artifacts/marie-satori-personal-health-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## SUMMER 2026: The week fills faster than you expect",
+      "endMarker": "## AUTUMN 2026:",
+      "unitWindow": {
+        "startsOn": "2026-06-21",
+        "endsOn": "2026-09-22"
+      },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "jupiter-conjunction-jupiter", "transitPlanet": "Jupiter", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "conjunction", "passCount": 1, "passDates": ["2026-07-04"], "motions": ["direct"], "isReturn": true },
+          { "factType": "lunar_event", "factId": "solar-eclipse-2026-08-12", "kind": "solar_eclipse", "subtype": "total", "occursOn": "2026-08-12", "natalHouse": 3, "contact": { "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square" } },
+          { "factType": "transit_arc", "factId": "jupiter-square-moon", "transitPlanet": "Jupiter", "natalPoint": "Moon", "natalHouse": 6, "aspect": "square", "passCount": 1, "passDates": ["2026-08-27"], "motions": ["direct"] },
+          { "factType": "lunar_event", "factId": "lunar-eclipse-2026-08-28", "kind": "lunar_eclipse", "subtype": "partial", "occursOn": "2026-08-28", "natalHouse": 10, "contact": { "natalPoint": "Mercury", "natalHouse": 10, "aspect": "conjunction" } }
+        ],
+        "claimSupport": [
+          { "claim": "Jupiter returns to natal Jupiter in the natal 3rd house on Jul 4.", "supportingFactIds": ["jupiter-conjunction-jupiter", "natal-position-jupiter"] },
+          { "claim": "The Aug 12 total solar eclipse falls in the natal 3rd house.", "supportingFactIds": ["solar-eclipse-2026-08-12"] },
+          { "claim": "Jupiter squares the natal 6th-house Moon on Aug 27.", "supportingFactIds": ["jupiter-square-moon", "natal-position-moon"] },
+          { "claim": "The Aug 28 partial lunar eclipse conjoins natal Mercury.", "supportingFactIds": ["lunar-eclipse-2026-08-28", "natal-position-mercury"] }
+        ]
+      },
+      "attributionParagraphIndex": 8,
+      "keyDatesParagraphIndex": 8,
+      "attributionMode": "key_date_inline",
+      "movementApplicable": true,
+      "substantiveParagraphIndices": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "ownerComparisonSet": [
+        "general_summer_complication",
+        "work_summer_complication",
+        "love_spring_turn"
+      ],
+      "targetFunctions": [
+        "development",
+        "complication",
+        "turn"
+      ],
+      "expected": {
+        "positiveMinimum": {
+          "lived_experience": 3,
+          "owner_voice": 3
+        },
+        "negativeMaximum": {
+          "lived_experience": 2
+        },
+        "minimumPairDelta": {
+          "lived_experience": 1
+        }
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace two lived cause-and-consequence paragraphs with category lists and wellness abstractions while preserving the unit's chronology, named facts, heading, date range, attribution-bearing key dates, structure, and every unnamed paragraph byte-identical.",
+        "replacements": [
+          {
+            "paragraphIndex": 4,
+            "sourceSha256": "a8bc9b74500fa177bc1f87c046e62d72f6de40e8db60b26a608274ffdec9698c",
+            "replacement": "Sleep, lunch, appointments, movement, medication, work, and evening tasks may all affect your capacity during this period. These daily-life categories can require more planning, balance, support, and sustainable attention as the calendar becomes fuller."
+          },
+          {
+            "paragraphIndex": 5,
+            "sourceSha256": "d5200fac387271714c5f9684a52a7981c4ddfdba1154e06edba30699049c23d3",
+            "replacement": "You may genuinely want the class, trip, project, invitation, and other opportunities that appear. Jupiter can expand possibility and enthusiasm, while the amount of activity may ask you to honor your limits, protect your energy, and create more room for well-being."
+          }
+        ]
+      },
+      "sourceSha256": "6702ec6f2191e5654462c3833a5fd23e33bfdf24c03bd4e299530cfc8064fcbc"
+    }
+  ],
+  "findingLevelFixtures": [
+    {
+      "id": "work_money_winter_single_aphorism_finding",
+      "kind": "finding_level",
+      "dimension": "owner_voice",
+      "reportDomain": "work_money",
+      "reportHorizon": "12_months",
+      "unitId": "winter-current",
+      "sourcePath": "artifacts/marie-satori-work-money-2026-owner-v1.md",
+      "sourceType": "owner_authored_final",
+      "startMarker": "## WINTER 2026",
+      "endMarker": "## SPRING 2026:",
+      "sourceSha256": "fcfba4d014442fd843751898ee2507c976f5a8f4c1e486138862a6abedda38e6",
+      "unitWindow": {
+        "startsOn": "2026-02-18",
+        "endsOn": "2026-03-20"
+      },
+      "factAudit": {
+        "requiredFacts": [
+          { "factType": "transit_arc", "factId": "saturn-trine-jupiter", "transitPlanet": "Saturn", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "trine", "passCount": 1, "passDates": ["2026-02-22"], "motions": ["direct"] },
+          { "factType": "transit_arc", "factId": "neptune-trine-jupiter", "transitPlanet": "Neptune", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "trine", "passCount": 1, "passDates": ["2026-02-26"], "motions": ["direct"] },
+          { "factType": "lunar_event", "factId": "lunar-eclipse-2026-03-03", "kind": "lunar_eclipse", "subtype": "total", "occursOn": "2026-03-03", "natalHouse": 4, "contact": { "natalPoint": "Saturn", "natalHouse": 4, "aspect": "conjunction" } }
+        ],
+        "claimSupport": [
+          { "claim": "Saturn trines natal Jupiter on Feb 22 and Neptune trines natal Jupiter on Feb 26, four days later.", "supportingFactIds": ["saturn-trine-jupiter", "neptune-trine-jupiter"] },
+          { "claim": "The Mar 3 eclipse is a total lunar eclipse conjunct natal Saturn in the natal 4th house.", "supportingFactIds": ["lunar-eclipse-2026-03-03", "natal-position-saturn"] }
+        ]
+      },
+      "attributionParagraphIndex": 8,
+      "keyDatesParagraphIndex": 10,
+      "attributionMode": "standalone",
+      "movementApplicable": true,
+      "substantiveParagraphIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "ownerComparisonSet": [
+        "love_winter_close",
+        "personal_spring_close"
+      ],
+      "targetFunctions": [
+        "close"
+      ],
+      "expected": {
+        "requiredFindingCategory": "owner_voice_drift",
+        "requiredParagraphIndex": 7,
+        "wholeUnitScoreRequirement": null
+      },
+      "degradation": {
+        "review_status": "needs_review",
+        "ownerApproved": false,
+        "promotionAuthorized": false,
+        "method": "Replace only the final interpretive sentence before attribution with a polished wellness aphorism of comparable length. This fixture tests bounded finding sensitivity and imposes no whole-unit score requirement.",
+        "replacements": [
+          {
+            "paragraphIndex": 7,
+            "sourceSha256": "1fabcbeb556b505954c058d14703f7427fb0de8472590378734c0323213583f8",
+            "replacement": "You need a professional life that leaves enough room for the person who has to live it."
+          }
+        ]
+      }
+    }
+  ]
+}
