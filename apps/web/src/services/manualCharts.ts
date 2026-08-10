@@ -1,4 +1,5 @@
 import { getSupabaseClient, getVerifiedAuthUser } from "./auth";
+import { normalizeBirthTime } from "./chartTime";
 import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from "./personReferences";
 import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "./relationshipContext";
 import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
@@ -210,6 +211,7 @@ function normalizeLocalManualChart(chart: LocalManualChartRecord): ManualChart {
 
 function inputToRow(userId: string, input: ManualChartInput, options: { omitPronounsColumn?: boolean; storageRelationship?: boolean } = {}) {
   const pronouns = normalizePronounChoice(input.pronouns);
+  const birthTime = input.birthTimeUnknown ? null : normalizeBirthTime(input.birthTime);
   const row = {
     owner_user_id: userId,
     display_name: input.displayName,
@@ -221,7 +223,7 @@ function inputToRow(userId: string, input: ManualChartInput, options: { omitPron
         ? relationshipContextStorageKey(input.relationshipType)
         : normalizeRelationshipContextKey(input.relationshipType),
     birth_date: input.birthDate,
-    birth_time: input.birthTimeUnknown ? null : input.birthTime,
+    birth_time: birthTime,
     birth_time_unknown: input.birthTimeUnknown,
     birth_place: input.birthPlace,
     birth_latitude: input.birthLocation.latitude,

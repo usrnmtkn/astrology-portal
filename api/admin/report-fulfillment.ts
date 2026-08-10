@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { waitUntil } from "@vercel/functions";
 import { reportBillingMode, reportCallEstimate, reportSku } from "../_lib/report-fulfillment-config.js";
 import { jsonRequestBody, reportUrl, requireReportAdmin, sendJson } from "../_lib/report-http.js";
 import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
@@ -124,11 +125,23 @@ async function action(body: {
     return { ok: true };
   }
   if (body.action === "authorize_generation") {
-    return authorizeReportGeneration(admin, {
+    const authorized = await authorizeReportGeneration(admin, {
       reportId: report.id,
       callBudget: Number(body.callBudget),
       now: new Date().toISOString()
     });
+    const runnerSecret = process.env.REPORT_FULFILLMENT_SECRET ?? process.env.CRON_SECRET;
+    if (!runnerSecret) return { ...authorized, workerTriggered: false, workerTriggerReason: "REPORT_FULFILLMENT_SECRET is not configured." };
+    const workerUrl = reportUrl(`/api/cron/run-report-fulfillment?jobId=${encodeURIComponent(authorized.jobId)}`, req);
+    waitUntil(fetch(workerUrl, {
+      method: "POST",
+      headers: { authorization: `Bearer ${runnerSecret}` }
+    }).then(async (response) => {
+      if (!response.ok) throw new Error(`Immediate report worker returned ${response.status}: ${await response.text()}`);
+    }).catch((error) => {
+      console.error("Immediate report worker trigger failed; scheduled pickup remains active.", error);
+    }));
+    return { ...authorized, workerTriggered: true };
   }
   if (body.action === "revoke_comp") {
     const entitlement = await admin.selectOne<{ source: string }>("report_entitlements", new URLSearchParams({ id: `eq.${report.entitlement_id}`, select: "source" }));

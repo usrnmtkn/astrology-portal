@@ -78,7 +78,7 @@ import {
   isLunarNodePoint,
   lunarNodeTransitRangeLabel
 } from "./services/astrologyDisplay";
-import { twentyFourHourTimeToDisplay } from "./services/chartTime";
+import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
 import {
   formatSignupBirthDate,
   formatSignupBirthTime,
@@ -149,6 +149,7 @@ import {
   getAuthAccount,
   isAuthConfigured,
   loadPersistedProfile,
+  normalizePersistedProfileBirthTimes,
   onAuthAccountChange,
   signOutAuth,
   upsertPersistedProfile
@@ -2960,7 +2961,8 @@ function getInitialUserProfile(): UserProfile | null {
 
     const parsedProfile = JSON.parse(savedProfile) as unknown;
 
-    return isUserProfile(parsedProfile) ? parsedProfile : null;
+    const normalizedProfile = normalizePersistedProfileBirthTimes(parsedProfile);
+    return isUserProfile(normalizedProfile) ? normalizedProfile : null;
   } catch {
     return null;
   }
@@ -3007,7 +3009,7 @@ function createUserProfile(form: SignupForm, provider: SignupProvider, account?:
     name: chartNameFromProfile(name),
     type: "Birth chart",
     birthDate: form.birthDate || "Birth date needed",
-    birthTime: form.unknownBirthTime ? "Time unknown" : form.birthTime || "Birth time needed",
+    birthTime: form.unknownBirthTime ? "Time unknown" : form.birthTime ? normalizeBirthTime(form.birthTime) : "Birth time needed",
     birthCity: form.birthCity.trim() || "Birth city needed",
     birthLocation: form.birthLocation
   };
@@ -12634,7 +12636,7 @@ export function App() {
       });
       const nextBirthTime = transitForm.unknownBirthTime
         ? "Time unknown"
-        : formattedBirthTime || "Birth time needed";
+        : formattedBirthTime ? normalizeBirthTime(formattedBirthTime) : "Birth time needed";
       const nextName = transitForm.name.trim();
       let birthCity = transitForm.birthPlace.trim();
       let birthLocation = birthCity && transitForm.birthLocation?.label.trim().toLocaleLowerCase() === birthCity.toLocaleLowerCase()
@@ -13520,7 +13522,9 @@ export function App() {
                         ...baseChart,
                         name: baseChart.name || chartNameFromProfile(userProfile.name),
                         birthDate: birthDate || "Birth date needed",
-                        birthTime: birthTime || "Birth time needed",
+                        birthTime: birthTime === "Time unknown"
+                          ? birthTime
+                          : birthTime ? normalizeBirthTime(birthTime) : "Birth time needed",
                         birthCity: birthCity || "Birth city needed",
                         birthLocation: baseChart.birthLocation ?? null
                       };
