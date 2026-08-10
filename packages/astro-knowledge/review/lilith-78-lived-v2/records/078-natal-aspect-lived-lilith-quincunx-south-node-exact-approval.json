@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-078",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/south-node",
+  "workbookKey": "lilith|quincunx|south-node",
+  "payloadSha256": "8dfdf79ad0d8c522ac934c870308e2fd402ebce3b667bbc9a49a438e42d3bdcf",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to smooth over the issue, handle it yourself, or leave before anyone can object, then wonder why the same irritation returns. The habit still solves enough of the problem to feel useful and fails enough to keep the real want out. This often happens because the strategy was built for an earlier situation with fewer choices. Replace one automatic response with a direct request.",
+    "astroHint": "Lilith quincunx the South Node can make an old coping strategy keep working while continuing to cause resentment.",
+    "sourceMechanism": "LIMITED LEGACY SUPPORT: no fallback-hook/aspect-pair/lilith reader row exists for this counterpart. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. South Node primitive: Familiar pattern, default strategy, inherited competence, and the comfort zone that can become repetitive when unconscious. Pair frame: The banished appetite turns out to be the hunger the north node meant. Reclamation aimed at revenge serves the past; the respectable habit revealed as release-side material. The want stops being a secret and starts being a plan. Aspect operation: Quincunx puts mismatched functions together and requires repeated adjustment. Traditional nature: awkward, requires adjustment. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/points/south-node.json; packages/astro-knowledge/data/pairs/lilith-nodes.json; packages/astro-knowledge/data/primitives/aspects.json."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 79,
+    "approvedBodyCell": "E79",
+    "approvedAstroHintCell": "F79",
+    "ownerStatusCell": "H79"
+  },
+  "additionalBilledCalls": 0
+}

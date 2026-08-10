@@ -190,6 +190,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
         headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
         parts: [exactLived.body ?? ""],
         body: exactLived.body ?? "",
+        astroHint: exactLived.astroHint,
         templateKey: exactLived.contentKey
       };
     }
@@ -2295,7 +2296,7 @@ function createKnowledgeMatrixV8Resolver(manifest, transitFile, houseFile, build
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-10b";
+var PACKAGE_VERSION = "v3-2026-08-10c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

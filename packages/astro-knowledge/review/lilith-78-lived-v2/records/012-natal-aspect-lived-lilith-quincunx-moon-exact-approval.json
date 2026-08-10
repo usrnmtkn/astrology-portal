@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-012",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/moon",
+  "workbookKey": "lilith|quincunx|moon",
+  "payloadSha256": "3a682dbc25b7a6b2ffdf72de911a875b81a8aa159ffcefac8beb23f4f47d37bc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to choose rest and then feel trapped by the quiet, or choose connection and resent how much energy it requires. The routine keeps changing because meeting one need does not settle the other. This often comes from treating comfort as the responsible choice and desire as the disruptive one. Plan for both needs instead of making either choice prove what you really want.",
+    "astroHint": "Lilith quincunx the Moon can make comfort and desire ask for different things at the same time.",
+    "sourceMechanism": "EXACT-ASPECT DERIVATION: no grouped quincunx legacy row; bounded by the pair sources and the quincunx primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Moon primitive: The Moon describes the emotional body: instinct, memory, mood, safety, belonging, and the private responses that happen before everything has been explained. It shows what helps someone feel settled and what can unsettle them when their needs have gone unnoticed. Pair frame: Restlessness inside a pleasant routine; ask what the want underneath would order if it could speak. The mood with no name that is a want with no permission; comfort eating standing in for desire. The appetite gets named without wrecking the nest; comfort expands to include it. Aspect operation: Quincunx puts mismatched functions together and requires repeated adjustment. Traditional nature: awkward, requires adjustment. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/moon.json; packages/astro-knowledge/data/pairs/moon-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/moon/conjunction; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/moon/hard; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/moon/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 13,
+    "approvedBodyCell": "E13",
+    "approvedAstroHintCell": "F13",
+    "ownerStatusCell": "H13"
+  },
+  "additionalBilledCalls": 0
+}

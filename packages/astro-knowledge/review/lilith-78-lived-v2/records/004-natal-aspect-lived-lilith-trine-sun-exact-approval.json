@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-004",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/sun",
+  "workbookKey": "lilith|trine|sun",
+  "payloadSha256": "866e449e2b92097740f7b580706f3ff9c21ab1a5e12066e1e7b63f557fa8e96b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to be open about the parts of yourself that other people might hide. Your style, opinions, humor, or life choices can be unusual without becoming a performance or an apology. You usually learned that being recognizable to yourself matters more than staying acceptable to every room. Other people often feel more comfortable being honest around you because you do not treat difference as a problem.",
+    "astroHint": "Lilith trine the Sun can make an unconventional part of your identity easy to express without much inner conflict.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Sun primitive: The Sun describes identity, vitality, creative force, visibility, and the part of life that wants to be lived with purpose. It shows where someone builds confidence, recognizes what gives them energy, and learns to act from the center of themselves rather than from imitation or approval. Pair frame: The real self airs safely; someone says the unsayable and the room exhales. Aspect operation: Trine lets the two functions cooperate with relative ease. Traditional nature: benefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/sun.json; packages/astro-knowledge/data/pairs/sun-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/sun/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 5,
+    "approvedBodyCell": "E5",
+    "approvedAstroHintCell": "F5",
+    "ownerStatusCell": "H5"
+  },
+  "additionalBilledCalls": 0
+}

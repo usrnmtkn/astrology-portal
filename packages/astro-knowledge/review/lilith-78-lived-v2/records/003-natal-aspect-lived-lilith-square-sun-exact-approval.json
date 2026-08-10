@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-003",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/sun",
+  "workbookKey": "lilith|square|sun",
+  "payloadSha256": "309c40e4a86329caac84f90676d7d8be084b534678dee53bc5e943b119566ca0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to question yourself right after doing something visible. You speak up, volunteer, dress the way you want, or take credit for your work, then replay every reaction and wonder whether you went too far. Underneath is often an old lesson that confidence made other people uncomfortable or that recognition had to be earned by being agreeable. Let one visible choice stand without explaining or reducing it afterward.",
+    "astroHint": "Lilith square the Sun can make ordinary visibility bring up shame about being bold, different, or hard to approve of.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Sun primitive: The Sun describes identity, vitality, creative force, visibility, and the part of life that wants to be lived with purpose. It shows where someone builds confidence, recognizes what gives them energy, and learns to act from the center of themselves rather than from imitation or approval. Pair frame: The outrageous urge in a respectable meeting; the identity that suddenly cannot breathe. Aspect operation: Square creates friction that presses the two functions into a forced adjustment. Traditional nature: malefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/sun.json; packages/astro-knowledge/data/pairs/sun-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/sun/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 4,
+    "approvedBodyCell": "E4",
+    "approvedAstroHintCell": "F4",
+    "ownerStatusCell": "H4"
+  },
+  "additionalBilledCalls": 0
+}

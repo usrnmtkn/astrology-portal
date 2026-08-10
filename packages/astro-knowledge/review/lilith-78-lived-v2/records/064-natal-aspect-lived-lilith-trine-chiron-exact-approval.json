@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-064",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/chiron",
+  "workbookKey": "lilith|trine|chiron",
+  "payloadSha256": "a63b14c7780a2c371c68322b19d3b9643dd803142271676d7316f2693617fa63",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to speak about a difficult history and the desire connected to it without pretending either one has disappeared. Being known does not automatically feel like being reduced to the story. You usually understand that pain can explain a reaction without defining every choice that follows. Other people often become less ashamed of their own history when you speak this plainly.",
+    "astroHint": "Lilith trine Chiron can make a painful or embarrassing truth easier to hold without treating it as a verdict on you.",
+    "sourceMechanism": "LIMITED LEGACY SUPPORT: no fallback-hook/aspect-pair/lilith reader row exists for this counterpart. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Chiron primitive: The deep, lasting wound and the path through it. Chiron marks where a person may feel broken, not enough, or too much, and where working honestly with that wound can become medicine they later offer others. Pair frame: The reclaimed desire turns out to be medicine; shame dissolves when the stories are told together. Aspect operation: Trine lets the two functions cooperate with relative ease. Traditional nature: benefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/points/chiron.json; packages/astro-knowledge/data/pairs/chiron-lilith.json; packages/astro-knowledge/data/primitives/aspects.json."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 65,
+    "approvedBodyCell": "E65",
+    "approvedAstroHintCell": "F65",
+    "ownerStatusCell": "H65"
+  },
+  "additionalBilledCalls": 0
+}
