@@ -40,7 +40,7 @@
     "test:relationship-facts": "node --experimental-strip-types scripts/test-relationship-facts.mjs && node --experimental-strip-types scripts/test-relationship-facts-api.mjs && node scripts/test-relationship-consent-contract.mjs",
     "qa:relationship-facts-drift": "node --experimental-strip-types scripts/verify-relationship-facts-drift.mjs",
     "qa:relationship-consent-migration": "node scripts/test-relationship-consent-migration.mjs",
-    "test:content:live": "node scripts/test-authored-sky-placement-coverage.mjs",
+    "test:content:live": "node scripts/test-authored-sky-placement-coverage.mjs --production-read",
     "qa:client-report": "node scripts/run-client-facing-qa-report.mjs",
     "qa:content-wiring": "node scripts/test-reader-facing-content-contract.mjs",
     "qa:calendar-weekly-monday-tone": "node scripts/test-calendar-weekly-monday-tone.mjs",

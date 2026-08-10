@@ -7,19 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
-
-function parseEnvFile(filePath) {
-  if (!fs.existsSync(filePath)) return {};
-  const env = {};
-  for (const rawLine of fs.readFileSync(filePath, "utf8").split(/\r?\n/)) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith("#")) continue;
-    const match = line.match(/^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
-    if (!match) continue;
-    env[match[1]] = match[2].replace(/^['"]|['"]$/g, "");
-  }
-  return env;
-}
+const productionProjectRef = "hdmdufozrgrajkfhydit";
+const productionReadRequested = process.argv.includes("--production-read");
 
 function slug(value) {
   return String(value ?? "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
@@ -36,30 +25,43 @@ function expectedRows() {
   return rows;
 }
 
-const env = {
-  ...parseEnvFile(path.join(repoRoot, "apps/web/.env.local")),
-  ...parseEnvFile(path.join(repoRoot, ".env.local"))
-};
-function firstPresent(...values) {
-  return values.find((value) => String(value ?? "").trim().length > 0);
+const expected = expectedRows();
+const expectedKeys = new Set();
+for (const row of expected) {
+  assert.ok(row.text.length > 0, `${row.contentKey} must contain authored copy.`);
+  assert.equal(expectedKeys.has(row.contentKey), false, `${row.contentKey} must be unique.`);
+  assert.equal(/reviewed .* bank|Use the reviewed/i.test(row.text), false, `${row.contentKey} must not contain reviewed-bank placeholder copy.`);
+  expectedKeys.add(row.contentKey);
 }
 
-const supabaseUrl = firstPresent(process.env.VITE_SUPABASE_URL, env.VITE_SUPABASE_URL, process.env.SUPABASE_URL, env.SUPABASE_URL);
-const supabaseKey = firstPresent(
-  process.env.VITE_SUPABASE_ANON_KEY,
-  env.VITE_SUPABASE_ANON_KEY,
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-  env.VITE_SUPABASE_PUBLISHABLE_KEY,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-if (!supabaseUrl || !supabaseKey) {
-  console.log(JSON.stringify({ status: "SKIP", reason: "Supabase URL/key env vars are not configured." }, null, 2));
+if (!productionReadRequested) {
+  console.log(JSON.stringify({
+    status: "PASS",
+    mode: "offline",
+    checkedRows: expected.length
+  }, null, 2));
   process.exit(0);
 }
 
-const expected = expectedRows();
+assert.equal(
+  process.env.TLDR_ALLOW_PRODUCTION_READ,
+  "1",
+  "Production coverage reads require TLDR_ALLOW_PRODUCTION_READ=1."
+);
+
+const supabaseUrl = String(process.env.TLDR_PRODUCTION_SUPABASE_URL ?? "").trim();
+const supabaseKey = String(process.env.TLDR_PRODUCTION_SUPABASE_PUBLISHABLE_KEY ?? "").trim();
+assert.ok(supabaseUrl, "Set TLDR_PRODUCTION_SUPABASE_URL for a production coverage read.");
+assert.ok(supabaseKey, "Set TLDR_PRODUCTION_SUPABASE_PUBLISHABLE_KEY for a production coverage read.");
+
+const parsedSupabaseUrl = new URL(supabaseUrl);
+assert.equal(parsedSupabaseUrl.protocol, "https:", "Production Supabase reads must use HTTPS.");
+assert.equal(
+  parsedSupabaseUrl.hostname,
+  `${productionProjectRef}.supabase.co`,
+  `Production coverage is restricted to Supabase project ${productionProjectRef}.`
+);
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 const liveByKey = new Map();
 
@@ -89,6 +91,7 @@ for (const expectedRow of expected) {
 
 console.log(JSON.stringify({
   status: "PASS",
+  mode: "production-read",
   checkedRows: expected.length,
   liveRows: [...liveByKey.values()].flat().length
 }, null, 2));
