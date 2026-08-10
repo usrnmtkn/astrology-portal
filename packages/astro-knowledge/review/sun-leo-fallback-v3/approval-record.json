@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "sun-leo-fallback-v3-owner-approved",
+  "approvedAt": "2026-08-10",
+  "contentKey": "fallback-hook/sky-sign-copy/sun/leo",
+  "ownerPackage": "owner-package.md",
+  "ownerPackageSha256": "3fefae0648de4f7dfacaf8289f49a6ef08ec51b84984c4ddf75053ecb57459af",
+  "approvalStatement": "The article is at exact-wording approved status and stages for Codex.",
+  "confirmationStatement": "yes, they read differently than they did cut short, which was your own root-cause diagnosis.",
+  "supersedes": [
+    "sun-leo-fallback-v2",
+    "sun-leo-close-fix-v1"
+  ],
+  "articleCount": 56,
+  "articlesSha256": "dfd50b549669c2d55175451dbbc5393ffdd4d4bb21690582178c1d1abdfbd445"
+}
