@@ -2,13 +2,16 @@
   "$extends": "daily-glance-writer-sol-xhigh-batch-3-v2.json",
   "schemaVersion": 1,
   "configId": "daily-glance-writer-sol-xhigh-batch-3-self-audit-v1",
-  "packetVersion": "daily-glance-writer-packet-v7:self-audit-bottom-five+harvest+scene+owner-six+key-facts+p4+sm-dg+dg-r1-r17",
-  "promptVersion": "daily-glance-writer-v7:self-audit-unapproved-best-of-three",
+  "packetVersion": "daily-glance-writer-packet-v8:self-audit-bottom-five+owner-sol-directive+same-group-golds+key-facts+external-lint",
+  "promptVersion": "daily-glance-writer-v8:owner-sol-directive-one-per-call",
   "status": "owner-authorized-self-audit-2026-08-10",
   "authorities": [
     "packages/astro-knowledge/review/daily-glance-autonomy-roadmap-2026-08-05.md",
-    "packages/astro-knowledge/review/daily-glance-judge-calibration-set-v1.json"
+    "packages/astro-knowledge/review/daily-glance-judge-calibration-set-v1.json",
+    "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v1.md"
   ],
+  "selfAuditDirectivePath": "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v1.md",
+  "candidateSamplesPerKey": 3,
   "routing": {
     "releaseId": "daily-glance-writer-openai-gpt-5.6-sol-self-audit-v1",
     "writerCalls": 5,

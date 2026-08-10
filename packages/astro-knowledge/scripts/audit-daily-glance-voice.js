@@ -15,16 +15,20 @@ const {
 const {
   buildPacket,
   estimateCost,
-  lintOutput,
   lintTextAgainstBans,
   loadLocalEnv,
   normalizeUsage,
   outputText,
-  packetLint,
-  parseOutput,
-  readJson: readConfig,
-  renderModelInput
+  readJson: readConfig
 } = require("./daily-glance-writer-runtime.js");
+const {
+  approvedGoodExamples,
+  lintSelfAuditCandidate,
+  parseSelfAuditCandidate,
+  renderSelfAuditWriterInput,
+  selectLintCleanWinner,
+  selfAuditPacketLint
+} = require("./daily-glance-self-audit-candidates.js");
 const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
 const {
   agreementSummary,
@@ -205,7 +209,7 @@ function renderAuditMarkdown(report) {
     `> **Current headline:** ${row.current.headline}`,
     ">",
     `> **Current body:** ${row.current.body}`,
-    ...(row.replacementProposal ? [
+    ...(row.replacementProposal?.winner ? [
       "",
       "#### UNAPPROVED engine candidate",
       "",
@@ -222,6 +226,15 @@ function renderAuditMarkdown(report) {
       `- Selection basis: ${row.replacementProposal.selectionBasis}`,
       `- Full packet: \`${row.replacementProposal.packetPath}\``,
       `- All three raw candidates: \`${row.replacementProposal.candidatesPath}\``
+    ] : row.replacementProposal ? [
+      "",
+      "#### No eligible engine candidate",
+      "",
+      "> All three independent Sol outputs failed deterministic lint and were discarded unread by Terra. Nothing was selected, revised, or changed in serving content.",
+      "",
+      `- Selection basis: ${row.replacementProposal.selectionBasis}`,
+      `- Full packet: \`${row.replacementProposal.packetPath}\``,
+      `- All three raw candidates and lint reports: \`${row.replacementProposal.candidatesPath}\``
     ] : [])
   ].join("\n")).join("\n\n");
   return [
@@ -284,8 +297,6 @@ async function writerCall(config, modelInput) {
 }
 
 function candidateRank(left, right, operatingMode) {
-  const lintDelta = Number(right.lint.passed) - Number(left.lint.passed);
-  if (lintDelta) return lintDelta;
   if (operatingMode === "flag-only") {
     const scoreOneDelta = Number(left.judge.score === 1) - Number(right.judge.score === 1);
     if (scoreOneDelta) return scoreOneDelta;
@@ -298,34 +309,55 @@ function candidateRank(left, right, operatingMode) {
 async function generateBottomFive(report) {
   const selectedKeys = report.rows.slice(0, 5).map((row) => row.key);
   const config = scheduledCandidateConfig(selectedKeys);
+  const sourceRows = readJson(sourceRowsPath);
+  const currentPairs = new Map(servingPairs(sourceRows).map((pair) => [pair.key, pair]));
   fs.mkdirSync(candidateDir, { recursive: true });
 
   const prepared = config.keys.map((target) => {
     const packet = buildPacket(target.key, config);
-    const modelInput = renderModelInput(packet);
-    const selfLint = packetLint(packet, modelInput, config);
+    const examples = approvedGoodExamples(target.key, sourceRows);
+    const modelInput = renderSelfAuditWriterInput(packet, config, examples);
+    packet.selfAuditDirectivePath = config.selfAuditDirectivePath;
+    packet.selfAuditGoodExamples = examples.map((example) => ({
+      key: example.key,
+      headlineSourceId: example.headlineSourceId,
+      bodySourceId: example.bodySourceId
+    }));
+    const selfLint = selfAuditPacketLint(packet, modelInput, config, examples, currentPairs.get(target.key));
     if (!selfLint.passed) throw new Error(`Packet self-lint failed for ${target.key}; refusing to bill.`);
+    packet.selfAuditModelInputSha256 = selfLint.modelInputSha256;
+    packet.selfAuditLintRulesSha256 = selfLint.rulesSha256;
     const slug = target.key.replace(/\//gu, "-");
     writeFile(path.join(candidateDir, `${slug}.packet.json`), JSON.stringify(packet, null, 2));
     writeFile(path.join(candidateDir, `${slug}.packet-lint.json`), JSON.stringify(selfLint, null, 2));
-    return { key: target.key, slug, packet, modelInput, selfLint };
+    return { key: target.key, slug, packet, modelInput, selfLint, examples };
   });
   process.stdout.write(`packet self-lint passed for ${prepared.length}/5 bottom-five keys\n`);
 
   const proposals = [];
   for (const item of prepared) {
-    const writers = await Promise.all(Array.from({ length: 3 }, () => writerCall(config, item.modelInput)));
+    const writers = await Promise.all(Array.from({ length: config.candidateSamplesPerKey }, () => writerCall(config, item.modelInput)));
     const candidates = await Promise.all(writers.map(async (writer, index) => {
       let candidate = null;
       let parseError = null;
-      try { candidate = parseOutput(writer.raw); } catch (error) { parseError = error.message; }
+      try { candidate = parseSelfAuditCandidate(writer.raw, item.key); } catch (error) { parseError = error.message; }
       const lint = candidate
-        ? lintOutput(candidate, item.key, config)
+        ? lintSelfAuditCandidate(candidate, item.key, config)
         : { passed: false, findings: [{ id: "unparseable", reason: parseError || "Unparseable writer output." }] };
-      const judge = candidate
+      const judge = candidate && lint.passed
         ? await judgeCandidate(candidate, item.key, 3)
-        : { score: 1, allScores: [1, 1, 1], dimScore: 0, verdict: { dimensions: {}, why: "Writer output was unparseable." }, usage: emptyUsage(), estimatedCostUsd: 0 };
-      process.stdout.write(`candidate ${item.key} ${index + 1}/3 lint=${lint.passed} triage=${judge.score} (${judge.dimScore}/7)\n`);
+        : {
+          skipped: true,
+          reason: "discarded-unread-after-deterministic-lint",
+          score: null,
+          allScores: [],
+          dimScore: null,
+          verdict: { dimensions: {}, why: "Not judged: deterministic lint failed." },
+          usage: emptyUsage(),
+          estimatedCostUsd: 0,
+          responseCount: 0
+        };
+      process.stdout.write(`candidate ${item.key} ${index + 1}/3 lint=${lint.passed} ${judge.skipped ? "terra=skipped" : `triage=${judge.score} (${judge.dimScore}/7)`}\n`);
       return {
         sample: index + 1,
         candidate,
@@ -346,12 +378,11 @@ async function generateBottomFive(report) {
           calibrationFailed: report.calibrationFailed,
           advisoryOnly: true
         },
-        status: "UNAPPROVED",
+        status: lint.passed ? "UNAPPROVED" : "DISCARDED_LINT_FAILURE",
         revisionsMade: 0
       };
     }));
-    const ranked = candidates.slice().sort((a, b) => candidateRank(a, b, report.operatingMode));
-    const winner = ranked[0];
+    const winner = selectLintCleanWinner(candidates, report.operatingMode, candidateRank);
     const candidatesPath = path.join(candidateDir, `${item.slug}.candidates.json`);
     const winnerPath = path.join(candidateDir, `${item.slug}.winner.json`);
     const modeNotice = report.operatingMode === "flag-only"
@@ -360,7 +391,7 @@ async function generateBottomFive(report) {
     writeFile(candidatesPath, JSON.stringify({
       schemaVersion: 1,
       key: item.key,
-      status: "UNAPPROVED",
+      status: winner ? "UNAPPROVED" : "NO_LINT_CLEAN_CANDIDATE",
       operatingMode: report.operatingMode,
       calibrationFailed: report.calibrationFailed,
       modeNotice,
@@ -371,28 +402,31 @@ async function generateBottomFive(report) {
     writeFile(winnerPath, JSON.stringify({
       schemaVersion: 1,
       key: item.key,
-      status: "UNAPPROVED",
+      status: winner ? "UNAPPROVED" : "NO_LINT_CLEAN_CANDIDATE",
       operatingMode: report.operatingMode,
       calibrationFailed: report.calibrationFailed,
       modeNotice,
-      selectionBasis: "Deterministic output lint first; then flag-only score-1 avoidance and failed-dimension triage. This is not a quality verdict.",
-      winner: winner.candidate,
-      lint: winner.lint,
-      judge: winner.judge
+      selectionBasis: "Deterministic lint is an eligibility gate. Terra ranks lint-clean candidates only; if none pass, no candidate is selected.",
+      winner: winner?.candidate || null,
+      lint: winner?.lint || null,
+      judge: winner?.judge || null
     }, null, 2));
     proposals.push({
       key: item.key,
-      winner: winner.candidate,
-      lint: winner.lint,
-      judge: winner.judge,
-      failedDimensions: failedDimensions(winner.judge),
-      selectionBasis: "Deterministic lint first, then flag-only advisory signals; no automatic approval.",
+      winner: winner?.candidate || null,
+      lint: winner?.lint || null,
+      judge: winner?.judge || null,
+      failedDimensions: winner ? failedDimensions(winner.judge) : [],
+      selectionBasis: winner
+        ? "Passed deterministic lint, then ranked by Terra's flag-only advisory signals; no automatic approval."
+        : "No lint-clean output among three independent calls; all were discarded before Terra and no candidate was selected.",
       packetPath: path.relative(repoRoot, path.join(candidateDir, `${item.slug}.packet.json`)),
       candidatesPath: path.relative(repoRoot, candidatesPath),
       writerUsage: candidates.reduce((sum, candidate) => addUsage(sum, candidate.writer.usage), emptyUsage()),
       writerCostUsd: candidates.reduce((sum, candidate) => sum + candidate.writer.estimatedCostUsd, 0),
       judgeUsage: candidates.reduce((sum, candidate) => addUsage(sum, candidate.judge.usage), emptyUsage()),
-      judgeCostUsd: candidates.reduce((sum, candidate) => sum + candidate.judge.estimatedCostUsd, 0)
+      judgeCostUsd: candidates.reduce((sum, candidate) => sum + candidate.judge.estimatedCostUsd, 0),
+      judgeResponses: candidates.reduce((sum, candidate) => sum + Number(candidate.judge.responseCount || 0), 0)
     });
   }
 
@@ -407,15 +441,15 @@ async function generateBottomFive(report) {
   report.candidateGeneration = {
     status: "UNAPPROVED",
     keys: selectedKeys,
-    samplesPerKey: 3,
+    samplesPerKey: config.candidateSamplesPerKey,
     writerModel: config.routing.model,
     writerReasoningEffort: config.routing.reasoningEffort,
-    writerResponses: selectedKeys.length * 3,
+    writerResponses: selectedKeys.length * config.candidateSamplesPerKey,
     writerUsage,
     writerCostUsd: Number(writerCostUsd.toFixed(6)),
     judgeModel: JUDGE_MODEL,
     judgeReasoningEffort: JUDGE_REASONING_EFFORT,
-    judgeResponses: selectedKeys.length * 3 * 3,
+    judgeResponses: proposals.reduce((sum, proposal) => sum + proposal.judgeResponses, 0),
     judgeUsage,
     judgeCostUsd: Number(judgeCostUsd.toFixed(6)),
     totalCostUsd: Number((writerCostUsd + judgeCostUsd).toFixed(6)),
