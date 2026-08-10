@@ -2,10 +2,12 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { reportUrl, requireReportUser, sendJson } from "./_lib/report-http.js";
 import { stripePost } from "./_lib/stripe-report-billing.js";
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
+import { reportBillingMode } from "./_lib/report-fulfillment-config.js";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Use POST." });
-  if (!process.env.STRIPE_SECRET_KEY) return sendJson(res, 503, { configured: false, error: "Stripe customer portal is not configured." });
+  if (reportBillingMode() === "free_test") return sendJson(res, 503, { configured: false, billingMode: "free_test", error: "Stripe customer portal is disabled during the free-test shadow launch." });
+  if (!process.env.STRIPE_SECRET_KEY) return sendJson(res, 503, { configured: false, billingMode: "stripe", error: "Stripe customer portal is not configured." });
   try {
     const user = await requireReportUser(req);
     const admin = createSupabaseReportAdmin();

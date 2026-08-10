@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { reportSku } from "./_lib/report-fulfillment-config.js";
+import { reportBillingMode, reportSku } from "./_lib/report-fulfillment-config.js";
 import { revokeEntitlement } from "./_lib/report-entitlements.js";
 import { rawRequestBody, sendJson } from "./_lib/report-http.js";
 import { parseVerifiedStripeEvent } from "./_lib/stripe-report-billing.js";
@@ -10,6 +10,7 @@ function recordValue(value: unknown) { return value && typeof value === "object"
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Use POST." });
+  if (reportBillingMode() === "free_test") return sendJson(res, 503, { configured: false, billingMode: "free_test", error: "Stripe webhooks are disabled during the free-test shadow launch." });
   const admin = createSupabaseReportAdmin();
   let eventId = "";
   try {

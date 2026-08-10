@@ -33,11 +33,11 @@ try {
   await db.query("insert into auth.users (id) values ($1)", [userId]);
   await db.query(`insert into public.report_entitlements
     (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
-    values ($1, 'general_1_month', 'general', '1_month', 'purchase', '2026-08-09', '2026-09-08', 'active', 'evt_1', 'cs_1', now())`, [userId]);
+    values ($1, 'general_1m', 'general', '1_month', 'purchase', '2026-08-09', '2026-09-08', 'active', 'evt_1', 'cs_1', now())`, [userId]);
   await db.exec("savepoint duplicate_event");
   await assert.rejects(db.query(`insert into public.report_entitlements
     (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
-    values ($1, 'general_1_month', 'general', '1_month', 'purchase', '2026-08-09', '2026-09-08', 'active', 'evt_1', 'cs_2', now())`, [userId]));
+    values ($1, 'general_1m', 'general', '1_month', 'purchase', '2026-08-09', '2026-09-08', 'active', 'evt_1', 'cs_2', now())`, [userId]));
   await db.exec("rollback to savepoint duplicate_event");
   await db.exec("release savepoint duplicate_event");
   assert.equal(Number((await db.query("select count(*)::int count from public.user_reports")).rows[0].count), 1);
@@ -50,19 +50,19 @@ try {
   const awaitingId = "00000000-0000-0000-0000-000000000002";
   await db.query(`insert into public.report_entitlements
     (id, user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, requires_birth_time, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
-    values ($1, $2, 'love_connection_12_months', 'love_connection', '12_months', 'solar_return_display', '2026-02-18', '2027-02-17', true, 'awaiting_birth_data', 'evt_2', 'cs_3', now())`, [awaitingId, userId]);
+    values ($1, $2, 'love_connection_12m', 'love_connection', '12_months', 'solar_return_display', '2026-02-18', '2027-02-17', true, 'awaiting_birth_data', 'evt_2', 'cs_3', now())`, [awaitingId, userId]);
   assert.equal(Number((await db.query("select count(*)::int count from public.report_fulfillment_jobs")).rows[0].count), 1, "Awaiting birth data must not enqueue.");
   assert.equal((await db.query("select fulfillment_status from public.user_reports where entitlement_id = $1", [awaitingId])).rows[0].fulfillment_status, "awaiting_birth_data");
   assert.ok((await db.query("select fulfillment_timestamps ? 'awaiting_birth_data' as recorded from public.user_reports where entitlement_id = $1", [awaitingId])).rows[0].recorded);
   await db.query(`insert into public.report_entitlements
     (user_id, product_key, report_domain, report_horizon, window_anchor, period_start, period_end, requires_birth_time, status, stripe_event_id, stripe_checkout_session_id, purchased_at)
-    values ($1, 'personal_health_12_months', 'personal_health', '12_months', 'solar_return_display', '2026-02-18', '2027-02-17', true, 'active', 'evt_3', 'cs_4', now())`, [userId]);
+    values ($1, 'personal_health_12m', 'personal_health', '12_months', 'solar_return_display', '2026-02-18', '2027-02-17', true, 'active', 'evt_3', 'cs_4', now())`, [userId]);
   assert.equal(Number((await db.query("select count(*)::int count from public.user_reports where report_domain = 'personal_health'")).rows[0].count), 1);
 
   const compId = "00000000-0000-0000-0000-000000000003";
   await db.query(`insert into public.report_entitlements
     (id, user_id, product_key, report_domain, report_horizon, window_anchor, selected_start, period_start, period_end, requires_birth_time, status, source, purchased_at)
-    values ($1, $2, 'work_money_4_months', 'work_money', '4_months', 'selected', '2027-01-01', '2027-01-01', '2027-04-30', true, 'active', 'comp', now())`, [compId, userId]);
+    values ($1, $2, 'work_money_4m', 'work_money', '4_months', 'selected', '2027-01-01', '2027-01-01', '2027-04-30', true, 'active', 'comp', now())`, [compId, userId]);
   const comp = (await db.query("select source, stripe_event_id, stripe_checkout_session_id from public.report_entitlements where id = $1", [compId])).rows[0];
   assert.deepEqual(comp, { source: "comp", stripe_event_id: null, stripe_checkout_session_id: null });
   const compReport = (await db.query("select id, fulfillment_status from public.user_reports where entitlement_id = $1", [compId])).rows[0];
@@ -72,7 +72,7 @@ try {
   await db.exec("savepoint duplicate_comp");
   await assert.rejects(db.query(`insert into public.report_entitlements
     (user_id, product_key, report_domain, report_horizon, window_anchor, selected_start, period_start, period_end, requires_birth_time, status, source, purchased_at)
-    values ($1, 'work_money_4_months', 'work_money', '4_months', 'selected', '2027-01-01', '2027-01-01', '2027-04-30', true, 'active', 'comp', now())`, [userId]));
+    values ($1, 'work_money_4m', 'work_money', '4_months', 'selected', '2027-01-01', '2027-01-01', '2027-04-30', true, 'active', 'comp', now())`, [userId]));
   await db.exec("rollback to savepoint duplicate_comp");
   await db.exec("release savepoint duplicate_comp");
 

@@ -3,9 +3,11 @@ import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 export const REPORT_AUTOMATION_RULING_VERSION = "owner-approved-v1";
 export const REPORT_AUTOMATION_RULING_PATH = "tldr-astro-phrasebank/TLDR-REPORT-AUTOMATED-FULFILLMENT-RULING-OWNER.md";
 export const REPORT_JUDGE_THRESHOLD = 0.85;
+export const REPORT_BILLING_MODE = "free_test" as const;
 
 export type ReportSku = {
   key: string;
+  legacyKey: string;
   nameEnv: string;
   reportDomain: ReportDomain;
   reportHorizon: ReportHorizon;
@@ -17,12 +19,17 @@ export type ReportSku = {
 const horizons: ReportHorizon[] = ["1_month", "4_months", "6_months", "12_months"];
 const domains: ReportDomain[] = ["general", "work_money", "love_connection", "personal_health"];
 
+function catalogHorizon(horizon: ReportHorizon) {
+  return horizon.replace(/_months?$/u, "m");
+}
+
 function envSuffix(domain: ReportDomain, horizon: ReportHorizon) {
   return `${domain}_${horizon}`.toUpperCase();
 }
 
 export const REPORT_SKUS: ReportSku[] = domains.flatMap((reportDomain) => horizons.map((reportHorizon) => ({
-  key: `${reportDomain}_${reportHorizon}`,
+  key: `${reportDomain}_${catalogHorizon(reportHorizon)}`,
+  legacyKey: `${reportDomain}_${reportHorizon}`,
   nameEnv: `STRIPE_REPORT_NAME_${envSuffix(reportDomain, reportHorizon)}`,
   reportDomain,
   reportHorizon,
@@ -42,7 +49,13 @@ function decimalEnv(name: string, fallback: number, minimum = 0, maximum = 1) {
 }
 
 export function reportSku(key: string) {
-  return REPORT_SKUS.find((sku) => sku.key === key) ?? null;
+  return REPORT_SKUS.find((sku) => sku.key === key || sku.legacyKey === key) ?? null;
+}
+
+export function reportBillingMode() {
+  const configured = process.env.REPORT_BILLING_MODE?.trim() || REPORT_BILLING_MODE;
+  if (configured !== "free_test" && configured !== "stripe") throw new Error(`Unsupported report billing mode '${configured}'.`);
+  return configured;
 }
 
 export function reportFulfillmentConfig() {

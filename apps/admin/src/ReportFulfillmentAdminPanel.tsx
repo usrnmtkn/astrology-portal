@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 
 type Dashboard = {
+  billingMode: "free_test" | "stripe";
   metrics: {
     orders: number; entitlementStatuses: Record<string, number>; fulfillmentStatuses: Record<string, number>;
     jobStates: Record<string, number>; exceptionDepth: number; auditDepth: number;
@@ -62,7 +63,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       </section>
       {message && <p className="admin-save-toast is-error" role="status">{message}</p>}
       <section className="admin-content-toolbar">
-        <div><p className="admin-eyebrow">Owner-only comp path</p><h3>Grant report</h3><p>Creates the same fulfillment envelope as checkout, then pauses before any billed model call.</p></div>
+        <div><p className="admin-eyebrow">{dashboard?.billingMode === "free_test" ? "Free-test shadow launch" : "Owner-only comp path"}</p><h3>Grant report</h3><p>Creates the fulfillment envelope directly, with no Stripe request, then pauses before any billed model call.</p></div>
         <div className="admin-toolbar-actions">
           <label>User
             <select value={grant.userId} onChange={(event) => setGrant({ ...grant, userId: event.target.value })}>
