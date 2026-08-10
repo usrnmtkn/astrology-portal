@@ -4,6 +4,11 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { evaluateCardJudgeV31Contract, loadCardJudgeV31FixtureSet } from "../../scripts/card-judge-v3-1-fixtures.mjs";
+import {
+  CARD_JUDGE_V3_1_SCHEMA,
+  cardJudgeV31PacketPrompt,
+  evaluateCardJudgeV31
+} from "../../src/astro-writing/cardJudgeV31.mjs";
 
 const read = (sourcePath) => fs.readFileSync(sourcePath, "utf8");
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
@@ -66,6 +71,11 @@ for (const id of ["gold-lilith-sagittarius-v5", "gold-lilith-pisces-v5"]) {
 assert.ok(draftRubric.includes("Concrete does not mean adding a random object or domestic scene. Concrete means naming the observable behavior, circumstance, decision, or consequence produced by the astrology."));
 assert.match(draftRubric, /When a placement's mechanism is internal \(belief, escape, numbing\), observable naming of the internal behavior satisfies concreteness; demanding external props for an internal mechanism is a judge error\./u);
 assert.match(draftRubric, /Comparison sets must match mechanism exteriority where the gold set allows\./u);
+assert.match(draftRubric, /The judge never judges from its own astrology knowledge\./u);
+assert.match(draftRubric, /Astrology knowledge from training priors is forbidden\./u);
+assert.match(draftRubric, /Every finding must cite at least one exact supplied mechanism element ID under `mechanism_citations`\./u);
+assert.match(draftRubric, /per-placement noun blacklist runs deterministically before the model call/u);
+assert.match(draftRubric, /seeds Sagittarius and Capricorn/u);
 
 assert.equal(fixtureContracts.status, "needs_review");
 assert.equal(fixtureContracts.ownerApproved, false);
@@ -77,6 +87,8 @@ assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.decisi
 assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.prohibitedRecurrence), ["owner_voice_drift", "owner_voice_drift"]);
 assert.ok(fixtureContracts.goldFindingRulings.every((entry) => entry.mechanismExteriority === "internal_behavior"));
 assert.equal(fixtureContracts.pairs.length, 8);
+assert.equal(fixtureContracts.themeViolationPlan.length, 12);
+assert.deepEqual(fixtureContracts.themeViolationPlan.filter((entry) => entry.status === "seeded").map((entry) => entry.sign).sort(), ["capricorn", "sagittarius"]);
 
 const reviseCategories = new Set(["house_bleed", "stock_trope", "example_proves_astrology", "metaphor_requires_translation", "tagline_stands_alone", "owner_voice_drift"]);
 const failCategories = new Set(["astrology_integrity", "shared_ban", "specificity_ceiling"]);
@@ -92,11 +104,56 @@ for (const pair of fixtureContracts.pairs) {
   assert.ok(!pair.comparisonSet.includes(pair.positiveFixtureId));
 }
 
-const { cases } = loadCardJudgeV31FixtureSet();
+const { cases, mechanisms } = loadCardJudgeV31FixtureSet();
 assert.equal(cases.length, 20);
 assert.equal(cases.filter((fixture) => fixture.kind === "gold").length, 12);
 assert.equal(cases.filter((fixture) => fixture.kind === "negative").length, 8);
 assert.ok(cases.every((fixture) => fixture.packet.version === "card-writing-judge-rubric-v3.1-draft"));
+assert.equal(mechanisms.records.length, 12);
+assert.ok(mechanisms.records.every((record) => record.elements.length >= 12));
+assert.ok(mechanisms.records.every((record) => record.doNotAssume.length > 0));
+assert.ok(mechanisms.records.every((record) => record.houseBleedNounBlacklist.status === "needs_review" && record.houseBleedNounBlacklist.ownerApproved === false));
+for (const fixture of cases) {
+  assert.ok(fixture.packet.mechanismRecord);
+  assert.ok(fixture.packet.mechanismRecord.elements.some((element) => element.id === "core_theme_wound"));
+  assert.ok(fixture.packet.mechanismRecord.elements.some((element) => element.id === "interiority"));
+  assert.ok(fixture.packet.ownerComparisonSet.every((comparison) => comparison.interiority === fixture.packet.mechanismRecord.interiority));
+}
+
+assert.deepEqual(CARD_JUDGE_V3_1_SCHEMA.properties.findings.items.required, ["category", "location", "finding", "evidence_ids", "mechanism_citations"]);
+assert.equal(CARD_JUDGE_V3_1_SCHEMA.properties.findings.items.properties.mechanism_citations.minItems, 1);
+
+const sagittariusNegative = cases.find((fixture) => fixture.fixtureId === "neg-sagittarius-9th");
+const capricornNegative = cases.find((fixture) => fixture.fixtureId === "neg-capricorn-career");
+for (const fixture of [sagittariusNegative, capricornNegative]) {
+  assert.equal(fixture.packet.validatorResults.findings.length, 1);
+  assert.equal(fixture.packet.validatorResults.findings[0].category, "house_bleed");
+  assert.ok(fixture.packet.validatorResults.findings[0].mechanism_citations.length >= 2);
+  assert.equal(evaluateCardJudgeV31({ packet: fixture.packet, modelOutput: { findings: [] } }).verdict, "REVISE");
+}
+for (const fixture of cases.filter((entry) => entry.kind === "gold")) {
+  assert.deepEqual(fixture.packet.validatorResults.findings, [], `${fixture.fixtureId} must not trip the noun blacklist.`);
+}
+
+const citationExample = cases.find((fixture) => fixture.fixtureId === "gold-lilith-aries-v5");
+const comparisonEvidenceId = citationExample.packet.ownerComparisonSet[0].evidenceId;
+const citedFinding = {
+  category: "owner_voice_drift",
+  location: "[LOCATION=lived; PARAGRAPH_INDEX=2]",
+  finding: "Fixture-only cited drift finding.",
+  evidence_ids: [comparisonEvidenceId],
+  mechanism_citations: ["manifestation_space.body"]
+};
+assert.equal(evaluateCardJudgeV31({ packet: citationExample.packet, modelOutput: { findings: [citedFinding] } }).verdict, "REVISE");
+assert.throws(() => evaluateCardJudgeV31({
+  packet: citationExample.packet,
+  modelOutput: { findings: [{ ...citedFinding, mechanism_citations: [] }] }
+}), /omitted required mechanism_citations/u);
+assert.throws(() => evaluateCardJudgeV31({
+  packet: citationExample.packet,
+  modelOutput: { findings: [{ ...citedFinding, mechanism_citations: ["training_prior.aries"] }] }
+}), /absent or training-prior mechanism element/u);
+assert.match(cardJudgeV31PacketPrompt(draftRubric, citationExample.packet), /MECHANISM_RECORD[\s\S]*Training-prior astrology knowledge is forbidden[\s\S]*mechanism_citations/u);
 
 for (const ruling of fixtureContracts.goldFindingRulings) {
   const goldCase = cases.find((fixture) => fixture.fixtureId === ruling.fixtureId && fixture.kind === "gold");

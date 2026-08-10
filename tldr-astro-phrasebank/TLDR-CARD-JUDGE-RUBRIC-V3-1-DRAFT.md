@@ -108,6 +108,26 @@ When a placement's mechanism is internal (belief, escape, numbing), observable n
 
 Comparison sets must match mechanism exteriority where the gold set allows. `gold-lilith-sagittarius-v5` and `gold-lilith-pisces-v5` therefore use function-matched comparison cards whose mechanisms are also internal behaviors. Do not treat a more externally staged comparison card as a demand that an internal mechanism acquire an unrelated object, domestic scene, or external event.
 
+## Governed mechanism record and citation boundary
+
+The judge never judges from its own astrology knowledge. The packet supplies one provenance-labeled `MECHANISM_RECORD` containing:
+
+- the placement's owner-reviewed core theme or wound;
+- its owner-reviewed manifestation space;
+- an `interiority` tag;
+- its governed DO-NOT-ASSUME list; and
+- its review-gated house-bleed noun blacklist.
+
+Use only `ASTROLOGY_FACTS` and `MECHANISM_RECORD` for astrology, theme, manifestation-space, interiority, and house-bleed judgments. Astrology knowledge from training priors is forbidden.
+
+Every finding must cite at least one exact supplied mechanism element ID under `mechanism_citations`. A theme, concreteness, specificity, house-bleed, or drift finding with no valid mechanism citation is invalid and receives no semantic result. `owner_voice_drift` additionally requires eligible same-surface comparison evidence IDs.
+
+The per-placement noun blacklist runs deterministically before the model call. A blacklist term becomes house-bleed evidence only when the configured noun threshold is met in one card field and that field contains none of the placement's mechanism anchors. This preserves an earned domain example while mechanically catching domain substitution. The model may still return `house_bleed` for non-blacklist substitutions, but it must cite the supplied mechanism element the substitution violates.
+
+The comparison manifest records the `interiority` tag for every gold card. Comparison evidence must match the candidate's interiority where the gold set allows.
+
+The fixture plan includes a mechanism-violation pair for every sign. V3.1 seeds Sagittarius and Capricorn from the existing house-bleed degradations; the remaining ten accumulate as owner-reviewed families are rewritten.
+
 ## Labeled category-boundary evidence from v3 run 1
 
 ### Call 14 — `neg-capricorn-career`
@@ -199,10 +219,11 @@ Return strict JSON:
       "category": "owner_voice_drift",
       "location": "[LOCATION=lived; PARAGRAPH_INDEX=2]",
       "finding": "Describe the observable defect without proposing replacement prose.",
-      "evidence_ids": ["gold-lilith-example-v5"]
+      "evidence_ids": ["gold-lilith-example-v5"],
+      "mechanism_citations": ["manifestation_space.body"]
     }
   ]
 }
 ```
 
-Every location must copy an exact supplied token. `evidence_ids` may be empty for fact and deterministic-rule findings. It must contain eligible comparison IDs for `owner_voice_drift`. Apply the collision rule before returning the findings. Do not rewrite the card.
+Every location must copy an exact supplied token. `evidence_ids` may be empty for fact and deterministic-rule findings. It must contain eligible comparison IDs for `owner_voice_drift`. `mechanism_citations` must contain one or more exact IDs from the supplied mechanism record for every finding. Apply the collision rule before returning the findings. Do not rewrite the card.
