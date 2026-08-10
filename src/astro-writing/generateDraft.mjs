@@ -1,4 +1,6 @@
 import { canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import { generatedApprovalState } from "./approvalGovernance.mjs";
+import { attachGenerationMetadata, writeGenerationMetadata } from "./generationMetadata.mjs";
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -28,6 +30,7 @@ export function buildDraftInput({ plan, context, task, family = "sky-placement",
 function unapprovedDraft(value) {
   return {
     ...value,
+    ...generatedApprovalState(),
     editorialStatus: "generated_candidate",
     reviewStatus: "needs_review",
     ownerApproved: false,
@@ -48,12 +51,21 @@ export async function generateDraft({
   if (typeof modelClient !== "function") throw new Error("generateDraft requires an injected modelClient; no implicit billed call is allowed.");
   const value = await modelClient({
     stage: "draft",
+    role: "WRITER",
     instructions: canonicalAstrologyWritingInstructions,
     input: buildDraftInput({ plan, context, task, family, register }),
     schema
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
-  return unapprovedDraft(value);
+  return attachGenerationMetadata(unapprovedDraft(value), writeGenerationMetadata({
+    role: "WRITER",
+    model: modelClient.model ?? null,
+    reasoningEffort: modelClient.reasoningEffort ?? null,
+    sourceIds: [
+      ...(context.examples ?? []).map((entry) => entry.id ?? entry.fixture_id).filter(Boolean),
+      ...(context.corrections ?? []).map((entry) => entry.fixture_id ?? entry.id).filter(Boolean)
+    ]
+  }));
 }
 
 export { unapprovedDraft };

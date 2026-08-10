@@ -1,0 +1,211 @@
+{
+  "goldResults": [
+    {
+      "fixtureId": "gold-lilith-aries-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-taurus-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-gemini-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-cancer-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-leo-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-virgo-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-libra-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-scorpio-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-sagittarius-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-capricorn-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-aquarius-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    },
+    {
+      "fixtureId": "gold-lilith-pisces-v5",
+      "expected": "PASS",
+      "actual": "PASS",
+      "categories": [],
+      "authority": "exact-owner-locked"
+    }
+  ],
+  "negativeResults": [
+    {
+      "fixtureId": "neg-aries-dishes",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "stock_trope",
+        "example_proves_astrology"
+      ],
+      "categories": [
+        "stock_trope",
+        "example_proves_astrology"
+      ],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "neg-capricorn-career",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "sign_house_separation"
+      ],
+      "categories": [
+        "sign_house_separation"
+      ],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "neg-sagittarius-9th",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "sign_house_separation"
+      ],
+      "categories": [
+        "sign_house_separation"
+      ],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "neg-pisces-well",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "metaphor_requires_translation"
+      ],
+      "categories": [
+        "metaphor_requires_translation"
+      ],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "neg-taurus-tagline",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "tagline_stands_alone"
+      ],
+      "categories": [
+        "tagline_stands_alone"
+      ],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "neg-aquarius-selfhelp",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "generic_self_help",
+        "observable_behavior"
+      ],
+      "categories": [
+        "register_consistency",
+        "generic_self_help",
+        "observable_behavior"
+      ],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "neg-gemini-advocacy",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "advocacy_register_drift",
+        "observable_behavior"
+      ],
+      "categories": [
+        "advocacy_register_drift",
+        "observable_behavior"
+      ],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "neg-virgo-clinical",
+      "expected": "REVISE_OR_FAIL",
+      "actual": "REVISE",
+      "expectedCategories": [
+        "clinical_shorthand",
+        "observable_behavior"
+      ],
+      "categories": [
+        "clinical_shorthand",
+        "observable_behavior"
+      ],
+      "missed": [],
+      "passed": true
+    }
+  ],
+  "goldPassed": 12,
+  "negativePassed": 8,
+  "falsePositives": 0,
+  "falseNegatives": 0,
+  "blockingRegressions": 0,
+  "passed": true,
+  "modelCallCount": 0,
+  "note": "Executable deterministic and structured-contract evaluation; no billed model call was required."
+}
