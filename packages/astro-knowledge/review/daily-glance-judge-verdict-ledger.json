@@ -720,7 +720,8 @@
         "screenshot_line",
         "specificity"
       ],
-      "ownerVerdict": "pending"
+      "ownerVerdict": "kept",
+      "ownerNote": "Owner prefers the serving copy."
     },
     {
       "auditDate": "2026-08-10",
