@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-051",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/neptune",
+  "workbookKey": "lilith|square|neptune",
+  "payloadSha256": "ac14a403ffd09c403c00787a1d12dd3499ead14ed738dc7a759b64d492729d87",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to stay up scrolling, watching, drinking, or daydreaming when the life you have does not resemble the one you want. The distraction changes the feeling for a while but leaves the desire just as vague the next day. This often happens because admitting the want would require a decision or expose it to judgment. Write down the specific change you are avoiding when you return to the fantasy.",
+    "astroHint": "Lilith square Neptune can make an unmet desire appear as avoidance, fantasy, or numbing instead of a clear want.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Neptune primitive: Neptune describes imagination, longing, compassion, spiritual sensitivity, idealization, confusion, surrender, and the places where boundaries become harder to define. It shows where someone may dream, dissolve, avoid, or become more receptive to what cannot be measured cleanly. Pair frame: The parasocial pull; the escape that is an unmet want wearing a disguise. Aspect operation: Square creates friction that presses the two functions into a forced adjustment. Traditional nature: malefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/neptune.json; packages/astro-knowledge/data/pairs/neptune-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/neptune/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 52,
+    "approvedBodyCell": "E52",
+    "approvedAstroHintCell": "F52",
+    "ownerStatusCell": "H52"
+  },
+  "additionalBilledCalls": 0
+}

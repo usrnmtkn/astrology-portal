@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-034",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/jupiter",
+  "workbookKey": "lilith|trine|jupiter",
+  "payloadSha256": "1d4e5ed9dae9259ef8a433ac31f47cc80b9c12963db94deaae95518c4f67897c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to ask the bigger question, order what you want, travel farther, laugh loudly, or pursue more than the approved amount without shrinking first. Your enthusiasm does not require other people to agree with every choice. You usually understand that appetite can be honest without becoming careless. People around you often become more open about what they want because you do not treat wanting as embarrassing.",
+    "astroHint": "Lilith trine Jupiter can make a larger-than-usual appetite for experience easy to own.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Jupiter primitive: Jupiter describes growth, wisdom, opportunity, belief, generosity, risk, confidence, and the instinct to expand beyond what is already known. It shows where someone seeks meaning, trusts possibility, and learns through experience. Pair frame: The honest conversation about wanting more finally happens and goes well. Aspect operation: Trine lets the two functions cooperate with relative ease. Traditional nature: benefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/jupiter.json; packages/astro-knowledge/data/pairs/jupiter-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/jupiter/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 35,
+    "approvedBodyCell": "E35",
+    "approvedAstroHintCell": "F35",
+    "ownerStatusCell": "H35"
+  },
+  "additionalBilledCalls": 0
+}

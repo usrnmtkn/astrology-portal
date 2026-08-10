@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-052",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/neptune",
+  "workbookKey": "lilith|trine|neptune",
+  "payloadSha256": "c0ad5ad5fe037f20dca88fa7aab9da3dc2564c2d67bb3981e08f9e4d1f4ffe83",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to hear about another person's shame, longing, mistake, or private fear without reducing them to it. You can also recognize your own complicated feelings without immediately turning them into a secret or a crisis. Imagination and compassion make room for what is difficult to explain. People often feel understood around you because you do not demand a simple version of their inner life.",
+    "astroHint": "Lilith trine Neptune can make complicated desires and private feelings easier to meet with compassion.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Neptune primitive: Neptune describes imagination, longing, compassion, spiritual sensitivity, idealization, confusion, surrender, and the places where boundaries become harder to define. It shows where someone may dream, dissolve, avoid, or become more receptive to what cannot be measured cleanly. Pair frame: Imagination gives the exiled want a safe first form: the art, the plan, the admission. Aspect operation: Trine lets the two functions cooperate with relative ease. Traditional nature: benefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/neptune.json; packages/astro-knowledge/data/pairs/neptune-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/neptune/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 53,
+    "approvedBodyCell": "E53",
+    "approvedAstroHintCell": "F53",
+    "ownerStatusCell": "H53"
+  },
+  "additionalBilledCalls": 0
+}

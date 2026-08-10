@@ -274,6 +274,7 @@ export function renderNatalAspect(facts, opts = {}) {
       headline: `${title(planetA)} ${aspect} ${title(planetB)}`,
       parts: [exactLived.body],
       body: exactLived.body,
+      astroHint: exactLived.astroHint,
       templateKey: exactLived.contentKey,
     };
   }

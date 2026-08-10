@@ -71,7 +71,10 @@ function mappedKey(workbookKey) {
 
 const rowsByKey = new Map(source.hookRows.map((row) => [row.contentKey, row]));
 const manifestByWorkbookKey = new Map(manifest.rows.map((row) => [row.workbookKey, row]));
-const livedRows = source.hookRows.filter((row) => livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix)));
+const livedRows = source.hookRows.filter((row) => (
+  livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
+  && !row.contentKey.startsWith("fallback-hook/natal-aspect-lived/lilith/")
+));
 assert.equal(livedRows.length, 108);
 assert.equal(packet.approvedAt, "2026-08-10");
 assert.equal(packet.approvalRecord, workbookPath);

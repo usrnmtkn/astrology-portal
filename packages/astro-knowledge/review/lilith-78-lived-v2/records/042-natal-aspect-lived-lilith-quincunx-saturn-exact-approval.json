@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-042",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/saturn",
+  "workbookKey": "lilith|quincunx|saturn",
+  "payloadSha256": "289fbd72f191b548522008e735736b5e0b8f8e6250035f6b8e059aa6cd0fb312",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to use a system that works until it blocks the very thing it was supposed to support. A careful budget removes every pleasure, or a flexible schedule leaves important work unfinished. This often comes from trying to settle the conflict between order and autonomy with one permanent rule. Adjust the rule to the current problem instead of making the whole life obey it.",
+    "astroHint": "Lilith quincunx Saturn can make a rule protect one part of life while restricting another.",
+    "sourceMechanism": "EXACT-ASPECT DERIVATION: no grouped quincunx legacy row; bounded by the pair sources and the quincunx primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Saturn primitive: Saturn describes time, structure, boundaries, maturity, responsibility, limits, discipline, and the lessons that ask someone to become more capable and realistic. It shows where life may move slowly, but also where lasting strength can be built. Pair frame: The obligation reads as a cage and the refusal finally gets representation. Compliance snaps into defiance; some rules deserve the refusal, some refusals are old anger. Renegotiation works because the exiled term is finally on the table. Aspect operation: Quincunx puts mismatched functions together and requires repeated adjustment. Traditional nature: awkward, requires adjustment. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/saturn.json; packages/astro-knowledge/data/pairs/saturn-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/saturn/conjunction; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/saturn/hard; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/saturn/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 43,
+    "approvedBodyCell": "E43",
+    "approvedAstroHintCell": "F43",
+    "ownerStatusCell": "H43"
+  },
+  "additionalBilledCalls": 0
+}

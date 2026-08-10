@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-076",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/south-node",
+  "workbookKey": "lilith|trine|south-node",
+  "payloadSha256": "45584fc86b51e2c35fb7db59e4e91aad39f714b192973c8d2c0aeb25a8456071",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to know how to read the room, keep the peace, or handle a difficult person without losing track of what you want. Familiar competence supports honesty instead of replacing it. You usually understand which old skills still serve you and which ones were only ways to stay acceptable. This makes it easier to use experience without automatically repeating the past.",
+    "astroHint": "Lilith trine the South Node can make an old skill useful when it no longer requires you to hide your preferences.",
+    "sourceMechanism": "LIMITED LEGACY SUPPORT: no fallback-hook/aspect-pair/lilith reader row exists for this counterpart. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. South Node primitive: Familiar pattern, default strategy, inherited competence, and the comfort zone that can become repetitive when unconscious. Pair frame: The want stops being a secret and starts being a plan. Aspect operation: Trine lets the two functions cooperate with relative ease. Traditional nature: benefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/points/south-node.json; packages/astro-knowledge/data/pairs/lilith-nodes.json; packages/astro-knowledge/data/primitives/aspects.json."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 77,
+    "approvedBodyCell": "E77",
+    "approvedAstroHintCell": "F77",
+    "ownerStatusCell": "H77"
+  },
+  "additionalBilledCalls": 0
+}

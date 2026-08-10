@@ -59,6 +59,7 @@ export type YouTransitArticle = {
   subtitle: string;
   tldr?: string;
   lensHint?: ReactNode;
+  lensHintLabel?: string;
   compactHeader?: boolean;
   plainBody?: boolean;
   bodyBeforeSections?: boolean;
@@ -943,7 +944,7 @@ function YouTransitArticlePage({
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
               {displayArticle.lensHint ? (
-                <aside className="article-lens-hint" aria-label="Placement lens">
+                <aside className="article-lens-hint" aria-label={displayArticle.lensHintLabel ?? "Placement lens"}>
                   {typeof displayArticle.lensHint === "string" ? <p>{cleanArticleText(displayArticle.lensHint)}</p> : displayArticle.lensHint}
                 </aside>
               ) : null}

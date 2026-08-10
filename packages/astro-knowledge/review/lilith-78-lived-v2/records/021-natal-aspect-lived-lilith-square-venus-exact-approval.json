@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-021",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/venus",
+  "workbookKey": "lilith|square|venus",
+  "payloadSha256": "e3380ac24a76e2bc698cf57df63082932d2a9c3e832bd94b4328588e04f52642",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You are good at wanting things from a distance. The tab stays open for weeks, the crush stays unspoken, the plan stays hypothetical. Whenever something you want becomes available, you find a reason the timing is wrong. Underneath there is usually an old lesson that your wanting was too much, too expensive, too selfish, or too strange, so desire learned to wait for a permission that never comes. Working through it starts small: buy the thing, name the preference, and let the discomfort pass.",
+    "astroHint": "Lilith square Venus can make it hard to act on a desire, even one you have carried for a long time.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Venus primitive: Venus describes attraction, pleasure, beauty, values, money, comfort, desire, and the conditions that help connection feel worth choosing. It shows what someone is drawn toward and what helps affection become real rather than only appealing. Pair frame: The relationship polished for the audience while the real want goes hungry; the exile that erupts. Aspect operation: Square creates friction that presses the two functions into a forced adjustment. Traditional nature: malefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/venus.json; packages/astro-knowledge/data/pairs/venus-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/venus/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 22,
+    "approvedBodyCell": "E22",
+    "approvedAstroHintCell": "F22",
+    "ownerStatusCell": "H22"
+  },
+  "additionalBilledCalls": 0
+}

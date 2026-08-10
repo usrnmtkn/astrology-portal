@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-018",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/mercury",
+  "workbookKey": "lilith|quincunx|mercury",
+  "payloadSha256": "d6081c2f3d7af619a23d31b22d0a24166a4abcc06f0a387b762bf1611bed4f84",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to rewrite a sentence until it no longer says what happened, or speak plainly and worry that it sounded harsher than you meant. Accuracy and acceptability rarely feel available at the same time. This usually comes from learning that the facts were welcome only when they did not make anyone uncomfortable. Keep the fact clear and revise only the delivery.",
+    "astroHint": "Lilith quincunx Mercury can make a true thought difficult to express in language that also feels acceptable.",
+    "sourceMechanism": "EXACT-ASPECT DERIVATION: no grouped quincunx legacy row; bounded by the pair sources and the quincunx primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Mercury primitive: Mercury describes the mind in motion: thought, language, questions, interpretation, learning, writing, conversation, and the way information becomes useful. It shows how someone notices patterns, names what is happening, and makes decisions from what they observe. Pair frame: The unsayable reaches the tongue's edge; said plainly once, it costs less than the silence has. The meeting where everyone knows and nobody says; the message drafted and deleted. The room exhales because someone finally names it; honesty clears years of static. Aspect operation: Quincunx puts mismatched functions together and requires repeated adjustment. Traditional nature: awkward, requires adjustment. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/mercury.json; packages/astro-knowledge/data/pairs/mercury-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/mercury/conjunction; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/mercury/hard; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/mercury/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 19,
+    "approvedBodyCell": "E19",
+    "approvedAstroHintCell": "F19",
+    "ownerStatusCell": "H19"
+  },
+  "additionalBilledCalls": 0
+}

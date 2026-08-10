@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-001",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/sun",
+  "workbookKey": "lilith|conjunction|sun",
+  "payloadSha256": "ea48d9cc19339980926dfc5c1ba78eb2fc036a68d06187885a0ec21961f5409e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to show the part of yourself that other people expect, then surprise them with an opinion, choice, or reaction that is much less edited. Keeping that side private rarely feels natural for long. Somewhere along the way, being fully visible was linked with being judged, selfish, or difficult, so being seen can still bring relief and embarrassment at the same time. Let one honest choice stay visible instead of taking it back as soon as someone notices.",
+    "astroHint": "Lilith conjunct the Sun can make a part of your identity that once felt unacceptable impossible to keep separate from the rest of you.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Sun primitive: The Sun describes identity, vitality, creative force, visibility, and the part of life that wants to be lived with purpose. It shows where someone builds confidence, recognizes what gives them energy, and learns to act from the center of themselves rather than from imitation or approval. Pair frame: The persona feels like a costume; the exiled want is information about the life, not a threat to it. Aspect operation: Conjunction fuses the two functions and intensifies them. Traditional nature: takes the combined nature of the two planets. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/sun.json; packages/astro-knowledge/data/pairs/sun-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/sun/conjunction."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 2,
+    "approvedBodyCell": "E2",
+    "approvedAstroHintCell": "F2",
+    "ownerStatusCell": "H2"
+  },
+  "additionalBilledCalls": 0
+}

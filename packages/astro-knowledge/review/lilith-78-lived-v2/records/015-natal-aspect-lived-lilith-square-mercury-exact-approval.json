@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-015",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/mercury",
+  "workbookKey": "lilith|square|mercury",
+  "payloadSha256": "0cd4e659c97fb894da9e4afe986105322db32e81befc6c9ad62f65f0595ac101",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You keep revising the email or holding back in the meeting until one careless comment is followed by everything coming out at once. Underneath is often the belief that you only have two choices: stay completely polite or say everything without a filter. You have a middle option: name one specific concern early before the frustration builds up.",
+    "astroHint": "Lilith square Mercury can make honest words come out too late and with more force than the situation needed.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Mercury primitive: Mercury describes the mind in motion: thought, language, questions, interpretation, learning, writing, conversation, and the way information becomes useful. It shows how someone notices patterns, names what is happening, and makes decisions from what they observe. Pair frame: The meeting where everyone knows and nobody says; the message drafted and deleted. Aspect operation: Square creates friction that presses the two functions into a forced adjustment. Traditional nature: malefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/mercury.json; packages/astro-knowledge/data/pairs/mercury-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/mercury/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 16,
+    "approvedBodyCell": "E16",
+    "approvedAstroHintCell": "F16",
+    "ownerStatusCell": "H16"
+  },
+  "additionalBilledCalls": 0
+}
