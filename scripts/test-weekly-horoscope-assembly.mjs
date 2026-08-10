@@ -681,7 +681,17 @@ try {
   );
   assert.match(
     weeklySource,
-    /stationEventPositions[\s\S]*includeTransitWindows/u,
+    /calculationDates\.map\(\(date\) => getAstrodienstSky\(location, date\)\)/u,
+    "Weekly daily snapshots must skip transit-window enrichment."
+  );
+  assert.doesNotMatch(
+    weeklySource,
+    /calculationDates\.map\(\(date\) => getAstrodienstSky\(location, date, \{ includeTransitWindows: true \}\)\)/u,
+    "Weekly daily snapshots must not pay for transit windows they do not consume."
+  );
+  assert.match(
+    weeklySource,
+    /const stationPositionEntries[\s\S]*?events\.filter\(isExactStation\)[\s\S]*?includeTransitWindows: true[\s\S]*?const stationEventPositions/u,
     "Exact station cards need the active house-pass window for the shared transit-card timing row."
   );
   assert.match(
@@ -768,6 +778,58 @@ try {
   );
 
   const natalSky = await ephemeris.getAstrodienstSky(location, new Date("1990-01-01T12:00:00Z"));
+  const dailySnapshotDate = new Date("2026-07-27T16:00:00Z");
+  const [coreDailySnapshot, enrichedDailySnapshot] = await Promise.all([
+    ephemeris.getAstrodienstSky(location, dailySnapshotDate),
+    ephemeris.getAstrodienstSky(location, dailySnapshotDate, { includeTransitWindows: true })
+  ]);
+  const natalTargets = natalSky.positions.filter((position) => typeof position.longitude === "number");
+  const coreDailyContacts = weekly.weeklyDailyTransitContacts(coreDailySnapshot, natalTargets);
+  const enrichedDailyContacts = weekly.weeklyDailyTransitContacts(enrichedDailySnapshot, natalTargets);
+  assert.equal(
+    JSON.stringify(coreDailyContacts),
+    JSON.stringify(enrichedDailyContacts),
+    "Skipping transit-window enrichment must leave daily contact selection byte-identical."
+  );
+
+  const stationRangeEvents = await ephemeris.getLunarCalendarRangeEvents(
+    location,
+    new Date("2026-07-27T00:00:00Z"),
+    new Date("2026-08-04T00:00:00Z")
+  );
+  const exactStationEvent = stationRangeEvents.find((event) => (
+    event.type === "station"
+    && event.primary
+    && (event.phase === "station-retrograde" || event.phase === "station-direct")
+  ));
+  assert.ok(exactStationEvent, "The station regression window must contain an exact station event.");
+  const enrichedStationSky = await ephemeris.getAstrodienstSky(
+    location,
+    new Date(exactStationEvent.startsAt),
+    { includeTransitWindows: true }
+  );
+  const exactStationPosition = enrichedStationSky.positions.find(
+    (position) => position.planet.toLowerCase() === exactStationEvent.planet?.toLowerCase()
+  );
+  assert.ok(exactStationPosition?.transitStart, "An exact station snapshot must retain its transit-window start.");
+  assert.ok(exactStationPosition?.transitEnd, "An exact station snapshot must retain its transit-window end.");
+  assert.ok(
+    new Date(exactStationPosition.transitStart).getTime() <= new Date(exactStationEvent.startsAt).getTime()
+      && new Date(exactStationPosition.transitEnd).getTime() >= new Date(exactStationEvent.startsAt).getTime(),
+    "The exact station's required transit window must contain the station event."
+  );
+  const exactStationCopy = weekly.resolveWeeklyStationCopy(
+    exactStationEvent,
+    rows,
+    "gemini",
+    exactStationPosition,
+    location.timeZone
+  );
+  assert.match(
+    exactStationCopy.timing ?? "",
+    /^[A-Z][a-z]+ \d{1,2}, \d{4} – [A-Z][a-z]+ \d{1,2}, \d{4}$/u,
+    "Station-event rendering must retain the required enriched transit window."
+  );
   const realWeek = await weekly.buildWeeklyHoroscope({
     userId: "weekly-acceptance-fixture",
     natalSky,
@@ -955,7 +1017,7 @@ try {
     "Aspect copy must render in its own standalone card."
   );
 
-  console.log("weekly horoscope assembly checks passed: event-time ruler condition, stale-sky guard, Neptune return exclusion, macro, and standalone aspect cards");
+  console.log("weekly horoscope assembly checks passed: daily-contact byte identity, station windows, event-time ruler condition, stale-sky guard, Neptune return exclusion, macro, and standalone aspect cards");
 } finally {
   await vite.close();
 }
