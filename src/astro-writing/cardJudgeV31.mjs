@@ -8,8 +8,8 @@ import {
 export const CARD_JUDGE_V3_1_VERSION = "card-writing-judge-rubric-v3.1";
 export const CARD_JUDGE_V3_1_CALL_BUDGET = 20;
 export const CARD_JUDGE_V3_1_AUTHORIZATION_ENV = "ASTRO_WRITING_V3_1_RUN_AUTHORIZATION";
-export const CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN = "owner-authorized-card-judge-v3-1-run-2a-20-calls";
-export const CARD_JUDGE_V3_1_ARTIFACT_PATH = "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json";
+export const CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN = "owner-authorized-card-judge-v3-1-run-2b-20-calls";
+export const CARD_JUDGE_V3_1_ARTIFACT_PATH = "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2b.json";
 
 export const CARD_JUDGE_V3_1_SCHEMA = Object.freeze({
   type: "object",
@@ -159,10 +159,10 @@ export function assertCardJudgeV31LiveAuthorization({
   artifactExists = false
 } = {}) {
   if (artifactExists) {
-    throw new Error("No billed call was made. The card judge v3.1 run-2a authorization token was already consumed by its artifact.");
+    throw new Error("No billed call was made. The card judge v3.1 run-2b authorization token was already consumed by its artifact.");
   }
   if (env[CARD_JUDGE_V3_1_AUTHORIZATION_ENV] !== CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN) {
-    throw new Error(`No billed call was made. Set ${CARD_JUDGE_V3_1_AUTHORIZATION_ENV} only after explicit owner authorization naming the 20-call v3.1 run-2a replacement budget.`);
+    throw new Error(`No billed call was made. Set ${CARD_JUDGE_V3_1_AUTHORIZATION_ENV} only after explicit owner authorization naming the 20-call v3.1 run-2b replacement budget.`);
   }
-  return { authorizedCalls: CARD_JUDGE_V3_1_CALL_BUDGET, retriesAuthorized: 0, run: "2a" };
+  return { authorizedCalls: CARD_JUDGE_V3_1_CALL_BUDGET, retriesAuthorized: 0, run: "2b" };
 }

@@ -87,18 +87,18 @@ assert.equal(fixtureContracts.ownerApproved, true);
 assert.equal(fixtureContracts.activeInHarness, true);
 assert.equal(fixtureContracts.activeInProduction, false);
 assert.equal(fixtureContracts.liveRunAuthorized, false);
-assert.equal(fixtureContracts.liveRunStatus, "errored_invalid_api_key");
+assert.equal(fixtureContracts.liveRunStatus, "run_2b_pending_explicit_authorization");
 assert.equal(fixtureContracts.completedCalls, 0);
 assert.equal(fixtureContracts.fixtureSetStatus, "owner_approved");
 assert.deepEqual(fixtureContracts.proposedLiveRun, {
-  run: "2a",
+  run: "2b",
   calls: 20,
   model: "gpt-5.6-terra",
   reasoningEffort: "high",
   retries: 0,
   positives: 12,
   negatives: 8,
-  authorizedAt: "2026-08-10"
+  authorizationStatus: "pending_explicit_owner_authorization"
 });
 assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.decision), ["judge_error", "judge_error"]);
 assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.prohibitedRecurrence), ["owner_voice_drift", "owner_voice_drift"]);
@@ -190,11 +190,11 @@ assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "R
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "FAIL", categories: ["specificity_ceiling"] }).passed, false);
 
 assert.equal(CARD_JUDGE_V3_1_CALL_BUDGET, 20);
-assert.equal(CARD_JUDGE_V3_1_ARTIFACT_PATH, "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json");
+assert.equal(CARD_JUDGE_V3_1_ARTIFACT_PATH, "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2b.json");
 assert.deepEqual(assertCardJudgeV31LiveAuthorization({
   env: { [CARD_JUDGE_V3_1_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN },
   artifactExists: false
-}), { authorizedCalls: 20, retriesAuthorized: 0, run: "2a" });
+}), { authorizedCalls: 20, retriesAuthorized: 0, run: "2b" });
 assert.throws(() => assertCardJudgeV31LiveAuthorization({
   env: { [CARD_JUDGE_V3_1_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN },
   artifactExists: true
@@ -204,6 +204,8 @@ assert.match(runtime, /assertCardJudgeV31LiveAuthorization/u);
 assert.match(runtime, /gpt-5\.6-terra/u);
 assert.match(runtime, /role: "CARD_REVIEWER_V3"/u);
 assert.ok(!runtime.includes("CARD_REVIEWER_V3_1"), "The shared OpenAI client accepts the governed card-reviewer role only.");
+assert.match(runtime, /ASTRO_WRITING_CALIBRATION_ENV_FILE/u);
+assert.match(runtime, /failed the local structural preflight/u);
 
 console.log(JSON.stringify({
   status: "PASS",

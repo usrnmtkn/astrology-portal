@@ -62,19 +62,21 @@
     { "sign": "pisces", "status": "planned" }
   ],
   "liveRunAuthorized": false,
-  "preservedErroredRun": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json",
-  "liveRunAuthorizationConsumedBy": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json",
-  "liveRunStatus": "errored_invalid_api_key",
+  "preservedErroredRuns": [
+    "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json",
+    "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2a.json"
+  ],
+  "liveRunStatus": "run_2b_pending_explicit_authorization",
   "completedCalls": 0,
   "proposedLiveRun": {
-    "run": "2a",
+    "run": "2b",
     "calls": 20,
     "model": "gpt-5.6-terra",
     "reasoningEffort": "high",
     "retries": 0,
     "positives": 12,
     "negatives": 8,
-    "authorizedAt": "2026-08-10"
+    "authorizationStatus": "pending_explicit_owner_authorization"
   },
   "pairs": [
     {
