@@ -5,7 +5,12 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { evaluateCardJudgeV31Contract, loadCardJudgeV31FixtureSet } from "../../scripts/card-judge-v3-1-fixtures.mjs";
 import {
+  CARD_JUDGE_V3_1_ARTIFACT_PATH,
+  CARD_JUDGE_V3_1_AUTHORIZATION_ENV,
+  CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN,
+  CARD_JUDGE_V3_1_CALL_BUDGET,
   CARD_JUDGE_V3_1_SCHEMA,
+  assertCardJudgeV31LiveAuthorization,
   cardJudgeV31PacketPrompt,
   evaluateCardJudgeV31
 } from "../../src/astro-writing/cardJudgeV31.mjs";
@@ -20,7 +25,7 @@ const ownerApprovedGold = read("data/writing/owner-approved-examples.jsonl");
 const draftChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-1-DRAFT.md");
 const draftRubric = read("tldr-astro-phrasebank/TLDR-CARD-JUDGE-RUBRIC-V3-1-DRAFT.md");
 const fixtureContracts = JSON.parse(read("packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-fixture-contracts.json"));
-const runtime = read("scripts/run-astro-writing-live-reviewer-eval-v3.mjs");
+const runtime = read("scripts/run-astro-writing-live-reviewer-eval-v3-1.mjs");
 
 assert.equal(sha256(approvedChecklist), "d1e255a1cf151d2d7fbf705d5a9167da5a62ca3cbbbabf0957dd5f6e56f702f5", "Approved v3 checklist must remain byte-identical.");
 assert.equal(sha256(approvedRubric), "bb2584941678a20d13e99c6aef34d8394f986bcdc52871c8a321a73cc0223117", "Approved v3 rubric must remain byte-identical.");
@@ -28,12 +33,12 @@ assert.equal(sha256(runOneArtifact), "5b50e50841938d95667ef6047132905f2ae52f5b60
 assert.equal(sha256(ownerApprovedGold), "7f43af675d3a3769377c409f864e9919ab3e1b6e0245daf408d52d0195d17002", "Owner-locked V5 gold cards must remain byte-identical.");
 
 for (const draft of [draftChecklist, draftRubric]) {
-  assert.match(draft, /^\*\*Status:\*\* `needs_review`$/mu);
-  assert.match(draft, /^\*\*Owner approved:\*\* `false`$/mu);
-  assert.match(draft, /^\*\*Active in harness:\*\* `false`$/mu);
+  assert.match(draft, /^\*\*Status:\*\* `owner_approved`$/mu);
+  assert.match(draft, /^\*\*Owner approved:\*\* `true`$/mu);
+  assert.match(draft, /^\*\*Active in harness:\*\* `true`$/mu);
   assert.match(draft, /^\*\*Active in production:\*\* `false`$/mu);
   assert.match(draft, /^\*\*Promotion authorized:\*\* `false`$/mu);
-  assert.match(draft, /^\*\*Fixture-set status:\*\* `finalized_for_owner_review`$/mu);
+  assert.match(draft, /^\*\*Fixture-set status:\*\* `owner_approved`$/mu);
   assert.match(draft, /When several categories describe the same underlying defect and require the same correction, return the narrowest causal defect as primary\. Add a second defect only when it identifies a materially different problem requiring a separate correction\./u);
   assert.match(draft, /Before returning a secondary defect, state internally what separate edit would be required to fix it\. If the same edit fixes both labels, suppress the secondary label\./u);
   assert.match(draft, /career-domain substitution[\s\S]*`house_bleed`[\s\S]*not `specificity_ceiling`/iu);
@@ -77,12 +82,24 @@ assert.match(draftRubric, /Every finding must cite at least one exact supplied m
 assert.match(draftRubric, /per-placement noun blacklist runs deterministically before the model call/u);
 assert.match(draftRubric, /seeds Sagittarius and Capricorn/u);
 
-assert.equal(fixtureContracts.status, "needs_review");
-assert.equal(fixtureContracts.ownerApproved, false);
-assert.equal(fixtureContracts.activeInHarness, false);
+assert.equal(fixtureContracts.status, "owner_approved");
+assert.equal(fixtureContracts.ownerApproved, true);
+assert.equal(fixtureContracts.activeInHarness, true);
+assert.equal(fixtureContracts.activeInProduction, false);
 assert.equal(fixtureContracts.liveRunAuthorized, false);
-assert.equal(fixtureContracts.fixtureSetStatus, "finalized_for_owner_review");
-assert.ok(!Object.hasOwn(fixtureContracts, "proposedLiveRun"));
+assert.equal(fixtureContracts.liveRunStatus, "errored_pre_call");
+assert.equal(fixtureContracts.completedCalls, 0);
+assert.equal(fixtureContracts.fixtureSetStatus, "owner_approved");
+assert.deepEqual(fixtureContracts.proposedLiveRun, {
+  run: 2,
+  calls: 20,
+  model: "gpt-5.6-terra",
+  reasoningEffort: "high",
+  retries: 0,
+  positives: 12,
+  negatives: 8,
+  authorizedAt: "2026-08-10"
+});
 assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.decision), ["judge_error", "judge_error"]);
 assert.deepEqual(fixtureContracts.goldFindingRulings.map((entry) => entry.prohibitedRecurrence), ["owner_voice_drift", "owner_voice_drift"]);
 assert.ok(fixtureContracts.goldFindingRulings.every((entry) => entry.mechanismExteriority === "internal_behavior"));
@@ -108,11 +125,11 @@ const { cases, mechanisms } = loadCardJudgeV31FixtureSet();
 assert.equal(cases.length, 20);
 assert.equal(cases.filter((fixture) => fixture.kind === "gold").length, 12);
 assert.equal(cases.filter((fixture) => fixture.kind === "negative").length, 8);
-assert.ok(cases.every((fixture) => fixture.packet.version === "card-writing-judge-rubric-v3.1-draft"));
+assert.ok(cases.every((fixture) => fixture.packet.version === "card-writing-judge-rubric-v3.1"));
 assert.equal(mechanisms.records.length, 12);
 assert.ok(mechanisms.records.every((record) => record.elements.length >= 12));
 assert.ok(mechanisms.records.every((record) => record.doNotAssume.length > 0));
-assert.ok(mechanisms.records.every((record) => record.houseBleedNounBlacklist.status === "needs_review" && record.houseBleedNounBlacklist.ownerApproved === false));
+assert.ok(mechanisms.records.every((record) => record.houseBleedNounBlacklist.status === "needs_review" && record.houseBleedNounBlacklist.ownerApproved === true));
 for (const fixture of cases) {
   assert.ok(fixture.packet.mechanismRecord);
   assert.ok(fixture.packet.mechanismRecord.elements.some((element) => element.id === "core_theme_wound"));
@@ -172,8 +189,21 @@ assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "R
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "REVISE", categories: ["example_proves_astrology", "stock_trope"] }).passed, false, "Allowed alternates are substitutions, not permission to stack findings.");
 assert.equal(evaluateCardJudgeV31Contract({ fixture: geminiNegative, verdict: "FAIL", categories: ["specificity_ceiling"] }).passed, false);
 
-assert.match(runtime, /TLDR-CARD-JUDGE-RUBRIC-V3-DRAFT\.md/u);
-assert.ok(!runtime.includes("TLDR-CARD-JUDGE-RUBRIC-V3-1-DRAFT.md"), "Inactive v3.1 draft must not be wired into the live runner.");
+assert.equal(CARD_JUDGE_V3_1_CALL_BUDGET, 20);
+assert.equal(CARD_JUDGE_V3_1_ARTIFACT_PATH, "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json");
+assert.deepEqual(assertCardJudgeV31LiveAuthorization({
+  env: { [CARD_JUDGE_V3_1_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN },
+  artifactExists: false
+}), { authorizedCalls: 20, retriesAuthorized: 0, run: 2 });
+assert.throws(() => assertCardJudgeV31LiveAuthorization({
+  env: { [CARD_JUDGE_V3_1_AUTHORIZATION_ENV]: CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN },
+  artifactExists: true
+}), /already consumed/u);
+assert.match(runtime, /TLDR-CARD-JUDGE-RUBRIC-V3-1-DRAFT\.md/u);
+assert.match(runtime, /assertCardJudgeV31LiveAuthorization/u);
+assert.match(runtime, /gpt-5\.6-terra/u);
+assert.match(runtime, /role: "CARD_REVIEWER_V3"/u);
+assert.ok(!runtime.includes("CARD_REVIEWER_V3_1"), "The shared OpenAI client accepts the governed card-reviewer role only.");
 
 console.log(JSON.stringify({
   status: "PASS",

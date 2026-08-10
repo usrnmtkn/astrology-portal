@@ -23,6 +23,7 @@
     "build:writing-harness": "node scripts/build-reviewer-gold-exemplars.mjs && node scripts/build-writing-harness-instructions.mjs && node scripts/build-writing-harness-data.mjs",
     "test:astro-writing": "node tests/astro-writing/harness.test.mjs && node tests/astro-writing/card-judge-v3.test.mjs && node tests/astro-writing/card-judge-v3-1-draft.test.mjs",
     "eval:astro-writing:v3": "node scripts/run-astro-writing-live-reviewer-eval-v3.mjs",
+    "eval:astro-writing:v3.1": "node scripts/run-astro-writing-live-reviewer-eval-v3-1.mjs",
     "eval:astro-writing": "node scripts/run-astro-writing-evals.mjs",
     "test:report-foundation": "node --experimental-strip-types scripts/test-report-envelope.mjs && node scripts/test-report-attribution.mjs && node scripts/test-report-article-fixture.mjs && node scripts/test-report-foundation-contract.mjs",
     "test:report-generation": "node --experimental-strip-types scripts/test-report-facts.mjs && node --experimental-strip-types scripts/test-report-generation.mjs",

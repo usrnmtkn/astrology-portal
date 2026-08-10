@@ -1,24 +1,28 @@
-# Card critique checklist v3.1 (draft)
+# Card critique checklist v3.1
 
-**Status:** `needs_review`
+**Status:** `owner_approved`
 
-**Version:** `card-critique-checklist-v3.1-draft`
+**Version:** `card-critique-checklist-v3.1`
 
-**Drafted:** 2026-08-09
+**Approved:** 2026-08-10
+
+**Approved source SHA-256:** `ce9c9556e8325fd16d417baf5277e12c05064f89e61fb9cec6f3ffc4dabedf35`
 
 **Surface:** `card`
 
-**Owner approved:** `false`
+**Owner approved:** `true`
 
-**Active in harness:** `false`
+**Active in harness:** `true`
 
 **Active in production:** `false`
 
 **Promotion authorized:** `false`
 
-**Fixture-set status:** `finalized_for_owner_review`
+**Fixture-set status:** `owner_approved`
 
-**Governance:** Successor draft to the owner-approved card critique checklist v3. The approved v3 document remains active in the harness and unchanged. This v3.1 draft is inactive, cannot authorize model calls, and requires fresh owner approval. The owner ruled the v3 findings on `gold-lilith-sagittarius-v5` and `gold-lilith-pisces-v5` judge errors on 2026-08-09.
+**Governance:** Owner-approved successor to card critique checklist v3. Active in the card-writing harness; candidate-writer activation and promotion remain off. Any later revision requires a new version and fresh owner approval. The owner ruled the v3 findings on `gold-lilith-sagittarius-v5` and `gold-lilith-pisces-v5` judge errors on 2026-08-09.
+
+> I explicitly approve Card critique checklist v3.1 at SHA-256 ce9c9556e8325fd16d417baf5277e12c05064f89e61fb9cec6f3ffc4dabedf35 and Card writing judge rubric v3.1 at SHA-256 13efcb054da3187238d1f58c177c2f11071b58c27f65c5fe4337b2e9966b70ca, and confirm the 12 needs-review house-bleed noun blacklists in mechanism dataset SHA-256 23a1bf1d97daeb66f741b8967d64b702e90518d2ce3dd95f4ee3e297526a68e3.
 
 This checklist implements sections 20 and 21 of `TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md`. It diagnoses complete card units only. It does not authorize rewriting, approval, activation, promotion, or a live evaluation.
 
