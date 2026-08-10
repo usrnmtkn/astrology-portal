@@ -97,7 +97,16 @@ async function action(body: {
       windowStart: body.windowStart,
       now: new Date().toISOString()
     });
-    return { ok: true, entitlementId: result.entitlement.id, status: result.entitlement.status };
+    const report = await admin.selectOne<{ id: string }>("user_reports", new URLSearchParams({
+      entitlement_id: `eq.${result.entitlement.id}`,
+      select: "id"
+    }));
+    return {
+      ok: true,
+      entitlementId: result.entitlement.id,
+      reportId: report?.id ?? null,
+      status: result.entitlement.status
+    };
   }
   if (!body.reportId) throw new Error("reportId is required.");
   const report = await admin.selectOne<{
@@ -137,6 +146,20 @@ async function action(body: {
   throw new Error("Unknown report fulfillment admin action.");
 }
 
+function adminFailure(error: unknown) {
+  const message = error instanceof Error ? error.message : "Report fulfillment admin request failed.";
+  if (/report_entitlements_active_comp|duplicate key|23505/iu.test(message)) {
+    return {
+      status: 409,
+      body: {
+        code: "ACTIVE_COMP_EXISTS",
+        error: "An active comp report already exists for this user, report type, and window. Use the existing queue row, or revoke it before granting a replacement."
+      }
+    };
+  }
+  return { status: 400, body: { error: message } };
+}
+
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!requireReportAdmin(req)) return sendJson(res, 401, { error: "Unauthorized." });
   try {
@@ -144,6 +167,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (req.method === "POST") return sendJson(res, 200, await action(await jsonRequestBody(req), req));
     sendJson(res, 405, { error: "Use GET or POST." });
   } catch (error) {
-    sendJson(res, 400, { error: error instanceof Error ? error.message : "Report fulfillment admin request failed." });
+    const failure = adminFailure(error);
+    sendJson(res, failure.status, failure.body);
   }
 }

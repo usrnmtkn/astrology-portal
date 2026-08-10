@@ -484,6 +484,11 @@ body,
   flex: 0 0 auto;
 }
 
+.admin-report-row-focused {
+  outline: 2px solid rgba(96, 199, 161, 0.72);
+  outline-offset: -2px;
+}
+
 .admin-api-status-card {
   align-items: center;
   background: var(--admin-panel);

@@ -459,8 +459,16 @@ assert.equal(retryPatch.state, "retry", "Transient model failures remain resumab
 const adminSource = fs.readFileSync(new URL("../api/admin/report-fulfillment.ts", import.meta.url), "utf8");
 assert.ok(!/edit(?:_|\s|-)?prose|update(?:_|\s|-)?body/iu.test(adminSource), "The exception dashboard must not add a prose-editing path.");
 for (const actionName of ["grant_comp", "authorize_generation", "revoke_comp"]) assert.ok(adminSource.includes(`body.action === "${actionName}"`));
+assert.ok(adminSource.includes('code: "ACTIVE_COMP_EXISTS"'), "Duplicate comp grants must return a stable, human-readable conflict code.");
+assert.ok(adminSource.includes("status: 409"), "Duplicate comp grants must return HTTP 409.");
+assert.ok(adminSource.includes("An active comp report already exists"), "Duplicate comp grants must explain that the existing queue row should be used.");
+assert.ok(adminSource.includes("reportId: report?.id ?? null"), "Successful comp grants must identify the generated report row for UI focus.");
 const adminPanelSource = fs.readFileSync(new URL("../apps/admin/src/ReportFulfillmentAdminPanel.tsx", import.meta.url), "utf8");
 for (const label of ["Grant report", "Authorize ", "Revoke comp"]) assert.ok(adminPanelSource.includes(label));
+assert.ok(adminPanelSource.includes("Report granted. The fulfillment queue was refreshed"), "Successful comp grants need visible refresh confirmation.");
+assert.ok(adminPanelSource.includes("The report was granted, but the fulfillment queue could not refresh"), "A post-grant refresh failure must warn the owner not to grant again.");
+assert.ok(adminPanelSource.includes("scrollIntoView"), "Successful comp grants must move the new queue row into view.");
+assert.ok(adminPanelSource.includes("ACTIVE_COMP_EXISTS") || adminSource.includes("ACTIVE_COMP_EXISTS"), "Duplicate comp conflicts need a stable UI contract.");
 for (const route of ["../api/report-checkout.ts", "../api/report-customer-portal.ts"]) {
   const source = fs.readFileSync(new URL(route, import.meta.url), "utf8");
   assert.ok(source.indexOf('reportBillingMode() === "free_test"') < source.indexOf("!process.env.STRIPE_SECRET_KEY"), `${route} must disable Stripe before inspecting Stripe credentials.`);
