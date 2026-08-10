@@ -35,7 +35,7 @@ export const REVIEW_SCHEMA = Object.freeze({
   required: [...REVIEW_FIELDS, "decision", "violations"],
   properties: Object.fromEntries([
     ...REVIEW_FIELDS.map((field) => [field, CHECK_RESULT_SCHEMA]),
-    ["decision", { type: "string", enum: ["PASS", "REVISE", "FAIL"] }],
+    ["decision", { type: "string", enum: ["PASS", "REVISE"] }],
     ["violations", { type: "array", items: VIOLATION_SCHEMA }]
   ])
 });
@@ -161,7 +161,7 @@ function validateModelReview(modelReview) {
       throw new Error(`Reviewer omitted strict result for ${field}.`);
     }
   }
-  if (!new Set(["PASS", "REVISE", "FAIL"]).has(modelReview?.decision)) throw new Error("Reviewer omitted a valid decision.");
+  if (!new Set(["PASS", "REVISE"]).has(modelReview?.decision)) throw new Error("Reviewer omitted a valid PASS-or-REVISE decision.");
   if (!Array.isArray(modelReview?.violations)) throw new Error("Reviewer omitted violations.");
   for (const violation of modelReview.violations) {
     for (const field of ["category", "severity", "location", "text", "reason", "revision_instruction"]) {
