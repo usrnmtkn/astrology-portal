@@ -2,8 +2,10 @@
 // docs/writing/VOICE_CONTRACT.md, docs/writing/ASTROLOGY_CONTRACT.md, and
 // docs/writing/REVIEW_RUBRIC.md. Tests prevent these excerpts from drifting.
 
+import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
+
 export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v2-2026-08-09";
-export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v2-2026-08-09";
+export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v3-owner-gold-2026-08-09";
 
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
 
@@ -118,7 +120,11 @@ OUTPUT STRICT JSON ONLY.
 
 Do not rewrite the passage.
 
-Diagnose failures and provide narrowly scoped revision instructions.`;
+Diagnose failures and provide narrowly scoped revision instructions.
+
+DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL.
+
+${REVIEWER_GOLD_EXEMPLARS}`;
 
 export const REVIEW_FIELDS = Object.freeze([
   "astrology_integrity",
