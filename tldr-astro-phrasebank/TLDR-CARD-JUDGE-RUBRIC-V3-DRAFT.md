@@ -1,18 +1,28 @@
 # Card writing judge rubric v3 (comparison-based draft)
 
-**Status:** `needs_review`
+**Status:** `owner_approved`
 
-**Version:** `card-writing-judge-rubric-v3-draft`
+**Version:** `card-writing-judge-rubric-v3`
+
+**Approved:** 2026-08-09
+
+**Approved source SHA-256:** `c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983`
 
 **Surface:** `card`
 
-**Owner approved:** `false`
+**Owner approved:** `true`
+
+**Active in harness:** `true`
 
 **Active in production:** `false`
 
 **Promotion authorized:** `false`
 
-This rubric is a candidate rebuilt after the writing-harness-v2 live evaluation. It cannot activate until the owner explicitly approves both the register-per-surface ruling and this rubric. It never authorizes writer promotion.
+**Governance:** Owner-approved card judge prompt. Active in the card-writing harness; candidate writer activation and promotion remain off. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Register-per-surface ruling at SHA-256 db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2, the Card critique checklist v3 at SHA-256 3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043, and the Card writing judge rubric v3 at SHA-256 c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983.
+
+This rubric was rebuilt after the writing-harness-v2 live evaluation and is owner-approved for the card-writing harness. It never authorizes writer promotion.
 
 ## Fail-closed input packet
 

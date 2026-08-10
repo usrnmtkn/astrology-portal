@@ -1,16 +1,26 @@
 # Card critique checklist v3 (owner-standard implementation draft)
 
-**Status:** `needs_review`
+**Status:** `owner_approved`
 
-**Version:** `card-critique-checklist-v3-draft-2026-08-09`
+**Version:** `card-critique-checklist-v3`
+
+**Approved:** 2026-08-09
+
+**Approved source SHA-256:** `3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043`
 
 **Surface:** `card`
 
-**Owner approved:** `false`
+**Owner approved:** `true`
+
+**Active in harness:** `true`
 
 **Active in production:** `false`
 
 **Promotion authorized:** `false`
+
+**Governance:** Owner-approved card critique prompt. Active in the card-writing harness; candidate writer activation and promotion remain off. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Register-per-surface ruling at SHA-256 db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2, the Card critique checklist v3 at SHA-256 3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043, and the Card writing judge rubric v3 at SHA-256 c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983.
 
 This checklist implements sections 20 and 21 of `TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md`. It diagnoses complete card units only. It does not authorize rewriting, approval, activation, or promotion.
 
@@ -34,7 +44,7 @@ For every complete card, ask:
 14. Does the advice emerge from the actual circumstance?
 15. Does the copy have enough personality that someone might remember one sentence from it?
 
-Questions 1, 3, 4, 6, and 7 diagnose astrology/content failure. Questions 2, 5, 8, 9, 10, 11, 12, 14, and 15 diagnose writing failure. Question 13 diagnoses a specificity-ceiling failure. Any supported finding keeps the unit `needs_review`.
+Questions 1, 3, 4, 6, and 7 diagnose astrology/content failure. Questions 2, 5, 8, 9, 10, 11, 12, 14, and 15 diagnose writing failure. Question 13 diagnoses a specificity-ceiling failure. Owner-approved interpretation: question 13 routes to `specificity_ceiling` with runtime `FAIL`. Any supported finding keeps the unit `needs_review`.
 
 ## Finding routing
 
@@ -77,4 +87,3 @@ Use these examples as diagnostic controls, not as freestanding style adjectives.
 ## Output discipline
 
 Return only supported findings under the card judge schema. Cite eligible comparison evidence for `owner_voice_drift`. Do not write replacement prose. Do not return a score, severity, or verdict.
-

@@ -55,7 +55,23 @@ function writeArtifact(status) {
     authorization,
     model: manifest.proposedLiveRun.model,
     reasoningEffort: manifest.proposedLiveRun.reasoningEffort,
-    rubric: { sourcePath: rubricPath, status: "needs_review", ownerApproved: false },
+    rubric: {
+      sourcePath: rubricPath,
+      version: "card-writing-judge-rubric-v3",
+      status: "owner_approved",
+      ownerApproved: true,
+      activeInHarness: true,
+      activeInProduction: false,
+      approvedSourceSha256: "c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983"
+    },
+    approval: {
+      recordedAt: "2026-08-09",
+      registerSourceSha256: "db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2",
+      critiqueSourceSha256: "3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043",
+      rubricSourceSha256: "c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983",
+      question13Category: "specificity_ceiling",
+      question13RuntimeAction: "FAIL"
+    },
     writerPromotionAuthorized: false,
     rows
   }, null, 2)}\n`);

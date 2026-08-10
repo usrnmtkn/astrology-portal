@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { cardCritiqueChecklist } from "./cardWritingStandard.mjs";
 
-export const CARD_JUDGE_V3_VERSION = "card-writing-judge-v3-candidate-2026-08-09";
+export const CARD_JUDGE_V3_VERSION = "card-writing-judge-rubric-v3";
 export const CARD_JUDGE_V3_SURFACE = "card";
 export const CARD_JUDGE_V3_CALL_BUDGET = 20;
 export const CARD_JUDGE_V3_AUTHORIZATION_ENV = "ASTRO_WRITING_V3_RUN_AUTHORIZATION";
