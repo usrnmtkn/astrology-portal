@@ -56,6 +56,7 @@ import {
   installFallbackArchitectureV3Bundle,
   installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
+  loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   fallbackRendererV3,
@@ -112,6 +113,7 @@ import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent } from "./services/ephemeris";
+
 import {
   calendarEventGeneratedContentKeys,
   calendarTransitDetailContentKeys
@@ -281,6 +283,7 @@ import {
 } from "./utils/articleText";
 import { compactCityLabel } from "./utils/locationLabels";
 
+type FriendRelationshipContentTab = Exclude<FriendProfileTab, "natal">;
 type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
@@ -2018,6 +2021,7 @@ const houseSignLabelStyleStorageKey = "tldrastro:houseSignLabelStyle";
 const journalPromptsStorageKey = "tldrastro:journalPrompts";
 const userProfileStorageKey = "tldrastro:userProfile";
 const portalModeStorageKey = "tldrastro:portalMode";
+const accountIntentStorageKey = "tldrastro:accountIntent";
 const pendingSignupStorageKey = "tldrastro:pendingSignup";
 const DEFAULT_SUNRISE_ORB_DEGREES = 0;
 const synodicMonthDays = 29.530588;
@@ -2025,6 +2029,35 @@ const lunarMeanDailyMotion = 13.176358;
 const traditionalSignRulers: Record<string, string> = Object.fromEntries(
   zodiacSigns.map((sign) => [sign, fallbackV3SignRuler(sign)])
 );
+
+function getInitialAccountIntent(): AuthMode {
+  try {
+    const url = new URL(window.location.href);
+
+    return (
+      url.searchParams.get("auth") === "login"
+      || window.sessionStorage.getItem(accountIntentStorageKey) === "login"
+    ) ? "login" : "create";
+  } catch {
+    return "create";
+  }
+}
+
+function storeAccountIntent(intent: AuthMode) {
+  try {
+    window.sessionStorage.setItem(accountIntentStorageKey, intent);
+
+    const url = new URL(window.location.href);
+    if (intent === "login") {
+      url.searchParams.set("auth", "login");
+    } else {
+      url.searchParams.delete("auth");
+    }
+    window.history.replaceState(window.history.state, "", url);
+  } catch {
+    // Storage can be unavailable in privacy-restricted browser contexts.
+  }
+}
 const houseLifeAreas: Record<number, string> = {
   1: fallbackV3HouseTopic(1),
   2: fallbackV3HouseTopic(2),
@@ -10016,8 +10049,14 @@ const GeneratedContentAdminDashboard = lazy(() =>
   }))
 );
 
+const loadYouPage = () => import("./features/you/YouPage");
+const loadYouRoute = () => import("./routes/YouRoute");
+const preloadYouExperience = () => {
+  void Promise.all([loadYouPage(), loadYouRoute()]);
+};
+
 const YouPage = lazy(() =>
-  import("./features/you/YouPage").then((module) => ({
+  loadYouPage().then((module) => ({
     default: module.YouPage
   }))
 );
@@ -10035,7 +10074,7 @@ const NatalAspectPatternActivationsSection = lazy(() =>
 );
 
 const YouRoute = lazy(() =>
-  import("./routes/YouRoute").then((module) => ({
+  loadYouRoute().then((module) => ({
     default: module.YouRoute
   }))
 );
@@ -10274,7 +10313,11 @@ export function App() {
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
   const remoteProfileReadyRef = useRef(false);
-  const [accountIntent, setAccountIntent] = useState<AuthMode>("create");
+  const [accountIntent, setAccountIntentState] = useState<AuthMode>(getInitialAccountIntent);
+  const setAccountIntent = useCallback((intent: AuthMode) => {
+    storeAccountIntent(intent);
+    setAccountIntentState(intent);
+  }, []);
   const pendingInvitationCapturedRef = useRef(false);
   const [launchChartSetupAfterAuth, setLaunchChartSetupAfterAuth] = useState(false);
   const [chartModalOpen, setChartModalOpen] = useState(false);
@@ -10309,7 +10352,9 @@ export function App() {
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [friendNatalContentRequested, setFriendNatalContentRequested] = useState(false);
-  const [friendRelationshipContentRequested, setFriendRelationshipContentRequested] = useState(false);
+  const [friendRelationshipContentRequests, setFriendRelationshipContentRequests] = useState<Set<FriendRelationshipContentTab>>(
+    () => new Set()
+  );
   const [friendCalculationNeeds, setFriendCalculationNeeds] = useState<FriendCalculationReadiness>(
     idleFriendCalculationReadiness
   );
@@ -10460,7 +10505,13 @@ export function App() {
       return;
     }
 
-    setFriendRelationshipContentRequested(true);
+    setFriendRelationshipContentRequests((current) => {
+      if (current.has(tab)) {
+        return current;
+      }
+
+      return new Set([...current, tab]);
+    });
   }, []);
   const requestFriendCalculations = useCallback((readiness: FriendCalculationReadiness) => {
     setFriendCalculationNeeds((current) => (
@@ -10741,11 +10792,14 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const friendDeferredFallbackRequested = friendRelationshipContentRequests.has("transits")
+      || friendRelationshipContentRequests.has("synastry")
+      || friendRelationshipContentRequests.has("composite");
 
     if (
       mode === "guest"
       || mode === "member"
-      || (mode === "friends" && !friendRelationshipContentRequested)
+      || (mode === "friends" && !friendDeferredFallbackRequested)
     ) {
       return () => {
         cancelled = true;
@@ -10759,13 +10813,39 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Deferred transit and relationship fallbacks failed to load; core fallbacks remain active.", error);
+        console.warn("Deferred transit fallbacks failed to load; core fallbacks remain active.", error);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [friendRelationshipContentRequested, mode]);
+  }, [friendRelationshipContentRequests, mode]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const friendCompatibilityFallbackRequested = friendRelationshipContentRequests.has("compatibility")
+      || friendRelationshipContentRequests.has("transits");
+
+    if (mode !== "friends" || !friendCompatibilityFallbackRequested) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadRelationshipFallbackArchitectureV3Bundle()
+      .then((installed) => {
+        if (installed && !cancelled) {
+          setFallbackArchitectureV3Version((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Deferred relationship fallbacks failed to load; transit fallbacks remain active.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [friendRelationshipContentRequests, mode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11141,13 +11221,13 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequested;
+    const shouldLoadRelationships = mode === "friends" && friendRelationshipContentRequests.size > 0;
 
     if (!shouldLoadRelationships) {
       setRelationshipGeneratedContent(new Map());
       if (mode !== "friends") {
         setFriendNatalContentRequested(false);
-        setFriendRelationshipContentRequested(false);
+        setFriendRelationshipContentRequests((current) => current.size > 0 ? new Set() : current);
       }
       return () => {
         cancelled = true;
@@ -11181,7 +11261,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendRelationshipContentRequested, generatedContentPreviewMode, mode, skyDate]);
+  }, [friendRelationshipContentRequests, generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     if (!datePickerOpen) {
@@ -12663,9 +12743,11 @@ export function App() {
   }
 
   function openMobileDatePicker() {
-    setMobileSkyControlsOpen(false);
-    setCityPickerOpen(false);
-    setCityPickerOpenedFromMobileControls(false);
+    flushSync(() => {
+      setMobileSkyControlsOpen(false);
+      setCityPickerOpen(false);
+      setCityPickerOpenedFromMobileControls(false);
+    });
     setDatePickerOpen(true);
   }
 
@@ -12761,7 +12843,9 @@ export function App() {
                   <button
                     className={`account-nav ${mode === "profile" ? "active" : ""}`}
                     type="button"
+                    onFocus={preloadYouExperience}
                     onClick={() => navigateToPortalMode("profile")}
+                    onPointerEnter={preloadYouExperience}
                   >
                     <SmileNavIcon />
                     <span>You</span>
@@ -12923,7 +13007,13 @@ export function App() {
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             onClick={() => {
               setMobileSkyControlsOpen(false);
-              setMenuOpen((isOpen) => !isOpen);
+              setMenuOpen((isOpen) => {
+                if (!isOpen && userProfile) {
+                  preloadYouExperience();
+                  preloadFriendsExperience();
+                }
+                return !isOpen;
+              });
             }}
           >
             <span className="hamburger-icon" aria-hidden="true">
@@ -12966,11 +13056,13 @@ export function App() {
                     className={mode === "profile" ? "active" : ""}
                     type="button"
                     role="menuitem"
+                    onFocus={preloadYouExperience}
                     onClick={() => {
                       setSelectedSkyDetail(null);
                       navigateToPortalMode("profile");
                       setMenuOpen(false);
                     }}
+                    onPointerEnter={preloadYouExperience}
                   >
                     <SmileNavIcon />
                     <span>You</span>
@@ -13029,7 +13121,7 @@ export function App() {
                     role="menuitem"
                     onClick={() => {
                       setSelectedSkyDetail(null);
-                      setAccountIntent("create");
+                      flushSync(() => setAccountIntent("create"));
                       navigateToPortalMode("profile");
                       setMenuOpen(false);
                     }}
@@ -13042,7 +13134,7 @@ export function App() {
                     role="menuitem"
                     onClick={() => {
                       setSelectedSkyDetail(null);
-                      setAccountIntent("login");
+                      flushSync(() => setAccountIntent("login"));
                       navigateToPortalMode("profile");
                       setMenuOpen(false);
                     }}
@@ -13104,25 +13196,25 @@ export function App() {
             <section className={isCalendarMode ? "detail-panel calendar-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
               {isTodayMode && (
                 <SkyRoute>
+                  {datePickerOpen && (
+                    <SkyDatePicker
+                      value={skyDate}
+                      pickerRef={datePickerRef}
+                      onClose={() => {
+                        setDatePickerOpen(false);
+                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+                      }}
+                      onSelect={(nextDate) => {
+                        setSkyDate(nextDate);
+                        setDatePickerOpen(false);
+                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+                      }}
+                    />
+                  )}
                   <section className="today-hero" aria-label="Today controls">
                     <div className="sky-intro">
                       <h1 className="sky-intro__lead">{formatSkyHeroTitle()}</h1>
                     </div>
-                    {datePickerOpen && (
-                      <SkyDatePicker
-                        value={skyDate}
-                        pickerRef={datePickerRef}
-                        onClose={() => {
-                          setDatePickerOpen(false);
-                          (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                        }}
-                        onSelect={(nextDate) => {
-                          setSkyDate(nextDate);
-                          setDatePickerOpen(false);
-                          (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                        }}
-                      />
-                    )}
                     {cityPickerOpen && !cityPickerOpenedFromMobileControls && (
                       <form
                         className="city-picker hero-city-picker"
@@ -13300,6 +13392,7 @@ export function App() {
                   ) : (
                     <Suspense fallback={<FeatureLoadingFallback />}>
                       <SignupView
+                        key={accountIntent}
                         initialForm={defaultSignupForm}
                         initialMode={accountIntent}
                         onAuthenticated={({ account, form, isNewAccount, provider }) => {

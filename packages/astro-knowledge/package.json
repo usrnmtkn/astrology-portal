@@ -48,7 +48,7 @@
     },
     "./timing-engine": {
       "types": "./engine/timing/index.d.ts",
-      "import": "./engine/timing/browser.js",
+      "import": "./engine/timing/browser.mjs",
       "require": "./engine/timing/index.js"
     }
   },

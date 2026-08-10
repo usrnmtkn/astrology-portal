@@ -227,7 +227,7 @@
   height: 24px;
   padding: 0;
   border: 1px solid var(--control-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
 }
 
@@ -237,9 +237,9 @@
   left: 3px;
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--card-bg);
-  box-shadow: 0 1px 3px rgb(20 23 31 / 24%);
+  box-shadow: var(--friend-sharing-thumb-shadow);
   transition: transform 160ms ease;
 }
 
@@ -254,8 +254,8 @@
 
 .social-sharing-state {
   flex: 0 0 auto;
-  padding: 4px 9px;
-  border-radius: 999px;
+  padding: var(--space-1) calc(var(--space-2) + var(--space-1) / 4);
+  border-radius: var(--radius-pill);
   background: var(--card-bg);
   color: var(--muted);
   font-family: var(--font-mono);

@@ -1,12 +1,61 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const apiRoot = resolve(repoRoot, "api");
 const adminAppRoot = resolve(repoRoot, "apps/admin");
+const swissEphFullDataPath = resolve(repoRoot, "node_modules/swisseph-wasm/wasm/swisseph.data");
+
+const swissEphFullDataManifest = 'files:[{filename:"/sweph/seas_18.se1",start:0,end:223002},{filename:"/sweph/seasnam.txt",start:223002,end:10153224},{filename:"/sweph/sefstars.txt",start:10153224,end:10286461},{filename:"/sweph/seleapsec.txt",start:10286461,end:10286743},{filename:"/sweph/semo_18.se1",start:10286743,end:11591514},{filename:"/sweph/seorbel.txt",start:11591514,end:11597371},{filename:"/sweph/sepl_18.se1",start:11597371,end:12081426}],remote_package_size:12081426';
+const swissEphWebDataManifest = 'files:[{filename:"/sweph/seas_18.se1",start:0,end:223002},{filename:"/sweph/seleapsec.txt",start:223002,end:223284},{filename:"/sweph/semo_18.se1",start:223284,end:1528055},{filename:"/sweph/seorbel.txt",start:1528055,end:1533912},{filename:"/sweph/sepl_18.se1",start:1533912,end:2017967}],remote_package_size:2017967';
+
+function trimSwissEphemerisWebDataPlugin() {
+  return {
+    name: "tldr-trim-swiss-ephemeris-web-data",
+    apply: "build" as const,
+    enforce: "pre" as const,
+    transform(code, id) {
+      if (!id.includes("swisseph-wasm/wasm/swisseph.js")) {
+        return undefined;
+      }
+
+      if (!code.includes(swissEphFullDataManifest)) {
+        throw new Error("The swisseph-wasm data manifest changed; review the web data trim before building.");
+      }
+
+      return code.replace(swissEphFullDataManifest, swissEphWebDataManifest);
+    }
+  };
+}
+
+function serveFullSwissEphemerisDataInDevPlugin() {
+  return {
+    name: "tldr-serve-full-swiss-ephemeris-data-in-dev",
+    apply: "serve" as const,
+    enforce: "pre" as const,
+    configureServer(server) {
+      const fullData = readFileSync(swissEphFullDataPath);
+
+      server.middlewares.use((req, res, next) => {
+        const requestPath = new URL(req.url ?? "/", "http://localhost").pathname;
+
+        if (requestPath !== "/wasm/swisseph.data" || !["GET", "HEAD"].includes(req.method ?? "GET")) {
+          next();
+          return;
+        }
+
+        res.statusCode = 200;
+        res.setHeader("content-type", "application/octet-stream");
+        res.setHeader("content-length", String(fullData.byteLength));
+        res.setHeader("cache-control", "no-cache");
+        res.end(req.method === "HEAD" ? undefined : fullData);
+      });
+    }
+  };
+}
 
 function suppressUnrelatedMonorepoHotUpdatesPlugin() {
   return {
@@ -92,7 +141,13 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [suppressUnrelatedMonorepoHotUpdatesPlugin(), localApiRoutePlugin(), react()],
+    plugins: [
+      suppressUnrelatedMonorepoHotUpdatesPlugin(),
+      localApiRoutePlugin(),
+      serveFullSwissEphemerisDataInDevPlugin(),
+      trimSwissEphemerisWebDataPlugin(),
+      react()
+    ],
     assetsInclude: ["**/*.wasm"],
     build: {
       manifest: true,
@@ -116,6 +171,15 @@ export default defineConfig(({ mode }) => {
             if (id.includes("fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")) {
               return "fallback-content-deferred-core";
             }
+            if (id.includes("fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json")) {
+              return "fallback-content-transit";
+            }
+            if (
+              id.includes("fallbackArchitectureV3/bundled-relationship-authored-cards-v3.json")
+              || id.includes("fallbackArchitectureV3/source-rows/bond-language")
+            ) {
+              return "fallback-content-relationships";
+            }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")
@@ -127,9 +191,6 @@ export default defineConfig(({ mode }) => {
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
             ) {
               return "fallback-content-sky-core";
-            }
-            if (id.includes("fallbackArchitectureV3/source-rows/transit-synastry") || id.includes("fallbackArchitectureV3/source-rows/bond-language")) {
-              return "fallback-content-relationships";
             }
             if (
               id.includes("fallbackArchitectureV3/source-rows/sky-")
