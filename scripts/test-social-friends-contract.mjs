@@ -72,6 +72,10 @@ const readableInviteCodesMigrationPath = path.join(
   repoRoot,
   "apps/web/supabase/migrations/20260729103000_readable_social_invitation_codes.sql"
 );
+const natalCachePreservationMigrationPath = path.join(
+  repoRoot,
+  "apps/web/supabase/migrations/20260810030000_preserve_social_natal_cache.sql"
+);
 const servicePath = path.join(repoRoot, "apps/web/src/services/socialFriends.ts");
 const authServicePath = path.join(repoRoot, "apps/web/src/services/auth.ts");
 const phoneAuthServicePath = path.join(repoRoot, "apps/web/src/services/phoneAuth.ts");
@@ -122,6 +126,7 @@ const rankedSearchMigration = fs.readFileSync(rankedSearchMigrationPath, "utf8")
 const invitationManagementMigration = fs.readFileSync(invitationManagementMigrationPath, "utf8");
 const shareLinksMigration = fs.readFileSync(shareLinksMigrationPath, "utf8");
 const readableInviteCodesMigration = fs.readFileSync(readableInviteCodesMigrationPath, "utf8");
+const natalCachePreservationMigration = fs.readFileSync(natalCachePreservationMigrationPath, "utf8");
 const service = fs.readFileSync(servicePath, "utf8");
 const authService = fs.readFileSync(authServicePath, "utf8");
 const phoneAuthService = fs.readFileSync(phoneAuthServicePath, "utf8");
@@ -310,6 +315,31 @@ assert.match(
   app,
   /syncOwnSocialProfile\(\{[\s\S]*natalChart: profileNatalSky/,
   "The owner's derived natal projection must stay synchronized for accepted friends."
+);
+assert.match(
+  app,
+  /if \(!remoteAccountId \|\| !remoteProfileReady \|\| !userProfile \|\| !profileNatalSky\) \{[\s\S]*?syncOwnSocialProfile\(\{[\s\S]*?natalChart: profileNatalSky/,
+  "Social synchronization must wait for a verified natal chart instead of sending a transient null projection."
+);
+assert.match(
+  natalCachePreservationMigration,
+  /natal_chart = coalesce\(excluded\.natal_chart, profile\.natal_chart\)/,
+  "A null profile sync must preserve the last verified friend-safe natal projection."
+);
+assert.doesNotMatch(
+  natalCachePreservationMigration,
+  /natal_chart = excluded\.natal_chart/,
+  "The latest social-profile function must not erase a verified natal projection with null."
+);
+assert.match(
+  service,
+  /hasNatalChart: row\.natal_chart != null[\s\S]*?loadOwnSocialProfile[\s\S]*?discoverable, natal_chart/,
+  "The owner bootstrap must know whether its durable friend-safe natal cache needs repair."
+);
+assert.match(
+  app,
+  /const socialNatalCacheMissing = ownSocialProfile\?\.hasNatalChart === false;[\s\S]*?!socialNatalCacheMissing[\s\S]*?shouldRunProfileNatalCalculation/,
+  "An affected account must repair a missing social natal cache once, even from an otherwise inactive route."
 );
 assert.match(
   accountView,

@@ -8,6 +8,7 @@ export type SocialProfile = {
   displayName: string;
   avatarUrl?: string;
   isPrivate: boolean;
+  hasNatalChart: boolean;
 };
 
 export type SocialLookupResult = {
@@ -94,6 +95,7 @@ type SocialProfileRow = {
   display_name: string;
   avatar_url: string | null;
   discoverable?: boolean | null;
+  natal_chart?: unknown | null;
 };
 
 type LookupRow = SocialProfileRow & {
@@ -260,7 +262,8 @@ function rowToProfile(row: SocialProfileRow): SocialProfile {
     handle: row.handle,
     displayName: row.display_name,
     avatarUrl: row.avatar_url ?? undefined,
-    isPrivate: row.discoverable === false
+    isPrivate: row.discoverable === false,
+    hasNatalChart: row.natal_chart != null
   };
 }
 
@@ -313,7 +316,7 @@ export async function syncOwnSocialProfile({
 
   const { data: currentProfile, error: profileError } = await client
     .from("social_profiles")
-    .select("user_id, handle, display_name, avatar_url, discoverable")
+    .select("user_id, handle, display_name, avatar_url, discoverable, natal_chart")
     .eq("user_id", user.id)
     .single();
 
@@ -328,7 +331,7 @@ export async function loadOwnSocialProfile(): Promise<SocialProfile | null> {
   const { client, user } = await authenticatedClient();
   const { data, error } = await client
     .from("social_profiles")
-    .select("user_id, handle, display_name, avatar_url, discoverable")
+    .select("user_id, handle, display_name, avatar_url, discoverable, natal_chart")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -364,7 +367,7 @@ export async function saveSocialHandle({
     .from("social_profiles")
     .update(profileValues)
     .eq("user_id", user.id)
-    .select("user_id, handle, display_name, avatar_url, discoverable")
+    .select("user_id, handle, display_name, avatar_url, discoverable, natal_chart")
     .limit(1);
 
   if (updateError) {
@@ -380,7 +383,7 @@ export async function saveSocialHandle({
         user_id: user.id,
         ...profileValues
       })
-      .select("user_id, handle, display_name, avatar_url, discoverable")
+      .select("user_id, handle, display_name, avatar_url, discoverable, natal_chart")
       .single();
 
     if (insertError) {
@@ -399,7 +402,7 @@ export async function saveSocialPrivacy(isPrivate: boolean): Promise<SocialProfi
     .from("social_profiles")
     .update({ discoverable: !isPrivate })
     .eq("user_id", user.id)
-    .select("user_id, handle, display_name, avatar_url, discoverable")
+    .select("user_id, handle, display_name, avatar_url, discoverable, natal_chart")
     .single();
 
   if (error) {
