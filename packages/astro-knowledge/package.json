@@ -35,6 +35,7 @@
     "./composite": "./dist/composite.json",
     "./web": "./dist/web.json",
     "./rewrite-corpora": "./dist/rewrite-corpora.json",
+    "./manifestation-sets": "./dist/manifestation-sets.json",
     "./index": "./dist/knowledge.index.json",
     "./entries/*": "./dist/entries/*.json",
     "./aspect-pattern-engine": {
@@ -138,6 +139,7 @@
     "test:private-model-data": "npm run private-model:export && npm run private-model:validate -- --allow-insufficient",
     "import:v4-rewrites": "node scripts/import-v4-rewrites.js",
     "build": "node scripts/import-v4-rewrites.js && node scripts/import-authored-placements.js && node scripts/import-owner-sky-aspect-reader-copy.js && node scripts/build.js",
+    "test:manifestation-sets": "node scripts/test-manifestation-sets.js",
     "test:timing": "node scripts/test-timing-engine.js",
     "test:aspect-patterns": "node scripts/test-aspect-pattern-engine.js",
     "test:aspect-patterns-v3": "node scripts/test-aspect-pattern-v3-resolver.js",

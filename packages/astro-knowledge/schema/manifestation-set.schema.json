@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schema/manifestation-set.schema.json",
+  "title": "Manifestation set collection",
+  "type": "object",
+  "required": ["id", "kind", "version", "coverageDomains", "records", "review_status"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "const": "manifestation-set-collection" },
+    "version": { "type": "integer", "minimum": 1 },
+    "coverageDomains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "records": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "factorType",
+          "match",
+          "domain",
+          "possibleLivedManifestations",
+          "doNotAssume",
+          "copyClaim",
+          "provenance",
+          "review_status"
+        ],
+        "properties": {
+          "factorType": {
+            "enum": [
+              "eclipse-on-natal-point",
+              "slow-transit-to-natal",
+              "return",
+              "profection-year",
+              "sr-overlay"
+            ]
+          },
+          "match": {
+            "type": "object",
+            "properties": {
+              "house": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "natalPoint": { "type": "string" },
+              "transitPlanet": { "type": "string" },
+              "aspect": { "type": "string" },
+              "overlayPoint": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "domain": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "possibleLivedManifestations": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "doNotAssume": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "copyClaim": {
+            "type": "object",
+            "required": ["text", "review_status"],
+            "properties": {
+              "text": { "type": "null" },
+              "review_status": { "const": "needs_review" }
+            },
+            "additionalProperties": false
+          },
+          "provenance": { "type": "string" },
+          "review_status": { "const": "needs_review" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "review_status": { "const": "needs_review" }
+  },
+  "additionalProperties": false
+}
