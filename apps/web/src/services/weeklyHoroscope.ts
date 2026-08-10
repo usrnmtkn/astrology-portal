@@ -379,7 +379,7 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
     const { getAstrodienstSky, getLunarCalendarRangeEvents } = await import("./ephemeris");
     const [rangeEvents, ...snapshots] = await Promise.all([
       getLunarCalendarRangeEvents(location, rangeStart, rangeEnd),
-      ...calculationDates.map((date) => getAstrodienstSky(location, date, { includeTransitWindows: true }))
+      ...calculationDates.map((date) => getAstrodienstSky(location, date))
     ]);
     const dateKeySet = new Set(window.dateKeys);
     const events = rangeEvents
@@ -495,7 +495,7 @@ function aspectCandidates(transit: PlanetPosition, natalTargets: PlanetPosition[
   });
 }
 
-function allTransitContacts(snapshot: SkySnapshot, natalTargets: PlanetPosition[]) {
+export function weeklyDailyTransitContacts(snapshot: SkySnapshot, natalTargets: PlanetPosition[]) {
   return snapshot.positions
     .filter((position) => position.planet !== "Moon")
     .flatMap((position) => aspectCandidates(position, natalTargets, 1))
@@ -1266,7 +1266,7 @@ export async function buildWeeklyHoroscope({
   const window = weeklyWindowFor(now, timeZone);
   const { events, snapshots, lunationEventSkies, stationEventPositions } = await loadWeeklyEphemeris(location, window);
   const natalTargets = natalSky.positions.filter((position) => typeof position.longitude === "number");
-  const contactsByDay = snapshots.map((snapshot) => allTransitContacts(snapshot, natalTargets));
+  const contactsByDay = snapshots.map((snapshot) => weeklyDailyTransitContacts(snapshot, natalTargets));
   const contacts = contactsByDay.flat();
   const closestContacts = new Map<string, { contact: TransitContact; dayIndex: number }>();
   contactsByDay.forEach((dayContacts, dayIndex) => {
