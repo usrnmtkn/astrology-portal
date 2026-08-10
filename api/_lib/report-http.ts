@@ -17,6 +17,19 @@ export async function jsonRequestBody<T>(req: IncomingMessage) {
   return (raw ? JSON.parse(raw) : {}) as T;
 }
 
+function firstHeader(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export function reportUrl(path: string, req?: IncomingMessage) {
+  const configured = (process.env.APP_URL ?? process.env.VITE_APP_URL ?? "").replace(/\/$/u, "");
+  if (configured) return `${configured}${path}`;
+  const host = firstHeader(req?.headers["x-forwarded-host"]) ?? firstHeader(req?.headers.host);
+  if (!host) return path;
+  const protocol = firstHeader(req?.headers["x-forwarded-proto"]) ?? "https";
+  return `${protocol}://${host}${path}`;
+}
+
 function bearerToken(req: IncomingMessage) {
   return req.headers.authorization?.match(/^Bearer\s+(.+)$/iu)?.[1] ?? "";
 }
@@ -43,4 +56,10 @@ export function requireInternalRunner(req: IncomingMessage) {
   const secrets = [process.env.REPORT_FULFILLMENT_SECRET, process.env.CRON_SECRET].filter(Boolean);
   if (!secrets.length) return process.env.NODE_ENV !== "production";
   return secrets.some((secret) => req.headers.authorization === `Bearer ${secret}`);
+}
+
+export function requireReportAdmin(req: IncomingMessage) {
+  const secret = process.env.CONTENT_GENERATION_SECRET;
+  if (!secret) return process.env.NODE_ENV !== "production";
+  return req.headers.authorization === `Bearer ${secret}`;
 }

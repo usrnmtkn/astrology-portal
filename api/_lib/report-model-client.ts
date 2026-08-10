@@ -8,6 +8,7 @@ export type ReportModelCall = <T>(input: {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  beforeProviderCall?: () => Promise<void>;
 }) => Promise<ReportModelResult<T>>;
 
 function usage(inputTokens = 0, outputTokens = 0): ReportModelUsage {
@@ -31,7 +32,9 @@ async function callOpenAi<T>(input: {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  beforeProviderCall?: () => Promise<void>;
 }): Promise<ReportModelResult<T>> {
+  await input.beforeProviderCall?.();
   const key = process.env.OPENAI_API_KEY;
   if (!key) throw new Error("OPENAI_API_KEY is not configured.");
   const response = await fetch("https://api.openai.com/v1/responses", {
@@ -61,7 +64,9 @@ async function callOpenAi<T>(input: {
 
 async function callClaude<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  beforeProviderCall?: () => Promise<void>;
 }): Promise<ReportModelResult<T>> {
+  await input.beforeProviderCall?.();
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new Error("ANTHROPIC_API_KEY is not configured.");
   const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -90,6 +95,7 @@ async function callClaude<T>(input: {
 
 async function directReportModelCall<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  beforeProviderCall?: () => Promise<void>;
 }) {
   if (input.provider === "openai") return callOpenAi<T>(input);
   if (input.provider === "claude" || input.provider === "anthropic") return callClaude<T>(input);
@@ -98,6 +104,7 @@ async function directReportModelCall<T>(input: {
 
 export const callReportModel: ReportModelCall = async <T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  beforeProviderCall?: () => Promise<void>;
 }) => {
   try {
     return await directReportModelCall<T>(input);
