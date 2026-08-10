@@ -1,0 +1,826 @@
+{
+  "schemaVersion": 2,
+  "status": "PASS",
+  "round": "1",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "medium",
+  "callCount": 20,
+  "authorizedCallCount": 20,
+  "modelGoldPassed": 12,
+  "modelNegativePassed": 8,
+  "modelFalsePositives": 0,
+  "modelFalseNegatives": 0,
+  "pipelineGoldPassed": 11,
+  "pipelineNegativePassed": 8,
+  "pipelineFalsePositives": 1,
+  "pipelineFalseNegatives": 0,
+  "results": [
+    {
+      "fixtureId": "gold-lilith-aries-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_02e0c9a161ea1caa006a79182c27e8819d9817bd9eff27540f",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5306,
+          "input_tokens_details": {
+            "cache_write_tokens": 5303,
+            "cached_tokens": 0
+          },
+          "output_tokens": 518,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5824
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-taurus-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0870b14f70122f66006a791831746c81a3948299d7fd6fe7b3",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5264,
+          "input_tokens_details": {
+            "cache_write_tokens": 1027,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 518,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5782
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-gemini-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_03a28391bee9759e006a7918371abc819da276ab26fd80a161",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5242,
+          "input_tokens_details": {
+            "cache_write_tokens": 1005,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 468,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5710
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-cancer-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0b958085ab84de2b006a79183bca14819e9a537466b20838e2",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5264,
+          "input_tokens_details": {
+            "cache_write_tokens": 1027,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 497,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5761
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-leo-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0d9430c979a2991f006a7918406b5881a3b45f0762ae33f5b8",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5254,
+          "input_tokens_details": {
+            "cache_write_tokens": 1017,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 503,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5757
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-virgo-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_054f9f0dc0e571f6006a791845a3e0819f8464c56d76b59e38",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5293,
+          "input_tokens_details": {
+            "cache_write_tokens": 1056,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 554,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5847
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-libra-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_00d290aede1a2a50006a79184bb0e08191bd91aa7c7d9f5576",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5345,
+          "input_tokens_details": {
+            "cache_write_tokens": 1108,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 501,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5846
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-scorpio-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0ff857ad8130f0f8006a7918506234819d8bdb12a354a15451",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5193,
+          "input_tokens_details": {
+            "cache_write_tokens": 956,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 480,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5673
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-sagittarius-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0ef810108eb47d26006a7918554874819db9ce6b6a06e24f0c",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5353,
+          "input_tokens_details": {
+            "cache_write_tokens": 1116,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 544,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5897
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-capricorn-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "REVISE",
+      "modelCategories": [],
+      "finalCategories": [
+        "sign_house_separation"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": false,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0833bb8630aca86b006a79185a4d40819d9b1459f74fb57135",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5315,
+          "input_tokens_details": {
+            "cache_write_tokens": 1078,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 491,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5806
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-aquarius-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0fbd1b8d009b63d0006a79185f58b4819db93806bd2fa6ae8e",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5310,
+          "input_tokens_details": {
+            "cache_write_tokens": 1073,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 497,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5807
+        }
+      }
+    },
+    {
+      "fixtureId": "gold-lilith-pisces-v5",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "expectedCategories": [],
+      "modelDecision": "PASS",
+      "finalDecision": "PASS",
+      "modelCategories": [],
+      "finalCategories": [],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_049ce6284b467ad0006a79186417e081a08aa219c3bfc565d8",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5297,
+          "input_tokens_details": {
+            "cache_write_tokens": 1060,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 497,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5794
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-aries-dishes",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "stock_trope",
+        "example_proves_astrology"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "observable_behavior",
+        "example_proves_astrology",
+        "stock_trope",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "stock_trope",
+        "example_proves_astrology",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "observable_behavior",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_046538f371e30bb8006a791868a7c4819186cc35a88870bcef",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5081,
+          "input_tokens_details": {
+            "cache_write_tokens": 844,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 885,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5966
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-capricorn-career",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "sign_house_separation"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "sign_house_separation",
+        "observable_behavior",
+        "example_proves_astrology",
+        "invented_motive",
+        "stock_trope",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "sign_house_separation",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "observable_behavior",
+        "example_proves_astrology",
+        "invented_motive",
+        "stock_trope",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0d5312c65b4308dc006a7918704768819fb701404994921b14",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5098,
+          "input_tokens_details": {
+            "cache_write_tokens": 861,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 1349,
+          "output_tokens_details": {
+            "reasoning_tokens": 125
+          },
+          "total_tokens": 6447
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-sagittarius-9th",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "sign_house_separation"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "sign_house_separation",
+        "example_proves_astrology",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "sign_house_separation",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "example_proves_astrology",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_071e5677c95ecaa5006a79187c53c881a2a9dda4b47884e262",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5125,
+          "input_tokens_details": {
+            "cache_write_tokens": 888,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 1147,
+          "output_tokens_details": {
+            "reasoning_tokens": 69
+          },
+          "total_tokens": 6272
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-pisces-well",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "metaphor_requires_translation"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "literal_first_read_clarity",
+        "observable_behavior",
+        "example_proves_astrology",
+        "metaphor_requires_translation",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "metaphor_requires_translation",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "literal_first_read_clarity",
+        "observable_behavior",
+        "example_proves_astrology",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_028eb131c08334cb006a79188642cc819e8617a5e6911f5feb",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5078,
+          "input_tokens_details": {
+            "cache_write_tokens": 841,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 1269,
+          "output_tokens_details": {
+            "reasoning_tokens": 140
+          },
+          "total_tokens": 6347
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-taurus-tagline",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "tagline_stands_alone"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "observable_behavior",
+        "example_proves_astrology",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "tagline_stands_alone",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "observable_behavior",
+        "example_proves_astrology",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0c240d5a5fb5d961006a791891c954819fb70196738cf12a38",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5041,
+          "input_tokens_details": {
+            "cache_write_tokens": 804,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 1085,
+          "output_tokens_details": {
+            "reasoning_tokens": 205
+          },
+          "total_tokens": 6126
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-aquarius-selfhelp",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "generic_self_help",
+        "observable_behavior"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "observable_behavior",
+        "example_proves_astrology",
+        "stock_trope",
+        "metaphor_requires_translation",
+        "generic_self_help",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "register_consistency",
+        "generic_self_help",
+        "observable_behavior",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "example_proves_astrology",
+        "stock_trope",
+        "metaphor_requires_translation",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_05d9f3a79a7ec2ac006a79189c3414819cb586e159cd54aba3",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5093,
+          "input_tokens_details": {
+            "cache_write_tokens": 856,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 1171,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 6264
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-gemini-advocacy",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "advocacy_register_drift",
+        "observable_behavior"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "literal_first_read_clarity",
+        "observable_behavior",
+        "example_proves_astrology",
+        "stock_trope",
+        "metaphor_requires_translation",
+        "generic_self_help",
+        "advocacy_register_drift",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "advocacy_register_drift",
+        "observable_behavior",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "literal_first_read_clarity",
+        "example_proves_astrology",
+        "stock_trope",
+        "metaphor_requires_translation",
+        "generic_self_help",
+        "tagline_stands_alone",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0ec6cd6aa849e87b006a7918a691b8819e867a77e9205a3190",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5035,
+          "input_tokens_details": {
+            "cache_write_tokens": 798,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 1358,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 6393
+        }
+      }
+    },
+    {
+      "fixtureId": "neg-virgo-clinical",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "expectedCategories": [
+        "clinical_shorthand",
+        "observable_behavior"
+      ],
+      "modelDecision": "REVISE",
+      "finalDecision": "REVISE",
+      "modelCategories": [
+        "astrology_integrity",
+        "planet_or_point_function",
+        "observable_behavior",
+        "example_proves_astrology",
+        "stock_trope",
+        "metaphor_requires_translation",
+        "generic_self_help",
+        "clinical_shorthand",
+        "voice_match"
+      ],
+      "finalCategories": [
+        "clinical_shorthand",
+        "observable_behavior",
+        "astrology_integrity",
+        "planet_or_point_function",
+        "example_proves_astrology",
+        "stock_trope",
+        "metaphor_requires_translation",
+        "generic_self_help",
+        "voice_match"
+      ],
+      "modelMissedCategories": [],
+      "finalMissedCategories": [],
+      "modelPassed": true,
+      "pipelinePassed": true,
+      "passed": true,
+      "provider": {
+        "responseId": "resp_0d5fe1ab9072aff2006a7918b2fb58819ca9fa0b4438a1dfb4",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 5074,
+          "input_tokens_details": {
+            "cache_write_tokens": 837,
+            "cached_tokens": 4234
+          },
+          "output_tokens": 1157,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 6231
+        }
+      }
+    }
+  ]
+}

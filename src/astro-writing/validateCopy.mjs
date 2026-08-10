@@ -68,10 +68,15 @@ export function validateCopy(copy, {
 } = {}) {
   const text = copyText(copy);
   const normalized = text.toLowerCase();
+  const unprotectedText = protectedOwnerLines.reduce(
+    (value, line) => value.split(String(line)).join(" "),
+    text
+  );
+  const unprotectedNormalized = unprotectedText.toLowerCase();
   const violations = [];
   if (text.includes("—")) violations.push({ category: "em_dash", detail: "Em dash is forbidden." });
   for (const phrase of banned) {
-    if (hasBanned(normalized, phrase)) violations.push({ category: "banned_language", detail: String(phrase) });
+    if (hasBanned(unprotectedNormalized, phrase)) violations.push({ category: "banned_language", detail: String(phrase) });
   }
   for (const trope of STOCK_TROPES) {
     if (normalized.includes(trope)) violations.push({ category: "stock_trope", detail: trope });
