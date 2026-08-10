@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { reportSku } from "./_lib/report-fulfillment-config.js";
+import { reportBillingMode, reportSku } from "./_lib/report-fulfillment-config.js";
 import { revokeEntitlement } from "./_lib/report-entitlements.js";
 import { rawRequestBody, sendJson } from "./_lib/report-http.js";
 import { parseVerifiedStripeEvent } from "./_lib/stripe-report-billing.js";
@@ -10,6 +10,7 @@ function recordValue(value: unknown) { return value && typeof value === "object"
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Use POST." });
+  if (reportBillingMode() === "free_test") return sendJson(res, 503, { configured: false, billingMode: "free_test", error: "Stripe webhooks are disabled during the free-test shadow launch." });
   const admin = createSupabaseReportAdmin();
   let eventId = "";
   try {
@@ -42,6 +43,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         period_end: stringValue(metadata.period_end),
         requires_birth_time: sku.requiresBirthTime,
         status: stringValue(metadata.birth_data_status) === "awaiting_birth_data" ? "awaiting_birth_data" : "active",
+        source: "stripe",
         stripe_event_id: event.id,
         stripe_checkout_session_id: stringValue(object.id),
         stripe_customer_id: stringValue(object.customer) || null,
