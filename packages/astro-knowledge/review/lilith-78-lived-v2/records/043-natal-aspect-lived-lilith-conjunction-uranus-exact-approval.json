@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-043",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/uranus",
+  "workbookKey": "lilith|conjunction|uranus",
+  "payloadSha256": "4d0aea85a6f6b0910b3dc1aa984161a8974b453d1b2df048017c6405528fd402",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to change the plan, leave the group, alter your appearance, or say no before checking whether anyone expected an explanation. The quick decision protects the part of you that does not want to be managed. This often comes from learning that gradual difference would be corrected, debated, or ignored. Explain what isn't working for you while there's still room to negotiate. When you keep your frustration to yourself, pulling out of the agreement without warning becomes the only way you know how to get your freedom back.",
+    "astroHint": "Lilith conjunct Uranus can make difference, change, and refusal arrive as one immediate instinct.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Uranus primitive: Uranus describes awakening, disruption, freedom, invention, rupture, surprise, and the part of life that refuses to stay trapped inside a stale pattern. It shows where someone needs room to change and where the old structure may no longer fit. Pair frame: The sudden freedom claimed after years of silence; right move, check the timing. Aspect operation: Conjunction fuses the two functions and intensifies them. Traditional nature: takes the combined nature of the two planets. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/uranus.json; packages/astro-knowledge/data/pairs/uranus-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/uranus/conjunction."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 44,
+    "approvedBodyCell": "E44",
+    "approvedAstroHintCell": "F44",
+    "ownerStatusCell": "H44"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-006",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/sun",
+  "workbookKey": "lilith|quincunx|sun",
+  "payloadSha256": "8359982c39f0ba414f7b1335d0e3cbbf7cb9c0e21abc652c2cbab60429025c5f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to edit yourself until the finished version no longer feels like you. The post gets rewritten, the outfit gets changed, or the opinion gets softened, and then you resent how little of your actual preference remains. This usually reflects an old trade: approval was easier when you were recognizable to other people, even if you felt less recognizable to yourself. Choose one detail to leave unedited.",
+    "astroHint": "Lilith quincunx the Sun can make the respectable version of you and the unfiltered version difficult to fit together.",
+    "sourceMechanism": "EXACT-ASPECT DERIVATION: no grouped quincunx legacy row; bounded by the pair sources and the quincunx primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Sun primitive: The Sun describes identity, vitality, creative force, visibility, and the part of life that wants to be lived with purpose. It shows where someone builds confidence, recognizes what gives them energy, and learns to act from the center of themselves rather than from imitation or approval. Pair frame: The persona feels like a costume; the exiled want is information about the life, not a threat to it. The outrageous urge in a respectable meeting; the identity that suddenly cannot breathe. The real self airs safely; someone says the unsayable and the room exhales. Aspect operation: Quincunx puts mismatched functions together and requires repeated adjustment. Traditional nature: awkward, requires adjustment. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/sun.json; packages/astro-knowledge/data/pairs/sun-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/sun/conjunction; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/sun/hard; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/sun/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 7,
+    "approvedBodyCell": "E7",
+    "approvedAstroHintCell": "F7",
+    "ownerStatusCell": "H7"
+  },
+  "additionalBilledCalls": 0
+}

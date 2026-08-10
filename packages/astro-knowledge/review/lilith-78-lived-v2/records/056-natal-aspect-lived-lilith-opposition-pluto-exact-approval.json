@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-056",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/pluto",
+  "workbookKey": "lilith|opposition|pluto",
+  "payloadSha256": "23c6e1f1ab10913399c0ec81fa1bc224f4a81eb2ef56966f55b38f442eab430c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to watch another person's tone, motives, access, or influence closely when dependence feels possible. A compromise can look like surrender, while their boundary can look like an attempt to dominate. This often comes from earlier situations in which important information or choices were controlled by somebody else. Ask what decision is actually being negotiated before treating the whole relationship as a power contest.",
+    "astroHint": "Lilith opposite Pluto can make power feel as if it always belongs to the other person until you are fighting them for it.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Pluto primitive: Pluto describes deep change, power, control, fear, survival, compulsion, hidden material, and the process of confronting what can no longer stay buried. It shows where life asks for honesty, release, and transformation at the root. Pair frame: The obsession that is an exile demanding daylight; the struggle that repeats an ancient banishment. Aspect operation: Opposition brings the two functions face-to-face through polarity, awareness, or confrontation. Traditional nature: malefic-leaning, oriented to awareness and relationship. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/pluto.json; packages/astro-knowledge/data/pairs/pluto-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/pluto/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 57,
+    "approvedBodyCell": "E57",
+    "approvedAstroHintCell": "F57",
+    "ownerStatusCell": "H57"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-063",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/chiron",
+  "workbookKey": "lilith|square|chiron",
+  "payloadSha256": "960039e3f66d1faea80e4439c14e057a97f66af852790e596b119e3e5b46dd4c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to reach for closeness, recognition, or pleasure and then pull away as soon as the response matters. The desire feels manageable at a distance and risky once another person can answer it. Underneath is often the lesson that wanting exposed the part of you most likely to be hurt. Make the current request small enough to hear the current answer.",
+    "astroHint": "Lilith square Chiron can make wanting something reactivate an old expectation of judgment or rejection.",
+    "sourceMechanism": "LIMITED LEGACY SUPPORT: no fallback-hook/aspect-pair/lilith reader row exists for this counterpart. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Chiron primitive: The deep, lasting wound and the path through it. Chiron marks where a person may feel broken, not enough, or too much, and where working honestly with that wound can become medicine they later offer others. Pair frame: Treating the want and the wound as separate cases keeps both open. Aspect operation: Square creates friction that presses the two functions into a forced adjustment. Traditional nature: malefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/points/chiron.json; packages/astro-knowledge/data/pairs/chiron-lilith.json; packages/astro-knowledge/data/primitives/aspects.json."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 64,
+    "approvedBodyCell": "E64",
+    "approvedAstroHintCell": "F64",
+    "ownerStatusCell": "H64"
+  },
+  "additionalBilledCalls": 0
+}

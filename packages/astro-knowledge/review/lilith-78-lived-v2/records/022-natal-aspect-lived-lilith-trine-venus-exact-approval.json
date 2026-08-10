@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-022",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/venus",
+  "workbookKey": "lilith|trine|venus",
+  "payloadSha256": "d47a1c570129491e3060a1db2f69a29bc325bc362a328eb822c83fe79607953a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to know what you like without treating the preference as a problem to solve. Your clothes, relationships, art, pleasures, or standards may not match what other people expect, but you do not need every choice to become a statement. You usually understand that taste does not require a defense. Other people often become more honest about their own wants around you.",
+    "astroHint": "Lilith trine Venus can make unconventional tastes and desires easy to accept as part of who you are.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Venus primitive: Venus describes attraction, pleasure, beauty, values, money, comfort, desire, and the conditions that help connection feel worth choosing. It shows what someone is drawn toward and what helps affection become real rather than only appealing. Pair frame: The real want enters the relationship and improves it; the no arrives clean. Aspect operation: Trine lets the two functions cooperate with relative ease. Traditional nature: benefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/venus.json; packages/astro-knowledge/data/pairs/venus-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/venus/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 23,
+    "approvedBodyCell": "E23",
+    "approvedAstroHintCell": "F23",
+    "ownerStatusCell": "H23"
+  },
+  "additionalBilledCalls": 0
+}

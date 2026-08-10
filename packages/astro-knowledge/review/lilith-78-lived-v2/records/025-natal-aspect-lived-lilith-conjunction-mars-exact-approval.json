@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-025",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/mars",
+  "workbookKey": "lilith|conjunction|mars",
+  "payloadSha256": "d35912f1948b1c17df78da580482abd3fae9e12e8fb97f0f5612a4761d04f382",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to know that a boundary has been crossed before you know how to explain it. Your body becomes tense, your answer becomes short, or you agree out loud while every part of you is refusing. This often comes from learning that anger itself was unacceptable, so the response had to appear before words were available. Turn the first physical no into one clear sentence.",
+    "astroHint": "Lilith conjunct Mars can make anger, action, and self-protection arrive as one immediate response.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Mars primitive: Mars describes action, drive, heat, conflict, courage, desire, and the instinct to move toward what is wanted. It shows how someone fights, initiates, protects, reacts, and uses energy when something needs to happen. Pair frame: Heat with an old address; the size of the reaction measures the age of the exile, not the offense. Aspect operation: Conjunction fuses the two functions and intensifies them. Traditional nature: takes the combined nature of the two planets. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/mars.json; packages/astro-knowledge/data/pairs/mars-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/mars/conjunction."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 26,
+    "approvedBodyCell": "E26",
+    "approvedAstroHintCell": "F26",
+    "ownerStatusCell": "H26"
+  },
+  "additionalBilledCalls": 0
+}

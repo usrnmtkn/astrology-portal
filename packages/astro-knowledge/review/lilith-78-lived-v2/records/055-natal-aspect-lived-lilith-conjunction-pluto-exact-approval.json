@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-055",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/pluto",
+  "workbookKey": "lilith|conjunction|pluto",
+  "payloadSha256": "4e557c91c497b82c7a99b78a08b5b9803c149985bb9e6a6391f1e97eddd8d6e2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to stay controlled until a conversation reaches the subject nobody is supposed to name. Then your response becomes more intense because the issue has been affecting decisions for a long time without being discussed. Underneath is often the belief that being exposed would give someone else power over you. State the fact before secrecy becomes the main source of control.",
+    "astroHint": "Lilith conjunct Pluto can make a hidden or shamed part of you produce an unusually strong need for control and honesty.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Pluto primitive: Pluto describes deep change, power, control, fear, survival, compulsion, hidden material, and the process of confronting what can no longer stay buried. It shows where life asks for honesty, release, and transformation at the root. Pair frame: The reclamation that changes what a person will accept forever after. Aspect operation: Conjunction fuses the two functions and intensifies them. Traditional nature: takes the combined nature of the two planets. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/pluto.json; packages/astro-knowledge/data/pairs/pluto-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/pluto/conjunction."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 56,
+    "approvedBodyCell": "E56",
+    "approvedAstroHintCell": "F56",
+    "ownerStatusCell": "H56"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-041",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/saturn",
+  "workbookKey": "lilith|sextile|saturn",
+  "payloadSha256": "7e79cf5ba78899dce44327e250a7c1803048b674fe44057ffd81a3b2b08353dc",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to see where a policy, deadline, or expectation can be negotiated rather than simply obeyed or rejected. You ask why the rule exists and often find a more honest way to meet the actual need. You may still hesitate because refusal once carried a larger penalty than discussion. Propose one specific change that keeps the useful part of the structure intact.",
+    "astroHint": "Lilith sextile Saturn can create workable chances to question a rule without destroying the whole arrangement.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Saturn primitive: Saturn describes time, structure, boundaries, maturity, responsibility, limits, discipline, and the lessons that ask someone to become more capable and realistic. It shows where life may move slowly, but also where lasting strength can be built. Pair frame: Renegotiation works because the exiled term is finally on the table. Aspect operation: Sextile offers a supportive opening that still has to be used. Traditional nature: benefic-leaning, conditional. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/saturn.json; packages/astro-knowledge/data/pairs/saturn-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/saturn/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 42,
+    "approvedBodyCell": "E42",
+    "approvedAstroHintCell": "F42",
+    "ownerStatusCell": "H42"
+  },
+  "additionalBilledCalls": 0
+}

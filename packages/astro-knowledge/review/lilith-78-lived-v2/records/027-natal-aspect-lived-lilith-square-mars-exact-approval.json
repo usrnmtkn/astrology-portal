@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-027",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/mars",
+  "workbookKey": "lilith|square|mars",
+  "payloadSha256": "fef2365db58570554fd0506856126e58f7ea914e3ba372ff851f07b7f847fb7e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to tolerate a demand, interruption, or crossed boundary until one more incident produces a sharp reply or an abrupt refusal. The current problem is usually real, but the force of the reaction also belongs to earlier times when saying no did not feel available. Anger becomes harder to aim when several situations are being answered at once. Address the first problem before responding to several old ones at the same time.",
+    "astroHint": "Lilith square Mars can make a small irritation bring up much older anger about being controlled or ignored.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Mars primitive: Mars describes action, drive, heat, conflict, courage, desire, and the instinct to move toward what is wanted. It shows how someone fights, initiates, protects, reacts, and uses energy when something needs to happen. Pair frame: The small irritation carrying decade-old heat; the battle of wills about who gets domesticated. Aspect operation: Square creates friction that presses the two functions into a forced adjustment. Traditional nature: malefic-leaning. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/mars.json; packages/astro-knowledge/data/pairs/mars-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/mars/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 28,
+    "approvedBodyCell": "E28",
+    "approvedAstroHintCell": "F28",
+    "ownerStatusCell": "H28"
+  },
+  "additionalBilledCalls": 0
+}

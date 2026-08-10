@@ -23,7 +23,13 @@ const livedPrefixes = [
   "fallback-hook/placement-sign-lived/",
   "fallback-hook/planet-lived/",
 ];
-const livedApprovalPrefix = "packages/astro-knowledge/review/lived-experience-108-v1/records/";
+const lived108ApprovalPrefix = "packages/astro-knowledge/review/lived-experience-108-v1/records/";
+const lilithLivedPrefix = "fallback-hook/natal-aspect-lived/lilith/";
+const lilithLivedApprovalPrefix = "packages/astro-knowledge/review/lilith-78-lived-v2/records/";
+const lilithLivedPayloadsPath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/lilith-78-lived-v2/lilith-78-lived-payloads.json",
+);
 const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
   "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
@@ -97,6 +103,19 @@ function exactServingPayload(row) {
 const sourceText = fs.readFileSync(sourcePath, "utf8");
 const source = JSON.parse(sourceText);
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+const lilithLivedPayloads = JSON.parse(fs.readFileSync(lilithLivedPayloadsPath, "utf8"));
+const lilithLivedPayloadsByContentKey = new Map(
+  Object.entries(lilithLivedPayloads.payloads ?? {}).map(([workbookKey, entry]) => {
+    const [object, aspect, counterpart] = workbookKey.split("|");
+    assert.equal(object, "lilith", `${workbookKey}: canonical lived payload object mismatch`);
+    assert.ok(aspect && counterpart, `${workbookKey}: canonical lived payload key is incomplete`);
+    return [
+      `${lilithLivedPrefix}${aspect}/${counterpart.replaceAll("_", "-")}`,
+      entry,
+    ];
+  }),
+);
+assert.equal(lilithLivedPayloadsByContentKey.size, 78, "Expected 78 canonical Lilith payload hashes");
 const rows = source.hookRows.filter((row) => row.contentKey?.startsWith(synastryPrefix));
 const statusCounts = {};
 const levelCounts = { exact_owner_approved: 0, owner_signoff_untraced: 0 };
@@ -202,15 +221,24 @@ assert.throws(
 const livedRows = source.hookRows.filter((row) => (
   livedPrefixes.some((prefix) => row.contentKey?.startsWith(prefix))
 ));
-assert.equal(livedRows.length, 108, "Expected 108 lived-experience serving rows");
+const lived108Rows = livedRows.filter((row) => !row.contentKey.startsWith(lilithLivedPrefix));
+const lilithLivedRows = livedRows.filter((row) => row.contentKey.startsWith(lilithLivedPrefix));
+assert.equal(lived108Rows.length, 108, "Expected 108 original lived-experience serving rows");
+assert.equal(lilithLivedRows.length, 78, "Expected 78 Lilith lived-experience serving rows");
+assert.equal(livedRows.length, 186, "Expected 186 total lived-experience serving rows");
 
 function assertExactLivedApproval(row) {
+  const isLilith = row.contentKey.startsWith(lilithLivedPrefix);
+  const expectedApprovalPrefix = isLilith ? lilithLivedApprovalPrefix : lived108ApprovalPrefix;
+  const expectedWorkbookPath = isLilith
+    ? "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx"
+    : "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx";
   assert.equal(row.review_status, "approved", `${row.contentKey}: lived-experience row must be approved`);
   assert.equal(row.approval?.approvalLevel, "exact_owner_approved", `${row.contentKey}: lived approval level mismatch`);
   assert.equal(row.approval?.approvedAt, "2026-08-10", `${row.contentKey}: lived approval date mismatch`);
   assert.ok(
-    row.approval?.recordPath?.startsWith(livedApprovalPrefix),
-    `${row.contentKey}: lived approval record must use ${livedApprovalPrefix}`,
+    row.approval?.recordPath?.startsWith(expectedApprovalPrefix),
+    `${row.contentKey}: lived approval record must use ${expectedApprovalPrefix}`,
   );
   assert.match(row.approval?.payloadSha256 ?? "", shaPattern, `${row.contentKey}: lived payload hash missing`);
   assert.equal(row.reader_only, true, `${row.contentKey}: lived row must be reader-only`);
@@ -227,9 +255,31 @@ function assertExactLivedApproval(row) {
   assert.equal(sha256(JSON.stringify(record.payload)), row.approval.payloadSha256, `${row.contentKey}: lived record payload hash mismatch`);
   assert.equal(record.payload.body, row.body, `${row.contentKey}: lived body differs from exact record`);
   assert.equal(record.payload.sourceMechanism, row.sourceMechanism, `${row.contentKey}: lived sourceMechanism differs from record`);
+  if (isLilith) {
+    const canonicalEntry = lilithLivedPayloadsByContentKey.get(row.contentKey);
+    assert.ok(canonicalEntry, `${row.contentKey}: canonical Lilith payload is missing`);
+    assert.equal(
+      sha256(JSON.stringify(canonicalEntry.payload)),
+      canonicalEntry.sha256,
+      `${row.contentKey}: canonical Lilith payload hash is stale`,
+    );
+    assert.equal(
+      row.approval.payloadSha256,
+      canonicalEntry.sha256,
+      `${row.contentKey}: serving approval hash differs from canonical Lilith payload`,
+    );
+    assert.deepEqual(
+      record.payload,
+      canonicalEntry.payload,
+      `${row.contentKey}: exact record differs from canonical Lilith payload`,
+    );
+    assert.equal(record.payload.astroHint, row.astroHint, `${row.contentKey}: lived astroHint differs from record`);
+  } else {
+    assert.equal(Object.hasOwn(row, "astroHint"), false, `${row.contentKey}: original lived row unexpectedly gained astroHint`);
+  }
   assert.equal(
     record.sourceWorkbook.path,
-    "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    expectedWorkbookPath,
     `${row.contentKey}: lived workbook provenance mismatch`,
   );
 }
@@ -249,4 +299,5 @@ console.log(`  exact_owner_approved: ${levelCounts.exact_owner_approved}`);
 console.log(`  exact approval records resolved: ${exactApprovalRecordsResolved}`);
 console.log(`  owner_signoff_untraced: ${levelCounts.owner_signoff_untraced}`);
 console.log(`  bond-effect exact_owner_approved: ${bondRows.length}`);
-console.log(`  lived-experience exact_owner_approved: ${livedRows.length}`);
+console.log(`  lived-experience 108 exact_owner_approved: ${lived108Rows.length}`);
+console.log(`  Lilith lived-experience exact_owner_approved: ${lilithLivedRows.length}`);

@@ -1,0 +1,584 @@
+{
+  "schemaVersion": 1,
+  "release": "lilith-78-lived-v2",
+  "approvedAt": "2026-08-10",
+  "sourceWorkbook": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+  "payloadsPath": "packages/astro-knowledge/review/lilith-78-lived-v2/lilith-78-lived-payloads.json",
+  "rowCount": 78,
+  "aspectCounts": {
+    "conjunction": 13,
+    "opposition": 13,
+    "square": 13,
+    "trine": 13,
+    "sextile": 13,
+    "quincunx": 13
+  },
+  "counterpartCounts": {
+    "sun": 6,
+    "moon": 6,
+    "mercury": 6,
+    "venus": 6,
+    "mars": 6,
+    "jupiter": 6,
+    "saturn": 6,
+    "uranus": 6,
+    "neptune": 6,
+    "pluto": 6,
+    "chiron": 6,
+    "north-node": 6,
+    "south-node": 6
+  },
+  "invariants": {
+    "existingApprovedRowsSha256": "3545dd7f0475a14ef0b381ed94d5ec0c47647ce28ea7eb6e34d33c46925f5cf7",
+    "existingApprovedRowsChanged": 0,
+    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))"
+  },
+  "rows": [
+    {
+      "workbookRow": 1,
+      "workbookKey": "lilith|conjunction|sun",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/sun",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/001-natal-aspect-lived-lilith-conjunction-sun-exact-approval.json",
+      "payloadSha256": "ea48d9cc19339980926dfc5c1ba78eb2fc036a68d06187885a0ec21961f5409e"
+    },
+    {
+      "workbookRow": 2,
+      "workbookKey": "lilith|opposition|sun",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/sun",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/002-natal-aspect-lived-lilith-opposition-sun-exact-approval.json",
+      "payloadSha256": "b6ae4f258f74a9d0a7a790592861d4774cd3cd86f4337191c5e66c365690e1ef"
+    },
+    {
+      "workbookRow": 3,
+      "workbookKey": "lilith|square|sun",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/sun",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/003-natal-aspect-lived-lilith-square-sun-exact-approval.json",
+      "payloadSha256": "309c40e4a86329caac84f90676d7d8be084b534678dee53bc5e943b119566ca0"
+    },
+    {
+      "workbookRow": 4,
+      "workbookKey": "lilith|trine|sun",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/sun",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/004-natal-aspect-lived-lilith-trine-sun-exact-approval.json",
+      "payloadSha256": "866e449e2b92097740f7b580706f3ff9c21ab1a5e12066e1e7b63f557fa8e96b"
+    },
+    {
+      "workbookRow": 5,
+      "workbookKey": "lilith|sextile|sun",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/sun",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/005-natal-aspect-lived-lilith-sextile-sun-exact-approval.json",
+      "payloadSha256": "7abf1f6497ce02488ba316e3a432114e00e9d62bff91d9c412976dc4462a1088"
+    },
+    {
+      "workbookRow": 6,
+      "workbookKey": "lilith|quincunx|sun",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/sun",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/006-natal-aspect-lived-lilith-quincunx-sun-exact-approval.json",
+      "payloadSha256": "8359982c39f0ba414f7b1335d0e3cbbf7cb9c0e21abc652c2cbab60429025c5f"
+    },
+    {
+      "workbookRow": 7,
+      "workbookKey": "lilith|conjunction|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/moon",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/007-natal-aspect-lived-lilith-conjunction-moon-exact-approval.json",
+      "payloadSha256": "26573a9f00f10101ab8f451aa07c95a971cfd13dd89cd50a1441a6e5c03096f7"
+    },
+    {
+      "workbookRow": 8,
+      "workbookKey": "lilith|opposition|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/moon",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/008-natal-aspect-lived-lilith-opposition-moon-exact-approval.json",
+      "payloadSha256": "cbb0374f8461dd169a5701c8cc0504f67f462af9ae85b650d88af02c4d637170"
+    },
+    {
+      "workbookRow": 9,
+      "workbookKey": "lilith|square|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/moon",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/009-natal-aspect-lived-lilith-square-moon-exact-approval.json",
+      "payloadSha256": "c218cc63351be82ecc9525e3abc92b9f3fd5a6df54563101e57f5b3aaf63d8bc"
+    },
+    {
+      "workbookRow": 10,
+      "workbookKey": "lilith|trine|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/moon",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/010-natal-aspect-lived-lilith-trine-moon-exact-approval.json",
+      "payloadSha256": "2d93e6b57117c504701859ac1be70209f4422d308554953c84d5afaa6d498f27"
+    },
+    {
+      "workbookRow": 11,
+      "workbookKey": "lilith|sextile|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/moon",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/011-natal-aspect-lived-lilith-sextile-moon-exact-approval.json",
+      "payloadSha256": "e8264bf689c3637474a50de993d0fef0878e47b335d1dff0ff1659318e3410de"
+    },
+    {
+      "workbookRow": 12,
+      "workbookKey": "lilith|quincunx|moon",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/moon",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/012-natal-aspect-lived-lilith-quincunx-moon-exact-approval.json",
+      "payloadSha256": "3a682dbc25b7a6b2ffdf72de911a875b81a8aa159ffcefac8beb23f4f47d37bc"
+    },
+    {
+      "workbookRow": 13,
+      "workbookKey": "lilith|conjunction|mercury",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/mercury",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/013-natal-aspect-lived-lilith-conjunction-mercury-exact-approval.json",
+      "payloadSha256": "115bd81efef2cd7e6b76bd1e1da7b89814960d3eec36f3d4c3cfacf5c3a5bc47"
+    },
+    {
+      "workbookRow": 14,
+      "workbookKey": "lilith|opposition|mercury",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/mercury",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/014-natal-aspect-lived-lilith-opposition-mercury-exact-approval.json",
+      "payloadSha256": "19ae0c2250d1856a0862360fc2a0846fec741d7bd2a182488acc1910c139ad7c"
+    },
+    {
+      "workbookRow": 15,
+      "workbookKey": "lilith|square|mercury",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/mercury",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/015-natal-aspect-lived-lilith-square-mercury-exact-approval.json",
+      "payloadSha256": "0cd4e659c97fb894da9e4afe986105322db32e81befc6c9ad62f65f0595ac101"
+    },
+    {
+      "workbookRow": 16,
+      "workbookKey": "lilith|trine|mercury",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/mercury",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/016-natal-aspect-lived-lilith-trine-mercury-exact-approval.json",
+      "payloadSha256": "5f41b007cd007a6448b94ddbe833c5eb33537810acd2eeecba659d08d70def8a"
+    },
+    {
+      "workbookRow": 17,
+      "workbookKey": "lilith|sextile|mercury",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/mercury",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/017-natal-aspect-lived-lilith-sextile-mercury-exact-approval.json",
+      "payloadSha256": "80f20c8f59ffc1bfe1954652420c024502e6edf7c8860984657f10e00a69b862"
+    },
+    {
+      "workbookRow": 18,
+      "workbookKey": "lilith|quincunx|mercury",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/mercury",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/018-natal-aspect-lived-lilith-quincunx-mercury-exact-approval.json",
+      "payloadSha256": "d6081c2f3d7af619a23d31b22d0a24166a4abcc06f0a387b762bf1611bed4f84"
+    },
+    {
+      "workbookRow": 19,
+      "workbookKey": "lilith|conjunction|venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/venus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/019-natal-aspect-lived-lilith-conjunction-venus-exact-approval.json",
+      "payloadSha256": "3ee02b1d365a8d07b08e0593d9cccfe3a8de5134feda77fa087d7b6c3e7d86b6"
+    },
+    {
+      "workbookRow": 20,
+      "workbookKey": "lilith|opposition|venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/venus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/020-natal-aspect-lived-lilith-opposition-venus-exact-approval.json",
+      "payloadSha256": "04733187d86292f8ded392835bed064bdd3e9261a52c5c6d8e91cce9c971ce88"
+    },
+    {
+      "workbookRow": 21,
+      "workbookKey": "lilith|square|venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/venus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/021-natal-aspect-lived-lilith-square-venus-exact-approval.json",
+      "payloadSha256": "e3380ac24a76e2bc698cf57df63082932d2a9c3e832bd94b4328588e04f52642"
+    },
+    {
+      "workbookRow": 22,
+      "workbookKey": "lilith|trine|venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/venus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/022-natal-aspect-lived-lilith-trine-venus-exact-approval.json",
+      "payloadSha256": "d47a1c570129491e3060a1db2f69a29bc325bc362a328eb822c83fe79607953a"
+    },
+    {
+      "workbookRow": 23,
+      "workbookKey": "lilith|sextile|venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/venus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/023-natal-aspect-lived-lilith-sextile-venus-exact-approval.json",
+      "payloadSha256": "32b872af047f6962d8b5ad6b011c2f7aca4f15c63a531a83df688fcd84b1f96d"
+    },
+    {
+      "workbookRow": 24,
+      "workbookKey": "lilith|quincunx|venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/venus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/024-natal-aspect-lived-lilith-quincunx-venus-exact-approval.json",
+      "payloadSha256": "956848f01db5dc138ebfc2fbcbf50f1fd98926b997e423fdb61fdbee09793ef8"
+    },
+    {
+      "workbookRow": 25,
+      "workbookKey": "lilith|conjunction|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/mars",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/025-natal-aspect-lived-lilith-conjunction-mars-exact-approval.json",
+      "payloadSha256": "d35912f1948b1c17df78da580482abd3fae9e12e8fb97f0f5612a4761d04f382"
+    },
+    {
+      "workbookRow": 26,
+      "workbookKey": "lilith|opposition|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/mars",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/026-natal-aspect-lived-lilith-opposition-mars-exact-approval.json",
+      "payloadSha256": "fe2bb102a9f80fd4c7cf07511061144373619391b1416fb5ce61e1e34813808f"
+    },
+    {
+      "workbookRow": 27,
+      "workbookKey": "lilith|square|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/mars",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/027-natal-aspect-lived-lilith-square-mars-exact-approval.json",
+      "payloadSha256": "fef2365db58570554fd0506856126e58f7ea914e3ba372ff851f07b7f847fb7e"
+    },
+    {
+      "workbookRow": 28,
+      "workbookKey": "lilith|trine|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/mars",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/028-natal-aspect-lived-lilith-trine-mars-exact-approval.json",
+      "payloadSha256": "53016e8adad307e86fcb582b2e7e9eb3b1e956e497476551bcab6ec1ab4f604a"
+    },
+    {
+      "workbookRow": 29,
+      "workbookKey": "lilith|sextile|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/mars",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/029-natal-aspect-lived-lilith-sextile-mars-exact-approval.json",
+      "payloadSha256": "a57cccee6a369bb8101ff2529f4a2873dd71d93dd6549bf39fe34471d0f84b89"
+    },
+    {
+      "workbookRow": 30,
+      "workbookKey": "lilith|quincunx|mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/mars",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/030-natal-aspect-lived-lilith-quincunx-mars-exact-approval.json",
+      "payloadSha256": "094933904935b1dc264e574633eed0a49d38f94c25faaa67c3cb76f4a0f4b3f6"
+    },
+    {
+      "workbookRow": 31,
+      "workbookKey": "lilith|conjunction|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/jupiter",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/031-natal-aspect-lived-lilith-conjunction-jupiter-exact-approval.json",
+      "payloadSha256": "5680c825f2103f3ae0091f336e18267651a5727f33040ba88063a9a11206c1fa"
+    },
+    {
+      "workbookRow": 32,
+      "workbookKey": "lilith|opposition|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/jupiter",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/032-natal-aspect-lived-lilith-opposition-jupiter-exact-approval.json",
+      "payloadSha256": "862b6b7dec73a09f6d7f99621f6d80742e73ba109fc5e8a431f36794b65786af"
+    },
+    {
+      "workbookRow": 33,
+      "workbookKey": "lilith|square|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/jupiter",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/033-natal-aspect-lived-lilith-square-jupiter-exact-approval.json",
+      "payloadSha256": "e70036926d13989d12e8de13b24c80cad4f9520f1067b1ba145e343c908ff424"
+    },
+    {
+      "workbookRow": 34,
+      "workbookKey": "lilith|trine|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/jupiter",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/034-natal-aspect-lived-lilith-trine-jupiter-exact-approval.json",
+      "payloadSha256": "1d4e5ed9dae9259ef8a433ac31f47cc80b9c12963db94deaae95518c4f67897c"
+    },
+    {
+      "workbookRow": 35,
+      "workbookKey": "lilith|sextile|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/jupiter",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/035-natal-aspect-lived-lilith-sextile-jupiter-exact-approval.json",
+      "payloadSha256": "7a0c05d43c26c0edf05d9789fa16d8aa393eecdcef6308eec41b6e639bbc9282"
+    },
+    {
+      "workbookRow": 36,
+      "workbookKey": "lilith|quincunx|jupiter",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/jupiter",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/036-natal-aspect-lived-lilith-quincunx-jupiter-exact-approval.json",
+      "payloadSha256": "355c7caaa44d95090c6ce3302379797a8edf76f3de4a91d21a9df59c204a914c"
+    },
+    {
+      "workbookRow": 37,
+      "workbookKey": "lilith|conjunction|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/saturn",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/037-natal-aspect-lived-lilith-conjunction-saturn-exact-approval.json",
+      "payloadSha256": "2017b697507b96a7286f58328e0c3c7cf859e7ae7853dab103f280e570756f2a"
+    },
+    {
+      "workbookRow": 38,
+      "workbookKey": "lilith|opposition|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/saturn",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/038-natal-aspect-lived-lilith-opposition-saturn-exact-approval.json",
+      "payloadSha256": "5bb8a7d98364fc34b86445cfac1cb65f6967d9b959bc7f828f930d4531a74eb1"
+    },
+    {
+      "workbookRow": 39,
+      "workbookKey": "lilith|square|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/saturn",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/039-natal-aspect-lived-lilith-square-saturn-exact-approval.json",
+      "payloadSha256": "62b1f4b6b564cdd219484420e78b817a4ee65f00cd86c4fca935fe508f03810d"
+    },
+    {
+      "workbookRow": 40,
+      "workbookKey": "lilith|trine|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/saturn",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/040-natal-aspect-lived-lilith-trine-saturn-exact-approval.json",
+      "payloadSha256": "0104710777493fbe0f57504f0e7c56d126c556a25a0c63f5e0e0d3644744d1f3"
+    },
+    {
+      "workbookRow": 41,
+      "workbookKey": "lilith|sextile|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/saturn",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/041-natal-aspect-lived-lilith-sextile-saturn-exact-approval.json",
+      "payloadSha256": "7e79cf5ba78899dce44327e250a7c1803048b674fe44057ffd81a3b2b08353dc"
+    },
+    {
+      "workbookRow": 42,
+      "workbookKey": "lilith|quincunx|saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/saturn",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/042-natal-aspect-lived-lilith-quincunx-saturn-exact-approval.json",
+      "payloadSha256": "289fbd72f191b548522008e735736b5e0b8f8e6250035f6b8e059aa6cd0fb312"
+    },
+    {
+      "workbookRow": 43,
+      "workbookKey": "lilith|conjunction|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/uranus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/043-natal-aspect-lived-lilith-conjunction-uranus-exact-approval.json",
+      "payloadSha256": "4d0aea85a6f6b0910b3dc1aa984161a8974b453d1b2df048017c6405528fd402"
+    },
+    {
+      "workbookRow": 44,
+      "workbookKey": "lilith|opposition|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/uranus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/044-natal-aspect-lived-lilith-opposition-uranus-exact-approval.json",
+      "payloadSha256": "6088961079b42553aba0179a9153c2a715d24f136f6a28ec4040f3cf00d79bd2"
+    },
+    {
+      "workbookRow": 45,
+      "workbookKey": "lilith|square|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/uranus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/045-natal-aspect-lived-lilith-square-uranus-exact-approval.json",
+      "payloadSha256": "9327cb4b3f45294af6742eb857e38528cab26ece7c4362f25b3af4e3d47690e1"
+    },
+    {
+      "workbookRow": 46,
+      "workbookKey": "lilith|trine|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/uranus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/046-natal-aspect-lived-lilith-trine-uranus-exact-approval.json",
+      "payloadSha256": "800f4a2e00c28f5da24d5aaefd86b96848b548092efe6648ccd32f5f8b9bad58"
+    },
+    {
+      "workbookRow": 47,
+      "workbookKey": "lilith|sextile|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/uranus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/047-natal-aspect-lived-lilith-sextile-uranus-exact-approval.json",
+      "payloadSha256": "4f7dc268d6dd95a8d085063d036db58ea30f7ccef02a008e4fd2a028ed509d60"
+    },
+    {
+      "workbookRow": 48,
+      "workbookKey": "lilith|quincunx|uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/uranus",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/048-natal-aspect-lived-lilith-quincunx-uranus-exact-approval.json",
+      "payloadSha256": "ccd70330f46b010158e3327c0366e4d70f4172981f40e10b157e9563d0ab807a"
+    },
+    {
+      "workbookRow": 49,
+      "workbookKey": "lilith|conjunction|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/neptune",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/049-natal-aspect-lived-lilith-conjunction-neptune-exact-approval.json",
+      "payloadSha256": "46e64d4f4c71b3e1d60ea75df9ae6c8fd2f34efbceb084fd7eced9d04e5110d5"
+    },
+    {
+      "workbookRow": 50,
+      "workbookKey": "lilith|opposition|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/neptune",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/050-natal-aspect-lived-lilith-opposition-neptune-exact-approval.json",
+      "payloadSha256": "dd260c9bf373453a8e7bc8ad758779f9489a2180709b6e092821f12e23072a5f"
+    },
+    {
+      "workbookRow": 51,
+      "workbookKey": "lilith|square|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/neptune",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/051-natal-aspect-lived-lilith-square-neptune-exact-approval.json",
+      "payloadSha256": "ac14a403ffd09c403c00787a1d12dd3499ead14ed738dc7a759b64d492729d87"
+    },
+    {
+      "workbookRow": 52,
+      "workbookKey": "lilith|trine|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/neptune",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/052-natal-aspect-lived-lilith-trine-neptune-exact-approval.json",
+      "payloadSha256": "c0ad5ad5fe037f20dca88fa7aab9da3dc2564c2d67bb3981e08f9e4d1f4ffe83"
+    },
+    {
+      "workbookRow": 53,
+      "workbookKey": "lilith|sextile|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/neptune",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/053-natal-aspect-lived-lilith-sextile-neptune-exact-approval.json",
+      "payloadSha256": "b1ca2e414f81f9e9e2e36ea79a2b5435a222b0ca6c2949539941455375ed2a05"
+    },
+    {
+      "workbookRow": 54,
+      "workbookKey": "lilith|quincunx|neptune",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/neptune",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/054-natal-aspect-lived-lilith-quincunx-neptune-exact-approval.json",
+      "payloadSha256": "6cc78e3fa72456399fe0b2feada9ba68e0204216b0142361c7bdff82f0ccb100"
+    },
+    {
+      "workbookRow": 55,
+      "workbookKey": "lilith|conjunction|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/pluto",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/055-natal-aspect-lived-lilith-conjunction-pluto-exact-approval.json",
+      "payloadSha256": "4e557c91c497b82c7a99b78a08b5b9803c149985bb9e6a6391f1e97eddd8d6e2"
+    },
+    {
+      "workbookRow": 56,
+      "workbookKey": "lilith|opposition|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/pluto",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/056-natal-aspect-lived-lilith-opposition-pluto-exact-approval.json",
+      "payloadSha256": "23c6e1f1ab10913399c0ec81fa1bc224f4a81eb2ef56966f55b38f442eab430c"
+    },
+    {
+      "workbookRow": 57,
+      "workbookKey": "lilith|square|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/pluto",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/057-natal-aspect-lived-lilith-square-pluto-exact-approval.json",
+      "payloadSha256": "3ca7df8b07fea596748bc711252345d01486f50896d1b2bddf6a3f63b7f40463"
+    },
+    {
+      "workbookRow": 58,
+      "workbookKey": "lilith|trine|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/pluto",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/058-natal-aspect-lived-lilith-trine-pluto-exact-approval.json",
+      "payloadSha256": "df30c1dbfb9960cd819c2475303119888a8002a98754515cbaa7274eda5217ed"
+    },
+    {
+      "workbookRow": 59,
+      "workbookKey": "lilith|sextile|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/pluto",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/059-natal-aspect-lived-lilith-sextile-pluto-exact-approval.json",
+      "payloadSha256": "98df48b02817388195f0bf50196bca6cfe6f373574df738125834cec67695972"
+    },
+    {
+      "workbookRow": 60,
+      "workbookKey": "lilith|quincunx|pluto",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/pluto",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/060-natal-aspect-lived-lilith-quincunx-pluto-exact-approval.json",
+      "payloadSha256": "ebe93e482ec2ed25d96ba2bed83b1597edc9d49d20ad78b099c881c1da77305c"
+    },
+    {
+      "workbookRow": 61,
+      "workbookKey": "lilith|conjunction|chiron",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/chiron",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/061-natal-aspect-lived-lilith-conjunction-chiron-exact-approval.json",
+      "payloadSha256": "9e382360897c4186484b1f4be67cca38bd9d9328bcce26b10ab9af613f20c963"
+    },
+    {
+      "workbookRow": 62,
+      "workbookKey": "lilith|opposition|chiron",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/chiron",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/062-natal-aspect-lived-lilith-opposition-chiron-exact-approval.json",
+      "payloadSha256": "97775b0120e3aad5a6974c70182faa8a872cbb43c944905865b5fadcf42593cb"
+    },
+    {
+      "workbookRow": 63,
+      "workbookKey": "lilith|square|chiron",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/chiron",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/063-natal-aspect-lived-lilith-square-chiron-exact-approval.json",
+      "payloadSha256": "960039e3f66d1faea80e4439c14e057a97f66af852790e596b119e3e5b46dd4c"
+    },
+    {
+      "workbookRow": 64,
+      "workbookKey": "lilith|trine|chiron",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/chiron",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/064-natal-aspect-lived-lilith-trine-chiron-exact-approval.json",
+      "payloadSha256": "a63b14c7780a2c371c68322b19d3b9643dd803142271676d7316f2693617fa63"
+    },
+    {
+      "workbookRow": 65,
+      "workbookKey": "lilith|sextile|chiron",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/chiron",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/065-natal-aspect-lived-lilith-sextile-chiron-exact-approval.json",
+      "payloadSha256": "b072481508aec5344585674348db9441186a5b5cfaacd95bc9fbdf305fd765f3"
+    },
+    {
+      "workbookRow": 66,
+      "workbookKey": "lilith|quincunx|chiron",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/chiron",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/066-natal-aspect-lived-lilith-quincunx-chiron-exact-approval.json",
+      "payloadSha256": "880279df1346eba3ae44aa91e91e5c26d28b8281455322100d6a6d0aa2962d0b"
+    },
+    {
+      "workbookRow": 67,
+      "workbookKey": "lilith|conjunction|north-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/north-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/067-natal-aspect-lived-lilith-conjunction-north-node-exact-approval.json",
+      "payloadSha256": "9f6aa4b82b84476c63c9195d2df9a0624f82f7c5b6081f2e68e5b2e35292d942"
+    },
+    {
+      "workbookRow": 68,
+      "workbookKey": "lilith|opposition|north-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/north-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/068-natal-aspect-lived-lilith-opposition-north-node-exact-approval.json",
+      "payloadSha256": "e7e6b667af1c0807b75b22ddb1cb2fe64c8c9551eece36612f33e95d17757907"
+    },
+    {
+      "workbookRow": 69,
+      "workbookKey": "lilith|square|north-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/north-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/069-natal-aspect-lived-lilith-square-north-node-exact-approval.json",
+      "payloadSha256": "1a7ed9f846a367bc89745f5e7814df021160112f5ae44081312ccff69e34273d"
+    },
+    {
+      "workbookRow": 70,
+      "workbookKey": "lilith|trine|north-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/north-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/070-natal-aspect-lived-lilith-trine-north-node-exact-approval.json",
+      "payloadSha256": "93b808c910d83dc183a26a50f153c96b3f610d1ad5608d65a970b34e016d059c"
+    },
+    {
+      "workbookRow": 71,
+      "workbookKey": "lilith|sextile|north-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/north-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/071-natal-aspect-lived-lilith-sextile-north-node-exact-approval.json",
+      "payloadSha256": "173e2074e1bea45e49d3d2b1bde994bff784445f28da3238b88a82db6dfaeda0"
+    },
+    {
+      "workbookRow": 72,
+      "workbookKey": "lilith|quincunx|north-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/north-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/072-natal-aspect-lived-lilith-quincunx-north-node-exact-approval.json",
+      "payloadSha256": "ea472c122cbf53a907895d3501e091617a95d1b41edc4fe252d47b4e3072a8d7"
+    },
+    {
+      "workbookRow": 73,
+      "workbookKey": "lilith|conjunction|south-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/south-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/073-natal-aspect-lived-lilith-conjunction-south-node-exact-approval.json",
+      "payloadSha256": "8e4b25a75e5ee72acb1124f89e56f12b85f30a800743ab85c39ca31a14b5cff1"
+    },
+    {
+      "workbookRow": 74,
+      "workbookKey": "lilith|opposition|south-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/south-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/074-natal-aspect-lived-lilith-opposition-south-node-exact-approval.json",
+      "payloadSha256": "e3381af14309949387bbd6962aec28d1756c1094173e9c7374de281e0c28bbff"
+    },
+    {
+      "workbookRow": 75,
+      "workbookKey": "lilith|square|south-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/square/south-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/075-natal-aspect-lived-lilith-square-south-node-exact-approval.json",
+      "payloadSha256": "62e4856f0fb92812622d41ddfe908e3fc221ba92e578d04f2cc648e21ba47766"
+    },
+    {
+      "workbookRow": 76,
+      "workbookKey": "lilith|trine|south-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/south-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/076-natal-aspect-lived-lilith-trine-south-node-exact-approval.json",
+      "payloadSha256": "45584fc86b51e2c35fb7db59e4e91aad39f714b192973c8d2c0aeb25a8456071"
+    },
+    {
+      "workbookRow": 77,
+      "workbookKey": "lilith|sextile|south-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/south-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/077-natal-aspect-lived-lilith-sextile-south-node-exact-approval.json",
+      "payloadSha256": "ade4422dd288a5203bebf1327a83cefd323f546cf00076be74cb6ca05b04e787"
+    },
+    {
+      "workbookRow": 78,
+      "workbookKey": "lilith|quincunx|south-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/south-node",
+      "recordPath": "packages/astro-knowledge/review/lilith-78-lived-v2/records/078-natal-aspect-lived-lilith-quincunx-south-node-exact-approval.json",
+      "payloadSha256": "8dfdf79ad0d8c522ac934c870308e2fd402ebce3b667bbc9a49a438e42d3bdcf"
+    }
+  ]
+}

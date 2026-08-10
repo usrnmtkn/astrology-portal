@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-059",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/sextile/pluto",
+  "workbookKey": "lilith|sextile|pluto",
+  "payloadSha256": "98df48b02817388195f0bf50196bca6cfe6f373574df738125834cec67695972",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to notice when asking the financial question, naming the secret, or correcting the private version of events would change who controls the decision. The conversation becomes more equal once everyone can discuss the same facts. You may hesitate because silence once protected you from retaliation. Put one necessary fact into the conversation before agreeing to the next step.",
+    "astroHint": "Lilith sextile Pluto can create useful openings for a hidden fact to change an unfair power arrangement.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Pluto primitive: Pluto describes deep change, power, control, fear, survival, compulsion, hidden material, and the process of confronting what can no longer stay buried. It shows where life asks for honesty, release, and transformation at the root. Pair frame: Old banishments integrate; the power comes back without the vendetta. Aspect operation: Sextile offers a supportive opening that still has to be used. Traditional nature: benefic-leaning, conditional. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/pluto.json; packages/astro-knowledge/data/pairs/pluto-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/pluto/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 60,
+    "approvedBodyCell": "E60",
+    "approvedAstroHintCell": "F60",
+    "ownerStatusCell": "H60"
+  },
+  "additionalBilledCalls": 0
+}
