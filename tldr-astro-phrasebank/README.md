@@ -2,6 +2,10 @@
 
 Built from the `tldr-astro-template-handoff-v2` (2.0.1) evidence corpus. Aligns to that package's contracts (`SURFACE-RESOLUTION-MATRIX`, `EXECUTABLE-TEMPLATE-CONTRACT`, `SOURCE-CLASSIFICATION`, `SECT-ELIGIBILITY`, voice spec). Nothing here replaces the calc/API checkpoint, dashboard IA, navigation, courses, or audio.
 
+## Canonical content and workbook export
+
+The repository is the canonical source for governed content. The former hand-maintained canonical-workbook contract is retired. The complete content inventory and deterministic export process live in [`data/content-inventory/`](../data/content-inventory/README.md): JSONL is the byte-reproducible artifact of record, its content fingerprint binds sorted keys, exact wording, and governance status, and XLSX is a generated review view only. The workbook is never imported into production and is never evidence for the writer or judge.
+
 ## What's here
 
 ```
