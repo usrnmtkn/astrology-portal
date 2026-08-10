@@ -153,93 +153,39 @@ function fallbackRecord(candidate, bucket) {
   };
 }
 
-function matrixV8Records(repoRoot) {
-  const relativeRoot = "apps/web/public/content/knowledge-matrix-v8/v8-owner-approved-locked";
-  const transitPath = `${relativeRoot}/transit-meanings-v8-owner-approved-locked.json`;
-  const housePath = `${relativeRoot}/house-activations-v8-owner-approved-locked.json`;
-  const transit = readJson(repoRoot, transitPath);
-  const houses = readJson(repoRoot, housePath);
-  const approvalRecord = "packages/astro-knowledge/review/knowledge-matrix-v8/OWNER-APPROVAL-AND-INGESTION-RECORD.md";
-  const records = [];
-  for (const [runtimeKey, entry] of Object.entries(transit.entries)) {
-    const normalized = runtimeKey.toLowerCase();
-    const wording = { body: entry.copy };
-    records.push({
-      contentKey: `knowledge-matrix-v8/transit/${normalized}`,
-      contentFamily: "transit-meaning",
-      runtimeSource: transitPath,
-      runtimeBucket: "knowledge-matrix-transit",
-      status: entry.judge === "owner-approved-v8-locked" ? "owner-locked" : "owner-approved",
-      sourceStatus: entry.judge,
-      provenance: "source-archive",
-      sourceAuthor: entry.archive ?? "composed",
-      approvalRecord,
-      approvalVersionDate: "2026-08-09",
-      contentHash: hash(wording),
-      wording,
-      astrology: {
-        objects: [String(entry.planet).toLowerCase()],
-        signs: entry.transit_sign === "Any" ? [] : [String(entry.transit_sign).toLowerCase()],
-        events: [String(entry.event_type).toLowerCase()],
-      },
-    });
-  }
-  for (const [primaryKey, entry] of Object.entries(houses.entries)) {
-    for (const [eventType, event] of Object.entries(entry.events ?? {})) {
-      const runtimeKey = `${primaryKey}|${eventType}`.toLowerCase();
-      const wording = { body: event.copy };
-      records.push({
-        contentKey: `knowledge-matrix-v8/house/${runtimeKey}`,
-        contentFamily: "house-activation",
-        runtimeSource: housePath,
-        runtimeBucket: "knowledge-matrix-house",
-        status: event.judge === "owner-approved-v8-locked" ? "owner-locked" : "owner-approved",
-        sourceStatus: event.judge,
-        provenance: "source-archive",
-        sourceAuthor: event.archive ?? "composed",
-        approvalRecord,
-        approvalVersionDate: "2026-08-09",
-        contentHash: hash(wording),
-        wording,
-        astrology: {
-          risingSign: String(entry.rising_sign).toLowerCase(),
-          objects: [String(entry.transit_planet).toLowerCase()],
-          signs: [String(entry.transit_sign).toLowerCase()],
-          houses: [entry.house],
-          events: [String(eventType).toLowerCase()],
-        },
-      });
-    }
-  }
-  return { records, transitKeys: new Set(records.filter((record) => record.runtimeBucket === "knowledge-matrix-transit").map((record) => record.contentKey.slice("knowledge-matrix-v8/transit/".length))), houseKeys: new Set(records.filter((record) => record.runtimeBucket === "knowledge-matrix-house").map((record) => record.contentKey.slice("knowledge-matrix-v8/house/".length))) };
-}
-
-function matrixV9DeltaRecords(repoRoot, v8TransitKeys, v8HouseKeys) {
-  const relativeRoot = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-delta";
-  const transitPath = `${relativeRoot}/transit-meanings-v9-governance-delta.json`;
-  const housePath = `${relativeRoot}/house-activations-v9-governance-delta.json`;
-  const transit = readJson(repoRoot, transitPath);
-  const houses = readJson(repoRoot, housePath);
-  const approvalRecord = "packages/astro-knowledge/review/knowledge-matrix-v9-governance/approval-record.json";
+function matrixV9Records(repoRoot) {
+  const relativeRoot = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled";
+  const rowsPath = `${relativeRoot}/knowledge-matrix-v9-owner-approved-rows.json`;
+  const matrix = readJson(repoRoot, rowsPath);
+  const approvalRecord = "packages/astro-knowledge/review/knowledge-matrix-v9/OWNER-APPROVAL-AND-CANONICAL-INGESTION.md";
   const records = [];
   const seenTransit = new Set();
-  for (const row of transit.rows) {
-    const runtimeKey = [row.Planet, row.Sign, row.Event].map((value) => String(value ?? "").trim().toLowerCase()).join("|");
-    if (!row.Planet || !row.Sign || !row.Event || !row.Copy || row.Copy.startsWith("[EXCLUDE FROM FALLBACK]")) continue;
-    if (v8TransitKeys.has(runtimeKey) || seenTransit.has(runtimeKey)) continue;
+  for (const row of matrix.transit_meanings ?? []) {
+    const runtimeKey = [row.Planet, row.Sign, row.Event]
+      .map((value) => String(value ?? "").trim().toLowerCase())
+      .join("|");
+    if (
+      row.Governance !== "owner-approved"
+      || !row.Planet
+      || !row.Sign
+      || !row.Event
+      || !row.Copy
+      || row.Copy.startsWith("[EXCLUDE FROM FALLBACK]")
+      || seenTransit.has(runtimeKey)
+    ) continue;
     seenTransit.add(runtimeKey);
     const wording = { body: row.Copy };
     records.push({
       contentKey: `knowledge-matrix-v9/transit/${runtimeKey}`,
       contentFamily: "transit-meaning",
-      runtimeSource: transitPath,
+      runtimeSource: rowsPath,
       runtimeBucket: "knowledge-matrix-transit",
       status: "owner-approved",
       sourceStatus: row.Governance,
       provenance: "source-archive",
-      sourceAuthor: row.Archive,
+      sourceAuthor: row.Archive ?? "composed",
       approvalRecord,
-      approvalVersionDate: "2026-08-10",
+      approvalVersionDate: "2026-08-09",
       contentHash: hash(wording),
       wording,
       astrology: {
@@ -251,30 +197,44 @@ function matrixV9DeltaRecords(repoRoot, v8TransitKeys, v8HouseKeys) {
       sourceRow: row.source_row,
     });
   }
+
   const seenHouse = new Set();
-  for (const row of houses.rows) {
+  for (const row of matrix.house_activations ?? []) {
     const risingSign = String(row["Rising sign"] ?? "").trim();
     const planet = String(row.Planet ?? "").trim();
     const transitSign = String(row["Transit sign"] ?? "").trim();
     const house = Number(row.House);
     const event = String(row.Event ?? "").trim();
     const copy = String(row.Experience ?? "");
-    if (!risingSign || !planet || !transitSign || !Number.isInteger(house) || house < 1 || house > 12 || !event || !copy || copy.startsWith("[EXCLUDE FROM FALLBACK]")) continue;
-    const runtimeKey = [risingSign, planet, transitSign, house, event].map((value) => String(value).toLowerCase()).join("|");
-    if (v8HouseKeys.has(runtimeKey) || seenHouse.has(runtimeKey)) continue;
+    const runtimeKey = [risingSign, planet, transitSign, house, event]
+      .map((value) => String(value).toLowerCase())
+      .join("|");
+    if (
+      row.Governance !== "owner-approved"
+      || !risingSign
+      || !planet
+      || !transitSign
+      || !Number.isInteger(house)
+      || house < 1
+      || house > 12
+      || !event
+      || !copy
+      || copy.startsWith("[EXCLUDE FROM FALLBACK]")
+      || seenHouse.has(runtimeKey)
+    ) continue;
     seenHouse.add(runtimeKey);
     const wording = { body: copy };
     records.push({
       contentKey: `knowledge-matrix-v9/house/${runtimeKey}`,
       contentFamily: "house-activation",
-      runtimeSource: housePath,
+      runtimeSource: rowsPath,
       runtimeBucket: "knowledge-matrix-house",
       status: "owner-approved",
       sourceStatus: row.Governance,
       provenance: "source-archive",
-      sourceAuthor: row.Archive,
+      sourceAuthor: row.Archive ?? "composed",
       approvalRecord,
-      approvalVersionDate: "2026-08-10",
+      approvalVersionDate: "2026-08-09",
       contentHash: hash(wording),
       wording,
       astrology: {
@@ -363,9 +323,8 @@ export function buildCanonicalContentRecords(repoRoot) {
   }
   const fallbackRecords = fallbackCandidates.filter((record) => manifestSet.has(`${record.runtimeBucket}:${record.contentKey}`));
 
-  const v8 = matrixV8Records(repoRoot);
-  const v9 = matrixV9DeltaRecords(repoRoot, v8.transitKeys, v8.houseKeys);
-  const records = [...fallbackRecords, ...v8.records, ...v9].sort((a, b) => a.contentKey.localeCompare(b.contentKey));
+  const records = [...fallbackRecords, ...matrixV9Records(repoRoot)]
+    .sort((a, b) => a.contentKey.localeCompare(b.contentKey));
   const duplicates = records.filter((record, index) => index > 0 && records[index - 1].contentKey === record.contentKey);
   if (duplicates.length) throw new Error(`Canonical inventory has duplicate runtime addresses: ${duplicates.map((record) => record.contentKey).join(", ")}`);
   return records;
