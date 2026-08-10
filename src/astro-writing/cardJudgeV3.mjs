@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { cardCritiqueChecklist } from "./cardWritingStandard.mjs";
 
 export const CARD_JUDGE_V3_VERSION = "card-writing-judge-v3-candidate-2026-08-09";
 export const CARD_JUDGE_V3_SURFACE = "card";
@@ -168,6 +169,7 @@ export function cardJudgeV3PacketPrompt(rubric, packet) {
   if (typeof rubric !== "string" || !rubric.includes("**Surface:** `card`")) throw new Error("V3 card rubric is missing or cross-scoped.");
   return [
     rubric,
+    `CARD_CRITIQUE_CHECKLIST\n${cardCritiqueChecklist}`,
     `SURFACE\n${packet.surface}`,
     `LOCATION_CONTRACT\n${JSON.stringify(packet.locationContract)}`,
     `COMPLETE_CARD\n${packet.completeCard}`,
