@@ -9,6 +9,8 @@ const { knownWeak } = require("./test-placement-judge-calibration.js");
 const historicalV1 = require(path.join("..", "voice", "tldr-astro", "fixtures", "sky-placement-historical-second-person.json"));
 const { assertLiveJudgeAuthorized, sha256 } = require("./editorial-judge-runtime.js");
 const { judgeConfig } = require("./generate-sky-aspect-cards.js");
+const { canonicalAstrologyReviewInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
+const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
 
 const root = path.join(__dirname, "..");
 const manifestPath = path.join(root, "config", "sky-placement-judge-ab-evaluation-v1.json");
@@ -107,20 +109,16 @@ function estimateCost(model, usage, pricing = manifest.pricing) {
 
 async function defaultRequest({ treatment, prompt, apiKey }) {
   const startedAt = Date.now();
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
+  const { response, payload } = await callOpenAIResponses({
+    apiKey,
+    role: "REVIEWER",
+    request: {
       model: treatment.model,
       input: prompt,
       reasoning: { effort: treatment.reasoningEffort },
       max_output_tokens: 1500
-    })
+    }
   });
-  const payload = await response.json();
   if (!response.ok) {
     throw new Error(payload.error?.message || `OpenAI request failed with ${response.status}.`);
   }

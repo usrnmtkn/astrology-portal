@@ -8,6 +8,8 @@ const { assertRoutingMatch, resolveWriterCandidate } = require("./sky-placement-
 const { lintArticle } = require("./lint-placement-voice.js");
 const { judgeArticle } = require("./judge-placement-voice.js");
 const { judgeConfig } = require("./generate-sky-aspect-cards.js");
+const { canonicalAstrologyWritingInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
+const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
 
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
 let activeOutDir = null;
@@ -271,12 +273,11 @@ async function main() {
       }
     }
   };
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: { authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify(requestBody)
+  const { response, payload } = await callOpenAIResponses({
+    apiKey: process.env.OPENAI_API_KEY,
+    role: "WRITER",
+    request: requestBody
   });
-  const payload = await response.json();
   writeJson(path.join(outDir, "writer-provider-response.json"), {
     responseId: payload.id || null,
     status: payload.status || null,

@@ -2011,6 +2011,7 @@ type ProfilePersistencePayload = {
 };
 
 type SkyLoadStatus = "loading" | "ready" | "cached" | "stale" | "error";
+type NatalChartCalculationStatus = "idle" | "loading" | "ready" | "error";
 
 const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
@@ -10160,6 +10161,29 @@ async function getAstrodienstSky(
   return calculateSky(...args);
 }
 
+const NATAL_CHART_CALCULATION_TIMEOUT_MS = 15_000;
+
+function withNatalChartCalculationTimeout(request: Promise<SkySnapshot>) {
+  return new Promise<SkySnapshot>((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      reject(new Error(
+        `Swiss Ephemeris chart calculation timed out after ${NATAL_CHART_CALCULATION_TIMEOUT_MS / 1000} seconds.`
+      ));
+    }, NATAL_CHART_CALCULATION_TIMEOUT_MS);
+
+    request.then(
+      (snapshot) => {
+        window.clearTimeout(timeoutId);
+        resolve(snapshot);
+      },
+      (error: unknown) => {
+        window.clearTimeout(timeoutId);
+        reject(error);
+      }
+    );
+  });
+}
+
 function FeatureLoadingFallback() {
   return <div className="feature-loading-fallback" aria-hidden="true" />;
 }
@@ -10303,6 +10327,8 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
+  const [profileNatalCalculationStatus, setProfileNatalCalculationStatus] = useState<NatalChartCalculationStatus>("idle");
+  const [profileNatalCalculationError, setProfileNatalCalculationError] = useState("");
   const profileNatalSkyRequestRef = useRef<{ key: string; request: Promise<SkySnapshot> } | null>(null);
   const [profileNatalAspectPatternStatus, setProfileNatalAspectPatternStatus] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
   const [personalTimingGenerated, setPersonalTimingGenerated] = useState<LiveGeneratedContent | null>(null);
@@ -11815,6 +11841,8 @@ export function App() {
     if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
       profileNatalSkyRequestRef.current = null;
       setProfileNatalSky(null);
+      setProfileNatalCalculationStatus("idle");
+      setProfileNatalCalculationError("");
       setProfileNatalAspectPatternStatus("idle");
       return;
     }
@@ -11841,6 +11869,8 @@ export function App() {
         : [];
 
       setProfileNatalSky(natalSky);
+      setProfileNatalCalculationStatus("ready");
+      setProfileNatalCalculationError("");
       setProfileNatalAspectPatternStatus(
         showNatalAspectPatterns
           ? natalSky.aspectPatterns?.interpretationContexts ? "ready" : "loading"
@@ -11886,11 +11916,14 @@ export function App() {
 
     if (cachedNatalSky) {
       applyNatalSky(cachedNatalSky);
+    } else {
+      setProfileNatalCalculationStatus("loading");
+      setProfileNatalCalculationError("");
     }
 
     const natalSkyRequest = profileNatalSkyRequestRef.current?.key === natalSkyRequestKey
       ? profileNatalSkyRequestRef.current.request
-      : getAstrodienstSky(birthLocation, birthDateTime);
+      : withNatalChartCalculationTimeout(getAstrodienstSky(birthLocation, birthDateTime));
 
     profileNatalSkyRequestRef.current = { key: natalSkyRequestKey, request: natalSkyRequest };
 
@@ -11931,8 +11964,21 @@ export function App() {
             });
         }
       })
-      .catch(() => {
-        return;
+      .catch((error: unknown) => {
+        if (cancelled) {
+          return;
+        }
+
+        const errorMessage = error instanceof Error && error.message.trim()
+          ? error.message.trim()
+          : "The chart calculation failed without an error message.";
+        console.error("Natal chart calculation failed.", error);
+        profileNatalSkyRequestRef.current = null;
+        setProfileNatalSky(null);
+        setProfileTransits([]);
+        setTransitsDrawn(false);
+        setProfileNatalCalculationStatus("error");
+        setProfileNatalCalculationError(errorMessage);
       });
 
     return () => {
@@ -13325,6 +13371,8 @@ export function App() {
                       transitItems={activeTransits}
                       currentSky={sky}
                       natalSky={profileNatalSky}
+                      natalCalculationStatus={profileNatalCalculationStatus}
+                      natalCalculationError={profileNatalCalculationError}
                       natalAspectPatternLoadStatus={profileNatalAspectPatternStatus}
                       personalTiming={personalTiming}
                       personalTimingGenerated={personalTimingGenerated}
@@ -15527,6 +15575,8 @@ function ProfileView({
   transitItems,
   currentSky,
   natalSky,
+  natalCalculationStatus,
+  natalCalculationError,
   natalAspectPatternLoadStatus,
   personalTiming,
   personalTimingGenerated,
@@ -15547,6 +15597,8 @@ function ProfileView({
   transitItems: TransitItem[];
   currentSky: SkySnapshot | null;
   natalSky: SkySnapshot | null;
+  natalCalculationStatus: NatalChartCalculationStatus;
+  natalCalculationError: string;
   natalAspectPatternLoadStatus: "idle" | "loading" | "ready" | "unavailable";
   personalTiming: PersonalTimingResponse | null;
   personalTimingGenerated: LiveGeneratedContent | null;
@@ -16486,7 +16538,8 @@ function ProfileView({
         natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
         natalAspectPatternStatus={natalAspectPatternStatus}
         natalSky={natalSky}
-        natalChartPending={!natalSky}
+        natalChartStatus={natalCalculationStatus}
+        natalChartError={natalCalculationError}
         natalTableRows={natalChartTableRows}
         updateTransitAspectLines={updateTransitAspectLines}
         onCreateChart={onCreateChart}

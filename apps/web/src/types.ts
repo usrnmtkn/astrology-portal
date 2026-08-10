@@ -74,6 +74,8 @@ export type SkySnapshot = {
     nodeType: "mean" | "true";
     lilithType: "mean" | "true";
     calculationVersion: string;
+    actualEphemeris?: "swiss";
+    returnedEphemerisFlags?: number[];
   };
   ascendant: string;
   ascendantLongitude?: number;
