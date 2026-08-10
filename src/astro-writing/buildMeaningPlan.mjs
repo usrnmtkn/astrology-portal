@@ -40,11 +40,33 @@ export function buildMeaningPlan(input) {
   const prohibitedDomainAssumptions = textList(input.prohibitedDomainAssumptions);
   if (SIGN_HOUSE_DEFAULTS[sign] && house == null) prohibitedDomainAssumptions.push(SIGN_HOUSE_DEFAULTS[sign]);
 
-  return Object.freeze({
+  const doNotAssume = textList(input.DO_NOT_ASSUME).concat(
+    house == null ? ["a house or life domain that was not supplied"] : [],
+    ["a specific event, motive, relationship type, or biography not present in governed facts"]
+  );
+  const risks = textList(input.risks ?? input.shadowExpression);
+  const plan = {
+    content_type: String(input.contentType ?? input.content_type ?? "placement"),
     object,
     sign,
-    eventType: input.eventType ? String(input.eventType).trim().toLowerCase() : null,
     house,
+    event_type: input.eventType ? String(input.eventType).trim().toLowerCase() : null,
+    object_function: [objectFunction],
+    sign_mechanics: [signMechanics],
+    actual_house_domain: house == null ? null : requiredText(input.actualHouseDomain, "actual house domain"),
+    core_tension: coreTension,
+    what_changes: requiredText(input.whatChanges ?? likelyConsequences[0], "what changes"),
+    constructive_expression: requiredText(input.constructiveExpression ?? likelyObservableBehaviors[0], "constructive expression"),
+    overcorrection: requiredText(input.overcorrection ?? risks[0] ?? coreTension, "overcorrection"),
+    observable_behaviors: likelyObservableBehaviors,
+    possible_consequences: likelyConsequences,
+    allowed_life_domain_examples: textList(input.allowedLivedDomains),
+    do_not_assume: doNotAssume,
+    house_bleed_risks: [...new Set(prohibitedDomainAssumptions)],
+    stock_trope_risks: textList(input.stockTropeRisks),
+    unearned_motives: textList(input.unearnedMotives),
+    // Compatibility aliases for existing retrieval and generation call sites.
+    eventType: input.eventType ? String(input.eventType).trim().toLowerCase() : null,
     objectFunction,
     signMechanics,
     actualHouseDomain: house == null ? null : requiredText(input.actualHouseDomain, "actual house domain"),
@@ -53,10 +75,8 @@ export function buildMeaningPlan(input) {
     coreTension,
     likelyObservableBehaviors,
     likelyConsequences,
-    risks: textList(input.risks ?? input.shadowExpression),
-    DO_NOT_ASSUME: textList(input.DO_NOT_ASSUME).concat(
-      house == null ? ["a house or life domain that was not supplied"] : [],
-      ["a specific event, motive, relationship type, or biography not present in governed facts"]
-    )
-  });
+    risks,
+    DO_NOT_ASSUME: doNotAssume
+  };
+  return Object.freeze(plan);
 }
