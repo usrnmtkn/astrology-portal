@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -338,7 +338,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
   planet,
@@ -2153,150 +2153,109 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV8.browser.ts
+// resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
-var STATUS_PRECEDENCE = [
-  "owner-approved-v8-locked",
-  "rewritten-owner-voice-audited-v5"
-];
+var OWNER_APPROVED = "owner-approved";
 function normalizedKeyPart(value) {
   return String(value ?? "").trim().toLowerCase();
 }
-function transitRuntimeKey(entry) {
-  return [entry.planet, entry.transit_sign, entry.event_type].map(normalizedKeyPart).join("|");
+function transitRuntimeKey(row) {
+  return [row.Planet, row.Sign, row.Event].map(normalizedKeyPart).join("|");
 }
-function housePrimaryRuntimeKey(entry) {
-  return [entry.rising_sign, entry.transit_planet, entry.transit_sign, entry.house].map(normalizedKeyPart).join("|");
+function housePrimaryRuntimeKey(row) {
+  return [row["Rising sign"], row.Planet, row["Transit sign"], row.House].map(normalizedKeyPart).join("|");
 }
-function houseEventRuntimeKey(entry, eventType) {
-  return `${housePrimaryRuntimeKey(entry)}|${normalizedKeyPart(eventType)}`;
+function houseEventRuntimeKey(row) {
+  return `${housePrimaryRuntimeKey(row)}|${normalizedKeyPart(row.Event)}`;
 }
-function statusRank(status) {
-  const rank = STATUS_PRECEDENCE.indexOf(status);
-  return rank === -1 ? Number.POSITIVE_INFINITY : rank;
-}
-function chooseKnowledgeMatrixCandidate(candidates) {
-  return candidates.reduce((winner, candidate) => {
-    if (!winner || statusRank(candidate.judge) < statusRank(winner.judge)) {
-      return candidate;
-    }
-    return winner;
-  }, null);
-}
-function assertExactSchema(manifest, transitFile, houseFile, buildReport) {
-  if (manifest.schema !== "tldrastro.knowledge-matrix-import.v8" || manifest.version !== "v8-owner-approved-locked" || manifest.source_policy.rewrite_or_clean_copy !== false || manifest.source_policy.preserve_workbook_copy_exactly !== true || JSON.stringify(manifest.transit_meanings.precedence) !== JSON.stringify(STATUS_PRECEDENCE) || JSON.stringify(manifest.house_activations.precedence) !== JSON.stringify(STATUS_PRECEDENCE) || transitFile.version !== manifest.version || houseFile.version !== manifest.version) {
-    throw new Error("Knowledge matrix v8 manifest or source version is not the owner-approved package.");
+function assertExactSchema(manifest, rowsFile, buildReport) {
+  if (manifest.schema !== "tldrastro.knowledge-matrix-import.v9" || manifest.version !== "v9-owner-approved-governance-labeled" || manifest.source_policy.rewrite_or_clean_copy !== false || manifest.source_policy.preserve_workbook_copy_exactly !== true || manifest.source_policy.authority_column !== "Governance" || manifest.source_policy.serving_authority !== OWNER_APPROVED || JSON.stringify(manifest.source_policy.historical_lineage_columns) !== JSON.stringify(["Judge"]) || rowsFile.schema !== "tldrastro.knowledge-matrix.rows.v9" || rowsFile.version !== manifest.version || rowsFile.source_workbook !== manifest.source_of_truth || rowsFile.source_workbook_sha256 !== manifest.source_sha256 || buildReport.version !== manifest.version) {
+    throw new Error("Knowledge matrix v9 manifest or source is not the governance-labeled owner-approved package.");
   }
-  if (manifest.validation.expected_build_warnings !== 0 || manifest.verified_build.build_warnings !== 0 || buildReport.warning_count !== 0 || buildReport.warnings.length !== 0 || buildReport.build_passed !== true) {
-    throw new Error("Knowledge matrix v8 has build warnings; runtime ingestion is blocked.");
+  if (manifest.verified_build.build_warnings !== 0 || buildReport.warning_count !== 0 || buildReport.warnings.length !== 0 || buildReport.build_passed !== true) {
+    throw new Error("Knowledge matrix v9 has build warnings; runtime ingestion is blocked.");
+  }
+  if (rowsFile.transit_meanings.length !== manifest.canonical_rows.transit_rows || rowsFile.house_activations.length !== manifest.canonical_rows.house_rows || rowsFile.transit_meanings.length + rowsFile.house_activations.length !== manifest.canonical_rows.owner_approved_rows || buildReport.transit_rows !== manifest.canonical_rows.transit_rows || buildReport.house_rows !== manifest.canonical_rows.house_rows || buildReport.governance_counts[OWNER_APPROVED] !== manifest.canonical_rows.owner_approved_rows) {
+    throw new Error("Knowledge matrix v9 canonical row count mismatch.");
   }
 }
-function assertCopyValidation(copy, manifest, sourceKey) {
-  const zero = manifest.validation.required_zero_occurrences;
-  const lowered = copy.toLowerCase();
-  if (copy.includes(zero.em_dash)) {
-    throw new Error(`Knowledge matrix v8 em dash validation failed: ${sourceKey}`);
+function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
+  assertExactSchema(manifest, rowsFile, buildReport);
+  const allRows = [...rowsFile.transit_meanings, ...rowsFile.house_activations];
+  if (allRows.some((row) => row.Governance !== OWNER_APPROVED)) {
+    throw new Error("Knowledge matrix v9 contains a row not authorized by Governance.");
   }
-  if (new RegExp(`\\b${zero.whether.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\\b`, "iu").test(copy)) {
-    throw new Error(`Knowledge matrix v8 whether validation failed: ${sourceKey}`);
-  }
-  for (const phrase of zero.banned_vocabulary) {
-    if (lowered.includes(phrase.toLowerCase())) {
-      throw new Error(`Knowledge matrix v8 banned vocabulary validation failed (${phrase}): ${sourceKey}`);
-    }
-  }
-}
-function candidateMap(candidates) {
-  const grouped = /* @__PURE__ */ new Map();
-  for (const [key, candidate] of candidates) {
-    const keyed = grouped.get(key) ?? [];
-    keyed.push(candidate);
-    grouped.set(key, keyed);
-  }
-  return new Map(
-    [...grouped.entries()].map(([key, keyed]) => [key, chooseKnowledgeMatrixCandidate(keyed)])
-  );
-}
-function createKnowledgeMatrixV8Resolver(manifest, transitFile, houseFile, buildReport) {
-  assertExactSchema(manifest, transitFile, houseFile, buildReport);
-  const transitCandidates = [];
-  for (const [sourceKey, entry] of Object.entries(transitFile.entries)) {
-    const expectedSourceKey = `${entry.planet}|${entry.transit_sign}|${entry.event_type}`;
-    if (sourceKey !== expectedSourceKey) {
-      throw new Error(`Knowledge matrix v8 transit key mismatch: ${sourceKey}`);
-    }
-    if (!entry.planet || !entry.transit_sign || !entry.event_type || !entry.copy) {
-      throw new Error(`Knowledge matrix v8 transit entry is incomplete: ${sourceKey}`);
-    }
-    if (!STATUS_PRECEDENCE.includes(entry.judge)) {
-      throw new Error(`Knowledge matrix v8 transit judge is not serving: ${sourceKey}`);
-    }
-    if (entry.copy.startsWith(EXCLUDED_PREFIX)) continue;
-    assertCopyValidation(entry.copy, manifest, sourceKey);
-    transitCandidates.push([transitRuntimeKey(entry), entry]);
+  const transitIndex = /* @__PURE__ */ new Map();
+  let transitEligibleRows = 0;
+  for (const row of rowsFile.transit_meanings) {
+    if (!row.Planet || !row.Sign || !row.Event || !row.Copy) continue;
+    if (row.Copy.startsWith(EXCLUDED_PREFIX)) continue;
+    transitEligibleRows += 1;
+    const key = transitRuntimeKey(row);
+    if (!transitIndex.has(key)) transitIndex.set(key, row);
   }
   const housePrimaryKeys = /* @__PURE__ */ new Set();
-  const houseCandidates = [];
-  for (const [sourceKey, entry] of Object.entries(houseFile.entries)) {
-    const expectedSourceKey = `${entry.rising_sign}|${entry.transit_planet}|${entry.transit_sign}|${entry.house}`;
-    if (sourceKey !== expectedSourceKey) {
-      throw new Error(`Knowledge matrix v8 house key mismatch: ${sourceKey}`);
+  const houseIndex = /* @__PURE__ */ new Map();
+  let houseEligibleRows = 0;
+  let excludedHouseRows = 0;
+  for (const row of rowsFile.house_activations) {
+    const eligible = Boolean(
+      row["Rising sign"] && row.Planet && row["Transit sign"] && row.Event && Number.isInteger(row.House) && Number(row.House) >= 1 && Number(row.House) <= 12 && row.Experience && !row.Experience.startsWith(EXCLUDED_PREFIX)
+    );
+    if (!eligible) {
+      excludedHouseRows += 1;
+      continue;
     }
-    if (!entry.rising_sign || !entry.transit_planet || !entry.transit_sign || !Number.isInteger(entry.house) || entry.house < 1 || entry.house > 12 || !entry.events || Array.isArray(entry.events)) {
-      throw new Error(`Knowledge matrix v8 house entry is incomplete: ${sourceKey}`);
-    }
-    housePrimaryKeys.add(housePrimaryRuntimeKey(entry));
-    for (const [eventType, event] of Object.entries(entry.events)) {
-      if (eventType !== event.event_type) {
-        throw new Error(`Knowledge matrix v8 house event key mismatch: ${sourceKey}|${eventType}`);
-      }
-      if (!event.copy || !STATUS_PRECEDENCE.includes(event.judge)) {
-        throw new Error(`Knowledge matrix v8 house event is incomplete: ${sourceKey}|${eventType}`);
-      }
-      if (event.copy.startsWith(EXCLUDED_PREFIX)) continue;
-      assertCopyValidation(event.copy, manifest, `${sourceKey}|${eventType}`);
-      houseCandidates.push([houseEventRuntimeKey(entry, eventType), event]);
-    }
+    houseEligibleRows += 1;
+    housePrimaryKeys.add(housePrimaryRuntimeKey(row));
+    const key = houseEventRuntimeKey(row);
+    if (!houseIndex.has(key)) houseIndex.set(key, row);
   }
-  const transitIndex = candidateMap(transitCandidates);
-  const houseIndex = candidateMap(houseCandidates);
   const expected = manifest.verified_build;
-  if (transitIndex.size !== expected.transit_primary_keys || housePrimaryKeys.size !== expected.house_primary_keys || houseIndex.size !== expected.house_event_entries) {
+  if (transitEligibleRows !== expected.transit_eligible_rows || transitIndex.size !== expected.transit_runtime_keys || houseEligibleRows !== expected.house_eligible_rows || housePrimaryKeys.size !== expected.house_primary_keys || houseIndex.size !== expected.house_event_runtime_keys || excludedHouseRows !== expected.excluded_house_rows) {
     throw new Error(
-      `Knowledge matrix v8 count mismatch: transit ${transitIndex.size}/${expected.transit_primary_keys}, house ${housePrimaryKeys.size}/${expected.house_primary_keys}, events ${houseIndex.size}/${expected.house_event_entries}.`
+      `Knowledge matrix v9 count mismatch: transit rows ${transitEligibleRows}/${expected.transit_eligible_rows}, transit keys ${transitIndex.size}/${expected.transit_runtime_keys}, house rows ${houseEligibleRows}/${expected.house_eligible_rows}, house primary ${housePrimaryKeys.size}/${expected.house_primary_keys}, house events ${houseIndex.size}/${expected.house_event_runtime_keys}, excluded ${excludedHouseRows}/${expected.excluded_house_rows}.`
     );
   }
   return Object.freeze({
     renderTransitMeaning({ planet, transitSign, eventType }) {
       const runtimeKey = [planet, transitSign, eventType].map(normalizedKeyPart).join("|");
-      const entry = transitIndex.get(runtimeKey);
-      return entry ? {
-        body: entry.copy,
-        contentKey: `knowledge-matrix-v8/transit/${runtimeKey}`,
-        judge: entry.judge,
-        sourceVersion: manifest.version
+      const row = transitIndex.get(runtimeKey);
+      return row ? {
+        body: row.Copy,
+        contentKey: `knowledge-matrix-v9/transit/${runtimeKey}`,
+        governance: row.Governance,
+        judgeLineage: row.Judge,
+        sourceVersion: manifest.version,
+        sourceRow: row.source_row
       } : null;
     },
     renderHouseActivation({ risingSign, planet, transitSign, house, eventType }) {
       const runtimeKey = [risingSign, planet, transitSign, house, eventType].map(normalizedKeyPart).join("|");
-      const event = houseIndex.get(runtimeKey);
-      return event ? {
-        body: event.copy,
-        contentKey: `knowledge-matrix-v8/house/${runtimeKey}`,
-        judge: event.judge,
-        sourceVersion: manifest.version
+      const row = houseIndex.get(runtimeKey);
+      return row ? {
+        body: row.Experience,
+        contentKey: `knowledge-matrix-v9/house/${runtimeKey}`,
+        governance: row.Governance,
+        judgeLineage: row.Judge,
+        sourceVersion: manifest.version,
+        sourceRow: row.source_row
       } : null;
     },
     counts: Object.freeze({
-      transitPrimaryKeys: transitIndex.size,
+      ownerApprovedRows: allRows.length,
+      transitEligibleRows,
+      transitRuntimeKeys: transitIndex.size,
+      houseEligibleRows,
       housePrimaryKeys: housePrimaryKeys.size,
-      houseEventEntries: houseIndex.size
+      houseEventRuntimeKeys: houseIndex.size,
+      excludedHouseRows
     })
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-10c";
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-08-10d";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -2352,9 +2311,8 @@ export {
   RoleViolationError,
   SourceGapError,
   TRUE_LILITH_KEY_DATES_INTRO,
-  chooseKnowledgeMatrixCandidate,
   createFallbackRenderer,
-  createKnowledgeMatrixV8Resolver,
+  createKnowledgeMatrixV9Resolver,
   createPackageManifest,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,

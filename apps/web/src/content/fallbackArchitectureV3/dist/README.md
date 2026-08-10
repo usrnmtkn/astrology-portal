@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-import { createFallbackRenderer, createKnowledgeMatrixV8Resolver, createTransitSynastryRenderer, SourceGapError } from "./dist/tldr-content.js";
+import { createFallbackRenderer, createKnowledgeMatrixV9Resolver, createTransitSynastryRenderer, SourceGapError } from "./dist/tldr-content.js";
 import templates from "./templates/fallback-templates-v3.json";
 import rows from "./source-rows/fallback-source-rows-v3.json";
 import transitLib from "./source-rows/transit-synastry-rows-v1.json";
@@ -16,7 +16,7 @@ const transits = createTransitSynastryRenderer(transitLib, templates, rows);
 
 - `natal`: `renderNatalPlacement`, `renderNatalAngle`, `renderNatalAspect`, `renderNatalEmptyHouse`, `renderProfectionYear`
 - `transits`: `renderTransitAspect`, `renderTransitHouse`, `renderTransitRetro`, `renderTransitReturn`, `renderTransitLabel`, `renderCompat`, `renderSynastryAspect`, `renderSkySeason`, `renderSkyPlacement`, `renderSkyAspectCard`, `renderSkyLunation`, `renderSkyHoroscope`, `renderCalendarPhase`, `renderVoidOfCourse`, `renderSeasonMarker`, `renderWeeklyMoon`, `renderCircleStory`, `renderPairDaily`, `formatCircleNames`, `renderBondTransit`
-- `createKnowledgeMatrixV8Resolver`: exact-key `renderTransitMeaning` and `renderHouseActivation` lookups. Both return package copy unchanged or `null`; they never substitute across signs, houses, or event types.
+- `createKnowledgeMatrixV9Resolver`: governance-gated exact-key `renderTransitMeaning` and `renderHouseActivation` lookups. Both return canonical workbook copy unchanged or `null`; they never substitute across signs, houses, or event types.
 
 Full API documentation: `admin/CODEX-TRANSIT-HANDOFF.md`. Catch `SourceGapError` and hide the surface (never substitute copy). All rows in this build are owner-approved; keep gating on `review_status` for future drafts.
 

@@ -194,14 +194,15 @@ interpretation defines Sagittarius through education/publishing/institutions rat
 through the behavior of belief and conviction. Apply the same noun-level test to every sign
 before PASS.
 
-KNOWLEDGE MATRIX V8 RULE (owner, 2026-08-09, amended same day): the v8 matrix package
-(tldr-astro-knowledge-matrix-v8-owner-approved-ingestion-ready.zip, in Resources) supersedes
-the topics-only demotion entirely. BOTH tiers are owner-authored: the owner rewrote and
-fixed the v5 rows herself, and locked the v8 rows after a further read. Owner ruling
-verbatim: "yes, we show them the v5 row. I rewrote and fixed these v5 files." Both tiers
-serve at runtime (precedence: owner-approved-v8-locked over rewritten-owner-voice-audited-v5
-per the import manifest), both feed the judge vocabulary, and composition may draw on both
-with adaptations flagged. The original CC matrix remains topics and gap-detection only.
+KNOWLEDGE MATRIX V9 RULE (owner, 2026-08-09):
+`TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx`
+(SHA-256 `d78569b194d132b921a71d061055e6b484ecae8877c6ae4c7b82d08538023b22`)
+is the canonical matrix and supersedes v8. Governance is the current authority layer;
+Judge fields are preserved as historical editing and review lineage, per GovernanceLegend.
+All 3,485 Governance=`owner-approved` rows are eligible evidence and serving candidates under
+the existing fail-closed render exclusions. Copy and Experience remain byte-identical to the
+approved v9. Never infer authorship from approval alone. Any matrix change becomes v10 and
+returns to the owner for approval; v9 is never edited in place.
 
 HYBRID STANDARD (owner, 2026-08-09, established with the Venus in Libra set): every placement
 core names the planet and sign up front to lock the astrological engine, uses loose, spoken,

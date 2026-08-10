@@ -107,40 +107,41 @@ const servingApproved = allCandidates
     source: "fallbackArchitectureV3"
   }));
 
-const matrixRoot = path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/knowledge-matrix-v8");
-const transitMatrix = JSON.parse(fs.readFileSync(path.join(matrixRoot, "transit-meanings-v8-owner-approved-locked.json"), "utf8"));
-const houseMatrix = JSON.parse(fs.readFileSync(path.join(matrixRoot, "house-activations-v8-owner-approved-locked.json"), "utf8"));
-const matrixLocked = [];
-for (const [key, entry] of Object.entries(transitMatrix.entries)) {
-  if (entry.judge !== "owner-approved-v8-locked" || String(entry.copy).startsWith("[EXCLUDE FROM FALLBACK]")) continue;
-  matrixLocked.push({
-    id: `matrix-v8:transit:${key}`,
-    contentKey: key,
+const matrixRoot = path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/knowledge-matrix-v9");
+const matrix = JSON.parse(fs.readFileSync(path.join(matrixRoot, "knowledge-matrix-v9-owner-approved-rows.json"), "utf8"));
+const matrixApproved = [];
+for (const entry of matrix.transit_meanings) {
+  if (entry.Governance !== "owner-approved" || String(entry.Copy).startsWith("[EXCLUDE FROM FALLBACK]")) continue;
+  matrixApproved.push({
+    id: `matrix-v9:transit:row-${entry.source_row}`,
+    contentKey: entry.Key,
     family: "knowledge-matrix-transit",
-    register: /\b(?:you|your|yours|yourself)\b/iu.test(entry.copy) ? "second_person" : "collective",
-    text: entry.copy,
+    register: /\b(?:you|your|yours|yourself)\b/iu.test(entry.Copy) ? "second_person" : "collective",
+    text: entry.Copy,
     ownerApproved: true,
-    authority: "owner-approved-v8-locked",
-    source: "knowledge-matrix-v8"
+    authority: "owner-approved-v9-governance-labeled",
+    governance: entry.Governance,
+    judgeLineage: entry.Judge,
+    source: "knowledge-matrix-v9"
   });
 }
-for (const [primaryKey, entry] of Object.entries(houseMatrix.entries)) {
-  for (const [eventType, event] of Object.entries(entry.events ?? {})) {
-    if (event.judge !== "owner-approved-v8-locked" || String(event.copy).startsWith("[EXCLUDE FROM FALLBACK]")) continue;
-    matrixLocked.push({
-      id: `matrix-v8:house:${primaryKey}|${eventType}`,
-      contentKey: `${primaryKey}|${eventType}`,
-      family: "knowledge-matrix-house",
-      register: "second_person",
-      text: event.copy,
-      ownerApproved: true,
-      authority: "owner-approved-v8-locked",
-      source: "knowledge-matrix-v8"
-    });
-  }
+for (const entry of matrix.house_activations) {
+  if (entry.Governance !== "owner-approved" || String(entry.Experience).startsWith("[EXCLUDE FROM FALLBACK]")) continue;
+  matrixApproved.push({
+    id: `matrix-v9:house:row-${entry.source_row}`,
+    contentKey: `${entry.Key}|${entry.House ?? ""}`,
+    family: "knowledge-matrix-house",
+    register: "second_person",
+    text: entry.Experience,
+    ownerApproved: true,
+    authority: "owner-approved-v9-governance-labeled",
+    governance: entry.Governance,
+    judgeLineage: entry.Judge,
+    source: "knowledge-matrix-v9"
+  });
 }
 
-const output = [...servingApproved, ...matrixLocked].sort((a, b) => a.id.localeCompare(b.id));
+const output = [...servingApproved, ...matrixApproved].sort((a, b) => a.id.localeCompare(b.id));
 writeJsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl", output);
 
 const bannedWordsSource = JSON.parse(fs.readFileSync(path.join(repoRoot, "packages/astro-knowledge/voice/banned-words.json"), "utf8"));
@@ -160,4 +161,4 @@ fs.writeFileSync(
   path.join(repoRoot, "src/astro-writing/policyData.generated.mjs"),
   `// Generated from canonical voice policy JSON. Do not edit by hand.\nexport const WRITING_POLICY_DATA = Object.freeze(${JSON.stringify(generatedPolicy, null, 2)});\n`
 );
-console.log(JSON.stringify({ servingApproved: servingApproved.length, matrixLocked: matrixLocked.length, total: output.length }, null, 2));
+console.log(JSON.stringify({ servingApproved: servingApproved.length, matrixApproved: matrixApproved.length, total: output.length }, null, 2));
