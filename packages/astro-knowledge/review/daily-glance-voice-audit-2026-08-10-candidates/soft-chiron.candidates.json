@@ -1,0 +1,797 @@
+{
+  "schemaVersion": 1,
+  "key": "soft/chiron",
+  "status": "UNAPPROVED",
+  "operatingMode": "flag-only",
+  "calibrationFailed": true,
+  "modeNotice": "Terra failed calibration. Score-1 and failed-dimension counts are advisory triage only, never quality verdicts.",
+  "immutableRawOutputs": true,
+  "revisionsMade": 0,
+  "candidates": [
+    {
+      "sample": 1,
+      "candidate": {
+        "headline": "You can accept help while you are still struggling.",
+        "body": "You are halfway through correcting a mistake at work when someone offers to handle one task and waits for your answer instead of taking over. You may recognize the old urge to prove you can handle the whole thing alone. This time, you can pause before saying no. If you refuse the offer, you keep correcting the mistake alone for longer. You’re not weak for needing care. Hand over one clear task, explain what still needs attention, and keep working on the part that remains yours."
+      },
+      "raw": "{\"headline\":\"You can accept help while you are still struggling.\",\"body\":\"You are halfway through correcting a mistake at work when someone offers to handle one task and waits for your answer instead of taking over. You may recognize the old urge to prove you can handle the whole thing alone. This time, you can pause before saying no. If you refuse the offer, you keep correcting the mistake alone for longer. You’re not weak for needing care. Hand over one clear task, explain what still needs attention, and keep working on the part that remains yours.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0c469d5d68dd677c006a7a02f89c0081a3a1b2c9222c3700bb",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4189,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 4186,
+          "outputTokens": 3743,
+          "reasoningTokens": 3624,
+          "totalTokens": 7932
+        },
+        "estimatedCostUsd": 0.138467
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "soft/chiron",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "9 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "6 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "86 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 0 detected instruction(s); final sentence: Hand over one clear task, explain what still needs attention, and keep working on the part that remains yours."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": {
+              "mildEaseCue": false,
+              "target": "chiron"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may recognize the old urge to prove you can handle the whole thi"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "softGrammar": false,
+              "otherGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "This time, you can pause before saying no.",
+              "You’re not weak for needing care."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "soft/chiron",
+                "matches": [
+                  "care-old-hurt"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "square/sun",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": true,
+            "details": [
+              "You’re not weak for needing care.",
+              "Hand over one clear task, explain what still needs attention, and keep working on the part that remains yours."
+            ]
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 9,
+          "headlineSentences": 1,
+          "bodyWords": 86,
+          "bodySentences": 6,
+          "instructions": 0,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 2
+        }
+      },
+      "judge": {
+        "key": "soft/chiron",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 4,
+        "verdict": {
+          "score": 2,
+          "verdict": "Near the approved register, but the scene-first setup, repeated capability/permission framing, and coaching close make it read assembled rather than owner-specific.",
+          "dimensions": {
+            "voice": false,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": false,
+            "screenshot_line": false,
+            "specificity": true
+          },
+          "best_line": "If you refuse the offer, you keep correcting the mistake alone for longer.",
+          "why": "This is the cleanest line because it names the actual cost of self-reliance without diagnosing the reader or turning care into a vague virtue. The rest leans on familiar Chiron language—proving you can handle it, not being weak, needing care—and ends with a procedural coaching sequence that the rejected examples also use."
+        },
+        "usage": {
+          "inputTokens": 14799,
+          "cachedInputTokens": 13476,
+          "outputTokens": 790,
+          "reasoningTokens": 292,
+          "totalTokens": 15589
+        },
+        "estimatedCostUsd": 0.014821,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 2,
+      "candidate": {
+        "headline": "Care is easier to accept before the struggle is over.",
+        "body": "You are still sorting out a billing mistake when someone offers to bring dinner, and you may not feel the usual pressure to say you are fine. If you refuse, you keep dinner on your list while the billing problem still needs your attention. You’re not weak for needing care. Reply with your address and a simple yes."
+      },
+      "raw": "{\"headline\":\"Care is easier to accept before the struggle is over.\",\"body\":\"You are still sorting out a billing mistake when someone offers to bring dinner, and you may not feel the usual pressure to say you are fine. If you refuse, you keep dinner on your list while the billing problem still needs your attention. You’re not weak for needing care. Reply with your address and a simple yes.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_08eba4cd1acf5d30006a7a02f89ea0819f99c0cb946b009d95",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4189,
+          "cachedInputTokens": 4186,
+          "cacheWriteTokens": 0,
+          "outputTokens": 2441,
+          "reasoningTokens": 2353,
+          "totalTokens": 6630
+        },
+        "estimatedCostUsd": 0.075338
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "soft/chiron",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "10 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "58 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 0 detected instruction(s); final sentence: Reply with your address and a simple yes."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "mildEaseCue": true,
+              "target": "chiron"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may not feel the usual pressure to say you are fine"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "softGrammar": true,
+              "otherGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You’re not weak for needing care.",
+              "Reply with your address and a simple yes."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "soft/chiron",
+                "matches": [
+                  "care-old-hurt"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "square/sun",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": true,
+            "details": [
+              "If you refuse, you keep dinner on your list while the billing problem still needs your attention.",
+              "You’re not weak for needing care."
+            ]
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 10,
+          "headlineSentences": 1,
+          "bodyWords": 58,
+          "bodySentences": 4,
+          "instructions": 0,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 2
+        }
+      },
+      "judge": {
+        "key": "soft/chiron",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 4,
+        "verdict": {
+          "score": 2,
+          "verdict": "Near the approved register, but the scene arrives before the central truth and the fixed-slot reassurance line gives it rejected-example template smell.",
+          "dimensions": {
+            "voice": false,
+            "stakes": true,
+            "structure": false,
+            "hedging": true,
+            "formula": false,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "If you refuse, you keep dinner on your list while the billing problem still needs your attention.",
+          "why": "This is the sentence that earns the card: it names the actual cost of refusing support without turning care into a vague lesson. The rest is softer and more assembled, especially “You’re not weak for needing care,” which reads like a familiar reassurance frame rather than the owner’s sharper plainspoken truth."
+        },
+        "usage": {
+          "inputTokens": 14706,
+          "cachedInputTokens": 13414,
+          "outputTokens": 739,
+          "reasoningTokens": 274,
+          "totalTokens": 15445
+        },
+        "estimatedCostUsd": 0.014135,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 3,
+      "candidate": {
+        "headline": "Accepting care does not require looking composed.",
+        "body": "You do not hide the unfinished part as quickly when someone notices you struggling. A coworker offers to review the page you keep reworking, and your usual quick refusal does not come right away. That refusal has kept you reworking the same problem alone as the deadline gets closer. You’re not weak for needing care. Send the page as it is and name the one section where another set of eyes would help."
+      },
+      "raw": "{\"headline\":\"Accepting care does not require looking composed.\",\"body\":\"You do not hide the unfinished part as quickly when someone notices you struggling. A coworker offers to review the page you keep reworking, and your usual quick refusal does not come right away. That refusal has kept you reworking the same problem alone as the deadline gets closer. You’re not weak for needing care. Send the page as it is and name the one section where another set of eyes would help.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0f3fb4b96ffbacba006a7a02f8a03c8192a82ac579860d5a7d",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4189,
+          "cachedInputTokens": 3840,
+          "cacheWriteTokens": 0,
+          "outputTokens": 2549,
+          "reasoningTokens": 2445,
+          "totalTokens": 6738
+        },
+        "estimatedCostUsd": 0.080135
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "soft/chiron",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "7 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "5 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "73 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send the page as it is and name the one section where another set of eyes would help."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": {
+              "mildEaseCue": false,
+              "target": "chiron"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "softGrammar": false,
+              "otherGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "0 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You’re not weak for needing care."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "soft/chiron",
+                "matches": [
+                  "care-old-hurt"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "square/sun",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": true,
+            "details": [
+              "You’re not weak for needing care."
+            ]
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 7,
+          "headlineSentences": 1,
+          "bodyWords": 73,
+          "bodySentences": 5,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 0,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 1
+        }
+      },
+      "judge": {
+        "key": "soft/chiron",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 5,
+        "verdict": {
+          "score": 2,
+          "verdict": "Near the register, but the fixed reassurance line and coached ending keep it from reading unnoticed among the approved examples.",
+          "dimensions": {
+            "voice": false,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": false,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "That refusal has kept you reworking the same problem alone as the deadline gets closer.",
+          "why": "This is the clearest line because it names the actual cost of refusing help: more isolated work while time runs out. The rest leans on familiar vulnerability language—especially “You’re not weak for needing care”—and the final instruction lands like a standard coaching close rather than completing the observation."
+        },
+        "usage": {
+          "inputTokens": 14754,
+          "cachedInputTokens": 13446,
+          "outputTokens": 727,
+          "reasoningTokens": 237,
+          "totalTokens": 15481
+        },
+        "estimatedCostUsd": 0.014029,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    }
+  ]
+}

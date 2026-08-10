@@ -1,0 +1,791 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/pluto",
+  "status": "UNAPPROVED",
+  "operatingMode": "flag-only",
+  "calibrationFailed": true,
+  "modeNotice": "Terra failed calibration. Score-1 and failed-dimension counts are advisory triage only, never quality verdicts.",
+  "immutableRawOutputs": true,
+  "revisionsMade": 0,
+  "candidates": [
+    {
+      "sample": 1,
+      "candidate": {
+        "headline": "Strong feelings can quickly turn your preference into a demand.",
+        "body": "You may feel so intensely about a shared decision that you repeat your point, reject every alternative, and press for an immediate answer. The other person starts explaining why they will not be rushed. You are arguing about who gets to decide. Say what you need once, then leave the question open so they can consider the choice instead of defending their right to make it."
+      },
+      "raw": "{\"headline\":\"Strong feelings can quickly turn your preference into a demand.\",\"body\":\"You may feel so intensely about a shared decision that you repeat your point, reject every alternative, and press for an immediate answer. The other person starts explaining why they will not be rushed. You are arguing about who gets to decide. Say what you need once, then leave the question open so they can consider the choice instead of defending their right to make it.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_025554b58354c92e006a7a047bab40819cb3e1025a74d705a1",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4044,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 4041,
+          "outputTokens": 7001,
+          "reasoningTokens": 6905,
+          "totalTokens": 11045
+        },
+        "estimatedCostUsd": 0.235301
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/pluto",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "10 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "66 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Say what you need once, then leave the question open so they can consider the choice instead of defending their right to make it."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "saturationCue": true,
+              "target": "pluto"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You are arguing about who gets to decide."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/pluto",
+                "matches": [
+                  "intensity"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "square/sun",
+                "square/uranus"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 10,
+          "headlineSentences": 1,
+          "bodyWords": 66,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "conjunction/pluto",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 5,
+        "verdict": {
+          "score": 2,
+          "verdict": "Near the owner register, but the body is too neatly coached and generic to disappear among the approved examples.",
+          "dimensions": {
+            "voice": false,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": false,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "You are arguing about who gets to decide.",
+          "why": "This is the only line that gets to the actual Pluto mechanism: control has replaced the stated disagreement. The rest turns quickly into a tidy behavior-correction script—repeat, reject, press, then say it once and leave it open—which gives the transit a generic conflict-management feel rather than the sharper, more lived-in consequence of a power struggle."
+        },
+        "usage": {
+          "inputTokens": 14754,
+          "cachedInputTokens": 13446,
+          "outputTokens": 791,
+          "reasoningTokens": 341,
+          "totalTokens": 15545
+        },
+        "estimatedCostUsd": 0.014797,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 2,
+      "candidate": {
+        "headline": "A strong feeling makes one outcome seem nonnegotiable.",
+        "body": "You may feel so strongly about a plan you need confirmed that you take their hesitation as rejection. You push. You repeat the question and explain why only one answer will work, so they start arguing about the pressure instead of discussing the plan. Say why the plan matters once, then stop pressing for an answer for the next few hours."
+      },
+      "raw": "{\"headline\":\"A strong feeling makes one outcome seem nonnegotiable.\",\"body\":\"You may feel so strongly about a plan you need confirmed that you take their hesitation as rejection. You push. You repeat the question and explain why only one answer will work, so they start arguing about the pressure instead of discussing the plan. Say why the plan matters once, then stop pressing for an answer for the next few hours.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_03967f8dc7f61af5006a7a047baab0819cbd4a894357ea655f",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4044,
+          "cachedInputTokens": 4041,
+          "cacheWriteTokens": 0,
+          "outputTokens": 2679,
+          "reasoningTokens": 2588,
+          "totalTokens": 6723
+        },
+        "estimatedCostUsd": 0.082406
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/pluto",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "8 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "61 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Say why the plan matters once, then stop pressing for an answer for the next few hours."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "saturationCue": true,
+              "target": "pluto"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": false,
+            "details": "Future outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": [
+              "for the next few hours"
+            ]
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You push."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": true,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/pluto",
+                "matches": [
+                  "intensity",
+                  "control"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "square/sun",
+                "square/uranus"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 8,
+          "headlineSentences": 1,
+          "bodyWords": 61,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 1,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "conjunction/pluto",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 5,
+        "verdict": {
+          "score": 2,
+          "verdict": "The Pluto pressure is recognizable, but the close turns into a familiar coaching instruction and the conflict never develops beyond a generic push-pull.",
+          "dimensions": {
+            "voice": true,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": false,
+            "screenshot_line": false,
+            "specificity": true
+          },
+          "best_line": "You push. You repeat the question and explain why only one answer will work, so they start arguing about the pressure instead of discussing the plan.",
+          "why": "This is the strongest line because it shows the actual consequence of fixation: the pressure becomes the subject, and the original plan goes unresolved. The rest is competent but more generic, especially the headline and the timed instruction at the end."
+        },
+        "usage": {
+          "inputTokens": 14739,
+          "cachedInputTokens": 13436,
+          "outputTokens": 871,
+          "reasoningTokens": 385,
+          "totalTokens": 15610
+        },
+        "estimatedCostUsd": 0.015745,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 3,
+      "candidate": {
+        "headline": "One strong feeling makes every detail of the decision nonnegotiable.",
+        "body": "You may feel old resentment so strongly that settling one simple plan starts to seem urgent. You repeat your case, dismiss their alternatives, and push for an immediate answer. They stop discussing the plan and start defending themselves. Pause the decision for an hour before they spend the rest of the conversation pushing back."
+      },
+      "raw": "{\"headline\":\"One strong feeling makes every detail of the decision nonnegotiable.\",\"body\":\"You may feel old resentment so strongly that settling one simple plan starts to seem urgent. You repeat your case, dismiss their alternatives, and push for an immediate answer. They stop discussing the plan and start defending themselves. Pause the decision for an hour before they spend the rest of the conversation pushing back.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_01fc95ba2ada0723006a7a047bac7081918c5f0d09940d0d92",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4044,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 4041,
+          "outputTokens": 4641,
+          "reasoningTokens": 4555,
+          "totalTokens": 8685
+        },
+        "estimatedCostUsd": 0.164501
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/pluto",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "10 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "54 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Pause the decision for an hour before they spend the rest of the conversation pushing back."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "saturationCue": true,
+              "target": "pluto"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": false,
+            "details": "No 2-8 word body sentence found."
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": true,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/pluto",
+                "matches": [
+                  "intensity",
+                  "control"
+                ],
+                "required": 2,
+                "passed": true
+              },
+              "comparisonScope": [
+                "conjunction/neptune",
+                "soft/chiron",
+                "square/sun",
+                "square/uranus"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 10,
+          "headlineSentences": 1,
+          "bodyWords": 54,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "conjunction/pluto",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          3
+        ],
+        "dimScore": 7,
+        "verdict": {
+          "score": 2,
+          "verdict": "Near owner voice, but the headline is abstract and the body leans on a familiar conflict-escalation sequence rather than making the Pluto pressure feel more distinct.",
+          "dimensions": {
+            "voice": true,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": true,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "They stop discussing the plan and start defending themselves.",
+          "why": "This is the clearest consequence in the card: the actual decision gets lost once resentment turns the exchange into self-protection. The rest is competent and concrete, but \"one strong feeling\" and the sequence of insistence, resistance, and a pause feel slightly assembled rather than like a sentence only this transit would produce."
+        },
+        "usage": {
+          "inputTokens": 14724,
+          "cachedInputTokens": 13426,
+          "outputTokens": 844,
+          "reasoningTokens": 392,
+          "totalTokens": 15568
+        },
+        "estimatedCostUsd": 0.015409,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    }
+  ]
+}

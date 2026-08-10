@@ -774,6 +774,7 @@ module.exports = {
   lintOutput,
   loadLocalEnv,
   normalizeUsage,
+  outputBanRules,
   outputText,
   packetLint,
   parseOutput,

@@ -1,0 +1,1858 @@
+{
+  "schemaVersion": 2,
+  "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+  "judgeModel": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "calibratedAt": "2026-08-10T16:47:18.550Z",
+  "goldMean": 2,
+  "negativeMean": 1.58,
+  "negativeScoreThrees": 0,
+  "acceptance": {
+    "goldMeanMin": 2.6,
+    "negativeMeanMax": 1.9,
+    "negativeScoreThreeMax": 0
+  },
+  "passed": false,
+  "operatingMode": "flag-only",
+  "permanence": "Calibration failed. This judge is permanently demoted to flag-only mode: score-1 and failed-dimension counts are advisory triage, never quality verdicts.",
+  "responseCount": 171,
+  "usage": {
+    "inputTokens": 840762,
+    "cachedInputTokens": 737849,
+    "outputTokens": 49589,
+    "reasoningTokens": 21319,
+    "totalTokens": 890351
+  },
+  "pricingPerMillionUsd": {
+    "input": 2,
+    "cachedInput": 0.2,
+    "output": 12
+  },
+  "estimatedCostUsd": 0.948464,
+  "rows": [
+    {
+      "tier": "gold",
+      "key": "soft/mars",
+      "source": "reference-pair",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "It takes less energy to do the thing than to keep putting it off.",
+      "why": "The headline names the real cost of avoidance without dressing it up. The body then turns into broad productivity coaching: “For the next few hours” is a mechanical transit marker, and the task, conversation, or decision could belong to almost any action-oriented key. It needs a more recognizable friction point that proves soft Mars rather than a generic instruction to start.",
+      "verdict": "Plain and usable, but too generic and time-anchored to sound specific to soft Mars or fully owner-voiced.",
+      "usage": {
+        "inputTokens": 14799,
+        "cachedInputTokens": 9860,
+        "outputTokens": 818,
+        "reasoningTokens": 302,
+        "totalTokens": 15617
+      },
+      "estimatedCostUsd": 0.021666
+    },
+    {
+      "tier": "gold",
+      "key": "square/lilith",
+      "source": "pilots-approval",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Comfort is a quick substitute for admitting what you actually want.",
+      "why": "This is the strongest line because it states the intended Lilith tension directly, but it is also too polished and mind-reading to sound like the approved examples. The body assumes that kitchen trips and hunger are really avoidance, gives no concrete cost beyond an abstract unanswered question, and could fit many desire, shame, or coping transits rather than this specific key.",
+      "verdict": "Off-voice: it turns ordinary eating into a confident diagnosis about avoidance, then closes in a therapy-coaching register.",
+      "usage": {
+        "inputTokens": 14880,
+        "cachedInputTokens": 13530,
+        "outputTokens": 923,
+        "reasoningTokens": 425,
+        "totalTokens": 15803
+      },
+      "estimatedCostUsd": 0.016482
+    },
+    {
+      "tier": "gold",
+      "key": "opposition/mars",
+      "source": "pilots-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": false,
+        "formula": true,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "Expect an urge to fire back when someone pushes a boundary or questions your judgment.",
+      "why": "This is the clearest transit-specific sentence: opposition pressure meets a Mars-style immediate response. The rest turns into a generalized self-regulation script, and “self-preservation” overstates the motive without showing what gets damaged when the reaction takes over.",
+      "verdict": "Near the register, but the body leans on generic conflict coaching and softened psychological diagnosis instead of naming what the reaction costs.",
+      "usage": {
+        "inputTokens": 14739,
+        "cachedInputTokens": 13436,
+        "outputTokens": 858,
+        "reasoningTokens": 372,
+        "totalTokens": 15597
+      },
+      "estimatedCostUsd": 0.015589
+    },
+    {
+      "tier": "gold",
+      "key": "house/11",
+      "source": "pilots-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for.",
+      "why": "This is the clearest statement of the actual cost: avoiding friction with the group creates obligations that take your time and choice away. The opening \"Notice how tempting\" and the tidy final instruction weaken it by describing the pattern from outside instead of putting the reader inside a recognizable moment where agreeing has already cost them something.",
+      "verdict": "Near the owner’s register, but the body stays too generalized and ends in a coaching-style instruction. The group-pressure mechanism is clear, yet it needs a more lived consequence to feel like an owner-approved daily rather than polished transit copy.",
+      "usage": {
+        "inputTokens": 14784,
+        "cachedInputTokens": 13466,
+        "outputTokens": 771,
+        "reasoningTokens": 258,
+        "totalTokens": 15555
+      },
+      "estimatedCostUsd": 0.014581
+    },
+    {
+      "tier": "gold",
+      "key": "square/moon",
+      "source": "batch-1-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Forcing the original schedule can turn a normal day into a fight with yourself.",
+      "why": "This is the strongest line because it names the actual emotional cost of overcommitting: the day becomes internally hostile, not merely busy. But the rest could apply to almost any stressful transit, and \"Changing the plan does not make you unreliable\" has the permission-line shape the rejected examples rely on.",
+      "verdict": "Clear and usable, but it leans on a familiar self-permission frame and generic errand overload rather than a distinctly square/Moon emotional friction. The consequence is present, but the voice does not yet sit unnoticed among the approved examples.",
+      "usage": {
+        "inputTokens": 14835,
+        "cachedInputTokens": 13500,
+        "outputTokens": 688,
+        "reasoningTokens": 165,
+        "totalTokens": 15523
+      },
+      "estimatedCostUsd": 0.013626
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/mars",
+      "source": "batch-1-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "The feeling hits, and you are already doing something about it.",
+      "why": "This is the cleanest expression of the Mars conjunction mechanism: feeling turns into immediate action before there is time to assess it. The body weakens it with \"solving the problem or making it bigger,\" which is generic coaching language and never names what the rushed action actually costs.",
+      "verdict": "Clear and usable, but the balanced caution and generic problem-solving language make it sound more like polished coaching than the owner's sharper, more lived-in voice.",
+      "usage": {
+        "inputTokens": 14838,
+        "cachedInputTokens": 13502,
+        "outputTokens": 833,
+        "reasoningTokens": 348,
+        "totalTokens": 15671
+      },
+      "estimatedCostUsd": 0.015368
+    },
+    {
+      "tier": "gold",
+      "key": "opposition/sun",
+      "source": "batch-1-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 6,
+      "dimensions": {
+        "voice": true,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "You can say yes in public and regret it in private.",
+      "why": "This is the clearest and most saveable line because it names the gap between performing agreement for other people and dealing with the resentment alone afterward. The rest is clean, but it moves through a familiar overcommitment-and-revise-the-boundary sequence that could belong to almost any relationship or pressure transit.",
+      "verdict": "Close to the owner's register, but the boundary-setting scene is broad enough to fit many transits. The public/private split gives it some opposition logic, yet the body does not make the Sun's own priorities or visibility meaning distinct enough to earn a 3.",
+      "usage": {
+        "inputTokens": 14784,
+        "cachedInputTokens": 12157,
+        "outputTokens": 851,
+        "reasoningTokens": 350,
+        "totalTokens": 15635
+      },
+      "estimatedCostUsd": 0.017897
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/lilith",
+      "source": "batch-1-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "The want you keep explaining away is still there.",
+      "why": "This is the clearest and most owner-adjacent line because it names a familiar form of self-denial without dressing it up. The rest relies on a vague routine-versus-want contrast, then ends in a journaling instruction; it never shows what the explanation is costing, what the conjunction is pressing on, or why this particular want has become harder to keep contained.",
+      "verdict": "The Lilith theme of disowned desire is present, but the body stays too generic to carry a conjunction-specific register. It reads like a polished self-reflection prompt rather than an observed pressure point with a real cost.",
+      "usage": {
+        "inputTokens": 14697,
+        "cachedInputTokens": 13408,
+        "outputTokens": 880,
+        "reasoningTokens": 374,
+        "totalTokens": 15577
+      },
+      "estimatedCostUsd": 0.01582
+    },
+    {
+      "tier": "gold",
+      "key": "soft/pluto",
+      "source": "batch-1-approval",
+      "score": 2,
+      "allScores": [
+        1,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "It takes less effort to acknowledge a feeling than to keep minimizing it.",
+      "why": "The headline is the only line with owner-level clarity: it names the exhausting work of downplaying something real. The body turns quickly into broad emotional-processing advice about grief, anxiety, family history, trust, and feelings, which could run under almost any soft transit and does not show a concrete Pluto mechanism, cost, or lived consequence.",
+      "verdict": "Near the owner’s plainspoken register, but too generic and therapy-coded to carry a soft/Pluto-specific consequence. It names emotional material without showing what suppression costs or what changes when it is acknowledged.",
+      "usage": {
+        "inputTokens": 14904,
+        "cachedInputTokens": 13546,
+        "outputTokens": 830,
+        "reasoningTokens": 340,
+        "totalTokens": 15734
+      },
+      "estimatedCostUsd": 0.015385
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/north-node",
+      "source": "batch-1-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": true,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "It does mean the choice deserves more than another closed tab.",
+      "why": "This is the clearest line because it turns avoidance into an observable behavior. But the rest leans on broad growth vocabulary—application, class, project, responsibility, overhaul your life—that could fit almost any transit about change or decision-making. The close gives a clean exercise without earning it through a consequence, lived pressure, or more particular North Node pull toward the next direction.",
+      "verdict": "Near the register, but too generic and instruction-led to feel specific to a conjunction with the North Node. It names hesitation around growth, but never shows what staying undecided is costing or why this particular opening matters now.",
+      "usage": {
+        "inputTokens": 14790,
+        "cachedInputTokens": 13470,
+        "outputTokens": 799,
+        "reasoningTokens": 264,
+        "totalTokens": 15589
+      },
+      "estimatedCostUsd": 0.014922
+    },
+    {
+      "tier": "gold",
+      "key": "opposition/south-node",
+      "source": "batch-1-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": false,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "The automatic yes is getting harder to live with.",
+      "why": "This is the clearest and most saveable line because it names the cost of reflexive accommodation without dressing it up. The body weakens it by opening on a generic favor scene, softening the consequence with “may,” and landing on the owner-rejected permission frame, “You do not have to.”",
+      "verdict": "Near the owner’s register, but it follows the rejected scene-then-hedge-then-permission-line skeleton too closely. The transit-specific tension is not developed beyond a generic boundary problem.",
+      "usage": {
+        "inputTokens": 14808,
+        "cachedInputTokens": 13482,
+        "outputTokens": 900,
+        "reasoningTokens": 404,
+        "totalTokens": 15708
+      },
+      "estimatedCostUsd": 0.016148
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/chiron",
+      "source": "batch-2-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": true,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "The care is being offered, but the old hurt makes it hard to accept.",
+      "why": "This is the clearest and most saveable line because it names the actual contradiction without dressing it up. The rest is competent but generic: \"fear of being disappointed\" could fit many vulnerable transits, and refusing the call never produces a recognizable cost such as being left alone with the problem, losing time, or deepening resentment.",
+      "verdict": "Near the owner’s register, but too generalized for a 3. It names the Chiron tension clearly, yet the consequence of refusing care stays abstract and the advice lands before the hurt has been made specific enough.",
+      "usage": {
+        "inputTokens": 14829,
+        "cachedInputTokens": 13496,
+        "outputTokens": 939,
+        "reasoningTokens": 416,
+        "totalTokens": 15768
+      },
+      "estimatedCostUsd": 0.016633
+    },
+    {
+      "tier": "gold",
+      "key": "square/chiron",
+      "source": "batch-2-approval",
+      "score": 3,
+      "allScores": [
+        2,
+        3,
+        3
+      ],
+      "dimScore": 7,
+      "dimensions": {
+        "voice": true,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail.",
+      "why": "This is the clearest expression of the square/Chiron tension: a real hurt gets activated, but the attempt to test whether someone cares creates the misunderstanding that deepens it. The scene supports that point instead of replacing it.",
+      "verdict": "Rubric-acceptable; the body names the wound behind indirect asking without turning it into a coaching script.",
+      "usage": {
+        "inputTokens": 14871,
+        "cachedInputTokens": 12186,
+        "outputTokens": 830,
+        "reasoningTokens": 387,
+        "totalTokens": 15701
+      },
+      "estimatedCostUsd": 0.017767
+    },
+    {
+      "tier": "gold",
+      "key": "opposition/chiron",
+      "source": "batch-2-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "That test backfires.",
+      "why": "It is the clearest statement of the actual pattern: withholding a need in hopes that another person will recognize it creates more hurt, not more closeness. But it is still too generic to carry the piece, and the surrounding permission line makes the whole draft sound like the rejected examples.",
+      "verdict": "The relationship wound is present, but the candidate falls into the rejected coaching template: scene, hedge, diagnosis, permission line, instruction. It names the pattern without giving it enough emotional cost or specificity to feel like opposition/Chiron rather than generic communication advice.",
+      "usage": {
+        "inputTokens": 14916,
+        "cachedInputTokens": 8585,
+        "outputTokens": 841,
+        "reasoningTokens": 347,
+        "totalTokens": 15757
+      },
+      "estimatedCostUsd": 0.024471
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/moon",
+      "source": "batch-2-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Instead of listing every reason their idea is inconvenient, just say what you can and cannot do.",
+      "why": "This is the only line that names a recognizable behavior rather than a general mood. The rest relies on familiar boundary-setting language, especially \"You do not have to manage everyone else's feelings today,\" which reads like a reusable permission frame rather than a sharp observation about this transit.",
+      "verdict": "Near the accepted register, but the body falls into a rejected-style coaching sequence: scene, permission line, instruction. It also stays too generic to establish a distinct conjunction/moon signature.",
+      "usage": {
+        "inputTokens": 14832,
+        "cachedInputTokens": 13498,
+        "outputTokens": 843,
+        "reasoningTokens": 334,
+        "totalTokens": 15675
+      },
+      "estimatedCostUsd": 0.015484
+    },
+    {
+      "tier": "gold",
+      "key": "soft/lilith",
+      "source": "batch-2-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "Saying nothing is not the same as wanting nothing.",
+      "why": "This is the only line that states the Lilith mechanism plainly: a desire gets denied before anyone else can reject it. The rest shrinks that truth into a generic snack-order scene, then resolves it with \"You're allowed\" and a prescribed action, which gives it the same permission-frame and coaching-close rhythm as the rejected examples.",
+      "verdict": "The core truth is usable, but the grocery-cart scene and fixed permission line make it read like the rejected coaching template rather than owner voice.",
+      "usage": {
+        "inputTokens": 14730,
+        "cachedInputTokens": 13430,
+        "outputTokens": 936,
+        "reasoningTokens": 425,
+        "totalTokens": 15666
+      },
+      "estimatedCostUsd": 0.016518
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/uranus",
+      "source": "batch-2-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "You keep reconsidering the whole routine after one unwelcome change.",
+      "why": "This is the clearest expression of the actual transit mechanism: one disruption makes the larger arrangement feel less stable. The rest turns that insight into a generic price-comparison scene, then softens it with \"You're allowed,\" which sounds like coaching rather than the owner's plain, consequential voice.",
+      "verdict": "Near the register, but the body falls into a rejected-style scene opener and a fixed permission line. The Uranian disruption is present, but the conclusion is too procedural to carry the tension of suddenly having to reconsider a system you relied on.",
+      "usage": {
+        "inputTokens": 14766,
+        "cachedInputTokens": 13454,
+        "outputTokens": 907,
+        "reasoningTokens": 428,
+        "totalTokens": 15673
+      },
+      "estimatedCostUsd": 0.016199
+    },
+    {
+      "tier": "gold",
+      "key": "house/1",
+      "source": "batch-2-approval",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Nobody can know you from the version that never shows up.",
+      "why": "This is the clearest statement of the actual cost of blending in: people respond to a reduced version of you, not to you. It has more weight than the outfit detail and gives the transit a recognizable first-house consequence.",
+      "verdict": "Near the owner's register, but the scene-first setup and coaching close make it feel assembled rather than fully native. The cost is clear, and the self-presentation focus fits house/1, but the phrasing stays a little generic.",
+      "usage": {
+        "inputTokens": 14658,
+        "cachedInputTokens": 13382,
+        "outputTokens": 1003,
+        "reasoningTokens": 547,
+        "totalTokens": 15661
+      },
+      "estimatedCostUsd": 0.017264
+    },
+    {
+      "tier": "gold",
+      "key": "square/venus",
+      "source": "batch-3-owner-authored",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        3
+      ],
+      "dimScore": 6,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "A slow reply does not get to decide what you are worth.",
+      "why": "It is the clearest and most sendable sentence because it names the disproportionate power a delayed response can take on. It also exposes the draft's limit: the line is strong, but it lands as a polished reassurance frame rather than the more grounded, situational truth the approved examples tend to earn through the lived consequence.",
+      "verdict": "The Venus themes are present, but the body leans on a familiar rejection-to-shopping diagnosis and ends in a polished self-worth line that feels more constructed than owner-natural.",
+      "usage": {
+        "inputTokens": 14790,
+        "cachedInputTokens": 13470,
+        "outputTokens": 886,
+        "reasoningTokens": 377,
+        "totalTokens": 15676
+      },
+      "estimatedCostUsd": 0.015966
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/jupiter",
+      "source": "batch-3-owner-authored",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Help becomes extra work when everyone shows up at the same time.",
+      "why": "This is the cleanest sentence because it names the actual problem without blaming anyone: generosity can create coordination work, and the person receiving help still has to manage it. The body explains that well, but its stacked offers and tidy directive ending make it read more like a constructed productivity tip than a line that would disappear into the approved examples.",
+      "verdict": "Clear and usable, but the scene-plus-instruction structure feels more polished and generic than owner-specific. It names Jupiter-style excess and group support, yet the closing turns into efficient coaching rather than landing on the social cost underneath the help.",
+      "usage": {
+        "inputTokens": 14670,
+        "cachedInputTokens": 13390,
+        "outputTokens": 754,
+        "reasoningTokens": 221,
+        "totalTokens": 15424
+      },
+      "estimatedCostUsd": 0.014286
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/saturn",
+      "source": "batch-3-owner-authored",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        3
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "The weight does not just come from showing up. It comes from constantly tearing down and rearranging your life whenever someone else needs help.",
+      "why": "This is the sentence that earns the draft its score: it names the real cost of family obligation as repeated disruption, not the task itself. The rest is competent, but \"rebuilding your whole day,\" \"tight corner,\" and the final scheduling instruction give it a slightly assembled coaching finish rather than the plainer, more particular owner voice.",
+      "verdict": "Clear and usable, but the phrasing is slightly too polished and generalized to disappear among the owner-approved examples. It names the Saturn cost of obligation well, yet the family-care scene could fit several burden or responsibility transits.",
+      "usage": {
+        "inputTokens": 14808,
+        "cachedInputTokens": 13482,
+        "outputTokens": 1015,
+        "reasoningTokens": 490,
+        "totalTokens": 15823
+      },
+      "estimatedCostUsd": 0.017528
+    },
+    {
+      "tier": "gold",
+      "key": "house/12",
+      "source": "batch-3-owner-authored",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": false,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "The cost is not only the time spent replying.",
+      "why": "This is the clearest, most owner-like sentence because it names the actual loss instead of treating early replies as a vague wellness problem. The follow-up, “return to yourself,” weakens it by becoming abstract, and the body takes too long to state the point after opening on a familiar morning-phone scene.",
+      "verdict": "Near the owner's register, but the scene arrives before the point and the close slips into generic self-care language. The private-time cost fits the key, but it needs a less coached finish.",
+      "usage": {
+        "inputTokens": 14724,
+        "cachedInputTokens": 13426,
+        "outputTokens": 885,
+        "reasoningTokens": 379,
+        "totalTokens": 15609
+      },
+      "estimatedCostUsd": 0.015901
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/mercury",
+      "source": "batch-3-owner-authored",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        3
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": true,
+        "stakes": true,
+        "structure": false,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Then the rest spills out: the work you would miss, who else could help, and why this keeps becoming your responsibility.",
+      "why": "This is the only line that names the actual cost and the buried resentment at the same time. It shows how one practical concern opens into the larger conversation, rather than treating the appointment as a generic conflict prop.",
+      "verdict": "Near the owner’s register, but the scene arrives before the point and the ending turns into a tidy two-step instruction. The family-care responsibility is clear, yet the Mercury conjunction is mostly a generic difficult conversation rather than a distinct communication pressure.",
+      "usage": {
+        "inputTokens": 14643,
+        "cachedInputTokens": 13372,
+        "outputTokens": 949,
+        "reasoningTokens": 436,
+        "totalTokens": 15592
+      },
+      "estimatedCostUsd": 0.016604
+    },
+    {
+      "tier": "gold",
+      "key": "conjunction/sun",
+      "source": "batch-3-owner-authored",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Hiding it does not convince anyone, least of all you.",
+      "why": "This is the clearest and most saveable line because it names the uselessness of performing indifference without turning into a therapy diagnosis. The rest is smoother than the rejected examples, but “playing easygoing” and the closing instruction still make the card feel slightly assembled rather than like an observed, specific consequence of a Sun conjunction.",
+      "verdict": "Near the approved register, but the body leans on a familiar self-expression coaching frame and does not give the desire much consequence beyond seeming distant.",
+      "usage": {
+        "inputTokens": 14763,
+        "cachedInputTokens": 13452,
+        "outputTokens": 764,
+        "reasoningTokens": 250,
+        "totalTokens": 15527
+      },
+      "estimatedCostUsd": 0.01448
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/jupiter",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": false,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "You may feel so encouraged that you accept everything, leaving you to coordinate more help than the errand needs.",
+      "why": "This is the only line that names the actual Jupiter cost: abundance becomes extra work when nobody decides what is useful. But the rest delays that truth behind a tidy little scene, then falls into the rejected-style reassurance of \"You are not ungrateful\" and a procedural close.",
+      "verdict": "Near the intended transit idea, but the scene-first setup, permission line, and coaching close make it read like a polished template rather than owner voice.",
+      "usage": {
+        "inputTokens": 14664,
+        "cachedInputTokens": 8501,
+        "outputTokens": 863,
+        "reasoningTokens": 375,
+        "totalTokens": 15527
+      },
+      "estimatedCostUsd": 0.024382
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/mercury",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        1,
+        2,
+        2
+      ],
+      "dimScore": 0,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": false,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "State the one fact that changes the plan before you assign it.",
+      "why": "This is the only line that gives the Mercury moment a clear use: one relevant piece of information changes a practical decision. The rest softens that point into generic worry, overexplaining, and a familiar reassurance frame that could belong to almost any communication transit.",
+      "verdict": "The communication point is usable, but the body reads like a template: scene first, repeated hedging, then a permission-line reassurance before the instruction. It needs an earlier truth and a more specific consequence than vague difficulty choosing.",
+      "usage": {
+        "inputTokens": 14619,
+        "cachedInputTokens": 13356,
+        "outputTokens": 1005,
+        "reasoningTokens": 524,
+        "totalTokens": 15624
+      },
+      "estimatedCostUsd": 0.017257
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/saturn",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": false,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "You leave the next request unanswered because you already know you cannot fit it in.",
+      "why": "This is the only line that shows the Saturn pressure as a real limit rather than a generic feeling: one obligation has already used up the available time, so another demand has to wait. The rest explains the scene too softly, then defaults to the familiar \"You don’t have to\" permission frame instead of naming what the responsibility is costing.",
+      "verdict": "Near the target in its concrete family-duty constraint, but the body falls into rejected-style scene setup, soft hedging, and a fixed permission-line/coaching close. It needs a more direct statement of the actual cost of carrying the responsibility.",
+      "usage": {
+        "inputTokens": 14721,
+        "cachedInputTokens": 13424,
+        "outputTokens": 881,
+        "reasoningTokens": 341,
+        "totalTokens": 15602
+      },
+      "estimatedCostUsd": 0.015851
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/sun",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "A casual answer can expose what you actually want.",
+      "why": "The headline names the actual tension clearly: acting easygoing can hide a preference until the choice makes that preference visible. The body weakens it with \"you may,\" \"you can,\" \"For the next few hours,\" and \"That does not make you difficult,\" which reads like a familiar coaching reassurance rather than the owner’s plainer, more consequential voice.",
+      "verdict": "Near the owner's register, but the body follows a rejected-style scene-to-reassurance-to-instruction skeleton. It also uses two hedges and a mechanical time anchor.",
+      "usage": {
+        "inputTokens": 14724,
+        "cachedInputTokens": 13426,
+        "outputTokens": 986,
+        "reasoningTokens": 466,
+        "totalTokens": 15710
+      },
+      "estimatedCostUsd": 0.017113
+    },
+    {
+      "tier": "negative",
+      "key": "house/12",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "Answering messages immediately is not worth your private time.",
+      "why": "The headline clearly names the cost and is the only line with real save-or-send weight. The body then slips into a familiar scene-and-instruction structure: closed door, phone, rest, send a boundary text. It could fit several keys about communication, boundaries, or burnout; it does not make the hidden withdrawal, private depletion, or need to protect solitude feel particular enough to house 12.",
+      "verdict": "Near the owner's register, but the private-time theme is delivered through a generic phone scene and a tidy coaching close rather than a sharper house 12-specific tension.",
+      "usage": {
+        "inputTokens": 14610,
+        "cachedInputTokens": 13350,
+        "outputTokens": 951,
+        "reasoningTokens": 440,
+        "totalTokens": 15561
+      },
+      "estimatedCostUsd": 0.016602
+    },
+    {
+      "tier": "negative",
+      "key": "house/5",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Playing it safe edits the fun out of flirting.",
+      "why": "The headline names a real fifth-house cost cleanly: caution removes the part of flirting that makes it feel alive. The body then drops into familiar horoscope assembly language—\"For the next few hours,\" \"You don’t have to,\" and a final instruction—which keeps it from reading like the owner’s strongest work.",
+      "verdict": "Clear and transit-specific, but the body follows a rejected-style template: scene, mechanical time anchor, permission line, coaching instruction.",
+      "usage": {
+        "inputTokens": 14613,
+        "cachedInputTokens": 13352,
+        "outputTokens": 804,
+        "reasoningTokens": 340,
+        "totalTokens": 15417
+      },
+      "estimatedCostUsd": 0.01484
+    },
+    {
+      "tier": "negative",
+      "key": "opposition/jupiter",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Their enthusiasm may make your own limit feel ungenerous. It isn't.",
+      "why": "This is the clearest and most recognizable insight in the piece: someone else’s excitement can make a reasonable boundary feel selfish. The candidate has a real cost and a transit-specific social excess dynamic, but “For the next few hours” and the clean final instruction give it the same controlled horoscope skeleton as the rejected examples.",
+      "verdict": "Near the owner’s register, but the mechanical time anchor and tidy scene-to-instruction structure make it feel more generated than the approved examples.",
+      "usage": {
+        "inputTokens": 14781,
+        "cachedInputTokens": 13464,
+        "outputTokens": 943,
+        "reasoningTokens": 459,
+        "totalTokens": 15724
+      },
+      "estimatedCostUsd": 0.016643
+    },
+    {
+      "tier": "negative",
+      "key": "opposition/pluto",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Their answer makes the power struggle impossible to miss.",
+      "why": "This is the clearest and most transit-specific line because it names the actual consequence of the exchange: the request is no longer only about money, but about who gets to control the decision. The rest weakens it with the familiar \"You are not weak\" reassurance and a procedural closing.",
+      "verdict": "The power dynamic is specific enough, but the body falls into the rejected pattern: scene, hedge, reassurance, instruction. It reads more like a polished coaching prompt than a line that would disappear into the approved set.",
+      "usage": {
+        "inputTokens": 14679,
+        "cachedInputTokens": 13396,
+        "outputTokens": 947,
+        "reasoningTokens": 442,
+        "totalTokens": 15626
+      },
+      "estimatedCostUsd": 0.016609
+    },
+    {
+      "tier": "negative",
+      "key": "soft/chiron",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": false,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "You may type “I’ve got it,” because being seen stuck feels worse than losing another hour to the sentence.",
+      "why": "This is the only line that gives the transit a real cost and a recognizable behavior: protecting pride creates a lost hour. The rest slips into coaching language—“You’re not weak for needing care”—and delays the actual truth until after the scene, which makes it read closer to the rejected permission-frame drafts than the approved examples.",
+      "verdict": "Near the target, but the body leans on a familiar vulnerability-and-permission template rather than landing in the owner's plainer, more specific register.",
+      "usage": {
+        "inputTokens": 14733,
+        "cachedInputTokens": 13432,
+        "outputTokens": 848,
+        "reasoningTokens": 348,
+        "totalTokens": 15581
+      },
+      "estimatedCostUsd": 0.015464
+    },
+    {
+      "tier": "negative",
+      "key": "soft/mercury",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Naming what hurt is not the same as starting another argument.",
+      "why": "This is the clearest and most saveable line because it separates honest disclosure from escalation without turning into therapy language. The rest of the copy weakens it by relying on the same permission-frame wording and communication-scene structure as Rejected 3.",
+      "verdict": "Near the owner’s register, but the body repeats the rejected template almost exactly: scene opener, short-term time anchor, then the fixed reassurance about not explaining perfectly. That skeleton makes it feel assembled rather than observed.",
+      "usage": {
+        "inputTokens": 14796,
+        "cachedInputTokens": 13474,
+        "outputTokens": 906,
+        "reasoningTokens": 440,
+        "totalTokens": 15702
+      },
+      "estimatedCostUsd": 0.016211
+    },
+    {
+      "tier": "negative",
+      "key": "soft/uranus",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Moving one errand does not require a new routine.",
+      "why": "The headline is the only line that gets at the Uranus tension between a small disruption and the urge to reorganize everything. The body reduces that idea to calendar management, with no clearer cost than a tight appointment window and no sentence that makes the reader recognize their own tendency to overcorrect.",
+      "verdict": "Clear but too close to the rejected schedule-adjustment template: scene, softened hesitation, then a narrow instruction. It names the practical change without giving it enough consequence or insight.",
+      "usage": {
+        "inputTokens": 14784,
+        "cachedInputTokens": 13466,
+        "outputTokens": 803,
+        "reasoningTokens": 307,
+        "totalTokens": 15587
+      },
+      "estimatedCostUsd": 0.014965
+    },
+    {
+      "tier": "negative",
+      "key": "square/mars",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "You lose more time.",
+      "why": "This is the strongest line because it names the actual consequence without explaining it away: reacting to the disrespect turns one task into a longer conflict. The rest of the copy is built from familiar horoscope scaffolding rather than that same direct truth.",
+      "verdict": "The cost is clear, but the scene-first setup, fixed permission line, mechanical time anchor, and coaching close put this in the rejected register. It also treats a sharp reply as a generic boundary problem rather than making the square/Mars pressure feel specific.",
+      "usage": {
+        "inputTokens": 14715,
+        "cachedInputTokens": 8518,
+        "outputTokens": 910,
+        "reasoningTokens": 432,
+        "totalTokens": 15625
+      },
+      "estimatedCostUsd": 0.025018
+    },
+    {
+      "tier": "negative",
+      "key": "square/uranus",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "Scrapping the plan won't tell you which part needs changing.",
+      "why": "This is the clearest truth in the piece and names the actual overcorrection cleanly. The body weakens it with three hedges and a generic task-list fix, without showing what gets lost when one bad obligation turns into an impulse to blow up the whole day.",
+      "verdict": "Near the register, but it has a rejected-example skeleton: scene first, repeated hedging, then a neat coaching instruction. The Uranus disruption is present, but the consequence stays too abstract and the wording could fit several productivity-oriented transits.",
+      "usage": {
+        "inputTokens": 14736,
+        "cachedInputTokens": 13434,
+        "outputTokens": 1046,
+        "reasoningTokens": 540,
+        "totalTokens": 15782
+      },
+      "estimatedCostUsd": 0.017843
+    },
+    {
+      "tier": "negative",
+      "key": "square/venus",
+      "source": "batch-3-v1-owner-rejected-flat",
+      "score": 2,
+      "allScores": [
+        1,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "Buying a treat won't settle what an unanswered message means.",
+      "why": "This is the clearest expression of the square's actual friction between comfort, spending, and relational uncertainty. The rest softens it into generic self-soothing language, especially “You don’t have to be simple to be loved,” which sounds assembled rather than like a plain, specific truth.",
+      "verdict": "The Venus tension is recognizable, but the body falls into a rejected-style reassurance script: scene, self-worth diagnosis, permission line, coaching close.",
+      "usage": {
+        "inputTokens": 14784,
+        "cachedInputTokens": 13466,
+        "outputTokens": 1082,
+        "reasoningTokens": 583,
+        "totalTokens": 15866
+      },
+      "estimatedCostUsd": 0.018313
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/lilith",
+      "source": "batch-1-v1-owner-rejected-no-harvest",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 0,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": false,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Rather than abandon what works, you may keep returning to the same specific want as you reconsider each choice.",
+      "why": "This is the closest the draft gets to the conjunction/Lilith tension between a familiar acceptable option and a desire that keeps insisting on itself. It still stays too abstract to land: there is no consequence for dismissing the preference, no concrete pressure around self-denial or justification, and the repeated hedging drains the claim of force.",
+      "verdict": "Off-voice: vague, heavily hedged, and built around a generic choice scene rather than a recognizable Lilith-level conflict or cost.",
+      "usage": {
+        "inputTokens": 14730,
+        "cachedInputTokens": 13430,
+        "outputTokens": 673,
+        "reasoningTokens": 164,
+        "totalTokens": 15403
+      },
+      "estimatedCostUsd": 0.013362
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/mars",
+      "source": "batch-1-v1-owner-rejected-no-harvest",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        2
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "You may act almost as soon as you feel today.",
+      "why": "The headline is the clearest expression of the conjunction/Mars mechanism, but the body immediately weakens it with repeated hedging, a generic \"next few hours\" anchor, and an interchangeable drafts-for-ten-minutes instruction. Nothing names what the quick action costs: a conflict escalated, work redone, trust damaged, or a choice made before the full situation is visible.",
+      "verdict": "Off-voice: hedged, mechanically timed, and built around a familiar pause-before-you-send coaching template rather than a lived consequence of acting too fast.",
+      "usage": {
+        "inputTokens": 14835,
+        "cachedInputTokens": 13500,
+        "outputTokens": 835,
+        "reasoningTokens": 367,
+        "totalTokens": 15670
+      },
+      "estimatedCostUsd": 0.01539
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/north-node",
+      "source": "batch-1-v1-owner-rejected-no-harvest",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        2
+      ],
+      "dimScore": 1,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "You can treat that repetition as a reason to give this forward choice deliberate attention, not as a demand to overhaul your plans.",
+      "why": "This is the clearest sentence because it identifies the tension between a new direction and an unnecessary total reset. But it still sounds like coaching copy: “forward choice,” “deliberate attention,” and “overhaul your plans” are abstract labels, not something a person would recognize happening in their day. The three hedges and the mechanical time anchor make the whole body feel assembled rather than lived.",
+      "verdict": "Off-voice. It is abstract, hedged, and built from generic horoscope instructions rather than a recognizable consequence of this transit.",
+      "usage": {
+        "inputTokens": 14820,
+        "cachedInputTokens": 13490,
+        "outputTokens": 892,
+        "reasoningTokens": 384,
+        "totalTokens": 15712
+      },
+      "estimatedCostUsd": 0.016062
+    },
+    {
+      "tier": "negative",
+      "key": "opposition/south-node",
+      "source": "batch-1-v1-owner-rejected-no-harvest",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        2
+      ],
+      "dimScore": 1,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Another person makes your familiar retreat harder to excuse.",
+      "why": "The headline is the clearest line because it identifies the relational pressure of an opposition meeting an old South Node reflex. The body weakens it immediately with two hedges, a generic objection, and \"You do not have to,\" then ends on an instruction rather than showing what the retreat costs or what changes when the concern is finally said.",
+      "verdict": "Off-voice. It uses the rejected template: time anchor, softened scene, permission frame, and coaching close. The opposition/South Node mechanism is named only as generic withdrawal, without a real interpersonal cost or a specific consequence of repeating it.",
+      "usage": {
+        "inputTokens": 14838,
+        "cachedInputTokens": 13502,
+        "outputTokens": 767,
+        "reasoningTokens": 242,
+        "totalTokens": 15605
+      },
+      "estimatedCostUsd": 0.014576
+    },
+    {
+      "tier": "negative",
+      "key": "opposition/sun",
+      "source": "batch-1-v1-owner-rejected-no-harvest",
+      "score": 2,
+      "allScores": [
+        1,
+        2,
+        2
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "You can hear their objection without treating their preference as your decision.",
+      "why": "This is the clearest statement of the transit’s self-versus-other tension, but it still reads more like polished advice than a lived truth. The rest of the copy keeps the conflict abstract, so there is no concrete resentment, lost time, compromised plan, or other consequence to make the reader feel what goes wrong when they answer around their own needs.",
+      "verdict": "The core opposition tension is present, but the body is too generalized and mechanically coached to sit with the approved examples. It relies on a time anchor, repeated hedging, and abstract language about preferences and positions without naming what compliance costs.",
+      "usage": {
+        "inputTokens": 14811,
+        "cachedInputTokens": 13484,
+        "outputTokens": 907,
+        "reasoningTokens": 381,
+        "totalTokens": 15718
+      },
+      "estimatedCostUsd": 0.016235
+    },
+    {
+      "tier": "negative",
+      "key": "soft/pluto",
+      "source": "batch-1-v1-owner-rejected-no-harvest",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "You can take it seriously without reorganizing your day.",
+      "why": "This is the closest thing to a useful truth because it names the gap between acknowledging a feeling and letting it take over. But the rest relies on familiar horoscope scaffolding: a mechanical time anchor, a softened \"may,\" a permission-style reassurance, and a journaling instruction. Nothing in the body would change if this were assigned to a different transit.",
+      "verdict": "Near the intended register but too generic and templated to sit with the approved examples. It describes emotional attention without giving the feeling a cost, consequence, or distinctly soft/Pluto mechanism.",
+      "usage": {
+        "inputTokens": 14928,
+        "cachedInputTokens": 13562,
+        "outputTokens": 792,
+        "reasoningTokens": 300,
+        "totalTokens": 15720
+      },
+      "estimatedCostUsd": 0.014948
+    },
+    {
+      "tier": "negative",
+      "key": "square/moon",
+      "source": "batch-1-v1-owner-rejected-no-harvest",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 0,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": false,
+        "hedging": false,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Move one nonessential task to later in the day.",
+      "why": "This is the clearest sentence because it gives an actual action, but it is still generic advice. The body stacks five “may” hedges, delays the point, and never names what the schedule costs or why this particular Moon square makes a changed mood collide with an already-arranged day.",
+      "verdict": "Off-voice: hedged, generic, and built from familiar self-management language rather than a specific felt conflict.",
+      "usage": {
+        "inputTokens": 14856,
+        "cachedInputTokens": 13514,
+        "outputTokens": 681,
+        "reasoningTokens": 219,
+        "totalTokens": 15537
+      },
+      "estimatedCostUsd": 0.013559
+    },
+    {
+      "tier": "negative",
+      "key": "soft/jupiter",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Take the meeting, send the ask, buy the ticket.",
+      "why": "This is the clearest line because it gives the reader actual actions, but the rest could run under almost any optimistic transit. “Your luck is better than your plans deserve” and “Luck likes a moving target” sound like competitor copy: clever, generalized, and slightly smug rather than plainspoken.",
+      "verdict": "Off-voice. It relies on polished luck-talk and a cynical aphorism instead of naming a recognizable human situation, cost, or consequence.",
+      "usage": {
+        "inputTokens": 14607,
+        "cachedInputTokens": 13348,
+        "outputTokens": 846,
+        "reasoningTokens": 347,
+        "totalTokens": 15453
+      },
+      "estimatedCostUsd": 0.01534
+    },
+    {
+      "tier": "negative",
+      "key": "square/jupiter",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Stop promising things future-you has to pay for.",
+      "why": "This names the actual cost of overcommitting in plain language: the current yes becomes someone else's time and energy problem later. The rest is competent, but its fixed permission headline and tidy instruction sequence make it sound assembled rather than like the owner’s sharper observational voice.",
+      "verdict": "Clear and transit-specific, but the permission-frame headline, stacked imperatives, and coaching close put it too close to the rejected template register.",
+      "usage": {
+        "inputTokens": 14706,
+        "cachedInputTokens": 7232,
+        "outputTokens": 679,
+        "reasoningTokens": 201,
+        "totalTokens": 15385
+      },
+      "estimatedCostUsd": 0.024542
+    },
+    {
+      "tier": "negative",
+      "key": "conjunction/venus",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "Today you notice what you love and what you've only been tolerating.",
+      "why": "This is the clearest and most sendable line because it names the gap between genuine enjoyment and passive acceptance without overexplaining it. The body weakens it by turning that insight into generic lifestyle advice about taste and pleasure rather than showing a concrete Venus-conjunction consequence.",
+      "verdict": "The Venus register is present, but the copy is too generalized and polished to feel owner-specific. It names preference without showing what tolerating the wrong thing costs or what this conjunction changes in a real interaction.",
+      "usage": {
+        "inputTokens": 14808,
+        "cachedInputTokens": 13482,
+        "outputTokens": 862,
+        "reasoningTokens": 376,
+        "totalTokens": 15670
+      },
+      "estimatedCostUsd": 0.015692
+    },
+    {
+      "tier": "negative",
+      "key": "opposition/neptune",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "Ask the direct question. Believe the answer.",
+      "why": "This is the cleanest and most useful sentence, but the rest leans on unsupported diagnosis: \"your own fears,\" \"being brave,\" and \"always more dramatic\" tell the reader what is happening inside them with too much certainty. The permission-frame headline and clipped coaching close also make it feel assembled rather than like the owner’s more concrete, consequence-led voice.",
+      "verdict": "Off-voice: it uses punchy mind-reading and absolute aphorisms instead of a grounded, recognizable relational consequence.",
+      "usage": {
+        "inputTokens": 14691,
+        "cachedInputTokens": 13404,
+        "outputTokens": 816,
+        "reasoningTokens": 317,
+        "totalTokens": 15507
+      },
+      "estimatedCostUsd": 0.015047
+    },
+    {
+      "tier": "negative",
+      "key": "house/2",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        2
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": true
+      },
+      "best_line": "Money, comfort, and what things are worth sit front of mind today.",
+      "why": "This is the clearest transit-specific sentence, but the rest relies on familiar self-worth and abundance slogans: someone else's ruler, defining enough, and “Both are wealth.” Nothing shows what gets overspent, withheld, resented, or misjudged, so there is no consequence for the reader to recognize.",
+      "verdict": "Off-voice. It has the right second-house topics, but it reads like generic abundance coaching rather than a lived horoscope with an actual cost.",
+      "usage": {
+        "inputTokens": 14724,
+        "cachedInputTokens": 13426,
+        "outputTokens": 956,
+        "reasoningTokens": 486,
+        "totalTokens": 15680
+      },
+      "estimatedCostUsd": 0.016753
+    },
+    {
+      "tier": "negative",
+      "key": "soft/sun",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Ask for the thing you've been sitting on; asking is the part you control.",
+      "why": "This is the clearest sentence because it gives the reader an action and distinguishes asking from getting an answer. The rest stays vague: “people cooperate,” “plans click,” and “your presence lands” do not name what happens or what is at stake, while “ease isn't a trap” sounds like a polished therapy aphorism rather than the owner's plain, concrete voice.",
+      "verdict": "Off-voice: it relies on polished abstractions and coaching language rather than a recognizable lived tension with a real cost.",
+      "usage": {
+        "inputTokens": 14619,
+        "cachedInputTokens": 13356,
+        "outputTokens": 858,
+        "reasoningTokens": 356,
+        "totalTokens": 15477
+      },
+      "estimatedCostUsd": 0.015493
+    },
+    {
+      "tier": "negative",
+      "key": "square/south-node",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "Today the familiar option looks better than it is.",
+      "why": "This is the only line that points toward the key's actual tension: defaulting to something familiar that no longer serves. The rest turns that observation into broad self-help and an aphoristic coaching close. It gives no specific consequence of repeating the old choice, no lived situation, and nothing that would distinguish square/south-node from nearly any transit about change or growth.",
+      "verdict": "Off-voice: this is generic comfort-zone coaching rather than a square/south-node observation with a recognizable lived cost.",
+      "usage": {
+        "inputTokens": 14748,
+        "cachedInputTokens": 13442,
+        "outputTokens": 808,
+        "reasoningTokens": 343,
+        "totalTokens": 15556
+      },
+      "estimatedCostUsd": 0.014996
+    },
+    {
+      "tier": "negative",
+      "key": "opposition/uranus",
+      "source": "copy-batch-A-owner-demoted-2026-08-04",
+      "score": 2,
+      "allScores": [
+        2,
+        2,
+        2
+      ],
+      "dimScore": 5,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "Space asked for plainly is just space; space taken suddenly reads as escape.",
+      "why": "This names the actual relational cost of Uranian distance: the other person can experience it as abandonment. But the contrast is too balanced and aphoristic, while “Today you want room” and the directive close give it a familiar horoscope-template rhythm. It needs a more lived consequence and less polished coaching language to sit unnoticed beside the GOOD examples.",
+      "verdict": "Clear and usable, but it leans on polished relationship-coaching language rather than the owner’s more grounded, consequence-first voice.",
+      "usage": {
+        "inputTokens": 14703,
+        "cachedInputTokens": 13412,
+        "outputTokens": 962,
+        "reasoningTokens": 482,
+        "totalTokens": 15665
+      },
+      "estimatedCostUsd": 0.016808
+    },
+    {
+      "tier": "negative",
+      "key": "cs/1",
+      "source": "co-star-format-model-competitor-register",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 4,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": true,
+        "specificity": false
+      },
+      "best_line": "Loyalty doesn't mean letting them get away with it.",
+      "why": "The headline names a real conflict cleanly, but the body immediately shifts into mind-reading and accusation: “You've confused” and “because you let them” sound like a scolding diagnosis. Nothing observable happens, no particular cost lands, and the advice could apply to almost any interpersonal transit.",
+      "verdict": "Off-voice: it relies on punchy diagnosis, blame, and generic boundary language instead of a lived consequence tied to this transit.",
+      "usage": {
+        "inputTokens": 14586,
+        "cachedInputTokens": 13334,
+        "outputTokens": 917,
+        "reasoningTokens": 427,
+        "totalTokens": 15503
+      },
+      "estimatedCostUsd": 0.016175
+    },
+    {
+      "tier": "negative",
+      "key": "cs/2",
+      "source": "co-star-format-model-competitor-register",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "While you've been interrogating yourself, opportunities walk by unnoticed.",
+      "why": "This is the closest the candidate gets to a real consequence: doubt costs attention and missed chances. But the rest leans on polished mind-reading and aphorisms—\"thoughts with good PR,\" \"Look up,\" and \"The stakes are lower than you think\"—instead of showing a specific, transit-shaped moment someone could recognize.",
+      "verdict": "Off-voice: this is punchy diagnosis and coaching, not a grounded daily observation.",
+      "usage": {
+        "inputTokens": 14622,
+        "cachedInputTokens": 13358,
+        "outputTokens": 1008,
+        "reasoningTokens": 530,
+        "totalTokens": 15630
+      },
+      "estimatedCostUsd": 0.017296
+    },
+    {
+      "tier": "negative",
+      "key": "cs/3",
+      "source": "co-star-format-model-competitor-register",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 3,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": true,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "What protected you then restricts you now.",
+      "why": "This is the clearest sentence, but it is still a broad therapy aphorism rather than an observable, transit-specific truth. The body mind-reads a childhood origin, offers no concrete current situation or recognizable consequence, and closes with generic trust coaching. It could run under almost any emotional transit.",
+      "verdict": "Off-voice: this is generic trauma-therapy copy built from unsupported childhood causality, not a Daily At-a-Glance horoscope with a specific present-day pressure.",
+      "usage": {
+        "inputTokens": 14772,
+        "cachedInputTokens": 13458,
+        "outputTokens": 801,
+        "reasoningTokens": 337,
+        "totalTokens": 15573
+      },
+      "estimatedCostUsd": 0.014932
+    },
+    {
+      "tier": "negative",
+      "key": "cs/4",
+      "source": "co-star-format-model-competitor-register",
+      "score": 1,
+      "allScores": [
+        1,
+        1,
+        1
+      ],
+      "dimScore": 2,
+      "dimensions": {
+        "voice": false,
+        "stakes": false,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": false,
+        "specificity": false
+      },
+      "best_line": "You've made yourself smaller to fit what was offered.",
+      "why": "This is the closest the draft gets to naming an actual relational pattern, but it stays abstract and never shows what getting smaller costs or looks like. The rest relies on familiar self-worth language—\"dimmed your light,\" \"scraps,\" and \"fire\"—that could be used for almost any love or confidence transit.",
+      "verdict": "Generic empowerment copy with stock metaphors and no transit-specific lived reality. It reads like a reusable affirmation, not an owner-voice Daily At-a-Glance horoscope.",
+      "usage": {
+        "inputTokens": 14541,
+        "cachedInputTokens": 12076,
+        "outputTokens": 851,
+        "reasoningTokens": 384,
+        "totalTokens": 15392
+      },
+      "estimatedCostUsd": 0.017557
+    }
+  ]
+}
