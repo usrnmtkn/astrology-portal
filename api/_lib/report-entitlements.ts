@@ -1,4 +1,5 @@
-import { birthProfileFromPersistedData, reportBillingWindow } from "./report-billing-window.ts";
+import crypto from "node:crypto";
+import { birthProfileFromPersistedData, reportBillingWindow, reportWindowFromSelectedStart } from "./report-billing-window.ts";
 import { reportSku, type ReportSku } from "./report-fulfillment-config.ts";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.ts";
 
@@ -34,6 +35,63 @@ export async function checkoutMetadata(input: {
     birthDate: profile.birthDate
   });
   return { sku, profile, window, readiness: entitlementReadiness(sku, profile) };
+}
+
+export async function grantCompEntitlement(admin: SupabaseReportAdmin, input: {
+  userId: string;
+  reportDomain: ReportSku["reportDomain"];
+  reportHorizon: ReportSku["reportHorizon"];
+  windowStart: string;
+  now: string;
+}) {
+  const sku = reportSku(`${input.reportDomain}_${input.reportHorizon}`);
+  if (!sku) throw new Error("Unknown report domain or horizon.");
+  const profile = await loadBuyerBirthProfile(admin, input.userId);
+  const window = reportWindowFromSelectedStart(input.reportHorizon, input.windowStart);
+  const rows = await admin.insert<{ id: string; status: string }>("report_entitlements", {
+    user_id: input.userId,
+    subject_id: null,
+    product_key: sku.key,
+    report_domain: sku.reportDomain,
+    report_horizon: sku.reportHorizon,
+    window_anchor: window.anchor,
+    selected_start: window.start,
+    period_start: window.start,
+    period_end: window.end,
+    requires_birth_time: sku.requiresBirthTime,
+    status: entitlementReadiness(sku, profile),
+    source: "comp",
+    stripe_event_id: null,
+    stripe_checkout_session_id: null,
+    purchased_at: input.now
+  });
+  const entitlement = rows[0];
+  if (!entitlement) throw new Error("Comp entitlement was not created.");
+  return { entitlement, sku, window };
+}
+
+export async function authorizeReportGeneration(admin: SupabaseReportAdmin, input: {
+  reportId: string;
+  callBudget: number;
+  now: string;
+}) {
+  if (!Number.isInteger(input.callBudget) || input.callBudget < 1) throw new Error("A positive whole-number call budget is required.");
+  const token = crypto.randomUUID();
+  const jobs = await admin.update<{ id: string }>("report_fulfillment_jobs", `report_id=eq.${encodeURIComponent(input.reportId)}&state=eq.paused&select=id`, {
+    state: "queued",
+    step: "calculating",
+    run_after: input.now,
+    last_error: null,
+    authorization_token: token,
+    authorized_call_budget: input.callBudget,
+    model_call_count: 0,
+    authorization_consumed_at: null
+  });
+  if (!jobs.length) throw new Error("The report is not paused at the authorization gate.");
+  await admin.update("user_reports", `id=eq.${encodeURIComponent(input.reportId)}&fulfillment_status=eq.awaiting_authorization`, {
+    fulfillment_status: "queued"
+  });
+  return { authorized: true, callBudget: input.callBudget };
 }
 
 export async function revokeEntitlement(admin: SupabaseReportAdmin, input: {
@@ -81,7 +139,7 @@ export async function activateReadyEntitlement(admin: SupabaseReportAdmin, entit
   await admin.update("report_entitlements", `id=eq.${entitlementId}`, { status: "active" });
   const report = await admin.selectOne<{ id: string }>("user_reports", new URLSearchParams({ entitlement_id: `eq.${entitlementId}`, select: "id" }));
   if (!report) throw new Error("The entitlement report envelope is unavailable.");
-  await admin.update("user_reports", `id=eq.${report.id}`, { fulfillment_status: "queued" });
-  await admin.insert("report_fulfillment_jobs", { report_id: report.id, entitlement_id: entitlementId }, { onConflict: "report_id", ignoreDuplicates: true });
-  return { activated: true, status: "queued", reportId: report.id };
+  await admin.update("user_reports", `id=eq.${report.id}`, { fulfillment_status: "awaiting_authorization" });
+  await admin.insert("report_fulfillment_jobs", { report_id: report.id, entitlement_id: entitlementId, state: "paused" }, { onConflict: "report_id", ignoreDuplicates: true });
+  return { activated: true, status: "awaiting_authorization", reportId: report.id };
 }

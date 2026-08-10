@@ -1,0 +1,25 @@
+{
+  "schema": "tldrastro.report-sku-catalog.v1",
+  "status": "draft-needs-owner-approval",
+  "billing_mode": "free_test",
+  "note": "All prices are $0 placeholders for the shadow-launch test. Stripe ids are inert placeholders; free_test grants entitlements directly without checkout.",
+  "skus": [
+    { "sku": "general_1m", "domain": "general", "horizon": "1_month", "name": "Your Month Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_general_1m", "stripe_price_id": "PLACEHOLDER_PRICE_general_1m" },
+    { "sku": "general_4m", "domain": "general", "horizon": "4_months", "name": "Your Four Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_general_4m", "stripe_price_id": "PLACEHOLDER_PRICE_general_4m" },
+    { "sku": "general_6m", "domain": "general", "horizon": "6_months", "name": "Your Six Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_general_6m", "stripe_price_id": "PLACEHOLDER_PRICE_general_6m" },
+    { "sku": "general_12m", "domain": "general", "horizon": "12_months", "name": "Your Year Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_general_12m", "stripe_price_id": "PLACEHOLDER_PRICE_general_12m" },
+    { "sku": "work_money_1m", "domain": "work_money", "horizon": "1_month", "name": "Work & Money: The Month Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_work_money_1m", "stripe_price_id": "PLACEHOLDER_PRICE_work_money_1m" },
+    { "sku": "work_money_4m", "domain": "work_money", "horizon": "4_months", "name": "Work & Money: Four Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_work_money_4m", "stripe_price_id": "PLACEHOLDER_PRICE_work_money_4m" },
+    { "sku": "work_money_6m", "domain": "work_money", "horizon": "6_months", "name": "Work & Money: Six Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_work_money_6m", "stripe_price_id": "PLACEHOLDER_PRICE_work_money_6m" },
+    { "sku": "work_money_12m", "domain": "work_money", "horizon": "12_months", "name": "Work & Money: The Year Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_work_money_12m", "stripe_price_id": "PLACEHOLDER_PRICE_work_money_12m" },
+    { "sku": "love_connection_1m", "domain": "love_connection", "horizon": "1_month", "name": "Love & Connection: The Month Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_love_connection_1m", "stripe_price_id": "PLACEHOLDER_PRICE_love_connection_1m" },
+    { "sku": "love_connection_4m", "domain": "love_connection", "horizon": "4_months", "name": "Love & Connection: Four Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_love_connection_4m", "stripe_price_id": "PLACEHOLDER_PRICE_love_connection_4m" },
+    { "sku": "love_connection_6m", "domain": "love_connection", "horizon": "6_months", "name": "Love & Connection: Six Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_love_connection_6m", "stripe_price_id": "PLACEHOLDER_PRICE_love_connection_6m" },
+    { "sku": "love_connection_12m", "domain": "love_connection", "horizon": "12_months", "name": "Love & Connection: The Year Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_love_connection_12m", "stripe_price_id": "PLACEHOLDER_PRICE_love_connection_12m" },
+    { "sku": "personal_health_1m", "domain": "personal_health", "horizon": "1_month", "name": "Personal & Health: The Month Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_personal_health_1m", "stripe_price_id": "PLACEHOLDER_PRICE_personal_health_1m" },
+    { "sku": "personal_health_4m", "domain": "personal_health", "horizon": "4_months", "name": "Personal & Health: Four Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_personal_health_4m", "stripe_price_id": "PLACEHOLDER_PRICE_personal_health_4m" },
+    { "sku": "personal_health_6m", "domain": "personal_health", "horizon": "6_months", "name": "Personal & Health: Six Months Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_personal_health_6m", "stripe_price_id": "PLACEHOLDER_PRICE_personal_health_6m" },
+    { "sku": "personal_health_12m", "domain": "personal_health", "horizon": "12_months", "name": "Personal & Health: The Year Ahead", "price_cents": 0, "stripe_product_id": "PLACEHOLDER_PRODUCT_personal_health_12m", "stripe_price_id": "PLACEHOLDER_PRICE_personal_health_12m" }
+  ],
+  "billing_model": "undecided; SKUs are content entitlements, not storefront prices"
+}

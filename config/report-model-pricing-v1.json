@@ -1,0 +1,33 @@
+{
+  "schema": "tldrastro.report-model-pricing.v1",
+  "version": "2026-08-10",
+  "currency": "USD",
+  "unit": "per_1m_tokens",
+  "serviceTier": "standard",
+  "contextBand": "short_under_272k_input_tokens",
+  "source": "https://developers.openai.com/api/docs/pricing",
+  "planningProfiles": {
+    "12_months": {
+      "basis": "run_1_observed_draft_critique_judge_plus_splice_revision_projection",
+      "units": 11,
+      "operationsPerUnit": [
+        { "model": "gpt-5.6-sol", "stage": "draft", "inputTokens": 35500, "outputTokens": 1200 },
+        { "model": "gpt-5.6-sol", "stage": "critique", "inputTokens": 12000, "outputTokens": 1500 },
+        { "model": "gpt-5.6-sol", "stage": "splice_revision", "inputTokens": 40000, "outputTokens": 700 },
+        { "model": "gpt-5.6-terra", "stage": "judge", "inputTokens": 12500, "outputTokens": 1000 }
+      ]
+    }
+  },
+  "models": {
+    "gpt-5.6-sol": {
+      "input": 5,
+      "cachedInput": 0.5,
+      "output": 30
+    },
+    "gpt-5.6-terra": {
+      "input": 2,
+      "cachedInput": 0.2,
+      "output": 12
+    }
+  }
+}

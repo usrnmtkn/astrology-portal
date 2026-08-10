@@ -59,6 +59,16 @@ function addUtcMonths(date: Date, months: number) {
   return result;
 }
 
+export function reportWindowFromSelectedStart(horizon: ReportHorizon, selectedStart: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(selectedStart)) throw new Error("Window start must be an ISO date (YYYY-MM-DD).");
+  const start = utcDate(selectedStart);
+  if (Number.isNaN(start.valueOf()) || isoDate(start) !== selectedStart) throw new Error("Window start is not a valid calendar date.");
+  const months = horizon === "1_month" ? 1 : horizon === "4_months" ? 4 : horizon === "6_months" ? 6 : 12;
+  const end = addUtcMonths(start, months);
+  end.setUTCDate(end.getUTCDate() - 1);
+  return { start: isoDate(start), end: isoDate(end), anchor: "selected" as const };
+}
+
 function birthdayInYear(birthDate: string, year: number) {
   const [, month, day] = birthDate.split("-").map(Number);
   const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
