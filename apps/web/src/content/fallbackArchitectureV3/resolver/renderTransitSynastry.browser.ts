@@ -102,6 +102,8 @@ export interface SkyPlacementFacts {
   priorSignExitDate?: string | null;
   previousResidencyEntryDate?: string | null;
   previousResidencyExitDate?: string | null;
+  residencyPasses?: Array<{ entryDate: string; exitDate: string }> | null;
+  residencyStations?: Array<{ occursAt: string; direction: "retrograde" | "direct" }> | null;
   hasPriorIngress?: boolean;
   historyEligible?: boolean;
   historyEntryDate?: string | null;
@@ -115,10 +117,61 @@ export interface SkyPlacementFacts {
 export interface SkyPlacementHouseCoreFacts { planet: string; sign: string; house: number }
 export interface SkyArticleKeyDate {
   date: string;
+  endDate?: string;
   label: string;
   sign?: string;
   degree?: number;
   event?: string;
+}
+
+export const TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
+
+export function skyPlacementKeyDates({
+  planet,
+  residencyPasses,
+  residencyStations
+}: Pick<SkyPlacementFacts, "planet" | "residencyPasses" | "residencyStations">): SkyArticleKeyDate[] {
+  const passes = (residencyPasses ?? [])
+    .filter((pass) => {
+      const entry = new Date(pass.entryDate);
+      const exit = new Date(pass.exitDate);
+      return !Number.isNaN(entry.getTime())
+        && !Number.isNaN(exit.getTime())
+        && entry.getTime() <= exit.getTime();
+    })
+    .sort((left, right) => left.entryDate.localeCompare(right.entryDate));
+  if (passes.length === 0) return [];
+
+  const keyDates: SkyArticleKeyDate[] = passes.map((pass, index) => ({
+    date: pass.entryDate,
+    endDate: pass.exitDate,
+    label: passes.length > 1 ? `Pass ${index + 1} of ${passes.length}` : "",
+    event: "residency-pass"
+  }));
+  for (const station of residencyStations ?? []) {
+    const occursAt = new Date(station.occursAt);
+    if (Number.isNaN(occursAt.getTime())) continue;
+    const isVerifiedInsidePass = passes.some((pass) => (
+      occursAt.getTime() >= new Date(pass.entryDate).getTime()
+      && occursAt.getTime() <= new Date(pass.exitDate).getTime()
+    ));
+    if (!isVerifiedInsidePass) continue;
+    keyDates.push({
+      date: station.occursAt,
+      label: `${title(planet)} stations ${station.direction}`,
+      event: `station-${station.direction}`
+    });
+  }
+  return keyDates.sort((left, right) => left.date.localeCompare(right.date));
+}
+
+export function skyPlacementKeyDatesIntro(
+  facts: Pick<SkyPlacementFacts, "planet" | "residencyPasses" | "residencyStations">
+): string | null {
+  return String(facts.planet ?? "").trim().toLowerCase() === "lilith"
+    && skyPlacementKeyDates(facts).length > 0
+    ? TRUE_LILITH_KEY_DATES_INTRO
+    : null;
 }
 export type SkyArticleSectionKind =
   | "seasonal-context"
@@ -181,6 +234,7 @@ export interface TransitRenderResult {
   tagline?: string | null;
   closingCharge?: string | null;
   keyDates?: SkyArticleKeyDate[];
+  keyDatesIntro?: string | null;
   articleWindow?: string | null;
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
@@ -1539,7 +1593,7 @@ export function createTransitSynastryRenderer(
   // rising-sign blocks. They are exclusive of the slot-tier frame, tagline,
   // Key Dates list, and separately assembled aspect copy. When no article matches,
   // the approved slot tier remains the deterministic fallback. ----
-  function renderSkyPlacement({
+  function renderSkyPlacementCopy({
     planet,
     sign,
     events = [],
@@ -1798,6 +1852,15 @@ export function createTransitSynastryRenderer(
       };
     }
     throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
+  }
+
+  function renderSkyPlacement(facts: SkyPlacementFacts): TransitRenderResult {
+    const keyDates = skyPlacementKeyDates(facts);
+    return {
+      ...renderSkyPlacementCopy(facts),
+      keyDates,
+      keyDatesIntro: skyPlacementKeyDatesIntro(facts)
+    };
   }
 
   // ---- Friends Circle feed (FRIENDS-CIRCLE-FEED-SPEC.md) ----

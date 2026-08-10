@@ -512,6 +512,7 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   tagline?: string | null;
   closingCharge?: string | null;
   keyDates?: SkyDetailKeyDate[];
+  keyDatesIntro?: string | null;
   articleWindow?: string | null;
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
@@ -3521,7 +3522,23 @@ function placementTransitRange(position: PlanetPosition, generatedAt: string) {
   return formatTransitRange(start, end);
 }
 
-function placementTransitEndpoints(position: PlanetPosition, generatedAt: string) {
+function verifiedPlacementResidencyPasses(position: PlanetPosition) {
+  return (position.residencyPasses ?? [])
+    .map((pass) => ({ start: new Date(pass.entryDate), end: new Date(pass.exitDate) }))
+    .filter((pass) => (
+      !Number.isNaN(pass.start.getTime())
+      && !Number.isNaN(pass.end.getTime())
+      && pass.start <= pass.end
+    ))
+    .sort((left, right) => left.start.getTime() - right.start.getTime());
+}
+
+export function placementTransitEndpoints(position: PlanetPosition, generatedAt: string) {
+  const generatedDate = new Date(generatedAt);
+  const currentPass = verifiedPlacementResidencyPasses(position)
+    .find((pass) => generatedDate >= pass.start && generatedDate <= pass.end);
+  if (currentPass) return currentPass;
+
   if (position.transitStart && position.transitEnd) {
     return {
       start: new Date(position.transitStart),
@@ -3544,15 +3561,19 @@ function placementTransitEndpoints(position: PlanetPosition, generatedAt: string
   };
 }
 
-function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
-  const nodeRangeLabel = lunarNodeTransitRangeLabel(position);
+export function placementFinalResidencyExit(position: PlanetPosition, fallback: Date) {
+  return verifiedPlacementResidencyPasses(position).at(-1)?.end ?? fallback;
+}
 
-  if (nodeRangeLabel) {
-    return nodeRangeLabel;
+function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
+  if (position.transitStart && position.transitEnd) {
+    const { start, end } = placementTransitEndpoints(position, generatedAt);
+    return formatTransitRange(start, end);
   }
 
-  if (position.transitStart && position.transitEnd) {
-    return formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd));
+  const nodeRangeLabel = lunarNodeTransitRangeLabel(position);
+  if (nodeRangeLabel) {
+    return nodeRangeLabel;
   }
 
   return placementTransitRange(position, generatedAt);
@@ -4894,6 +4915,7 @@ function skyPlacementWritingSection(
     && !isArchiveArticle
     && ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].includes(planet);
   const transitEndpoints = placementTransitEndpoints(position, generatedAt);
+  const finalResidencyExit = placementFinalResidencyExit(position, transitEndpoints.end);
   let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement>;
 
   try {
@@ -4905,7 +4927,9 @@ function skyPlacementWritingSection(
       articleMode: articleOptions?.articleMode ?? "current",
       articleKey: articleOptions?.articleKey ?? null,
       entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
-      exitDate: formatPlacementTransitEndpoint(position, transitEndpoints.end, true),
+      exitDate: formatPlacementTransitEndpoint(position, finalResidencyExit, true),
+      residencyPasses: position.residencyPasses,
+      residencyStations: position.residencyStations,
       priorSign: position.priorTransitSign ? normalizeContentIdPart(position.priorTransitSign) : null,
       priorSignEntryDate: position.priorTransitStart
         ? formatPlacementTransitEndpoint(position, new Date(position.priorTransitStart), true)
@@ -4961,12 +4985,18 @@ function skyPlacementWritingSection(
     month: "long",
     day: "numeric",
     year: "numeric",
-    timeZone: "UTC"
+    timeZone: position.transitTimeZone || "UTC"
   });
-  const keyDates = (rendered.keyDates ?? []).map((keyDate: { date: string; label: string }) => ({
-    date: keyDateFormatter.format(new Date(`${keyDate.date.slice(0, 10)}T00:00:00Z`)),
-    label: keyDate.label
-  }));
+  const keyDates = (rendered.keyDates ?? []).map((keyDate: { date: string; endDate?: string; label: string }) => {
+    const start = new Date(keyDate.date);
+    const end = keyDate.endDate ? new Date(keyDate.endDate) : null;
+    return {
+      date: end
+        ? `${keyDateFormatter.format(start)} - ${keyDateFormatter.format(end)}`
+        : keyDateFormatter.format(start),
+      label: keyDate.label
+    };
+  });
 
   return {
     slot: "meaning",
@@ -4982,6 +5012,7 @@ function skyPlacementWritingSection(
     tagline: rendered.tagline,
     closingCharge: rendered.closingCharge,
     keyDates,
+    keyDatesIntro: rendered.keyDatesIntro ?? null,
     articleWindow: rendered.articleWindow,
     articleMode: rendered.articleMode,
     risingHoroscopes: rendered.risingHoroscopes,
@@ -5131,7 +5162,8 @@ function currentSkyPlacementDetailArticle({
     ].filter(Boolean).join(" · "),
     duration: isRegistryArticle || isContinuousFallback ? undefined : effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
-    keyDates: [],
+    keyDates: placementSection?.keyDates ?? [],
+    keyDatesIntro: placementSection?.keyDatesIntro ?? null,
     closingCharge: placementSection?.closingCharge,
     risingHoroscopes: placementSection?.risingHoroscopes,
     retrograde: isRetrograde,
