@@ -1,0 +1,70 @@
+{
+  "schema": "tldrastro.knowledge-matrix-import.v9",
+  "version": "v9-owner-approved-governance-labeled",
+  "source_of_truth": "TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx",
+  "source_sha256": "d78569b194d132b921a71d061055e6b484ecae8877c6ae4c7b82d08538023b22",
+  "source_policy": {
+    "rewrite_or_clean_copy": false,
+    "preserve_workbook_copy_exactly": true,
+    "authority_column": "Governance",
+    "serving_authority": "owner-approved",
+    "historical_lineage_columns": [
+      "Judge"
+    ],
+    "authority_rule": "Governance records the highest confirmed current authority. Judge is historical editing and review lineage only; never infer authorship from approval alone.",
+    "change_control": "Any change to the canonical workbook becomes v10 and returns to the owner for approval. Never edit v9 in place."
+  },
+  "canonical_rows": {
+    "file": "knowledge-matrix-v9-owner-approved-rows.json",
+    "sha256": "5907cbdbc6e015c4d0a68ce54f24506fe7e8eff51fbdf4b83485e492032e9a4c",
+    "transit_rows": 1117,
+    "house_rows": 2368,
+    "owner_approved_rows": 3485
+  },
+  "transit_meanings": {
+    "sheet": "TransitMeanings",
+    "runtime_key": [
+      "Planet",
+      "Sign",
+      "Event"
+    ],
+    "copy_column": "Copy",
+    "authority_column": "Governance",
+    "lineage_column": "Judge",
+    "duplicate_resolution": "Use the first owner-approved eligible row in canonical workbook order; copy remains byte-identical."
+  },
+  "house_activations": {
+    "sheet": "HouseActivations",
+    "primary_runtime_key": [
+      "Rising sign",
+      "Planet",
+      "Transit sign",
+      "House"
+    ],
+    "secondary_key": "Event",
+    "copy_column": "Experience",
+    "authority_column": "Governance",
+    "lineage_column": "Judge",
+    "duplicate_resolution": "Use the first owner-approved eligible row in canonical workbook order; keep Event in the runtime key and preserve copy byte-identically.",
+    "exclusion_rules": [
+      "Exclude rows whose Experience begins with '[EXCLUDE FROM FALLBACK]'.",
+      "Exclude rows missing a reusable Planet + Transit sign + House combination.",
+      "Do not flatten different Event values into one house entry; keep Event in the runtime key."
+    ]
+  },
+  "validation": {
+    "copy_digest_algorithm": "sha256(JSON.stringify(cell-values))",
+    "transit_copy_digest": "7f4e8c3c19c04d43c1e296bdfee3dc2e6131e2c73972fdaba911cd70edb8800d",
+    "house_experience_digest": "f63144974cd05afcbca12f2eef83f665c1a50c3233e2d7cff41de9c05124e532",
+    "combined_copy_experience_digest": "45701b493cf7004ba9e5438c6a6db9293b8c02b9420e3a4ffddffe1fe191d425"
+  },
+  "verified_build": {
+    "transit_eligible_rows": 1117,
+    "transit_runtime_keys": 365,
+    "house_eligible_rows": 2353,
+    "house_primary_keys": 954,
+    "house_event_runtime_keys": 1017,
+    "excluded_house_rows": 15,
+    "build_warnings": 0
+  }
+}

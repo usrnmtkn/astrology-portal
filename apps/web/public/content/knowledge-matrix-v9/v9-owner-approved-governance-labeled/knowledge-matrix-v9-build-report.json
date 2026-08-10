@@ -1,0 +1,21 @@
+{
+  "version": "v9-owner-approved-governance-labeled",
+  "workbook_sha256": "d78569b194d132b921a71d061055e6b484ecae8877c6ae4c7b82d08538023b22",
+  "canonical_rows_sha256": "5907cbdbc6e015c4d0a68ce54f24506fe7e8eff51fbdf4b83485e492032e9a4c",
+  "governance_counts": {
+    "owner-approved": 3485
+  },
+  "transit_rows": 1117,
+  "house_rows": 2368,
+  "runtime": {
+    "transit_eligible_rows": 1117,
+    "transit_keys": 365,
+    "house_eligible_rows": 2353,
+    "house_primary_keys": 954,
+    "house_event_keys": 1017,
+    "excluded_house_rows": 15
+  },
+  "warning_count": 0,
+  "warnings": [],
+  "build_passed": true
+}
