@@ -36,6 +36,10 @@ const HOUSE_BLEED_NOUNS = Object.freeze({
   pisces: ["retreat", "isolation", "hidden enemy", "institution", "hospital"]
 });
 
+// Owner rule: one life-domain example may be legitimate. House bleed begins
+// when a cluster of associated-house nouns starts defining the sign.
+const HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS = 4;
+
 function copyText(copy) {
   if (typeof copy === "string") return copy;
   return Object.values(copy ?? {}).flatMap((value) => (
@@ -107,7 +111,9 @@ export function validateCopy(copy, {
   }
   if (plan?.house == null) {
     const matches = (HOUSE_BLEED_NOUNS[plan?.sign] ?? []).filter((noun) => normalized.includes(noun));
-    if (matches.length >= 2) violations.push({ category: "sign_house_separation", detail: matches.join(", ") });
+    if (matches.length >= HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS) {
+      violations.push({ category: "sign_house_separation", detail: matches.join(", ") });
+    }
   }
   if (family.includes("placement") && /\b(?:will definitely|is guaranteed to)\b/iu.test(text)) {
     violations.push({ category: "astrology_integrity", detail: "Placement copy predicts an event instead of a recurring pattern." });
@@ -115,4 +121,4 @@ export function validateCopy(copy, {
   return { passed: violations.length === 0, violations };
 }
 
-export { DEFAULT_BANNED, HOUSE_BLEED_NOUNS, STOCK_TROPES };
+export { DEFAULT_BANNED, HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS, HOUSE_BLEED_NOUNS, STOCK_TROPES };
