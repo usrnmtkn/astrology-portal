@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-101",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/6",
+  "workbookKey": "part-of-fortune|6th house",
+  "payloadSha256": "fdc57e510499e86abd71ba3230eee989f90737470e0f3a8a754a92e779640eff",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Part of Fortune in the 6th house can make a restless mood easier to handle once one practical problem is fixed. You clean the counter, answer the overdue email, organize the work, or repair the small thing that has been bothering you all week. The relief is real. It gets less useful when staying busy becomes the only way you know how not to feel.",
+    "sourceMechanism": "Part of Fortune in the 6th house gives restless feelings somewhere practical to go. A problem gets fixed. The work gets organized. Someone feels better after doing the part of the day they could actually do something about. The trouble starts when staying busy becomes a way to avoid the feeling, or every small change in the body becomes another problem to monitor."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 102,
+    "approvedBodyCell": "E102",
+    "ownerStatusCell": "G102"
+  },
+  "additionalBilledCalls": 0
+}

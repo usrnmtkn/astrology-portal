@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-015",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/saturn",
+  "workbookKey": "mars|inconjunct|saturn",
+  "payloadSha256": "c838758d8f1a0e73ce11108a19cfb75cfa034beb2f0a91c8046fcde87e2bd069",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mars inconjunct Saturn can spend the whole week doing what has to be done and then make everybody else's fun annoying. You finish the deadline, handle the caregiving, answer the messages, and look up to realize the day is gone. Resentment usually arrives before you admit how little time is left for anything you actually wanted.",
+    "sourceMechanism": "Mars inconjunct Saturn can make duty and desire feel like enemies. The person may become irritable because responsibility seems to consume every hour that could have belonged to something enjoyable. The real question is which responsibilities are actually required and how much life is left after they are handled."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 16,
+    "approvedBodyCell": "E16",
+    "ownerStatusCell": "G16"
+  },
+  "additionalBilledCalls": 0
+}

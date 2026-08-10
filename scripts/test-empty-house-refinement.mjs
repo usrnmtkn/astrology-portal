@@ -64,7 +64,7 @@ const occurrences = (body, value) => body.split(value).length - 1;
 const vocabularyByKey = new Map(rows.vocabularyRows.map((row) => [row.contentKey, row]));
 const hooksByKey = new Map(rows.hookRows.map((row) => [row.contentKey, row]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-10a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-10b");
 
 const expectedNote = "Everyone has all 12 houses, and an empty house is normal. It means no planet was there when you were born, not that this area is missing from your life. To understand it, look to the planet that rules the sign on the house and where that planet sits in your chart. A birth chart can name a pattern before it feels obvious.";
 const expectedAries = "With Aries on your 11th house, friends, community, and long-term hopes respond best to speed and directness. You may know quickly who you want around you and which future plans you are ready to pursue. Waiting too long can create more frustration than giving a direct answer. Because Aries is ruled by Mars, what happens here is guided by where your Mars sits: in Aquarius, in your 9th house of belief systems, spiritual direction, and long-term goals. You act on the principle and the plan, most freely when nobody is standing over you. Direct orders slow you down; a reason speeds you up. Because of this, friends and future plans may develop through the way you handle belief, study, travel, and the bigger picture. Timing: You may notice more activity here when a transit reaches your Mars or when a current planet moves through your 11th house.";
@@ -105,11 +105,18 @@ const cancerMoonScorpio = browserRenderer.renderNatalEmptyHouse({
 });
 const moonScorpioMethodRow = hooksByKey.get("fallback-hook/ruler-method/moon/scorpio");
 const moonScorpioPlacementRow = hooksByKey.get("fallback-hook/placement-sentence/moon/scorpio");
+const moonSixthHouseLivedRow = hooksByKey.get("fallback-hook/placement-house-lived/moon/6");
 const moonScorpioPlacementCard = browserRenderer.renderNatalPlacement({
   planet: "moon",
   sign: "scorpio",
   house: 6,
   voice: "you"
+}, { allowUnreviewed: true });
+const moonScorpioNamedPlacementCard = browserRenderer.renderNatalPlacement({
+  planet: "moon",
+  sign: "scorpio",
+  house: 6,
+  voice: "Bird"
 }, { allowUnreviewed: true });
 assert.equal(moonScorpioPlacementRow?.positive_test, "passed-jul29-criteria");
 assert.equal(moonScorpioPlacementRow?.review_status, "approved");
@@ -136,9 +143,14 @@ assert.equal(
   cancerMoonScorpio.parts[4],
   "Timing: You may notice more activity here when a transit reaches your Moon or when a current planet moves through your 2nd house."
 );
+assert.equal(
+  moonScorpioPlacementCard.body,
+  moonSixthHouseLivedRow.body,
+  "Reader natal placements must prefer the exact lived house row."
+);
 assert.ok(
-  moonScorpioPlacementCard.body.includes(moonScorpioPlacementRow.body_you),
-  "Natal placement cards must continue using the portrait-style placement sentence."
+  moonScorpioNamedPlacementCard.body.includes(moonScorpioPlacementRow.body_they),
+  "Named-voice natal placements must continue using the portrait-style placement sentence."
 );
 assert.ok(
   !moonScorpioPlacementCard.body.includes(moonScorpioMethodRow.body_you),

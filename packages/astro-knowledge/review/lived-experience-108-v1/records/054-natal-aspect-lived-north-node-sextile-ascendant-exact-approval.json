@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-054",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/north-node/sextile/ascendant",
+  "workbookKey": "north_node|sextile|ascendant",
+  "payloadSha256": "5f1457b82dc7d9dae80b284e9bd165881b9068801798feaba44b864d84374423",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "North Node sextile the Ascendant can make a new direction show up in a small choice you almost would not count. You accept the unfamiliar invitation, answer the conversation differently, or choose the option you usually avoid. The change becomes visible in what you do before you have a bigger story about who you are becoming.",
+    "sourceMechanism": "North Node sextile Ascendant can make a spiritual approach easier to develop through ordinary choices. Ordinary choices start reflecting the spiritual direction instead of keeping it separate from daily life."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 55,
+    "approvedBodyCell": "E55",
+    "ownerStatusCell": "G55"
+  },
+  "additionalBilledCalls": 0
+}

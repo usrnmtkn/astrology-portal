@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-076",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/part-of-fortune",
+  "workbookKey": "sun|inconjunct|part_of_fortune",
+  "payloadSha256": "b58451adf7688f903eed7c049cb7837c5aaa123b3d50484d6b9f0b3c9d1f95b2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Sun inconjunct the Part of Fortune can make an old spiritual rule keep deciding your life long after you stopped examining it. You say no to the opportunity, relationship, or desire because it does not fit what you were taught to value. Something can still feel sacred and be wrong for the life you are trying to build now.",
+    "sourceMechanism": "Sun inconjunct Part of Fortune can make spiritual discernment uneven. An older path may once have pulled the person away from soul growth, so familiar beliefs are not automatically the right guide now. A belief can feel spiritually convincing and still deserve another look before the next decision is built around it."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 77,
+    "approvedBodyCell": "E77",
+    "ownerStatusCell": "G77"
+  },
+  "additionalBilledCalls": 0
+}

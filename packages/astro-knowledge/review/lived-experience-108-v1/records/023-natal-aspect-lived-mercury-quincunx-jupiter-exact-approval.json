@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-023",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/jupiter",
+  "workbookKey": "mercury|inconjunct|jupiter",
+  "payloadSha256": "152b2868d5d73dd8669df6a1cbeb00751fbac67ff85806ca4d360ba096cf6833",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury inconjunct Jupiter can make the idea feel finished while the practical work is still mostly in your head. You can explain the vision, tell everyone how it should work, and even hold other people to the standard before your own version is ready. Your plan is still missing dates, numbers, or structure. Big ideas still need details.",
+    "sourceMechanism": "Mercury inconjunct Jupiter can make a half-formed plan sound complete before it is. The person sees the concept quickly but may skip the careful planning needed to make it workable. There can also be a gap between the standards preached to other people and the standards actually lived. Everyone, including the self, has to be responsible for their own moral framework."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 24,
+    "approvedBodyCell": "E24",
+    "ownerStatusCell": "G24"
+  },
+  "additionalBilledCalls": 0
+}

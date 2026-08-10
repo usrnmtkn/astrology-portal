@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-066",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/neptune",
+  "workbookKey": "saturn|opposition|neptune",
+  "payloadSha256": "7b53ed3a4641aebf872576f9bfddd5b5cf7f1c2f89850c41d203f754977fb906",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn opposite Neptune can make you look for guarantees after something important has been lost or betrayed. You check the account again, hold tighter to the role, or want the relationship to promise it is not going anywhere. The fear makes sense. The harder lesson is living with something valuable without being able to make it permanent.",
+    "sourceMechanism": "Saturn opposite Neptune can make trust feel dangerous because loss is remembered before closeness is. Material possessions, status, or achievement may be held too tightly after an earlier experience of betrayal. Something can be deeply valued without being required to last forever."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 67,
+    "approvedBodyCell": "E67",
+    "ownerStatusCell": "G67"
+  },
+  "additionalBilledCalls": 0
+}

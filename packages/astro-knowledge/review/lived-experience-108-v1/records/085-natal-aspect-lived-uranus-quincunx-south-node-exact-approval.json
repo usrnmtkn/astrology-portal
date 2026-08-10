@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-085",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/south-node",
+  "workbookKey": "uranus|inconjunct|south_node",
+  "payloadSha256": "9386f8fcbd511ce31ebaf10a8da7cda6d4efab152d25d001964d214b753d8029",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Uranus inconjunct the South Node can make one late reply, sudden change, or unexpected cancellation feel exactly like something that happened before. Your body reacts first and the conclusion arrives fast: here we go again. The memory is real. The present still deserves time to prove what it actually is.",
+    "sourceMechanism": "Uranus inconjunct South Node can make karmic situations difficult to accept because they threaten to open memories or patterns the person does not want to face. Unconscious material can surface without meaning the present is doomed to repeat the past."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 86,
+    "approvedBodyCell": "E86",
+    "ownerStatusCell": "G86"
+  },
+  "additionalBilledCalls": 0
+}

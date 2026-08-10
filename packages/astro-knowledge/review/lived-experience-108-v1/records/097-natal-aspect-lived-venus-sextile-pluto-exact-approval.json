@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-097",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/pluto",
+  "workbookKey": "venus|sextile|pluto",
+  "payloadSha256": "eac1b20cb6a829fd9fb3e06b0daa85fd74ecbe429e878adba08b3c7ce1406d47",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold.",
+    "sourceMechanism": "Venus sextile Pluto gives values enough depth to be changed deliberately. Emotional self-sufficiency and magnetism are strong, and artistic ability can become a way to create beauty without needing another person to supply it. What is worth wanting becomes easier to recognize once the old value system loosens."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 98,
+    "approvedBodyCell": "E98",
+    "ownerStatusCell": "G98"
+  },
+  "additionalBilledCalls": 0
+}

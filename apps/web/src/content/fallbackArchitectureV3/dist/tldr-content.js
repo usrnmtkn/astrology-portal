@@ -58,6 +58,17 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     if (!opts2.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
     return (voice === "you" ? row.body_you : row.body_they) ?? null;
   };
+  const getReaderLivedRow = (key, voice, opts2 = {}) => {
+    if (voice !== "you") return null;
+    const row = hooks.get(key);
+    if (!row) return null;
+    if (row.content_role !== "fallback_hook") throw new RoleViolationError(`Row ${key} is not a fallback_hook.`);
+    if (!opts2.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
+    if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
+      throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
+    }
+    return typeof row.body === "string" && row.body.trim() ? row : null;
+  };
   const findTemplate = (key, opts2 = {}) => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
     if (!t) return null;
@@ -82,6 +93,16 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalPlacement(facts, opts2 = {}) {
     const { planet, sign, house } = facts;
     const voice = facts.voice === "you" ? "you" : "they";
+    const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) : null;
+    if (exactHouseLived) {
+      return {
+        headline: `${title(planet)} in the ${ordinal(house)} house`,
+        parts: [exactHouseLived.body ?? ""],
+        body: exactHouseLived.body ?? "",
+        templateKey: exactHouseLived.contentKey
+      };
+    }
+    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
     const ctx = {
@@ -98,7 +119,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, opts2),
       planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, opts2),
       signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, opts2),
-      planetIntro: getHook(`fallback-hook/planet-intro/${planet}`, voice, opts2),
+      planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, opts2)?.body ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, opts2),
       planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts2),
       placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts2),
       placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, opts2).join(", or ") || null
@@ -129,7 +150,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
-    parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+    parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
     let headlineTemplate = signTemplate;
     if (house) {
       const houseTemplate = getTemplate("fallback-template/natal.house-context");
@@ -162,18 +183,29 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   }
   function renderNatalAspect(facts, opts2 = {}) {
     const voice = facts.voice === "you" ? "you" : "they";
-    const group = ASPECT_GROUP[facts.aspect];
+    const aspect = facts.aspect;
+    const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts2);
+    if (exactLived) {
+      return {
+        headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
+        parts: [exactLived.body ?? ""],
+        body: exactLived.body ?? "",
+        templateKey: exactLived.contentKey
+      };
+    }
+    const group = ASPECT_GROUP[aspect];
+    if (!group) throw new SourceGapError(`SOURCE_GAP: natal aspect ${facts.planetA}-${aspect}-${facts.planetB}`);
     const pair = getHook(`fallback-hook/aspect-pair/${facts.planetA}/${facts.planetB}/${group}`, voice, opts2) ?? getHook(`fallback-hook/aspect-pair/${facts.planetB}/${facts.planetA}/${group}`, voice, opts2);
     const ctx = {
       possessive: facts.voice === "you" ? "Your" : `${facts.voice}'s`,
       planetATitle: title(facts.planetA),
       planetBTitle: title(facts.planetB),
-      aspectName: facts.aspect,
-      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${facts.aspect}`, opts2),
+      aspectName: aspect,
+      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, opts2),
       planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, opts2),
       planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, opts2),
-      aspectTypeLine: getHook(`fallback-hook/aspect-type/${facts.aspect}`, voice, opts2),
-      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${facts.aspect}`, opts2),
+      aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, opts2),
+      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, opts2),
       possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
       pairSentences: pair
     };
@@ -298,7 +330,9 @@ function normalizeAspect(input) {
     opposition: "opposition",
     opposite: "opposition",
     opposed: "opposition",
-    oppose: "opposition"
+    oppose: "opposition",
+    quincunx: "quincunx",
+    inconjunct: "quincunx"
   };
   return map[k] ?? null;
 }
@@ -2261,7 +2295,7 @@ function createKnowledgeMatrixV8Resolver(manifest, transitFile, houseFile, build
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-10a";
+var PACKAGE_VERSION = "v3-2026-08-10b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

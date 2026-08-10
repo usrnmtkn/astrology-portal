@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-057",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/south-node",
+  "workbookKey": "pluto|inconjunct|south_node",
+  "payloadSha256": "4ce950a3ae486be3c77cf87609a384cd649b3dfd02ffe29f08bd42c47782b536",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Pluto inconjunct the South Node can make an old role feel threatened when life stops rewarding the version of you that used to work. Maybe you were always the capable one, the private one, or the person who stayed in control. When that response stops helping, defending the identity can become harder than changing it.",
+    "sourceMechanism": "Pluto inconjunct South Node can make karmic necessity difficult to accept when the experience threatens a familiar belief about who the person is. Repeated circumstances keep changing the consciousness that the old identity is trying to protect."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 58,
+    "approvedBodyCell": "E58",
+    "ownerStatusCell": "G58"
+  },
+  "additionalBilledCalls": 0
+}

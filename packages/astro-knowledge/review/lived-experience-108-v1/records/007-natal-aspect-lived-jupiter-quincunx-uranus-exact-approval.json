@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-007",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/uranus",
+  "workbookKey": "jupiter|inconjunct|uranus",
+  "payloadSha256": "0f41827de7bfa0602e4dec4daff18bf27518a69c9799e76fa547173695a20c4a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter inconjunct Uranus can make a group project feel great until the third meeting needs another round of approval. You start wishing you could do it alone. Then you get the freedom you wanted and miss having someone to exchange ideas with. Too much collaboration feels restrictive. Too much independence gets lonely.",
+    "sourceMechanism": "Jupiter inconjunct Uranus can make solitude and collaboration both feel wrong after too much of either one. Group work starts to feel oppressive, then working alone becomes lonely. The life has to contain enough of both."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 8,
+    "approvedBodyCell": "E8",
+    "ownerStatusCell": "G8"
+  },
+  "additionalBilledCalls": 0
+}

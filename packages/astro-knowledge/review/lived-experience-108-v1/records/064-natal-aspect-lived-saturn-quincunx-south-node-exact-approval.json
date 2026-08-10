@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-064",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/south-node",
+  "workbookKey": "saturn|inconjunct|south_node",
+  "payloadSha256": "e361ae07ed8e597b2896bc19f37b238e3dd0c2122cde6164f9e3ad7294f12329",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn inconjunct the South Node can make a familiar limit feel personal almost immediately. The answer is no, the deadline will not move, or someone else has the authority to decide, and the old anger comes back before you have considered the actual restriction. The same kind of limit keeps finding the same sore response.",
+    "sourceMechanism": "Saturn inconjunct South Node can make karmic necessity difficult to accept when it reduces control or status. The same kind of limit keeps appearing around these house topics because the old response to limitation is still active."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 65,
+    "approvedBodyCell": "E65",
+    "ownerStatusCell": "G65"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-055",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/ascendant",
+  "workbookKey": "pluto|inconjunct|ascendant",
+  "payloadSha256": "f2ebe7d9204efb6992f7da684ce75bee41f160343c24d37923befee34b375b95",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Pluto inconjunct the Ascendant can make uncertainty feel like a reason to take control fast. Someone proposes a different method and you shut it down, make the decision yourself, or end the conversation before the other option is clear. The first reaction is often trying to make sure nobody else gets enough room to change the outcome.",
+    "sourceMechanism": "Pluto inconjunct Ascendant can make behavior more impulsive than the person's usual intensity would suggest. Slowing down before acting gives compromise a chance to feel different from surrender."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 56,
+    "approvedBodyCell": "E56",
+    "ownerStatusCell": "G56"
+  },
+  "additionalBilledCalls": 0
+}

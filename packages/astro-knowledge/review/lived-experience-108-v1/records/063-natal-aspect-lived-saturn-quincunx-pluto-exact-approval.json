@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-063",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/pluto",
+  "workbookKey": "saturn|inconjunct|pluto",
+  "payloadSha256": "a353ea4ebf75b7abd2f8fb94c1db8a3396c56ff96557db016cac5ac3ea564e10",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn inconjunct Pluto can keep you in a job, relationship, or arrangement long after the daily evidence says it is not working. You know how to endure, so you keep getting through another week while sleep gets worse and your body stays tense. Staying can look like strength long after it has stopped being useful.",
+    "sourceMechanism": "Saturn inconjunct Pluto can make letting go show up as physical tension. The person may be strong enough to survive major adversity and still resist the change long after the old structure has stopped working. Endurance stops being a virtue when it only keeps the person inside a structure that has already ended."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 64,
+    "approvedBodyCell": "E64",
+    "ownerStatusCell": "G64"
+  },
+  "additionalBilledCalls": 0
+}

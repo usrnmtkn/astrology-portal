@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-001",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/ascendant",
+  "workbookKey": "jupiter|inconjunct|ascendant",
+  "payloadSha256": "7ff16fe5a6a468a397a72a2a34d102d5e8a67cdcc159cafdee4f9648ce601f9b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Jupiter inconjunct the Ascendant can turn a simple shared plan into a small fight over who gets to decide. You volunteer to organize the day, then feel yourself tighten when someone changes the route, the timing, or the restaurant. You are happy to help. It is harder when helping means the plan no longer goes the way you pictured it.",
+    "sourceMechanism": "Jupiter inconjunct Ascendant can make compromise feel more useful once the person sees how much is gained by helping other people. Generosity works better in the relationship when freedom does not always mean getting the preferred direction."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 2,
+    "approvedBodyCell": "E2",
+    "ownerStatusCell": "G2"
+  },
+  "additionalBilledCalls": 0
+}

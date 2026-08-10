@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-067",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/part-of-fortune",
+  "workbookKey": "saturn|sextile|part_of_fortune",
+  "payloadSha256": "3f5ad61a2cb15ddc84211898f36ff9e3398132b2549d567c37784dd6a847fef7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Saturn sextile the Part of Fortune can make correction easier to use. The draft comes back with notes, the application needs another document, or someone points out the part that has to be fixed. You may not like it, but the feedback does not automatically turn into a story about being incapable.",
+    "sourceMechanism": "Saturn sextile Part of Fortune gives humility a workable opening. Limits and correction become easier to take in without turning them into humiliation."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 68,
+    "approvedBodyCell": "E68",
+    "ownerStatusCell": "G68"
+  },
+  "additionalBilledCalls": 0
+}

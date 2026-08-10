@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "lived-experience-108-v1-032",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored lived-experience copy supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/south-node",
+  "workbookKey": "mercury|sextile|south_node",
+  "payloadSha256": "544709c424bfb9a26f332e3125230b47d6d12a60ef9e6993abf7e19fedbe30e9",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head.",
+    "sourceMechanism": "Mercury sextile South Node can make karmic situations easier to use for mental growth. The thinking pattern is easier to catch before it hardens into the next repeated response."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lived-experience-108-v1/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 33,
+    "approvedBodyCell": "E33",
+    "ownerStatusCell": "G33"
+  },
+  "additionalBilledCalls": 0
+}
