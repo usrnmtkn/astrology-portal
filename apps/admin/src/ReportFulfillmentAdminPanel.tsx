@@ -6,6 +6,8 @@ type AdminResponse = {
   code?: string;
   entitlementId?: string;
   reportId?: string | null;
+  workerTriggered?: boolean;
+  workerTriggerReason?: string;
 };
 
 class AdminRequestError extends Error {
@@ -91,6 +93,11 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
         setFocusedReportId(grantedReportId ? String(grantedReportId) : "");
         setMessageTone("success");
         setMessage("Report granted. The fulfillment queue was refreshed and the new report row is focused below.");
+      } else if (actionName === "authorize_generation") {
+        setMessageTone(result.workerTriggered === false ? "error" : "success");
+        setMessage(result.workerTriggered === false
+          ? `Generation was authorized and remains queued for scheduled pickup. ${result.workerTriggerReason ?? "Immediate pickup was unavailable."}`
+          : "Generation authorized. An immediate worker cycle was triggered; scheduled pickup remains active as a fallback.");
       } else {
         setMessage("");
       }

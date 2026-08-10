@@ -1,4 +1,5 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { normalizeBirthTime } from "./chartTime";
 
 export type AuthProvider = "google";
 
@@ -12,6 +13,31 @@ export type AuthAccount = {
 };
 
 export type PersistedProfileData = unknown;
+
+function recordValue(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+export function normalizePersistedProfileBirthTimes(data: PersistedProfileData): PersistedProfileData {
+  const root = recordValue(data);
+  if (!root) return data;
+  const profile = recordValue(root.profile) ?? root;
+  if (!Array.isArray(profile.charts)) return data;
+  let changed = false;
+  const charts = profile.charts.map((entry) => {
+    const chart = recordValue(entry);
+    if (!chart || typeof chart.birthTime !== "string") return entry;
+    const raw = chart.birthTime.trim();
+    if (!raw || raw === "Time unknown" || raw === "Birth time needed") return entry;
+    const normalized = normalizeBirthTime(raw);
+    if (normalized === chart.birthTime) return entry;
+    changed = true;
+    return { ...chart, birthTime: normalized };
+  });
+  if (!changed) return data;
+  const nextProfile = { ...profile, charts };
+  return root.profile ? { ...root, profile: nextProfile } : nextProfile;
+}
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabasePublishableKey = (
@@ -155,7 +181,7 @@ export async function loadPersistedProfile(userId: string): Promise<PersistedPro
     throw error;
   }
 
-  return data?.data ?? null;
+  return data?.data == null ? null : normalizePersistedProfileBirthTimes(data.data);
 }
 
 export async function upsertPersistedProfile(userId: string, data: PersistedProfileData) {
@@ -165,11 +191,12 @@ export async function upsertPersistedProfile(userId: string, data: PersistedProf
     return;
   }
 
+  const normalizedData = normalizePersistedProfileBirthTimes(data);
   const { error } = await supabase
     .from("user_profiles")
     .upsert({
       user_id: userId,
-      data,
+      data: normalizedData,
       updated_at: new Date().toISOString()
     });
 
