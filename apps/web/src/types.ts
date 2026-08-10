@@ -35,6 +35,10 @@ export type PlanetPosition = {
     entryDate: string;
     exitDate: string;
   }> | null;
+  residencyStations?: Array<{
+    occursAt: string;
+    direction: "retrograde" | "direct";
+  }> | null;
   retrogradeStart?: string | null;
   retrogradeEnd?: string | null;
   retrogradeWindowSource?: "station" | "sign-transit" | null;
