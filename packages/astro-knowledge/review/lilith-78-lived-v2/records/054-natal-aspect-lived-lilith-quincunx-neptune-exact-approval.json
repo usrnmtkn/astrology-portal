@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-054",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/quincunx/neptune",
+  "workbookKey": "lilith|quincunx|neptune",
+  "payloadSha256": "6cc78e3fa72456399fe0b2feada9ba68e0204216b0142361c7bdff82f0ccb100",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to picture a total reinvention while remaining unsure which part of an ordinary week needs to change. Hours can go into the fantasy while the concrete dissatisfaction stays unnamed. This often comes from learning that a dream was acceptable as long as it did not become a disruptive request. Identify the specific part of your weekly routine that you actually want to change.",
+    "astroHint": "Lilith quincunx Neptune can make the imagined escape and the real desire difficult to line up.",
+    "sourceMechanism": "EXACT-ASPECT DERIVATION: no grouped quincunx legacy row; bounded by the pair sources and the quincunx primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Neptune primitive: Neptune describes imagination, longing, compassion, spiritual sensitivity, idealization, confusion, surrender, and the places where boundaries become harder to define. It shows where someone may dream, dissolve, avoid, or become more receptive to what cannot be measured cleanly. Pair frame: The daydream with a repeating theme; follow it to its plain content. The parasocial pull; the escape that is an unmet want wearing a disguise. Imagination gives the exiled want a safe first form: the art, the plan, the admission. Aspect operation: Quincunx puts mismatched functions together and requires repeated adjustment. Traditional nature: awkward, requires adjustment. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/neptune.json; packages/astro-knowledge/data/pairs/neptune-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/neptune/conjunction; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/neptune/hard; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/neptune/soft."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 55,
+    "approvedBodyCell": "E55",
+    "approvedAstroHintCell": "F55",
+    "ownerStatusCell": "H55"
+  },
+  "additionalBilledCalls": 0
+}

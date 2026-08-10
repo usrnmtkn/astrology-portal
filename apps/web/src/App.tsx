@@ -489,6 +489,7 @@ type NormalizedNatalPlacementArticle = {
 type NatalAspectSlot = "meaning";
 type NormalizedNatalAspectSection = NormalizedSurfaceSection<NatalAspectSlot> & {
   heading: string;
+  astroHint?: string;
 };
 type NormalizedNatalAspectArticle = {
   surface: "natal-aspect";
@@ -606,6 +607,7 @@ export type YouTransitArticle = {
   subtitle: string;
   tldr?: string;
   lensHint?: ReactNode;
+  lensHintLabel?: string;
   compactHeader?: boolean;
   plainBody?: boolean;
   bodyBeforeSections?: boolean;
@@ -4002,7 +4004,8 @@ function sourceGroundedNatalAspectNormalizedSection(
         rendered.templateKey
       ].filter(Boolean),
       heading: rendered.headline || natalAspectDisplayTitle(aspect),
-      body
+      body,
+      astroHint: rendered.astroHint
     };
   } catch (error) {
     if (error instanceof FallbackV3SourceGapError) {
@@ -4063,6 +4066,8 @@ function natalAspectDetailArticle(
     glyph: pointGlyph(aspect.from),
     subtitle: stripTldrPrefix(resolvedSummary),
     compactHeader: true,
+    lensHint: normalized.sections.find((section) => section.astroHint)?.astroHint ?? "",
+    lensHintLabel: "Astrology hint",
     bodyBeforeSections: true,
     body: resolvedBody,
     summary: "",

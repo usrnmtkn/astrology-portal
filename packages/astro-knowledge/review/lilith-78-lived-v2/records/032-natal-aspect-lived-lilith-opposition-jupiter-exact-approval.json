@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-78-lived-v2-032",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Owner-authored Lilith lived-experience copy and astrology hint supplied verbatim. The sourceMechanism field is provenance metadata and is never rendered.",
+  "contentKey": "fallback-hook/natal-aspect-lived/lilith/opposition/jupiter",
+  "workbookKey": "lilith|opposition|jupiter",
+  "payloadSha256": "862b6b7dec73a09f6d7f99621f6d80742e73ba109fc5e8a431f36794b65786af",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to defend a belief strongly in front of other people and then question the whole idea when you are alone. At other times, someone else's certainty makes you reject a view you partly share. Underneath is often an old lesson that conviction had to be impressive, complete, or publicly approved before it counted. Say what you know and what you are still unsure about in the same conversation.",
+    "astroHint": "Lilith opposite Jupiter can make certainty become larger in public and less stable in private.",
+    "sourceMechanism": "DIRECT LEGACY SUPPORT: grouped legacy Lilith pair row is present and is narrowed by the exact-aspect primitive. Lilith core: The disowned, uncompromising self. Black Moon Lilith marks raw instinct that refuses to be tamed, shamed, or controlled, and the place where autonomy and unfiltered truth are reclaimed. Jupiter primitive: Jupiter describes growth, wisdom, opportunity, belief, generosity, risk, confidence, and the instinct to expand beyond what is already known. It shows where someone seeks meaning, trusts possibility, and learns through experience. Pair frame: The transgression that suddenly seems reasonable; the amplifier blurs the ethics too. Aspect operation: Opposition brings the two functions face-to-face through polarity, awareness, or confrontation. Traditional nature: malefic-leaning, oriented to awareness and relationship. Sources: packages/astro-knowledge/data/points/black-moon-lilith.json; packages/astro-knowledge/data/planetary/jupiter.json; packages/astro-knowledge/data/pairs/jupiter-lilith.json; packages/astro-knowledge/data/primitives/aspects.json; apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/lilith/jupiter/hard."
+  },
+  "approvedAt": "2026-08-10",
+  "approvalEffect": "exact_wording_approval",
+  "sourceWorkbook": {
+    "path": "packages/astro-knowledge/review/lilith-78-lived-v2/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx",
+    "sheet": "OwnerLivedReview",
+    "row": 33,
+    "approvedBodyCell": "E33",
+    "approvedAstroHintCell": "F33",
+    "ownerStatusCell": "H33"
+  },
+  "additionalBilledCalls": 0
+}
