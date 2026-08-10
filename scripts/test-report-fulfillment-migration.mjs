@@ -9,6 +9,9 @@ if (!modulePath) throw new Error("REPORT_PGLITE_MODULE must point to @electric-s
 const { PGlite } = await import(pathToFileURL(modulePath).href);
 const db = new PGlite();
 await db.exec(`
+  create role anon;
+  create role authenticated;
+  create role service_role;
   create schema auth;
   create table auth.users (id uuid primary key);
   create function auth.uid() returns uuid language sql stable as 'select null::uuid';
@@ -24,11 +27,13 @@ await db.exec(`
 const migration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809150000_report_fulfillment.sql", import.meta.url), "utf8");
 const personalHealthMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260809160000_personal_health_report_domain.sql", import.meta.url), "utf8");
 const compMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810120000_comp_report_entitlements.sql", import.meta.url), "utf8");
+const accountingMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810130000_report_call_accounting.sql", import.meta.url), "utf8");
 await db.exec("begin");
 try {
   await db.exec(migration);
   await db.exec(personalHealthMigration);
   await db.exec(compMigration);
+  await db.exec(accountingMigration);
   const userId = "00000000-0000-0000-0000-000000000001";
   await db.query("insert into auth.users (id) values ($1)", [userId]);
   await db.query(`insert into public.report_entitlements
@@ -81,10 +86,17 @@ try {
   await db.query("update public.user_reports set fulfillment_status = 'queued' where id = $1", [compReport.id]);
   const claimed = (await db.query("select * from public.claim_report_fulfillment_jobs('fixture-worker', 10)")).rows.find((row) => row.id === compJob.id);
   assert.ok(claimed, "An authorized queued comp report must be claimable.");
-  assert.equal((await db.query("select public.consume_report_fulfillment_call($1, $2) as count", [compJob.id, authorizationToken])).rows[0].count, 1);
-  assert.equal((await db.query("select public.consume_report_fulfillment_call($1, $2) as count", [compJob.id, authorizationToken])).rows[0].count, 2);
+  const firstCall = (await db.query("select public.begin_report_fulfillment_call($1, $2, 'openai', 'gpt-5.6-sol', 'fixture_draft') as begun", [compJob.id, authorizationToken])).rows[0].begun;
+  assert.equal(firstCall.callNumber, 1);
+  assert.equal((await db.query("select public.finish_report_fulfillment_call($1, 'complete', 100, 20, 10, 110, 0.00079, 'resp_fixture', null) as finished", [firstCall.callId])).rows[0].finished, true);
+  assert.equal(Number((await db.query("select token_count_total from public.user_reports where id = $1", [compReport.id])).rows[0].token_count_total), 110);
+  assert.equal(Number((await db.query("select token_spend_usd_estimate from public.user_reports where id = $1", [compReport.id])).rows[0].token_spend_usd_estimate), 0.00079);
+  const secondCall = (await db.query("select public.begin_report_fulfillment_call($1, $2, 'openai', 'gpt-5.6-sol', 'fixture_critique') as begun", [compJob.id, authorizationToken])).rows[0].begun;
+  assert.equal(secondCall.callNumber, 2);
+  assert.equal((await db.query("select public.finish_report_fulfillment_call($1, 'error', 0, 0, 0, 0, 0, null, 'FIXTURE_ONLY') as finished", [secondCall.callId])).rows[0].finished, true);
+  assert.equal((await db.query("select public.finish_report_fulfillment_call($1, 'error', 0, 0, 0, 0, 0, null, 'MUTATION') as finished", [secondCall.callId])).rows[0].finished, false, "A terminal ledger row must be immutable.");
   await db.exec("savepoint exhausted_budget");
-  await assert.rejects(db.query("select public.consume_report_fulfillment_call($1, $2)", [compJob.id, authorizationToken]), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
+  await assert.rejects(db.query("select public.begin_report_fulfillment_call($1, $2, 'openai', 'gpt-5.6-sol', 'fixture_extra')", [compJob.id, authorizationToken]), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
   await db.exec("rollback to savepoint exhausted_budget");
   await db.exec("release savepoint exhausted_budget");
   await db.exec("rollback");
@@ -92,4 +104,4 @@ try {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");

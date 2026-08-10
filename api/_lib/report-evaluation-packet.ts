@@ -38,7 +38,29 @@ export function completeReportUnit(draft: ReportDraft) {
   ))).join("\n\n");
 }
 
+export function assertReportEvaluationPacketReady(payload: ReportGenerationPayload) {
+  if (!Array.isArray(payload.ownerComparisonSet)) {
+    throw new Error("REPORT_COMPARISON_SET_MISSING: ownerComparisonSet must be assembled before any provider call.");
+  }
+  if (payload.ownerComparisonSet.length < 2 || payload.ownerComparisonSet.length > 3) {
+    throw new Error("REPORT_COMPARISON_SET_MISSING: V3 evaluation requires two or three owner comparison passages before any provider call.");
+  }
+  const evidenceIds = new Set<string>();
+  for (const passage of payload.ownerComparisonSet) {
+    if (!passage || typeof passage.evidenceId !== "string" || !passage.evidenceId.trim()
+      || typeof passage.text !== "string" || !passage.text.trim()
+      || typeof passage.function !== "string" || !passage.function.trim()) {
+      throw new Error("REPORT_COMPARISON_SET_INVALID: every comparison passage needs evidenceId, text, and function.");
+    }
+    if (evidenceIds.has(passage.evidenceId)) {
+      throw new Error(`REPORT_COMPARISON_SET_INVALID: duplicate evidence id '${passage.evidenceId}'.`);
+    }
+    evidenceIds.add(passage.evidenceId);
+  }
+}
+
 export function reportEvaluationPacket(payload: ReportGenerationPayload, draft: ReportDraft) {
+  assertReportEvaluationPacketReady(payload);
   const candidateParagraphs = new Set(locatedText(draft).flatMap((field) => paragraphs(field.text)));
   const ownerComparisonSet = payload.ownerComparisonSet.filter((passage) => !candidateParagraphs.has(passage.text));
   if (ownerComparisonSet.length < 2 || ownerComparisonSet.length > 3) {
