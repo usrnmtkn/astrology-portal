@@ -30,7 +30,9 @@ async function responsesClient({ stage, role, instructions, input, schema }) {
   const model = review
     ? (process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra")
     : (process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? "gpt-5.6-sol");
-  const effort = review ? "low" : (process.env.OPENAI_REASONING_EFFORT ?? "xhigh");
+  const effort = review
+    ? (process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium")
+    : (process.env.OPENAI_REASONING_EFFORT ?? "xhigh");
   if (!instructions) throw new Error(`Harness ${role} call omitted its canonical instruction contract.`);
   const { response, payload } = await callOpenAIResponses({
     apiKey: process.env.OPENAI_API_KEY,
@@ -54,7 +56,7 @@ writerClient.model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_M
 writerClient.reasoningEffort = process.env.OPENAI_REASONING_EFFORT ?? "xhigh";
 const reviewerClient = (request) => responsesClient({ ...request, role: "REVIEWER" });
 reviewerClient.model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
-reviewerClient.reasoningEffort = "low";
+reviewerClient.reasoningEffort = process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium";
 const reviserClient = (request) => responsesClient({ ...request, role: "REVISER" });
 reviserClient.model = writerClient.model;
 reviserClient.reasoningEffort = writerClient.reasoningEffort;
