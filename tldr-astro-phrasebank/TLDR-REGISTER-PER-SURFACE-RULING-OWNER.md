@@ -1,6 +1,16 @@
 # Register-per-surface ruling (owner ruling, canonical)
 
-**Status: DRAFT FOR OWNER APPROVAL, 2026-08-09. `needs_review`. Synthesizes recorded owner rulings (the pass-5 card tonal ruling, the lived-prose standard, the 27-point standard) into one governing rule. On explicit owner approval, every validator, critique checklist, judge rubric, and writer prompt becomes surface-scoped under it.**
+**Status:** `owner_approved`
+**Version:** `register-per-surface-ruling-v1`
+**Approved:** 2026-08-09
+**Approved source SHA-256:** `db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2`
+**Active in harness:** `true`
+**Active in production:** `false`
+**Owner approved:** `true`
+**Promotion authorized:** `false`
+**Governance:** Owner-approved surface-scoping rule. Active in the card-writing harness; candidate writer activation and promotion remain off. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Register-per-surface ruling at SHA-256 db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2, the Card critique checklist v3 at SHA-256 3507f41f6c29b6b9abb2216e9f2acddf63be519866b4c88259c852791cbad043, and the Card writing judge rubric v3 at SHA-256 c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983.
 
 ## The rule
 

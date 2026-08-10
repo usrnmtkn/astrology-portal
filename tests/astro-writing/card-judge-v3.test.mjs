@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import {
   CARD_JUDGE_V3_ARTIFACT_PATH,
@@ -22,24 +21,29 @@ import { cardJudgeV3PacketContextHash, loadCardJudgeV3FixtureSet } from "../../s
 import openAIResponses from "../../src/astro-writing/openAIResponses.cjs";
 
 const read = (sourcePath) => fs.readFileSync(sourcePath, "utf8");
-const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const ruling = read("tldr-astro-phrasebank/TLDR-REGISTER-PER-SURFACE-RULING-OWNER.md");
 const rubric = read("tldr-astro-phrasebank/TLDR-CARD-JUDGE-RUBRIC-V3-DRAFT.md");
 const readme = read("packages/astro-knowledge/review/writing-harness-v3/README.md");
 const runner = read("scripts/run-astro-writing-live-reviewer-eval-v3.mjs");
 const implementationReport = read("packages/astro-knowledge/review/writing-harness-v3/implementation-report.md");
 
-assert.equal(sha256(ruling), "db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2", "Surface ruling must remain byte-for-byte owner supplied.");
-assert.match(ruling, /DRAFT FOR OWNER APPROVAL[\s\S]*`needs_review`/u);
+assert.match(ruling, /^\*\*Status:\*\* `owner_approved`$/mu);
+assert.match(ruling, /^\*\*Approved source SHA-256:\*\* `db48c5b42df2afee30faea6141a3417ca1e1d69fc3110586281bdd79e72d29e2`$/mu);
+assert.match(ruling, /^\*\*Active in harness:\*\* `true`$/mu);
+assert.match(ruling, /^\*\*Active in production:\*\* `false`$/mu);
+assert.match(ruling, /^\*\*Promotion authorized:\*\* `false`$/mu);
 assert.match(ruling, /A card grader loads card rules and card exemplars; a report grader loads report rules and report exemplars\./u);
 assert.match(rubric, /^\*\*Surface:\*\* `card`$/mu);
-assert.match(rubric, /^\*\*Owner approved:\*\* `false`$/mu);
+assert.match(rubric, /^\*\*Status:\*\* `owner_approved`$/mu);
+assert.match(rubric, /^\*\*Approved source SHA-256:\*\* `c7426929d5868847bea263b3c8b7eb3830304657dde2f6f54ebb7b417268e983`$/mu);
+assert.match(rubric, /^\*\*Owner approved:\*\* `true`$/mu);
+assert.match(rubric, /^\*\*Active in harness:\*\* `true`$/mu);
 assert.match(rubric, /^\*\*Active in production:\*\* `false`$/mu);
 assert.match(rubric, /^\*\*Promotion authorized:\*\* `false`$/mu);
 assert.match(readme, /Every billed run requires a separate, explicit owner authorization naming the call budget\./u);
 assert.match(readme, /Low reasoning is the documented suspect/u);
-assert.match(implementationReport, /These are configured contracts only\. No live results exist and no model calls were made\./u);
-assert.match(implementationReport, /Owner-pending items/u);
+assert.match(implementationReport, /frozen contracts for the separately authorized 20-call live evaluation/u);
+assert.match(implementationReport, /Approval and authorization record/u);
 assert.match(openAIResponses.instructionsForRole("CARD_REVIEWER_V3"), /findings only[\s\S]*Never return a verdict/u);
 
 assert.deepEqual(CARD_JUDGE_V3_CATEGORIES, [
@@ -200,6 +204,8 @@ console.log(JSON.stringify({
   goldContracts: 12,
   pairedNegativeContracts: 8,
   liveCallsMade: 0,
-  ownerApproved: false,
+  governedDocumentsOwnerApproved: true,
+  activeInHarness: true,
+  activeInProduction: false,
   promotionAuthorized: false
 }, null, 2));

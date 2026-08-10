@@ -5,7 +5,7 @@ const REGISTER_RULING_URL = new URL("../../tldr-astro-phrasebank/TLDR-REGISTER-P
 const CRITIQUE_CHECKLIST_URL = new URL("../../tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md", import.meta.url);
 
 export const CARD_TRANSIT_WRITING_STANDARD_VERSION = "card-transit-writing-standard-owner-2026-08-09";
-export const CARD_CRITIQUE_CHECKLIST_VERSION = "card-critique-checklist-v3-draft-2026-08-09";
+export const CARD_CRITIQUE_CHECKLIST_VERSION = "card-critique-checklist-v3";
 
 export const cardTransitWritingStandard = fs.readFileSync(CARD_STANDARD_URL, "utf8");
 export const registerPerSurfaceRuling = fs.readFileSync(REGISTER_RULING_URL, "utf8");
@@ -43,7 +43,7 @@ export function isCardWritingSurface({ surface = "card", family = "" } = {}) {
 export function buildCardWriterInstructions(baseInstructions) {
   return [
     cardTransitTopLevelDirection,
-    "REGISTER-PER-SURFACE RULING (verbatim; candidate governance remains needs_review)",
+    "REGISTER-PER-SURFACE RULING (verbatim; owner-approved and active in the harness)",
     registerPerSurfaceRuling,
     "CARD-REGISTER TRANSIT WRITING STANDARD (owner ruling, verbatim)",
     cardTransitWritingStandard,
