@@ -1,41 +1,45 @@
 #!/usr/bin/env node
+
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
+import { stripTypeScriptTypes } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   PACKAGE_VERSION,
-  createFallbackRenderer
+  createFallbackRenderer as createDistRenderer,
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import {
-  renderNatalEmptyHouse as renderNatalEmptyHouseNode
+  RoleViolationError as NodeRoleViolationError,
+  SourceGapError as NodeSourceGapError,
+  renderNatalEmptyHouse as renderNatalEmptyHouseNode,
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
-const rows = JSON.parse(
-  fs.readFileSync(path.join(packageDir, "source-rows/fallback-source-rows-v3.json"), "utf8")
-);
-const templates = JSON.parse(
-  fs.readFileSync(path.join(packageDir, "templates/fallback-templates-v3.json"), "utf8")
-);
+const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
+const rows = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
+const templates = readJson("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
+const authored = readJson("apps/web/src/content/fallbackArchitectureV3/authored-inputs/empty-house-v14-modern-v1.json");
+const canonical = readJson("packages/astro-knowledge/review/empty-house-v14/empty-house-v14-owner-approved-rows.json");
+const friendReview = readJson("packages/astro-knowledge/review/empty-house-v14/empty-house-v14-friend-variants-review.json");
+const approval = readJson("packages/astro-knowledge/review/empty-house-v14/friend-variant-approval-record.json");
+const projection = readJson("packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-4.json");
+const originalFriendFlags = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-flagged-for-owner.json");
+const friendCorrections = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-corrections.json");
+const friendDecisionAid = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-decision-aid.json");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
-const browserRenderer = createFallbackRenderer(templates, rows);
+const browserSourcePath = path.join(packageDir, "resolver/renderFallback.browser.ts");
+const browserSource = stripTypeScriptTypes(fs.readFileSync(browserSourcePath, "utf8"), { mode: "transform" });
+const browserSourceModule = await import(`data:text/javascript;base64,${Buffer.from(browserSource).toString("base64")}`);
+
+const prefix = "fallback-hook/empty-house/";
 const signs = [
-  "aries",
-  "taurus",
-  "gemini",
-  "cancer",
-  "leo",
-  "virgo",
-  "libra",
-  "scorpio",
-  "sagittarius",
-  "capricorn",
-  "aquarius",
-  "pisces"
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
 ];
-const primaryRulers = {
+const modernRulers = {
   aries: "mars",
   taurus: "venus",
   gemini: "mercury",
@@ -43,361 +47,286 @@ const primaryRulers = {
   leo: "sun",
   virgo: "mercury",
   libra: "venus",
-  scorpio: "mars",
+  scorpio: "pluto",
   sagittarius: "jupiter",
   capricorn: "saturn",
-  aquarius: "saturn",
-  pisces: "jupiter"
-};
-const modernRulers = {
-  scorpio: "pluto",
   aquarius: "uranus",
-  pisces: "neptune"
+  pisces: "neptune",
 };
-const rulerReferences = {
-  sun: "the Sun",
-  moon: "the Moon"
-};
-const title = (value) => value.replace(/\b\w/g, (character) => character.toUpperCase());
-const ordinal = (value) => value === 1 ? "1st" : value === 2 ? "2nd" : value === 3 ? "3rd" : `${value}th`;
-const occurrences = (body, value) => body.split(value).length - 1;
-const vocabularyByKey = new Map(rows.vocabularyRows.map((row) => [row.contentKey, row]));
-const hooksByKey = new Map(rows.hookRows.map((row) => [row.contentKey, row]));
+const traditionalOuterRulers = { scorpio: "mars", aquarius: "saturn", pisces: "jupiter" };
+const ordinal = (house) => house === 1 ? "1st" : house === 2 ? "2nd" : house === 3 ? "3rd" : `${house}th`;
+const categoryCounts = Object.fromEntries(
+  [
+    "principle",
+    "empty_house_essay",
+    "empty_house_sign",
+    "empty_house_ruler_generic",
+    "empty_house_ruler_house1_specific",
+    "empty_house_ruler_planet_example",
+  ].map((category) => [category, canonical.entries.filter((entry) => entry.category === category).length])
+);
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-10f");
-
-const expectedNote = "Everyone has all 12 houses, and an empty house is normal. It means no planet was there when you were born, not that this area is missing from your life. To understand it, look to the planet that rules the sign on the house and where that planet sits in your chart. A birth chart can name a pattern before it feels obvious.";
-const expectedAries = "With Aries on your 11th house, friends, community, and long-term hopes respond best to speed and directness. You may know quickly who you want around you and which future plans you are ready to pursue. Waiting too long can create more frustration than giving a direct answer. Because Aries is ruled by Mars, what happens here is guided by where your Mars sits: in Aquarius, in your 9th house of belief systems, spiritual direction, and long-term goals. You act on the principle and the plan, most freely when nobody is standing over you. Direct orders slow you down; a reason speeds you up. Because of this, friends and future plans may develop through the way you handle belief, study, travel, and the bigger picture. Timing: You may notice more activity here when a transit reaches your Mars or when a current planet moves through your 11th house.";
-const expectedGemini = "With Gemini on your 1st house, identity, the body, and self-presentation develop through movement, conversation, and trying more than one option. Talking it through, trying both options, and changing your mind are all part of how this area works. Because Gemini is ruled by Mercury, what happens here is guided by where your Mercury sits: in Pisces, in your 10th house of career, visibility, and legacy. You follow a hunch to the answer and build the reasoning on the way back. Exact figures and firm dates hold badly when the mood around you is heavy. Because of this, your identity may become clearer through the way you handle career, reputation, and public role. Timing: You may notice more activity here when a transit reaches your Mercury or when a current planet moves through your 1st house.";
-const expectedCancer = "With Cancer on your 2nd house, money, worth, and values run on feeling first. This area responds to trust and familiarity, and past experience carries real weight. Because Cancer is ruled by the Moon, what happens here is guided by where your Moon sits: in Scorpio, in your 6th house of daily work, routines, and health. Your sense of security depends on certainty: you commit slowly, read what is not being said, and hold back until a person or plan has proven itself. Once it has, the loyalty is total. Because of this, money and questions of worth may come together through the way you handle your work and routines. Timing: You may notice more activity here when a transit reaches your Moon or when a current planet moves through your 2nd house.";
-
-const ariesWorkedExample = browserRenderer.renderNatalEmptyHouse({
-  house: 11,
-  sign: "aries",
-  primaryRuler: "mars",
-  modernRuler: "pluto",
-  ruler: "pluto",
-  rulerSign: "aquarius",
-  rulerHouse: 9,
-  voice: "you"
+assert.deepEqual(categoryCounts, {
+  principle: 9,
+  empty_house_essay: 12,
+  empty_house_sign: 144,
+  empty_house_ruler_generic: 121,
+  empty_house_ruler_house1_specific: 132,
+  empty_house_ruler_planet_example: 132,
 });
-const geminiWorkedExample = browserRenderer.renderNatalEmptyHouse({
-  house: 1,
-  sign: "gemini",
-  primaryRuler: "mercury",
-  modernRuler: "uranus",
-  ruler: "uranus",
-  rulerSign: "pisces",
-  rulerHouse: 10,
-  voice: "you"
-});
-assert.equal(ariesWorkedExample.note, expectedNote);
-assert.equal(ariesWorkedExample.body, expectedAries);
-assert.equal(geminiWorkedExample.body, expectedGemini);
+assert.equal(projection.package, "empty-house-corpus-v14-serving-projection");
+assert.equal(projection.version, "v14-projection-4");
+assert.equal(projection.source_workbook_sha256, canonical.source_workbook_sha256);
+assert.equal(projection.counts.serving_rows, 541);
+assert.equal(projection.counts.traditional_rows_to_author, 33);
+assert.equal(projection.counts.friend_corrections_adopted, 34);
+assert.equal(projection.counts.friend_flags_approved_as_is, 31);
+assert.equal(projection.counts.friend_flags_unresolved, 0);
+assert.match(projection.body_they_status, /^drafted \+ 34 owner-adopted corrections/u);
+assert.equal(projection.prior_body_they_digest_sha256, "74e0052ee3c3ce8660b22317b328ad46b01adb97a23e42e1ec48e4ad28f5568d");
+assert.equal(originalFriendFlags.source_body_they_digest_sha256, projection.prior_body_they_digest_sha256);
+assert.equal(Object.keys(originalFriendFlags.flags).length, 65);
+assert.equal(friendCorrections.rows.length, 34);
+assert.equal(friendDecisionAid.rows.length, 65);
+assert.equal(friendDecisionAid.rows.filter((row) => row.verdict === "corrected_wording_proposed").length, 34);
+assert.equal(friendDecisionAid.rows.filter((row) => row.verdict === "approve_as_is").length, 31);
+assert.deepEqual(canonical.ruler_policy.sign_rulers, modernRulers);
+assert.equal(new Set(canonical.entries.map((entry) => entry.key)).size, 550, "V14 corpus keys must be unique.");
 
-const cancerMoonScorpio = browserRenderer.renderNatalEmptyHouse({
-  house: 2,
-  sign: "cancer",
-  primaryRuler: "moon",
-  rulerSign: "scorpio",
-  rulerHouse: 6,
-  voice: "you"
-});
-const moonScorpioMethodRow = hooksByKey.get("fallback-hook/ruler-method/moon/scorpio");
-const moonScorpioPlacementRow = hooksByKey.get("fallback-hook/placement-sentence/moon/scorpio");
-const moonSixthHouseLivedRow = hooksByKey.get("fallback-hook/placement-house-lived/moon/6");
-const moonScorpioPlacementCard = browserRenderer.renderNatalPlacement({
-  planet: "moon",
-  sign: "scorpio",
-  house: 6,
-  voice: "you"
-}, { allowUnreviewed: true });
-const moonScorpioNamedPlacementCard = browserRenderer.renderNatalPlacement({
-  planet: "moon",
-  sign: "scorpio",
-  house: 6,
-  voice: "Bird"
-}, { allowUnreviewed: true });
-assert.equal(moonScorpioPlacementRow?.positive_test, "passed-jul29-criteria");
-assert.equal(moonScorpioPlacementRow?.review_status, "approved");
-assert.equal(moonScorpioMethodRow?.review_status, "approved");
-assert.equal(
-  cancerMoonScorpio.parts[0],
-  "With Cancer on your 2nd house, money, worth, and values run on feeling first. This area responds to trust and familiarity, and past experience carries real weight."
-);
-assert.equal(
-  cancerMoonScorpio.parts[1],
-  "Because Cancer is ruled by the Moon, what happens here is guided by where your Moon sits: in Scorpio, in your 6th house of daily work, routines, and health."
-);
-assert.equal(
-  cancerMoonScorpio.parts[2],
-  moonScorpioMethodRow.body_you,
-  "Empty-house M3 must use the approved Moon-in-Scorpio ruler-method bytes."
-);
-assert.equal(
-  cancerMoonScorpio.parts[3],
-  "Because of this, money and questions of worth may come together through the way you handle your work and routines."
-);
-assert.equal(cancerMoonScorpio.body, expectedCancer, "The owner-final Cancer 2H worked example must render byte-for-byte.");
-assert.equal(
-  cancerMoonScorpio.parts[4],
-  "Timing: You may notice more activity here when a transit reaches your Moon or when a current planet moves through your 2nd house."
-);
-assert.equal(
-  moonScorpioPlacementCard.body,
-  moonSixthHouseLivedRow.body,
-  "Reader natal placements must prefer the exact lived house row."
-);
-assert.ok(
-  moonScorpioNamedPlacementCard.body.includes(moonScorpioPlacementRow.body_they),
-  "Named-voice natal placements must continue using the portrait-style placement sentence."
-);
-assert.ok(
-  !moonScorpioPlacementCard.body.includes(moonScorpioMethodRow.body_you),
-  "Ruler-method rows must remain scoped to empty-house M3."
-);
-assert.doesNotMatch(cancerMoonScorpio.body, /\b(?:hurt|pouring|creative)\b/iu, "Cancer/Moon/Scorpio QA assembly must avoid blocked batch strings.");
-assert.equal(
-  browserRenderer.renderNatalEmptyHouse({
-    house: 2,
-    sign: "cancer",
-    primaryRuler: "moon",
-    rulerSign: "scorpio",
-    rulerHouse: 6,
-    voice: "you"
-  }).body,
-  cancerMoonScorpio.body,
-  "Owner-cleared M1/M3 rows must serve without the QA preview bypass."
-);
+const readerEntries = canonical.entries.filter((entry) => entry.category !== "principle");
+const canonicalByKey = new Map(readerEntries.map((entry) => [entry.key, entry]));
+const authoredByKey = new Map(authored.rows.map((row) => [row.corpus_key, row]));
+const friendByKey = new Map(friendReview.rows.map((row) => [row.corpus_key, row]));
+const correctionByKey = new Map(friendCorrections.rows.map((row) => [row.corpus_key, row]));
+const decisionByKey = new Map(friendDecisionAid.rows.map((row) => [row.corpus_key, row]));
+const servingV14Rows = rows.hookRows.filter((row) => row.contentKey.startsWith(prefix));
+const promoted = servingV14Rows.length > 0;
+const effectiveRows = promoted
+  ? rows
+  : { ...rows, hookRows: [...rows.hookRows, ...authored.rows] };
+const sourceRenderer = browserSourceModule.createFallbackRenderer(templates, effectiveRows);
+const renderOpts = promoted ? {} : { allowUnreviewed: true };
 
-for (let house = 1; house <= 12; house += 1) {
-  const jurisdictionRow = vocabularyByKey.get(`fallback-vocab/house-jurisdiction/${house}`);
-  assert.ok(jurisdictionRow, `Missing house-jurisdiction row ${house}.`);
-  assert.doesNotMatch(
-    jurisdictionRow.body,
-    /^(?:about|around|at|by|for|from|in|of|on|through|to|with)\b/iu,
-    `House-jurisdiction ${house} must begin with a bare noun phrase.`
-  );
+assert.equal(readerEntries.length, 541);
+assert.equal(authored.rows.length, 541);
+assert.equal(friendReview.rows.length, 541);
+assert.equal(authored.friend_payload_sha256, friendReview.payload_sha256);
+assert.equal(authored.prior_projection_body_they_digest_sha256, projection.prior_body_they_digest_sha256);
+assert.equal(friendReview.prior_projection_body_they_digest_sha256, projection.prior_body_they_digest_sha256);
+assert.equal(
+  crypto.createHash("sha256").update(JSON.stringify(authored.rows.map(({ corpus_key, body_they }) => ({ corpus_key, body_they })))).digest("hex"),
+  projection.body_they_approval_payload_sha256,
+  "Projection-4 corrected Friend bytes must remain exact."
+);
+assert.equal(approval.payload_sha256, friendReview.payload_sha256);
+assert.equal(approval.row_count, 541);
+assert.equal(PACKAGE_VERSION, promoted ? "v3-2026-08-10c" : "v3-2026-08-10b");
+
+for (const entry of canonical.entries) {
+  assert.equal(entry.owner_approved, true, `${entry.key}: V14 You copy must be owner-approved.`);
+  assert.equal(entry.governance, canonical.governance, `${entry.key}: governance label mismatch.`);
+  if (entry.category.startsWith("empty_house_ruler_")) {
+    assert.notEqual(entry.house, entry.ruler_house, `${entry.key}: an empty house cannot contain its ruler.`);
+  }
 }
 
-const expectedVariantKeys = ["f", "a", "b", "c", "d", "e"];
-const previewM2Bodies = expectedVariantKeys.map((variant, index) => {
-  const house = index + 1;
-  const row = hooksByKey.get(`fallback-hook/empty-house-ruler-v3/${variant}`);
-  assert.equal(row?.review_status, "needs_review", `V3 M2 variant ${variant.toUpperCase()} must remain review-gated.`);
-  return browserRenderer.renderNatalEmptyHouse({
-    house,
-    sign: "cancer",
-    primaryRuler: "moon",
-    rulerSign: "scorpio",
-    rulerHouse: 6,
-    voice: "you"
-  }, { allowUnreviewed: true }).parts[1];
-});
-assert.equal(
-  new Set(previewM2Bodies).size,
-  6,
-  "The six modulo buckets must preview six distinct V3 M2 variants."
-);
-
-const rulerMethodRows = rows.hookRows.filter(
-  (row) => row.contentKey.startsWith("fallback-hook/ruler-method/")
-);
-assert.equal(rulerMethodRows.length, 84, "The complete ruler-method family must contain 84 rows.");
-assert.equal(
-  hooksByKey.get("fallback-hook/ruler-method/moon/aries")?.body_you,
-  "You settle by acting: a fast reaction, a direct answer, and the mood clears as quickly as it came. What throws you most is having to wait.",
-  "The refreshed Moon-in-Aries row must retain the owner-approved wording."
-);
-assert.equal(
-  hooksByKey.get("fallback-hook/ruler-method/jupiter/sagittarius")?.body_you,
-  "You grow by range: travel, study, belief tested against the world, and the bet on meaning over comfort. Faith in the destination is your fuel and your risk.",
-  "The refreshed Jupiter-in-Sagittarius row must retain the owner-approved wording."
-);
-for (const row of rulerMethodRows) {
-  const [, , planet, sign] = row.contentKey.split("/");
-  assert.equal(row.review_status, "approved", `${row.contentKey}: owner approval must be recorded.`);
-  assert.deepEqual(
-    row.source_keys,
-    [
-      `cc/planet-in-sign/${planet}-in-${sign}`,
-      `book/201419935-a-spiritual-approach-to-astrology/${planet}-in-the-signs/${sign}`
-    ],
-    `${row.contentKey}: both source anchors must be retained.`
-  );
-  assert.doesNotMatch(
-    `${row.body_you} ${row.body_they}`,
-    /\b(?:guided|sits|ruled|handle|notice|house|timing)\b/iu,
-    `${row.contentKey}: frame words belong to the renderer, not M3.`
-  );
-  assert.doesNotMatch(
-    row.body_they,
-    /\b(?:you|your|yours|yourself)\b/iu,
-    `${row.contentKey}: friend voice must not leak second person.`
-  );
+for (const entry of readerEntries) {
+  const row = authoredByKey.get(entry.key);
+  assert.ok(row, `${entry.key}: missing authored projection.`);
+  assert.equal(row.body_you, entry.copy_you, `${entry.key}: owner-approved You bytes changed.`);
+  assert.ok(row.body_they?.trim(), `${entry.key}: missing explicit Friend variant.`);
+  assert.doesNotMatch(row.body_they, /\b(?:you|your|yours|yourself)\b/iu, `${entry.key}: Friend copy leaks second person.`);
+  assert.equal(row.body_you_review_status, "approved");
+  assert.equal(row.body_they_review_status, promoted ? "approved" : "needs_review");
+  assert.equal(row.review_status, promoted ? "approved" : "needs_review");
+  assert.equal(row.governance, canonical.governance);
+  assert.equal(row.version, canonical.version);
+  assert.equal(row.judge_verdict, "pending");
+  const correction = correctionByKey.get(entry.key);
+  const decision = decisionByKey.get(entry.key);
+  if (correction) {
+    assert.equal(row.body_they, correction.body_they, `${entry.key}: owner-adopted correction changed.`);
+    assert.equal(row.body_they_flag_disposition, "corrected_wording_adopted");
+    assert.equal(decision?.verdict, "corrected_wording_proposed");
+    assert.match(row.body_they_flag, /^corrected wording adopted by owner 2026-08-10/u);
+  } else if (decision) {
+    assert.equal(decision.verdict, "approve_as_is");
+    assert.equal(row.body_they, decision.body_they_drafted, `${entry.key}: approved-as-is Friend wording changed.`);
+    assert.equal(row.body_they_flag, decision.flag);
+    assert.equal(row.body_they_flag_disposition, "approve_as_is");
+  } else {
+    assert.equal(row.body_they_flag, null);
+    assert.equal(row.body_they_flag_disposition, null);
+  }
+  assert.deepEqual(row.source, {
+    archive: entry.archive,
+    page_ref: entry.page_ref,
+    workbook_sha256: canonical.source_workbook_sha256,
+    sheet: entry.source_sheet,
+    row: entry.source_row,
+  });
+  assert.deepEqual(friendByKey.get(entry.key).flags, []);
+  assert.doesNotMatch(row.body_they, /\b(?:place|test|know|knows|prove|proves|proving|places) them (?:return|are|were|know|have|will|can|matter|live|go)\b/iu);
+  assert.doesNotMatch(row.body_they, /\bfollowing they\b/iu);
 }
 
-let parityCount = 0;
-const repeatedClosingSentences = new Map();
+assert.equal(
+  effectiveRows.hookRows.filter((row) => row.contentKey.startsWith(prefix)).length,
+  541,
+  "Exactly 541 V14 rows belong in the serving projection; principles remain review-only."
+);
+assert.equal(
+  effectiveRows.hookRows.filter((row) => row.contentKey.includes("principle")).length,
+  0,
+  "Principles must not become reader-serving hooks."
+);
+
+function corpusKeyForRuler(house, sign, ruler, rulerHouse) {
+  if (house === 1) return `empty-1st|${sign}|${ruler}-in-${ordinal(rulerHouse)}`;
+  const exact = `empty-${ordinal(house)}|${ruler}-in-${ordinal(rulerHouse)}`;
+  return canonicalByKey.has(exact) ? exact : `empty-${ordinal(house)}|ruler-in-${ordinal(rulerHouse)}`;
+}
+
+let renderCount = 0;
+let exactExampleCount = 0;
+let genericFallbackCount = 0;
+const selectedModernKeys = new Set();
 for (let house = 1; house <= 12; house += 1) {
   for (const sign of signs) {
-    const cuspRow = hooksByKey.get(`fallback-hook/house-cusp/${sign}`);
-    assert.equal(cuspRow?.review_status, "approved", `${sign} house-cusp row must be reader-serving.`);
-    assert.doesNotMatch(
-      `${cuspRow?.body_you ?? ""} ${cuspRow?.body_they ?? ""}`,
-      /(^|[^{])\{(?:houseOrdinal|houseTopic)\}(?!\})/u,
-      `${sign} house-cusp row must use double-brace slots.`
-    );
-    for (const voice of ["you", "Sofia"]) {
-      const primaryRuler = primaryRulers[sign];
-      const modernRuler = modernRulers[sign] ?? "pluto";
-      const facts = {
-        house,
-        sign,
-        primaryRuler,
-        modernRuler,
-        ruler: modernRuler,
-        rulerSign: "capricorn",
-        rulerHouse: ((house + 3) % 12) + 1,
-        voice
-      };
-      const browserResult = browserRenderer.renderNatalEmptyHouse(facts);
-      const nodeResult = renderNatalEmptyHouseNode(facts);
-      const houseTopic = vocabularyByKey.get(`fallback-vocab/house-topic/${house}`)?.body;
-      const placementLine = hooksByKey.get(
-        `fallback-hook/ruler-method/${primaryRuler}/capricorn`
-      )?.[voice === "you" ? "body_you" : "body_they"];
-      const rulerReference = rulerReferences[primaryRuler] ?? title(primaryRuler);
-      const rulerHouseJurisdiction = vocabularyByKey.get(
-        `fallback-vocab/empty-house-ruler-jurisdiction/${facts.rulerHouse}`
-      )?.body ?? vocabularyByKey.get(
-        voice === "you"
-          ? `fallback-vocab/house-jurisdiction/${facts.rulerHouse}`
-          : `fallback-vocab/house-jurisdiction-they/${facts.rulerHouse}`
-      )?.body ?? vocabularyByKey.get(`fallback-vocab/house-jurisdiction/${facts.rulerHouse}`)?.body;
-      const possessive = voice === "you" ? "your" : "their";
-      const expectedM2 = `Because ${title(sign)} is ruled by ${rulerReference}, what happens here is guided by where ${possessive} ${title(primaryRuler)} sits: in Capricorn, in ${possessive} ${ordinal(facts.rulerHouse)} house of ${rulerHouseJurisdiction}.`;
-      const bridgeLead = hooksByKey.get(
-        `fallback-hook/empty-house-bridge/${house}`
-      )?.[voice === "you" ? "body_you" : "body_they"];
-      const emptyHouseRulerTopic = vocabularyByKey.get(
-        `fallback-vocab/empty-house-ruler-topic/${facts.rulerHouse}`
-      )?.body;
-      const rulerHouseTopic = emptyHouseRulerTopic
-        ? `${possessive} ${emptyHouseRulerTopic}`
-        : vocabularyByKey.get(`fallback-vocab/house-topic/${facts.rulerHouse}`)?.body;
+    const ruler = modernRulers[sign];
+    for (let rulerHouse = 1; rulerHouse <= 12; rulerHouse += 1) {
+      if (rulerHouse === house) continue;
+      const rulerCorpusKey = corpusKeyForRuler(house, sign, ruler, rulerHouse);
+      const expectedRuler = canonicalByKey.get(rulerCorpusKey);
+      assert.ok(expectedRuler, `${house}/${sign}/${ruler}-in-${rulerHouse}: missing ruler coverage.`);
+      if (expectedRuler.category === "empty_house_ruler_generic") genericFallbackCount += 1;
+      else exactExampleCount += 1;
 
-      assert.deepEqual(browserResult, nodeResult, `${house}/${sign}/${voice}: browser/Node parity`);
-      assert.equal(browserResult.parts.length, 5, `${house}/${sign}/${voice}: five movements`);
-      assert.equal(browserResult.parts[1], expectedM2, `${house}/${sign}/${voice}: primary-ruler M2`);
-      assert.equal(
-        browserResult.parts[2],
-        placementLine,
-        `${house}/${sign}/${voice}: M3 must preserve the dual-voice placement sentence`
-      );
-      assert.equal(
-        browserResult.parts[3],
-        `Because of this, ${bridgeLead.replace(/^./, (character) => character.toLowerCase())} through the way ${voice === "you" ? "you" : "they"} handle ${rulerHouseTopic}.`,
-        `${house}/${sign}/${voice}: M4 must use the source-house bridge and compact ruler-house topic`
-      );
-      assert.equal(
-        browserResult.parts[4],
-        `Timing: ${voice === "you" ? "You" : "They"} may notice more activity here when a transit reaches ${possessive} ${title(primaryRuler)} or when a current planet moves through ${possessive} ${ordinal(house)} house.`,
-        `${house}/${sign}/${voice}: M5 must keep the labeled timing frame`
-      );
-      assert.equal(
-        occurrences(browserResult.body, houseTopic),
-        1,
-        `${house}/${sign}/${voice}: house jurisdiction must render exactly once`
-      );
-      assert.equal(
-        occurrences(browserResult.body, rulerHouseJurisdiction),
-        1,
-        `${house}/${sign}/${voice}: ruler-house full jurisdiction must render exactly once`
-      );
-      assert.doesNotMatch(
-        browserResult.body,
-        /(?:—|--)/u,
-        `${house}/${sign}/${voice}: assembled punctuation gate`
-      );
-      assert.doesNotMatch(
-        browserResult.body,
-        /story of this house|surface there|takes its cues|gets lit up|this side of (?:your|their) life|asks for real decisions|answers to/iu,
-        `${house}/${sign}/${voice}: retired empty-house language`
-      );
-      assert.doesNotMatch(
-        browserResult.parts[1],
-        /\b(?:Mars|Saturn|Jupiter)\s+and\s+(?:Pluto|Uranus|Neptune)\b/u,
-        `${house}/${sign}/${voice}: M2 must not include a modern co-ruler`
-      );
-      const closingSentence = browserResult.parts[4];
-      const closingCount = repeatedClosingSentences.get(closingSentence) ?? 0;
-      repeatedClosingSentences.set(closingSentence, closingCount + 1);
-      parityCount += 1;
+      for (const voice of ["you", "Friend"]) {
+        const result = sourceRenderer.renderNatalEmptyHouse({
+          house,
+          sign,
+          primaryRuler: ruler,
+          rulerHouse,
+          voice,
+        }, renderOpts);
+        const base = authoredByKey.get(`empty-${ordinal(house)}`);
+        const signRow = authoredByKey.get(`empty-${ordinal(house)}|${sign}`);
+        const rulerRow = authoredByKey.get(rulerCorpusKey);
+        const field = voice === "you" ? "body_you" : "body_they";
+
+        assert.equal(result.note, base[field], `${house}/${sign}/${rulerHouse}/${voice}: base essay.`);
+        assert.deepEqual(result.parts, [signRow[field], rulerRow[field]], `${house}/${sign}/${rulerHouse}/${voice}: sign then ruler.`);
+        assert.equal(result.body, result.parts.join("\n\n"));
+        assert.equal(result.templateKey, "fallback-template/natal.empty-house-v14");
+        assert.deepEqual(result.sourceKeys, [base.contentKey, signRow.contentKey, rulerRow.contentKey]);
+        result.sourceKeys.forEach((key) => selectedModernKeys.add(key));
+        renderCount += 1;
+      }
     }
   }
 }
 
-assert.equal(parityCount, 288);
-for (const [sentence, count] of repeatedClosingSentences) {
-  if (count > 1) {
-    assert.match(sentence, /^Timing:/u, "Only labeled Timing lines may repeat as final sentences.");
-  }
+assert.equal(renderCount, 3168, "All 1,584 modern-ruler fact combinations must render in both voices.");
+assert.equal(exactExampleCount, 308, "House-1 specifics and matching planet examples must win when exact keys exist.");
+assert.equal(genericFallbackCount, 1276, "Generic ruler-house rows must carry uncovered houses 2–12 combinations.");
+assert.equal(selectedModernKeys.size, 541, "Every V14 serving row must be reachable under the modern launch map.");
+assert.deepEqual(
+  effectiveRows.hookRows
+    .filter((row) => row.contentKey.startsWith(prefix) && !selectedModernKeys.has(row.contentKey))
+    .map((row) => row.contentKey),
+  [],
+  "The modern launch map must leave zero unreachable V14 serving rows."
+);
+
+for (let house = 1; house <= 12; house += 1) {
+  assert.throws(
+    () => sourceRenderer.renderNatalEmptyHouse({
+      house,
+      sign: signs[house - 1],
+      primaryRuler: modernRulers[signs[house - 1]],
+      rulerHouse: house,
+      voice: "you",
+    }, renderOpts),
+    browserSourceModule.SourceGapError,
+    `House ${house}: same-house ruler placement must be unreachable.`
+  );
 }
 
-const mercuryMethod = hooksByKey.get("fallback-hook/ruler-method/mercury/pisces")?.body_you;
-const geminiMercuryCard = browserRenderer.renderNatalEmptyHouse({
-  house: 3,
-  sign: "gemini",
-  primaryRuler: "mercury",
-  rulerSign: "pisces",
-  rulerHouse: 10,
-  rulerOccurrence: 1,
-  voice: "you"
-});
-const virgoMercuryCard = browserRenderer.renderNatalEmptyHouse({
-  house: 6,
-  sign: "virgo",
-  primaryRuler: "mercury",
-  rulerSign: "pisces",
-  rulerHouse: 10,
-  rulerOccurrence: 2,
-  voice: "you"
-});
-assert.equal(geminiMercuryCard.parts.length, 5, "The first Mercury-ruled empty house keeps M3.");
-assert.equal(virgoMercuryCard.parts.length, 4, "The second Mercury-ruled empty house suppresses M3.");
-assert.equal(
-  occurrences(`${geminiMercuryCard.body} ${virgoMercuryCard.body}`, mercuryMethod),
-  1,
-  "A shared Mercury method row must render once across Gemini- and Virgo-cusp cards."
-);
-assert.equal(
-  virgoMercuryCard.parts[2],
-  "Because Virgo is also ruled by Mercury, the same pattern applies: routines and health habits may take shape through the way you handle career, reputation, and public role.",
-  "The second shared-ruler card must use the owner-approved same-pattern M4 frame."
-);
-assert.deepEqual(
-  virgoMercuryCard,
-  renderNatalEmptyHouseNode({
-    house: 6,
-    sign: "virgo",
-    primaryRuler: "mercury",
-    rulerSign: "pisces",
-    rulerHouse: 10,
-    rulerOccurrence: 2,
-    voice: "you"
-  }),
-  "Shared-ruler suppression must retain browser/Node parity."
-);
-assert.match(
-  appSource,
-  /function emptyHouseRulerOccurrence[\s\S]*?emptyHouses[\s\S]*?currentRuler[\s\S]*?candidate <= house[\s\S]*?\.length \|\| 1;/u,
-  "The app must compute a ruler occurrence from each profile's ordered empty-house set."
-);
-assert.equal(
-  occurrences(appSource, "rulerOccurrence: emptyHouseRulerOccurrence"),
-  2,
-  "Both empty-house card and detail surfaces must pass the shared-ruler occurrence into the package."
-);
+const traditionalBacklogKeys = [];
+for (const [sign, traditionalRuler] of Object.entries(traditionalOuterRulers)) {
+  assert.throws(
+    () => sourceRenderer.renderNatalEmptyHouse({ house: 1, sign, primaryRuler: traditionalRuler, rulerHouse: 2, voice: "you" }, renderOpts),
+    browserSourceModule.RoleViolationError,
+    `${sign}: Phase 1 must reject a traditional ruler passed into the modern contract.`
+  );
+  for (let rulerHouse = 2; rulerHouse <= 12; rulerHouse += 1) {
+    const neededKey = `fallback-hook/empty-house/rising-ruler/${sign}/${traditionalRuler}/${rulerHouse}`;
+    traditionalBacklogKeys.push(neededKey);
+    assert.ok(
+      !effectiveRows.hookRows.some((row) => row.contentKey === neededKey),
+      `${neededKey}: traditional house-1 wording must remain owner-to-author.`
+    );
+    assert.throws(
+      () => sourceRenderer.renderNatalEmptyHouse({
+        house: 1,
+        sign,
+        primaryRuler: traditionalRuler,
+        rulerHouse,
+        rulerSystem: "traditional",
+        voice: "you",
+      }, renderOpts),
+      browserSourceModule.SourceGapError,
+      `${neededKey}: missing traditional house-1 content must produce SOURCE_GAP.`
+    );
+  }
+  const traditionalNonHouse1 = sourceRenderer.renderNatalEmptyHouse({
+    house: 2,
+    sign,
+    primaryRuler: traditionalRuler,
+    rulerHouse: 3,
+    rulerSystem: "traditional",
+    voice: "you",
+  }, renderOpts);
+  assert.equal(traditionalNonHouse1.parts.length, 2, `${sign}: generic coverage should support traditional houses 2–12.`);
+}
+assert.equal(traditionalBacklogKeys.length, 33);
+assert.deepEqual(projection.traditional_authoring_backlog.rising_rulers, traditionalOuterRulers);
+assert.equal(new Set(traditionalBacklogKeys).size, 33);
 
-console.log("empty-house V3 passed: 84 approved method rows, exact Cancer example, shared-ruler suppression, 288/288 parity, and jurisdiction gates");
+assert.match(appSource, /const activeEmptyHouseRulerSystem: EmptyHouseRulerSystem = "modern"/u);
+assert.match(appSource, /const emptyHouseV14ModernSignRulers[\s\S]*?Scorpio: "Pluto"[\s\S]*?Aquarius: "Uranus"[\s\S]*?Pisces: "Neptune"/u);
+assert.match(appSource, /emptyHouseSignRulersBySystem[\s\S]*?traditional: traditionalSignRulers/u);
+assert.match(appSource, /function emptyHouseContext[\s\S]*?emptyHouseSignRulersBySystem\[activeEmptyHouseRulerSystem\]\[sign\][\s\S]*?positions\.find\(\(candidate\) => candidate\.planet === ruler\)/u);
+assert.doesNotMatch(appSource, /rulerOccurrence: emptyHouseRulerOccurrence/u);
+
+if (promoted) {
+  assert.equal(servingV14Rows.length, 541);
+  assert.equal(approval.status, "approved");
+  const distRenderer = createDistRenderer(templates, rows);
+  for (const facts of [
+    { house: 1, sign: "scorpio", primaryRuler: "pluto", rulerHouse: 9, voice: "you" },
+    { house: 1, sign: "aquarius", primaryRuler: "uranus", rulerHouse: 6, voice: "Friend" },
+    { house: 2, sign: "aries", primaryRuler: "mars", rulerHouse: 11, voice: "you" },
+    { house: 2, sign: "pisces", primaryRuler: "neptune", rulerHouse: 7, voice: "Friend" },
+    { house: 12, sign: "leo", primaryRuler: "sun", rulerHouse: 3, voice: "you" },
+  ]) {
+    const sourceResult = sourceRenderer.renderNatalEmptyHouse(facts);
+    assert.deepEqual(distRenderer.renderNatalEmptyHouse(facts), sourceResult, "Dist/source parity.");
+    assert.deepEqual(renderNatalEmptyHouseNode(facts), sourceResult, "Node/source parity.");
+  }
+  assert.throws(
+    () => renderNatalEmptyHouseNode({ house: 1, sign: "scorpio", primaryRuler: "mars", rulerHouse: 2, voice: "you" }),
+    NodeRoleViolationError
+  );
+  assert.throws(
+    () => renderNatalEmptyHouseNode({ house: 2, sign: "aries", primaryRuler: "mars", rulerHouse: 2, voice: "you" }),
+    NodeSourceGapError
+  );
+} else {
+  assert.equal(servingV14Rows.length, 0, "Unapproved Friend rows must not enter the serving source store.");
+  assert.equal(approval.status, "needs_review");
+  assert.equal(authored.distribution_state, "staged");
+}
+
+console.log(`empty-house V14 modern passed: 550 governed rows, 541 serving projections, ${renderCount} dual-voice renders, ${promoted ? "dist/browser/Node parity" : "Friend approval still gated"}`);

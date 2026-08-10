@@ -1,0 +1,175 @@
+{
+ "note": "Patch payload: 34 corrected body_they rows. Apply over the drafted payload if the owner adopts the corrections.",
+ "rows": [
+  {
+   "corpus_key": "empty-1st",
+   "contentKey": "fallback-hook/empty-house/base/1",
+   "body_they": "The 1st house is how they arrive. Before anyone knows their history, people see their pace, expression, body language, and how quickly they take up space or hold back. Those first impressions change how people respond to them: who approaches, who waits for them to lead, and what others assume they can handle. An empty 1st house does not make them less visible. Follow the ruler of the rising sign to see where their identity gets shaped and where changes elsewhere in life are most likely to show up in the way they carry themselves."
+  },
+  {
+   "corpus_key": "empty-7th",
+   "contentKey": "fallback-hook/empty-house/base/7",
+   "body_they": "The 7th house is where another person can change the plan. A partner says no, a client wants different terms, a contract adds a condition, or the person sharing their life has needs that cannot be solved by pretending they are still making the decision alone. This house covers marriage, long-term partners, business partnerships, advisors, lawyers, rivals, and open conflicts because all of them require dealing with somebody else's position. The 7th house is empty, so the ruler of the Descendant shows what partnership keeps getting tied to and where agreements start carrying concrete consequences."
+  },
+  {
+   "corpus_key": "empty-11th",
+   "contentKey": "fallback-hook/empty-house/base/11",
+   "body_they": "The 11th house is where the people between them and the future matter. A friend forwards the job, a group introduces them to someone useful, a team finally gives the idea enough people to work, or an unreliable collaborator delays a goal that could not be finished alone. This house covers friends, groups, communities, allies, and long-range plans because other people often determine which possibilities become reachable. The 11th house is empty, so its ruler shows what their hopes depend on and where friendship or group life changes what happens next."
+  },
+  {
+   "corpus_key": "empty-2nd|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/2/capricorn",
+   "body_they": "They usually want the money to last. They may save patiently, inspect an investment before committing, and choose durability over a quick thrill. A plan feels better when it can survive contact with the calendar and the bank account. Building wealth may be slow because they would rather trust effort than luck. The trap comes when every expense has to audition for the right to exist."
+  },
+  {
+   "corpus_key": "empty-2nd|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/2/pisces",
+   "body_they": "Money can be easier to feel than to pin down. They may earn through music, images, caregiving, spiritual work, or another skill that depends on imagination and sensitivity. The trouble starts when a beautiful idea arrives without a clear price, contract, or payment date. The inspiration can stay. The numbers belong in writing before they trust the offer."
+  },
+  {
+   "corpus_key": "empty-4th|aquarius",
+   "contentKey": "fallback-hook/empty-house/sign/4/aquarius",
+   "body_they": "Their household may work by rules that make perfect sense to the people inside it and very little sense to anybody else. Chosen family, unusual living arrangements, a house full of technology, or sudden changes in where and how they live can all make home feel less traditional from the beginning. They can love relatives deeply and still need more distance than the relatives expect. The home works best when difference is allowed without turning emotional closeness into a requirement nobody can actually meet."
+  },
+  {
+   "corpus_key": "empty-5th|libra",
+   "contentKey": "fallback-hook/empty-house/sign/5/libra",
+   "body_they": "They like pleasure to have some beauty and mutuality in it. They may spend time choosing the restaurant, the outfit, the playlist, or the right words because the atmosphere is part of what makes the experience enjoyable. High standards can make romance and creative work feel refined. Those standards can also leave them comparing a real person or project with the version they imagined and postponing a choice that cannot be made perfectly."
+  },
+  {
+   "corpus_key": "empty-6th|virgo",
+   "contentKey": "fallback-hook/empty-house/sign/6/virgo",
+   "body_they": "Systems can become part of how they keep stress from multiplying. They notice the missing step, organize the schedule, remember the detail, and often prevent a problem before anybody else knows it was coming. That competence can make them indispensable. It can also mean more and more work finds them because people know whatever they drop will be caught. Digestion, diet, and health routines can require more attention here."
+  },
+  {
+   "corpus_key": "empty-6th|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/6/capricorn",
+   "body_they": "Coworkers learn quickly who will handle the difficult part of the job. They can tolerate long hours, strict systems, and slow progress because responsibility gives the day structure, which can eventually bring more authority. It can also teach everyone else to leave the unpleasant task with them. The bones, skin, knees, and teeth may be more sensitive areas, and overwork becomes the larger problem when competence keeps being rewarded with more to carry."
+  },
+  {
+   "corpus_key": "empty-7th|cancer",
+   "contentKey": "fallback-hook/empty-house/sign/7/cancer",
+   "body_they": "They pay attention to who makes the relationship feel livable at home. Somebody remembers what they need from the store, notices when they are exhausted, or takes care of the practical detail without turning it into a favor that is now owed. Cancer or Capricorn may show up strongly in a partner\u2019s chart, so care and responsibility can become two sides of the same agreement. The relationship gets harder when one person is always doing the remembering and the other gets to remain the guest."
+  },
+  {
+   "corpus_key": "empty-7th|leo",
+   "contentKey": "fallback-hook/empty-house/sign/7/leo",
+   "body_they": "They want to feel that the person beside them is genuinely glad to have them in their life. That person celebrates the win, introduces them with warmth, or makes it obvious that their presence matters instead of treating appreciation like something they should infer. Leo or Aquarius may show up strongly in a partner\u2019s chart, bringing either more visible affection or a stronger need for friendship and independence inside commitment. Admiration helps the bond. It becomes exhausting when the relationship has to look impressive before it can feel good."
+  },
+  {
+   "corpus_key": "empty-8th|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/8/capricorn",
+   "body_they": "Intimacy and shared money can become serious business. The 8th gets literal around the tax form, the loan, the shared account, the will, the secret, or the moment somebody expects to be trusted with something costly. They may be cautious about physical vulnerability and dependable with financial responsibilities. They may also live a long life, but control is the more immediate issue: feelings can take longer to show when consequences matter this much."
+  },
+  {
+   "corpus_key": "empty-10th|aries",
+   "contentKey": "fallback-hook/empty-house/sign/10/aries",
+   "body_they": "They do not need much time to decide when the work clearly needs movement. The stalled project gets a volunteer, the urgent problem finally has an owner, or the team stops debating because somebody is finally willing to make the first call. That initiative can move them toward leadership or physically demanding fields where acting matters more than polishing the plan. The friction usually starts when a boss wants permission to matter more than the result."
+  },
+  {
+   "corpus_key": "empty-10th|cancer",
+   "contentKey": "fallback-hook/empty-house/sign/10/cancer",
+   "body_they": "A client remembers the person who noticed what mattered to them. A guest feels looked after, a team trusts them with the sensitive situation, or somebody comes back because the work felt human instead of processed. That reputation can open doors in hospitality, property, food, caregiving, and other fields where care changes the experience. Home and family can redirect the career too, especially when private responsibilities change how much public work they can reasonably hold."
+  },
+  {
+   "corpus_key": "empty-10th|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/10/pisces",
+   "body_they": "A client cannot quite explain what they want, but they understand the mood before the client finds the words. They may notice what a team is avoiding, make something artistic that communicates more than a long report, or do work where sensitivity itself becomes part of the skill. That receptivity can create professional value. It becomes expensive when being open to what everybody needs quietly turns into absorbing stress and tasks nobody actually assigned them."
+  },
+  {
+   "corpus_key": "empty-11th|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/11/capricorn",
+   "body_they": "A small number of friendships can become unusually consequential. One older colleague may introduce them to the person who changes their career, or a long-standing friend may be the one who helps a difficult plan become possible because that friend has watched them work for years. Status and responsibility can enter friendship more than they expect. The circle may be small, but each tie can carry enough weight that losing one changes more than their weekend plans."
+  },
+  {
+   "corpus_key": "empty-11th|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/11/pisces",
+   "body_they": "They can care about a friend\u2019s crisis almost as if it were their own. That compassion can create beautiful communities around art, spirituality, service, or people who do not feel at home elsewhere. It can also make rescue feel a lot like friendship, especially when somebody always needs something and they are always the one who understands. Devotion matters. So does noticing what the relationship keeps costing."
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-7th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/taurus/venus/7",
+   "body_they": "Being loved can become easier to believe when another person shows it consistently. That person makes the plan, remembers what matters to them, shares the expense without making them ask, or simply keep choosing the relationship after the first excitement is gone. Partnership may come early, and Taurus or Scorpio can show up strongly in the other person\u2019s chart through either practical reliability or a more private, intense approach to trust. The relationship can strengthen their sense of value. It should not have to become the only place they know they have it."
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-12th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/cancer/moon/12",
+   "body_they": "They may keep feelings private until the house is quiet enough for the feelings to catch up with them. A family memory returns in a dream, an old story gets louder after everybody leaves, or they realize how much of the day they spent absorbing somebody else\u2019s mood. Institutions and behind-the-scenes care work may draw out their compassion too. Past-life material may feel tied to a feminine role. Solitude helps when it gives the feeling somewhere to go instead of somewhere to hide."
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-5th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/virgo/mercury/5",
+   "body_they": "Attraction often begins with the mind. They may be selective, drawn to younger or intellectually interesting partners, and quick to notice what is not working in romance. Boredom can shorten a relationship, and criticism can do the same. Children and lovers do not need to pass an exam to be loved, even when they can see exactly how each could improve."
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-5th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/pisces/neptune/5",
+   "body_they": "They can fall in love with the atmosphere before they know the person. Music, theater, art, dance, fantasy, and romance can pull them completely into the experience, which makes creativity feel almost effortless when inspiration is strong. The same imagination can keep a relationship beautiful in their head after the evidence has started saying something else. The dream can stay. The actual person just has to stay visible inside it."
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-7th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/pisces/neptune/7",
+   "body_they": "They can see the best version of a partner very early. The kindness feels significant, the connection feels fated, or they understand the partner's pain well enough that they start making room for who that person might become instead of only who they are now. Virgo or Pisces may appear strongly in the partner\u2019s chart through either practical attentiveness or unusual sensitivity. Love can be generous here. It gets confusing when hope keeps rewriting behavior they have already seen more than once."
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-8th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/pisces/neptune/8",
+   "body_they": "Intuition and imagination can become especially strong around intimacy and shared money. Romantic fantasy may be powerful, but so can confusion, dishonesty, or wishful thinking when another person's finances are involved. A feeling can be meaningful without being evidence. The loan, account, inheritance, or agreement should be clear enough that nobody has to guess what was promised."
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/3/1",
+   "body_they": "What they are thinking is rarely a secret, because they have already started saying it. They ask the question, tell the story, answer the message, or volunteer the explanation before the conversation has warmed up. Errands, siblings, short trips, and ordinary exchanges can keep the whole day moving. That quick mind makes connection easy. It also means the first sentence may land before they have decided if it is the sentence they meant to keep."
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-10th",
+   "contentKey": "fallback-hook/empty-house/ruler-house/4/10",
+   "body_they": "Family and career can pull on the same rope. A parent's advice or approval may matter, and public image may include wanting to come from a solid or respectable family background. The r\u00e9sum\u00e9, the promotion, the deadline, the person signing off, and who gets thanked when the work lands all tell the story. Career and home can also compete for time. The useful question is which responsibility is actually theirs today, not which side can make them feel more guilty."
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/4/1",
+   "body_they": "People may be able to see their family history before being told much about it. The way they host, protect their space, talk about where they are from, or react when home feels unstable can become part of how others know them. Family can be a strong foundation for identity. It becomes limiting when the household or a parent\u2019s expectations keep deciding which version of them is allowed to grow."
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-6th",
+   "contentKey": "fallback-hook/empty-house/ruler-house/5/6",
+   "body_they": "Pleasure and work can cross paths. A hobby can become paid work and a coworker can become a date, but once every enjoyable skill gets scheduled, measured, and monetized, the thing that restored them can start feeling like another task. Creative challenge can make the workday feel more alive. The thing to notice is when the enjoyable skill has quietly become another obligation."
+  },
+  {
+   "corpus_key": "empty-3rd|mars-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/3/mars/1",
+   "body_they": "Their opinion often arrives before people have finished wondering what it is. They answer quickly, argue directly, or say the sharp part out loud because holding the point back can feel more uncomfortable than dealing with the reaction. That force can make them persuasive and hard to ignore. The useful pause is only long enough to decide if they want the other person to understand the point or simply feel how angry they are."
+  },
+  {
+   "corpus_key": "empty-6th|saturn-in-10th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/6/saturn/10",
+   "body_they": "Daily work can build directly toward status and authority. They may take responsibility seriously and want a stable professional role. The r\u00e9sum\u00e9, the promotion, the deadline, the person signing off, and who gets thanked when the work lands all tell the story. Success after age thirty and possible help from the 10th-house parent may show up too. Patience can build a career. It does not need to become a reason to stay indefinitely in work that has stopped supporting the life around it."
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/7/1",
+   "body_they": "A partner can become one of the clearest mirrors for how they see themselves. The partner's attention changes their confidence, the partner's criticism lands personally, or the relationship becomes part of the way they introduce their life to other people. They may strongly prefer being partnered. The mirror is useful when it shows them something. It becomes limiting when the relationship is the only place they are allowed to decide who they are."
+  },
+  {
+   "corpus_key": "empty-8th|saturn-in-11th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/8/saturn/11",
+   "body_they": "They may keep a small circle of serious, older, professional, or unusually consequential friends. A group can pool money, support a crisis, or build something together, but shared resources need clear ownership before goodwill turns into confusion about who owes what. Friends can bring responsibility as well as stability, and long-range goals may take patience. They may expect a lot from the people they trust because they take those friends' role in their future seriously."
+  },
+  {
+   "corpus_key": "empty-12th|mercury-in-2nd",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/12/mercury/2",
+   "body_they": "Private work can quietly become income, while an expense they refuse to look at can keep growing in the background. Writing, research, confidential associations, or another intellectual skill may earn money without much public visibility. Hidden costs and private income get harder to manage when the records cannot include what nobody is willing to name. The money has to be visible enough to manage before anxiety invents the balance."
+  },
+  {
+   "corpus_key": "empty-12th|pluto-in-7th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/12/pluto/7",
+   "body_they": "A close relationship can bring private fears to the surface very quickly. They notice who has the information, who decides what gets discussed, or how strongly they react when another person has access to something they normally control. Commitment may repeat the same lesson around trust until the pattern changes, and past-life themes can feel unusually vivid here. Being able to read somebody closely is useful. It still does not tell them what the other person will do with the access they hand over."
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-3rd",
+   "contentKey": "fallback-hook/empty-house/ruler-house/12/3",
+   "body_they": "Their communication style is quiet, intuitive, and deeply perceptive. What stays unsaid in a room can shape the conversation more than the actual dialogue. They might share a private, unspoken bond with a relative or spend hours researching psychology, storytelling, and hidden patterns. Their imagination is powerful, but one unconfirmed assumption can send a simple plan off course. Confirming the facts out loud is how they can tell the difference between intuition and a runaway story."
+  }
+ ]
+}
