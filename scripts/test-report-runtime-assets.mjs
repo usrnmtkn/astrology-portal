@@ -6,14 +6,13 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const vercel = JSON.parse(fs.readFileSync(path.join(repoRoot, "vercel.json"), "utf8"));
 const functionConfig = vercel.functions?.["api/**/*.ts"];
-const expectedIncludeGlob = "{api/_lib/{content-generation.ts,report-*.ts,supabase-report-admin.ts},artifacts/*.md,config/*.json,packages/astro-knowledge/data/manifestation-sets/*.json,tldr-astro-phrasebank/*.md}";
+const expectedIncludeGlob = "{artifacts/*.md,config/*.json,packages/astro-knowledge/data/manifestation-sets/*.json,tldr-astro-phrasebank/*.md}";
 
 assert.ok(functionConfig, "Every TypeScript API function must receive the report runtime include manifest.");
 assert.equal(functionConfig.includeFiles, expectedIncludeGlob, "Vercel report runtime includeFiles must remain the audited single-glob manifest.");
+assert.doesNotMatch(functionConfig.includeFiles, /api\/_lib|\.ts/u, "Compiled API helpers must be traced from emitted .js imports, not shipped as raw TypeScript includeFiles.");
 
 const exactRuntimeAssets = [
-  "api/_lib/content-generation.ts",
-  "api/_lib/supabase-report-admin.ts",
   "artifacts/marie-satori-love-connection-2026-owner-v1.md",
   "artifacts/marie-satori-personal-health-2026-owner-v1.md",
   "artifacts/marie-satori-work-money-2026-owner-v1.md",
@@ -38,14 +37,13 @@ for (const relativePath of exactRuntimeAssets) {
 const reportHelpers = fs.readdirSync(path.join(repoRoot, "api/_lib"))
   .filter((name) => /^report-.*\.ts$/u.test(name))
   .map((name) => `api/_lib/${name}`);
-assert.match(functionConfig.includeFiles, /api\/_lib\/\{content-generation\.ts,report-\*\.ts,supabase-report-admin\.ts\}/u, "Vercel must include every statically imported report helper.");
 assert.ok(reportHelpers.includes("api/_lib/report-billing-window.ts"), "Billing-window helper must remain in the traced report helper set.");
 assert.ok(reportHelpers.includes("api/_lib/report-owner-comparison.ts"), "Owner-comparison helper must remain in the traced report helper set.");
 
 const reportRuntimeSource = reportHelpers
   .map((relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8"))
   .join("\n");
-for (const relativePath of exactRuntimeAssets.filter((item) => !item.startsWith("api/"))) {
+for (const relativePath of exactRuntimeAssets) {
   assert.match(reportRuntimeSource, new RegExp(relativePath.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"), `Runtime asset is no longer referenced by report code: ${relativePath}`);
 }
 
@@ -55,4 +53,4 @@ assert.doesNotMatch(
   "Card mechanism records must not become an implicit report-fulfillment dependency."
 );
 
-console.log(`Report runtime asset contract passed: ${reportHelpers.length} static helpers and ${exactRuntimeAssets.length - 2} runtime-read assets are deployment-traced.`);
+console.log(`Report runtime asset contract passed: ${reportHelpers.length} compiled helpers and ${exactRuntimeAssets.length} runtime-read assets are deployment-traced.`);
