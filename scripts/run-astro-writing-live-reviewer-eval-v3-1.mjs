@@ -56,7 +56,7 @@ const startedAt = new Date().toISOString();
 function writeArtifact(status, error = null) {
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, `${JSON.stringify({
-    version: "card-judge-v3.1-live-evaluation-run-2",
+    version: "card-judge-v3.1-live-evaluation-run-2a",
     status,
     startedAt,
     completedAt: status === "running" ? null : new Date().toISOString(),
