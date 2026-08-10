@@ -1,4 +1,4 @@
-import { reportFulfillmentConfig } from "./report-fulfillment-config.ts";
+import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 
 export type ReportModelUsage = { inputTokens: number; cachedInputTokens?: number; outputTokens: number; totalTokens: number };
 export type ReportModelResult<T> = { value: T; model: string; provider: string; responseId?: string; usage: ReportModelUsage };

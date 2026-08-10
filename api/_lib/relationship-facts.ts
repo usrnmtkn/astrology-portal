@@ -3,7 +3,7 @@ import {
   fetchReportEnvelope,
   type ReportEnvelopeStore,
   type UserReportRow
-} from "./report-envelope.ts";
+} from "./report-envelope.js";
 
 const DEFAULT_TLDRASTRO_API_URL = "https://tldrastro-api-27165565299.us-central1.run.app";
 const HARD_ASPECTS = new Set(["opposition", "square"]);

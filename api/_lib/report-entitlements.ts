@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
-import { birthProfileFromPersistedData, reportBillingWindow, reportWindowFromSelectedStart } from "./report-billing-window.ts";
-import { reportSku, type ReportSku } from "./report-fulfillment-config.ts";
+import { birthProfileFromPersistedData, reportBillingWindow, reportWindowFromSelectedStart } from "./report-billing-window.js";
+import { reportSku, type ReportSku } from "./report-fulfillment-config.js";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.ts";
 
 type PersistedProfileRow = { data: unknown };

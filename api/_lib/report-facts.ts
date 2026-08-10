@@ -3,13 +3,13 @@ import {
   fetchReportEnvelope,
   type ReportEnvelopeStore,
   type UserReportRow
-} from "./report-envelope.ts";
+} from "./report-envelope.js";
 import {
   REPORT_DOMAINS,
   REPORT_HORIZONS,
   type ReportDomain,
   type ReportHorizon
-} from "./report-types.ts";
+} from "./report-types.js";
 
 const DEFAULT_TLDRASTRO_API_URL = "https://tldrastro-api-27165565299.us-central1.run.app";
 
