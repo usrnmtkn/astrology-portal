@@ -5,7 +5,11 @@ import {
   cardJudgeV3Verdict
 } from "./cardJudgeV3.mjs";
 
-export const CARD_JUDGE_V3_1_VERSION = "card-writing-judge-rubric-v3.1-draft";
+export const CARD_JUDGE_V3_1_VERSION = "card-writing-judge-rubric-v3.1";
+export const CARD_JUDGE_V3_1_CALL_BUDGET = 20;
+export const CARD_JUDGE_V3_1_AUTHORIZATION_ENV = "ASTRO_WRITING_V3_1_RUN_AUTHORIZATION";
+export const CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN = "owner-authorized-card-judge-v3-1-run-2-20-calls";
+export const CARD_JUDGE_V3_1_ARTIFACT_PATH = "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json";
 
 export const CARD_JUDGE_V3_1_SCHEMA = Object.freeze({
   type: "object",
@@ -55,7 +59,7 @@ export function buildCardJudgeV31Packet({ mechanismRecord, ...input }) {
 }
 
 export function cardJudgeV31PacketPrompt(rubric, packet) {
-  if (typeof rubric !== "string" || !rubric.includes("**Version:** `card-writing-judge-rubric-v3.1-draft`")) {
+  if (typeof rubric !== "string" || !rubric.includes("**Version:** `card-writing-judge-rubric-v3.1`")) {
     throw new Error("V3.1 card rubric is missing or cross-scoped.");
   }
   return [
@@ -148,4 +152,17 @@ export function validateCardJudgeV31HouseBleed({ candidate, mechanismRecord }) {
     }
   }
   return { findings };
+}
+
+export function assertCardJudgeV31LiveAuthorization({
+  env = process.env,
+  artifactExists = false
+} = {}) {
+  if (artifactExists) {
+    throw new Error("No billed call was made. The card judge v3.1 run-2 authorization token was already consumed by its artifact.");
+  }
+  if (env[CARD_JUDGE_V3_1_AUTHORIZATION_ENV] !== CARD_JUDGE_V3_1_AUTHORIZATION_TOKEN) {
+    throw new Error(`No billed call was made. Set ${CARD_JUDGE_V3_1_AUTHORIZATION_ENV} only after explicit owner authorization naming the 20-call v3.1 run-2 budget.`);
+  }
+  return { authorizedCalls: CARD_JUDGE_V3_1_CALL_BUDGET, retriesAuthorized: 0, run: 2 };
 }

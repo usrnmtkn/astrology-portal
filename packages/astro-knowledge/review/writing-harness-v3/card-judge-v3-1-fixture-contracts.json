@@ -1,12 +1,18 @@
 {
   "version": "card-judge-v3.1-fixture-contracts-2026-08-09",
-  "status": "needs_review",
-  "ownerApproved": false,
-  "activeInHarness": false,
+  "status": "owner_approved",
+  "ownerApproved": true,
+  "activeInHarness": true,
   "activeInProduction": false,
   "promotionAuthorized": false,
   "surface": "card",
-  "fixtureSetStatus": "finalized_for_owner_review",
+  "fixtureSetStatus": "owner_approved",
+  "approvedAt": "2026-08-10",
+  "approvedSourceSha256": {
+    "critiqueChecklist": "ce9c9556e8325fd16d417baf5277e12c05064f89e61fb9cec6f3ffc4dabedf35",
+    "judgeRubric": "13efcb054da3187238d1f58c177c2f11071b58c27f65c5fe4337b2e9966b70ca",
+    "mechanismRecords": "23a1bf1d97daeb66f741b8967d64b702e90518d2ce3dd95f4ee3e297526a68e3"
+  },
   "baseFixtureManifest": "card-judge-v3-paired-fixtures-2026-08-09",
   "mechanismRecordPath": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-mechanism-records.json",
   "comparisonInteriority": {
@@ -56,6 +62,19 @@
     { "sign": "pisces", "status": "planned" }
   ],
   "liveRunAuthorized": false,
+  "liveRunAuthorizationConsumedBy": "packages/astro-knowledge/review/writing-harness-v3/card-judge-v3-1-live-evaluation-run-2.json",
+  "liveRunStatus": "errored_pre_call",
+  "completedCalls": 0,
+  "proposedLiveRun": {
+    "run": 2,
+    "calls": 20,
+    "model": "gpt-5.6-terra",
+    "reasoningEffort": "high",
+    "retries": 0,
+    "positives": 12,
+    "negatives": 8,
+    "authorizedAt": "2026-08-10"
+  },
   "pairs": [
     {
       "id": "aries-generic-prop",
