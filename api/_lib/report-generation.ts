@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.ts";
+import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";

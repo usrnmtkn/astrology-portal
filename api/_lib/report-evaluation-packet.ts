@@ -1,5 +1,5 @@
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
-import { REPORT_LABELED_NEGATIVE_EXAMPLES } from "./report-owner-comparison.ts";
+import { REPORT_LABELED_NEGATIVE_EXAMPLES } from "./report-owner-comparison.js";
 
 type LocatedText = { location: string; text: string; heading: boolean };
 

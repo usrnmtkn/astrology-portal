@@ -1,5 +1,5 @@
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
-import { estimateReportPlanningProfile } from "./report-model-pricing.ts";
+import { estimateReportPlanningProfile } from "./report-model-pricing.js";
 
 export const REPORT_AUTOMATION_RULING_VERSION = "owner-approved-v1";
 export const REPORT_AUTOMATION_RULING_PATH = "tldr-astro-phrasebank/TLDR-REPORT-AUTOMATED-FULFILLMENT-RULING-OWNER.md";

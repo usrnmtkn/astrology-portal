@@ -27,18 +27,19 @@
     "eval:astro-writing:v3.1:run-2c": "node scripts/run-astro-writing-live-reviewer-eval-v3-1-run-2c.mjs",
     "eval:astro-writing": "node scripts/run-astro-writing-evals.mjs",
     "test:report-foundation": "node --experimental-strip-types scripts/test-report-envelope.mjs && node scripts/test-report-attribution.mjs && node scripts/test-report-article-fixture.mjs && node scripts/test-report-foundation-contract.mjs",
-    "test:report-generation": "node --experimental-strip-types scripts/test-report-facts.mjs && node --experimental-strip-types scripts/test-report-generation.mjs",
-    "test:report-fulfillment": "node scripts/test-report-runtime-assets.mjs && node scripts/test-production-report-smoke.mjs && node --experimental-strip-types scripts/test-report-fulfillment.mjs && node --experimental-strip-types scripts/test-report-judge-personal-health.mjs && node --experimental-strip-types scripts/test-report-judge-v3.mjs && node --experimental-strip-types scripts/calibrate-report-judge.mjs",
+    "test:report-generation": "tsx scripts/test-report-facts.mjs && tsx scripts/test-report-generation.mjs",
+    "test:report-fulfillment": "node scripts/test-report-runtime-assets.mjs && node scripts/test-production-report-smoke.mjs && tsx scripts/test-report-fulfillment.mjs && tsx scripts/test-report-judge-personal-health.mjs && tsx scripts/test-report-judge-v3.mjs && tsx scripts/calibrate-report-judge.mjs",
     "smoke:production-report": "node scripts/smoke-production-report-deployment.mjs",
-    "test:report-judge:v3": "node --experimental-strip-types scripts/test-report-judge-v3.mjs",
+    "test:report-judge:v3": "tsx scripts/test-report-judge-v3.mjs",
+    "test:production-health": "node scripts/test-production-api-health.mjs",
     "test:report-judge:v3-draft": "npm run test:report-judge:v3",
-    "calibrate:report-judge:personal-health": "node --experimental-strip-types scripts/test-report-judge-personal-health.mjs --live",
+    "calibrate:report-judge:personal-health": "tsx scripts/test-report-judge-personal-health.mjs --live",
     "qa:report-fulfillment-migration": "node scripts/test-report-fulfillment-migration.mjs",
     "stripe:setup-report-products": "node --experimental-strip-types scripts/setup-stripe-report-products.mjs",
     "qa:report-generation-migration": "node scripts/test-report-horizon-migration.mjs",
     "test:report-foundation:mobile": "node scripts/test-report-article-mobile.mjs",
-    "test:relationship-facts": "node --experimental-strip-types scripts/test-relationship-facts.mjs && node --experimental-strip-types scripts/test-relationship-facts-api.mjs && node scripts/test-relationship-consent-contract.mjs",
-    "qa:relationship-facts-drift": "node --experimental-strip-types scripts/verify-relationship-facts-drift.mjs",
+    "test:relationship-facts": "tsx scripts/test-relationship-facts.mjs && tsx scripts/test-relationship-facts-api.mjs && tsx scripts/test-relationship-consent-contract.mjs",
+    "qa:relationship-facts-drift": "tsx scripts/verify-relationship-facts-drift.mjs",
     "qa:relationship-consent-migration": "node scripts/test-relationship-consent-migration.mjs",
     "test:content:live": "node scripts/test-authored-sky-placement-coverage.mjs --production-read",
     "qa:client-report": "node scripts/run-client-facing-qa-report.mjs",
@@ -124,6 +125,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
-    "@types/node": "^25.9.1"
+    "@types/node": "^25.9.1",
+    "tsx": "^4.23.12"
   }
 }

@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
-import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.ts";
-import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.ts";
-import { loadVersionedReportPrompt, REPORT_JUDGE_PROMPT_PATH } from "./report-prompt-versions.ts";
+import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.js";
+import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
+import { loadVersionedReportPrompt, REPORT_JUDGE_PROMPT_PATH } from "./report-prompt-versions.js";
 
 export const REPORT_JUDGE_CATEGORIES = [
   "astrology_chronology",
