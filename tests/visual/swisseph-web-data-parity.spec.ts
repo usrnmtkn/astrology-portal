@@ -1,10 +1,13 @@
 import fs from "node:fs";
+import { createServer as createNetServer } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
 import SwissEph from "swisseph-wasm";
+import { createServer as createViteServer, type ViteDevServer } from "vite";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const webRoot = path.join(repoRoot, "apps/web");
 const manifest = JSON.parse(
   fs.readFileSync(path.join(repoRoot, "apps/web/dist/.vite/manifest.json"), "utf8")
 ) as Record<string, { file: string }>;
@@ -35,6 +38,54 @@ const pointIds = [
   ["Lilith", 13],
   ["North Node", 11]
 ] as const;
+let devServer: ViteDevServer;
+let devBaseUrl: string;
+
+async function reserveFreePort() {
+  return new Promise<number>((resolvePort, reject) => {
+    const server = createNetServer();
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        server.close();
+        reject(new Error("Could not reserve a local TCP port for the Vite development server."));
+        return;
+      }
+
+      server.close((error) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolvePort(address.port);
+      });
+    });
+  });
+}
+
+test.beforeAll(async () => {
+  const devPort = await reserveFreePort();
+  devServer = await createViteServer({
+    root: webRoot,
+    server: {
+      host: "127.0.0.1",
+      port: devPort,
+      strictPort: true
+    }
+  });
+  await devServer.listen();
+
+  const address = devServer.httpServer?.address();
+  if (!address || typeof address === "string") {
+    throw new Error("Vite development server did not expose a local TCP port.");
+  }
+  devBaseUrl = `http://127.0.0.1:${address.port}`;
+});
+
+test.afterAll(async () => {
+  await devServer?.close();
+});
 
 function normalizeDegrees(value: number) {
   return ((value % 360) + 360) % 360;
@@ -43,6 +94,24 @@ function normalizeDegrees(value: number) {
 function utcHour(date: Date) {
   return date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3_600;
 }
+
+test("Vite development mode serves working Swiss Ephemeris data", async ({ page }) => {
+  test.setTimeout(45_000);
+
+  await page.goto(devBaseUrl, { waitUntil: "domcontentloaded" });
+  const calculated = await page.evaluate(async ({ isoDate, location: requestedLocation }) => {
+    const modulePath = "/src/services/ephemeris.ts";
+    const ephemeris = await import(/* @vite-ignore */ modulePath);
+    return ephemeris.getAstrodienstSky(requestedLocation, new Date(isoDate));
+  }, { isoDate: "1979-02-18T13:24:00.000Z", location });
+
+  expect(calculated.positions.length).toBeGreaterThanOrEqual(pointIds.length);
+  expect(calculated.positions.map((position: { planet: string }) => position.planet)).toEqual(
+    expect.arrayContaining(pointIds.map(([planet]) => planet))
+  );
+  expect(calculated.ascendantLongitude).toBeGreaterThanOrEqual(0);
+  expect(calculated.ascendantLongitude).toBeLessThan(360);
+});
 
 test("trimmed browser Swiss Ephemeris data matches the full package across dates", async ({ page }) => {
   test.setTimeout(45_000);
