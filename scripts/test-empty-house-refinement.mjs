@@ -82,7 +82,8 @@ assert.equal(projection.counts.traditional_rows_to_author, 33);
 assert.equal(projection.counts.friend_corrections_adopted, 34);
 assert.equal(projection.counts.friend_flags_approved_as_is, 31);
 assert.equal(projection.counts.friend_flags_unresolved, 0);
-assert.match(projection.body_they_status, /^drafted \+ 34 owner-adopted corrections/u);
+assert.match(projection.body_they_status, /^owner-approved exact wording/u);
+assert.match(projection.body_they_status, new RegExp(approval.payload_sha256, "u"));
 assert.equal(projection.prior_body_they_digest_sha256, "74e0052ee3c3ce8660b22317b328ad46b01adb97a23e42e1ec48e4ad28f5568d");
 assert.equal(originalFriendFlags.source_body_they_digest_sha256, projection.prior_body_they_digest_sha256);
 assert.equal(Object.keys(originalFriendFlags.flags).length, 65);
@@ -293,6 +294,11 @@ for (const [sign, traditionalRuler] of Object.entries(traditionalOuterRulers)) {
 assert.equal(traditionalBacklogKeys.length, 33);
 assert.deepEqual(projection.traditional_authoring_backlog.rising_rulers, traditionalOuterRulers);
 assert.equal(new Set(traditionalBacklogKeys).size, 33);
+assert.deepEqual(
+  projection.traditional_authoring_backlog.keys,
+  traditionalBacklogKeys,
+  "The review contract must retain all 33 pre-assigned traditional house-1 keys."
+);
 
 assert.match(appSource, /const activeEmptyHouseRulerSystem: EmptyHouseRulerSystem = "modern"/u);
 assert.match(appSource, /const emptyHouseV14ModernSignRulers[\s\S]*?Scorpio: "Pluto"[\s\S]*?Aquarius: "Uranus"[\s\S]*?Pisces: "Neptune"/u);
