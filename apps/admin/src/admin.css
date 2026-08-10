@@ -484,6 +484,42 @@ body,
   flex: 0 0 auto;
 }
 
+.admin-report-feedback {
+  align-items: flex-start;
+  background: rgba(20, 38, 31, 0.72);
+  border: 1px solid rgba(96, 199, 161, 0.52);
+  border-radius: var(--admin-radius-lg);
+  color: rgba(224, 255, 239, 0.96);
+  display: flex;
+  font-size: var(--type-nav-size);
+  font-weight: var(--weight-semibold);
+  gap: var(--admin-space-lg);
+  justify-content: space-between;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: var(--admin-space-lg) var(--admin-space-xl);
+  position: static;
+}
+
+.admin-report-feedback.is-error {
+  background: rgba(58, 27, 24, 0.72);
+  border-color: rgba(215, 106, 91, 0.58);
+  color: rgba(255, 224, 220, 0.96);
+}
+
+.admin-report-feedback p {
+  margin: 0;
+}
+
+.admin-report-feedback button {
+  flex: 0 0 auto;
+}
+
+.admin-report-row-focused {
+  outline: 2px solid rgba(96, 199, 161, 0.72);
+  outline-offset: -2px;
+}
+
 .admin-api-status-card {
   align-items: center;
   background: var(--admin-panel);

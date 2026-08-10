@@ -1,6 +1,25 @@
 import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 
+type AdminResponse = {
+  error?: string;
+  code?: string;
+  entitlementId?: string;
+  reportId?: string | null;
+};
+
+class AdminRequestError extends Error {
+  status: number;
+  code: string;
+
+  constructor(message: string, status: number, code = "") {
+    super(message);
+    this.name = "AdminRequestError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
 type Dashboard = {
   billingMode: "free_test" | "stripe";
   metrics: {
@@ -22,6 +41,8 @@ type Dashboard = {
 export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState<"success" | "error">("success");
+  const [focusedReportId, setFocusedReportId] = useState("");
   const [loading, setLoading] = useState(false);
   const [grant, setGrant] = useState({ userId: "", reportDomain: "general", reportHorizon: "12_months", windowStart: new Date().toISOString().slice(0, 10) });
 
@@ -32,27 +53,61 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
         ...init,
         headers: { authorization: `Bearer ${secret}`, "content-type": "application/json", ...(init?.headers ?? {}) }
       });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error ?? `Request failed with ${response.status}.`);
+      const payload = await response.json() as AdminResponse;
+      if (!response.ok) throw new AdminRequestError(payload.error ?? `Request failed with ${response.status}.`, response.status, payload.code);
       return payload;
     } finally {
       setLoading(false);
     }
   }
 
-  async function load() {
-    try { setDashboard(await request()); setMessage(""); }
-    catch (error) { setMessage(error instanceof Error ? error.message : "Fulfillment metrics unavailable."); }
+  async function load(clearMessage = true) {
+    try {
+      const next = await request() as Dashboard;
+      setDashboard(next);
+      if (clearMessage) setMessage("");
+      return next;
+    } catch (error) {
+      setMessageTone("error");
+      setMessage(error instanceof Error ? error.message : "Fulfillment metrics unavailable.");
+      return null;
+    }
   }
 
   async function action(actionName: string, reportId?: string, entitlementId?: string, extra: Record<string, unknown> = {}) {
     try {
-      await request({ method: "POST", body: JSON.stringify({ action: actionName, reportId, entitlementId, ...extra }) });
-      await load();
-    } catch (error) { setMessage(error instanceof Error ? error.message : "Fulfillment action failed."); }
+      const result = await request({ method: "POST", body: JSON.stringify({ action: actionName, reportId, entitlementId, ...extra }) });
+      const refreshed = await load(false);
+      if (!refreshed) {
+        if (actionName === "grant_comp") {
+          setMessageTone("error");
+          setMessage("The report was granted, but the fulfillment queue could not refresh. Use Refresh before granting anything else.");
+        }
+        return;
+      }
+      if (actionName === "grant_comp") {
+        const grantedReportId = result.reportId
+          ?? refreshed?.reports.find((report) => String(report.entitlement_id) === result.entitlementId)?.id;
+        setFocusedReportId(grantedReportId ? String(grantedReportId) : "");
+        setMessageTone("success");
+        setMessage("Report granted. The fulfillment queue was refreshed and the new report row is focused below.");
+      } else {
+        setMessage("");
+      }
+    } catch (error) {
+      setMessageTone("error");
+      setMessage(error instanceof Error ? error.message : "Fulfillment action failed.");
+    }
   }
 
   useEffect(() => { if (secret) void load(); }, [secret]);
+  useEffect(() => {
+    if (!focusedReportId) return;
+    const row = document.getElementById(`report-row-${focusedReportId}`);
+    if (!row) return;
+    row.scrollIntoView({ behavior: "smooth", block: "center" });
+    row.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true });
+  }, [dashboard, focusedReportId]);
   const metrics = dashboard?.metrics;
 
   return (
@@ -65,7 +120,12 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
           <button type="button" onClick={() => void load()} disabled={loading}><RefreshCw size={16} aria-hidden="true" />Refresh</button>
         </div>
       </section>
-      {message && <p className="admin-save-toast is-error" role="status">{message}</p>}
+      {message && (
+        <div className={`admin-report-feedback ${messageTone === "error" ? "is-error" : ""}`} role={messageTone === "error" ? "alert" : "status"}>
+          <p>{message}</p>
+          <button type="button" onClick={() => setMessage("")} aria-label="Dismiss fulfillment message">Dismiss</button>
+        </div>
+      )}
       <section className="admin-content-toolbar">
         <div><p className="admin-eyebrow">{dashboard?.billingMode === "free_test" ? "Free-test shadow launch" : "Owner-only comp path"}</p><h3>Grant report</h3><p>Creates the fulfillment envelope directly, with no Stripe request, then pauses before any billed model call.</p></div>
         <div className="admin-toolbar-actions">
@@ -111,7 +171,11 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
         <table className="admin-content-table">
           <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Estimated USD</th><th>Attempts</th><th>Last failure</th><th>Actions</th></tr></thead>
           <tbody>{dashboard?.reports.map((report) => (
-            <tr key={String(report.id)}>
+            <tr
+              id={`report-row-${String(report.id)}`}
+              key={String(report.id)}
+              className={focusedReportId === String(report.id) ? "admin-report-row-focused" : ""}
+            >
               <td><code>{String(report.id)}</code></td>
               <td>{String(report.entitlement_source)}</td>
               <td>{String(report.report_domain)}</td><td>{String(report.report_horizon)}</td><td>{String(report.fulfillment_status)}</td>
