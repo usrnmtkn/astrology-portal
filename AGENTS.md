@@ -30,9 +30,15 @@ A writer result remains `needs_review` unless the owner explicitly approves
 the complete exact wording. A judge score, positive direction, or preferred
 line never authorizes governed-content promotion.
 
-## Serving-content flight rule
+## Serving-content merge model (v2 - replaces the flight rule; canonical text in CLAUDE.md)
 
-Before branching, list open PRs touching fallbackArchitectureV3 or packages/astro-knowledge; if any exists, stop and report.
+Open PRs touching `apps/web/src/content/fallbackArchitectureV3/**` or `packages/astro-knowledge/**` do NOT block branching or development. Queue, don't halt:
+
+1. Scope PRs merge one at a time, oldest-ready-first unless the owner reorders. Immediately before merging, rebase onto current main and regenerate all generated artifacts.
+2. Overlap is judged on SOURCE files only. `dist/tldr-content.js`, bundled manifests, and `content-book.html` are generated - never merge them across branches; the merging PR regenerates them from its sources. A conflict exists only when two PRs edit the same source content.
+3. Every scope PR must leave all `review_status: approved` rows byte-identical, unless the PR description quotes the owner's explicit approval for the specific change. Diff the approved rows before merging to verify. Violations are a hard stop.
+4. Stop-and-report is reserved for: (a) a source-file conflict with another open PR that rebasing cannot resolve, (b) any change to approved copy without quoted owner approval, (c) CI failures not on the known pre-existing list. Everything else proceeds through the queue.
+5. A scope PR idle 3+ days must be rebased or closed by its owning session before that session opens another scope PR.
 
 ### Sky aspect surface
 
