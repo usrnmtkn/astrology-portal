@@ -1010,6 +1010,7 @@ export function ManualChartsPanel({
         lifeAreaFocus
       );
   }, [
+    fallbackArchitectureV3Version,
     friendProfileWork.synastryContacts,
     lifeAreaFocus,
     relationshipComparisonIsSelf,

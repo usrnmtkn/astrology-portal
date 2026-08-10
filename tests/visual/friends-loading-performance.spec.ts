@@ -389,9 +389,14 @@ test.describe("Friends loading performance matrix", () => {
         expect(prepared.delayedRelationshipRequests()).toBeGreaterThan(0);
         expect(
           prepared.delayedDeferredFallbackRequests(),
-          "Compatibility must not compete with deferred transit or cross-tab fallback chunks."
-        ).toBe(0);
+          "Compatibility aspect descriptions must request their deferred synastry rows."
+        ).toBeGreaterThan(0);
         await expect(page.locator(".compatibility-card")).toHaveCount(7, {
+          timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs + 5_000
+        });
+        await expect(
+          page.locator(".compatibility-dynamic-row .aspect-row-copy p").first()
+        ).toHaveText(/\S/u, {
           timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs + 5_000
         });
         relationshipEnhancedSamples.push({
