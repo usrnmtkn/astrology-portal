@@ -87,7 +87,9 @@ function getReaderLivedRow(key, voice, { allowUnreviewed = false } = {}) {
   if (voice !== "you") return null;
   const row = hooks.get(key);
   if (!row) return null;
-  if (row.content_role !== "fallback_hook") throw new RoleViolationError(`Row ${key} is not a fallback_hook.`);
+  if (!["fallback_hook", "full_copy"].includes(row.content_role)) {
+    throw new RoleViolationError(`Row ${key} is not a reader-eligible exact-copy role.`);
+  }
   if (!allowUnreviewed && !READER_ELIGIBLE_STATUS.has(row.review_status)) return null;
   if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
     throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
@@ -150,6 +152,7 @@ export function renderNatalPlacement(facts, opts = {}) {
   const voice = facts.voice === "you" ? "you" : "they";
   const exactHouseLived = house
     ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, { allowUnreviewed })
+      ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, { allowUnreviewed })
     : null;
   if (exactHouseLived) {
     return {
@@ -159,7 +162,8 @@ export function renderNatalPlacement(facts, opts = {}) {
       templateKey: exactHouseLived.contentKey,
     };
   }
-  const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed });
+  const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed })
+    ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed });
 
   const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
   const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
@@ -268,7 +272,8 @@ export function renderNatalAspect(facts, opts = {}) {
   const voice = facts.voice === "you" ? "you" : "they";
   const exactLived =
     getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetA}/${aspect}/${planetB}`, voice, { allowUnreviewed })
-    ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetB}/${aspect}/${planetA}`, voice, { allowUnreviewed });
+    ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetB}/${aspect}/${planetA}`, voice, { allowUnreviewed })
+    ?? getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, { allowUnreviewed });
   if (exactLived) {
     return {
       headline: `${title(planetA)} ${aspect} ${title(planetB)}`,
@@ -301,7 +306,7 @@ export function renderNatalAspect(facts, opts = {}) {
   return { headline: mustache(template.headline, ctx), parts: [body], body, templateKey: template.contentKey };
 }
 
-/** Normalize app wording to the six canonical aspect ids ("conjunct" -> "conjunction", etc).
+/** Normalize app wording to the supported canonical aspect ids ("conjunct" -> "conjunction", etc).
  *  Inconjunct normalizes to the engine's canonical quincunx id. */
 export function normalizeAspect(input) {
   const k = input.trim().toLowerCase();
@@ -312,6 +317,8 @@ export function normalizeAspect(input) {
     sextile: "sextile", sext: "sextile",
     opposition: "opposition", opposite: "opposition", opposed: "opposition", oppose: "opposition",
     quincunx: "quincunx", inconjunct: "quincunx",
+    semisextile: "semisextile", "semi-sextile": "semisextile", "semi sextile": "semisextile",
+    nonagen: "nonagen",
   };
   return map[k] ?? null;
 }

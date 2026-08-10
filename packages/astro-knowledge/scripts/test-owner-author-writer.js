@@ -83,9 +83,35 @@ function main() {
     knowledgeMatrixEntries.find((entry) => entry.sourceId === "kmv9-transit-row-2")?.sign,
     ""
   );
-  assert.strictEqual(index.entries.length, 7394);
-  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 6897);
+  const llMatrixV13Entries = index.entries.filter((entry) => entry.origin === "owner-approved-ll-matrix-v13");
+  assert.strictEqual(llMatrixV13Entries.length, 301);
+  assert.deepStrictEqual(
+    llMatrixV13Entries.reduce((counts, entry) => {
+      counts[entry.editorialStatus] = (counts[entry.editorialStatus] ?? 0) + 1;
+      return counts;
+    }, {}),
+    {
+      "owner-approved-v13-direct-language": 194,
+      "owner-lived-experience-ll-v9-owner-approved": 106,
+      "owner-approved-clarity-fix-ll-v12": 1
+    }
+  );
+  assert(llMatrixV13Entries.every((entry) => (
+    entry.authorityClass === "exact_owner_approved"
+    && entry.ownerApproved === true
+    && entry.reviewStatus === "approved"
+    && entry.canonical === true
+    && entry.useAsPositiveVoiceEvidence === true
+    && entry.useAsContextualEvidence === true
+    && ["natal-placement", "natal-aspect"].includes(entry.surface)
+    && entry.sourcePath.endsWith("knowledge-matrix-v13-owner-approved-locked.json")
+  )));
+  assert.strictEqual(index.entries.length, 7695);
+  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 7198);
+  assert.strictEqual(index.summary.contextualEvidenceCount, 3844);
   assert.strictEqual(index.summary.bySurface["sky-placement"], 3816);
+  assert.strictEqual(index.summary.bySurface["natal-placement"], 136);
+  assert.strictEqual(index.summary.bySurface["natal-aspect"], 165);
   const calibrationV3 = index.entries.filter((entry) => entry.sourceId.startsWith("sky-placement-uranus-cancer-collective-owner-approval-candidate-v3:"));
   assert(calibrationV3.length >= 5);
   assert(calibrationV3.every((entry) => entry.authorityClass === "exact_owner_approved" && entry.ownerApproved && !entry.useAsPositiveVoiceEvidence));
