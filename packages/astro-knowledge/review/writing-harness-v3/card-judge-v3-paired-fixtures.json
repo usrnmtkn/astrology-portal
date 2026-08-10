@@ -1,0 +1,99 @@
+{
+  "version": "card-judge-v3-paired-fixtures-2026-08-09",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "surface": "card",
+  "positiveSourcePath": "data/writing/owner-approved-examples.jsonl",
+  "negativeSourcePath": "data/writing/negative-regression-fixtures.jsonl",
+  "proposedLiveRun": {
+    "calls": 20,
+    "goldCalls": 12,
+    "negativeCalls": 8,
+    "retries": 0,
+    "model": "gpt-5.6-terra",
+    "reasoningEffort": "high"
+  },
+  "pairs": [
+    {
+      "id": "aries-generic-prop",
+      "positiveFixtureId": "gold-lilith-aries-v5",
+      "negativeFixtureId": "neg-aries-dishes",
+      "dimension": "generic example replaces mechanism",
+      "replacementField": "lived",
+      "targetCategories": ["stock_trope", "example_proves_astrology"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-taurus-v5", "gold-lilith-gemini-v5", "gold-lilith-cancer-v5"]
+    },
+    {
+      "id": "capricorn-house-bleed",
+      "positiveFixtureId": "gold-lilith-capricorn-v5",
+      "negativeFixtureId": "neg-capricorn-career",
+      "dimension": "associated house domain replaces sign mechanism",
+      "replacementField": "lived",
+      "targetCategories": ["house_bleed"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-sagittarius-v5", "gold-lilith-aquarius-v5", "gold-lilith-pisces-v5"]
+    },
+    {
+      "id": "sagittarius-house-bleed",
+      "positiveFixtureId": "gold-lilith-sagittarius-v5",
+      "negativeFixtureId": "neg-sagittarius-9th",
+      "dimension": "associated house domain replaces sign mechanism",
+      "replacementField": "lived",
+      "targetCategories": ["house_bleed"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-scorpio-v5", "gold-lilith-capricorn-v5", "gold-lilith-aquarius-v5"]
+    },
+    {
+      "id": "pisces-untranslated-metaphor",
+      "positiveFixtureId": "gold-lilith-pisces-v5",
+      "negativeFixtureId": "neg-pisces-well",
+      "dimension": "ordinary consequence replaced by untranslated metaphor",
+      "replacementField": "turn",
+      "targetCategories": ["metaphor_requires_translation"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-cancer-v5", "gold-lilith-libra-v5", "gold-lilith-scorpio-v5"]
+    },
+    {
+      "id": "taurus-undeveloped-hook",
+      "positiveFixtureId": "gold-lilith-taurus-v5",
+      "negativeFixtureId": "neg-taurus-tagline",
+      "dimension": "earned tagline replaced by undeveloped hook",
+      "replacementField": "tagline",
+      "targetCategories": ["tagline_stands_alone"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-aries-v5", "gold-lilith-gemini-v5", "gold-lilith-leo-v5"]
+    },
+    {
+      "id": "aquarius-stock-self-help",
+      "positiveFixtureId": "gold-lilith-aquarius-v5",
+      "negativeFixtureId": "neg-aquarius-selfhelp",
+      "dimension": "developed mechanism replaced by generic empowerment",
+      "replacementField": "turn",
+      "targetCategories": ["stock_trope", "owner_voice_drift"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-gemini-v5", "gold-lilith-leo-v5", "gold-lilith-libra-v5"]
+    },
+    {
+      "id": "gemini-advocacy-abstraction",
+      "positiveFixtureId": "gold-lilith-gemini-v5",
+      "negativeFixtureId": "neg-gemini-advocacy",
+      "dimension": "observable card voice replaced by advocacy abstraction",
+      "replacementField": "lived",
+      "targetCategories": ["owner_voice_drift", "example_proves_astrology"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-aries-v5", "gold-lilith-leo-v5", "gold-lilith-libra-v5"]
+    },
+    {
+      "id": "virgo-clinical-shorthand",
+      "positiveFixtureId": "gold-lilith-virgo-v5",
+      "negativeFixtureId": "neg-virgo-clinical",
+      "dimension": "observable mechanism replaced by therapy shorthand",
+      "replacementField": "turn",
+      "targetCategories": ["stock_trope"],
+      "configuredNegativeVerdict": "REVISE",
+      "comparisonSet": ["gold-lilith-cancer-v5", "gold-lilith-libra-v5", "gold-lilith-scorpio-v5"]
+    }
+  ]
+}
