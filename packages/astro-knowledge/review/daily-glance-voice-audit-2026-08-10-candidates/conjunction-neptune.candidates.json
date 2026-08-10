@@ -1,0 +1,791 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/neptune",
+  "status": "UNAPPROVED",
+  "operatingMode": "flag-only",
+  "calibrationFailed": true,
+  "modeNotice": "Terra failed calibration. Score-1 and failed-dimension counts are advisory triage only, never quality verdicts.",
+  "immutableRawOutputs": true,
+  "revisionsMade": 0,
+  "candidates": [
+    {
+      "sample": 1,
+      "candidate": {
+        "headline": "One worried voice can change your plans before anyone explains the problem.",
+        "body": "You hear worry in one voice and may imagine the whole group feels the same. You start rearranging your work to cover tasks no one has asked you to take. Only one person has spoken. Ask what help is actually needed before you spend the next few hours fixing a problem no one has described."
+      },
+      "raw": "{\"headline\":\"One worried voice can change your plans before anyone explains the problem.\",\"body\":\"You hear worry in one voice and may imagine the whole group feels the same. You start rearranging your work to cover tasks no one has asked you to take. Only one person has spoken. Ask what help is actually needed before you spend the next few hours fixing a problem no one has described.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0732717a48663653006a7a02a4ecc08191bba4457dd17f9cac",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4054,
+          "cachedInputTokens": 4051,
+          "cacheWriteTokens": 0,
+          "outputTokens": 3973,
+          "reasoningTokens": 3888,
+          "totalTokens": 8027
+        },
+        "estimatedCostUsd": 0.121231
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/neptune",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "12 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "55 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask what help is actually needed before you spend the next few hours fixing a problem no one has described."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "saturationCue": true,
+              "target": "neptune"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may imagine the whole group feels the same"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "Only one person has spoken."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/neptune",
+                "matches": [],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "soft/chiron",
+                "square/sun",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 12,
+          "headlineSentences": 1,
+          "bodyWords": 55,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "conjunction/neptune",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 3,
+        "allScores": [
+          2,
+          3,
+          3
+        ],
+        "dimScore": 7,
+        "verdict": {
+          "score": 3,
+          "verdict": "Rubric-acceptable; the vague group concern is treated as a practical planning problem, not a feeling to decode.",
+          "dimensions": {
+            "voice": true,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": true,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "Only one person has spoken.",
+          "why": "This is the sentence that cuts through the Neptune-style projection without sounding mystical or corrective. The body names the actual cost—rearranging work and losing hours to an undefined problem—then gives a direct way to verify what is real before taking it on."
+        },
+        "usage": {
+          "inputTokens": 14691,
+          "cachedInputTokens": 13404,
+          "outputTokens": 749,
+          "reasoningTokens": 328,
+          "totalTokens": 15440
+        },
+        "estimatedCostUsd": 0.014243,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 2,
+      "candidate": {
+        "headline": "Someone else’s worry starts shaping your decisions before you know what happened.",
+        "body": "You read one worried message, imagine what it leaves out, and within minutes start changing a plan before anyone confirms the problem. You may feel their fear so strongly that it becomes hard to tell what you think about the situation. You still do not have the facts. If you cancel now, you give up needed time based on their fear and details your imagination supplied. Ask the sender what actually happened before you change the plan."
+      },
+      "raw": "{\"headline\":\"Someone else’s worry starts shaping your decisions before you know what happened.\",\"body\":\"You read one worried message, imagine what it leaves out, and within minutes start changing a plan before anyone confirms the problem. You may feel their fear so strongly that it becomes hard to tell what you think about the situation. You still do not have the facts. If you cancel now, you give up needed time based on their fear and details your imagination supplied. Ask the sender what actually happened before you change the plan.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_085f13aecc6adb72006a7a02a4a0d081a2b111c170ac34f6a0",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4054,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 4051,
+          "outputTokens": 1828,
+          "reasoningTokens": 1717,
+          "totalTokens": 5882
+        },
+        "estimatedCostUsd": 0.080174
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/neptune",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "12 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "5 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "77 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask the sender what actually happened before you change the plan."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": {
+              "saturationCue": false,
+              "target": "neptune"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": false,
+            "details": {
+              "originalConjunctionGrammar": false,
+              "otherGrammar": true,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You still do not have the facts."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/neptune",
+                "matches": [
+                  "sensitivity"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "soft/chiron",
+                "square/sun",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 12,
+          "headlineSentences": 1,
+          "bodyWords": 77,
+          "bodySentences": 5,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "conjunction/neptune",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 3,
+        "allScores": [
+          3,
+          3,
+          3
+        ],
+        "dimScore": 7,
+        "verdict": {
+          "score": 3,
+          "verdict": "Rubric-acceptable; the absorbed worry, missing facts, and unnecessary cancellation all land clearly and specifically for Neptune.",
+          "dimensions": {
+            "voice": true,
+            "stakes": true,
+            "structure": true,
+            "hedging": true,
+            "formula": true,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "If you cancel now, you give up needed time based on their fear and details your imagination supplied.",
+          "why": "This is the clearest consequence in the piece: somebody else's unconfirmed worry becomes your lost time through assumptions you made to fill in the gaps. It names the Neptune mechanism without turning it into therapy language or a generic caution."
+        },
+        "usage": {
+          "inputTokens": 14769,
+          "cachedInputTokens": 13456,
+          "outputTokens": 906,
+          "reasoningTokens": 475,
+          "totalTokens": 15675
+        },
+        "estimatedCostUsd": 0.016189,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    },
+    {
+      "sample": 3,
+      "candidate": {
+        "headline": "You start making plans around feelings no one has named.",
+        "body": "You read one person’s strain into every reply and begin preparing for a problem nobody has confirmed. Within ten minutes, you are drafting an apology, offering help, and changing your schedule before anyone has asked you to do any of it. You do not have the facts yet. You may be carrying their fear alongside your own imagination, and acting now can cost you time or a commitment you meant to keep. Ask what actually happened before you send the apology or change your schedule."
+      },
+      "raw": "{\"headline\":\"You start making plans around feelings no one has named.\",\"body\":\"You read one person’s strain into every reply and begin preparing for a problem nobody has confirmed. Within ten minutes, you are drafting an apology, offering help, and changing your schedule before anyone has asked you to do any of it. You do not have the facts yet. You may be carrying their fear alongside your own imagination, and acting now can cost you time or a commitment you meant to keep. Ask what actually happened before you send the apology or change your schedule.\"}",
+      "parseError": null,
+      "writer": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_03193596131af51a006a7a02a48ebc81a180dfb7dff1c2f0a1",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 4054,
+          "cachedInputTokens": 4051,
+          "cacheWriteTokens": 0,
+          "outputTokens": 2069,
+          "reasoningTokens": 1951,
+          "totalTokens": 6123
+        },
+        "estimatedCostUsd": 0.064111
+      },
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/neptune",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "10 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "5 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "85 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask what actually happened before you send the apology or change your schedule."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "saturationCue": true,
+              "target": "neptune"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may be carrying their fear alongside your own imagination"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You do not have the facts yet."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/neptune",
+                "matches": [
+                  "sensitivity"
+                ],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "soft/chiron",
+                "square/sun",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 10,
+          "headlineSentences": 1,
+          "bodyWords": 85,
+          "bodySentences": 5,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        }
+      },
+      "judge": {
+        "key": "conjunction/neptune",
+        "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+        "judgeModel": "gpt-5.6-terra",
+        "reasoningEffort": "low",
+        "score": 2,
+        "allScores": [
+          2,
+          2,
+          2
+        ],
+        "dimScore": 5,
+        "verdict": {
+          "score": 2,
+          "verdict": "The Neptune mechanism is clear, but the body leans into polished mind-reading diagnosis and softens its claim with two hedges. It is close, but it does not yet sound fully native to the owner's plainer, less assembled register.",
+          "dimensions": {
+            "voice": false,
+            "stakes": true,
+            "structure": true,
+            "hedging": false,
+            "formula": true,
+            "screenshot_line": true,
+            "specificity": true
+          },
+          "best_line": "You do not have the facts yet.",
+          "why": "This is the cleanest sentence because it names the actual problem without therapy language or decoration. The surrounding phrasing, especially \"carrying their fear alongside your own imagination,\" sounds more composed and diagnostic than the GOOD examples, while the stacked sequence of apology, help, and schedule changes makes the passage feel slightly engineered."
+        },
+        "usage": {
+          "inputTokens": 14790,
+          "cachedInputTokens": 13470,
+          "outputTokens": 864,
+          "reasoningTokens": 376,
+          "totalTokens": 15654
+        },
+        "estimatedCostUsd": 0.015702,
+        "responseCount": 3,
+        "advisoryOnly": true,
+        "operatingMode": "flag-only",
+        "calibrationFailed": true
+      },
+      "status": "UNAPPROVED",
+      "revisionsMade": 0
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "mode": "flag-only",
+  "permanentlyDemoted": true,
+  "judgeModel": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "establishedAt": "2026-08-10T16:47:18.550Z",
+  "basisReport": "packages/astro-knowledge/review/daily-glance-judge-calibration-report-terra-2026-08-10.json",
+  "policy": "Score-1 and failed-dimension counts are advisory triage only, never quality verdicts. GR-003 and DG-P1 remain absolute."
+}

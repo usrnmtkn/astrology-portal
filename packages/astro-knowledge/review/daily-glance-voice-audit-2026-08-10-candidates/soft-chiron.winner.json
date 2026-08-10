@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "key": "soft/chiron",
+  "status": "UNAPPROVED",
+  "operatingMode": "flag-only",
+  "calibrationFailed": true,
+  "modeNotice": "Terra failed calibration. Score-1 and failed-dimension counts are advisory triage only, never quality verdicts.",
+  "selectionBasis": "Deterministic output lint first; then flag-only score-1 avoidance and failed-dimension triage. This is not a quality verdict.",
+  "winner": {
+    "headline": "Accepting care does not require looking composed.",
+    "body": "You do not hide the unfinished part as quickly when someone notices you struggling. A coworker offers to review the page you keep reworking, and your usual quick refusal does not come right away. That refusal has kept you reworking the same problem alone as the deadline gets closer. You’re not weak for needing care. Send the page as it is and name the one section where another set of eyes would help."
+  },
+  "lint": {
+    "schemaVersion": 1,
+    "key": "soft/chiron",
+    "passed": false,
+    "immutableRawOutput": true,
+    "revisionsMade": 0,
+    "ownerPlacementApproval": {
+      "required": false
+    },
+    "checks": [
+      {
+        "id": "P4-headline-one-declarative-sentence",
+        "passed": true,
+        "details": "1 sentence(s)"
+      },
+      {
+        "id": "P4-headline-word-count",
+        "passed": true,
+        "details": "7 words"
+      },
+      {
+        "id": "P4-body-sentence-count",
+        "passed": true,
+        "details": "5 sentences"
+      },
+      {
+        "id": "P4-body-word-count",
+        "passed": true,
+        "details": "73 words"
+      },
+      {
+        "id": "P4-one-final-instruction",
+        "passed": true,
+        "details": "skeleton=permission-after-recognition; instruction optional per D2-3; 1 detected instruction(s); final sentence: Send the page as it is and name the one section where another set of eyes would help."
+      },
+      {
+        "id": "P4-body-supports-without-repeating",
+        "passed": true,
+        "details": "Body does not repeat the full headline."
+      },
+      {
+        "id": "global+VC-016+DG+SM-output-bans",
+        "passed": true,
+        "details": "No prohibited match."
+      },
+      {
+        "id": "DG-R2-register",
+        "passed": false,
+        "details": {
+          "mildEaseCue": false,
+          "target": "chiron"
+        }
+      },
+      {
+        "id": "DG-R3-no-slogan-or-restatement-closer",
+        "passed": true,
+        "details": "No known slogan or full-headline restatement detected."
+      },
+      {
+        "id": "DG-R4-no-outcome-promise",
+        "passed": true,
+        "details": "No deterministic outcome promise detected."
+      },
+      {
+        "id": "DG-R7-varied-opener",
+        "passed": true,
+        "details": "Body uses a non-fixed opener."
+      },
+      {
+        "id": "DG-R9-enumerated-instruction-allowed",
+        "passed": true,
+        "details": "No enumerated one-X/one-Y instruction present."
+      },
+      {
+        "id": "B1-L1-time-anchor-max-once",
+        "passed": true,
+        "details": "No time-anchor phrase used."
+      },
+      {
+        "id": "B1-L2-may-inner-states-only",
+        "passed": true,
+        "details": "Every may clause is an inner state, or may is absent."
+      },
+      {
+        "id": "B1-L3+L4-headline-group-grammar",
+        "passed": false,
+        "details": {
+          "softGrammar": false,
+          "otherGrammar": false
+        }
+      },
+      {
+        "id": "SM-DG-2-no-diagnostic-history",
+        "passed": true,
+        "details": "No diagnostic reader-history frame detected."
+      },
+      {
+        "id": "DG-R11-unhedged-headline",
+        "passed": true,
+        "details": "Headline makes an unhedged claim."
+      },
+      {
+        "id": "DG-R12-no-time-anchor-opener",
+        "passed": true,
+        "details": "Body opens inside the scene."
+      },
+      {
+        "id": "DG-R13-may-max-once",
+        "passed": true,
+        "details": "0 may usage(s)"
+      },
+      {
+        "id": "DG-R14-scene-not-biographical",
+        "passed": true,
+        "details": "No biographical anchor detected."
+      },
+      {
+        "id": "DG-R15-action-repairs-moment",
+        "passed": true,
+        "details": []
+      },
+      {
+        "id": "DG-R16-owner-reserved-construction",
+        "passed": true,
+        "details": []
+      },
+      {
+        "id": "DG-R17-quoted-dialogue-max-one",
+        "passed": true,
+        "details": "No quoted-dialogue line used."
+      },
+      {
+        "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+        "passed": true,
+        "advisory": true,
+        "details": "No quoted-dialogue judgment needed."
+      },
+      {
+        "id": "OWNER-DIRECTIVE-short-blunt-line",
+        "passed": true,
+        "details": [
+          "You’re not weak for needing care."
+        ]
+      },
+      {
+        "id": "OWNER-TEST-specificity",
+        "passed": false,
+        "advisory": false,
+        "details": {
+          "own": {
+            "key": "soft/chiron",
+            "matches": [
+              "care-old-hurt"
+            ],
+            "required": 2,
+            "passed": false
+          },
+          "comparisonScope": [
+            "conjunction/neptune",
+            "square/sun",
+            "square/uranus",
+            "conjunction/pluto"
+          ],
+          "swappableTo": [],
+          "advisorySwappableTo": []
+        }
+      },
+      {
+        "id": "OWNER-TEST-morning-read",
+        "passed": true,
+        "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+      },
+      {
+        "id": "OWNER-TEST-screenshot",
+        "passed": true,
+        "details": [
+          "You’re not weak for needing care."
+        ]
+      }
+    ],
+    "findings": [],
+    "counts": {
+      "headlineWords": 7,
+      "headlineSentences": 1,
+      "bodyWords": 73,
+      "bodySentences": 5,
+      "instructions": 1,
+      "timeAnchors": 0,
+      "mayUsages": 0,
+      "quotedDialogueLines": 0,
+      "screenshotCandidateLines": 1
+    }
+  },
+  "judge": {
+    "key": "soft/chiron",
+    "rubricVersion": "daily-glance-voice-v2:boundary-discipline+median3",
+    "judgeModel": "gpt-5.6-terra",
+    "reasoningEffort": "low",
+    "score": 2,
+    "allScores": [
+      2,
+      2,
+      2
+    ],
+    "dimScore": 5,
+    "verdict": {
+      "score": 2,
+      "verdict": "Near the register, but the fixed reassurance line and coached ending keep it from reading unnoticed among the approved examples.",
+      "dimensions": {
+        "voice": false,
+        "stakes": true,
+        "structure": true,
+        "hedging": true,
+        "formula": false,
+        "screenshot_line": true,
+        "specificity": true
+      },
+      "best_line": "That refusal has kept you reworking the same problem alone as the deadline gets closer.",
+      "why": "This is the clearest line because it names the actual cost of refusing help: more isolated work while time runs out. The rest leans on familiar vulnerability language—especially “You’re not weak for needing care”—and the final instruction lands like a standard coaching close rather than completing the observation."
+    },
+    "usage": {
+      "inputTokens": 14754,
+      "cachedInputTokens": 13446,
+      "outputTokens": 727,
+      "reasoningTokens": 237,
+      "totalTokens": 15481
+    },
+    "estimatedCostUsd": 0.014029,
+    "responseCount": 3,
+    "advisoryOnly": true,
+    "operatingMode": "flag-only",
+    "calibrationFailed": true
+  }
+}
