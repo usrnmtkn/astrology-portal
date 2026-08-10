@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
-import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportFulfillmentConfig } from "../api/_lib/report-fulfillment-config.ts";
+import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportCallEstimate, reportFulfillmentConfig } from "../api/_lib/report-fulfillment-config.ts";
 import { processReportFulfillmentJob, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { REPORT_JUDGE_CATEGORIES, reportJudgeOverall, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
-import { revokeEntitlement } from "../api/_lib/report-entitlements.ts";
+import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../api/_lib/report-entitlements.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
+import { createReportMailProvider } from "../api/_lib/report-mail.ts";
+import { reportUrl } from "../api/_lib/report-http.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
 import { enforceReportRevisionStopRule, ReportStopRuleError } from "../api/_lib/report-writer-chain.ts";
 
@@ -68,6 +70,51 @@ await revokeEntitlement({
 assert.ok(refundCalls.some((call) => call.table === "user_reports" && call.patch.fulfillment_status === "revoked" && call.patch.status === "draft"));
 assert.ok(refundCalls.some((call) => call.table === "report_fulfillment_jobs" && call.patch.state === "cancelled"));
 
+const compInserts = [];
+const grantedComp = await grantCompEntitlement({
+  async selectOne() {
+    return { data: { profile: { charts: [{ birthDate: "1990-02-18", birthTime: "10:30", birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" } }] } } };
+  },
+  async insert(table, row) { compInserts.push({ table, row }); return [{ id: "comp-ent-1", status: row.status }]; }
+}, { userId: "user-1", reportDomain: "work_money", reportHorizon: "12_months", windowStart: "2026-09-01", now: "2026-08-10T12:00:00Z" });
+assert.equal(grantedComp.window.end, "2027-08-31");
+assert.equal(compInserts[0].row.source, "comp");
+assert.equal(compInserts[0].row.stripe_event_id, null);
+assert.equal(compInserts[0].row.stripe_checkout_session_id, null);
+assert.equal(compInserts[0].row.status, "active");
+
+const authorizationUpdates = [];
+const authorization = await authorizeReportGeneration({
+  async update(table, query, patch) {
+    authorizationUpdates.push({ table, query, patch });
+    return table === "report_fulfillment_jobs" ? [{ id: "comp-job-1" }] : [{ id: "comp-report-1" }];
+  }
+}, { reportId: "comp-report-1", callBudget: 44, now: "2026-08-10T12:01:00Z" });
+assert.deepEqual(authorization, { authorized: true, callBudget: 44 });
+const jobAuthorization = authorizationUpdates.find((entry) => entry.table === "report_fulfillment_jobs").patch;
+assert.match(jobAuthorization.authorization_token, /^[0-9a-f-]{36}$/u);
+assert.equal(jobAuthorization.authorized_call_budget, 44);
+assert.equal(jobAuthorization.state, "queued");
+assert.ok(authorizationUpdates.some((entry) => entry.table === "user_reports" && entry.patch.fulfillment_status === "queued"));
+
+delete process.env.REPORT_MAIL_ENDPOINT;
+delete process.env.REPORT_MAIL_TOKEN;
+delete process.env.REPORT_READY_MAIL_TEMPLATE_ID;
+let mailFetches = 0;
+const logOnlyMail = await createReportMailProvider(async () => { mailFetches += 1; throw new Error("must not fetch"); }).sendReportReady({
+  reportId: "report-1", userId: "user-1", reportUrl: "/reports/report-1"
+});
+assert.equal(logOnlyMail.mode, "log_only");
+assert.equal(logOnlyMail.provider, "log-only");
+assert.equal(mailFetches, 0);
+assert.equal(logOnlyMail.payload.variables.reportUrl, "/reports/report-1");
+delete process.env.APP_URL;
+delete process.env.VITE_APP_URL;
+assert.equal(reportUrl("/reports/report-1"), "/reports/report-1");
+assert.equal(reportUrl("/reports/report-1", { headers: { "x-forwarded-proto": "https", "x-forwarded-host": "preview.example" } }), "https://preview.example/reports/report-1");
+
+delete process.env.STRIPE_SECRET_KEY;
+
 function factsForHorizon(horizon) {
   const result = structuredClone(frozen);
   const ends = { "1_month": "2026-03-18T01:59:11Z", "4_months": "2026-06-18T01:59:11Z", "6_months": "2026-08-18T01:59:11Z", "12_months": frozen.endsAt };
@@ -100,6 +147,13 @@ function createMemoryStore() {
     async entitlement(id) { return entitlements.get(id) ?? null; },
     async updateReport(id, patch) { Object.assign(reports.get(id), patch); },
     async updateJob() {},
+    async consumeAuthorizedCall(jobId, token) {
+      if (token !== "fixture-authorization") throw new Error("REPORT_CALL_AUTHORIZATION_REQUIRED");
+      const key = `calls:${jobId}`;
+      const next = Number(facts.get(key) ?? 0) + 1;
+      facts.set(key, next);
+      return next;
+    },
     async reusableFacts(report) { return facts.get(`${report.user_id}:${report.report_horizon}:${report.period_start}`) ?? null; },
     async claimFacts(report) {
       const key = `${report.user_id}:${report.report_horizon}:${report.period_start}`;
@@ -131,6 +185,7 @@ function modelCallWithCrash(crashAt = Infinity) {
   let calls = 0;
   const call = async (input) => {
     calls += 1;
+    await input.beforeProviderCall?.();
     if (calls === crashAt) throw new Error("FIXTURE_ONLY_CRASH");
     if (input.schemaName === "report_unit_draft") {
       assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*INTERNAL PRE-DRAFT EXTRACTION \(REQUIRED\)[\s\S]*REPORT_GENERATION_PAYLOAD/u);
@@ -161,6 +216,10 @@ const judgeCall = async () => ({
   usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, model: "FIXTURE_ONLY_JUDGE", promptVersion: "FIXTURE_ONLY_JUDGE_V1"
 });
 
+function authorizedJob(input) {
+  return { ...input, authorization_token: "fixture-authorization", authorized_call_budget: 1000, model_call_count: 0 };
+}
+
 const store = createMemoryStore();
 let calculationCalls = 0;
 const calculateFacts = async (report) => {
@@ -177,19 +236,38 @@ for (const [index, sku] of activeSkus.entries()) {
     facts: {}, facts_engine: "pending", facts_hash: null, fulfillment_status: "queued", prompt_versions: {}, token_count: 0,
     attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
   });
-  store.entitlements.set(entitlementId, { id: entitlementId, user_id: "user-1", status: "active", product_key: sku.key, period_start: frozen.startsAt.slice(0, 10), period_end: factsForHorizon(sku.reportHorizon).endsAt.slice(0, 10) });
+  const isCompEndToEnd = sku.key === "work_money_12_months";
+  store.entitlements.set(entitlementId, { id: entitlementId, user_id: "user-1", status: "active", source: isCompEndToEnd ? "comp" : "stripe", product_key: sku.key, period_start: frozen.startsAt.slice(0, 10), period_end: factsForHorizon(sku.reportHorizon).endsAt.slice(0, 10) });
+  const providerMock = modelCallWithCrash();
+  const meteredJudgeCall = isCompEndToEnd ? async (judgeInput) => {
+    await judgeInput.callModel({ provider: "FIXTURE_ONLY_PROVIDER", model: "FIXTURE_ONLY_MODEL", prompt: "FIXTURE_ONLY", schemaName: "fixture_judge_meter", schema: {} });
+    return judgeCall();
+  } : judgeCall;
   const result = await processReportFulfillmentJob({
-    job: { id: `job-${index}`, report_id: reportId, entitlement_id: entitlementId, state: "running", step: "calculating", attempt: 1 },
-    store, calculateFacts, callModel: modelCallWithCrash(), judgeCall
+    job: authorizedJob({ id: `job-${index}`, report_id: reportId, entitlement_id: entitlementId, state: "running", step: "calculating", attempt: 1 }),
+    store, calculateFacts, callModel: providerMock, judgeCall: meteredJudgeCall
   });
   assert.equal(result.status, "needs_review");
   assert.equal(store.reports.get(reportId).status, "needs_review");
+  if (isCompEndToEnd) {
+    assert.equal(providerMock.count(), reportCallEstimate("12_months").cleanPathCalls, "The comp mock must traverse draft, critique, and judge for all 12-month units.");
+    assert.equal(store.facts.get(`calls:job-${index}`), reportCallEstimate("12_months").cleanPathCalls);
+    assert.ok(providerMock.count() <= reportCallEstimate("12_months").recommendedCallBudget);
+  }
 }
 assert.equal(REPORT_SKUS.length, 16);
 assert.equal(activeSkus.length, 16);
 assert.equal(calculationCalls, 4, "One facts calculation per user/window must serve all four active domains.");
 assert.ok([...store.reports.values()].filter((report) => report.report_domain === "personal_health")
   .every((report) => report.status === "needs_review"), "Personal & Health fulfillment must be active and remain review-gated.");
+
+const unauthorizedStore = createMemoryStore();
+unauthorizedStore.reports.set("unauthorized-report", { ...structuredClone([...store.reports.values()][0]), id: "unauthorized-report" });
+unauthorizedStore.entitlements.set("unauthorized-ent", { id: "unauthorized-ent", status: "active", source: "comp", product_key: "general_1_month" });
+await assert.rejects(processReportFulfillmentJob({
+  job: { id: "unauthorized-job", report_id: "unauthorized-report", entitlement_id: "unauthorized-ent", state: "running", step: "calculating", attempt: 1, authorization_token: null, authorized_call_budget: null, model_call_count: 0 },
+  store: unauthorizedStore, calculateFacts, callModel: modelCallWithCrash(), judgeCall
+}), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
 
 const concurrentStore = createMemoryStore();
 const concurrentBase = {
@@ -206,18 +284,18 @@ const calculationLatch = new Promise((resolve) => { releaseCalculation = resolve
 let concurrentCalculations = 0;
 const heldCalculation = async () => { concurrentCalculations += 1; await calculationLatch; return { facts: factsForHorizon("1_month"), facts_engine: "FIXTURE_ONLY_ENGINE" }; };
 const firstConcurrent = processReportFulfillmentJob({
-  job: { id: "concurrent-job-1", report_id: "concurrent-general", entitlement_id: "concurrent-general-ent", state: "running", step: "calculating", attempt: 1 },
+  job: authorizedJob({ id: "concurrent-job-1", report_id: "concurrent-general", entitlement_id: "concurrent-general-ent", state: "running", step: "calculating", attempt: 1 }),
   store: concurrentStore, calculateFacts: heldCalculation, callModel: modelCallWithCrash(), judgeCall
 });
 await new Promise((resolve) => setImmediate(resolve));
 await assert.rejects(processReportFulfillmentJob({
-  job: { id: "concurrent-job-2", report_id: "concurrent-work", entitlement_id: "concurrent-work-ent", state: "running", step: "calculating", attempt: 1 },
+  job: authorizedJob({ id: "concurrent-job-2", report_id: "concurrent-work", entitlement_id: "concurrent-work-ent", state: "running", step: "calculating", attempt: 1 }),
   store: concurrentStore, calculateFacts: heldCalculation, callModel: modelCallWithCrash(), judgeCall
 }), /FACTS_PENDING/u);
 releaseCalculation();
 await firstConcurrent;
 await processReportFulfillmentJob({
-  job: { id: "concurrent-job-2", report_id: "concurrent-work", entitlement_id: "concurrent-work-ent", state: "running", step: "calculating", attempt: 2 },
+  job: authorizedJob({ id: "concurrent-job-2", report_id: "concurrent-work", entitlement_id: "concurrent-work-ent", state: "running", step: "calculating", attempt: 2 }),
   store: concurrentStore, calculateFacts: heldCalculation, callModel: modelCallWithCrash(), judgeCall
 });
 assert.equal(concurrentCalculations, 1, "Concurrent domain purchases must share one claimed facts calculation.");
@@ -231,14 +309,14 @@ const resumeReport = {
 resumeStore.reports.set(resumeReport.id, resumeReport);
 resumeStore.entitlements.set("resume-ent", { id: "resume-ent", user_id: "resume-user", status: "active", product_key: "general_1_month" });
 const crashCall = modelCallWithCrash(3);
-await assert.rejects(processReportFulfillmentJob({ job: { id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 1 }, store: resumeStore, calculateFacts, callModel: crashCall, judgeCall }), /FIXTURE_ONLY_CRASH/u);
+await assert.rejects(processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 1 }), store: resumeStore, calculateFacts, callModel: crashCall, judgeCall }), /FIXTURE_ONLY_CRASH/u);
 assert.ok(resumeStore.units.has("resume-report:overview"));
 const resumeCall = modelCallWithCrash();
-await processReportFulfillmentJob({ job: { id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 2 }, store: resumeStore, calculateFacts, callModel: resumeCall, judgeCall });
+await processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 2 }), store: resumeStore, calculateFacts, callModel: resumeCall, judgeCall });
 assert.equal(resumeCall.count(), 6, "Resume must skip the completed unit and make two writer calls for each of three remaining units.");
 
 const retryStore = createMemoryStore();
-retryStore.claimJobs = async () => [{ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 }];
+retryStore.claimJobs = async () => [authorizedJob({ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 })];
 retryStore.reports.set("retry-report", { ...structuredClone(resumeReport), id: "retry-report", fulfillment_status: "writing" });
 retryStore.entitlements.set("retry-ent", { id: "retry-ent", user_id: "resume-user", status: "active", product_key: "general_1_month" });
 let retryPatch = null;
@@ -248,5 +326,12 @@ assert.equal(retryPatch.state, "retry", "Transient model failures remain resumab
 
 const adminSource = fs.readFileSync(new URL("../api/admin/report-fulfillment.ts", import.meta.url), "utf8");
 assert.ok(!/edit(?:_|\s|-)?prose|update(?:_|\s|-)?body/iu.test(adminSource), "The exception dashboard must not add a prose-editing path.");
+for (const actionName of ["grant_comp", "authorize_generation", "revoke_comp"]) assert.ok(adminSource.includes(`body.action === "${actionName}"`));
+const adminPanelSource = fs.readFileSync(new URL("../apps/admin/src/ReportFulfillmentAdminPanel.tsx", import.meta.url), "utf8");
+for (const label of ["Grant report", "Authorize ", "Revoke comp"]) assert.ok(adminPanelSource.includes(label));
+for (const route of ["../api/report-checkout.ts", "../api/report-customer-portal.ts"]) {
+  const source = fs.readFileSync(new URL(route, import.meta.url), "utf8");
+  assert.match(source, /if \(!process\.env\.STRIPE_SECRET_KEY\) return sendJson\(res, 503, \{ configured: false,/u, `${route} must fail cleanly when Stripe is absent.`);
+}
 
-console.log("Report fulfillment passed: 16 active SKUs including Personal & Health, owner gate, signatures, refunds, fact lock, scoped stop rule, shared facts across four domains, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: comp grant/revoke, log-only mail, relative links, per-call authorization, 16 active SKUs, mocked comp E2E to needs_review, shared facts, crash resume, retry queue, and no-edit admin contract.");
