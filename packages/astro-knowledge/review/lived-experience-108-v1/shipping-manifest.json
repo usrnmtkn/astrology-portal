@@ -12,10 +12,10 @@
     "placement-sign-lived": 2
   },
   "invariants": {
-    "existingApprovedRowsSha256": "1f8af66c0f364ed32b10ef5a6f128324deacde493e2d9c735aef21990ac3fea7",
+    "existingApprovedRowsSha256": "3facbd7f7b1d3becb678cd10f7a569d4ed7ae6c2596e9439a25f5b7cb7f1f785",
     "existingApprovedRowsChanged": 0,
     "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
-    "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows; all 108 governed family rows remain byte-identical to their row-level approval payloads and records."
+    "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows and the v3-2026-08-11b owner-approved soft/Uranus revision changed exactly two approved daily rows; all 108 governed family rows remain byte-identical to their row-level approval payloads and records."
   },
   "rows": [
     {
