@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
-import { processReportFulfillmentJob, ReportPersistenceInfrastructureError, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { assertReportTokenBudgets, processReportFulfillmentJob, ReportPersistenceInfrastructureError, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-store.ts";
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
@@ -55,7 +55,26 @@ delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
 assert.equal(reportCallEstimate("12_months").expectedCallBudget, 44);
 assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 11);
 assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 55);
-assert.equal(reportFulfillmentConfig().tokenBudget, 1_450_000);
+assert.equal(reportFulfillmentConfig().authorizationTokenBudget, 1_450_000);
+assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
+assert.doesNotThrow(() => assertReportTokenBudgets({
+  authorizationTokenCount: 249_787,
+  authorizationTokenBudget: 1_450_000,
+  lifetimeTokenCount: 1_507_070,
+  lifetimeTokenBudget: 3_000_000
+}), "Report 74951c07's exact Production ledger state must pass under its current authorization and owner-raised lifetime cap.");
+assert.throws(() => assertReportTokenBudgets({
+  authorizationTokenCount: 1_450_001,
+  authorizationTokenBudget: 1_450_000,
+  lifetimeTokenCount: 2_707_284,
+  lifetimeTokenBudget: 3_000_000
+}), /Authorization token budget exceeded/u);
+assert.throws(() => assertReportTokenBudgets({
+  authorizationTokenCount: 249_787,
+  authorizationTokenBudget: 1_450_000,
+  lifetimeTokenCount: 3_000_001,
+  lifetimeTokenBudget: 3_000_000
+}), /Report lifetime token budget exceeded/u);
 assert.equal(reportModelPricing().version, "2026-08-10");
 assert.equal(estimateReportModelCost("gpt-5.6-sol", { inputTokens: 1_000_000, outputTokens: 0, totalTokens: 1_000_000 }), 5);
 assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.3415);
@@ -201,10 +220,14 @@ const authorization = await authorizeReportGeneration({
     return table === "report_fulfillment_jobs" ? [{ id: "comp-job-1" }] : [{ id: "comp-report-1" }];
   }
 }, { reportId: "comp-report-1", callBudget: 44, now: "2026-08-10T12:01:00Z" });
-assert.deepEqual(authorization, { authorized: true, callBudget: 44, jobId: "comp-job-1" });
+assert.deepEqual(authorization, { authorized: true, callBudget: 44, tokenBudget: 1_450_000, jobId: "comp-job-1" });
 const jobAuthorization = authorizationUpdates.find((entry) => entry.table === "report_fulfillment_jobs").patch;
 assert.match(jobAuthorization.authorization_token, /^[0-9a-f-]{36}$/u);
 assert.equal(jobAuthorization.authorized_call_budget, 44);
+assert.equal(jobAuthorization.authorization_call_count, 0);
+assert.equal(jobAuthorization.authorized_token_budget, 1_450_000);
+assert.equal(jobAuthorization.authorization_token_count, 0);
+assert.equal("model_call_count" in jobAuthorization, false, "A new authorization must not reset immutable lifetime call numbering.");
 assert.equal(jobAuthorization.state, "queued");
 assert.ok(authorizationUpdates.some((entry) => entry.table === "user_reports" && entry.patch.fulfillment_status === "queued"));
 
@@ -408,7 +431,15 @@ const judgeCall = async () => ({
 });
 
 function authorizedJob(input) {
-  return { ...input, authorization_token: "fixture-authorization", authorized_call_budget: 1000, model_call_count: 0 };
+  return {
+    ...input,
+    authorization_token: "fixture-authorization",
+    authorized_call_budget: 1000,
+    model_call_count: 0,
+    authorization_call_count: 0,
+    authorized_token_budget: 1_450_000,
+    authorization_token_count: 0
+  };
 }
 
 const store = createMemoryStore();
@@ -715,7 +746,8 @@ assert.equal(retryPatch.state, "retry", "Transient model failures remain resumab
 
 const adminSource = fs.readFileSync(new URL("../api/admin/report-fulfillment.ts", import.meta.url), "utf8");
 assert.ok(!/edit(?:_|\s|-)?prose|update(?:_|\s|-)?body/iu.test(adminSource), "The exception dashboard must not add a prose-editing path.");
-for (const actionName of ["grant_comp", "authorize_generation", "revoke_comp"]) assert.ok(adminSource.includes(`body.action === "${actionName}"`));
+for (const actionName of ["grant_comp", "authorize_generation", "revoke_comp", "set_lifetime_token_budget"]) assert.ok(adminSource.includes(`body.action === "${actionName}"`));
+assert.ok(adminSource.includes("token_budget_lifetime"), "The owner-only admin endpoint must expose the adjustable lifetime token backstop.");
 assert.ok(adminSource.includes('code: "ACTIVE_COMP_EXISTS"'), "Duplicate comp grants must return a stable, human-readable conflict code.");
 assert.ok(adminSource.includes("status: 409"), "Duplicate comp grants must return HTTP 409.");
 assert.ok(adminSource.includes("An active comp report already exists"), "Duplicate comp grants must explain that the existing queue row should be used.");
@@ -723,7 +755,7 @@ assert.ok(adminSource.includes("reportId: report?.id ?? null"), "Successful comp
 assert.ok(adminSource.includes("waitUntil(fetch(workerUrl"), "Authorize must ring an immediate worker cycle without removing the scheduled pickup.");
 assert.ok(adminSource.includes("jobId=${encodeURIComponent(authorized.jobId)}"), "The immediate worker trigger must target the authorized job.");
 const adminPanelSource = fs.readFileSync(new URL("../apps/admin/src/ReportFulfillmentAdminPanel.tsx", import.meta.url), "utf8");
-for (const label of ["Grant report", "Authorize ", "Revoke comp"]) assert.ok(adminPanelSource.includes(label));
+for (const label of ["Grant report", "Authorize ", "Revoke comp", "Lifetime token cap", "Set cap"]) assert.ok(adminPanelSource.includes(label));
 assert.ok(adminPanelSource.includes("Report granted. The fulfillment queue was refreshed"), "Successful comp grants need visible refresh confirmation.");
 assert.ok(adminPanelSource.includes("The report was granted, but the fulfillment queue could not refresh"), "A post-grant refresh failure must warn the owner not to grant again.");
 assert.ok(adminPanelSource.includes("scrollIntoView"), "Successful comp grants must move the new queue row into view.");
