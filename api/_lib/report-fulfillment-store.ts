@@ -4,12 +4,14 @@ import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 export type FulfillmentJobRow = {
   id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number;
   authorization_token: string | null; authorized_call_budget: number | null; model_call_count: number;
+  authorization_call_count: number; authorized_token_budget: number | null; authorization_token_count: number;
   passing_unit_cache?: Record<string, unknown>;
 };
 export type FulfillmentReportRow = {
   id: string; user_id: string; subject_id: string | null; report_domain: ReportDomain; report_horizon: ReportHorizon;
   period_start: string; period_end: string; facts: Record<string, unknown>; facts_engine: string; facts_hash: string | null;
   fulfillment_status: string; prompt_versions: Record<string, unknown>; token_count: number; token_count_total?: number;
+  token_budget_lifetime?: number;
   token_spend_usd_estimate?: number; attempt_counts: { validator?: number; judge?: number };
   failure_history: unknown[];
 };
