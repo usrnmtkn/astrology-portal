@@ -129,11 +129,28 @@ The focused regression lives in:
 
 ```text
 scripts/test-reviewed-sky-aspect-phrasebook.mjs
+scripts/test-calendar-exact-sky-aspect-routing.mjs
 ```
 
 Keep the canonical matrix assertion in that test. A test that covers only
 specific phrasebook keys is insufficient because it can miss a broken adapter
 boundary.
+
+### Calendar exact-copy parity and intentional gaps
+
+Current Sky and Calendar must use the same precedence selector and the same
+approved exact-aspect lookup. The Calendar parity gate runs all 214
+reader-eligible exact records in both planet orders. It fails if any of those
+428 routes reaches the general compositor instead of approved specific copy.
+
+The separate exact-copy gap list remains intentionally unfilled in this
+routing change: 66 Chiron targets, 72 Lilith targets, 60 node-axis targets, and
+42 classical-planet quincunxes (240 combinations total). Saturn square Lilith
+is the screenshot-era representative of this set. For these combinations, the
+exact lookup fails closed: it must not invent, import, or relabel generic copy
+as an approved exact record. The resolver may continue to the already-approved
+lower precedence tiers described above. Adding exact prose for any gap is a
+separate governed editorial change.
 
 ## Change-review checklist
 

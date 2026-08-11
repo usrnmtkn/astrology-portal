@@ -1,0 +1,204 @@
+{
+  "batchId": "mercury-placements-pilot-v1",
+  "generatedAt": "2026-08-11T06:53:32.431Z",
+  "draftedRows": 48,
+  "draftedCards": 12,
+  "firstPassPassedCards": 12,
+  "firstPassPassRatePercent": 100,
+  "automaticallyRevisedCards": 0,
+  "revisionCalls": 0,
+  "pipelineReviewPassedCards": 12,
+  "humanReviewRequiredCards": 0,
+  "failureCategories": [],
+  "finalLintStatus": "PASS",
+  "finalEvalStatus": "PASS",
+  "calls": {
+    "count": 24,
+    "inputTokens": 209305,
+    "outputTokens": 39604,
+    "totalTokens": 248909,
+    "cachedInputTokens": 131098,
+    "reasoningTokens": 30978,
+    "byStage": {
+      "draft": 12,
+      "review": 12
+    }
+  },
+  "models": {
+    "writer": {
+      "laneId": "writer:sky-placement",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh"
+    },
+    "reviewer": {
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "medium"
+    }
+  },
+  "evidenceDensity": [
+    {
+      "sign": "aries",
+      "grade": "medium",
+      "v13MercurySign": 1,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 41,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 263
+    },
+    {
+      "sign": "taurus",
+      "grade": "medium",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 6,
+      "ownerCorpusSameSign": 29,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 264
+    },
+    {
+      "sign": "gemini",
+      "grade": "medium",
+      "v13MercurySign": 1,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 17,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 256
+    },
+    {
+      "sign": "cancer",
+      "grade": "medium",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 61,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 265
+    },
+    {
+      "sign": "leo",
+      "grade": "high",
+      "v13MercurySign": 1,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 13,
+      "ownerCorpusSameSign": 49,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 265
+    },
+    {
+      "sign": "virgo",
+      "grade": "medium",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 3,
+      "ownerCorpusSameSign": 71,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 275
+    },
+    {
+      "sign": "libra",
+      "grade": "medium",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 19,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 259
+    },
+    {
+      "sign": "scorpio",
+      "grade": "medium",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 0,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 255
+    },
+    {
+      "sign": "sagittarius",
+      "grade": "medium",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 11,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 256
+    },
+    {
+      "sign": "capricorn",
+      "grade": "medium",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 0,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 261
+    },
+    {
+      "sign": "aquarius",
+      "grade": "evidence-poor",
+      "v13MercurySign": 0,
+      "v13SignMechanic": 0,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 51,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 269
+    },
+    {
+      "sign": "pisces",
+      "grade": "medium",
+      "v13MercurySign": 1,
+      "v13SignMechanic": 1,
+      "ownerCorpusExactMercurySign": 0,
+      "ownerCorpusSameSign": 72,
+      "ownerCorpusMercury": 43,
+      "ownerCorrectionsAvailable": 20,
+      "qualifyingOwnerCorpus": 269
+    }
+  ],
+  "evidencePoorSigns": [
+    "aquarius"
+  ],
+  "batchRepetitionWarnings": [
+    {
+      "phrase": "the same",
+      "count": 10
+    },
+    {
+      "phrase": "until {{exitdate}},",
+      "count": 12
+    },
+    {
+      "phrase": "someone",
+      "count": 17
+    },
+    {
+      "phrase": "people",
+      "count": 4
+    }
+  ],
+  "governance": {
+    "authorization": "OWNER AUTHORIZATION, 2026-08-11: first supervised generation run. The CANDIDATE_WRITER is promoted for THIS BATCH ONLY; promotion does not persist past it and reverts automatically when the batch report is delivered.",
+    "currentProductionWriterBefore": null,
+    "candidatePromotedForBatchOnly": true,
+    "candidatePromotionPersisted": false,
+    "candidatePromotionRevertedAtDelivery": true,
+    "contentStaged": false,
+    "contentServed": false,
+    "ownerApprovalInferred": false,
+    "maximumOutputStatus": "pipeline-review-passed"
+  }
+}

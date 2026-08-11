@@ -87,6 +87,12 @@ export type ReportPersistenceRetryOptions = {
   sleep?: (milliseconds: number) => Promise<void>;
 };
 
+export type ReportWorkerContinuationPolicy = {
+  deadlineAtMs: number;
+  maxNewUnits: number;
+  now?: () => number;
+};
+
 export class ReportPersistenceInfrastructureError extends Error {
   constructor(unitId: string, attempts: number, cause: unknown) {
     const message = cause instanceof Error ? cause.message : String(cause);
@@ -165,6 +171,7 @@ export async function processReportFulfillmentJob(input: {
   mail?: ReportMailProvider;
   random?: () => number;
   persistenceRetry?: ReportPersistenceRetryOptions;
+  continuationPolicy?: ReportWorkerContinuationPolicy;
 }) {
   const config = reportFulfillmentConfig();
   const report = await input.store.report(input.job.report_id);
@@ -255,6 +262,28 @@ export async function processReportFulfillmentJob(input: {
   let validatorAttempts = report.attempt_counts?.validator ?? 0;
   let judgeAttempts = report.attempt_counts?.judge ?? 0;
   const passingUnitCache = parsedPassingUnitCache(input.job.passing_unit_cache);
+  let generatedUnitsThisCycle = 0;
+
+  const requeueForContinuation = async () => {
+    const continuedAt = new Date((input.continuationPolicy?.now ?? Date.now)()).toISOString();
+    await input.store.updateReport(report.id, nowPatch("writing"));
+    await input.store.updateJob(input.job.id, {
+      state: "queued",
+      step: "writing",
+      run_after: continuedAt,
+      locked_at: null,
+      locked_by: null,
+      last_error: null
+    });
+    return {
+      status: "queued" as const,
+      continuation: true,
+      tokenCount,
+      tokenCountTotal,
+      estimatedCostUsd: estimatedCostTotal,
+      judgeScores
+    };
+  };
 
   const persistPassingUnit = async (entry: PassingUnitCacheEntry) => {
     const nextTokenCount = Math.max(tokenCount, entry.reportTokenCountAfter);
@@ -301,6 +330,12 @@ export async function processReportFulfillmentJob(input: {
         Object.assign(promptVersions, snapshot.promptVersions);
       }
       continue;
+    }
+    if (input.continuationPolicy) {
+      const now = input.continuationPolicy.now ?? Date.now;
+      const unitLimitReached = generatedUnitsThisCycle >= Math.max(1, input.continuationPolicy.maxNewUnits);
+      const deadlineReached = now() >= input.continuationPolicy.deadlineAtMs;
+      if (unitLimitReached || deadlineReached) return requeueForContinuation();
     }
     await input.store.updateJob(input.job.id, { step: "writing" });
     const payload = assembleReportGenerationPayload({ reportId: report.id, reportDomain: report.report_domain, reportHorizon: report.report_horizon, unitId, frozenFacts: report.facts });
@@ -370,6 +405,7 @@ export async function processReportFulfillmentJob(input: {
       await input.store.updateJob(input.job.id, { step: "delivery", passing_unit_cache: passingUnitCache });
     }, input.persistenceRetry);
     await persistPassingUnit(passingUnit);
+    generatedUnitsThisCycle += 1;
   }
 
   const publicationStatus = config.autoPublishEnabled ? "live" : "needs_review";
@@ -427,6 +463,7 @@ export async function runReportFulfillmentBatch(input: {
   mail?: ReportMailProvider;
   jobId?: string;
   persistenceRetry?: ReportPersistenceRetryOptions;
+  continuationPolicy?: ReportWorkerContinuationPolicy;
 }) {
   const config = reportFulfillmentConfig();
   if (config.workerPaused || await input.store.workerPaused()) return { paused: true, processed: [] };

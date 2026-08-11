@@ -28,9 +28,14 @@ import {
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3 as calendarFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
-import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
+import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "../../content/readerSafety";
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
+import {
+  resolveApprovedExactSkyAspectCopy,
+  selectSkyAspectCopyByPrecedence,
+  type ApprovedExactSkyAspectLookup
+} from "../../services/skyAspectRouting";
 import { hasMapboxToken, searchCities, type CitySuggestion } from "../../services/mapbox";
 import { timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
@@ -1152,6 +1157,68 @@ function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "
   return "";
 }
 
+type CalendarSkyAspectCandidate = {
+  body: string;
+  layer: CalendarEventProseLayer;
+  sourceKeys: string[];
+  tier: string;
+};
+
+function calendarSkyAspectPackageCandidates(
+  event: LunarCalendarEvent,
+  dateLine: string
+): {
+  signSpecific: CalendarSkyAspectCandidate | null;
+  phrasebook: CalendarSkyAspectCandidate | null;
+  fallback: CalendarSkyAspectCandidate | null;
+} {
+  const empty = { signSpecific: null, phrasebook: null, fallback: null };
+
+  if (event.type !== "aspect" || !event.planets || !event.aspect) {
+    return empty;
+  }
+
+  const [first, second] = event.planets;
+
+  try {
+    const rendered = calendarFallbackRendererV3.renderSkyAspectCard({
+      a: slugContentPart(first),
+      b: slugContentPart(second),
+      aspect: slugContentPart(event.aspect),
+      aSign: event.fromSign ? slugContentPart(event.fromSign) : undefined,
+      bSign: event.toSign ? slugContentPart(event.toSign) : undefined,
+      dateLine
+    });
+    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+
+    if (!body) {
+      return empty;
+    }
+
+    const isReviewed = rendered.contentKey?.startsWith("fallback-hook/sky-aspect-") ?? false;
+    const isSignSpecific = rendered.contentKey?.startsWith("fallback-hook/sky-aspect-sign/") ?? false;
+    const candidate: CalendarSkyAspectCandidate = {
+      body,
+      layer: "fallback",
+      sourceKeys: [rendered.contentKey ?? rendered.templateKey],
+      tier: isReviewed ? "reviewed-sky-aspect-phrasebook-v1" : "v3-package"
+    };
+
+    if (isSignSpecific) {
+      return { ...empty, signSpecific: candidate };
+    }
+
+    if (isReviewed) {
+      return { ...empty, phrasebook: candidate };
+    }
+
+    return { ...empty, fallback: candidate };
+  } catch (error) {
+    calendarEventPackageFailure(event, error);
+    return empty;
+  }
+}
+
 function weeklyLunationArticleOpening(event: LunarCalendarEvent) {
   if (event.type !== "lunation" || !event.sign) {
     return "";
@@ -1182,7 +1249,8 @@ export function normalizeCalendarEventSurface(
   event: LunarCalendarEvent,
   content: LiveGeneratedContent | null,
   dateLine = "Today",
-  knowledgeMatrixV9?: CalendarV9TransitResolver | null
+  knowledgeMatrixV9?: CalendarV9TransitResolver | null,
+  approvedExactSkyAspectLookup?: ApprovedExactSkyAspectLookup | null
 ): NormalizedCalendarEventSurface {
   const generatedDescription = firstReaderFacingCopy([
     ...(event.type === "aspect" ? [] : [content?.summary]),
@@ -1192,6 +1260,63 @@ export function normalizeCalendarEventSurface(
   ]);
   const generatedDescriptionFitsDateContext = dateLine === "Today"
     || weeklyEventDescriptionFitsDateContext(generatedDescription);
+
+  if (event.type === "aspect" && event.planets && event.aspect) {
+    const [first, second] = event.planets;
+    const packageCandidates = calendarSkyAspectPackageCandidates(event, dateLine);
+    const exact = resolveApprovedExactSkyAspectCopy({
+      aspect: event.aspect,
+      first,
+      heading: event.title,
+      lookup: approvedExactSkyAspectLookup,
+      second,
+      slots: {
+        aspect: slugContentPart(event.aspect),
+        planetA: first,
+        planetATopic: fallbackV3PlanetTopic(first),
+        planetB: second,
+        planetBTopic: fallbackV3PlanetTopic(second),
+        signA: event.fromSign,
+        signB: event.toSign
+      }
+    });
+    const generated = content && generatedDescription && generatedDescriptionFitsDateContext
+      ? {
+          body: generatedDescription,
+          layer: "fallback" as const,
+          sourceKeys: [content.contentKey],
+          tier: "generated-sky-aspect-lint-v1"
+        }
+      : null;
+    const selected = selectSkyAspectCopyByPrecedence<CalendarSkyAspectCandidate>({
+      signSpecific: packageCandidates.signSpecific,
+      exact,
+      phrasebook: packageCandidates.phrasebook,
+      generated,
+      fallback: packageCandidates.fallback
+    });
+
+    if (!selected) {
+      return {
+        surface: "calendar-event",
+        status: "not-servable",
+        sections: []
+      };
+    }
+
+    return {
+      surface: "calendar-event",
+      status: selected.layer === "authored" ? "servable" : "partial",
+      sections: [{
+        slot: "description",
+        required: false,
+        layer: selected.layer,
+        tier: selected.tier,
+        sourceKeys: selected.sourceKeys,
+        body: selected.body
+      }]
+    };
+  }
 
   if (content && generatedDescription && generatedDescriptionFitsDateContext) {
     const layer = calendarEventContentLayer(content);
@@ -1264,25 +1389,34 @@ function calendarEventEditorialContent(
   event: LunarCalendarEvent,
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   timeZone: string,
-  knowledgeMatrixV9?: CalendarV9TransitResolver | null
+  knowledgeMatrixV9?: CalendarV9TransitResolver | null,
+  approvedExactSkyAspectLookup?: ApprovedExactSkyAspectLookup | null
 ): CalendarEditorialContent {
   const dateLine = calendarCanonicalEventDateLine(event, timeZone);
   const content = liveCalendarEventContent(generatedContent, event);
-  const normalized = normalizeCalendarEventSurface(event, content, dateLine, knowledgeMatrixV9);
+  const normalized = normalizeCalendarEventSurface(
+    event,
+    content,
+    dateLine,
+    knowledgeMatrixV9,
+    approvedExactSkyAspectLookup
+  );
   const description = normalized.sections[0];
   const isKnowledgeMatrixV9 = description?.tier === KNOWLEDGE_MATRIX_V9_VERSION;
+  const isApprovedSpecificSkyAspect = event.type === "aspect"
+    && ["approved-exact-sky-aspect-v1", "reviewed-sky-aspect-phrasebook-v1"].includes(description?.tier ?? "");
   const headline = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
   const fallbackContentKey = `generated/calendar-event/${event.type}/${event.id}`;
 
   return {
-    contentKey: isKnowledgeMatrixV9
+    contentKey: isKnowledgeMatrixV9 || isApprovedSpecificSkyAspect
       ? description.sourceKeys[0] ?? fallbackContentKey
       : description?.layer === "authored"
       ? description.sourceKeys[0] ?? `owner-approved/calendar-event/${event.id}`
       : description
         ? fallbackContentKey
         : `source-gap/calendar-event/${event.id}`,
-    contentSource: description?.layer === "authored" || isKnowledgeMatrixV9
+    contentSource: description?.layer === "authored" || isKnowledgeMatrixV9 || isApprovedSpecificSkyAspect
       ? "owner_approved"
       : "generated_fallback",
     eventId: event.id,
@@ -1300,7 +1434,7 @@ function calendarEventEditorialContent(
         : description?.layer === "fallback"
           ? "calendar-event-fallback.v3"
           : undefined,
-      reviewStatus: description?.layer === "authored" || isKnowledgeMatrixV9
+      reviewStatus: description?.layer === "authored" || isKnowledgeMatrixV9 || isApprovedSpecificSkyAspect
         ? "reader-eligible"
         : "assembled-fallback"
     }
@@ -1662,6 +1796,7 @@ export function LunarCalendar({
   const [pendingLocation, setPendingLocation] = useState<CitySuggestion | null>(null);
   const [locationSearchStatus, setLocationSearchStatus] = useState<LocationSearchStatus>("idle");
   const [knowledgeMatrixV9, setKnowledgeMatrixV9] = useState<CalendarV9TransitResolver | null>(null);
+  const [approvedExactSkyAspectLookup, setApprovedExactSkyAspectLookup] = useState<ApprovedExactSkyAspectLookup | null>(null);
   const monthDetailRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1673,6 +1808,24 @@ export function LunarCalendar({
       })
       .catch((error) => {
         console.warn("Calendar V9 transit copy could not load; keeping the existing package fallback.", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    void import("../../content/skyRegistry")
+      .then((registry) => {
+        if (active) {
+          setApprovedExactSkyAspectLookup(() => registry.approvedExactSkyAspectCopy);
+        }
+      })
+      .catch((error) => {
+        console.warn("Calendar exact Sky aspect registry could not load; keeping the approved fallback tiers.", error);
       });
 
     return () => {
@@ -2020,7 +2173,8 @@ export function LunarCalendar({
           event,
           generatedContent,
           zone,
-          knowledgeMatrixV9
+          knowledgeMatrixV9,
+          approvedExactSkyAspectLookup
         );
 
         return {
@@ -2148,7 +2302,7 @@ export function LunarCalendar({
         showGuidance
       };
     });
-  }, [calendar, generatedContent, knowledgeMatrixV9, selectedWeekDays, zone]);
+  }, [approvedExactSkyAspectLookup, calendar, generatedContent, knowledgeMatrixV9, selectedWeekDays, zone]);
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {
@@ -2201,7 +2355,13 @@ export function LunarCalendar({
       // Use the same reviewed, sign-specific aspect content selected for Sky.
       // When that exact row is unavailable, preserve Calendar coverage with
       // the package renderer instead of leaving the write-up blank.
-      const editorial = calendarEventEditorialContent(event, generatedContent, zone, knowledgeMatrixV9);
+      const editorial = calendarEventEditorialContent(
+        event,
+        generatedContent,
+        zone,
+        knowledgeMatrixV9,
+        approvedExactSkyAspectLookup
+      );
       const body = editorial.eventCopy ?? "";
 
       if (body) {
@@ -2211,7 +2371,7 @@ export function LunarCalendar({
     }
 
     return writeups;
-  }, [generatedContent, knowledgeMatrixV9, selectedDayTransits]);
+  }, [approvedExactSkyAspectLookup, generatedContent, knowledgeMatrixV9, selectedDayTransits, zone]);
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedDayPhase = selectedDay && calendar
     ? calendarPhaseLabelForDay(selectedDay, calendar.days)
@@ -2456,7 +2616,8 @@ export function LunarCalendar({
                     event,
                     generatedContent,
                     zone,
-                    knowledgeMatrixV9
+                    knowledgeMatrixV9,
+                    approvedExactSkyAspectLookup
                   );
                   const eventTitle = editorial.headline ?? event.title;
                   const description = editorial.eventCopy ?? "";
@@ -2858,6 +3019,7 @@ export function LunarCalendar({
               <div className="lunar-week-transits__list">
                 {visibleWeekTransitEvents.map((event) => (
                   <TransitCard
+                    approvedExactSkyAspectLookup={approvedExactSkyAspectLookup}
                     contentStatus={generatedContentStatus}
                     event={event}
                     generatedContent={generatedContent}
@@ -3093,6 +3255,7 @@ export function LunarCalendar({
               <div className="lunar-month-transits__list">
                 {monthTransitEvents.map((event) => (
                   <TransitCard
+                    approvedExactSkyAspectLookup={approvedExactSkyAspectLookup}
                     contentStatus={generatedContentStatus}
                     event={event}
                     generatedContent={generatedContent}
@@ -3114,6 +3277,7 @@ export function LunarCalendar({
 }
 
 function TransitCard({
+  approvedExactSkyAspectLookup,
   contentStatus,
   event,
   generatedContent,
@@ -3121,6 +3285,7 @@ function TransitCard({
   onOpenTransit,
   timeZone
 }: {
+  approvedExactSkyAspectLookup?: ApprovedExactSkyAspectLookup | null;
   contentStatus: "idle" | "loading" | "ready";
   event: LunarCalendarEvent;
   generatedContent?: Map<string, LiveGeneratedContent>;
@@ -3133,7 +3298,8 @@ function TransitCard({
     event,
     generatedContent,
     timeZone,
-    knowledgeMatrixV9
+    knowledgeMatrixV9,
+    approvedExactSkyAspectLookup
   );
   const title = editorial.headline ?? event.title;
   const description = editorial.eventCopy ?? "";
