@@ -1,0 +1,293 @@
+{
+  "program": "mercury-masters-and-derivations",
+  "step": 1,
+  "recordedAt": "2026-08-11",
+  "ownerSource": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+  "ownerSourceSha256": "36185857dc2710b8e0e59e100a33fe8be225632285b0b0ad69e8037fa633a476",
+  "counts": {
+    "articleMasters": 12,
+    "alternativeHookVariants": 24,
+    "replacedServingRows": 12,
+    "nonTargetRows": 44
+  },
+  "invariants": {
+    "nonTargetRowsBeforeSha256": "4591fba73e432d30e9edeea3f32fa972fcca643898a543748da9c1c05847ec5f",
+    "nonTargetRowsAfterSha256": "4591fba73e432d30e9edeea3f32fa972fcca643898a543748da9c1c05847ec5f",
+    "nonTargetRowsByteEquivalent": true,
+    "ownerParagraphsAndHeadingsCopiedExactly": true,
+    "primaryHooksCopiedExactly": true,
+    "alternativeHooksCopiedExactly": true,
+    "servingArticleSnapshotSha256": "bd898d6f9ef1eb47115a9f242472ee9402b261b21478cd4dd28bdc28f5a241c6"
+  },
+  "dateHandling": {
+    "factLine": "{{entryDate}} to {{exitDate}}",
+    "mechanicalPlaceholderConversions": [],
+    "explanation": "The existing engine-rendered fact_line continues to supply entry and exit dates. No owner sentence was converted or rewritten."
+  },
+  "rows": [
+    {
+      "sign": "aries",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/aries",
+      "sourceSection": "Mercury in Aries",
+      "primaryHookSha256": "2b8fff42cfee14319acae9a3624b3fb4f58244cf58c9c436195efea3273007c9",
+      "sectionHeadings": [
+        "Get to the point",
+        "Move what has been stalled",
+        "Speed can miss what matters",
+        "Keep the directness, lose the rush"
+      ],
+      "sectionBodySha256": [
+        "aec16843d07c2b0ea17219e54bbafd229b358a014a3c86249a5b02d4a6f1aa10",
+        "d5a28ee1c182446aba643861afcb7842456be65107c6709a1d729d42e59c399f",
+        "7179118a92cfd1540ef29c2e21af6b181dceb3c5b662d50694c2b0ec3f50397f",
+        "4adbc09bcd74bd201f20bee76893293767ea2afb15b5dcd9ff5eaaa3cacae390"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/aries/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/aries/variant-3"
+      ]
+    },
+    {
+      "sign": "taurus",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/taurus",
+      "sourceSection": "Mercury in Taurus",
+      "primaryHookSha256": "594b1b68f640001815d8e737473181deba388d31f0f8c6987244a00861b7c617",
+      "sectionHeadings": [
+        "Let the answer prove itself",
+        "Choose what can last",
+        "Stability can turn into resistance",
+        "Update what no longer fits"
+      ],
+      "sectionBodySha256": [
+        "ed868f3dec0cd4ac9b3a2f176ed832617d5b47fcd130ff768c51cc737d6ab6d3",
+        "a5352f4d31e04dfca3812f728759e8b28ebee52417274c6f5822716ef77d9318",
+        "5e54f00712bd2269a515becb482de272766e29e99b95e14c3144702b1561843b",
+        "da9f03b94c7b7a8d77d8340f24f3711c401602974d074f4f170c68d6b595b19e"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/taurus/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/taurus/variant-3"
+      ]
+    },
+    {
+      "sign": "gemini",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/gemini",
+      "sourceSection": "Mercury in Gemini",
+      "primaryHookSha256": "136a5a025883a8fece3937ecf5c37742470c739a51de8db454442225aa95cf71",
+      "sectionHeadings": [
+        "Let the information move",
+        "Change your mind when the facts improve",
+        "Too many open loops create their own confusion",
+        "Finish enough to be understood"
+      ],
+      "sectionBodySha256": [
+        "0f1bcb4f336acdbe0c2c3c126c3ba22c4eed410f1d84fe09159c7c3174dabe37",
+        "634f5f34f17c96d1fd3f93d154ea4752787e909aa7e1afb9ea76a6176b1b88db",
+        "962459f2f77d3d248299c12c073f742e75f318188c042d92bb7e87fb4c822d6f",
+        "b025316b532530778c541f2a054b0b021e2505ca49779638ef16b1e7e9e4aa43"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/gemini/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/gemini/variant-3"
+      ]
+    },
+    {
+      "sign": "cancer",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/cancer",
+      "sourceSection": "Mercury in Cancer",
+      "primaryHookSha256": "abcdfd38092f5bed421a29f892b6d4728010c6bffd87e3611745b1f859ecff32",
+      "sectionHeadings": [
+        "Read the history in the words",
+        "Memory can catch what the literal wording misses",
+        "The past can answer before the present does",
+        "Give the present its own chance"
+      ],
+      "sectionBodySha256": [
+        "bfc9b908379a7b3453ca4bcddf27ec8c3352ab8447ae81b7fb40919d47114152",
+        "31d8b908ee717633e891fe0c7825dabb949b6a4bed5d2afc4c1461d216d9aca3",
+        "27ec44b66ea28da4572184bf8ef0ee5b5b154ca0d41b82b91c2444af07dbbe29",
+        "6b833375d3bebe171b64baaf1be51912195a884737bcee3fd0880f59f8fa473f"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/cancer/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/cancer/variant-3"
+      ]
+    },
+    {
+      "sign": "leo",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/leo",
+      "sourceSection": "Mercury in Leo",
+      "primaryHookSha256": "3df1c26d8a26f38f3846be45f40023b5495ba22503f7e8ec53102a45a622aa3c",
+      "sectionHeadings": [
+        "Put your voice behind the point",
+        "Make the information matter",
+        "Pride can take over the conversation",
+        "Keep the point bigger than the applause"
+      ],
+      "sectionBodySha256": [
+        "21e29d5b2dd3a52fb22ef3d0dfe6cfd43a3436ea52f5811bcfcf58f49a7b5e63",
+        "cfe9ada83921a750242b06f0613a35afc7433c04f436a80c330edcc361e9b710",
+        "aa1e6315e8fd1eab7ff54e461cf08db9d843dcc105b04ff5355a2ee295e8e02e",
+        "691037aba0cce4a57c8cd05b1dfb85bb207e05aa93fdfe2c3f7a7da8429e8b2a"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/leo/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/leo/variant-3"
+      ]
+    },
+    {
+      "sign": "virgo",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/virgo",
+      "sourceSection": "Mercury in Virgo",
+      "primaryHookSha256": "f2d9d34fc77885226bce8ae9e998649960e10eef06acdbb0f021245fdd4c6908",
+      "sectionHeadings": [
+        "Find the part that keeps breaking",
+        "Small corrections can save a lot of time",
+        "Precision can become its own delay",
+        "Fix what changes the result"
+      ],
+      "sectionBodySha256": [
+        "c3561bd5b9da241180ba12b2f4e6934d3f98e5305b681695c4ad9c65b3e046e1",
+        "34380838d19ad9e7975761afe423c47021276f72a7295f0d7868699d0dfa06f6",
+        "bf872241de3d99b2b208abd669cb9cb1cd678b7984fe338ed46d21c5dc7e9ba5",
+        "be2fa23bb48e3313028b5f71d016a10ceb855933990581837977410a46b12888"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/virgo/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/virgo/variant-3"
+      ]
+    },
+    {
+      "sign": "libra",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/libra",
+      "sourceSection": "Mercury in Libra",
+      "primaryHookSha256": "0ca8e60fb94f97ae3d28a204b9591100fca841c90a0e014eab8eede0a941990e",
+      "sectionHeadings": [
+        "Listen for who keeps giving ground",
+        "A better conversation can reveal a worse deal",
+        "Compromise can erase the person doing most of it",
+        "Keep your position in the room"
+      ],
+      "sectionBodySha256": [
+        "ad665bbab3c3059e2b7de082d33db88126dbc16714962f19511a76e27eabb777",
+        "a75f27bccea71997c4b3aff364ee0f7770e0ce076d092b6039d8451b5f505451",
+        "f9fffa564d25d5f3d321022bb8d5311999a2718b7d7b59691054aeda0554d530",
+        "3ff0cfa9146d4b78401dd80fca0978ae371fe24bc13dda62a581f00d38931675"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/libra/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/libra/variant-3"
+      ]
+    },
+    {
+      "sign": "scorpio",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/scorpio",
+      "sourceSection": "Mercury in Scorpio",
+      "primaryHookSha256": "65cadf7140988e86f23fb5e34e4b1d8d7dc4853b39e85c28fbff56334361d74a",
+      "sectionHeadings": [
+        "Look beneath the first answer",
+        "Follow what does not add up",
+        "When depth turns into suspicion",
+        "Let the facts be enough"
+      ],
+      "sectionBodySha256": [
+        "0da206b60fb12083d2bbef7d4b2d67d130200292942a121e00d0accdf2d4c1c8",
+        "555d8f4a4f89c393e3d8a0fd8d19b037b3e65b3c3ed6c537337c7d49713b7b19",
+        "86b233e1b9477d3e6252d2be899d3f5dba376ff3f5dbb86c46b731095bbb1dda",
+        "8640e506c525a02b4afecbf0db226e92d06f54a6605c7cba383116e9360a05ae"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/scorpio/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/scorpio/variant-3"
+      ]
+    },
+    {
+      "sign": "sagittarius",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/sagittarius",
+      "sourceSection": "Mercury in Sagittarius",
+      "primaryHookSha256": "6896163b4a6fa5f9b3c25158c317950a1b3a6417028739697f7e2aad0102cbd0",
+      "sectionHeadings": [
+        "Name the larger point",
+        "Give the information a direction",
+        "The conclusion can get ahead of the evidence",
+        "Check how much the facts really support"
+      ],
+      "sectionBodySha256": [
+        "9c36abd5fdc5d05b22faed7ec620376870a5f90206bd1f0a0a2fa85eb84a45ac",
+        "a191ad03ce68b5d7c1aa4134812e87b1c0e94c78b2fb32a6d53b6578e134d533",
+        "2bc4bc845517dd71954cb52f0cb3b1ab8b3f4c0e37fc4f4dfb075b97df6bc1f4",
+        "87adf78a67db0717ecf58feeb73682f4cd91f78fc149cdb2e9f4e97b0b5288a0"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/sagittarius/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/sagittarius/variant-3"
+      ]
+    },
+    {
+      "sign": "capricorn",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/capricorn",
+      "sourceSection": "Mercury in Capricorn",
+      "primaryHookSha256": "bcecb6acb73d5c9418c0c883f1b60061ada42a92e0ac582f0d227cedcb2446ab",
+      "sectionHeadings": [
+        "Put the terms on the table",
+        "Make the plan accountable to reality",
+        "Caution can become silence",
+        "Say it while it can still matter"
+      ],
+      "sectionBodySha256": [
+        "3ce7e8f077cc6dfee4808bfb3bc4b69c906624cb6ff0bb32e50adb332ced561b",
+        "739d9a915a952dc1d2269cfb3958c7d22501e6ccb1e3829adc5d65fa252fb6b4",
+        "c3c9178ce2d2f8ce4d7293721beffd8e5bf2b4a92c866a97b035f2c31243b9c1",
+        "352b4a3c2841eadea1efa48fa74c1345284c0d42cc789cfebd01d49c7acc8fd7"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/capricorn/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/capricorn/variant-3"
+      ]
+    },
+    {
+      "sign": "aquarius",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/aquarius",
+      "sourceSection": "Mercury in Aquarius",
+      "primaryHookSha256": "4bcb86f5ac5e1f87e93324e23583ab348d1d862dcc6a8e925e26b320a522aa84",
+      "sectionHeadings": [
+        "Question the system",
+        "Find the pattern behind the problem",
+        "A smarter system should actually improve people’s lives",
+        "Look at who the change serves"
+      ],
+      "sectionBodySha256": [
+        "9893ac867a857e21d469abd509a8ffa0e911e8cacaf3a98c79aab9c049fb8978",
+        "8a7c18e1de66d8674bab266427b309ee84bf23dd71f180d4c758069d717b9ff5",
+        "1562601edb58b8870a93ae34e841ee8edd217a0ba0835e37bbb69cb9793525bd",
+        "6b66a6d22e64ce1c06b0af6f1731c6fae75c5a4a1480876c0f5751ec6d4a294b"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/aquarius/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/aquarius/variant-3"
+      ]
+    },
+    {
+      "sign": "pisces",
+      "contentKey": "fallback-hook/sky-sign-copy/mercury/pisces",
+      "sourceSection": "Mercury in Pisces",
+      "primaryHookSha256": "ea5169a2c3823f4edc718e49ae68f7618f3f092f216004f3b39cd4803be95637",
+      "sectionHeadings": [
+        "Notice what the words did not say",
+        "Intuition can catch the missing context",
+        "A strong impression can still be incomplete",
+        "Give the feeling enough language to test"
+      ],
+      "sectionBodySha256": [
+        "a6979932a7484320a0c8fb50dbe09439f5369439687050af3adbd14be19fc87b",
+        "2491b1736710b7cc65e8b88e8c32883d88bc01cf679f468e8b9a817d4d261d88",
+        "c9d11e63826a794ac3f277cd261ae16d3f241794494c672e04ca5b7033e2fbd4",
+        "566ca4c93c1dec1ddcd3acbb25568fcd468962039258c8be431cd3ccd87ea636"
+      ],
+      "alternativeVariantKeys": [
+        "fallback-hook/sky-sign-copy-hook/mercury/pisces/variant-2",
+        "fallback-hook/sky-sign-copy-hook/mercury/pisces/variant-3"
+      ]
+    }
+  ]
+}
