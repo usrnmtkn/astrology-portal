@@ -95,6 +95,7 @@ type PassingUnitCacheEntry = {
     fulfillmentPassed: true;
     validatorResults: unknown[];
     judge: ReportJudgeResult;
+    writerReviews: Array<{ critique: unknown; coldCritique: unknown }>;
     promptVersions: Record<string, unknown>;
     factsHash: string | null;
     attemptCounts: { validator: number; judge: number };
@@ -419,6 +420,10 @@ export async function processReportFulfillmentJob(input: {
       failureContext: assemblyFailureContext.length ? assemblyFailureContext : undefined,
       callModel: authorizedCall
     });
+    const writerReviews: Array<{ critique: unknown; coldCritique: unknown }> = [{
+      critique: initialChain.critique,
+      coldCritique: initialChain.coldCritique
+    }];
     const initialValidation = await validateWithNamedRevisions(initialChain.revised, totalTokens(initialChain.calls));
     let draft = initialValidation.draft;
     let acceptedChainTokens = initialValidation.acceptedTokens;
@@ -437,6 +442,7 @@ export async function processReportFulfillmentJob(input: {
       await input.store.updateReport(report.id, nowPatch("writing"));
       await input.store.updateJob(input.job.id, { step: "writing" });
       const chain = await runReportWriterChain({ payload, failureContext: judged.result.findings.map((finding) => JSON.stringify(finding)), callModel: authorizedCall });
+      writerReviews.push({ critique: chain.critique, coldCritique: chain.coldCritique });
       const judgeRevisionValidation = await validateWithNamedRevisions(chain.revised, totalTokens(chain.calls));
       draft = judgeRevisionValidation.draft;
       acceptedChainTokens = judgeRevisionValidation.acceptedTokens;
@@ -445,6 +451,7 @@ export async function processReportFulfillmentJob(input: {
     if (!judged || judged.result.verdict !== "pass") throw new Error(`Judge attempt cap exhausted for ${unitId}.`);
     const sourceSnapshot: PassingUnitCacheEntry["sourceSnapshot"] = {
       fulfillmentPassed: true, validatorResults, judge: judged.result, promptVersions,
+      writerReviews,
       factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts }
     };
     const passingUnit: PassingUnitCacheEntry = {
