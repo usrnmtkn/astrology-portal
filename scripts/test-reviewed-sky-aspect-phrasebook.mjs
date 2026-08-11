@@ -15,6 +15,7 @@ const templates = readJson("../apps/web/src/content/fallbackArchitectureV3/templ
 const canonicalMatrix = readJson("../docs/content-review/sky-aspects/2026-07-31/canonical-noon-matrix.json");
 const approvedJupiterNeptune = readJson("../packages/astro-knowledge/data/transits/jupiter-trine-neptune.json");
 const ownerAspectSource = readJson("../packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json");
+const skyAspectVoice = readJson("../packages/astro-knowledge/voice/tldr-astro/sky-aspect.json");
 const transitDirectory = new URL("../packages/astro-knowledge/data/transits/", import.meta.url);
 const exactTransitRecords = fs.readdirSync(transitDirectory)
   .filter((name) => name.endsWith(".json"))
@@ -37,9 +38,13 @@ assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fall
 assert.equal(approvedJupiterNeptune.status, "LIVE");
 assert.match(approvedJupiterNeptune.readerCopy?.body ?? "", /^Hope has somewhere to go\./u);
 assert.equal(Object.keys(ownerAspectSource).length, 225);
-assert.equal(exactTransitRecords.length, 214);
+assert.equal(exactTransitRecords.length, 215);
 assert.ok(exactTransitRecords.every((record) => record.status === "LIVE"));
 assert.ok(exactTransitRecords.every((record) => record.readerCopy?.summary && record.readerCopy?.body));
+assert.equal(
+  skyAspectVoice.lockedPrinciple,
+  "The astrology should explain why the event unfolds the way it does, while the prose shows what that looks like in ordinary life. The best version does both."
+);
 assert.match(
   exactTransitRecords.find((record) => record.id === "neptune-sextile-pluto")?.readerCopy?.body ?? "",
   /^A compelling public story creates an opening/u

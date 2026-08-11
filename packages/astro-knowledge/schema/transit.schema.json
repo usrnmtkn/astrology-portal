@@ -20,7 +20,8 @@
       "properties": {
         "summary": { "type": "string", "minLength": 1 },
         "body": { "type": "string", "minLength": 1 },
-        "approvedVia": { "type": "string", "minLength": 1 }
+        "approvedVia": { "type": "string", "minLength": 1 },
+        "calendarLeadIn": { "enum": ["date-placements-collective-level"] }
       }
     },
     "base": { "type": "string" },

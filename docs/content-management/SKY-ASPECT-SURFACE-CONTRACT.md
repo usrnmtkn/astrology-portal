@@ -139,14 +139,14 @@ boundary.
 ### Calendar exact-copy parity and intentional gaps
 
 Current Sky and Calendar must use the same precedence selector and the same
-approved exact-aspect lookup. The Calendar parity gate runs all 214
+approved exact-aspect lookup. The Calendar parity gate runs all 215
 reader-eligible exact records in both planet orders. It fails if any of those
-428 routes reaches the general compositor instead of approved specific copy.
+430 routes reaches the general compositor instead of approved specific copy.
 
-The separate exact-copy gap list remains intentionally unfilled in this
-routing change: 66 Chiron targets, 72 Lilith targets, 60 node-axis targets, and
-42 classical-planet quincunxes (240 combinations total). Saturn square Lilith
-is the screenshot-era representative of this set. For these combinations, the
+The separate exact-copy gap list remains intentionally unfilled except for
+the owner-approved Saturn square Lilith record shipped on 2026-08-11: 66 Chiron
+targets, 71 remaining Lilith targets, 60 node-axis targets, and 42
+classical-planet quincunxes (239 combinations total). For these combinations, the
 exact lookup fails closed: it must not invent, import, or relabel generic copy
 as an approved exact record. The resolver may continue to the already-approved
 lower precedence tiers described above. Adding exact prose for any gap is a
