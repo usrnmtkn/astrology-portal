@@ -1,0 +1,168 @@
+{
+  "id": "owner-reference-report-gaps-v1",
+  "kind": "manifestation-set-collection",
+  "version": 1,
+  "coverageDomains": [
+    "eclipse natal house placement",
+    "work and private life"
+  ],
+  "records": {
+    "eclipse-house-placement/3": {
+      "factorType": "eclipse-house-placement",
+      "match": { "house": 3 },
+      "domain": [
+        "application",
+        "announcement",
+        "piece of writing",
+        "conversation",
+        "class",
+        "contract",
+        "decision"
+      ],
+      "possibleLivedManifestations": [
+        "An application, announcement, piece of writing, conversation, class, contract, or decision may reach a point where somebody else can finally respond to it."
+      ],
+      "doNotAssume": [
+        "an application is accepted",
+        "writing is published",
+        "the reader is enrolled in a class",
+        "a contract is signed"
+      ],
+      "copyClaim": {
+        "text": "An announcement, application, or piece of writing may need a clear answer from someone else.",
+        "review_status": "approved"
+      },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "review_status": "approved"
+    },
+    "eclipse-house-placement/4": {
+      "factorType": "eclipse-house-placement",
+      "match": { "house": 4 },
+      "domain": [
+        "move",
+        "repair",
+        "living arrangement",
+        "family duty",
+        "household obligation"
+      ],
+      "possibleLivedManifestations": [
+        "A move may become necessary or desirable.",
+        "A family member may need more care, less care, or a clearer division of responsibility."
+      ],
+      "doNotAssume": [
+        "a move",
+        "a family illness",
+        "a property sale",
+        "family conflict"
+      ],
+      "copyClaim": {
+        "text": "A move, repair, living arrangement, family duty, or household obligation may need a decision.",
+        "review_status": "approved"
+      },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "review_status": "approved"
+    },
+    "eclipse-house-placement/9": {
+      "factorType": "eclipse-house-placement",
+      "match": { "house": 9 },
+      "domain": [
+        "application",
+        "offer or rejection",
+        "title",
+        "project",
+        "client",
+        "publication",
+        "public-facing project"
+      ],
+      "possibleLivedManifestations": [
+        "An application may turn into an offer or rejection.",
+        "A title may change.",
+        "A project may finally carry your name.",
+        "A client may want an answer.",
+        "A publication or public-facing project may move forward."
+      ],
+      "doNotAssume": [
+        "employment",
+        "a promotion",
+        "success",
+        "job loss"
+      ],
+      "copyClaim": {
+        "text": "An application may turn into an offer or rejection. A title may change. A project may finally carry your name.",
+        "review_status": "approved"
+      },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "review_status": "approved"
+    },
+    "eclipse-house-placement/10": {
+      "factorType": "eclipse-house-placement",
+      "match": { "house": 10 },
+      "domain": [
+        "words in public",
+        "draft",
+        "application",
+        "conversation",
+        "title",
+        "deadline",
+        "audience",
+        "answer"
+      ],
+      "possibleLivedManifestations": [
+        "A draft may need to become an application.",
+        "Something written for yourself may need to be revised because other people are going to read it.",
+        "A private decision may need to become a conversation."
+      ],
+      "doNotAssume": [
+        "publication",
+        "an application is accepted",
+        "a public announcement",
+        "professional success"
+      ],
+      "copyClaim": {
+        "text": "Review what you wrote for yourself before it becomes something other people need to understand.",
+        "review_status": "approved"
+      },
+      "provenance": "artifacts/marie-satori-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "review_status": "approved"
+    },
+    "slow-transit-to-natal/jupiter/opposition/midheaven": {
+      "factorType": "slow-transit-to-natal",
+      "match": {
+        "natalPoint": "Midheaven",
+        "transitPlanet": "Jupiter",
+        "aspect": "opposition"
+      },
+      "domain": [
+        "professional opportunity",
+        "hours",
+        "travel",
+        "attention",
+        "responsibility",
+        "private life",
+        "commute",
+        "household"
+      ],
+      "possibleLivedManifestations": [
+        "A professional opportunity could bring more hours, travel, attention, or responsibility at the same time something in your private life needs more of you."
+      ],
+      "doNotAssume": [
+        "employment",
+        "a move",
+        "family illness",
+        "that work or home should automatically win"
+      ],
+      "copyClaim": {
+        "text": "A professional opportunity or responsibility may require more time than home and private life can comfortably give it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md and artifacts/marie-satori-work-money-2026-owner-v1.md; exact owner-approved wording",
+      "review_status": "approved"
+    }
+  },
+  "approval": {
+    "status": "owner_approved",
+    "approvedOn": "2026-08-10",
+    "sourcePath": "artifacts/marie-satori-year-ahead-2026-FINAL.md"
+  },
+  "review_status": "approved"
+}

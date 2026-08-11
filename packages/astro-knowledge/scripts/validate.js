@@ -477,6 +477,7 @@ function validateManifestationSetFile(filePath, errors) {
   assertSchemaFile("manifestation-set.schema.json", errors);
   const collection = readJson(filePath);
   const allowedFactorTypes = new Set([
+    "eclipse-house-placement",
     "eclipse-on-natal-point",
     "slow-transit-to-natal",
     "return",

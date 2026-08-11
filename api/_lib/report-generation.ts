@@ -14,7 +14,7 @@ export type ReportUnitContract = {
 
 export type ManifestationSetRecord = {
   id: string;
-  factorType: "eclipse-on-natal-point" | "slow-transit-to-natal" | "return" | "profection-year" | "sr-overlay";
+  factorType: "eclipse-house-placement" | "eclipse-on-natal-point" | "slow-transit-to-natal" | "return" | "profection-year" | "sr-overlay";
   match: {
     house?: number;
     natalPoint?: string;
@@ -25,9 +25,12 @@ export type ManifestationSetRecord = {
   domain: string[];
   possibleLivedManifestations: string[];
   doNotAssume: string[];
-  copyClaim: { text: null; review_status: "needs_review" };
+  copyClaim: {
+    text: string | null;
+    review_status: "needs_review" | "approved";
+  };
   provenance: string;
-  review_status: "needs_review";
+  review_status: "needs_review" | "approved";
 };
 
 export type ReportFactor = {
@@ -139,7 +142,28 @@ export type ReportValidatorOptions = {
 const GENERATION_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md";
 const LIVED_PROSE_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md";
 export const PERSONAL_HEALTH_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md";
-const MANIFESTATION_SETS_PATH = "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json";
+const MANIFESTATION_SETS_PATHS = [
+  "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json",
+  "packages/astro-knowledge/data/manifestation-sets/sr-overlays-v1.json",
+  "packages/astro-knowledge/data/manifestation-sets/owner-reference-gaps-v1.json"
+] as const;
+
+export const REPORT_FACTOR_ELIGIBILITY_RULING = "Eclipses enter report factor selection by conjunction to natal points and by natal house placement only. Soft eclipse aspects (sextile, trine, square to natal points as standalone factors, and non-conjunction oppositions) are excluded. Chiron, Black Moon Lilith, and the lunar Nodes are excluded as slow-transit targets and as SR-overlay factors in report factor selection. The SR-overlay grid covers Sun through Pluto in natal houses 1–12.";
+
+export const SR_OVERLAY_ELIGIBLE_POINTS = [
+  "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"
+] as const;
+
+export const SLOW_TRANSIT_EXCLUDED_TARGETS = [
+  "Chiron", "Lilith", "Black Moon Lilith", "North Node", "South Node"
+] as const;
+
+function pointToken(value: string) {
+  return value.trim().toLowerCase().replaceAll("_", " ").replaceAll("-", " ").replace(/\s+/gu, " ");
+}
+
+const srOverlayEligibleTokens = new Set(SR_OVERLAY_ELIGIBLE_POINTS.map(pointToken));
+const slowTransitExcludedTargetTokens = new Set(SLOW_TRANSIT_EXCLUDED_TARGETS.map(pointToken));
 
 type FactorRuleMatch = {
   factorTypes?: ManifestationSetRecord["factorType"][];
@@ -726,10 +750,18 @@ export function reportUnitContract(horizon: ReportHorizon, unitId: string, repor
 }
 
 function loadManifestationRecords() {
-  const collection = JSON.parse(readRepoText(MANIFESTATION_SETS_PATH)) as {
-    records: Record<string, Omit<ManifestationSetRecord, "id">>;
-  };
-  return Object.entries(collection.records).map(([id, record]) => ({ id, ...record }));
+  const records = MANIFESTATION_SETS_PATHS.flatMap((sourcePath) => {
+    const collection = JSON.parse(readRepoText(sourcePath)) as {
+      records: Record<string, Omit<ManifestationSetRecord, "id">>;
+    };
+    return Object.entries(collection.records).map(([id, record]) => ({ id, ...record }));
+  });
+  const seen = new Set<string>();
+  for (const record of records) {
+    if (seen.has(record.id)) throw new Error(`Duplicate manifestation-set key: ${record.id}`);
+    seen.add(record.id);
+  }
+  return records;
 }
 
 function factorKey(factor: ReportFactor) {
@@ -763,7 +795,7 @@ function solarReturnFactors(facts: Record<string, unknown>): ReportFactor[] {
     const overlay = recordValue(value);
     const house = numberValue(overlay?.house);
     const overlayPoint = stringValue(overlay?.point);
-    if (!overlay || house === undefined || !overlayPoint) return [];
+    if (!overlay || house === undefined || !overlayPoint || !srOverlayEligibleTokens.has(pointToken(overlayPoint))) return [];
     return [{
       id: `sr-overlay-${overlayPoint.toLowerCase().replaceAll(" ", "-")}-house-${house}`,
       factorType: "sr-overlay" as const,
@@ -782,6 +814,7 @@ function transitFactors(facts: Record<string, unknown>): ReportFactor[] {
     const natalPoint = stringValue(arc.natalPoint);
     const aspect = stringValue(arc.aspect);
     const house = numberValue(arc.natalHouse);
+    if (slowTransitExcludedTargetTokens.has(pointToken(natalPoint))) return [];
     const selfConjunction = transitPlanet === natalPoint && aspect === "conjunction";
     if (selfConjunction && !RETURN_ELIGIBLE.has(transitPlanet)) return [];
     const returnEligible = selfConjunction && RETURN_ELIGIBLE.has(transitPlanet);
@@ -816,20 +849,30 @@ function eclipseFactors(facts: Record<string, unknown>): ReportFactor[] {
     const event = recordValue(value);
     const kind = stringValue(event?.kind);
     if (!event || !kind.includes("eclipse")) return [];
-    return arrayValue(event.natalContacts).flatMap((contactValue) => {
+    const activationHouse = numberValue(event.natalHouse);
+    const housePlacement: ReportFactor[] = activationHouse === undefined ? [] : [{
+      id: `${stringValue(event.id)}-house-${activationHouse}`,
+      factorType: "eclipse-house-placement",
+      house: activationHouse,
+      activationHouse,
+      source: { ...event, natalContacts: [] }
+    }];
+    const conjunctions = arrayValue(event.natalContacts).flatMap((contactValue) => {
       const contact = recordValue(contactValue);
       const natalPoint = stringValue(contact?.natalPoint);
-      if (!contact || !natalPoint) return [];
+      const aspect = stringValue(contact?.aspect);
+      if (!contact || !natalPoint || pointToken(aspect) !== "conjunction") return [];
       return [{
         id: `${stringValue(event.id)}-${natalPoint.toLowerCase().replaceAll(" ", "-")}`,
         factorType: "eclipse-on-natal-point" as const,
-        house: natalHouses.get(natalPoint),
-        activationHouse: numberValue(event.natalHouse),
+        house: numberValue(contact.natalHouse) ?? natalHouses.get(natalPoint),
+        activationHouse,
         natalPoint,
-        aspect: stringValue(contact.aspect),
+        aspect,
         source: { ...event, contact }
       }];
     });
+    return [...housePlacement, ...conjunctions];
   });
 }
 
@@ -866,7 +909,11 @@ function bestManifestationRecord(records: ManifestationSetRecord[], factor: Repo
   return records
     .map((record) => ({ record, score: recordMatchScore(record, factor) }))
     .filter((candidate) => candidate.score >= 0)
-    .sort((left, right) => right.score - left.score || left.record.id.localeCompare(right.record.id))[0]?.record;
+    .sort((left, right) => (
+      right.score - left.score
+      || Number(right.record.review_status === "approved") - Number(left.record.review_status === "approved")
+      || left.record.id.localeCompare(right.record.id)
+    ))[0]?.record;
 }
 
 function relevantTerms(text: string, terms: string[]) {
@@ -909,6 +956,10 @@ function projectedRecord(
   const bridge = (selection?.bridgeConsequences.length ?? 0) > 0;
   const included = (value: string) => !excluded(value)
     && (configuration.strictBridgeProjection ? relevant(value) : bridge || relevant(value));
+  const copyClaimText = record.copyClaim.text;
+  const projectedCopyClaim = copyClaimText && included(copyClaimText)
+    ? record.copyClaim
+    : { text: null, review_status: "needs_review" as const };
   return {
     ...record,
     domain: record.domain.filter(included),
@@ -917,7 +968,8 @@ function projectedRecord(
     doNotAssume: [...new Set([
       ...record.doNotAssume.filter((value) => !excluded(value)),
       ...(selection?.doNotAssume ?? [])
-    ])]
+    ])],
+    copyClaim: projectedCopyClaim
   };
 }
 

@@ -30,6 +30,7 @@
         "properties": {
           "factorType": {
             "enum": [
+              "eclipse-house-placement",
               "eclipse-on-natal-point",
               "slow-transit-to-natal",
               "return",
