@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
+import { REPORT_NO_CLEVERNESS_RULING_PATH, REPORT_OWNER_REVIEW_EVIDENCE_PATH } from "./report-prompt-versions.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";
@@ -82,6 +83,14 @@ export type ReportGenerationPayload = {
     text: string;
   } | null;
   livedProseStandard: {
+    sourcePath: string;
+    text: string;
+  };
+  noClevernessRuling: {
+    sourcePath: string;
+    text: string;
+  };
+  ownerReviewEvidence: {
     sourcePath: string;
     text: string;
   };
@@ -1132,6 +1141,14 @@ export function assembleReportGenerationPayload(
       sourcePath: LIVED_PROSE_STANDARD_PATH,
       text: readRepoText(LIVED_PROSE_STANDARD_PATH)
     },
+    noClevernessRuling: {
+      sourcePath: REPORT_NO_CLEVERNESS_RULING_PATH,
+      text: readRepoText(REPORT_NO_CLEVERNESS_RULING_PATH)
+    },
+    ownerReviewEvidence: {
+      sourcePath: REPORT_OWNER_REVIEW_EVIDENCE_PATH,
+      text: readRepoText(REPORT_OWNER_REVIEW_EVIDENCE_PATH)
+    },
     sharedInvariants: [...SHARED_INVARIANTS],
     domainRelevanceModel: reportDomainRelevanceModel(input.reportDomain),
     frozenFacts: JSON.parse(JSON.stringify(input.frozenFacts)) as Record<string, unknown>,
@@ -1172,10 +1189,12 @@ It must never appear in reader-facing report output, headings, metadata, attribu
 Its purpose is to force reasoning before prose, not to create visible report structure.`;
 
 export function reportPromptFromPayload(payload: ReportGenerationPayload) {
-  const { canonicalOwnerPrompt, livedProseStandard, ...taskPayload } = payload;
+  const { canonicalOwnerPrompt, livedProseStandard, noClevernessRuling, ownerReviewEvidence, ...taskPayload } = payload;
   return [
     canonicalOwnerPrompt.text,
     `LIVED_PROSE_STANDARD\n${livedProseStandard.text}`,
+    `NO_CLEVERNESS_TAX_OWNER_RULING\n${noClevernessRuling.text}`,
+    `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
     INTERNAL_LIVED_PROSE_SCAFFOLD,
     `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
   ].join("\n\n");
@@ -1238,7 +1257,7 @@ function phrasePresent(sentence: string, phrase: string) {
   return new RegExp(`(^|[^a-z0-9])${escaped(phrase)}([^a-z0-9]|$)`, "iu").test(sentence);
 }
 
-function manifestationEnumerationSize(sentence: string) {
+export function manifestationEnumerationSize(sentence: string) {
   const clauseBoundary = /[;:]|,\s+(?=(?:but|so|yet|while|whereas|because|although|though|when|if|unless|since|after|before)\b|(?:i|you|we|they|he|she|it|this|that|these|those|the)\s+(?:am|is|are|was|were|may|might|can|could|will|would|should|must|has|have|had|do|does|did)\b)/iu;
   let largest = 0;
 
@@ -1254,6 +1273,14 @@ function manifestationEnumerationSize(sentence: string) {
 
 function hedged(sentence: string) {
   return /\b(?:may|can|could|might)\b/iu.test(sentence);
+}
+
+export function isAstrologyMechanismStatement(sentence: string) {
+  const astrology = "(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|node|eclipse|profection|solar return|transit)";
+  const attribution = new RegExp(`\\b${astrology}\\b[^.!?]*\\b(?:conjoins?|squares?|opposes?|trines?|sextiles?|returns?|stations?)\\b`, "iu");
+  const interpretedMechanism = new RegExp(`\\b${astrology}\\b[^.!?]*\\b(?:chang(?:e|es|ing|ed)|expand(?:s|ing|ed)?|limit(?:s|ing|ed)?|structur(?:e|es|ing|ed)|disrupt(?:s|ing|ed)?|activate(?:s|d|ing)?|puts? pressure on|brings? pressure to)\\b[^.!?]*\\b(?:terms?|roles?|conditions?|patterns?|rhythms?|expectations?|timing|pace|pressure|structure|capacity|visibility)\\b`, "iu");
+  const explanatoryMechanism = new RegExp(`\\b${astrology}\\b[^.!?]*\\bmakes?\\b[^.!?]*\\b(?:look|feel|seem)\\b`, "iu");
+  return attribution.test(sentence) || interpretedMechanism.test(sentence) || explanatoryMechanism.test(sentence);
 }
 
 function hasActualSaturnReturn(facts: Record<string, unknown>) {
@@ -1336,6 +1363,34 @@ function validateLivedProseMechanics(draft: ReportDraft, issues: ReportValidatio
       message: `Reader-facing output contains generic advice instead of a situated practical change: ${phrase}.`,
       severity: "error"
     });
+  }
+  const bannedReaderTerms: Array<[RegExp, string, string]> = [
+    [/\bthings\b/iu, "vague_noun", "Reader-facing output uses 'things' as a vague noun."],
+    [/\b(?:the\s+)?(?:outcome|result|answer|decision|future)\s+(?:is|was|remains)\s+not settled\b/iu, "banned_settled", "Reader-facing output uses 'settled' as an abstract outcome disclaimer."],
+    [/\b(?:the\s+)?(?:year|eclipse|transit|profection|solar return)\s+(?:asks|wants|invites|encourages)\b/iu, "astrology_as_agent", "Reader-facing output makes astrology an agent that asks, wants, invites, or encourages."],
+    [/\blabor\b/iu, "labor_for_work", "Reader-facing output uses 'labor' where concrete work should be named."],
+    [/\bsummer opens the year outward\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: Summer opens the year outward."],
+    [/\bthe work starts moving between people\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: The work starts moving between people."],
+    [/\bcircumstances may choose part of it for you\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: Circumstances may choose part of it for you."],
+    [/\baugust brings greater access and response\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: August brings greater access and response."],
+    [/\bwednesday still has one afternoon\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: Wednesday still has one afternoon."],
+    [/\bthe public and private parts of life compete\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: The public and private parts of life compete."],
+    [/\bthe opportunity reaches the calendar\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: The opportunity reaches the calendar."]
+  ];
+  for (const [pattern, code, message] of bannedReaderTerms) {
+    if (pattern.test(text)) issues.push({ code, message, severity: "error" });
+  }
+  const mechanismTerms = /\b(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|node|eclipse|profection|solar return|transit|house)\b/iu;
+  const concreteCosts = /\b(?:hours?|sleep|meals?|lunch|appointments?|travel|commut(?:e|ing)|preparation|follow-up|workload|recovery|caregiving|schedule|costs?|expenses?|money|time)\b/iu;
+  for (const paragraph of paragraphs(draft)) {
+    if (!/\b(?:overcommit(?:ment|ting|ted)?|capacity|crowd(?:ed|s|ing)? the week|full week)\b/iu.test(paragraph)) continue;
+    if (!mechanismTerms.test(paragraph) || !concreteCosts.test(paragraph)) {
+      issues.push({
+        code: "mechanism_grounding",
+        message: `Capacity or overcommitment passage must name both its astrological mechanism and a concrete cost: ${paragraph}`,
+        severity: "error"
+      });
+    }
   }
   if (/^\s*(?:#{1,6}\s*)?(?:ASTROLOGY|LIVED FACT|CAUSE|CONSEQUENCE|CONTRADICTION|DO NOT ASSUME)\s*(?::|$)/mu.test(text)) {
     issues.push({
@@ -1494,7 +1549,7 @@ export function validateReportDraft(
       const exclusions = manifestationRecords.flatMap((record) => record.doNotAssume)
         .filter((exclusion) => phrasePresent(sentence, exclusion));
       const framed = hedged(sentence) || (index > 0 && hedged(blockSentences[index - 1]));
-      if (manifestations.length > 0 && !framed) {
+      if (manifestations.length > 0 && !framed && !isAstrologyMechanismStatement(sentence)) {
         issues.push({ code: "possibility_language", message: `Manifestation is asserted without may/can/could/might framing: ${sentence}` });
       }
       if (exclusions.length > 0 && !framed && !/\b(?:not|never|without|avoid|do not)\b/iu.test(sentence)) {

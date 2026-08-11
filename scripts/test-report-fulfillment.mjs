@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
-import { assertReportTokenBudgets, processReportFulfillmentJob, ReportPersistenceInfrastructureError, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { assertReportTokenBudgets, processReportFulfillmentJob, ReportAssemblyRegenerationRequired, ReportPersistenceInfrastructureError, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-store.ts";
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
@@ -53,9 +53,10 @@ delete process.env.REPORT_BILLING_MODE;
 
 process.env.REPORT_AUTO_PUBLISH = "true";
 delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
-assert.equal(reportCallEstimate("12_months").expectedCallBudget, 44);
+assert.equal(reportCallEstimate("12_months").redundancyPassCalls, 1);
+assert.equal(reportCallEstimate("12_months").expectedCallBudget, 45);
 assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 11);
-assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 55);
+assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 56);
 assert.equal(reportFulfillmentConfig().authorizationTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().workerBatchSize, 1, "The 300-second worker may claim only one report per invocation.");
@@ -102,7 +103,9 @@ assert.throws(() => assertReportTokenBudgets({
 }), /Report lifetime token budget exceeded/u);
 assert.equal(reportModelPricing().version, "2026-08-10");
 assert.equal(estimateReportModelCost("gpt-5.6-sol", { inputTokens: 1_000_000, outputTokens: 0, totalTokens: 1_000_000 }), 5);
-assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.3415);
+assert.equal(estimateReportPlanningProfile("12_months").totalTokens, 1_180_400);
+assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.5515);
+assert.equal(estimateReportPlanningProfile("12_months").operationsPerReport[0].stage, "assembled_redundancy");
 delete process.env.REPORT_JUDGE_THRESHOLD;
 assert.equal(reportFulfillmentConfig().judgeThreshold, 0.85, "V3.1 must default to the owner-approved 0.85 threshold.");
 assert.equal(reportFulfillmentConfig().autoPublishEnabled, false, "Auto-publish requires the owner ruling version as well as its feature flag.");
@@ -471,7 +474,15 @@ function createMemoryStore() {
     async releaseFactsClaim(report) { facts.delete(`claim:${report.user_id}:${report.report_horizon}:${report.period_start}`); },
     async saveFacts(report, bundle) { facts.set(`${report.user_id}:${report.report_horizon}:${report.period_start}`, bundle); },
     async unit(reportId, unitId) { return units.get(`${reportId}:${unitId}`) ?? null; },
-    async saveUnit(report, unitId, value, sourceSnapshot) { units.set(`${report.id}:${unitId}`, { id: `${report.id}:${unitId}`, body: value.body, sections: value.sections, source_snapshot: sourceSnapshot }); },
+    async saveUnit(report, unitId, value, sourceSnapshot) { units.set(`${report.id}:${unitId}`, {
+      id: `${report.id}:${unitId}`,
+      content_key: `report:${report.id}:${unitId}`,
+      headline: value.headline ?? "",
+      summary: value.summary ?? "",
+      body: value.body ?? "",
+      sections: value.sections ?? [],
+      source_snapshot: sourceSnapshot
+    }); },
     async unitRows(reportId) { return [...units.entries()].filter(([key]) => key.startsWith(`${reportId}:`)).map(([, value]) => value); },
     async countCombination() { return 0; }, async queueAudit() {}, async recordDelivery() {}
   };
@@ -488,6 +499,21 @@ assert.equal(reportJudgeVerdict({ ...passingJudgeScores, natural_language: 2 }, 
 const shortUnitScores = { ...passingJudgeScores, interpretive_movement: null };
 assert.equal(reportJudgeOverall(shortUnitScores, false), 1);
 assert.equal(reportJudgeVerdict(shortUnitScores, 0.85, false), "pass", "Movement is excluded when a short unit marks it not applicable.");
+function fixtureUnitDraft(unitId) {
+  const unitFingerprint = crypto.createHash("sha256").update(unitId).digest("hex").slice(0, 10).toUpperCase();
+  return {
+    headline: `FIXTURE_ONLY ${unitFingerprint} HEADLINE.`,
+    tldr: `FIXTURE_ONLY ${unitFingerprint} TLDR.`,
+    summary: `FIXTURE_ONLY ${unitFingerprint} SUMMARY.`,
+    body: `FIXTURE_ONLY ${unitFingerprint} BODY.`,
+    action: `FIXTURE_ONLY ${unitFingerprint} ACTION.`,
+    timing: `FIXTURE_ONLY ${unitFingerprint} TIMING.`,
+    sections: unitId === "key-dates" ? [{
+      heading: "FIXTURE_ONLY SEASON",
+      body: "FEB 18 · FIXTURE_ONLY TITLE · A supported event may require an answer. · FIXTURE_ONLY attribution."
+    }] : []
+  };
+}
 function modelCallWithCrash(crashAt = Infinity) {
   let calls = 0;
   const call = async (input) => {
@@ -506,12 +532,17 @@ function modelCallWithCrash(crashAt = Infinity) {
       assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE[\s\S]*COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARISON_SET/u);
       assert.match(input.prompt, /Never return flatness or lived_prose as a defect category\./u);
     }
+    const unitId = /"unitId":\s*"([^"]+)"/u.exec(input.prompt)?.[1] ?? "fixture-unit";
+    const uniqueDraft = fixtureUnitDraft(unitId);
     const result = {
       value: input.schemaName === "report_unit_critique" ? {
         result: "no_defects",
         applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
         defects: []
-      } : structuredClone(modelDraft),
+      } : input.schemaName === "report_redundancy_pass" ? {
+        result: "no_findings",
+        findings: []
+      } : uniqueDraft,
       model: input.model, provider: input.provider,
       usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
     };
@@ -840,7 +871,100 @@ await assert.rejects(processReportFulfillmentJob({ job: authorizedJob({ id: "res
 assert.ok(resumeStore.units.has("resume-report:overview"));
 const resumeCall = modelCallWithCrash();
 await processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 2 }), store: resumeStore, calculateFacts, callModel: resumeCall, judgeCall });
-assert.equal(resumeCall.count(), 6, "Resume must skip the completed unit and make two writer calls for each of three remaining units.");
+assert.equal(resumeCall.count(), 7, "Resume must skip the completed unit, make two writer calls for each of three remaining units, and run one report-level redundancy pass.");
+
+function assemblyReadyReport(id) {
+  return {
+    ...structuredClone(resumeReport),
+    id,
+    facts: factsForHorizon("1_month"),
+    facts_engine: "FIXTURE_ONLY_ENGINE",
+    facts_hash: "FIXTURE_ONLY_FACTS_HASH",
+    fulfillment_status: "validating",
+    token_count: 0,
+    token_count_total: 0,
+    token_spend_usd_estimate: 0,
+    attempt_counts: { validator: 0, judge: 0 }
+  };
+}
+
+async function seedAssemblyUnits(targetStore, report, bodyByUnit = {}) {
+  for (const [index, unitId] of ["overview", "what-matters-most", "domain:main", "key-dates"].entries()) {
+    const marker = `${index + 1}${index + 1}${index + 1}`;
+    await targetStore.saveUnit(report, unitId, {
+      headline: `FIXTURE ${marker} HEADING.`,
+      tldr: `FIXTURE ${marker} TLDR.`,
+      summary: `A distinct summary belongs to marker ${marker}.`,
+      body: bodyByUnit[unitId] ?? `A distinct body consequence belongs to marker ${marker}.`,
+      action: `A distinct action belongs to marker ${marker}.`,
+      timing: `A distinct timing note belongs to marker ${marker}.`,
+      sections: unitId === "key-dates" ? [{
+        heading: "FIXTURE KEY DATES",
+        body: "FEB 18 · FIXTURE TITLE · A supported event may require an answer. · FIXTURE attribution."
+      }] : []
+    }, {
+      fulfillmentPassed: true,
+      validatorResults: [],
+      judge: { scores: passingJudgeScores, overall: 1, verdict: "pass", findings: [] },
+      promptVersions: { judge: "report-judge-v3.1" },
+      factsHash: report.facts_hash,
+      attemptCounts: { validator: 1, judge: 1 }
+    });
+  }
+}
+
+const structuralStore = createMemoryStore();
+const structuralReport = assemblyReadyReport("structural-report");
+structuralStore.reports.set(structuralReport.id, structuralReport);
+structuralStore.entitlements.set("structural-ent", { id: "structural-ent", user_id: structuralReport.user_id, status: "active", product_key: "general_1m" });
+const repeatedClose = "The same closing sentence must not appear in two report units.";
+await seedAssemblyUnits(structuralStore, structuralReport, { overview: repeatedClose, "what-matters-most": repeatedClose });
+const structuralModel = modelCallWithCrash();
+await assert.rejects(processReportFulfillmentJob({
+  job: authorizedJob({ id: "structural-job", report_id: structuralReport.id, entitlement_id: "structural-ent", state: "running", step: "validating", attempt: 1 }),
+  store: structuralStore, calculateFacts, callModel: structuralModel, judgeCall
+}), (error) => error instanceof ReportAssemblyRegenerationRequired && error.issues.some((entry) => entry.code === "repeated_exact_sentence"));
+assert.equal(structuralModel.count(), 0, "Deterministic assembly defects must fail before a report-level provider call.");
+assert.equal(structuralStore.units.get("structural-report:overview").source_snapshot.fulfillmentPassed, true);
+assert.equal(structuralStore.units.get("structural-report:what-matters-most").source_snapshot.fulfillmentPassed, false,
+  "Only the implicated repeated unit should re-enter its writer chain.");
+assert.notEqual(structuralStore.reports.get(structuralReport.id).fulfillment_status, "needs_review");
+
+const redundancyStore = createMemoryStore();
+const redundancyReport = assemblyReadyReport("redundancy-report");
+redundancyStore.reports.set(redundancyReport.id, redundancyReport);
+redundancyStore.entitlements.set("redundancy-ent", { id: "redundancy-ent", user_id: redundancyReport.user_id, status: "active", product_key: "general_1m" });
+await seedAssemblyUnits(redundancyStore, redundancyReport);
+let redundancyProviderCalls = 0;
+const redundancyFindingCall = async (input) => {
+  redundancyProviderCalls += 1;
+  const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
+  await input.beforeProviderCall?.(attempt);
+  assert.equal(input.schemaName, "report_redundancy_pass");
+  const quote = "A distinct body consequence belongs to marker 222.";
+  const result = {
+    value: {
+      result: "findings",
+      findings: [{
+        id: "fixture-semantic-repeat", category: "semantic_duplication", unit_id: "what-matters-most",
+        related_unit_ids: ["overview"], location: "body", sentence_index: 0, scope_start: 0, scope_end: 0,
+        quote, evidence: "FIXTURE_ONLY supported comparison evidence.", instruction: "FIXTURE_ONLY regenerate the named unit without repeating the overview job."
+      }]
+    },
+    model: input.model, provider: input.provider,
+    usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
+  };
+  await input.afterProviderCall?.(attempt, result);
+  return result;
+};
+await assert.rejects(processReportFulfillmentJob({
+  job: authorizedJob({ id: "redundancy-job", report_id: redundancyReport.id, entitlement_id: "redundancy-ent", state: "running", step: "validating", attempt: 1 }),
+  store: redundancyStore, calculateFacts, callModel: redundancyFindingCall, judgeCall
+}), (error) => error instanceof ReportAssemblyRegenerationRequired && error.issues.some((entry) => entry.code === "report_semantic_duplication"));
+assert.equal(redundancyProviderCalls, 1, "The report-level pass is one findings-only provider call.");
+assert.equal(redundancyStore.units.get("redundancy-report:what-matters-most").source_snapshot.fulfillmentPassed, false);
+assert.equal(redundancyStore.reports.get(redundancyReport.id).token_count, 2, "Accepted report-level evaluation tokens must remain accounted when a named unit is requeued.");
+assert.notEqual(redundancyStore.reports.get(redundancyReport.id).fulfillment_status, "needs_review");
 
 const persistenceStore = createMemoryStore();
 const persistenceReport = {
@@ -901,7 +1025,7 @@ assert.match(persistenceFailure.processed[0].error, /^REPORT_INFRASTRUCTURE_ERRO
 assert.equal(persistenceStore.jobs.get(persistenceJob.id).state, "retry");
 const cachedOverview = persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache.overview;
 assert.equal(cachedOverview.schema, "report-passing-unit-cache.v1");
-assert.deepEqual(cachedOverview.draft, modelDraft, "The exact passing text must be durable in job state before the unit write.");
+assert.deepEqual(cachedOverview.draft, fixtureUnitDraft("overview"), "The exact passing text must be durable in job state before the unit write.");
 assert.deepEqual(cachedOverview.sourceSnapshot.judge.scores, passingJudgeScores, "The passing judge scores must be durable in job state.");
 
 const secondPersistenceModel = modelCallWithCrash();
@@ -920,8 +1044,8 @@ const persistenceResume = await runReportFulfillmentBatch({
   persistenceRetry: { attempts: 3, baseDelayMs: 10, sleep: async () => {} }
 });
 assert.equal(persistenceResume.processed[0].result.status, "needs_review");
-assert.equal(secondPersistenceModel.count(), 6, "The retry must persist cached overview work without re-entering its writer chain, then generate only three remaining units.");
-assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 8, "Infrastructure retry must not add any writer calls above the clean four-unit path.");
+assert.equal(secondPersistenceModel.count(), 7, "The retry must persist cached overview work without re-entering its writer chain, generate only three remaining units, and run one report-level redundancy pass.");
+assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 9, "Infrastructure retry must not add any calls above the clean four-unit path plus its report-level redundancy pass.");
 assert.equal(persistenceJudgeCalls, 4, "Infrastructure retry must not re-bill the cached overview judge.");
 assert.deepEqual(persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache, {}, "A cached unit clears only after its write and report accounting succeed.");
 assert.deepEqual(persistenceStore.units.get("persistence-report:overview").source_snapshot.judge.scores, passingJudgeScores);

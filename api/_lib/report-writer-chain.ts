@@ -156,8 +156,9 @@ function textFields(draft: ReportDraft) {
 
 function issueCategory(code: string): ReportDefectCategory {
   if (/untraceable|next_year|saturn_return/iu.test(code)) return "factual_traceability";
-  if (/menu_size|lexical_budget|isolated_one_liners|status_branching/iu.test(code)) return "density_violation";
+  if (/menu_size|lexical_budget|isolated_one_liners|status_branching|repeated|duplicate|modal_budget/iu.test(code)) return "density_violation";
   if (/possibility_language|do_not_assume|invention|specificity/iu.test(code)) return "astrology_chronology";
+  if (/no_cleverness|vague_noun|astrology_as_agent|labor_for_work|mechanism_grounding/iu.test(code)) return "owner_voice_drift";
   return "unnatural_phrasing";
 }
 
@@ -182,6 +183,18 @@ function mechanicalInstruction(issue: MechanicalValidationIssue, noun?: string) 
       return "Remove the internal writer-facing language from the quoted sentence and preserve only reader-facing meaning.";
     case "generic_advice":
       return "Replace the generic advice in the quoted sentence with one situated, observable consequence already supported by the unit facts.";
+    case "vague_noun":
+      return "Replace the vague noun 'things' with the supported behavior, circumstance, decision, or consequence.";
+    case "banned_settled":
+      return "Replace the abstract 'not settled' disclaimer with the concrete decision or range of chart-earned outcomes.";
+    case "astrology_as_agent":
+      return "State the astrological mechanism directly without making the year, eclipse, transit, profection, or Solar Return ask, want, invite, or encourage anything.";
+    case "labor_for_work":
+      return "Replace 'labor' with the concrete kind of work, task, responsibility, or household work meant in this sentence.";
+    case "no_cleverness_tax":
+      return "Rewrite the quoted sentence so it names the observable behavior, circumstance, decision, or consequence directly. The reader must not have to decode a metaphor, compressed phrase, or abstract noun.";
+    case "mechanism_grounding":
+      return "Name the astrological mechanism and the concrete cost in hours, sleep, meals, appointments, travel, preparation, follow-up, workload, recovery, caregiving, schedule, money, or expenses. Do not turn the passage into generic balance advice.";
     case "money_abstraction":
       return "Translate the abstraction in the quoted sentence into rate, hours, expenses, scope, payment timing, or another supported concrete financial term.";
     case "love_banned_vocabulary":
@@ -504,6 +517,8 @@ export async function runReportWriterChain(input: {
       critiquePrompt.text,
       `CANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}`,
       `LIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}`,
+      `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
+      `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
       FLATNESS_DIAGNOSTIC_ROUTING,
       `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
       `COMPLETE_UNIT\n${packet.completeUnit}`,
