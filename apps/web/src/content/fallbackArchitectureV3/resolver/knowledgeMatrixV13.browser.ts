@@ -194,8 +194,7 @@ export function createKnowledgeMatrixV13Resolver(file: KnowledgeMatrixV13File): 
       const normalizedB = normalizeObject(planetB);
       const normalizedAspect = normalizeAspect(aspect);
       return readContentKey(`fallback-hook/natal-aspect-lived/${normalizedA}/${normalizedAspect}/${normalizedB}`)
-        ?? readContentKey(`fallback-hook/natal-aspect-lived/${normalizedB}/${normalizedAspect}/${normalizedA}`)
-        ?? readContentKey(`fallback-hook/aspect-lived/${normalizedAspect}`);
+        ?? readContentKey(`fallback-hook/natal-aspect-lived/${normalizedB}/${normalizedAspect}/${normalizedA}`);
     },
     renderWorkbookKey(key) {
       const row = byWorkbookKey.get(String(key).trim().toLowerCase());

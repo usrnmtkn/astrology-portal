@@ -142,7 +142,11 @@ assert.equal(resolver.renderNatalPlacement({ planet: "Mars", sign: "Aries", hous
 const sunMoon = locked.rows.find((row) => row.key === "sun|square|moon");
 assert.equal(resolver.renderNatalAspect({ planetA: "sun", aspect: "square", planetB: "moon" })?.body, sunMoon?.copy);
 assert.equal(resolver.renderNatalAspect({ planetA: "moon", aspect: "square", planetB: "sun" })?.body, sunMoon?.copy);
-assert.equal(resolver.renderNatalAspect({ planetA: "mars", aspect: "sextile", planetB: "pluto" })?.contentKey, "fallback-hook/aspect-lived/sextile");
+assert.equal(
+  resolver.renderNatalAspect({ planetA: "mars", aspect: "sextile", planetB: "pluto" }),
+  null,
+  "The direct V13 natal resolver must not substitute an aspect-only row for a missing natal pair."
+);
 assert.equal(resolver.renderWorkbookKey("balsamic-moon")?.body, locked.rows.find((row) => row.key === "balsamic-moon")?.copy);
 assert.equal(resolver.renderWorkbookKey("unapproved-key"), null);
 
@@ -159,7 +163,7 @@ const browser = createFallbackRenderer(
 );
 assert.equal(browser.renderNatalPlacement({ planet: "mars", sign: "aries", voice: "you" }).body, resolver.renderNatalPlacement({ planet: "mars", sign: "aries" })?.body);
 assert.equal(browser.renderNatalAspect({ planetA: "moon", aspect: "square", planetB: "sun", voice: "you" }).body, sunMoon?.copy);
-assert.equal(browser.renderNatalAspect({ planetA: "mars", aspect: "sextile", planetB: "pluto", voice: "you" }).templateKey, "fallback-hook/aspect-lived/sextile");
+assert.equal(browser.renderNatalAspect({ planetA: "mars", aspect: "sextile", planetB: "pluto", voice: "you" }).templateKey, "fallback-template/natal.aspect");
 const jupiterRows = sourceRows.hookRows.filter((row) => row.contentKey === "fallback-hook/planet-lived/jupiter");
 assert.equal(jupiterRows.length, 1, "V13 same-key precedence must leave one canonical Jupiter row.");
 assert.equal(jupiterRows[0]?.source_release, "ll-matrix-v13-owner-approved-runtime");
