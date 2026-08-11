@@ -8,6 +8,7 @@ import fallbackTemplates from "../apps/web/src/content/fallbackArchitectureV3/te
 import transitSynastryRows from "../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json" with { type: "json" };
 import skyArticleV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-article-v1.json" with { type: "json" };
 import skySignCopySunV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json" with { type: "json" };
+import skyPlacementOwnerApprovedSourceV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json" with { type: "json" };
 import skyPlacementOwnerApprovedFallbacksV1 from "../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-owner-approved-reader-v1.json" with { type: "json" };
 import contentRoleContract from "../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json" with { type: "json" };
 import {
@@ -461,11 +462,11 @@ assert.ok(
 );
 assert.match(
   sunLeo.body,
-  /^July 22 to August 23, 2026\n\nAfter moving through Cancer from June 21 to July 22, the Sun enters Leo on July 22,/u,
+  /^July 22 to August 23, 2026\n\nThe work may be ready to be seen before we feel ready to show it\. The Sun enters Leo on July 22 after moving through Cancer since June 21\./u,
   "Package Sun-in-Leo copy must lead with the engine-filled fact line and exact owner-approved opening."
 );
 assert.match(sunLeo.body, /the work reaches the audience it was made for\./u);
-assert.match(sunLeo.body, /We are making it easier to approve\./u);
+assert.match(sunLeo.body, /It is becoming easier to approve\./u);
 assert.doesNotMatch(sunLeo.body, /last moved through/u, "Annual Sun ingress carries no look-back (owner rule 2026-08-05).");
 assert.match(sunLeo.body, /What we name during Leo season is what Virgo season will ask us to build\./u);
 assert.doesNotMatch(
@@ -475,7 +476,7 @@ assert.doesNotMatch(
 );
 assert.match(
   sunLeo.body,
-  /The problem begins when the response starts deciding what we make next\./u,
+  /The problem begins when the response starts deciding what gets made next\./u,
   "Sun-in-Leo must keep the owner-approved central tension."
 );
 assert.doesNotMatch(
@@ -562,6 +563,33 @@ assert.equal(sunAries.contentKey, "fallback-hook/sky-sign-copy/sun/aries");
 assert.match(sunAries.body, /The Sun in Aries makes a clean decision feel like a return to life\./u);
 assert.equal(sunLeo.tagline, null, "The continuous unit must not append the retired quote-style tagline.");
 assert.equal(Object.hasOwn(sunLeo, "moves"), false, "Sun-in-Leo must not expose the retired Try this section.");
+const sunLeoV3 = skyPlacementOwnerApprovedSourceV1.rows.find((row) => (
+  row.contentKey === "fallback-hook/sky-sign-copy/sun/leo"
+));
+assert.ok(sunLeoV3, "The owner-approved Sun-in-Leo V3 source row must exist.");
+assert.equal(sunLeoV3.fact_line, "{{entryDate}} to {{exitDate}}", "V3 must not change the engine fact line.");
+assert.equal(sunLeoV3.aspect_insert, "{{aspectInsert}}", "V3 must not change the aspect insert contract.");
+assert.equal(
+  sunLeoV3.opening,
+  "The work may be ready to be seen before we feel ready to show it. The Sun enters Leo on {{entryDate}} after moving through {{priorSign}} since {{priorSignEntryDate}}. The Sun governs identity, vitality, and who we are beneath the roles. Leo is the sign of visibility, creative pride, and being seen. A creative project gets shared before every detail is finished. Someone asks for the title, credit, invitation, or opportunity that matches work they have already been doing. The work can be unfinished and still ready to have a name on it."
+);
+assert.equal(
+  sunLeoV3.tension,
+  "Wanting to be seen is not the problem. Recognition can bring confidence back, especially when the work reaches the audience it was made for. The problem begins when the response starts deciding what gets made next. We check the numbers, reread the comments, and compare our reception with someone else's. A quiet response feels like proof the work failed. Someone else's success feels like lost ground. Soon the work is no longer becoming more honest or more interesting. It is becoming easier to approve."
+);
+assert.equal(
+  sunLeoV3.development,
+  "Being visible and being known are not the same thing. A title may still look impressive and no longer describe the life we want. An online persona may attract attention while leaving important parts of us out. A creative identity may become another role we feel required to maintain. The version that gets rewarded can still be the wrong version to keep feeding."
+);
+assert.equal(
+  sunLeoV3.close,
+  "Praise can give the work momentum. It cannot tell us what the work means. Before {{exitDate}}, the response may change, the audience may move on, or the role may stop feeling convincing. What we name during Leo season is what Virgo season will ask us to build. The work worth carrying forward is the work we still mean when the spotlight is off."
+);
+assert.equal(
+  sunLeoV3.body_you,
+  [sunLeoV3.opening, sunLeoV3.tension, sunLeoV3.development, sunLeoV3.close].join("\n\n"),
+  "The legacy editorial mirror must remain a mechanical join of the four approved V3 fields."
+);
 assert.equal(lilithAries.tagline, "Anger stops going somewhere else", "Owner-approved Lilith placement taglines must be reader-eligible.");
 assert.match(
   lilithAries.body,
