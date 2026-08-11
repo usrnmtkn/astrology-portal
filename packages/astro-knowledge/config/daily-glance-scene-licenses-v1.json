@@ -1,0 +1,365 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "sourcePrecedence": [
+      "exact-owner-doctrine",
+      "exact-approved-ll-aspect-or-placement",
+      "approved-pair-store-and-aspect-group",
+      "approved-planet-house-or-planet-sign-ll",
+      "approved-house-primitive",
+      "approved-sign-primitive",
+      "approved-planet-primitive"
+    ],
+    "unknownConcreteTerm": "block",
+    "servingStatuses": ["approved", "approved_reuse", "reviewed"]
+  },
+  "authoritySources": [
+    {
+      "sourceId": "owner-doctrine:daily-glance-scene-license-ruling-2026-08-11",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-scene-licenses-v1-owner-ruling-2026-08-11.md",
+      "authorityClass": "owner-doctrine",
+      "approval": "approved",
+      "verificationText": "these exact field-level changes constitute approval of the revised meanings"
+    }
+  ],
+  "closedVocabulary": {
+    "domains": {
+      "daily work": ["daily work", "workday", "workload", "work situation"],
+      "routines": ["routine", "routines", "schedule"],
+      "health habits / body care": ["health habits", "body care"],
+      "career": ["career", "professional work", "public work"],
+      "reputation": ["reputation", "how the work will be received"],
+      "public responsibility": ["public responsibility"],
+      "professional achievement": ["professional achievement"],
+      "communication": ["communication", "conversation", "information"],
+      "home": ["home", "household", "living situation"],
+      "family": ["family", "parent", "parents"],
+      "shared money": ["shared money", "debt", "taxes", "inheritance"],
+      "travel": ["travel", "trip", "flight"],
+      "health": ["health", "symptom", "symptoms", "medical"]
+    },
+    "roles": {
+      "coworker": ["coworker", "co-worker", "colleague"],
+      "manager / authority figure": ["manager", "boss", "supervisor", "authority figure"],
+      "partner": ["partner", "spouse"],
+      "client": ["client", "customer"],
+      "family member": ["family member", "parent", "sibling", "child"]
+    },
+    "settings": {
+      "work that can be evaluated publicly or professionally": [
+        "work that can be evaluated publicly or professionally",
+        "publicly evaluated work",
+        "professionally evaluated work"
+      ]
+    },
+    "objects": {
+      "message": ["message", "email", "text message"],
+      "document": ["document", "draft", "notes"],
+      "presentation": ["presentation", "slides", "PowerPoint"],
+      "spreadsheet": ["spreadsheet", "worksheet"],
+      "invoice": ["invoice", "bill"],
+      "appointment": ["appointment"],
+      "rent": ["rent", "mortgage"]
+    },
+    "actions": {
+      "check details": ["check details", "check the details", "checking the details", "go back through the details"],
+      "revise communication": ["rewrite", "rewriting", "revise the email", "revise the message"],
+      "manage a schedule": ["change the schedule", "fix the schedule", "manage the schedule"],
+      "make a professional decision": ["professional decision", "work decision", "career decision"],
+      "notice another person's mood": ["notice somebody else's mood", "notice someone else's mood", "someone else seems uneasy"],
+      "form an explanation before the other person has explained what happened": [
+        "form an explanation before the other person has explained what happened"
+      ]
+    },
+    "behaviors": {
+      "absorb another person's mood as their own": ["absorb another person's mood as their own"],
+      "imagine a version of the situation or person that may differ from what is actually happening": [
+        "imagine a version of the situation or person that may differ from what is actually happening"
+      ],
+      "responds by trying to make the feeling useful or correctable": [
+        "responds by trying to make the feeling useful or correctable"
+      ]
+    },
+    "consequences": {
+      "confusion about which feelings belong to them": ["confusion about which feelings belong to them"]
+    }
+  },
+  "licenses": [
+    {
+      "licenseId": "scene-license/aspect/moon-conjunction-neptune/v1",
+      "scope": {
+        "type": "aspect",
+        "transitPlanet": "moon",
+        "aspect": "conjunction",
+        "natalPoint": "neptune"
+      },
+      "sourceIds": [
+        "ll:moon|conjunction|neptune",
+        "owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"
+      ],
+      "evidence": [
+        {
+          "sourceId": "ll:moon|conjunction|neptune",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "selector": "rows[key=moon|conjunction|neptune]",
+          "match": "exact",
+          "text": "Moon conjunct Neptune can make you notice somebody else's mood before they tell you what happened. You walk into the room and know something is off, or a song, movie, or memory changes the whole atmosphere inside you. Sensitivity gets confusing when another person's sadness starts feeling like your own, or when the version of someone in your head is easier to love than the person in front of you.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": [],
+        "roles": [],
+        "settings": [],
+        "objects": [],
+        "actions": [
+          "notice another person's mood",
+          "form an explanation before the other person has explained what happened"
+        ],
+        "behaviors": [
+          "absorb another person's mood as their own",
+          "imagine a version of the situation or person that may differ from what is actually happening"
+        ],
+        "consequences": ["confusion about which feelings belong to them"]
+      },
+      "provenance": [
+        {
+          "semanticClass": "actions",
+          "value": "notice another person's mood",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "actions",
+          "value": "form an explanation before the other person has explained what happened",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "behaviors",
+          "value": "absorb another person's mood as their own",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "behaviors",
+          "value": "imagine a version of the situation or person that may differ from what is actually happening",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "consequences",
+          "value": "confusion about which feelings belong to them",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        }
+      ],
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    },
+    {
+      "licenseId": "scene-license/house/6/v1",
+      "scope": { "type": "house", "house": 6 },
+      "sourceIds": ["ll:6th house", "owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"],
+      "evidence": [
+        {
+          "sourceId": "ll:6th house",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "selector": "rows[key=6th house]",
+          "match": "includes",
+          "text": "The 6th house is where big ideas turn into daily tasks. It is the workload, the appointment, the routine, the skill built through repetition, the task nobody applauds, and the body that still needs care on the day you would rather push through. Competence is usually built here in unglamorous increments.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": ["daily work", "routines", "health habits / body care"],
+        "roles": [],
+        "settings": [],
+        "objects": ["appointment"],
+        "actions": ["manage a schedule"],
+        "behaviors": [],
+        "consequences": []
+      },
+      "provenance": [
+        {
+          "semanticClass": "domains",
+          "value": "daily work",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "routines",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "health habits / body care",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "objects",
+          "value": "appointment",
+          "grantType": "verbatim",
+          "scopeRole": "arena",
+          "sourceIds": ["ll:6th house"]
+        },
+        {
+          "semanticClass": "actions",
+          "value": "manage a schedule",
+          "grantType": "normalized",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        }
+      ],
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    },
+    {
+      "licenseId": "scene-license/house/10/v1",
+      "scope": { "type": "house", "house": 10 },
+      "sourceIds": ["ll:10th house", "owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"],
+      "evidence": [
+        {
+          "sourceId": "ll:10th house",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "selector": "rows[key=10th house]",
+          "match": "includes",
+          "text": "The 10th house is the work other people can point to. It includes career, reputation, authority, achievement, public responsibility, and the role that starts carrying your name before you enter the room. Visibility turns private ability into something other people can evaluate, hire, promote, criticize, or trust.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": ["career", "reputation", "public responsibility", "professional achievement"],
+        "roles": ["manager / authority figure"],
+        "settings": ["work that can be evaluated publicly or professionally"],
+        "objects": [],
+        "actions": [],
+        "behaviors": [],
+        "consequences": []
+      },
+      "provenance": [
+        {
+          "semanticClass": "domains",
+          "value": "career",
+          "grantType": "verbatim",
+          "scopeRole": "arena",
+          "sourceIds": ["ll:10th house"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "reputation",
+          "grantType": "verbatim",
+          "scopeRole": "arena",
+          "sourceIds": ["ll:10th house"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "public responsibility",
+          "grantType": "verbatim",
+          "scopeRole": "arena",
+          "sourceIds": ["ll:10th house"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "professional achievement",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "roles",
+          "value": "manager / authority figure",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "settings",
+          "value": "work that can be evaluated publicly or professionally",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        }
+      ],
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    },
+    {
+      "licenseId": "scene-license/transit-sign/moon-virgo/v1",
+      "scope": {
+        "type": "transit-sign",
+        "transitPlanet": "moon",
+        "sign": "virgo"
+      },
+      "sourceIds": ["ll:moon|virgo", "owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"],
+      "evidence": [
+        {
+          "sourceId": "ll:moon|virgo",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "selector": "rows[key=moon|virgo]",
+          "match": "includes",
+          "text": "Moon in Virgo tries to turn the feeling into something productive. You clean the kitchen, make the list, research the symptom, fix the schedule, organize the drawer, or solve somebody else's problem because usefulness gives anxiety somewhere to go. Competence can be deeply regulating.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": [],
+        "roles": [],
+        "settings": [],
+        "objects": [],
+        "actions": ["check details"],
+        "behaviors": ["responds by trying to make the feeling useful or correctable"],
+        "consequences": []
+      },
+      "provenance": [
+        {
+          "semanticClass": "actions",
+          "value": "check details",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "manner",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        },
+        {
+          "semanticClass": "behaviors",
+          "value": "responds by trying to make the feeling useful or correctable",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "manner",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        }
+      ],
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    }
+  ]
+}
