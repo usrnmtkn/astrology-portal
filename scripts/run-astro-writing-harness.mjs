@@ -93,7 +93,7 @@ for (const config of [writerConfig, judgeConfig]) {
   if (!apiKeys[keyName]) throw new Error(`${keyName} is not configured in apps/web/.env.local.`);
 }
 const writerClient = modelClient(writerConfig, apiKeys);
-const reviewerClient = modelClient(judgeConfig, apiKeys, "REVIEWER");
+const reviewerClient = modelClient(judgeConfig, apiKeys);
 const reviserClient = writerClient;
 const result = await runWritingPipeline({
   ...request,

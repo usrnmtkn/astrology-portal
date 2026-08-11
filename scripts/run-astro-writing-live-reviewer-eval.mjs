@@ -156,11 +156,11 @@ for (const fixture of fixtures) {
     : { body: fixture.bad_text };
   let liveModelReview = null;
   let providerRecord = null;
-  const modelClient = async ({ input, schema }) => {
+  const modelClient = async ({ stage, input, schema }) => {
     callCount += 1;
     const { response, payload } = await callOpenAIResponses({
       apiKey: process.env.OPENAI_API_KEY,
-      role: "REVIEWER",
+      role: stage === "cold-review" ? "COLD_REVIEWER" : "REVIEWER",
       taskInstructions: "For every violation category, use the exact lowercase snake_case check ID from the strict output schema and reviewer contract.",
       request: {
         model,
