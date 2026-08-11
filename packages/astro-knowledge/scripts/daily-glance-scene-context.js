@@ -432,21 +432,36 @@ function scanRecognizedSpecificity(text, registry) {
 }
 
 const UNKNOWN_NOUN_STOP = new Set([
-  "actual", "another", "available", "combined", "completed", "different", "earlier", "enough", "every", "first", "missing", "next", "old", "only", "open", "other", "own", "private", "professional", "public", "same", "single", "small", "vague", "whole", "worried"
+  "actual", "after", "again", "and", "another", "as", "available", "be", "been", "before", "being", "but", "can", "combined", "completed", "could", "did", "different", "do", "does", "earlier", "enough", "evaluated", "every", "explains", "first", "for", "from", "had", "has", "have", "if", "in", "into", "is", "may", "might", "missing", "must", "named", "next", "no", "not", "of", "old", "on", "only", "open", "or", "other", "own", "private", "professional", "public", "same", "seems", "should", "single", "small", "so", "still", "that", "then", "their", "to", "unexplained", "vague", "was", "were", "what", "when", "while", "who", "whole", "will", "with", "without", "would", "worried", "yet", "your"
 ]);
 const GENERIC_NOUNS = new Set([
-  "answer", "concern", "day", "decision", "detail", "details", "feeling", "facts", "hour", "impression", "moment", "mood", "person", "problem", "question", "reader", "response", "situation", "state", "thing", "time", "uncertainty", "version", "way", "work"
+  "answer", "attention", "change", "concern", "day", "decision", "detail", "details", "explanation", "feeling", "facts", "hour", "impression", "moment", "mood", "person", "problem", "question", "reader", "response", "situation", "state", "thing", "time", "uncertainty", "version", "way", "work"
 ]);
 
+function normalizeScannerToken(value) {
+  return normalized(value)
+    .replace(/[’']s$/u, "")
+    .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+}
+
 function scanUnknownConcretePhrases(text, recognized) {
-  const recognizedTerms = recognized.map((entry) => normalized(entry.term));
+  const recognizedTokens = new Set(recognized.flatMap((entry) => normalized(entry.term)
+    .split(/\s+/u)
+    .map(normalizeScannerToken)
+    .filter(Boolean)));
   const phrases = [];
-  const pattern = /\b(?:a|an|the|this|that|your|their|one|another)\s+([\p{L}][\p{L}'’-]*(?:\s+[\p{L}][\p{L}'’-]*){0,2})/giu;
+  const pattern = /\b(?:a|an|the|this|that|your|their|one|another)\s+([\p{L}][\p{L}'’-]*(?:\s+[\p{L}][\p{L}'’-]*){0,1})/giu;
   for (const match of text.matchAll(pattern)) {
-    const words = normalized(match[1]).split(/\s+/u).filter((word) => !UNKNOWN_NOUN_STOP.has(word));
-    const head = words[0] || "";
+    const words = normalized(match[1])
+      .split(/\s+/u)
+      .map(normalizeScannerToken)
+      .filter((word) => word && !UNKNOWN_NOUN_STOP.has(word));
+    // English noun phrases put their head at the end. Using the first token
+    // misclassified possessors, modal auxiliaries, and adjective modifiers as
+    // nouns (for example manager's, will, and unexplained).
+    const head = words.at(-1) || "";
     if (!head || GENERIC_NOUNS.has(head)) continue;
-    if (recognizedTerms.some((term) => term.split(/\s+/u).includes(head))) continue;
+    if (recognizedTokens.has(head)) continue;
     phrases.push(head);
   }
   return [...new Set(phrases)];
