@@ -1,0 +1,143 @@
+{
+  "contractId": "lunation-horoscope-templates-v1",
+  "version": 1,
+  "editorialStatus": "owner_calibration_resolved",
+  "calibrationResolvedAt": "2026-08-11",
+  "runtimeEligible": false,
+  "generationAuthorized": false,
+  "servingAuthorized": false,
+  "source": "review/lunation-horoscope-templates-v1/owner-package.md",
+  "surface": "current-sky-lunation-horoscope",
+  "register": {
+    "person": "second_person",
+    "datesAllowed": true,
+    "rhetoricalQuestionsAllowed": true,
+    "imperativeCloseAllowed": true,
+    "peopleAllowed": true,
+    "emDashAllowed": false,
+    "requiresConcreteDomains": true,
+    "requiresPerSentenceAstrologyAttribution": true
+  },
+  "sharedSpine": [
+    {
+      "id": "house_landing",
+      "required": true,
+      "factDependencies": ["risingSign", "moonHouse", "houseDomains"],
+      "rule": "Name the whole-sign house and concrete domains; never name a bare house."
+    },
+    {
+      "id": "event_condition",
+      "required": true,
+      "factDependencies": ["eventType", "eventSign"],
+      "rule": "State what this event does in the supplied house and show a recognizable situation."
+    },
+    {
+      "id": "education_beat",
+      "required": true,
+      "factDependencies": ["eventSign", "ruler"],
+      "rule": "Use one or two plain sentences connecting sign, traditional ruler, or modality to behavior."
+    },
+    {
+      "id": "aspect_weave",
+      "required": true,
+      "factDependencies": ["aspects", "aspectsComplete"],
+      "rule": "Give each supplied aspect its own attributed sentence and place it in the supplied houses. No fact, no sentence."
+    },
+    {
+      "id": "response_close",
+      "required": true,
+      "factDependencies": ["eventType"],
+      "rule": "End with an imperative response that matches the event temperature."
+    }
+  ],
+  "eventTemplates": {
+    "new-moon": {
+      "temperature": ["beginning", "planting", "desire"],
+      "movements": ["house_landing", "event_condition", "desire_test", "education_beat", "aspect_weave", "response_close"],
+      "axisNamingAllowed": false,
+      "revealBeat": false,
+      "collapseFirst": false,
+      "sixMonthArc": false,
+      "lunarCycleArc": true,
+      "arcPolicy": "name_lunar_cycle",
+      "closePolicy": "point_to_start"
+    },
+    "full-moon": {
+      "temperature": ["culmination", "illumination", "release"],
+      "movements": ["house_landing", "axis_partner", "event_condition", "education_beat", "aspect_weave", "response_close"],
+      "axisNamingAllowed": true,
+      "revealBeat": false,
+      "collapseFirst": false,
+      "sixMonthArc": false,
+      "matchingNewMoonClaim": "fact_gated",
+      "closePolicy": "match_full_moon_theme"
+    },
+    "eclipse-solar": {
+      "temperature": ["beginning", "planting", "eclipse_reveal"],
+      "movements": ["house_landing", "event_condition", "education_beat", "aspect_weave", "reveal_beat", "response_close"],
+      "axisNamingAllowed": false,
+      "revealBeat": true,
+      "collapseFirst": false,
+      "sixMonthArc": true,
+      "arcPolicy": "required",
+      "closePolicy": "sharp",
+      "desireTestPolicy": "excluded_event_itself_governs",
+      "eventAgencyPolicy": "describe_event_itself",
+      "readerChoiceImplied": false
+    },
+    "eclipse-lunar": {
+      "temperature": ["culmination", "illumination", "release", "collapse_first"],
+      "movements": ["house_landing", "axis_partner", "event_condition", "education_beat", "aspect_weave", "reveal_beat", "response_close"],
+      "axisNamingAllowed": true,
+      "revealBeat": true,
+      "collapseFirst": true,
+      "sixMonthArc": true,
+      "arcPolicy": "required",
+      "closePolicy": "sharp"
+    }
+  },
+  "factGate": {
+    "required": [
+      "eventType",
+      "exactAt",
+      "degree",
+      "eventSign",
+      "risingSign",
+      "moonHouse",
+      "houseDomains",
+      "ruler",
+      "aspects",
+      "aspectsComplete",
+      "outerPlanetPlacements",
+      "outerPlanetPlacementsComplete"
+    ],
+    "fullMoonAndLunarEclipse": ["sunSign", "sunHouse"],
+    "rule": "No fact, no sentence. Empty aspect or outer-planet lists are accepted only with an explicit completeness flag."
+  },
+  "openQuestions": [
+    {
+      "id": "plain_new_moon_arc",
+      "appliesTo": ["new-moon"],
+      "status": "resolved",
+      "question": "Should a plain New Moon name the lunar-cycle arc, or name no arc?",
+      "ownerRuling": "Ordinary New Moons mention the lunar arc.",
+      "resolvedAt": "2026-08-11"
+    },
+    {
+      "id": "full_moon_close_temperature",
+      "appliesTo": ["full-moon"],
+      "status": "resolved",
+      "question": "Should a Full Moon close with a benediction, a sharp close, or be decided per event?",
+      "ownerRuling": "Full Moon closes should match the theme of the Full Moon.",
+      "resolvedAt": "2026-08-11"
+    },
+    {
+      "id": "solar_eclipse_desire_test",
+      "appliesTo": ["eclipse-solar"],
+      "status": "resolved",
+      "question": "Does the solar-eclipse desire test remain at full strength?",
+      "ownerRuling": "The solar eclipse should be what the event itself is.",
+      "resolvedAt": "2026-08-11"
+    }
+  ]
+}
