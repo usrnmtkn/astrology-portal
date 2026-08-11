@@ -56,6 +56,7 @@ import {
   installFallbackArchitectureV3Bundle,
   installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
+  loadEmptyHouseFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
@@ -10846,6 +10847,30 @@ export function App() {
     storePortalMode(nextMode);
     setMode(nextMode);
   }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (mode !== "guest" && mode !== "member" && mode !== "friends") {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadEmptyHouseFallbackArchitectureV3Bundle()
+      .then((installed) => {
+        if (installed && !cancelled) {
+          setFallbackArchitectureV3Version((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Empty-house fallbacks failed to load; natal empty-house copy remains unavailable.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
 
   useEffect(() => {
     let cancelled = false;
