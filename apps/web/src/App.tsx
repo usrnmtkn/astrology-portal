@@ -10851,7 +10851,7 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
 
-    if (mode !== "guest" && mode !== "member" && mode !== "friends") {
+    if (mode !== "profile" && mode !== "friends") {
       return () => {
         cancelled = true;
       };
