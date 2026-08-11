@@ -15,10 +15,11 @@ import { estimateReportModelCost, estimateReportPlanningProfile, reportModelPric
 import { releaseReviewedReport } from "../api/_lib/report-release.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
 import { assembleReportGenerationPayload } from "../api/_lib/report-generation.ts";
+import { reportDraftMovementApplicable, reportUnitCoordinates } from "../api/_lib/report-evaluation-packet.ts";
 import {
   enforceReportRevisionStopRule, ReportRevisionScopeError, ReportStopRuleError,
   mergeOverlappingReportDefects, reportValidationIssuesToNamedDefects,
-  reviseReportDraftForNamedDefects, runReportWriterChain, spliceReportRevision
+  normalizeReportColdReadCritique, reviseReportDraftForNamedDefects, runReportWriterChain, spliceReportRevision
 } from "../api/_lib/report-writer-chain.ts";
 
 process.env.REPORT_AUTO_PUBLISH = "false";
@@ -240,6 +241,93 @@ assert.equal(missingComparisonProviderCalls, 0, "Missing owner comparisons must 
 const spliceChainPayload = assembleReportGenerationPayload({
   reportId: "fixture-splice-chain", reportDomain: "general", reportHorizon: "12_months", unitId: "overview", frozenFacts: frozen
 });
+const productionColdReadFailures = [
+  "Merged replacement scope is outside 'body'.",
+  "Cold read returned interpretive_gap for a unit where interpretive movement is not applicable.",
+  "Merged replacement scope is outside 'body; paragraph 0'.",
+  "Replacement location 'summary; paragraph 0' is not present.",
+  "Replacement location 'body; paragraph 0' is not present."
+];
+assert.equal(productionColdReadFailures.length, 5, "The complete report 8b3e266e failure history must remain represented by regressions.");
+
+const coordinateDraft = {
+  headline: "FIXTURE_ONLY_HEADLINE.", tldr: "", summary: "FIXTURE_ONLY_SUMMARY.",
+  body: "FIXTURE_ONLY_BODY_FIRST. FIXTURE_ONLY_BODY_SECOND.", action: "", timing: "", sections: []
+};
+const coordinateTokens = reportUnitCoordinates(coordinateDraft).map((coordinate) => coordinate.token);
+assert.deepEqual(coordinateTokens, [
+  "[LOCATION=headline; PARAGRAPH_INDEX=0]",
+  "[LOCATION=summary; PARAGRAPH_INDEX=0]",
+  "[LOCATION=body; PARAGRAPH_INDEX=0]"
+], "Cold-read addresses must be exact supplied field/paragraph coordinates.");
+const normalizedCoordinateFinding = normalizeReportColdReadCritique(coordinateDraft, {
+  result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
+  defects: [{
+    id: "cold-coordinate", category: "unnatural_phrasing",
+    address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]", quote: "FIXTURE_ONLY_BODY_SECOND.",
+    evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE"
+  }]
+});
+assert.deepEqual({
+  location: normalizedCoordinateFinding.defects[0].location,
+  sentenceIndex: normalizedCoordinateFinding.defects[0].sentence_index,
+  start: normalizedCoordinateFinding.defects[0].scope_start,
+  end: normalizedCoordinateFinding.defects[0].scope_end
+}, { location: "body", sentenceIndex: 1, start: 1, end: 1 },
+"An exact cold-read coordinate plus exact quote must resolve to a bounded internal sentence scope.");
+
+for (const inventedAddress of ["body; paragraph 0", "summary; paragraph 0"]) {
+  assert.throws(() => normalizeReportColdReadCritique(coordinateDraft, {
+    result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
+    defects: [{
+      id: `invented-${inventedAddress}`, category: "unnatural_phrasing", address_token: inventedAddress,
+      quote: "FIXTURE_ONLY_BODY_FIRST.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY"
+    }]
+  }), /was not supplied/u, `Production's invented '${inventedAddress}' address must be rejected before revision.`);
+}
+
+const oneParagraphColdDraft = {
+  headline: "FIXTURE_ONLY_HEADLINE.", tldr: "", summary: "", body: "FIXTURE_ONLY_BODY.",
+  action: "", timing: "", sections: []
+};
+assert.equal(reportDraftMovementApplicable(oneParagraphColdDraft), false);
+const suppressedMovementFinding = normalizeReportColdReadCritique(oneParagraphColdDraft, {
+  result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY_MODEL_BYPASS" },
+  defects: [{
+    id: "not-applicable-movement", category: "interpretive_gap",
+    address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]", quote: "FIXTURE_ONLY_BODY.",
+    evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY"
+  }]
+}, false);
+assert.deepEqual(suppressedMovementFinding, {
+  result: "no_defects",
+  applicability: {
+    interpretive_movement: "not_applicable",
+    reason: "The rendered unit contains fewer than two substantive prose paragraphs."
+  },
+  defects: []
+}, "A provider bypass cannot reintroduce interpretive_gap when movement is not applicable.");
+
+let outOfBoundsRevisionCalls = 0;
+await assert.rejects(reviseReportDraftForNamedDefects({
+  payload: spliceChainPayload,
+  draft: coordinateDraft,
+  defects: [
+    { id: "outside-body-a", category: "density_violation", location: "body", sentence_index: 0, scope_start: 0, scope_end: 2, quote: "FIXTURE_ONLY", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY" },
+    { id: "outside-body-b", category: "owner_voice_drift", location: "body", sentence_index: 1, scope_start: 1, scope_end: 3, quote: "FIXTURE_ONLY", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY" }
+  ],
+  callModel: async () => { outOfBoundsRevisionCalls += 1; throw new Error("Provider must not be called."); }
+}), /references a sentence outside 'body'/u,
+"Production's merged out-of-bounds body scope must fail before a revision call.");
+assert.equal(outOfBoundsRevisionCalls, 0);
+
+const crossFieldDefects = [
+  { id: "field-summary", category: "unnatural_phrasing", location: "summary", sentence_index: 0, scope_start: 0, scope_end: 0, quote: "FIXTURE_ONLY_SUMMARY.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY" },
+  { id: "field-body", category: "unnatural_phrasing", location: "body", sentence_index: 0, scope_start: 0, scope_end: 0, quote: "FIXTURE_ONLY_BODY_FIRST.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY" }
+];
+assert.equal(mergeOverlappingReportDefects(coordinateDraft, crossFieldDefects).length, 2,
+  "Equal sentence indices in different fields must never merge into one replacement scope.");
+
 const summerOverlapSchemas = [];
 const summerOverlapRevision = await reviseReportDraftForNamedDefects({
   payload: spliceChainPayload,
@@ -290,6 +378,43 @@ assert.deepEqual(spliceChainSchemas, ["report_unit_draft", "report_unit_critique
 assert.equal(spliceChain.revised.body, "FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECOND.");
 assert.equal(spliceChain.revised.summary, spliceChainDraft.summary, "The writer chain must keep unnamed text byte-identical.");
 assert.equal(spliceChain.coldCritique.result, "no_defects");
+
+const coldCoordinateSchemas = [];
+const coldCoordinateChain = await runReportWriterChain({ payload: spliceChainPayload, callModel: async (input) => {
+  coldCoordinateSchemas.push(input.schemaName);
+  if (input.schemaName === "report_unit_draft") {
+    return { value: oneParagraphColdDraft, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
+  }
+  if (input.schemaName === "report_unit_critique") {
+    return { value: { result: "no_defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: [] }, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
+  }
+  assert.equal(input.schemaName, "report_unit_cold_read");
+  assert.deepEqual(input.schema.properties.defects.items.properties.address_token.enum, [
+    "[LOCATION=headline; PARAGRAPH_INDEX=0]",
+    "[LOCATION=body; PARAGRAPH_INDEX=0]"
+  ], "The provider schema must reject every address except an exact supplied token.");
+  assert.equal(input.schema.properties.defects.items.properties.category.enum.includes("interpretive_gap"), false,
+    "The provider schema must reject interpretive_gap when movement is not applicable.");
+  assert.equal("location" in input.schema.properties.defects.items.properties, false,
+    "Cold-read findings must not receive the old free-form location field.");
+  assert.match(input.prompt, /coordinates, not prose or drafting context/u);
+  return {
+    // Deliberately bypass the schema in this mock: runtime suppression remains
+    // the second line of defense for a nonconforming provider response.
+    value: {
+      result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY_BYPASS" },
+      defects: [{
+        id: "bypass-movement", category: "interpretive_gap",
+        address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]", quote: "FIXTURE_ONLY_BODY.",
+        evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY"
+      }]
+    },
+    model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
+  };
+} });
+assert.deepEqual(coldCoordinateSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_cold_read"],
+  "A suppressed non-applicable movement finding must never trigger a revision call.");
+assert.equal(coldCoordinateChain.coldCritique.result, "no_defects");
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
