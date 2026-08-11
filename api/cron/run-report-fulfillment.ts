@@ -21,6 +21,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       jobId,
       continuationPolicy: {
         deadlineAtMs: cycleStartedAt + config.workerCycleDeadlineMs,
+        runtimeDeadlineAtMs: cycleStartedAt + maxDuration * 1_000,
         maxNewUnits: config.workerMaxNewUnitsPerCycle
       }
     }));
