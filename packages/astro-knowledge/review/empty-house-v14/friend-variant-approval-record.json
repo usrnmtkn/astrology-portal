@@ -1,0 +1,11 @@
+{
+  "schema": "tldrastro.empty-house.friend-variant-approval.v1",
+  "status": "approved",
+  "source_version": "v14-owner-approved-full-workbook-2026-08-10",
+  "row_count": 541,
+  "payload_sha256": "07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b",
+  "approval_statement": "Owner exact-wording approval: all 541 body_they rows in exact current wording, including the 34 adopted corrections and the 31 approved-as-is flag dispositions recorded in the decision aid. Scope: Friend surface, empty-house V14 projection-4, modern rulers.",
+  "approved_at": "2026-08-10",
+  "source": "owner_message_2026-08-10",
+  "note": "Approval applies exactly to payload SHA-256 07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b. Any body_they byte change requires a new approval record."
+}
