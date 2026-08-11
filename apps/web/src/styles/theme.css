@@ -398,7 +398,7 @@
   --friend-card-title-size: var(--text-card-title);
   --friend-card-title-line: 1.2;
   --friend-row-title-size: var(--text-card-title);
-  --friend-row-description-size: var(--text-description);
+  --friend-row-description-size: var(--aspect-card-body-size);
   --friend-row-meta-size: var(--type-meta-size);
   --friend-feed-chevron-size: 34px;
   --friend-feed-chevron-size-compact: 28px;
@@ -610,8 +610,8 @@
   --aspect-card-title-size: var(--text-card-title);
   --aspect-card-title-weight: var(--weight-medium);
   --aspect-card-title-line: var(--leading-title);
-  --aspect-card-body-size: var(--text-description);
-  --aspect-card-body-line: var(--leading-description);
+  --aspect-card-body-size: var(--article-body-size);
+  --aspect-card-body-line: var(--leading-body);
   --aspect-card-meta-size: var(--type-meta-size);
   --aspect-card-meta-weight: var(--weight-regular);
   --aspect-card-meta-line: var(--leading-meta);
