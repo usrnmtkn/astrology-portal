@@ -26,6 +26,50 @@
  },
  "templates": [
   {
+   "contentKey": "fallback-hook/empty-house/bridge-template/standard",
+   "content_role": "template",
+   "surface": "you|friends",
+   "requiredSlots": [
+    "houseN",
+    "sign",
+    "planet",
+    "houseM",
+    "topicN",
+    "topicM"
+   ],
+   "optionalSlots": [],
+   "body": "Your {{houseN}} house is empty, and {{sign}} sits on its cusp. {{sign}} is ruled by {{planet}}, and in your chart {{planet}} lands in your {{houseM}} house. That is why your {{topicN}} story keeps running through {{topicM}}.",
+   "body_you": "Your {{houseN}} house is empty, and {{sign}} sits on its cusp. {{sign}} is ruled by {{planet}}, and in your chart {{planet}} lands in your {{houseM}} house. That is why your {{topicN}} story keeps running through {{topicM}}.",
+   "body_they": "Their {{houseN}} house is empty, and {{sign}} sits on its cusp. {{sign}} is ruled by {{planet}}, and in their chart {{planet}} lands in their {{houseM}} house. That is why their {{topicN}} story keeps running through {{topicM}}.",
+   "review_status": "approved",
+   "approved_via": "owner exact-wording approval 2026-08-11",
+   "source_keys": [
+    "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json",
+    "packages/astro-knowledge/review/empty-house-v14/bridge-template-approval-record.json"
+   ]
+  },
+  {
+   "contentKey": "fallback-hook/empty-house/bridge-template/house-1",
+   "content_role": "template",
+   "surface": "you|friends",
+   "requiredSlots": [
+    "sign",
+    "planet",
+    "houseM",
+    "topicM"
+   ],
+   "optionalSlots": [],
+   "body": "Your rising sign is {{sign}}, which makes {{planet}} your chart ruler. In your chart {{planet}} lands in your {{houseM}} house, so the story of who you are gets worked out through {{topicM}}.",
+   "body_you": "Your rising sign is {{sign}}, which makes {{planet}} your chart ruler. In your chart {{planet}} lands in your {{houseM}} house, so the story of who you are gets worked out through {{topicM}}.",
+   "body_they": "Their rising sign is {{sign}}, which makes {{planet}} their chart ruler. In their chart {{planet}} lands in their {{houseM}} house, so the story of who they are gets worked out through {{topicM}}.",
+   "review_status": "approved",
+   "approved_via": "owner exact-wording approval 2026-08-11; house-1 sentence owner-verbatim",
+   "source_keys": [
+    "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json",
+    "packages/astro-knowledge/review/empty-house-v14/bridge-template-approval-record.json"
+   ]
+  },
+  {
    "contentKey": "fallback-template/natal.planet-in-sign",
    "content_role": "template",
    "surface": "you|friends",

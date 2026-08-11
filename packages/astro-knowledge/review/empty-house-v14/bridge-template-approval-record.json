@@ -1,0 +1,21 @@
+{
+  "schema": "tldrastro.empty-house.bridge-template-approval.v1",
+  "status": "approved",
+  "approved_at": "2026-08-11",
+  "source": "owner_message_2026-08-11",
+  "scope": "Two empty-house bridge templates in both voices and the full and possessive-safe short house-topic vocabularies, rendered only in the detail view.",
+  "template_keys": [
+    "fallback-hook/empty-house/bridge-template/standard",
+    "fallback-hook/empty-house/bridge-template/house-1"
+  ],
+  "approval_statement": "Owner approved the supplied bridge-templates-proposal.json wording as written, including removal of the 'Here is the link:' prefix and the owner-verbatim house-1 sentence.",
+  "vocabulary_revisions": [
+    {
+      "date": "2026-08-11",
+      "record": "bridge-vocab-fix-2026-08-11.json",
+      "authority": "owner selection in conversation 2026-08-11",
+      "scope": "Four empty-house bridge topic-short vocabulary rows: houses 6, 8, 9, and 12.",
+      "status": "owner_approved_exact_wording"
+    }
+  ]
+}
