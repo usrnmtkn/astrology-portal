@@ -13,6 +13,7 @@ const sourcePath = path.join(
 const transitRoot = path.join(packageRoot, "data", "transits");
 const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
 const sourceByTransitKey = new Map();
+const importedApproval = "owner-refined Sky aspect v10.1 corpus; owner direction, chat 2026-08-01";
 
 for (const [sourceId, entry] of Object.entries(source)) {
   const key = `${entry.planetA}-${entry.aspect}-${entry.planetB}`;
@@ -30,14 +31,13 @@ for (const fileName of fs.readdirSync(transitRoot).filter((name) => name.endsWit
   const key = `${transit.transiting}-${transit.aspect}-${transit.other}`;
   const match = sourceByTransitKey.get(key);
 
-  if (!match) {
-    missing.push(key);
+  if (transit.readerCopy && transit.readerCopy.approvedVia !== importedApproval) {
+    preserved += 1;
     continue;
   }
 
-  const importedApproval = "owner-refined Sky aspect v10.1 corpus; owner direction, chat 2026-08-01";
-  if (transit.readerCopy && transit.readerCopy.approvedVia !== importedApproval) {
-    preserved += 1;
+  if (!match) {
+    missing.push(key);
     continue;
   }
 
