@@ -129,7 +129,7 @@ async function action(body: {
       state: "paused", step: "writing", last_error: null, authorization_token: null,
       authorized_call_budget: null, authorization_call_count: 0,
       authorized_token_budget: null, authorization_token_count: 0, authorization_consumed_at: null,
-      passing_unit_cache: {}
+      passing_unit_cache: {}, locked_at: null, locked_by: null, lease_expires_at: null
     });
     return { ok: true };
   }

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
-import { assertReportTokenBudgets, processReportFulfillmentJob, ReportAssemblyRegenerationRequired, ReportPersistenceInfrastructureError, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { assertReportTokenBudgets, processReportFulfillmentJob, ReportAssemblyRegenerationRequired, ReportPersistenceInfrastructureError, reportCallDurationEstimates, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-store.ts";
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
@@ -71,6 +71,17 @@ assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().workerBatchSize, 1, "The 300-second worker may claim only one report per invocation.");
 assert.equal(reportFulfillmentConfig().workerMaxNewUnitsPerCycle, 1, "A worker cycle must finish and persist one new unit before yielding.");
 assert.equal(reportFulfillmentConfig().workerCycleDeadlineMs, 240_000, "The worker must reserve 60 seconds before Vercel's hard timeout.");
+assert.equal(reportFulfillmentConfig().workerCallDurationDefaultMs, 60_000);
+assert.equal(reportFulfillmentConfig().workerCallSafetyMarginMs, 90_000, "Every provider-call admission must retain the owner-ruled 90-second margin.");
+assert.deepEqual(reportCallDurationEstimates([
+  { schema_name: "report_unit_draft", created_at: "2026-08-11T21:21:00.000Z", completed_at: "2026-08-11T21:22:10.000Z" },
+  { schema_name: "report_unit_draft", created_at: "2026-08-11T21:23:00.000Z", completed_at: "2026-08-11T21:24:45.000Z" },
+  { schema_name: "report_unit_critique", created_at: "2026-08-11T21:20:00.000Z", completed_at: "2026-08-11T21:20:40.000Z" }
+], 60_000), {
+  report_unit_draft: { samples: 2, estimateMs: 105_000 },
+  report_unit_critique: { samples: 1, estimateMs: 40_000 },
+  __default__: { samples: 0, estimateMs: 60_000 }
+}, "Call-type estimates must retain the longest immutable-ledger observation.");
 assert.equal(reportValidatorAttemptCap({ validator_attempt_overrides: { summer: 5 } }, "summer", 3), 5,
   "Report 74951c07's Summer override must add two attempts to the governed cap of three.");
 assert.equal(reportValidatorAttemptCap({ validator_attempt_overrides: { summer: 5 } }, "spring", 3), 3,
@@ -603,6 +614,7 @@ function createMemoryStore() {
       return { callId: `${jobId}:${next}`, callNumber: next };
     },
     async finishAuthorizedCall(callId, result) { facts.set(`finished:${callId}`, result); return true; },
+    async callTimingHistory(jobId) { return facts.get(`timings:${jobId}`) ?? []; },
     async reusableFacts(report) { return facts.get(`${report.user_id}:${report.report_horizon}:${report.period_start}`) ?? null; },
     async claimFacts(report) {
       const key = `${report.user_id}:${report.report_horizon}:${report.period_start}`;
@@ -901,7 +913,7 @@ const deadlineResult = await processReportFulfillmentJob({
   calculateFacts,
   callModel: deadlineModel,
   judgeCall,
-  continuationPolicy: { deadlineAtMs: 240_000, maxNewUnits: 1, now: () => 120_000 }
+  continuationPolicy: { deadlineAtMs: 400_000, maxNewUnits: 1, now: () => 120_000 }
 });
 assert.equal(deadlineResult.status, "queued", "A deadline-aware cycle must yield instead of starting a second incomplete unit.");
 assert.equal(deadlineResult.continuation, true);
@@ -915,6 +927,94 @@ assert.deepEqual({
   lockedBy: deadlineStore.jobs.get(deadlineJob.id).locked_by,
   lastError: deadlineStore.jobs.get(deadlineJob.id).last_error
 }, { state: "queued", step: "writing", lockedAt: null, lockedBy: null, lastError: null }, "The persisted job must be immediately claimable by the next scheduled cycle.");
+
+const strandedStore = createMemoryStore();
+const strandedReport = {
+  ...structuredClone(deadlineReport),
+  id: "8b3e266e-286d-4ea7-a008-f60776e6b791",
+  user_id: "97965306-21fd-481a-8bf2-7d271ab76c8b",
+  failure_history: [
+    { at: "2026-08-11T17:04:07.785Z", stage: "calculating", values: "Merged replacement scope is outside 'body'." },
+    { at: "2026-08-11T17:06:41.995Z", stage: "writing", values: "Cold read returned interpretive_gap for a unit where interpretive movement is not applicable." },
+    { at: "2026-08-11T17:12:50.755Z", stage: "writing", values: "Merged replacement scope is outside 'body; paragraph 0'." },
+    { at: "2026-08-11T17:17:46.130Z", stage: "writing", values: "Replacement location 'summary; paragraph 0' is not present." },
+    { at: "2026-08-11T17:23:16.619Z", stage: "writing", values: "Replacement location 'body; paragraph 0' is not present." }
+  ]
+};
+const strandedFailureHistory = structuredClone(strandedReport.failure_history);
+const strandedJob = {
+  ...authorizedJob({
+    id: "1b3bcbda-cb44-4cab-ae2c-e59c81c52e8f",
+    report_id: strandedReport.id,
+    entitlement_id: "1b3bcbda-entitlement",
+    state: "running",
+    step: "writing",
+    attempt: 1,
+    locked_at: "2026-08-11T21:20:27.651752Z",
+    locked_by: "report-worker-4-1786483227141",
+    lease_expires_at: "2026-08-11T21:26:57.651752Z"
+  }),
+  model_call_count: 31,
+  authorization_call_count: 31
+};
+strandedStore.reports.set(strandedReport.id, strandedReport);
+strandedStore.entitlements.set(strandedJob.entitlement_id, {
+  id: strandedJob.entitlement_id,
+  user_id: strandedReport.user_id,
+  status: "active",
+  product_key: "general_1m"
+});
+strandedStore.jobs.set(strandedJob.id, structuredClone(strandedJob));
+strandedStore.facts.set(`timings:${strandedJob.id}`, [{
+  schema_name: "report_unit_draft",
+  created_at: "2026-08-11T21:21:00.000Z",
+  completed_at: "2026-08-11T21:23:00.000Z"
+}]);
+strandedStore.claimJobs = async () => [structuredClone(strandedStore.jobs.get(strandedJob.id))];
+let strandedProviderRequests = 0;
+const strandedModel = async (input) => {
+  const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
+  await input.beforeProviderCall?.(attempt);
+  strandedProviderRequests += 1;
+  throw new Error("FIXTURE_ONLY_PROVIDER_MUST_NOT_RUN");
+};
+let strandedClockReads = 0;
+const strandedResult = await runReportFulfillmentBatch({
+  workerId: "report-worker-4-1786483227141",
+  store: strandedStore,
+  calculateFacts,
+  callModel: strandedModel,
+  judgeCall,
+  continuationPolicy: {
+    deadlineAtMs: 240_000,
+    runtimeDeadlineAtMs: 300_000,
+    maxNewUnits: 1,
+    now: () => strandedClockReads++ === 0 ? 0 : 274_000
+  }
+});
+assert.equal(strandedProviderRequests, 0, "The exact call-32 stranding must be prevented before a provider request.");
+assert.equal(strandedStore.facts.get(`calls:${strandedJob.id}`), undefined, "A denied call must not consume a ledger authorization.");
+assert.deepEqual(strandedResult.processed[0].result.deadlineAdmission, {
+  schemaName: "report_unit_draft",
+  remainingMs: 26_000,
+  estimatedCallMs: 120_000,
+  safetyMarginMs: 90_000
+});
+assert.deepEqual({
+  state: strandedStore.jobs.get(strandedJob.id).state,
+  step: strandedStore.jobs.get(strandedJob.id).step,
+  lockedAt: strandedStore.jobs.get(strandedJob.id).locked_at,
+  lockedBy: strandedStore.jobs.get(strandedJob.id).locked_by,
+  leaseExpiresAt: strandedStore.jobs.get(strandedJob.id).lease_expires_at
+}, {
+  state: "queued",
+  step: "writing",
+  lockedAt: null,
+  lockedBy: null,
+  leaseExpiresAt: null
+}, "A denied call must persist and immediately requeue without entering the retry path.");
+assert.deepEqual(strandedStore.reports.get(strandedReport.id).failure_history, strandedFailureHistory,
+  "Deadline admission is continuation control, not a report failure.");
 
 const validatorRepairStore = createMemoryStore();
 const validatorRepairReport = {
@@ -963,7 +1063,7 @@ const validatorRepairResult = await processReportFulfillmentJob({
   calculateFacts,
   callModel: validatorRepairModel,
   judgeCall,
-  continuationPolicy: { deadlineAtMs: 240_000, maxNewUnits: 1, now: () => 120_000 }
+  continuationPolicy: { deadlineAtMs: 400_000, maxNewUnits: 1, now: () => 120_000 }
 });
 assert.equal(validatorRepairResult.status, "queued");
 assert.deepEqual(validatorRepairSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_cold_read", "report_unit_revision_spans"],
@@ -1232,4 +1332,4 @@ assert.ok(webhookSource.includes('reportBillingMode() === "free_test"'));
 const stripeSetupSource = fs.readFileSync(new URL("./setup-stripe-report-products.mjs", import.meta.url), "utf8");
 assert.ok(stripeSetupSource.indexOf('reportBillingMode() !== "stripe"') < stripeSetupSource.indexOf("for (const sku"));
 
-console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, deadline-aware one-unit worker continuation, Production-shaped unit upsert, durable passing-unit cache, persistence backoff without re-billing, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, observed-duration deadline admission, deadline-aware one-unit worker continuation, Production-shaped unit upsert, durable passing-unit cache, persistence backoff without re-billing, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");
