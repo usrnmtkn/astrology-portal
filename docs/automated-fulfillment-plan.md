@@ -57,7 +57,9 @@ Human attention is reserved for reports that fail out: exhausted retries, birth-
 3. **Judge runtime**: extend the existing judge scripts into a fulfillment-path judge with the report rubric; calibrate on the recorded v2–FINAL review decisions; owner signs off on the rubric and threshold before launch.
 4. **Delivery**: report view route gated by entitlement (Phase F renderer); email notification; optional PDF later.
 5. **Dashboards**: order volume, pass rates per gate, retry rates, judge score distributions, exception-queue depth, audit findings — the owner's window into the system she now governs.
-6. **Cost controls**: per-report token budget, provider failover, generation kill-switch.
+6. **Cost controls**: authorization-scoped call and token budgets, an owner-adjustable per-report lifetime token backstop, provider failover, generation kill-switch.
+
+Post-shadow-launch optimization backlog: consider in-progress writer-chain checkpointing only after real shadow runs establish the observed mid-unit failure rate and the billed retry cost. The current durable cache boundary remains a fully gated unit; partial draft/critique/revision state is intentionally not persisted speculatively.
 
 ## 5. Launch sequence
 

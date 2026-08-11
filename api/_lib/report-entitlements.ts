@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { birthProfileFromPersistedData, reportBillingWindow, reportWindowFromSelectedStart } from "./report-billing-window.js";
-import { reportSku, type ReportSku } from "./report-fulfillment-config.js";
+import { reportFulfillmentConfig, reportSku, type ReportSku } from "./report-fulfillment-config.js";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.ts";
 
 type PersistedProfileRow = { data: unknown };
@@ -77,6 +77,7 @@ export async function authorizeReportGeneration(admin: SupabaseReportAdmin, inpu
 }) {
   if (!Number.isInteger(input.callBudget) || input.callBudget < 1) throw new Error("A positive whole-number call budget is required.");
   const token = crypto.randomUUID();
+  const tokenBudget = reportFulfillmentConfig().authorizationTokenBudget;
   const jobs = await admin.update<{ id: string }>("report_fulfillment_jobs", `report_id=eq.${encodeURIComponent(input.reportId)}&state=eq.paused&select=id`, {
     state: "queued",
     step: "calculating",
@@ -84,14 +85,16 @@ export async function authorizeReportGeneration(admin: SupabaseReportAdmin, inpu
     last_error: null,
     authorization_token: token,
     authorized_call_budget: input.callBudget,
-    model_call_count: 0,
+    authorization_call_count: 0,
+    authorized_token_budget: tokenBudget,
+    authorization_token_count: 0,
     authorization_consumed_at: null
   });
   if (!jobs.length) throw new Error("The report is not paused at the authorization gate.");
   await admin.update("user_reports", `id=eq.${encodeURIComponent(input.reportId)}&fulfillment_status=eq.awaiting_authorization`, {
     fulfillment_status: "queued"
   });
-  return { authorized: true, callBudget: input.callBudget, jobId: jobs[0].id };
+  return { authorized: true, callBudget: input.callBudget, tokenBudget, jobId: jobs[0].id };
 }
 
 export async function revokeEntitlement(admin: SupabaseReportAdmin, input: {

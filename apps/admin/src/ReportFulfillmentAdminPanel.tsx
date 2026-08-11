@@ -8,6 +8,7 @@ type AdminResponse = {
   reportId?: string | null;
   workerTriggered?: boolean;
   workerTriggerReason?: string;
+  lifetimeTokenBudget?: number;
 };
 
 class AdminRequestError extends Error {
@@ -45,6 +46,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
   const [focusedReportId, setFocusedReportId] = useState("");
+  const [lifetimeBudgets, setLifetimeBudgets] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [grant, setGrant] = useState({ userId: "", reportDomain: "general", reportHorizon: "12_months", windowStart: new Date().toISOString().slice(0, 10) });
 
@@ -98,6 +100,9 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
         setMessage(result.workerTriggered === false
           ? `Generation was authorized and remains queued for scheduled pickup. ${result.workerTriggerReason ?? "Immediate pickup was unavailable."}`
           : "Generation authorized. An immediate worker cycle was triggered; scheduled pickup remains active as a fallback.");
+      } else if (actionName === "set_lifetime_token_budget") {
+        setMessageTone("success");
+        setMessage(`Lifetime token backstop updated to ${Number(result.lifetimeTokenBudget ?? 0).toLocaleString()}.`);
       } else {
         setMessage("");
       }
@@ -176,7 +181,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       )}
       <div className="admin-content-table-scroll">
         <table className="admin-content-table">
-          <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Estimated USD</th><th>Attempts</th><th>Last failure</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Lifetime token cap</th><th>Estimated USD</th><th>Attempts</th><th>Last failure</th><th>Actions</th></tr></thead>
           <tbody>{dashboard?.reports.map((report) => (
             <tr
               id={`report-row-${String(report.id)}`}
@@ -187,6 +192,20 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
               <td>{String(report.entitlement_source)}</td>
               <td>{String(report.report_domain)}</td><td>{String(report.report_horizon)}</td><td>{String(report.fulfillment_status)}</td>
               <td>{Number(report.token_count ?? 0).toLocaleString()} / {Number(report.token_count_total ?? 0).toLocaleString()}</td>
+              <td>
+                <div className="admin-toolbar-actions">
+                  <input
+                    type="number"
+                    min="1"
+                    aria-label={`Lifetime token cap for ${String(report.id)}`}
+                    value={lifetimeBudgets[String(report.id)] ?? String(report.token_budget_lifetime ?? 1_450_000)}
+                    onChange={(event) => setLifetimeBudgets((current) => ({ ...current, [String(report.id)]: event.target.value }))}
+                  />
+                  <button type="button" disabled={loading} onClick={() => void action("set_lifetime_token_budget", String(report.id), undefined, {
+                    lifetimeTokenBudget: Number(lifetimeBudgets[String(report.id)] ?? report.token_budget_lifetime ?? 1_450_000)
+                  })}>Set cap</button>
+                </div>
+              </td>
               <td>${Number(report.token_spend_usd_estimate ?? 0).toFixed(4)} est.</td>
               <td><code>{JSON.stringify(report.attempt_counts ?? {})}</code></td>
               <td><code>{JSON.stringify(Array.isArray(report.failure_history) ? report.failure_history.at(-1) ?? null : null)}</code></td>

@@ -74,7 +74,8 @@ export function reportFulfillmentConfig() {
     judgeAttemptCap: integerEnv("REPORT_JUDGE_ATTEMPT_CAP", 2, 1),
     auditSampleRate: decimalEnv("REPORT_AUDIT_SAMPLE_RATE", 0.05),
     firstCombinationAuditCount: integerEnv("REPORT_FIRST_COMBINATION_AUDIT_COUNT", 3),
-    tokenBudget: integerEnv("REPORT_TOKEN_BUDGET", 1_450_000, 1),
+    authorizationTokenBudget: integerEnv("REPORT_AUTHORIZATION_TOKEN_BUDGET", integerEnv("REPORT_TOKEN_BUDGET", 1_450_000, 1), 1),
+    reportLifetimeTokenBudget: integerEnv("REPORT_LIFETIME_TOKEN_BUDGET", 1_450_000, 1),
     jobAttemptCap: integerEnv("REPORT_JOB_ATTEMPT_CAP", 5, 1),
     workerBatchSize: integerEnv("REPORT_WORKER_BATCH_SIZE", 5, 1),
     workerPaused: process.env.REPORT_WORKER_PAUSED === "true",
@@ -102,7 +103,7 @@ export function reportCallEstimate(horizon: ReportHorizon) {
     expectedCallBudget,
     safetyMarginCalls,
     recommendedCallBudget,
-    tokenBudget: config.tokenBudget,
+    tokenBudget: config.authorizationTokenBudget,
     planning
   };
 }
