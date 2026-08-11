@@ -18,6 +18,17 @@ The workbook `tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE
 
 The locked JSON at `packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json` contains the exact approved copy, runtime destination, payload hash, and workbook sheet/row/cell provenance for every serving row. No unapproved row enters the locked file or serving lane.
 
+### Two-lineage runtime boundary
+
+Owner ruling, 2026-08-11: LL V13 and CC V9 are separate canonical lineages and coexist.
+
+- LL V13 is canonical specifically for the LL natal matrix: exact natal placements, natal aspects, and its explicitly mapped natal workbook keys.
+- CC V9 remains canonical for transit meanings, house activations, and their voiced collective or personal timing copy.
+- LL V13 does not supersede, replace, or authorize edits to CC V9. CC V9 does not supply natal copy governed by LL V13.
+- A missing exact key fails closed inside its owning lineage. The runtime must not borrow from the other lineage merely because both are loaded.
+
+The active implementations preserve this boundary: `knowledgeMatrixV13Runtime.ts` exposes natal placement, natal aspect, and V13 workbook-key lookups, while `knowledgeMatrixV9Runtime.ts` exposes transit and house lookups.
+
 ## Voice-index companion
 
 - The current committed `build-voice-index.js` includes the governed `llMatrixV13Entries()` loader alongside `knowledgeMatrixV9Entries()`. The V8 package retained with this record is a provenance archive and is not the active loader.
@@ -27,7 +38,7 @@ The locked JSON at `packages/astro-knowledge/voice/tldr-astro/marie-satori-write
 
 ## Change control
 
-The runtime selects the V13 exact-key row ahead of earlier LL copy while preserving all earlier approved source rows byte-for-byte. A missing V13 key does not borrow another row. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
+The runtime selects the V13 exact-key row ahead of earlier LL natal copy while preserving all earlier approved source rows byte-for-byte. This precedence is limited to the LL natal lineage and does not replace CC V9 transit or house content. A missing V13 key does not borrow another row. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
 
 ## Fingerprints
 
