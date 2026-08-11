@@ -29,7 +29,7 @@
     "south-node": 6
   },
   "invariants": {
-    "existingApprovedRowsSha256": "1a192e68e45f71b891de452b713c2aaba88e773672d3d4f9d009e79bb7ea8614",
+    "existingApprovedRowsSha256": "b989365c2dfbc85b363969bebd05a9e3a5340e38756722b3cf6fe76bd3378118",
     "existingApprovedRowsChanged": 0,
     "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
     "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows, the 2026-08-11 V13 duplicate-contentKey repair removed 108 documented superseded rows, the v3-2026-08-11b owner-approved soft/Uranus revision changed exactly two approved daily rows, and the v3-2026-08-11d projection-5 empty-house owner revision and bridge addition changed only its authorized empty-house row and added bridge vocabulary; all 78 governed family rows remain byte-identical to their row-level approval payloads and records."
