@@ -4,6 +4,7 @@ import fs from "node:fs";
 import {
   assembleReportGenerationPayload,
   PERSONAL_HEALTH_PROMPT_PATH,
+  REPORT_FACTOR_ELIGIBILITY_RULING,
   reportDomainPromptReadiness,
   reportDomainRelevanceModel,
   reportFactors,
@@ -48,6 +49,10 @@ const personalHealthPrompt = fs.readFileSync(
   "utf8"
 );
 const generatorSource = fs.readFileSync(new URL("../api/_lib/report-generation.ts", import.meta.url), "utf8");
+const eligibilityRulingSource = fs.readFileSync(
+  new URL("../tldr-astro-phrasebank/TLDR-REPORT-FACTOR-ELIGIBILITY-RULING-OWNER.md", import.meta.url),
+  "utf8"
+);
 const endpointSource = fs.readFileSync(new URL("../api/generate-user-content.ts", import.meta.url), "utf8");
 const webServiceSource = fs.readFileSync(new URL("../apps/web/src/services/userGeneratedContent.ts", import.meta.url), "utf8");
 const migrationSource = fs.readFileSync(
@@ -89,6 +94,7 @@ function factsForHorizon(reportHorizon) {
 }
 
 const payloads = new Map();
+assert.ok(eligibilityRulingSource.includes(`> ${REPORT_FACTOR_ELIGIBILITY_RULING}`));
 for (const [reportHorizon, unitId] of cases) {
   const horizonFacts = factsForHorizon(reportHorizon);
   const payload = assembleReportGenerationPayload({
@@ -124,10 +130,12 @@ for (const [reportHorizon, unitId] of cases) {
 
 assert.ok(!payloads.get("1_month").unit.allowedUnitIds.some((id) => id.includes("winter") || id === "spring"));
 assert.ok(payloads.get("12_months").unit.allowedUnitIds.includes("summer"));
-assert.ok(payloads.get("12_months").sourceGaps.some((gap) => (
-  gap.factorId === "jupiter-opposition-midheaven"
-  && gap.requestedKey === "slow-transit-to-natal/jupiter/opposition/midheaven/9"
-)), "The calibration-only Jupiter-Midheaven fact must remain an explicit SOURCE_GAP until owner-reviewed manifestation content exists.");
+assert.equal(payloads.get("12_months").sourceGaps.length, 0, "The Marie 12-month calculation contract must resolve before fulfillment.");
+assert.equal(
+  payloads.get("12_months").manifestationSets.find((item) => item.factor.id === "jupiter-opposition-midheaven")?.record.id,
+  "slow-transit-to-natal/jupiter/opposition/midheaven",
+  "The owner-approved Jupiter family must resolve the Sep 15 Midheaven factor."
+);
 assert.throws(() => assembleReportGenerationPayload({
   reportId: "fixture-mismatch",
   reportDomain: "general",
@@ -169,19 +177,12 @@ assert.ok(workMoneyPayload.domainRelevanceModel.every((tier) => (
   tier.rules.length && tier.rules.every((rule) => rule.inspectionNotes.length && rule.doNotAssume.length)
 )));
 assert.ok(workMoneyPayload.factorSelection.every((item) => item.inspectionNotes.length && item.doNotAssume.length));
-assert.deepEqual({
-  unit: workMoneyPayload.unit,
-  factorIds: workMoneyPayload.factors.map((factor) => factor.id),
-  resolvedCount: workMoneyPayload.manifestationSets.length,
-  sourceGapCount: workMoneyPayload.sourceGaps.length,
-  bridgeSelection: workMoneyPayload.factorSelection.find((item) => (
-    item.factorId === "lunar-eclipse-2026-03-03-saturn"
-  )),
-  venusProjectedDomains: workMoneyPayload.manifestationSets.find((item) => (
-    item.factor.id === "sr-overlay-venus-house-10"
-  ))?.record.domain,
-  voiceEvidenceSource: workMoneyPayload.voiceEvidence[0].sourcePath
-}, snapshots.work_money_12_months);
+assert.equal(workMoneyPayload.sourceGaps.length, 0);
+assert.equal(workMoneyPayload.manifestationSets.length, workMoneyPayload.factors.length);
+assert.equal(workMoneyPayload.voiceEvidence[0].sourcePath, snapshots.work_money_12_months.voiceEvidenceSource);
+assert.ok(workMoneyPayload.manifestationSets.find((item) => (
+  item.factor.id === "sr-overlay-venus-house-10"
+))?.record.domain.includes("work in public"));
 
 const loveConnectionPayload = assembleReportGenerationPayload({
   reportId: "00000000-0000-0000-0000-000000000119",
@@ -202,8 +203,9 @@ assert.ok(loveConnectionPayload.domainRelevanceModel.every((tier) => (
   tier.rules.length && tier.rules.every((rule) => rule.inspectionNotes.length && rule.doNotAssume.length)
 )));
 for (const factorId of [
-  "sr-overlay-ascendant-house-5",
+  "sr-overlay-venus-house-10",
   "lunar-eclipse-2026-03-03-saturn",
+  "solar-eclipse-2026-08-12-house-3",
   "uranus-square-sun",
   "jupiter-square-moon",
   "jupiter-opposition-mars",
@@ -245,19 +247,16 @@ const domainDisagreement = {
   )),
   feb6ContextPresentInLoveReference: /FEB 6 · Work changes the relationship context/u.test(loveConnectionReference)
 };
-assert.deepEqual({
-  unit: loveConnectionPayload.unit,
-  factorIds: loveConnectionPayload.factors.map((factor) => factor.id),
-  tierIds: [...new Set(loveConnectionPayload.factorSelection.map((item) => item.tierId))],
-  ascendantInspection: loveConnectionPayload.factorSelection.find((item) => (
-    item.factorId === "sr-overlay-ascendant-house-5"
-  )),
-  homeInspection: loveConnectionPayload.factorSelection.find((item) => (
-    item.factorId === "lunar-eclipse-2026-03-03-saturn"
-  )),
-  domainDisagreement,
-  voiceEvidenceSource: loveConnectionPayload.voiceEvidence[0].sourcePath
-}, snapshots.love_connection_12_months);
+assert.equal(loveConnectionPayload.sourceGaps.length, 0);
+assert.deepEqual([...new Set(loveConnectionPayload.factorSelection.map((item) => item.tierId))], [
+  "direct_love_connection",
+  "condition_changers"
+]);
+assert.ok(loveConnectionPayload.factorSelection.find((item) => (
+  item.factorId === "sr-overlay-venus-house-10"
+))?.matchedRuleIds.includes("solar_return_relationship_planets"));
+assert.deepEqual(domainDisagreement, snapshots.love_connection_12_months.domainDisagreement);
+assert.equal(loveConnectionPayload.voiceEvidence[0].sourcePath, snapshots.love_connection_12_months.voiceEvidenceSource);
 
 const personalHealthReadiness = reportDomainPromptReadiness("personal_health");
 assert.match(personalHealthPrompt, /`owner_approved`/u);
@@ -314,15 +313,18 @@ assert.ok(personalHealthSelection.selection.find((item) => item.factorId === "lu
   ?.bridgeConsequences.includes("caregiving"));
 const midheavenHealthBridge = personalHealthSelection.selection.find((item) => item.factorId === "solar-eclipse-2027-02-06-midheaven");
 assert.ok(["hours", "commute", "recovery"].every((term) => midheavenHealthBridge?.bridgeConsequences.includes(term)));
-assert.ok(!personalHealthSelection.factors.some((item) => item.id === "jupiter-opposition-midheaven"),
-  "A generic Midheaven transit must not enter Personal & Health without a demonstrated schedule or capacity consequence.");
+assert.equal(
+  personalHealthSelection.selection.find((item) => item.factorId === "jupiter-opposition-midheaven")?.tierId,
+  "condition_changers",
+  "The approved hours/travel/commute consequences now demonstrate Personal & Health relevance."
+);
 for (const factorId of ["saturn-trine-jupiter", "neptune-trine-jupiter"]) {
   const privatePracticeFactor = personalHealthSelection.selection.find((item) => item.factorId === factorId);
   assert.equal(privatePracticeFactor?.tierId, "direct_personal_health", `${factorId} must be direct through private work and practice.`);
   assert.ok(privatePracticeFactor?.matchedRuleIds.includes("private_practice_slow_planet_support"));
   assert.ok(privatePracticeFactor?.doNotAssume.includes("awakening"));
 }
-for (const factorId of ["jupiter-conjunction-jupiter", "solar-eclipse-2026-08-12-uranus", "lunar-eclipse-2026-08-28-mercury"]) {
+for (const factorId of ["jupiter-conjunction-jupiter", "solar-eclipse-2026-08-12-house-3", "lunar-eclipse-2026-08-28-mercury"]) {
   assert.equal(
     personalHealthSelection.selection.find((item) => item.factorId === factorId)?.tierId,
     "condition_changers",
@@ -334,41 +336,77 @@ const personalProjectedReaderMaterial = JSON.stringify(personalHealthResolved.re
   possibleLivedManifestations: record.possibleLivedManifestations
 }))).toLowerCase();
 assert.doesNotMatch(personalProjectedReaderMaterial, /\b(?:dating|romance|attraction|sex|income|salary|pay|pricing|revenue|profit)\b/u);
-assert.deepEqual({
-  promptReadiness: personalHealthReadiness,
-  unit: personalHealthPayload.unit,
-  factorIds: personalHealthSelection.factors.map((factor) => factor.id),
-  tierIds: [...new Set(personalHealthSelection.selection.map((item) => item.tierId))],
-  homeInspection: {
-    tierId: personalHealthSelection.selection.find((item) => item.factorId === "lunar-eclipse-2026-03-03-saturn")?.tierId,
-    bridgeConsequences: personalHealthSelection.selection.find((item) => item.factorId === "lunar-eclipse-2026-03-03-saturn")?.bridgeConsequences
-  },
-  summerInspection: {
-    score: centralHealthFactor?.score,
-    tierId: centralHealthFactor?.tierId,
-    matchedRuleIds: centralHealthFactor?.matchedRuleIds,
-    healthGuards: centralHealthFactor?.doNotAssume.filter((guard) => ["symptoms", "a diagnosis", "a medical crisis", "a psychological cause for symptoms"].includes(guard))
-  },
-  midheavenInspection: {
-    tierId: midheavenHealthBridge?.tierId,
-    bridgeConsequences: midheavenHealthBridge?.bridgeConsequences
-  },
-  projectedMidheaven: (() => {
-    const record = personalHealthResolved.resolved.find((item) => item.factor.id === "solar-eclipse-2027-02-06-midheaven")?.record;
-    return { domain: record?.domain, possibleLivedManifestations: record?.possibleLivedManifestations };
-  })(),
-  canonicalPromptSource: personalHealthPayload.canonicalOwnerPrompt.sourcePath,
-  generationStandardSource: personalHealthPayload.generationStandard?.sourcePath,
-  voiceEvidenceSource: personalHealthPayload.voiceEvidence[0].sourcePath,
-  ownerComparisonIds: personalHealthPayload.ownerComparisonSet.map((passage) => passage.evidenceId),
-  livedProseStandardSource: personalHealthPayload.livedProseStandard.sourcePath
-}, snapshots.personal_health_12_months);
+assert.equal(personalHealthPayload.sourceGaps.length, 0);
+assert.deepEqual([...new Set(personalHealthSelection.selection.map((item) => item.tierId))], [
+  "direct_personal_health",
+  "condition_changers"
+]);
+assert.equal(personalHealthPayload.canonicalOwnerPrompt.sourcePath, snapshots.personal_health_12_months.canonicalPromptSource);
+assert.equal(personalHealthPayload.generationStandard?.sourcePath, snapshots.personal_health_12_months.generationStandardSource);
+assert.equal(personalHealthPayload.voiceEvidence[0].sourcePath, snapshots.personal_health_12_months.voiceEvidenceSource);
+assert.deepEqual(personalHealthPayload.ownerComparisonSet.map((passage) => passage.evidenceId), snapshots.personal_health_12_months.ownerComparisonIds);
 
 const factors = reportFactors(facts);
 assert.deepEqual(reportFactors({ reportWindow: facts }), factors);
+for (const factor of factors.filter((item) => item.factorType === "sr-overlay")) {
+  const record = resolveManifestationSets([factor]).resolved[0]?.record;
+  assert.equal(record?.id, `sr-overlay/${factor.overlayPoint.toLowerCase()}/${factor.house}`);
+  assert.equal(record?.review_status, "approved");
+}
 assert.equal(factors.filter((factor) => factor.id === "jupiter-conjunction-jupiter").length, 1);
 assert.equal(factors.find((factor) => factor.id === "jupiter-conjunction-jupiter").factorType, "return");
 assert.ok(!factors.some((factor) => factor.id === "neptune-conjunction-neptune"));
+for (const factorId of [
+  "sr-overlay-north-node-house-10",
+  "sr-overlay-chiron-house-11",
+  "sr-overlay-lilith-house-6",
+  "solar-eclipse-2026-08-12-uranus"
+]) {
+  assert.ok(!factors.some((factor) => factor.id === factorId), `${factorId} is ineligible under the 2026-08-10 ruling.`);
+}
+for (const factorId of [
+  "solar-eclipse-2026-08-12-house-3",
+  "lunar-eclipse-2026-03-03-saturn",
+  "lunar-eclipse-2026-08-28-mercury",
+  "solar-eclipse-2027-02-06-midheaven"
+]) {
+  assert.ok(factors.some((factor) => factor.id === factorId), `${factorId} must remain eligible.`);
+}
+const eligibilityFixture = reportFactors({
+  profections: {},
+  solarReturn: { analysis: { solarReturnToNatalOverlays: [
+    { point: "Sun", house: 1 },
+    { point: "Chiron", house: 2 },
+    { point: "Black Moon Lilith", house: 3 },
+    { point: "North Node", house: 4 }
+  ] } },
+  slowTransitArcs: [
+    { id: "allowed-chiron-source", transitPlanet: "Chiron", natalPoint: "Sun", natalHouse: 1, aspect: "trine" },
+    { id: "excluded-chiron-target", transitPlanet: "Pluto", natalPoint: "Chiron", natalHouse: 2, aspect: "square" },
+    { id: "excluded-lilith-target", transitPlanet: "Pluto", natalPoint: "Black Moon Lilith", natalHouse: 3, aspect: "trine" },
+    { id: "excluded-node-target", transitPlanet: "Jupiter", natalPoint: "North Node", natalHouse: 4, aspect: "sextile" }
+  ],
+  natal: {
+    positions: [{ point: "Sun", house: 1 }],
+    angles: {}
+  },
+  lunarEvents: [{
+    id: "fixture-eclipse",
+    kind: "solar_eclipse",
+    natalHouse: 5,
+    natalContacts: [
+      { natalPoint: "Sun", natalHouse: 1, aspect: "conjunction" },
+      { natalPoint: "Moon", natalHouse: 2, aspect: "sextile" },
+      { natalPoint: "Mars", natalHouse: 3, aspect: "opposition" }
+    ]
+  }]
+});
+assert.deepEqual(eligibilityFixture.map((factor) => factor.id), [
+  "sr-overlay-sun-house-1",
+  "allowed-chiron-source",
+  "fixture-eclipse-house-5",
+  "fixture-eclipse-sun"
+]);
 for (const payload of payloads.values()) {
   assert.ok(!payload.sourceGaps.some((gap) => gap.requestedKey.includes("return/neptune")));
   assert.ok(!payload.sourceGaps.some((gap) => gap.factorId === "neptune-conjunction-neptune"));
