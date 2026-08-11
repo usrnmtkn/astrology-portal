@@ -42,6 +42,17 @@ The `GovernanceLegend` sheet controls current authority:
 
 The writer index ingests all 3,485 governed rows. The 12 rows carrying the existing `[EXCLUDE FROM FALLBACK]` marker remain present for governance traceability but are not quotable voice/context evidence and do not serve. The other 3,473 rows are positive and contextual retrieval evidence. Runtime also excludes three additional rows whose reusable house key is incomplete, for 15 serving exclusions total.
 
+### Two-lineage runtime boundary
+
+Owner ruling, 2026-08-11: CC V9 and LL V13 are separate canonical lineages and coexist.
+
+- CC V9 is canonical for transit meanings, house activations, and their voiced collective or personal timing copy.
+- LL V13 is canonical for the LL natal matrix: exact natal placements, natal aspects, and its explicitly mapped natal workbook keys.
+- LL V13 does not supersede, replace, or authorize edits to CC V9. CC V9 does not supply natal copy governed by LL V13.
+- A missing exact key fails closed inside its owning lineage. The runtime must not borrow from the other lineage merely because both are loaded.
+
+The active implementations preserve this boundary: `knowledgeMatrixV9Runtime.ts` exposes transit and house lookups, while `knowledgeMatrixV13Runtime.ts` exposes natal placement, natal aspect, and V13 workbook-key lookups.
+
 ## Runtime behavior
 
 Existing fail-closed render rules remain in force:
@@ -62,4 +73,4 @@ Verified runtime inventory:
 
 ## Supersession and future changes
 
-The v9 workbook and v9 package supersede the active v8 workbook/package references. Historical v8 review records remain as provenance only. The canonical v9 workbook is immutable. Any proposed change is a v10 candidate, is not owner-approved by inheritance, and must return to the owner for explicit approval before replacing v9.
+The v9 workbook and v9 package supersede the active CC v8 workbook/package references. They do not supersede the separate LL V13 natal lineage. Historical CC v8 review records remain as provenance only. The canonical v9 workbook is immutable. Any proposed change is a v10 candidate, is not owner-approved by inheritance, and must return to the owner for explicit approval before replacing v9.
