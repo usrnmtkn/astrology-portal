@@ -6,6 +6,8 @@
 
   "voiceDescription": "Direct, grounded, and modern, like advice from the reader's smartest, most honest friend. Names what is actually happening before it explains any astrology. Collective and third-person (never 'you'), felt but never corporate or mystical. Short, quotable sentences; ends on a plain truth.",
 
+  "lockedPrinciple": "The astrology should explain why the event unfolds the way it does, while the prose shows what that looks like in ordinary life. The best version does both.",
+
   "person": "first-person-plural-collective",
   "secondPersonAllowed": false,
   "firstPersonPluralAllowed": true,

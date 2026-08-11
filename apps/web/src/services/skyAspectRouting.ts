@@ -19,6 +19,38 @@ export type ResolvedApprovedExactSkyAspectCopy = {
   tier: "approved-exact-sky-aspect-v1";
 };
 
+const calendarAspectLeadVerb: Record<string, string> = {
+  conjunction: "conjoins",
+  opposition: "opposes",
+  quincunx: "quincunxes",
+  sextile: "sextiles",
+  square: "squares",
+  trine: "trines"
+};
+
+function lowerSentenceStart(value: string) {
+  return value ? `${value.charAt(0).toLowerCase()}${value.slice(1)}` : value;
+}
+
+function calendarExactLeadIn(
+  body: string,
+  aspect: string,
+  slots: TemplateSlotValues
+) {
+  const dateLine = String(slots.dateLine ?? "").trim();
+  const planetA = String(slots.planetA ?? "").trim();
+  const planetB = String(slots.planetB ?? "").trim();
+  const signA = String(slots.signA ?? "").trim();
+  const signB = String(slots.signB ?? "").trim();
+  const aspectVerb = calendarAspectLeadVerb[aspect.trim().toLowerCase()] ?? "";
+
+  if (!dateLine || !planetA || !planetB || !signA || !signB || !aspectVerb) {
+    return null;
+  }
+
+  return `${dateLine}, ${planetA} in ${signA} ${aspectVerb} ${planetB} in ${signB}, and on a collective level, ${lowerSentenceStart(body)}`;
+}
+
 type SkyAspectPrecedenceCandidates<T> = {
   signSpecific?: T | null;
   exact?: T | null;
@@ -58,7 +90,7 @@ export function resolveApprovedExactSkyAspectCopy({
     return null;
   }
 
-  const body = interpolateTemplateString(copy.body, slots, {
+  const storedBody = interpolateTemplateString(copy.body, slots, {
     contentKey: copy.contentId,
     field: "body"
   })
@@ -66,6 +98,10 @@ export function resolveApprovedExactSkyAspectCopy({
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
     .join("\n\n");
+  const body = copy.calendarLeadIn === "date-placements-collective-level"
+    && slots.dateLine
+    ? calendarExactLeadIn(storedBody, aspect, slots)
+    : storedBody;
 
   if (!body || !isReaderFacingCopy(body)) {
     return null;
