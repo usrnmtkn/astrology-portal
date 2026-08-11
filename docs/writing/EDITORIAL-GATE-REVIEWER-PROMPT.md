@@ -14,9 +14,13 @@ Evaluate the copy against the supplied structured astrology meaning plan and can
 
 ASSUME THERE IS A DEFECT UNTIL EACH REQUIRED CHECK PASSES.
 
-BLOCKING CHECKS
+ADVISORY CHECK
 
 0. COLD RENDERED PROSE
+
+The final TRAIN/HOLDOUT calibration rejected an owner-approved gold. This check is
+permanently advisory-only. Its findings go to the owner and cannot produce or contribute to
+REVISE.
 
 Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
 reader would encounter it in the product. Do not use the prompt, source notes, astrology
@@ -50,6 +54,8 @@ this?", or "A normal person would say this more simply," the line is not approve
 Final judge instruction: Do not reward a sentence for being astrologically correct if it is
 awkward prose. Correct astrology expressed in unnatural language still fails the writing
 judge.
+
+BLOCKING CHECKS
 
 1. ASTROLOGY INTEGRITY
 Does the passage accurately express the supplied planet/point function and sign mechanics?

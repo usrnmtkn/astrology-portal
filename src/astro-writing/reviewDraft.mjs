@@ -55,7 +55,7 @@ export const COLD_REVIEW_SCHEMA = Object.freeze({
         properties: {
           ...VIOLATION_SCHEMA.properties,
           category: { type: "string", enum: ["cold_rendered_prose"] },
-          severity: { type: "string", enum: ["blocking"] }
+          severity: { type: "string", enum: ["nonblocking"] }
         }
       }
     }
@@ -204,8 +204,8 @@ function validateColdModelReview(modelReview) {
   }
   if (!Array.isArray(modelReview?.violations)) throw new Error("Cold reviewer omitted violations.");
   for (const violation of modelReview.violations) {
-    if (violation.category !== "cold_rendered_prose" || violation.severity !== "blocking") {
-      throw new Error("Cold reviewer returned a non-cold or nonblocking violation.");
+    if (violation.category !== "cold_rendered_prose" || violation.severity !== "nonblocking") {
+      throw new Error("Cold reviewer returned a non-cold or blocking violation after advisory-only calibration.");
     }
     for (const field of ["location", "text", "reason", "revision_instruction"]) {
       if (typeof violation?.[field] !== "string") throw new Error(`Cold reviewer violation omitted ${field}.`);
@@ -213,7 +213,7 @@ function validateColdModelReview(modelReview) {
   }
   const failed = modelReview.cold_rendered_prose.status === "FAIL";
   if ((failed && modelReview.decision !== "REVISE") || (!failed && modelReview.decision !== "PASS")) {
-    throw new Error("Cold reviewer decision contradicts its blocking check result.");
+    throw new Error("Cold reviewer decision contradicts its advisory check result.");
   }
 }
 
@@ -241,12 +241,9 @@ export async function reviewDraft({
     return {
       ...mechanical,
       cold_rendered_prose: { status: "FAIL", reason: missingColdReview.reason },
-      decision: "REVISE",
+      decision: mechanical.decision,
       violations: [...mechanical.violations, missingColdReview],
-      required_revisions: [
-        ...mechanical.required_revisions,
-        { field: missingColdReview.location, instruction: missingColdReview.revision_instruction }
-      ]
+      required_revisions: mechanical.required_revisions
     };
   }
 
@@ -284,13 +281,13 @@ export async function reviewDraft({
   }]));
   const blocking = mergedViolations.some((item) => item.severity === "blocking")
     || HARD_REVISE_FIELDS.some((field) => checks[field].status === "FAIL");
-  const anyFailedCheck = REVIEW_FIELDS.some((field) => checks[field].status === "FAIL");
+  const anyFailedCheck = REVIEW_FIELDS.some((field) => field !== "cold_rendered_prose" && checks[field].status === "FAIL");
+  const actionableViolation = mergedViolations.some((item) => item.category !== "cold_rendered_prose");
   return {
     ...checks,
     decision: blocking
       || anyFailedCheck
-      || mergedViolations.length > 0
-      || coldModelReview.decision !== "PASS"
+      || actionableViolation
       || modelReview.decision !== "PASS" ? "REVISE" : "PASS",
     violations: mergedViolations,
     required_revisions: mergedViolations.map((item) => ({ field: item.location, instruction: item.revision_instruction }))

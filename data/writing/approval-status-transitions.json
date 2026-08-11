@@ -42,5 +42,10 @@
     "serving": [
       "rendered_sample_owner_approved"
     ]
+  },
+  "proseJudgment": {
+    "authority": "owner",
+    "semanticColdReview": "permanently_advisory_only",
+    "semanticColdReviewMayAuthorizeTransition": false
   }
 }

@@ -1,16 +1,30 @@
 {
   "schemaVersion": "cold-rendered-prose-calibration-status-v1",
   "reviewerVersion": "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11",
-  "status": "failed",
+  "status": "final_failed",
   "trusted": false,
   "promotionAuthorized": false,
+  "mode": "permanently_advisory_only",
+  "proseJudgmentAuthority": "owner",
+  "furtherCalibrationAuthorized": false,
   "required": {
     "v7NegativeRevise": 12,
     "sunLeoV3GoldPass": 1
   },
-  "actual": {
-    "v7NegativeRevise": 8,
-    "sunLeoV3GoldPass": 0
+  "finalRound": {
+    "train": {
+      "negativeExamples": 4,
+      "goldExamples": 2
+    },
+    "holdout": {
+      "negativeRevise": 8,
+      "goldPass": 1,
+      "probes": 3,
+      "fullTextLeakage": false
+    },
+    "calls": 13,
+    "totalTokens": 48325
   },
-  "liveEval": "live-eval.json"
+  "initialLiveEval": "live-eval.json",
+  "finalLiveEval": "round-2-live-eval.json"
 }

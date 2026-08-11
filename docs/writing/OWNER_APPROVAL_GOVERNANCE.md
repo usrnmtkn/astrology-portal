@@ -38,3 +38,7 @@ The executable transition contract is `data/writing/approval-status-transitions.
 Document-level approval can advance wording to `owner-approved` or `owner-locked`, but both
 `batch_generation` and `serving` remain false until the exact staged product sample advances
 from `owner-review-pending` to `owner-approved` through an explicit owner ruling.
+
+The final cold-rendered-prose TRAIN/HOLDOUT calibration rejected an owner-approved gold.
+Accordingly, semantic cold-review findings are permanently advisory-only and cannot authorize
+or deny any transition. Cold prose judgment is an owner gate by design.

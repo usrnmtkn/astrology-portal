@@ -167,7 +167,7 @@ required_revisions
 
 decision may only be PASS or REVISE.
 
-A failure on cold_rendered_prose, astrology_integrity, sign_house_separation,
+A failure on astrology_integrity, sign_house_separation,
 literal_first_read_clarity, example_proves_astrology,
 invented_motive, stock_trope, or metaphor_requires_translation
 must produce REVISE.
@@ -362,6 +362,11 @@ this?", or "A normal person would say this more simply," the line is not approve
 Final judge instruction: Do not reward a sentence for being astrologically correct if it is
 awkward prose. Correct astrology expressed in unnatural language still fails the writing
 judge.
+
+FINAL CALIBRATION OUTCOME: `cold_rendered_prose` is permanently advisory-only. It may flag
+lines for owner review, but it cannot produce or contribute to `REVISE`. Cold prose judgment
+is an owner gate by design. No further calibration spend is authorized without a new owner
+instruction.
 
 DONE WHEN
 

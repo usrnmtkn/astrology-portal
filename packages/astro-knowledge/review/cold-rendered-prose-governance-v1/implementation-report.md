@@ -66,3 +66,30 @@ The concise per-fixture result list is in `summary.md`.
   Leo V3 gold.
 - Trust decision: the target of 12/12 negative rejection and 1/1 gold acceptance was not
   met. The check remains an implemented candidate and must not be treated as calibrated.
+
+## Final TRAIN/HOLDOUT calibration
+
+The final owner-authorized round used a mechanically verified split:
+
+- TRAIN: four V7 failures with owner reasons and two owner-approved PASS examples.
+- HOLDOUT: eight unseen V7 failures and two unseen owner-approved golds.
+- Probes: three pipeline-clean Mercury pilot cards, reported without expectations.
+- Full-text leakage from HOLDOUT into TRAIN: zero.
+
+Results with `gpt-5.6-terra` at `high` reasoning:
+
+- Calls: **13**.
+- Input tokens: **37,763**.
+- Output tokens: **10,562**, including **5,756** reasoning tokens.
+- Total tokens: **48,325**.
+- Cached input tokens: **31,536**.
+- Negative holdouts correctly returned `REVISE`: **8/8**.
+- Gold holdouts correctly returned `PASS`: **1/2**.
+- Venus in Libra was the false positive.
+- Virgo, Libra, and Sagittarius Mercury probes all returned `REVISE`.
+
+The success gate was not met. The accepted final governance outcome is
+`permanently_advisory_only_owner_prose_gate`. Semantic cold review may surface observations,
+but it cannot block, revise, approve, stage, promote, or serve copy. Cold prose judgment is an
+owner gate by design. No further calibration spend is authorized without a new owner
+instruction.
