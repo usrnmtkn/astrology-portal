@@ -120,7 +120,8 @@ async function action(body: {
     await admin.update("user_reports", `id=eq.${report.id}`, { status: "draft", fulfillment_status: "awaiting_authorization", failure_history: [] });
     await admin.update("report_fulfillment_jobs", `report_id=eq.${report.id}`, {
       state: "paused", step: "writing", last_error: null, authorization_token: null,
-      authorized_call_budget: null, model_call_count: 0, authorization_consumed_at: null
+      authorized_call_budget: null, model_call_count: 0, authorization_consumed_at: null,
+      passing_unit_cache: {}
     });
     return { ok: true };
   }
