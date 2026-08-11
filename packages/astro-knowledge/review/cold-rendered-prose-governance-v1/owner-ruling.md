@@ -44,3 +44,14 @@ judge.
 Rulings on a file authorize drafting and staging; batch generation and serving require the
 owner's read of ONE fully rendered sample page on the product surface first. No batch
 proceeds on document review alone.
+
+## Final calibration disposition
+
+The owner authorized one final TRAIN/HOLDOUT calibration and ruled that its result would be
+accepted either way. Success required all eight negative holdouts to return `REVISE` and both
+owner-approved holdout golds to return `PASS`. The reviewer caught all eight negatives but
+incorrectly rejected the Venus in Libra gold, producing only one of two gold passes.
+
+Per the owner's instruction, `cold_rendered_prose` is now permanently advisory-only. Cold
+prose judgment is an owner gate by design. No further calibration spend is authorized without
+a new owner instruction.

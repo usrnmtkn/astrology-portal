@@ -103,6 +103,14 @@ drafting and staging; batch generation and serving require the owner's read of O
 rendered sample page on the product surface first. No batch proceeds on document review
 alone.
 
+FINAL COLD-RENDERED-PROSE CALIBRATION OUTCOME (owner-directed, 2026-08-11):
+
+The TRAIN/HOLDOUT calibration caught all 8 owner-rejected holdout pages but incorrectly rejected
+one of the 2 owner-approved holdout golds. Under the owner's acceptance rule, this check is
+permanently advisory-only. It may identify lines for the owner's attention, but it cannot block,
+revise, approve, promote, stage, or serve copy. Cold prose judgment is an owner gate by design.
+No further calibration spend is authorized without a new owner instruction.
+
 
 NO-VAGUENESS GOVERNOR (owner verbatim, 2026-08-08, applies across TLDR Astro):
 Every sentence must tell the reader what the astrology could look like in an actual life. Do
