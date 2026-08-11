@@ -33,7 +33,11 @@ const lunationBlendRows = readPackageJson("source-rows/lunation-blend-units-v1.j
 const skyArticleRows = readPackageJson("source-rows/sky-article-v1.json");
 const skyAspectPhrasebook = readPackageJson("source-rows/sky-aspect-phrasebook-v1.json");
 const skyPlacementVoicePass = readPackageJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
-const skyPlacementOwnerApprovedFallbacks = readPackageJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+const skyPlacementOwnerApprovedSource = readPackageJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+const skyPlacementOwnerApprovedFallbacks = {
+  ...skyPlacementOwnerApprovedSource,
+  rows: skyPlacementOwnerApprovedSource.rows.filter((row) => row.rendered_as_body_copy !== false)
+};
 const sunLeoHouseCores = readPackageJson("source-rows/sun-leo-house-cores-v1.json");
 const sunLeoHouseCoreReaderRows = sunLeoHouseCores.rows.map(({
   notes: _notes,
@@ -57,6 +61,10 @@ const skyPlacementCurrentApproval = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "packages/astro-knowledge/review/sun-leo-fallback-v3/approval-record.json"),
   "utf8"
 ));
+const mercuryIngressMastersApproval = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "packages/astro-knowledge/review/mercury-ingress-masters-v7/ingestion-audit.json"),
+  "utf8"
+));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
 const skySignCopySun = readPackageJson("source-rows/sky-sign-copy-sun-v1.json");
 const pairDailyFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
@@ -65,6 +73,11 @@ const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
 assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 56);
+assert.equal(skyPlacementOwnerApprovedSource.rows.length, 80);
+assert.equal(
+  skyPlacementOwnerApprovedSource.rows.filter((row) => row.rendered_as_body_copy === false).length,
+  24
+);
 assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 56);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
 const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => approval.articles);
@@ -89,18 +102,31 @@ const servingArticleSnapshot = skyPlacementOwnerApprovedFallbacks.rows
 assert.equal(skyPlacementCurrentApproval.articleCount, servingArticleSnapshot.length);
 assert.equal(
   createHash("sha256").update(JSON.stringify(servingArticleSnapshot)).digest("hex"),
-  skyPlacementCurrentApproval.articlesSha256,
-  "The exact serving articles must match the owner-approved Sun-in-Leo V3 snapshot."
+  mercuryIngressMastersApproval.invariants.servingArticleSnapshotSha256,
+  "The exact serving articles must match the latest owner-approved Mercury V7 snapshot."
 );
 for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows) {
+  const expectedBody = servingRow.primary_hook
+    ? [
+        servingRow.primary_hook,
+        servingRow.opening_heading,
+        servingRow.opening,
+        servingRow.tension_heading,
+        servingRow.tension,
+        servingRow.development_heading,
+        servingRow.development,
+        servingRow.close_heading,
+        servingRow.close
+      ].join("\n\n")
+    : [
+        servingRow.opening,
+        servingRow.tension,
+        servingRow.development,
+        servingRow.close
+      ].join("\n\n");
   assert.equal(
     servingRow.body_you,
-    [
-      servingRow.opening,
-      servingRow.tension,
-      servingRow.development,
-      servingRow.close
-    ].join("\n\n"),
+    expectedBody,
     `${servingRow.contentKey} must preserve the exact approved article wording.`
   );
 }
@@ -122,13 +148,17 @@ assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => (
   && !Object.hasOwn(row, "approved_via")
   && !Object.hasOwn(row, "body_you")
 )), "Reader serving rows must exclude editorial provenance metadata.");
-assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => !/\b(?:you|your|yours|yourself|yourselves)\b/iu.test([
-  row.opening,
-  row.tension,
-  row.development,
-  row.close,
-  ...(row.try_this ?? [])
-].join("\n"))), "Legacy body_you storage must not introduce second-person Current Sky copy.");
+assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => {
+  const isExactOwnerApprovedMercuryV7 = /^fallback-hook\/sky-sign-copy\/mercury\/(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$/u.test(row.contentKey);
+  return isExactOwnerApprovedMercuryV7 || !/\b(?:you|your|yours|yourself|yourselves)\b/iu.test([
+    row.primary_hook,
+    row.opening,
+    row.tension,
+    row.development,
+    row.close,
+    ...(row.try_this ?? [])
+  ].join("\n"));
+}), "Only the byte-protected, exact owner-approved Mercury V7 masters may retain their settled second-person sentences.");
 
 const moonTaurusEntry = sourceRows.hookRows.find((row) => (
   row.contentKey === "fallback-hook/sky-placement-hook/moon/taurus"

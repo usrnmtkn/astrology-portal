@@ -131,7 +131,9 @@ function skyPlacementOwnerApprovedReaderRows() {
   return {
     schemaVersion: 1,
     generatedFrom: "source-rows/sky-placement-owner-approved-fallbacks-v1.json",
-    rows: source.rows.map(({ body_you: _legacyBody, note: _note, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row)
+    rows: source.rows
+      .filter((row) => row.rendered_as_body_copy !== false)
+      .map(({ body_you: _legacyBody, note: _note, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row)
   };
 }
 
