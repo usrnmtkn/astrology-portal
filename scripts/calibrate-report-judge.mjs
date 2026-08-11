@@ -5,7 +5,7 @@ import { REPORT_JUDGE_THRESHOLD } from "../api/_lib/report-fulfillment-config.ts
 import { callReportModel } from "../api/_lib/report-model-client.ts";
 import { deterministicCalibrationScore, reportJudgeCalibrationFixtures } from "../api/_lib/report-judge.ts";
 import { judgeModelTarget } from "../api/_lib/report-model-client.ts";
-import { loadVersionedReportPrompt, REPORT_JUDGE_PROMPT_PATH } from "../api/_lib/report-prompt-versions.ts";
+import { loadActiveReportJudgePrompt } from "../api/_lib/report-prompt-versions.ts";
 
 const live = process.argv.includes("--live");
 const threshold = REPORT_JUDGE_THRESHOLD;
@@ -17,7 +17,7 @@ async function score(id, text, expected) {
     const result = deterministicCalibrationScore(text);
     return { id, expected, score: result.overall, findings: result.defects };
   }
-  const rubric = loadVersionedReportPrompt(REPORT_JUDGE_PROMPT_PATH);
+  const rubric = loadActiveReportJudgePrompt();
   const result = await callReportModel({
     ...judgeModelTarget(),
     prompt: `${rubric.text}\n\nCALIBRATION_TEXT\n${text}`,
