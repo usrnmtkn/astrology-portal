@@ -9,11 +9,13 @@
   },
   "models": {
     "writer": {
+      "provider": "openai",
       "model": "gpt-5.6-sol",
       "reasoningEffort": "high",
       "maxOutputTokens": 12000
     },
     "judge": {
+      "provider": "openai",
       "model": "gpt-5.6-terra",
       "reasoningEffort": "low",
       "maxOutputTokens": 4000

@@ -56,6 +56,7 @@ function unapprovedDraft(value) {
     ...generatedApprovalState(),
     editorialStatus: "generated_candidate",
     reviewStatus: "needs_review",
+    ownerStatus: "PENDING OWNER",
     ownerApproved: false,
     promotionAuthorized: false,
     canonical: false
@@ -87,8 +88,10 @@ export async function generateDraft({
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
   return attachGenerationMetadata(unapprovedDraft(value), writeGenerationMetadata({
     role,
+    provider: modelClient.provider ?? null,
     model: modelClient.model ?? null,
     reasoningEffort: modelClient.reasoningEffort ?? null,
+    thinkingLevel: modelClient.thinkingLevel ?? null,
     sourceIds: [
       ...(context.examples ?? []).map((entry) => entry.id ?? entry.fixture_id).filter(Boolean),
       ...(context.corrections ?? []).map((entry) => entry.fixture_id ?? entry.id).filter(Boolean)
